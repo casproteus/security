@@ -1,0 +1,513 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.stgo.security</groupId>
+		<artifactId>security</artifactId>
+		<version>1-SNAPSHOT</version>
+	</parent>
+	<artifactId>security-service-installer</artifactId>
+	<name>STGO Security - Dist</name>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<eclipsePluginVersion>2.8</eclipsePluginVersion>
+		<staging.dir>${project.build.directory}/staging</staging.dir>
+		<project.build.finalName>stgo-security-service-installer-${project.version}</project.build.finalName>
+		<jar.finalName>stgo-security-service-installer-${project.version}</jar.finalName>
+		<izpack.version>4.3.5</izpack.version>
+		<izpack.staging>${staging.dir}</izpack.staging>
+		<izpack-standalone.version>4.3.5</izpack-standalone.version>
+		<izpack-plugin.version>1.0-alpha-5</izpack-plugin.version>
+	</properties>
+
+	<distributionManagement>
+		<site>
+			<id>dev</id>
+			<url>${project.artifactId}-site</url>
+		</site>
+	</distributionManagement>
+
+	<dependencies>
+		<!-- IzPack console mode denpends xalan jar to run. -->
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.izpack</groupId>
+			<artifactId>izpack-standalone-compiler</artifactId>
+			<version>${izpack.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.stgo.security</groupId>
+			<artifactId>security-server</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.stgo.security</groupId>
+			<artifactId>security-module</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.stgo.security</groupId>
+			<artifactId>security-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.stgo.security</groupId>
+			<artifactId>security-data</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.stgo.security</groupId>
+			<artifactId>simonstyle</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-jersey</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>mule-module-cxf</artifactId>
+					<groupId>org.mule.modules</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>2.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.perf4j</groupId>
+			<artifactId>perf4j</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mule</groupId>
+			<artifactId>mule-core</artifactId>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-slf4j-impl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-1.2-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-jcl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.logging.log4j</groupId>
+					<artifactId>log4j-jul</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-spring-config</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mule.common</groupId>
+			<artifactId>mule-common</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Mule Transports -->
+		<dependency>
+			<groupId>org.mule.transports</groupId>
+			<artifactId>mule-transport-http</artifactId>
+			<version>${mule.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.transports</groupId>
+			<artifactId>mule-transport-vm</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Mule Modules -->
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-client</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-management</artifactId>
+			<version>${mule.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-scripting</artifactId>
+			<version>${mule.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-module-xml</artifactId>
+			<version>${mule.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.tanukisoftware</groupId>
+			<artifactId>wrapper</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.tanukisoftware</groupId>
+			<artifactId>wrapper</artifactId>
+			<classifier>linux-x86-32</classifier>
+			<type>zip</type>
+		</dependency>
+		<dependency>
+			<groupId>org.tanukisoftware</groupId>
+			<artifactId>wrapper</artifactId>
+			<classifier>linux-x86-64</classifier>
+			<type>zip</type>
+		</dependency>
+		<dependency>
+			<groupId>org.tanukisoftware</groupId>
+			<artifactId>wrapper</artifactId>
+			<classifier>windows-x86-32</classifier>
+			<type>zip</type>
+		</dependency>
+		<dependency>
+			<groupId>org.tanukisoftware</groupId>
+			<artifactId>wrapper</artifactId>
+			<classifier>windows-x86-64</classifier>
+			<type>zip</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.kenai</groupId>
+			<artifactId>winsw</artifactId>
+			<version>1.9</version>
+			<type>zip</type>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbytools</artifactId>
+		</dependency>
+
+
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mvel</groupId>
+			<artifactId>mvel2</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>${project.build.finalName}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<locales>en</locales>
+				</configuration>
+			</plugin>
+
+			<!-- Generate build number -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<configuration>
+					<revisionOnScmFailure>SNAPSHOT</revisionOnScmFailure>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+						<configuration>
+							<doCheck>false</doCheck>
+							<doUpdate>false</doUpdate>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- copy resources into staging area -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>create-staging-area</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
+
+								<copy todir="${staging.dir}">
+									<fileset dir="${basedir}/src/main/resources" />
+								</copy>
+								<echo file="${staging.dir}/version.txt">${project.version}-r${buildNumber}</echo>
+
+								<copy todir="${project.build.directory}">
+									<fileset dir="${basedir}/src/main/izpack" excludes="install.xml" />
+								</copy>
+
+								<copy todir="${project.build.directory}/izpack/">
+									<fileset dir="${basedir}/src/main/izpack/" />
+								</copy>
+
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.ant</groupId>
+						<artifactId>ant-nodeps</artifactId>
+						<version>1.8.1</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<!-- retrieve dependencies -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>dependency-fetch</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+							<stripVersion>false</stripVersion>
+							<!-- don't want standalone compiler -->
+							<excludeGroupIds>org.codehaus.izpack,org.apache.ant</excludeGroupIds>
+							<!-- just want jars, will need to unpack zips -->
+							<includeTypes>jar</includeTypes>
+							<outputDirectory>${staging.dir}/lib</outputDirectory>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>zip-dependency-unpack</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<configuration>
+							<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+							<stripVersion>false</stripVersion>
+							<!-- just want zips, to unpack them -->
+							<includeTypes>zip</includeTypes>
+							<outputDirectory>${staging.dir}</outputDirectory>
+							<overWrite>true</overWrite>
+						</configuration>
+					</execution>
+
+				</executions>
+			</plugin>
+
+			<!-- Adjust packaging files in staging folder -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>adjust-staging-area</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<replace file="${project.build.directory}/izpack/install.xml"
+									token="#VERSION#" value="${project.version}.r${buildNumber}"
+									summary="yes" />
+								<replace file="${project.build.directory}/izpack/install.xml"
+									token="#WRAPPER_VERSION#" value="${wrapper.version}" summary="yes" />
+								<replace file="${project.build.directory}/izpack/install.xml"
+									token="#PRODUCT_VERSION#" value="${project.version}" summary="yes" />
+								<replace file="${project.build.directory}/izpack/install.xml"
+									token="#OTSP_INSTALLER#" value="security-service-${project.version}-standard.jar"
+									summary="yes" />
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Build installer -->
+			<plugin>
+				<groupId>org.codehaus.izpack</groupId>
+				<artifactId>izpack-maven-plugin</artifactId>
+				<version>${izpack-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>izpack</id>
+						<phase>package</phase>
+						<goals>
+							<goal>izpack</goal>
+						</goals>
+						<configuration>
+							<izpackBasedir>${project.build.directory}</izpackBasedir>
+							<descriptor>${project.build.directory}/izpack/install.xml</descriptor>
+							<descriptorEncoding>UTF-8</descriptorEncoding>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.codehaus.izpack</groupId>
+						<artifactId>izpack-standalone-compiler</artifactId>
+						<version>${izpack.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-5</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/zip.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- append to the packaging phase. -->
+						<goals>
+							<goal>single</goal> <!-- goals == mojos -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-antrun-plugin
+										</artifactId>
+										<versionRange>
+											[1.3,)
+										</versionRange>
+										<goals>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.9</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>index</report>
+							<report>dependencies</report>
+							<report>project-team</report>
+							<report>mailing-list</report>
+							<report>cim</report>
+							<report>issue-tracking</report>
+							<report>license</report>
+							<report>scm</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
+</project>

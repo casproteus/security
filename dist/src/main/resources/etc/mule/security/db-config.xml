@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file configures the available REST resources for testing. -->
+<mule xmlns:spring="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.mulesoft.org/schema/mule/core"
+    xsi:schemaLocation="
+               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.4/mule.xsd">
+
+    <spring:bean id="securityDataSource" destroy-method="close" class="org.apache.commons.dbcp.BasicDataSource">
+        <spring:property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
+        <spring:property name="url" value="jdbc:derby:${security.service.path}/db/securitydb" />
+        <spring:property name="username" value="" />
+        <spring:property name="password" value="" />
+    </spring:bean>
+    
+</mule>

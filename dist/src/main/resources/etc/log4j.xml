@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%p [%d{ISO8601}] - %m%n" />
+		</layout>
+	</appender>
+	<appender name="fileOut" class="org.apache.log4j.RollingFileAppender">
+		<param name="file" value="log/security-service.log" />
+		<param name="MaxFileSize" value="1MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<param name="BufferedIO" value="true" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%p [%d{ISO8601}] (%F:%L) %c - %m%n" />
+		</layout>
+	</appender>
+
+    <!-- This file appender is used to output aggregated performance security -->
+    <appender name="fileAppender" class="org.apache.log4j.FileAppender">
+        <param name="File" value="log/security-service-perf-stats.log"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%m%n"/>
+        </layout>
+    </appender>
+
+    <!-- The Perf4J logger -->
+    <logger name="org.perf4j.TimingLogger" additivity="false" value="ERROR">
+        <appender-ref ref="fileAppender" />
+    </logger>
+
+	<!-- This logger will output request information to a separate file. -->
+	<logger name="org.mule.module.jersey.JerseyResourcesComponent" additivity="false">
+		<level value="ERROR" />
+		<appender-ref ref="requestOut" />
+	</logger>
+	<logger name="com.stgo">
+		<level value="INFO" />
+	</logger>
+	<logger name="org.apache.commons.httpclient">
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.apache">
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.mule">
+		<level value="INFO" />
+	</logger>
+	<logger name="org.drools.repository.RulesRepository">
+		<level value="FATAL" />
+	</logger>
+	<logger name="org.mule.DefaultMuleContext">
+		<level value="INFO" />
+	</logger>
+	<logger name="org.mule.exception.DefaultSystemExceptionStrategy">
+		<level value="ERROR" />
+	</logger>
+	<logger name="org.mule.exception.DefaultServiceExceptionStrategy">
+		<level value="ERROR" />
+	</logger>
+    <logger name="org.mule.exception.DefaultMessagingExceptionStrategy">
+        <level value="ERROR" />
+    </logger>
+	<logger name="org.mule.config.i18n.CoreMessages">
+		<level value="FATAL" />
+	</logger>
+	<logger name="org.acegisecurity">
+		<level value="WARN" />
+	</logger>
+	<logger name="org.springframework">
+		<level value="WARN" />
+	</logger>
+	<logger name="org.mule.transport.jersey">
+		<level value="WARN" />
+	</logger>
+	<root>
+		<priority value="INFO" />
+		<appender-ref ref="stdout" />
+		<appender-ref ref="fileOut" />
+	</root>
+</log4j:configuration>

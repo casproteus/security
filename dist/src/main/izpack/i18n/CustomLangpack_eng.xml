@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+<langpack>
+	<str id="InfoPanel.info" txt="" />
+	<str id="HTMLInfoPanel.headline.WelcomePanel" txt="" />
+	<str id="LicencePanel.headline.LicensePanel" txt="" />
+	<str id="LicencePanel.headinfo0.LicensePanel" txt="" />
+	<str id="TargetPanel.headline.InstallTargetPanel" txt="" />
+	<str id="TargetPanel.headinfo0.InstallTargetPanel" txt="" />
+	<str id="TreePacksPanel.headline.FeaturesPanel" txt="Customize Setup" />
+	<str id="TreePacksPanel.headinfo0.FeaturesPanel" txt="Select the way you want features to be installed" />
+	<str id="UserInputPanel.headline.StartupPanel" txt="Startup Options" />	
+	<str id="JDKPathPanel.headline.JDKPathPanel" txt="" />
+	<str id="JDKPathPanel.intro"
+		txt="The installed application requires a supported JDK version (1.8+)" />
+	<str id="UserInputPanel.headline.PortPanel" txt="Port Options" />
+	<str id="UserInputPanel.headline.DeployStatisticsAsServiceConditionPanel"
+		txt="" />
+	<str id="UserInputPanel.headline.StatisticsServiceInfoPanel" txt="" />
+	<str id="UserInputPanel.headline.ServiceRegistrationInfoPanel" txt="" />
+	<str id="SummaryPanel.headline.SummaryPanel" txt="" />
+	<str id="InstallPanel.headline.InstallPanel" txt="" />
+	<str id="ProcessPanel.headline.ProcessPanel" txt="" />
+	<str id="FinishPanel.headline.FinishPanel" txt="" />
+</langpack>

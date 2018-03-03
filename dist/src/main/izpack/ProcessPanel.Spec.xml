@@ -1,0 +1,16 @@
+<processing>
+    <job name="Install Security DB Schema">
+        <executefile name="java">
+            <arg>-cp</arg>
+            <arg>$INSTALL_PATH/lib/derby-10.8.1.2.jar$SYSTEM_path_separator$INSTALL_PATH/lib/derbytools-10.8.1.2.jar</arg>
+            <arg>org.apache.derby.tools.ij</arg>
+            <arg>$INSTALL_PATH/db/security.sql</arg>
+        </executefile>
+    </job>    
+    <job name="start security service ">
+		<os family="unix" />
+		<executefile name="$INSTALL_PATH/bin/security-service.sh">
+			<arg>$st.arg</arg>
+		</executefile>
+	</job>
+</processing>

@@ -1,0 +1,16 @@
+<langpack>
+	<str id="STGOLib" txt="STGO Libraries" />
+	<str id="STGOLib.description" txt="Libraries are the core of the STGO" />
+	<str id="STGOData" txt="STGO Data" />
+	<str id="STGOData.description" txt="Generic data for the different STGO modules. The STGO will not run correctly without valid data." />
+	<str id="STGOOntologyAF" txt="STGO Ontology AFs" />
+	<str id="STGOOntologyAF.description" txt="Content of Nstein's generic AFs in the ontology (allows edition)." />
+	<str id="STGOConfig" txt="STGO Configuration" />
+	<str id="STGOConfig.description" txt="Configuration files for the STGO." />
+	<str id="STGOBin" txt="STGO Binaries" />
+	<str id="STGOBin.description" txt="Scripts and executables for the STGO" />
+	<str id="STGOShared" txt="STGO Shared" />
+	<str id="STGOShared.description" txt="External applications" />
+	<str id="STGODoc" txt="STGO Documentation" />
+	<str id="STGODoc.description" txt="User and administrator documentation." />
+</langpack>

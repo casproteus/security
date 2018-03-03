@@ -1,0 +1,12 @@
+<project name="Generated from Open Text OTSP simple java archetype">
+	<skin>
+		<groupId>org.apache.maven.skins</groupId>
+		<artifactId>maven-default-skin</artifactId>
+		<version>1.0</version>
+	</skin>
+	<body>
+		<menu ref="reports"/>
+		<menu ref="parent"/>
+		<menu ref="modules"/>
+	</body>
+</project>

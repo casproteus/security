@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file configures the available REST resources for testing. -->
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:spring="http://www.springframework.org/schema/beans"
+	xmlns:jersey="http://www.mulesoft.org/schema/mule/jersey"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:tme-xml="http://www.opentext.com/schema/mule/tme-xml"
+	xmlns:tcp="http://www.mulesoft.org/schema/mule/tcp"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.1/mule.xsd
+    http://www.mulesoft.org/schema/mule/jersey http://www.mulesoft.org/schema/mule/jersey/3.1/mule-jersey.xsd
+    http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/3.1/mule-vm.xsd
+    http://www.mulesoft.org/schema/mule/tcp http://www.mulesoft.org/schema/mule/tcp/3.1/mule-tcp.xsd
+    http://www.opentext.com/schema/mule/tme-xml http://www.opentext.com/schema/mule/tme-xml/3.1/mule-tme-xml.xsd
+    http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/3.1/mule-file.xsd
+    http://jersey.apache.org/core http://jersey.apache.org/schemas/core.xsd">
+    
+ 	<tme-xml:connector name="TMEXmlConnector" receiveBufferSize="1024000" receiveBacklog="50" sendTcpNoDelay="false"
+                reuseAddress="true" clientSoTimeout="0" serverSoTimeout="0" socketSoLinger="0"
+                keepSendSocketOpen="false" keepAlive="true">
+	</tme-xml:connector> 
+
+    <vm:endpoint name="test" path="test" exchange-pattern="request-response" />
+    <vm:endpoint name="test2" path="test2" exchange-pattern="request-response" />
+    <endpoint name="testREST" address="http://localhost:8880/test" />
+    <endpoint name="test2REST" address="http://localhost:8880/test2"/>
+    <tme-xml:endpoint name="testXML" host="localhost" port="8889" connector-ref="TMEXmlConnector" />
+    <tme-xml:endpoint name="test2XML" host="localhost" port="8890" connector-ref="TMEXmlConnector" />
+    <spring:bean name="testInstance" class="com.opentext.otsp.server.TheTestResource2" />
+	<file:connector name="receiveConnector" fileAge="500" autoDelete="true" pollingFrequency="1000" />
+	<file:connector name="outputConnector" outputAppend="false"/>
+
+	<!-- Load the test resources into the Mule context. -->
+	<flow name="TestREST">
+		<inbound-endpoint ref="testREST" />
+		<jersey:resources>
+			<component class="com.opentext.otsp.server.TheTestResource" >
+			</component>
+		</jersey:resources>
+	</flow>
+	<flow name="TestVM">
+		<vm:inbound-endpoint ref="test" />
+		<component class="com.opentext.otsp.server.TheTestResource" >
+		</component>
+	</flow>
+	<flow name="TestPoll">
+		<file:inbound-endpoint connector-ref="receiveConnector" path="/tmp/otsp-server-test-input"/>
+		<component class="com.opentext.otsp.server.TheTestResource" >
+		</component>
+		<file:outbound-endpoint connector-ref="outputConnector" path="/tmp/otsp-server-test-output"/>
+	</flow>
+	<flow name="TestXML">
+		<tme-xml:inbound-endpoint ref="testXML" />
+		<component class="com.opentext.otsp.server.TheTestResource" >
+		</component>
+	</flow>
+	<flow name="Test2REST">
+		<inbound-endpoint ref="test2REST" />
+		<jersey:resources>
+			<component class="com.opentext.otsp.server.TheTestResource2" >
+			</component>
+		</jersey:resources>
+	</flow>
+	<flow name="Test2VM">
+		<vm:inbound-endpoint ref="test2" />
+		<component class="com.opentext.otsp.server.TheTestResource2" >
+		</component>
+	</flow>
+	<flow name="Test2XML">
+		<tme-xml:inbound-endpoint ref="test2XML" />
+		<component class="com.opentext.otsp.server.TheTestResource2" >
+		</component>
+	</flow>
+
+</mule>

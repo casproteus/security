@@ -1,0 +1,3 @@
+The Setup Wizard will install ShareTheGoodOnes Security Monitor Service on your computer.
+
+Click Next to continue or Quit to exit the Setup Wizard.

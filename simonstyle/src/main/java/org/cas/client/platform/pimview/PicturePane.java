@@ -1,0 +1,228 @@
+package org.cas.client.platform.pimview;
+
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.LayoutManager;
+import java.awt.LayoutManager2;
+import java.awt.MediaTracker;
+import java.awt.TexturePaint;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+
+import javax.swing.JComponent;
+
+/**
+ * 面板基类，主要实现两个功能：1、绘制背景图片；2、将自己设为自己的布局管理器（子类只需重写layoutContainer方法， 即可定制自己的布局方案）。 TODO:
+ * 可以改善：如果图片尺寸大，则缩小至this的尺寸，如果图片小，则平铺。
+ */
+
+public class PicturePane extends JComponent implements LayoutManager2 {
+    /**
+     * @param prmImag
+     *            传入的图片 改抽象类作为其所有子类的父类,实现了layoutManager2接口,并将自己作为布局管理器加在自己身上. 这样,其子类必须覆盖layoutContainer()方法,来定制自己的布局方案.
+     */
+    public PicturePane(Image prmImag) {
+        if (prmImag != null) // 如果传入的图片不是空，则用它初始化picture对象。
+            preparePicture(prmImag);
+        setDoubleBuffered(true);
+        setLayout(this); // 改变布局管理器。
+    }
+
+    /**
+     * 初始化图片
+     * 
+     * @param prmImg
+     *            传入的图片
+     * @called by: emo.pim.pimview.CoverPane;
+     */
+    public void preparePicture(
+            Image prmImg) {
+        MediaTracker track = new MediaTracker(this);
+        track.addImage(prmImg, 0);
+        try {
+            track.waitForID(0);
+        } catch (InterruptedException e) {
+        }
+
+        int tmpImgWidth = prmImg.getWidth(this);
+        int tmpImgHeight = prmImg.getHeight(this);
+
+        Rectangle2D tmpRect = new Rectangle2D.Double(0, 0, tmpImgWidth, tmpImgHeight);
+        BufferedImage tmpImgBuf = new BufferedImage(tmpImgWidth, tmpImgHeight, BufferedImage.SCALE_FAST);
+        tmpImgBuf.getGraphics().drawImage(prmImg, 0, 0, this);
+        picture = new TexturePaint(tmpImgBuf, tmpRect);
+    }
+
+    // ------------------------------------------------------------------------
+    /**
+     * 绘制组件的内容
+     * 
+     * @param g
+     *            绘制图形的句柄
+     */
+    public void paintComponent(
+            Graphics g) {
+        // if (skipPaint)改标记暂时尚未用到,故先注掉,等用到时打开.
+        // {
+        // return ;
+        // }
+        if (picture == null) {
+            g.setColor(getBackground());
+        } else {
+            ((Graphics2D) g).setPaint(picture);
+        }
+        // 如果实例的paintAreaWidth,paintAreaHeigh属性被赋予过>=0的值,则按照赋予的值的范围进行绘制.
+        // @TODO:补注释:什么情况下需要对实际的绘制范围进行设置?
+        if (paintAreaWidth > -1 && paintAreaHeight > -1) {
+            g.fillRect(paintAreaX, paintAreaY, paintAreaWidth, paintAreaHeight);
+        } else // 否则按照实例的实际面积进行绘制.
+        {
+            g.fillRect(paintAreaX, paintAreaY, getWidth(), getHeight());
+        }
+    }
+
+    /**
+     * 设置绘制区域
+     * 
+     * @called by: emo.pim.pimview.CoverPane;
+     * @param prmX
+     *            X坐标
+     * @param prmY
+     *            Y坐标
+     * @param prmWidth
+     *            宽度
+     * @param prmHeight
+     *            高度
+     */
+    protected void setPaintArea(
+            int prmX,
+            int prmY,
+            int prmWidth,
+            int prmHeight) {
+        paintAreaX = prmX;
+        paintAreaY = prmY;
+        paintAreaWidth = prmWidth;
+        paintAreaHeight = prmHeight;
+    }
+
+    // 以下为实现LayoutManager2的接口-------------------------------------------------
+    /**
+     * Adds the specified component to the layout, using the specified constraint object.
+     * 
+     * @param comp
+     *            the component to be added
+     * @param constraints
+     *            where/how the component is added to the layout.
+     */
+    public void addLayoutComponent(
+            Component comp,
+            Object constraints) {
+    }
+
+    /**
+     * If the layout manager uses a per-component string, adds the component <code>comp</code> to the layout,
+     * associating it with the string specified by <code>name</code>.
+     *
+     * @param name
+     *            the string to be associated with the component
+     * @param comp
+     *            the component to be added
+     */
+    public void addLayoutComponent(
+            String name,
+            Component comp) {
+    }
+
+    /**
+     * Returns the alignment along the x axis. This specifies how the component would like to be aligned relative to
+     * other components. The value should be a number between 0 and 1 where 0 represents alignment along the origin, 1
+     * is aligned the furthest away from the origin, 0.5 is centered, etc.
+     */
+    public float getLayoutAlignmentX(
+            Container target) {
+        return 0.0f;
+    }
+
+    /**
+     * Returns the alignment along the y axis. This specifies how the component would like to be aligned relative to
+     * other components. The value should be a number between 0 and 1 where 0 represents alignment along the origin, 1
+     * is aligned the furthest away from the origin, 0.5 is centered, etc.
+     */
+    public float getLayoutAlignmentY(
+            Container target) {
+        return 0.0f;
+    }
+
+    /**
+     * Invalidates the layout, indicating that if the layout manager has cached information it should be discarded.
+     */
+    public void invalidateLayout(
+            Container target) {
+    }
+
+    /**
+     * 调自己的将有子类实现的方法实现布局.Lays out the specified container.
+     * 
+     * @param parent
+     *            the container to be laid out
+     */
+    public void layoutContainer(
+            Container parent) {
+    }
+
+    /**
+     * Calculates the maximum size dimensions for the specified container, given the components it contains.
+     * 
+     * @see java.awt.Component#getMaximumSize
+     * @see LayoutManager
+     */
+    public Dimension maximumLayoutSize(
+            Container target) {
+        return getSize();
+    }
+
+    /**
+     * Calculates the minimum size dimensions for the specified container, given the components it contains.
+     * 
+     * @param parent
+     *            the component to be laid out
+     * @see #preferredLayoutSize
+     */
+    public Dimension minimumLayoutSize(
+            Container parent) {
+        return new Dimension(0, 0);
+    }
+
+    /**
+     * Calculates the preferred size dimensions for the specified container, given the components it contains.
+     * 
+     * @param parent
+     *            the container to be laid out
+     * @see #minimumLayoutSize
+     */
+    public Dimension preferredLayoutSize(
+            Container parent) {
+        return getSize();
+    }
+
+    /**
+     * Removes the specified component from the layout.
+     * 
+     * @param comp
+     *            the component to be removed
+     */
+    public void removeLayoutComponent(
+            Component comp) {
+    }
+
+    // over-----------------------------------------------
+    private TexturePaint picture; // 两边纹理绘制的图片/
+    protected int paintAreaX; // 绘制的X坐标/
+    protected int paintAreaY; // 绘制的Y坐标/
+    protected int paintAreaWidth = -1; // 绘制的宽度/
+    protected int paintAreaHeight = -1; // 绘制的高度/
+}

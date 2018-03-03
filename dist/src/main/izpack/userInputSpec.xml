@@ -1,0 +1,49 @@
+<userInput>
+	<panel order="0">
+		<field type="title" align="left"
+			id="DeployStatisticAsServiceConditionPanel" txt="Please select the correct options to install the Security Service Components as a Service" bold="true" size="1" />
+		<field type="space" />
+		<field type="space" />
+		<field type="radio" variable="security.monitor.service">
+  			<spec>
+    			<choice txt="No" value="no" />
+    			<choice txt="Install service" value="install"/>
+    			<choice txt="Install and start service" value="installAndStart" set="true" />
+  			</spec>
+		</field>
+	</panel>
+	
+	<panel order="1">
+		<field type="title" align="left" id="StatisticsServiceInfoPanel"
+			txt="Please provide the information for STGO Security Monitor Service"
+			bold="true" size="1" />
+		<field type="space" />
+		<field type="space" />
+        <field type="text" variable="security.service.host">
+            <spec txt="Security Service Host:"  size="30" set="$HOST_NAME" />
+            <validator class="com.izforge.izpack.util.RegularExpressionValidator"
+                txt="Security service host is not valid">
+                <param name="pattern" value="[\w\-_\.]+" />
+            </validator>
+        </field>
+        
+        <field type="space" />        
+		<field type="text" variable="security.service.port">
+			<spec txt="Security Service Port:"  size="30" set="80" />
+			<validator class="com.izforge.izpack.util.RegularExpressionValidator"
+				txt="Security service port value must be between 1-65535">
+				<param name="pattern" value="(6553[0-5]|655[0-2]\d|65[0-4]\d{2}|6[0-4]\d{3}|[1-5]\d{4}|[1-9]\d{0,3})" />
+			</validator>
+		</field>
+		
+		<field type="space" />
+		<field type="text" variable="security.service.server.ensemble">
+            <spec txt="Security Sverver Ensemble:"  size="30" set="security.sharethegoodones.com:80" />
+			<validator class="com.izforge.izpack.util.RegularExpressionValidator"
+				txt="Security Server Ensemble is not valid, it must be composed with [host name]:[port number].">
+				<param name="pattern"
+					value="([\w\-_\.]+:(6553[0-5]|655[0-2]\d|65[0-4]\d{2}|6[0-4]\d{3}|[1-5]\d{4}|[1-9]\d{0,3})[,]*)" />
+			</validator>          
+        </field>
+	</panel>
+</userInput>

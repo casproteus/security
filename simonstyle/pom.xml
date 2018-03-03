@@ -1,0 +1,124 @@
+﻿<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+		<groupId>com.stgo.security</groupId>
+		<artifactId>security</artifactId>
+		<version>1-SNAPSHOT</version>
+  </parent>
+  <artifactId>simonstyle</artifactId>
+  <name>STGO POS</name>
+  
+  <url>http://maven.apache.org</url>
+  
+  <properties>
+    <jdkName>JavaSE-1.7</jdkName>
+    <jdk.version>1.7</jdk.version>
+  </properties>
+  
+  <dependencies>
+  
+	<dependency>
+	    <groupId>jfree</groupId>
+	    <artifactId>jfreechart</artifactId>
+	    <version>1.0.13</version>
+	</dependency>
+
+	<!-- dependency>
+	    <groupId>org.jfree</groupId>
+	    <artifactId>jcommon</artifactId>
+	    <version>1.0.24</version>
+	</dependency>
+	 -->
+	<dependency>
+	    <groupId>commons-io</groupId>
+	    <artifactId>commons-io</artifactId>
+	    <version>2.6</version>
+	</dependency>
+
+	<dependency>
+    	<groupId>org.stgo</groupId>
+	    <artifactId>hsqldb</artifactId>
+	    <version>1.0</version>
+	    <scope></scope>
+	</dependency>
+	
+	<dependency>
+    	<groupId>org.stgo</groupId>
+	    <artifactId>comm</artifactId>
+	    <version>1.0</version>
+	    <scope></scope>
+	</dependency>
+	
+	<dependency>
+    	<groupId>org.stgo</groupId>
+	    <artifactId>jai_codec</artifactId>
+	    <version>1.0</version>
+	    <scope></scope>
+	</dependency>
+	
+	<dependency>
+    	<groupId>org.stgo</groupId>
+	    <artifactId>jai_core</artifactId>
+	    <version>1.0</version>
+	    <scope></scope>
+	</dependency>
+	
+	<dependency>
+    	<groupId>org.stgo</groupId>
+	    <artifactId>jpos110</artifactId>
+	    <version>1.0</version>
+	    <scope></scope>
+	</dependency>
+	
+  </dependencies>
+ 
+
+<build>
+  	<plugins>
+  		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<configuration>
+				<encoding>UTF-8</encoding>
+				<source>1.7</source>
+				<target>1.7</target>
+			</configuration>
+		</plugin>
+		<plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-dependency-plugin</artifactId>
+		    <executions>
+			<execution>
+			    <id>copy-dependencies</id>
+			    <phase>prepare-package</phase>
+			    <goals>
+				<goal>copy-dependencies</goal>
+			    </goals>
+			    <configuration>
+				<outputDirectory>
+				    target/libs
+				</outputDirectory>
+			    </configuration>
+			</execution>
+		    </executions>
+		</plugin>
+		<plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-jar-plugin</artifactId>
+		    <configuration>
+			<archive>
+			    <manifest>
+				<addClasspath>true</addClasspath>
+				<classpathPrefix>libs/</classpathPrefix>
+				<mainClass>
+				    org.cas.client.platform.pos.dialog.PosFrame
+				</mainClass>
+			    </manifest>
+			</archive>
+		    </configuration>
+		</plugin>
+	</plugins>
+  </build>
+    
+  </project>

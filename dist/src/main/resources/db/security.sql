@@ -1,0 +1,63 @@
+CONNECT 'jdbc:derby:$INSTALL_PATH/db/securitydb;create=true';
+
+CREATE TABLE SecurityLog
+  (id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+   group_name VARCHAR(255),
+   computer_name VARCHAR(255),
+   label VARCHAR(255),
+   description VARCHAR(255),
+   created TIMESTAMP WITH DEFAULT CURRENT TIMESTAMP,
+   status INTEGER,
+   
+   stringext1 VARCHAR(255),
+   stringext2 VARCHAR(255),
+   intext1 INTEGER,
+   intext2 INTEGER,
+   PRIMARY KEY (id));
+   
+CREATE TABLE OptionStatus
+  (id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+   group_name VARCHAR(255),
+   computer_name VARCHAR(255),
+   function_id INTEGER NOT NULL,
+   stat_value VARCHAR(255) NOT NULL,
+   
+   stringext1 VARCHAR(255),
+   stringext2 VARCHAR(255),
+   intext1 INTEGER,
+   intext2 INTEGER,
+   PRIMARY KEY (id));
+   
+CREATE TABLE Extention1
+  (id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+   field1 VARCHAR(255),
+   field2 VARCHAR(255),
+   field3 INTEGER,
+   field4 INTEGER,
+   created TIMESTAMP WITH DEFAULT CURRENT TIMESTAMP,
+   PRIMARY KEY (id));
+
+
+CREATE TABLE Extention2
+  (id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+   field1 VARCHAR(255) NOT NULL,
+   field2 VARCHAR(255) NOT NULL,
+   field3 INTEGER NOT NULL,
+   field4 INTEGER NOT NULL,
+   PRIMARY KEY (id));
+
+CREATE TABLE Extention3
+  (id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+   field1 VARCHAR(255) NOT NULL,
+   field2 VARCHAR(255) NOT NULL,
+   field3 INTEGER NOT NULL,
+   field4 INTEGER NOT NULL,
+   PRIMARY KEY (id));
+
+CREATE TABLE Extention4
+  (id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+   field1 VARCHAR(255) NOT NULL,
+   field2 VARCHAR(255) NOT NULL,
+   field3 INTEGER NOT NULL,
+   field4 INTEGER NOT NULL,
+   PRIMARY KEY (id));

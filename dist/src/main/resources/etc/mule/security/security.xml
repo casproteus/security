@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:quartz="http://www.mulesoft.org/schema/mule/quartz" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ot="http://www.mulesoft.org/schema/mule/otac-mule-utils" xmlns:tcp="http://www.mulesoft.org/schema/mule/tcp" xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml" xmlns:jersey="http://www.mulesoft.org/schema/mule/jersey"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+			http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+			http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+			http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+			http://www.mulesoft.org/schema/mule/quartz http://www.mulesoft.org/schema/mule/quartz/current/mule-quartz.xsd
+			http://www.mulesoft.org/schema/mule/otac-mule-utils http://www.mulesoft.org/schema/mule/otac-mule-utils/3.4/otac-mule-utils.xsd
+			http://www.mulesoft.org/schema/mule/tcp http://www.mulesoft.org/schema/mule/tcp/current/mule-tcp.xsd
+			http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd
+			http://www.mulesoft.org/schema/mule/jersey http://www.mulesoft.org/schema/mule/jersey/3.4/mule-jersey.xsd
+			http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+	
+	<!-- 
+		Security service specific configuration file 
+	 -->
+	<spring:beans>
+	
+		<spring:bean id="securityResource" class="com.stgo.security.monitor.SecurityResource">
+			<spring:property name="protectionOperator" ref="protectionOperator"/>
+		</spring:bean>
+		
+		<spring:bean id="protectionOperator" class="com.stgo.security.monitor.ProtectionOperator">
+			<spring:property name="derbySecurityLogDao" ref="derbySecurityLogDao"/>
+			<spring:property name="derbyOptionStatusDao" ref="derbyOptionStatusDao"/>
+			<spring:property name="unzipFolderPath" value="${security.service.path}/cache/"/>
+			<spring:property name="tempFolderPath" value="${security.service.path}/temp/"/>
+			<spring:property name="serverURL" value="http://${security.service.server.ensemble}/security"/>
+			
+		</spring:bean>
+		
+		<spring:bean id="derbySecurityLogDao" class="com.stgo.security.monitor.dao.DerbySecurityLogDao">
+			<spring:constructor-arg ref="securityDataSource" />
+		</spring:bean>
+		
+		<spring:bean id="derbyOptionStatusDao" class="com.stgo.security.monitor.dao.DerbyOptionStatusDao">
+			<spring:constructor-arg ref="securityDataSource" />
+		</spring:bean>
+		
+	</spring:beans>
+
+
+	<!-- Flow used to expose the Security REST API resource -->
+	<flow name="securityREST">
+		<http:inbound-endpoint exchange-pattern="request-response" host="${security.service.host}" port="${security.service.port}" doc:name="HTTP" />
+		<jersey:resources>
+			<component>
+				<spring-object bean="securityResource" />
+			</component>
+		</jersey:resources>
+
+		<!-- Enable CORS. Required for the swagger UI -->
+		<set-property propertyName="Access-Control-Allow-Origin"
+			value="*" />
+		<set-property propertyName="Access-Control-Allow-Headers"
+			value="Origin, X-Requested-With, Content-Type, Accept, Authorization" />
+		<set-property propertyName="Access-Control-Allow-Methods"
+			value="GET, POST, PUT, DELETE, patch, OPTIONS" />
+		<set-property propertyName="Access-Control-Request-Method"
+			value="*" />        	
+	</flow>
+	
+</mule>
