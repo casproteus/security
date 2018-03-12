@@ -206,6 +206,11 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         Object o = e.getSource();
         if (o == btnLogin) { // Login
             new LoginDlg(BarFrame.instance).setVisible(true);
+            if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+            	CustOpts.custOps.setUserName(LoginDlg.USERNAME);
+            	lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(CustOpts.custOps.getUserName()));
+            	reLayout();
+            }
         } else if (o == btnOffDuty) { // 交班
             new OffDutyDlg(BarFrame.instance).setVisible(true);
         } else if (o == btnCheck) { // 盘货,先检查是否存在尚未输入完整信息的产品，如果检查到存
@@ -237,6 +242,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 float tShouldReceive = shouldReceive * Float.parseFloat(tRate);
                 tfdShoudReceive.setText(decimalFormat.format(tShouldReceive));
                 lblUnit.setText((String) cmbMoneyType.getSelectedItem());
+                reLayout();
             } catch (Exception exp) {
             }
         }
@@ -1319,7 +1325,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 lblOperator.getPreferredSize().height);
         int tHalfHeight = (prmHeight - lblOperator.getY() - lblOperator.getHeight()) / 2;
         int tBtnWidht = (prmWidth - CustOpts.HOR_GAP * 9) / 8;
-        int tBtnHeight = prmHeight / 20;
+        int tBtnHeight = prmHeight / 10;
         int tGap = tHalfHeight / 11;
         int tVGap = tGap * 2 / 3;
         int tCompH = tGap + tGap - tVGap;
@@ -1365,17 +1371,9 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 prmWidth - lblNote.getX() - lblNote.getWidth() - CustOpts.HOR_GAP,
                 lblTotlePrice.getY() + lblTotlePrice.getHeight() - lblNote.getY());
 
-        btnLogin.setBounds(CustOpts.HOR_GAP, tarNote.getY() + tarNote.getHeight() + tVGap, tBtnWidht, tBtnHeight);
-        btnOffDuty.setBounds(btnLogin.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogin.getY(), tBtnWidht, tBtnHeight);
-        btnInput.setBounds(btnOffDuty.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogin.getY(), tBtnWidht, tBtnHeight);
-        btnRefund.setBounds(btnInput.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogin.getY(), tBtnWidht, tBtnHeight);
-        btnHangup.setBounds(btnRefund.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogin.getY(), tBtnWidht, tBtnHeight);
-        btnCheck.setBounds(btnHangup.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogin.getY(), tBtnWidht, tBtnHeight);
-        btnStatic.setBounds(btnCheck.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogin.getY(), tBtnWidht, tBtnHeight);
-        btnOption.setBounds(btnStatic.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogin.getY(), tBtnWidht, tBtnHeight);
-
-        srpContent.setBounds(CustOpts.HOR_GAP, btnLogin.getY() + btnLogin.getHeight() + tVGap, prmWidth * 3 / 5,
-                prmHeight - btnLogin.getY() - btnLogin.getHeight() - tVGap - CustOpts.LBL_HEIGHT - CustOpts.VER_GAP);
+        //table area-------------
+        srpContent.setBounds(CustOpts.HOR_GAP, tarNote.getY() + tarNote.getHeight() + tVGap, prmWidth * 3 / 5,
+                prmHeight - tarNote.getY() - tarNote.getHeight() - tBtnHeight - tVGap - CustOpts.LBL_HEIGHT - 2*CustOpts.VER_GAP);
         lblCalculate.setBounds(srpContent.getX() + srpContent.getWidth() + CustOpts.HOR_GAP, srpContent.getY(),
                 prmWidth - srpContent.getWidth() - CustOpts.HOR_GAP * 3, tGap);
         tfdShoudReceive.setBounds(lblCalculate.getX(), lblCalculate.getY() + lblCalculate.getHeight(),
@@ -1397,8 +1395,22 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 - lblChangeUnit.getPreferredSize().width * 2, lblChange.getHeight());
         lblChangeUnit.setBounds(tfdChange.getX() + tfdChange.getWidth(), tfdChange.getY(),
                 lblChangeUnit.getPreferredSize().width * 2, lblChange.getHeight());
-        lblStatus.setBounds(srpContent.getX(), srpContent.getY() + srpContent.getHeight() + 2, srpContent.getWidth()
+        
+        //command buttons--------------
+        btnLogin.setBounds( srpContent.getX(), srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
+        btnOffDuty.setBounds(btnLogin.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogin.getY(), tBtnWidht, tBtnHeight);
+        btnInput.setBounds(btnOffDuty.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogin.getY(), tBtnWidht, tBtnHeight);
+        btnRefund.setBounds(btnInput.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogin.getY(), tBtnWidht, tBtnHeight);
+        btnHangup.setBounds(btnRefund.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogin.getY(), tBtnWidht, tBtnHeight);
+        btnCheck.setBounds(btnHangup.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogin.getY(), tBtnWidht, tBtnHeight);
+        btnStatic.setBounds(btnCheck.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogin.getY(), tBtnWidht, tBtnHeight);
+        btnOption.setBounds(btnStatic.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogin.getY(), tBtnWidht, tBtnHeight);
+        
+        //status---------
+        lblStatus.setBounds(btnLogin.getX(), btnLogin.getY() + btnLogin.getHeight() + CustOpts.VER_GAP, srpContent.getWidth()
                 + lblCalculate.getWidth() + CustOpts.HOR_GAP, CustOpts.LBL_HEIGHT);
+        
+
         resetColWidth();
     }
 

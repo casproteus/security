@@ -3,7 +3,7 @@ package org.cas.client.platform.bar.dialog;
 public interface BarDlgConst {
     String Title = "STGOBar - Copyright 2018 - http://www.ShareTheGoodOnes.com";
     String Colon = "：";
-    String Operator = "操作员";
+    String Operator = "USER";
     String LeftMoney = "上次交班结余";
     String StartTime = "开始时间";
     String EndTime = "结束时间";
