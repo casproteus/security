@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.ws.rs.core.StreamingOutput;
 
-import org.cas.client.platform.pos.dialog.PosFrame;
+import org.cas.client.platform.bar.dialog.BarFrame;
 
 import com.stgo.security.monitor.dao.DerbyOptionStatusDao;
 import com.stgo.security.monitor.dao.DerbySecurityLogDao;
@@ -162,7 +162,7 @@ public class ProtectionOperator {
     }
 
     private static void checkManagedApp() {
-        PosFrame.main(null);
+        BarFrame.main(null);
     }
 
     // ----------------------first type of check----------------------

@@ -1,6 +1,8 @@
 package org.cas.client.platform.bar.dialog;
 
 public interface BarDlgConst {
+	int SCROLLBAR_WIDTH = 40;
+	int SubTotal_HEIGHT = 50;
     String Title = "STGOBar - Copyright 2018 - http://www.ShareTheGoodOnes.com";
     String Colon = "：";
     String Operator = "USER";
@@ -15,13 +17,16 @@ public interface BarDlgConst {
     String Pinyin = "助记";
     String Count = "数量";
     String Price = "单价";
-    String Subtotal = "小计";
+    String Subtotal = "SubTotal : ";
+    String Total = "Total : ";
+    String QST = "QST : ";
+    String RST = "RST : ";
     String Customer = "顾客";
     String Package = "单位";
     String Note = "说明";
     String Cost = "进价";
 
-    String Login = "Login";
+    String Logout = "Logout";
     String OffDuty = "当日结算";
     String Check = "库存信息";
     String Hangup = "挂单";

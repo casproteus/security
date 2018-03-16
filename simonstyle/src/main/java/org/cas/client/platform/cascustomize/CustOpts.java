@@ -47,6 +47,7 @@ public abstract class CustOpts {
     public static int SIZE_TITLE;
     public static int VER_GAP;
     public static int HOR_GAP;
+    public static int BTN_WIDTH_NUM;
     public static int BTN_WIDTH;
     public static int BTN_HEIGHT;
     public static int BAR_HEIGHT;
@@ -62,6 +63,7 @@ public abstract class CustOpts {
         SIZE_TITLE = 30;
         VER_GAP = 6;
         HOR_GAP = 8;
+        BTN_WIDTH_NUM = 66;
         BTN_WIDTH = 74;
         BTN_HEIGHT = 22;// 应验表名：按钮、TextField等组件的高度不能小于22，否则显得太小了。
         BAR_HEIGHT = 25;// 工具条25，否则显得太小了。

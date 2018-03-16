@@ -67,8 +67,8 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
         initContent();
         reLayout();
         // built
-        add(lblUserName);
-        add(cmbUserName);
+        //add(lblUserName);
+        //add(cmbUserName);
         add(lblPassword);
         add(pfdPassword);
 
@@ -143,13 +143,13 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
     /** 本方法用于设置View上各个组件的尺寸。 */
     public void reLayout() {
         int prmWidth = getWidth();
-        lblUserName.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblUserName.getPreferredSize().width,
+        lblPassword.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblPassword.getPreferredSize().width,
                 CustOpts.BTN_HEIGHT);
-        cmbUserName.setBounds(lblUserName.getX() + lblUserName.getWidth() + CustOpts.HOR_GAP, lblUserName.getY(),
-                prmWidth - lblUserName.getWidth() - CustOpts.HOR_GAP * 3, CustOpts.BTN_HEIGHT);
-        lblPassword.setBounds(lblUserName.getX(), lblUserName.getY() + lblUserName.getHeight() + CustOpts.VER_GAP,
-                lblUserName.getWidth(), CustOpts.BTN_HEIGHT);
-        pfdPassword.setBounds(cmbUserName.getX(), lblPassword.getY(), cmbUserName.getWidth(), CustOpts.BTN_HEIGHT);
+        pfdPassword.setBounds(lblUserName.getX() + lblPassword.getWidth() + CustOpts.HOR_GAP, lblUserName.getY(),
+                prmWidth - lblPassword.getWidth() - CustOpts.HOR_GAP * 3, 40);
+//        lblPassword.setBounds(lblUserName.getX(), lblUserName.getY() + lblUserName.getHeight() + CustOpts.VER_GAP,
+//                lblUserName.getWidth(), CustOpts.BTN_HEIGHT);
+//        pfdPassword.setBounds(cmbUserName.getX(), lblPassword.getY(), cmbUserName.getWidth(), CustOpts.BTN_HEIGHT);
         setPreferredSize(new Dimension(getWidth(), pfdPassword.getY() + pfdPassword.getHeight() + CustOpts.VER_GAP));
     }
 

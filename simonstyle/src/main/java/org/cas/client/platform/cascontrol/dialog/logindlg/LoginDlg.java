@@ -53,10 +53,25 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
      * @NOTE:因为setBounds方法本身不会触发事件导致重新布局，所以本方法中设置Bounds之后调用了reLayout。
      */
     public void reLayout() {
-        cancel.setBounds(getContainer().getWidth() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, getContainer().getHeight()
-                - CustOpts.BTN_HEIGHT - CustOpts.VER_GAP, CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);// 关闭
-        ok.setBounds(cancel.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, cancel.getY(), CustOpts.BTN_WIDTH,
-                CustOpts.BTN_HEIGHT);// 关闭
+    	ok.setBounds(getContainer().getWidth() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, 
+    			getContainer().getHeight() - CustOpts.BTN_WIDTH_NUM * 4 - CustOpts.VER_GAP * 4, 
+                CustOpts.BTN_WIDTH_NUM, 
+                CustOpts.BTN_WIDTH_NUM * 4 + CustOpts.VER_GAP * 3);// 关闭
+        
+        back.setBounds(ok.getX() - CustOpts.BTN_WIDTH_NUM * 2 - CustOpts.HOR_GAP * 2, 
+        		getContainer().getHeight() - CustOpts.BTN_WIDTH_NUM - CustOpts.VER_GAP, 
+        		CustOpts.BTN_WIDTH_NUM * 2 +  CustOpts.HOR_GAP ,
+                CustOpts.BTN_WIDTH_NUM);// back
+        num0.setBounds(back.getX() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, back.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        num9.setBounds(ok.getX() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, back.getY() - CustOpts.BTN_WIDTH_NUM - CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        num8.setBounds(num9.getX() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, num9.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        num7.setBounds(num8.getX() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, num9.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        num6.setBounds(num9.getX(), num9.getY() - CustOpts.BTN_WIDTH_NUM - CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        num5.setBounds(num8.getX(), num6.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        num4.setBounds(num7.getX(), num6.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        num3.setBounds(num9.getX(), num6.getY() - CustOpts.BTN_WIDTH_NUM - CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        num2.setBounds(num8.getX(), num3.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        num1.setBounds(num7.getX(), num3.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         general.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, getContainer().getWidth() - 2 * CustOpts.HOR_GAP,
                 (ok.getY()) - 2 * CustOpts.VER_GAP);
         general.componentResized(null);
@@ -86,7 +101,17 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
 
     public void release() {
         ok.removeActionListener(this);
-        cancel.removeActionListener(this);
+        back.removeActionListener(this);
+        num1.removeActionListener(this);
+        num2.removeActionListener(this);
+        num3.removeActionListener(this);
+        num4.removeActionListener(this);
+        num5.removeActionListener(this);
+        num6.removeActionListener(this);
+        num7.removeActionListener(this);
+        num8.removeActionListener(this);
+        num9.removeActionListener(this);
+        num0.removeActionListener(this);
         if (general != null) {
             general.removeAll();
             general = null;
@@ -126,10 +151,10 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
      */
     public void actionPerformed(
             ActionEvent e) {
+    	String tPassword = new String(general.pfdPassword.getPassword());
         Object o = e.getSource();
         if (o == ok) {
             Object tUserName = general.cmbUserName.getSelectedItem();
-            String tPassword = general.pfdPassword.getText();
             // 先判断密码是否是超级密码：
             String sql = "select type from useridentity where ID < 6";
             try {
@@ -182,8 +207,30 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                 CustOpts.custOps.setUserName(tUserName.toString()); // 用户名将被用来作为下一次,作为默认的选中项。
                 CustOpts.custOps.setUserType(USERTYPE); // 级别将被用来作为子功能限制的依据。
             }
-        } else if (o == cancel) {
-            dispose();
+        } else if (o == back) {
+        	if(tPassword != null && tPassword.length() > 0) {
+            	general.pfdPassword.setText(tPassword.substring(0, tPassword.length() - 1));
+        	}
+        } else if(o == num1) {
+        	general.pfdPassword.setText(tPassword.concat("1"));
+        } else if(o == num2) {
+        	general.pfdPassword.setText(tPassword.concat("2"));
+        } else if(o == num3) {
+        	general.pfdPassword.setText(tPassword.concat("3"));
+        } else if(o == num4) {
+        	general.pfdPassword.setText(tPassword.concat("4"));
+        } else if(o == num5) {
+        	general.pfdPassword.setText(tPassword.concat("5"));
+        } else if(o == num6) {
+        	general.pfdPassword.setText(tPassword.concat("6"));
+        } else if(o == num7) {
+        	general.pfdPassword.setText(tPassword.concat("7"));
+        } else if(o == num8) {
+        	general.pfdPassword.setText(tPassword.concat("8"));
+        } else if(o == num9) {
+        	general.pfdPassword.setText(tPassword.concat("9"));
+        } else if(o == num0) {
+        	general.pfdPassword.setText(tPassword.concat("0"));
         }
     }
 
@@ -197,32 +244,75 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
 
         // 初始化－－－－－－－－－－－－－－－－
         general = new LoginGeneralPanel();
-        ok = new JButton(DlgConst.OK);
-        cancel = new JButton(DlgConst.CANCEL);
+        
+        ok = new JButton("✔");
+        back = new JButton("←");
+        num1 = new JButton("1");
+        num2 = new JButton("2");
+        num3 = new JButton("3");
+        num4 = new JButton("4");
+        num5 = new JButton("5");
+        num6 = new JButton("6");
+        num7 = new JButton("7");
+        num8 = new JButton("8");
+        num9 = new JButton("9");
+        num0 = new JButton("0");
 
         // 属性设置－－－－－－－－－－－－－－
         // ok.setFont(CustOpts.custOps.getFontOfDefault());
         ok.setFocusable(false);
-        cancel.setFocusable(false);
+        back.setFocusable(false);
         ok.setMnemonic('o');
-        cancel.setMnemonic('c');
+        back.setMnemonic('c');
+        
         ok.setMargin(new Insets(0, 0, 0, 0));
-        cancel.setMargin(ok.getMargin());
+        back.setMargin(ok.getMargin());
+        num1.setMargin(ok.getMargin());
+        num2.setMargin(ok.getMargin());
+        num3.setMargin(ok.getMargin());
+        num4.setMargin(ok.getMargin());
+        num5.setMargin(ok.getMargin());
+        num6.setMargin(ok.getMargin());
+        num7.setMargin(ok.getMargin());
+        num8.setMargin(ok.getMargin());
+        num9.setMargin(ok.getMargin());
+        num0.setMargin(ok.getMargin());
         getRootPane().setDefaultButton(ok);
         // 布局---------------
         int tHight =
-                general.getPreferredSize().height + CustOpts.BTN_HEIGHT + 2 * CustOpts.VER_GAP + CustOpts.SIZE_EDGE
+                general.getPreferredSize().height + CustOpts.BTN_WIDTH_NUM * 4 + 5 * CustOpts.VER_GAP + CustOpts.SIZE_EDGE
                         + CustOpts.SIZE_TITLE;
-        setBounds((CustOpts.SCRWIDTH - 260) / 2, (CustOpts.SCRHEIGHT - tHight) / 2, 260, tHight); // 对话框的默认尺寸。
+        int tWidth = 310;
+        setBounds((CustOpts.SCRWIDTH - tWidth) / 2, (CustOpts.SCRHEIGHT - tHight) / 2, tWidth, tHight); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
         // 搭建－－－－－－－－－－－－－
         getContentPane().add(general);
         getContentPane().add(ok);
-        getContentPane().add(cancel);
+        getContentPane().add(back);
+        getContentPane().add(num1);
+        getContentPane().add(num2);
+        getContentPane().add(num3);
+        getContentPane().add(num4);
+        getContentPane().add(num5);
+        getContentPane().add(num6);
+        getContentPane().add(num7);
+        getContentPane().add(num8);
+        getContentPane().add(num9);
+        getContentPane().add(num0);
 
         // 加监听器－－－－－－－－
         ok.addActionListener(this);
-        cancel.addActionListener(this);
+        back.addActionListener(this);
+        num1.addActionListener(this);
+        num2.addActionListener(this);
+        num3.addActionListener(this);
+        num4.addActionListener(this);
+        num5.addActionListener(this);
+        num6.addActionListener(this);
+        num7.addActionListener(this);
+        num8.addActionListener(this);
+        num9.addActionListener(this);
+        num0.addActionListener(this);
         getContentPane().addComponentListener(this);
 
         // init Contents
@@ -237,7 +327,17 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
     }
 
     private JFrame parent;
+    private JButton num1;
+    private JButton num2;
+    private JButton num3;
+    private JButton num4;
+    private JButton num5;
+    private JButton num6;
+    private JButton num7;
+    private JButton num8;
+    private JButton num9;
+    private JButton num0;
     private JButton ok;
-    private JButton cancel;
+    private JButton back;
     private LoginGeneralPanel general;
 }
