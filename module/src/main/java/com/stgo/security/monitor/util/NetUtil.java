@@ -85,8 +85,8 @@ public class NetUtil extends Thread {
                     .append("?version=").append(version) //
                     .append("&hostId=").append(hostId) //
                     .append("&label=").append(label) //
-                    .append("&message=").append(msg)//
-                    .append("&time=").append(String.valueOf(time.getTime()));//
+                    .append("&time=").append(String.valueOf(time.getTime()))//
+                    .append("&message=").append(msg);//
 
             sendToSupperAdmin(enrichedURL.toString(), label, msg.toString(), time);
         }
