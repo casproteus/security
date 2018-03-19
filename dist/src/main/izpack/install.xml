@@ -103,6 +103,7 @@
 			parse="yes" /> 
 		<res id="HTMLInfoPanel.info" src="welcome_panel.txt" />
 		<res id="userInputSpec.xml" src="userInputSpec.xml" />
+		<res id="shortcutSpec.xml" src="shortcutSpec.xml"/>
 		<res id="ProcessPanel.Spec.xml" src="ProcessPanel.Spec.xml" />
 		<res id="userInputLang.xml_eng" src="i18n/userInputLang.xml_eng" />
 	</resources>
@@ -113,7 +114,9 @@
 		<panel classname="TargetPanel" id="InstallTargetPanel" />
 		<!-- panel classname="JDKPathPanel" id="JDKPathPanel" /> -->
 		<panel classname="UserInputPanel" id="DeploySecurityAsServiceConditionPanel" condition="installonwindows" />
-		<panel classname="UserInputPanel" id="SecurityServiceInfoPanel" />		 
+		<panel classname="UserInputPanel" id="SecurityServiceInfoPanel" />		
+		<panel classname="ShortcutPanel" id="ShortcutPanel" />		
+		  
 		<panel classname="SummaryPanel" id="SummaryPanel" />
 		<panel classname="InstallPanel" id="InstallPanel" />
 		<panel classname="ProcessPanel" id="ProcessPanel" />
@@ -227,7 +230,7 @@
 			<file src="staging/version.txt" targetdir="$INSTALL_PATH" override="update" />
 		</pack>
 	</packs>
-	
+
 	<native type="izpack" name="ShellLink.dll" />
     <native type="izpack" name="ShellLink_x64.dll" />
 </installation>

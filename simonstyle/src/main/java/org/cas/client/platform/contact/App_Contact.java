@@ -1,9 +1,7 @@
 package org.cas.client.platform.contact;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -22,7 +20,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
@@ -30,39 +27,26 @@ import org.cas.client.platform.CASControl;
 import org.cas.client.platform.casbeans.calendar.CalendarCombo;
 import org.cas.client.platform.cascontrol.AbstractApp;
 import org.cas.client.platform.cascontrol.IStatCons;
-import org.cas.client.platform.cascontrol.MainPane;
 import org.cas.client.platform.cascontrol.dialog.CASFileFilter;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.csvtool.CSVImportStep3Dlg;
-import org.cas.client.platform.cascontrol.menuaction.CategoriesAction;
-import org.cas.client.platform.cascontrol.menuaction.DeleteAction;
-import org.cas.client.platform.cascontrol.menuaction.FollowUpAction;
-import org.cas.client.platform.cascontrol.menuaction.MarkFollowUpCompleteAction;
 import org.cas.client.platform.cascontrol.menuaction.OpenAction;
-import org.cas.client.platform.cascontrol.menuaction.RemoveFollowupFlagAction;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.ModelCons;
 import org.cas.client.platform.casutil.PIMPool;
-import org.cas.client.platform.casutil.CASUtility;
-import org.cas.client.platform.contact.action.DisplayFieldsAction;
 import org.cas.client.platform.contact.action.NewContactAction;
-import org.cas.client.platform.contact.action.NewListAction;
-import org.cas.client.platform.contact.action.SortAction;
 import org.cas.client.platform.contact.dialog.ContactDlg;
 import org.cas.client.platform.contact.dialog.selectcontacts.MainListDialog;
-import org.cas.client.platform.employee.EmployeeDefaultViews;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.platform.pimmodel.event.PIMModelEvent;
 import org.cas.client.platform.pimview.FieldDescription;
 import org.cas.client.platform.pimview.IView;
 import org.cas.client.platform.pimview.View_PIMThumbnails;
-import org.cas.client.platform.pimview.pimcard.CardViewPanel;
 import org.cas.client.platform.pimview.pimtable.DefaultPIMCellEditor;
 import org.cas.client.platform.pimview.pimtable.ImageIconPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.Item;
-import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.platform.pimview.pimtable.PIMTable.DateRenderer;
 import org.cas.client.platform.pimview.pimtable.specialeditors.FileAsCellEditor;
 import org.cas.client.platform.pimview.pimtable.specialeditors.SexComboBox;
@@ -74,9 +58,6 @@ import org.cas.client.platform.pimview.pimtable.tagcombo.TagCombo;
 import org.cas.client.resource.international.DlgConst;
 import org.cas.client.resource.international.IntlModelConstants;
 import org.cas.client.resource.international.PIMTableConstants;
-import org.cas.client.resource.international.PopupMenuConstant;
-
-import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
 
 /**
  * To change the template for this generated type comment go to Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code
@@ -89,6 +70,7 @@ public class App_Contact extends AbstractApp {
         initActionFlags();
     }
 
+    @Override
     public Action getAction(
             Object prmActionName) {
         if (actionFlags.get(prmActionName) != null)// 看看该ActionName是否被系统维护.如果是系统有维护的,那么就是系统的Action.
@@ -106,19 +88,23 @@ public class App_Contact extends AbstractApp {
             return null;
     }
 
+    @Override
     public int getStatus(
             Object prmActionName) {
         return -1;
     }
 
+    @Override
     public int[] getImportableFields() {
         return ContactDefaultViews.IMPORT_MAP;
     }// 返回应用中可以供导入的字段.
 
+    @Override
     public String[] getImportDispStr() {
         return new String[] { ContactDefaultViews.strForImportItem };
     }// 返回应用所支持的可导入内容的字符串数组。
 
+    @Override
     public String getImportIntrStr(
             Object prmKey) {
         if (ContactDefaultViews.strForImportItem.equals(prmKey)) {
@@ -127,6 +113,7 @@ public class App_Contact extends AbstractApp {
         return null;
     }
 
+    @Override
     public boolean execImport(
             Object prmKey) {
         if (ContactDefaultViews.strForImportItem.equals(prmKey)) {
@@ -190,6 +177,7 @@ public class App_Contact extends AbstractApp {
     }
 
     /** 每个希望加入到PIM系统的应用都必须实现该方法，使系统在ViewInfo系统表中为其初始化ViewInfo。 */
+    @Override
     public void initInfoInDB() {
         Statement stmt = null;
         StringBuffer tmpSQL = new StringBuffer();
@@ -206,7 +194,7 @@ public class App_Contact extends AbstractApp {
             stmt.executeUpdate(tmpSQL.toString());
             stmt.executeUpdate("create index folderidx_" + "Contact" + " on " + "Contact" + " ( folderID)");
         } catch (Exception exp) {
-            ErrorUtil.write(exp);
+            ErrorUtil.write("Error occured when insert view infos:" + exp);
         }
 
         // make sure that the viewinfo table is already there. for the first time use of the system,
@@ -224,6 +212,7 @@ public class App_Contact extends AbstractApp {
             }
     }
 
+    @Override
     public void showDialog(
             Frame parent,
             ActionListener prmAction,
@@ -268,26 +257,32 @@ public class App_Contact extends AbstractApp {
         }
     }
 
+    @Override
     public JToolBar[] getStaticBars() {
         return null;
     }
 
+    @Override
     public JToolBar[] getDynamicBars() {
         return null;
     }
 
+    @Override
     public JPanel[] getStaticStateBars() {
         return null;
     }
 
+    @Override
     public JPanel[] getDynamicStateBars() {
         return null;
     }
 
+    @Override
     public ICASDialog getADialog() {
         return new ContactDlg((Frame) null, null, null);
     }
 
+    @Override
     public JMenuItem getCreateMenu() {
         JMenuItem tmpMenu = new JMenuItem(DlgConst.CONTACTS, CustOpts.custOps.getContactsIcon(false));
         tmpMenu.setMnemonic('c');
@@ -297,27 +292,33 @@ public class App_Contact extends AbstractApp {
         // array[PIMActionName.ID_FILE_NEW_LIST] = new NewListAction(PIMActionFlag.STATUS_ALL))
     }
 
+    @Override
     public JMenuItem getCreateMenu(
             Vector prmSelectedRecVec) {
         return null;
     }
 
+    @Override
     public String[] getAppFields() {
         return ContactDefaultViews.FIELDS;
     }
 
+    @Override
     public String[] getAppTypes() {
         return ContactDefaultViews.TYPES;
     }
 
+    @Override
     public String[] getAppTexts() {
         return ContactDefaultViews.TEXTS;
     }
 
+    @Override
     public IView getTiedView() {
         return null;
     }
 
+    @Override
     public Icon getAppIcon(
             boolean prmIsBig) {
         if (prmIsBig)
@@ -327,11 +328,13 @@ public class App_Contact extends AbstractApp {
     }
 
     /* 返回用于在查找对话盒中显示的一些文本类型的列名.方便用户做简单查找. */
+    @Override
     public String[] getRecommendColAry() {
         return ContactDefaultViews.RecommendCols;
     }
 
     // 几种特殊的绘制器和编辑器
+    @Override
     public FieldDescription getFieldDescription(
             String prmHeadName,
             boolean prmIsEditable) {
@@ -449,6 +452,7 @@ public class App_Contact extends AbstractApp {
      * @param actionInfo
      *            其他信息
      */
+    @Override
     public void processMouseDoubleClickAction(
             Component prmComp,
             int x,
@@ -459,12 +463,14 @@ public class App_Contact extends AbstractApp {
         else
             // 在记录上鼠标双击事件处理-------------------------
             SwingUtilities.invokeLater(new Runnable() { // 放到事件队列的末尾,为的是防止存盘之前就先显示对话盒.
+                        @Override
                         public void run() { // 因为存盘动作是由在线程中触发的editStopping方法中调到的.
                             new OpenAction().actionPerformed(null);
                         }
                     });
     }
 
+    @Override
     public void updateContent(
             PIMModelEvent e) {
         int tmpFoldID = CustOpts.custOps.getActivePathID();
@@ -574,6 +580,7 @@ public class App_Contact extends AbstractApp {
      * @param e
      *            键盘事件
      */
+    @Override
     public void processKeyEvent(
             KeyEvent e) {
         // warning 卡片视图的键盘事件被转移了
@@ -583,6 +590,7 @@ public class App_Contact extends AbstractApp {
             super.processKeyEvent(e);
     }
 
+    @Override
     public Object[][] processContent(
             Object[][] pContents,
             Object[] pFieldNames) {

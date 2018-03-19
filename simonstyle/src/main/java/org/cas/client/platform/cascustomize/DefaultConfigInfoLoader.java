@@ -34,7 +34,7 @@ class DefaultConfigInfoLoader {
             Hashtable prmHash) {
         // 将磁盘中文件中的信息读入字符串tmpFileText。----------------------------------------
         String tmpConfigFilePath = getConfigFilePath();
-        System.out.println("tmpConfigFilePath is : " + tmpConfigFilePath);
+        // System.out.println("tmpConfigFilePath is : " + tmpConfigFilePath);
         String tmpFileText = "";
         try {
             tmpFileText = FileUtils.readFileToString(new File(tmpConfigFilePath), "UTF-8");
@@ -47,7 +47,7 @@ class DefaultConfigInfoLoader {
         } catch (IOException e) {
             return;
         }
-        System.out.println("tmpFileText(UTF-8) is : " + tmpFileText);
+        // System.out.println("tmpFileText(UTF-8) is : " + tmpFileText);
         // 将字符串中的信息存入Hashtable。----------------------------------------
         int tmpLINKPos;
         int tmpENTERPos = 0;

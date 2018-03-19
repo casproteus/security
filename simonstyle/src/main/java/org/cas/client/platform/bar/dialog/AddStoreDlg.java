@@ -14,7 +14,6 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DecimalFormat;
@@ -23,7 +22,6 @@ import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -52,7 +50,6 @@ import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.platform.pimview.pimtable.PIMTableColumn;
 import org.cas.client.resource.international.DlgConst;
-import org.hsqldb.Record;
 
 public class AddStoreDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, FocusListener,
         KeyListener, DocumentListener {
@@ -61,53 +58,65 @@ public class AddStoreDlg extends JDialog implements ICASDialog, ActionListener, 
         initDialog();
     }
 
+    @Override
     public PIMRecord getContents() {
         return null;
     }
 
+    @Override
     public boolean setContents(
             PIMRecord prmRecord) {
         return true;
     }
 
+    @Override
     public void makeBestUseOfTime() {
     }
 
+    @Override
     public void addAttach(
             File[] file,
             Vector actualAttachFiles) {
     }
 
+    @Override
     public PIMTextPane getTextPane() {
         return null;
     }
 
+    @Override
     public void release() {
         dispose();// 对于对话盒，如果不加这句话，就很难释放掉。
         System.gc();// @TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
     }
 
+    @Override
     public void componentResized(
             ComponentEvent e) {
         reLayout();
     };
 
+    @Override
     public void componentMoved(
             ComponentEvent e) {
     };
 
+    @Override
     public void componentShown(
             ComponentEvent e) {
     };
 
+    @Override
     public void componentHidden(
             ComponentEvent e) {
     };
 
+    @Override
     public Container getContainer() {
         return getContentPane();
     }
 
+    @Override
     public void insertUpdate(
             DocumentEvent e) {
         String tProdNumber = tfdProdNumber.getText();
@@ -177,14 +186,17 @@ public class AddStoreDlg extends JDialog implements ICASDialog, ActionListener, 
         }
     }
 
+    @Override
     public void removeUpdate(
             DocumentEvent e) {
     }
 
+    @Override
     public void changedUpdate(
             DocumentEvent e) {
     }
 
+    @Override
     public void focusGained(
             FocusEvent e) {
         Object o = e.getSource();
@@ -192,6 +204,7 @@ public class AddStoreDlg extends JDialog implements ICASDialog, ActionListener, 
             ((JTextField) o).selectAll();
     }
 
+    @Override
     public void focusLost(
             FocusEvent e) {
         Object o = e.getSource();
@@ -256,6 +269,7 @@ public class AddStoreDlg extends JDialog implements ICASDialog, ActionListener, 
     }
 
     // ActionListner----------------------------------
+    @Override
     public void actionPerformed(
             ActionEvent e) {
         Object o = e.getSource();
@@ -366,6 +380,7 @@ public class AddStoreDlg extends JDialog implements ICASDialog, ActionListener, 
     }
 
     // Key Listener--------------------------------
+    @Override
     public void keyPressed(
             KeyEvent e) {
         Object o = e.getSource();
@@ -574,6 +589,7 @@ public class AddStoreDlg extends JDialog implements ICASDialog, ActionListener, 
         }
     }
 
+    @Override
     public void keyReleased(
             KeyEvent e) {
         if (BarUtility.isNumber(e.getKeyCode())) {
@@ -592,11 +608,13 @@ public class AddStoreDlg extends JDialog implements ICASDialog, ActionListener, 
         }
     }
 
+    @Override
     public void keyTyped(
             KeyEvent e) {
     }
 
     /** 本方法用于设置View上各个组件的尺寸。 */
+    @Override
     public void reLayout() {
         int prmWidth = getWidth();
         int tFieldWidth1 = prmWidth / 2 - CustOpts.HOR_GAP;
@@ -782,6 +800,7 @@ public class AddStoreDlg extends JDialog implements ICASDialog, ActionListener, 
 
         // initContents--------------
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 initComponents();
                 initTable();
