@@ -114,11 +114,11 @@
 		<panel classname="TargetPanel" id="InstallTargetPanel" />
 		<!-- panel classname="JDKPathPanel" id="JDKPathPanel" /> -->
 		<panel classname="UserInputPanel" id="DeploySecurityAsServiceConditionPanel" condition="installonwindows" />
-		<panel classname="UserInputPanel" id="SecurityServiceInfoPanel" />		
-		<panel classname="ShortcutPanel" id="ShortcutPanel" />		
+		<panel classname="UserInputPanel" id="SecurityServiceInfoPanel" />
 		  
 		<panel classname="SummaryPanel" id="SummaryPanel" />
-		<panel classname="InstallPanel" id="InstallPanel" />
+		<panel classname="InstallPanel" id="InstallPanel" />		
+		<panel classname="ShortcutPanel" id="ShortcutPanel" />		
 		<panel classname="ProcessPanel" id="ProcessPanel" />
 		<panel classname="FinishPanel" id="FinishPanel" />
 	</panels>
@@ -228,9 +228,12 @@
 			<file src="staging/README.txt" targetdir="$INSTALL_PATH" override="update" />
 			<file src="staging/License.txt" targetdir="$INSTALL_PATH" override="update" />
 			<file src="staging/version.txt" targetdir="$INSTALL_PATH" override="update" />
+			<file src="staging/desktop.ico" targetdir="$INSTALL_PATH" override="update" />
 		</pack>
 	</packs>
 
-	<native type="izpack" name="ShellLink.dll" />
     <native type="izpack" name="ShellLink_x64.dll" />
+    <native type="3rdparty" name="COIOSHelper_x64.dll" stage="both">
+        <os family="windows"/>
+    </native>
 </installation>

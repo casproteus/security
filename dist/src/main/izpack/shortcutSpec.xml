@@ -1,48 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-
 <shortcuts>
-<skipIfNotSupported/>
+    <skipIfNotSupported/>
     <programGroup defaultName="STGO Pos" location="applications"/>
-    <shortcut
-        name="STGO Pos"
-        programGroup="yes"
-        desktop="yes"
-        applications="yes"
-        startMenu="yes"
-        startup="yes"
-        target="$INSTALL_PATH\myapp.jar"
-        commandLine=""
-        description="myapp"
-        iconFile="%SystemRoot%\system32\SHELL32.dll"
-        iconIndex="3">
-        <createForPack name="Base"/>
-    </shortcut>
-    <!-- shortcut
-        name="myapp Documentation"
-        programGroup="yes"
-        desktop="no"
-        applications="yes"
-        startMenu="yes"
-        startup="no"
-        target="$INSTALL_PATH\myappMan.pdf"
-        commandLine=""
-        iconFile="%SystemRoot%\system32\SHELL32.dll"
-        iconIndex="30"
-        description="myapp docs">
-        <createForPack name="Manual"/>
-    </shortcut>                
-    <shortcut
-        name="myapp Uninstaller"
-        programGroup="yes"
-        desktop="no"
-        applications="yes"
-        startMenu="yes"
-        startup="no"
-        target="$INSTALL_PATH\Uninstaller\uninstaller.jar"
-        commandLine=""
-        iconFile="%SystemRoot%\system32\SHELL32.dll"
-        iconIndex="31"
-        description="Uninstall myapp">
-        <createForPack name="Base"/>
-    </shortcut -->
+      <shortcut
+         name="STGO Pos"
+         programGroup="yes"
+         desktop="yes"
+         applications="no"
+         startMenu="yes"
+         startup="yes"
+         target="$INSTALL_PATH\bin\POS.bat"
+         commandLine=""
+         description=""
+         iconFile="$INSTALL_PATH\desktop.ico"
+         iconIndex="0"
+         initialState="noShow">
+
+         <createForPack name="STGOSecurityService"/>
+       </shortcut>
 </shortcuts>
