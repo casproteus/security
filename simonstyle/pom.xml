@@ -12,8 +12,8 @@
   <url>http://maven.apache.org</url>
   
   <properties>
-    <jdkName>JavaSE-1.7</jdkName>
-    <jdk.version>1.7</jdk.version>
+    <jdkName>JavaSE-1.8</jdkName>
+    <jdk.version>1.8</jdk.version>
   </properties>
   
   <dependencies>
@@ -81,8 +81,8 @@
 			<artifactId>maven-compiler-plugin</artifactId>
 			<configuration>
 				<encoding>UTF-8</encoding>
-				<source>1.7</source>
-				<target>1.7</target>
+				<source>1.8</source>
+				<target>1.8</target>
 			</configuration>
 		</plugin>
 		<plugin>

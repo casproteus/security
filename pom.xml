@@ -60,10 +60,6 @@
 		<backport-util-concurrent.backport-util-concurrent.3.1-osgi.license.name>Creative
 			Commons Public Domain License</backport-util-concurrent.backport-util-concurrent.3.1-osgi.license.name>
 		<backport-util-concurrent.backport-util-concurrent.3.1-osgi.license.url>http://olex.openlogic.com/licenses/creative-commons-public-domain-license</backport-util-concurrent.backport-util-concurrent.3.1-osgi.license.url>
-		<com.nstein.common.1.7-SNAPSHOT.license.name>Nstein Terms of Use</com.nstein.common.1.7-SNAPSHOT.license.name>
-		<com.nstein.common.1.7-SNAPSHOT.license.url>http://www.nstein.com/en/about/terms-of-use/</com.nstein.common.1.7-SNAPSHOT.license.url>
-		<com.nstein.common.1.7.license.name>Nstein Terms of Use</com.nstein.common.1.7.license.name>
-		<com.nstein.common.1.7.license.url>http://www.nstein.com/en/about/terms-of-use/</com.nstein.common.1.7.license.url>
 		<com.zend.framework.framework.1.11.11.license.name>New BSD License</com.zend.framework.framework.1.11.11.license.name>
 		<com.zend.framework.framework.1.11.11.license.url>http://framework.zend.com/license</com.zend.framework.framework.1.11.11.license.url>
 		<org.phpunit.phpunit5.3.6.10.license.name>BSD License</org.phpunit.phpunit5.3.6.10.license.name>
@@ -837,7 +833,7 @@
 				<artifactId>spring-context</artifactId>
 				<version>4.1.7.RELEASE</version>
 			</dependency>
-			<dependency>
+			<!-- dependency>
 				<groupId>com.nstein.tme</groupId>
 				<artifactId>tme-server-core</artifactId>
 				<version>5.3-SNAPSHOT</version>
@@ -856,7 +852,7 @@
 				<artifactId>nstein-jersey-mule-transport</artifactId>
 				<groupId>com.nstein</groupId>
 				<version>1.1-SNAPSHOT</version>
-			</dependency>
+			</dependency> -->
 
 			<dependency>
 				<groupId>org.tanukisoftware</groupId>
@@ -999,8 +995,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -1190,7 +1186,7 @@
 						<artifactId>maven-pmd-plugin</artifactId>
 						<version>2.7.1</version>
 						<configuration>
-							<targetJdk>1.7</targetJdk>
+							<targetJdk>1.8</targetJdk>
 						</configuration>
 					</plugin>
 					<plugin>
