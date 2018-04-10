@@ -231,7 +231,11 @@ class PIMDBConnecter {
             for (int j = 0; j < tmpLength; j++)
                 tmpSQL.append(fieldList[j]).append(fieldTypeList[j]);
             tmpSQL.append(");");
-            tmpStateMent.executeUpdate(tmpSQL.toString());
+            try {
+                tmpStateMent.executeUpdate(tmpSQL.toString());
+            } catch (Exception e) {
+                System.out.println(tmpSQL.toString() + e);
+            }
         }
 
         CustOpts.custOps.setSysTableNames(ModelConstants2.SYSTEMTABLE_NAME_LIST);
@@ -382,13 +386,13 @@ class PIMDBConnecter {
         stmt.executeUpdate(str);
         str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('战', '8', 12)";
         stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('系统管理员', '1234', 0)";
+        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('admin', '5555', 0)";
         stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('普通操作员1', '1234', 1)";
+        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('user1', '1111', 1)";
         stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('普通操作员2', '1234', 1)";
+        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('user2', '2222', 1)";
         stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('普通操作员3', '1234', 1)";
+        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('user3', '3333', 1)";
         stmt.executeUpdate(str);
     }
 

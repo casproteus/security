@@ -1,6 +1,5 @@
 package org.cas.client.platform.contact;
 
-import org.cas.client.platform.cascustomize.CustOpts;
 
 public interface ContactDefaultViews {
     String[] TEXTS = { "ID", "已删除", "位置", "显示为", "备注", "姓", "名", "昵称", "职位", "宅电", "家庭住址", "手机", "电子邮件地址", "即时通讯号码",
@@ -12,11 +11,12 @@ public interface ContactDefaultViews {
             "COMPANY", "COMPTEL", "COMPFAX", "COMPATTR", "COMPPOSTCODE", "ANNIVERSARYTYPE", "ANNIVERSARY", "TYPE",
             "MEMBERLIST", "HOMEPOSTCODE", "ACCOUNT" };
 
-    String[] TYPES = { "INTEGER IDENTITY PRIMARY KEY", "BIT DEFAULT false", "INTEGER", "VARCHAR", "VARCHAR", "VARCHAR",
-            "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR",
-            "VARCHAR", "BIT DEFAULT false", "VARCHAR", "VARCHAR", "BINARY", "TIMESTAMP", "VARCHAR", "VARCHAR",
-            "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "TIMESTAMP", "BIT DEFAULT false", "VARCHAR", "VARCHAR",
-            "INTEGER" };
+    String[] TYPES = { "INTEGER IDENTITY PRIMARY KEY", "BIT DEFAULT false", "INTEGER", "VARCHAR(255)", "VARCHAR(255)",
+            "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)",
+            "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "BIT DEFAULT false",
+            "VARCHAR(255)", "VARCHAR(255)", "BINARY", "TIMESTAMP", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)",
+            "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "TIMESTAMP", "BIT DEFAULT false", "VARCHAR(255)",
+            "VARCHAR(255)", "INTEGER" };
 
     String strForImportItem = "导入地址簿";
     String describeForImportItem = "导入外部地址簿文件";

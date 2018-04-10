@@ -1,6 +1,5 @@
 package org.cas.client.platform.output;
 
-import org.cas.client.platform.cascustomize.CustOpts;
 
 /**
  * 该应用不能支持CVS外部数据导入,因为用到了ForeignKey,对于这类字段,外部数据如果用int表示,则导入时意义多半将发生错误, 如果用文本表示,则类型转换将过于烦琐和低效.
@@ -10,8 +9,9 @@ public interface OutputDefaultViews {
 
     String[] FIELDS = { "ID", "DELETED", "FOLDERID", "SUBJECT", "CONTENT", "EMPLOYEEID", "TIME", "PRODUCTID", "AMOUNT",
             "TOLTALPRICE", "DISCOUNT", "CONTACTID", "ARREARAGE", "CATEGORY", "PROFIT" };
-    String[] TYPES = { "INTEGER IDENTITY PRIMARY KEY", "BIT DEFAULT false", "INTEGER", "VARCHAR", "VARCHAR", "INTEGER",
-            "VARCHAR", "INTEGER", "INTEGER", "INTEGER", "INTEGER", "INTEGER", "INTEGER", "VARCHAR", "INTEGER" };
+    String[] TYPES = { "INTEGER IDENTITY PRIMARY KEY", "BIT DEFAULT false", "INTEGER", "VARCHAR(255)", "VARCHAR(255)",
+            "INTEGER", "VARCHAR(255)", "INTEGER", "INTEGER", "INTEGER", "INTEGER", "INTEGER", "INTEGER",
+            "VARCHAR(255)", "INTEGER" };
     int ID = 0;
     int DELETED = 1;
     int FOLDERID = 2;

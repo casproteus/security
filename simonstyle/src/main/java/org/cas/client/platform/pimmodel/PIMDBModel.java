@@ -2185,7 +2185,7 @@ public final class PIMDBModel extends AbstractModel {
             // ALTER TABLE <tablename> ADD COLUMN <columnname> Datatype [(columnSize[,precision])] [DEFAULT
             // 'defaultValue' [NOT NULL]] [BEFORE <existingcolumn>];
             // 在数据库中插入一列
-            String insertSql = "ALTER TABLE ACCOUNT ADD COLUMN IS_ACCOUNT_FORBID BIT DEFAULT 'FALSE'";
+            String insertSql = "ALTER TABLE ACCOUNT ADD COLUMN IS_ACCOUNT_FORBID BIT DEFAULT FALSE";
 
             Statement smt = con.createStatement();
             smt.executeUpdate(insertSql);

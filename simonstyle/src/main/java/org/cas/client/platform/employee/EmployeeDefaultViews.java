@@ -1,6 +1,5 @@
 package org.cas.client.platform.employee;
 
-import org.cas.client.platform.cascustomize.CustOpts;
 
 public interface EmployeeDefaultViews {
     String[] TEXTS = { "ID", "已删除", "位置", "显示为", "备注", "姓", "名", "昵称", "职位", "宅电", "家庭住址", "手机", "电子邮件地址", "即时通讯号码",
@@ -10,10 +9,11 @@ public interface EmployeeDefaultViews {
             "ADDRESS", "CPHONE", "EMAIL", "CNUMBER", "CTOOL", "WEBPAGE", "SEX", "RELATION", "CATEGORY", "PHOTO",
             "JOINTIME", "SALARY", "INSURANCE", "SSCNUMBER", "CODE", "PASSWORD", "IDCARD", "BIRTHDAY",
             "ANNIVERSARYTYPE", "ANNIVERSARY", "BANKNUMBER" };
-    String[] TYPES = { "INTEGER IDENTITY PRIMARY KEY", "BIT DEFAULT false", "INTEGER", "VARCHAR", "VARCHAR", "VARCHAR",
-            "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR",
-            "VARCHAR", "BIT DEFAULT false", "VARCHAR", "VARCHAR", "BINARY", "TIMESTAMP", "INTEGER", "INTEGER",
-            "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "TIMESTAMP", "VARCHAR", "TIMESTAMP", "VARCHAR" };
+    String[] TYPES = { "INTEGER IDENTITY PRIMARY KEY", "BIT DEFAULT false", "INTEGER", "VARCHAR(255)", "VARCHAR(255)",
+            "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)",
+            "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "BIT DEFAULT false",
+            "VARCHAR(255)", "VARCHAR(255)", "BINARY", "TIMESTAMP", "INTEGER", "INTEGER", "VARCHAR(255)",
+            "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "TIMESTAMP", "VARCHAR(255)", "TIMESTAMP", "VARCHAR(255)" };
 
     int ID = 0;
     int DELETED = 1;

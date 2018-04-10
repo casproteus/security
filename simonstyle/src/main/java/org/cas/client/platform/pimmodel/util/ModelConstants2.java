@@ -50,13 +50,13 @@ public interface ModelConstants2 {
     String TYPE_ID = " INTEGER IDENTITY PRIMARY KEY, "; // ID
     String TYPE_INTEGER = " INTEGER, ";
     String TYPE_SMALLINT = " SMALLINT, ";
-    String TYPE_VARCHAR = " VARCHAR, ";
+    String TYPE_VARCHAR = " VARCHAR(255), ";
     String TYPE_BINARY = " BINARY, ";
     String TYPE_BIT = " BIT, ";
     String TYPE_TIMESTAMP = " TIMESTAMP, ";
     String TYPE_TINYINT = " TINYINT, ";
-    String TYPE_BITE_DEFAULT_TRUE = " BIT DEFAULT 'TRUE', ";
-    String TYPE_BITE_DEFAULT_FALSE = " BIT DEFAULT 'FALSE', ";
+    String TYPE_BITE_DEFAULT_TRUE = " BIT DEFAULT TRUE, ";
+    String TYPE_BITE_DEFAULT_FALSE = " BIT DEFAULT FALSE, ";
     /**
      * 以下为各个数据库表的字段名，其中一共有n张数据库表 每张数据库表对应的类型字符串，这些字符串是用来创建DBMS对象：建立数据库表
      */
@@ -64,8 +64,8 @@ public interface ModelConstants2 {
     public static final String VIEWINFO_TABLE_NAME = "VIEWINFO";
     // 留作扩展用的,同时起到占位作用,是Index号和Namelist数组以及SYSTEMTABLE_FIELD_LIST数组中的位置对应起来--
     String[] EXTENDS_TABLE_FIELD = new String[] { "ID", "NAME" };
-    String[] EXTENDS_TABLE_FIELD_TYPE = new String[] { TYPE_ID, " VARCHAR" };// ---------------------------------------------------------------
-                                                                             // ViewInfo需要的字段列表==============================================
+    String[] EXTENDS_TABLE_FIELD_TYPE = new String[] { TYPE_ID, " VARCHAR(255)" };// ---------------------------------------------------------------
+    // ViewInfo需要的字段列表==============================================
     String[] VIEWINFO_TABLE_FIELD = new String[] { "ID", "APPTYPE", "VIEWTYPE", "USESCOPE", "PREVIEWSCALE",
             "CUSTOMIZE", "HASEDITOR", "HASPREVIEW", "FIELDNAMES", "FIELDWIDTHS", "VIEWNAME", "SORTCRITERIA", "FILTER",
             "VIEWFORMAT", "FOLDERID", "NUMBER", "UNREADED", "SYCNSETTING", "SERVERFOLDER" };
@@ -73,8 +73,8 @@ public interface ModelConstants2 {
             TYPE_ID, TYPE_INTEGER, TYPE_INTEGER, TYPE_INTEGER, " INTEGER DEFAULT 38, ", TYPE_BIT,
                     TYPE_BITE_DEFAULT_TRUE, TYPE_BIT, TYPE_VARCHAR, TYPE_VARCHAR, TYPE_VARCHAR, TYPE_VARCHAR,
                     TYPE_BINARY, TYPE_BINARY, TYPE_INTEGER, TYPE_INTEGER, TYPE_INTEGER, " INTEGER DEFAULT 0, ",
-                    " VARCHAR" };// ================================================================
-                                 // 帐号表的字段========================================================
+                    " VARCHAR(255)" };// ================================================================
+    // 帐号表的字段========================================================
     String[] ACCOUNT_TABLE_FIELD = new String[] { "ID", "ACCOUNTNAME", "SMTPDISPLAYNAME", "SMTPORGNAME",
             "SMTPEMAILADDRESS", "SMTPREPLYTOEMAIL", "SMTPSERVER", "SMTPUSESICILY", "SMTPUSERNAME", "SMTPPROMPTPWD",
             "SMTPPASSWORD2", "SMTPPORT", "SMTPSECURECONNECTION", "SMTPTIMEOUT", "SMTPSPLITMSG", "LEAVEMAILONSERVER",
@@ -95,8 +95,8 @@ public interface ModelConstants2 {
                     TYPE_INTEGER, TYPE_BIT, TYPE_VARCHAR, TYPE_VARCHAR, TYPE_VARCHAR, TYPE_VARCHAR, TYPE_BIT, TYPE_BIT,
                     TYPE_BIT, TYPE_SMALLINT, TYPE_TIMESTAMP, TYPE_BIT, TYPE_BINARY, TYPE_BINARY, TYPE_BINARY,
                     TYPE_BINARY, TYPE_VARCHAR, TYPE_BINARY, TYPE_BINARY, TYPE_VARCHAR, TYPE_VARCHAR,
-                    " BIT DEFAULT 'FALSE'" };// ===============================================================
-                                             // 邮件规则表的字段////////////////////////////////////////////////////
+                    " BIT DEFAULT FALSE" };// ===============================================================
+                                           // 邮件规则表的字段////////////////////////////////////////////////////
     String[] MAILRULE_TABLE_FIELD = new String[] { "ID", "SERIES", "JUNKORADULT", "ISSENDER", "ISSELECTED", "RULENAME",
             "CONDITIONPOOL", "EXCEPTIONPOOL", "ACTIONPOOL" };
     String[] MAILRULE_TABLE_FIELD_TYPE = new String[] {// 字段类型
@@ -104,18 +104,18 @@ public interface ModelConstants2 {
     // 类别表字段----------------------------------------------------------
     String[] CATEGORY_TABLE_FIELD = new String[] { "ID", "NAME" };
     String[] CATEGORY_TABLE_FIELD_TYPE = new String[] {// 字段类型
-            TYPE_ID, " VARCHAR" };// ----------------------------------------------------------------
+            TYPE_ID, " VARCHAR(255)" };// ----------------------------------------------------------------
     // 在自定义视图时定义的ViewFormat信息*************************************
     String[] VIEWFORMAT_TABLE_FIELD = new String[] { "ID", "APPTYPE", "MODETYPE", INFOLDER, "FONTSIZE", "FONTNAME",
             "FONTSTYLE", "HAVESTRIKETHROUGH", "FONTCOLOR", "UNREADED", "NUMBER", "SYCNSETTING", "SERVERFOLDER" };
     String[] VIEWFORMAT_TABLE_FIELD_TYPE = new String[] {// 字段类型
             TYPE_ID, TYPE_INTEGER, TYPE_INTEGER, TYPE_VARCHAR, TYPE_INTEGER, TYPE_VARCHAR, TYPE_INTEGER, TYPE_BIT,
-                    TYPE_INTEGER, TYPE_INTEGER, TYPE_INTEGER, " INTEGER DEFAULT 0, ", " VARCHAR" };// ****************************************************************
-                                                                                                   // 保存系统信息的表。目前只有版本信息，若以后没有其他信息，可以考虑与其他表合并--
+                    TYPE_INTEGER, TYPE_INTEGER, TYPE_INTEGER, " INTEGER DEFAULT 0, ", " VARCHAR(255)" };// ****************************************************************
+    // 保存系统信息的表。目前只有版本信息，若以后没有其他信息，可以考虑与其他表合并--
     String[] SYSTEMINFO_TABLE_FIELE = new String[] { "ID", "VERSION" };
     String[] SYSTEMINFO_TABLE_FIELE_TYPE = new String[] {// 字段类型
-            TYPE_ID, " VARCHAR" };// --------------------------------------------------------------
-                                  // 保存用户登入的用户名、密码、类型（权限）================================
+            TYPE_ID, " VARCHAR(255)" };// --------------------------------------------------------------
+    // 保存用户登入的用户名、密码、类型（权限）================================
     String[] USERIDENTITY_TABLE_FIELD = new String[] { "ID", USERNAME, "PASSWORD", "TYPE" };
     String[] USERIDENTITY_FIELD_TYPE = new String[] {// 字段类型,字段中没有添加这个四个字段对应的键值，目的：安全
             TYPE_ID, TYPE_VARCHAR, TYPE_VARCHAR, " INTEGER" };// ================================================================

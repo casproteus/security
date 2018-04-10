@@ -1,6 +1,5 @@
 package org.cas.client.platform.product;
 
-import org.cas.client.platform.cascustomize.CustOpts;
 
 public interface ProductDefaultViews {
 
@@ -14,8 +13,9 @@ public interface ProductDefaultViews {
 
     String[] FIELDS = { "ID", "DELETED", "FOLDERID", "SUBJECT", "CONTENT", "CODE", "UNIT", "PRICE", "PRODUCAREA",
             "BRAND", "CATEGORY", "MNEMONIC", "COST", "STORE" };
-    String[] TYPES = { "INTEGER IDENTITY PRIMARY KEY", "BIT DEFAULT false", "INTEGER", "VARCHAR", "VARCHAR", "VARCHAR",
-            "VARCHAR", "INTEGER", "VARCHAR", "VARCHAR", "VARCHAR", "VARCHAR", "INTEGER", "INTEGER" };
+    String[] TYPES = { "INTEGER IDENTITY PRIMARY KEY", "BIT DEFAULT false", "INTEGER", "VARCHAR(255)", "VARCHAR(255)",
+            "VARCHAR(255)", "VARCHAR(255)", "INTEGER", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)",
+            "INTEGER", "INTEGER" };
 
     int ID = 0; // "ID",
     int DELETED = 1; // "已删除",

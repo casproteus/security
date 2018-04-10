@@ -28,11 +28,12 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     public static void main(
             String[] args) {
         if (instance == null) {
-        	new LoginDlg(instance).setVisible(true);
+            CASControl.ctrl.initModel();
+            new LoginDlg(instance).setVisible(true);
             if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-            	CustOpts.custOps.setUserName(LoginDlg.USERNAME);
-            }else {
-            	return;
+                CustOpts.custOps.setUserName(LoginDlg.USERNAME);
+            } else {
+                return;
             }
             instance = new BarFrame();
         }
@@ -211,7 +212,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                //general.tfdProdNumber.grabFocus();
+                // general.tfdProdNumber.grabFocus();
             }
         });
     }

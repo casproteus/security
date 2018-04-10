@@ -1,14 +1,11 @@
 package org.cas.client.platform.cascontrol.dialog.logindlg;
 
 import java.awt.Container;
-import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -21,12 +18,10 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.cas.client.platform.CASControl;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
-import org.cas.client.platform.casutil.SOptionPane;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.resource.international.DlgConst;
@@ -52,24 +47,29 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
      * 对话盒的布局独立出来，为了在对话盒尺寸发生改变后，界面各元素能够重新布局， 使整体保持美观。尤其在Linux系列的操作系统上，所有的对话盒都必须准备好应对用户的拖拉改变尺寸。
      * @NOTE:因为setBounds方法本身不会触发事件导致重新布局，所以本方法中设置Bounds之后调用了reLayout。
      */
+    @Override
     public void reLayout() {
-    	ok.setBounds(getContainer().getWidth() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, 
-    			getContainer().getHeight() - CustOpts.BTN_WIDTH_NUM * 4 - CustOpts.VER_GAP * 4, 
-                CustOpts.BTN_WIDTH_NUM, 
-                CustOpts.BTN_WIDTH_NUM * 4 + CustOpts.VER_GAP * 3);// 关闭
-        
-        back.setBounds(ok.getX() - CustOpts.BTN_WIDTH_NUM * 2 - CustOpts.HOR_GAP * 2, 
-        		getContainer().getHeight() - CustOpts.BTN_WIDTH_NUM - CustOpts.VER_GAP, 
-        		CustOpts.BTN_WIDTH_NUM * 2 +  CustOpts.HOR_GAP ,
+        ok.setBounds(getContainer().getWidth() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, getContainer().getHeight()
+                - CustOpts.BTN_WIDTH_NUM * 4 - CustOpts.VER_GAP * 4, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM * 4
+                + CustOpts.VER_GAP * 3);// 关闭
+
+        back.setBounds(ok.getX() - CustOpts.BTN_WIDTH_NUM * 2 - CustOpts.HOR_GAP * 2, getContainer().getHeight()
+                - CustOpts.BTN_WIDTH_NUM - CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM * 2 + CustOpts.HOR_GAP,
                 CustOpts.BTN_WIDTH_NUM);// back
-        num0.setBounds(back.getX() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, back.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
-        num9.setBounds(ok.getX() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, back.getY() - CustOpts.BTN_WIDTH_NUM - CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
-        num8.setBounds(num9.getX() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, num9.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
-        num7.setBounds(num8.getX() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, num9.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
-        num6.setBounds(num9.getX(), num9.getY() - CustOpts.BTN_WIDTH_NUM - CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        num0.setBounds(back.getX() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, back.getY(), CustOpts.BTN_WIDTH_NUM,
+                CustOpts.BTN_WIDTH_NUM);
+        num9.setBounds(ok.getX() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, back.getY() - CustOpts.BTN_WIDTH_NUM
+                - CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        num8.setBounds(num9.getX() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, num9.getY(), CustOpts.BTN_WIDTH_NUM,
+                CustOpts.BTN_WIDTH_NUM);
+        num7.setBounds(num8.getX() - CustOpts.BTN_WIDTH_NUM - CustOpts.HOR_GAP, num9.getY(), CustOpts.BTN_WIDTH_NUM,
+                CustOpts.BTN_WIDTH_NUM);
+        num6.setBounds(num9.getX(), num9.getY() - CustOpts.BTN_WIDTH_NUM - CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM,
+                CustOpts.BTN_WIDTH_NUM);
         num5.setBounds(num8.getX(), num6.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         num4.setBounds(num7.getX(), num6.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
-        num3.setBounds(num9.getX(), num6.getY() - CustOpts.BTN_WIDTH_NUM - CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        num3.setBounds(num9.getX(), num6.getY() - CustOpts.BTN_WIDTH_NUM - CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM,
+                CustOpts.BTN_WIDTH_NUM);
         num2.setBounds(num8.getX(), num3.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         num1.setBounds(num7.getX(), num3.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         general.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, getContainer().getWidth() - 2 * CustOpts.HOR_GAP,
@@ -78,27 +78,33 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
         validate();
     }
 
+    @Override
     public PIMRecord getContents() {
         return null;
     }
 
+    @Override
     public boolean setContents(
             PIMRecord prmRecord) {
         return true;
     }
 
+    @Override
     public void makeBestUseOfTime() {
     }
 
+    @Override
     public void addAttach(
             File[] file,
             Vector actualAttachFiles) {
     }
 
+    @Override
     public PIMTextPane getTextPane() {
         return null;
     }
 
+    @Override
     public void release() {
         ok.removeActionListener(this);
         back.removeActionListener(this);
@@ -121,22 +127,26 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
     }
 
     /** Invoked when the component's size changes. */
+    @Override
     public void componentResized(
             ComponentEvent e) {
         reLayout();
     };
 
     /** Invoked when the component's position changes. */
+    @Override
     public void componentMoved(
             ComponentEvent e) {
     };
 
     /** Invoked when the component has been made visible. */
+    @Override
     public void componentShown(
             ComponentEvent e) {
     };
 
     /** Invoked when the component has been made invisible. */
+    @Override
     public void componentHidden(
             ComponentEvent e) {
     };
@@ -149,9 +159,10 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
      * @param e
      *            动作事件
      */
+    @Override
     public void actionPerformed(
             ActionEvent e) {
-    	String tPassword = new String(general.pfdPassword.getPassword());
+        String tPassword = new String(general.pfdPassword.getPassword());
         Object o = e.getSource();
         if (o == ok) {
             Object tUserName = general.cmbUserName.getSelectedItem();
@@ -208,32 +219,33 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                 CustOpts.custOps.setUserType(USERTYPE); // 级别将被用来作为子功能限制的依据。
             }
         } else if (o == back) {
-        	if(tPassword != null && tPassword.length() > 0) {
-            	general.pfdPassword.setText(tPassword.substring(0, tPassword.length() - 1));
-        	}
-        } else if(o == num1) {
-        	general.pfdPassword.setText(tPassword.concat("1"));
-        } else if(o == num2) {
-        	general.pfdPassword.setText(tPassword.concat("2"));
-        } else if(o == num3) {
-        	general.pfdPassword.setText(tPassword.concat("3"));
-        } else if(o == num4) {
-        	general.pfdPassword.setText(tPassword.concat("4"));
-        } else if(o == num5) {
-        	general.pfdPassword.setText(tPassword.concat("5"));
-        } else if(o == num6) {
-        	general.pfdPassword.setText(tPassword.concat("6"));
-        } else if(o == num7) {
-        	general.pfdPassword.setText(tPassword.concat("7"));
-        } else if(o == num8) {
-        	general.pfdPassword.setText(tPassword.concat("8"));
-        } else if(o == num9) {
-        	general.pfdPassword.setText(tPassword.concat("9"));
-        } else if(o == num0) {
-        	general.pfdPassword.setText(tPassword.concat("0"));
+            if (tPassword != null && tPassword.length() > 0) {
+                general.pfdPassword.setText(tPassword.substring(0, tPassword.length() - 1));
+            }
+        } else if (o == num1) {
+            general.pfdPassword.setText(tPassword.concat("1"));
+        } else if (o == num2) {
+            general.pfdPassword.setText(tPassword.concat("2"));
+        } else if (o == num3) {
+            general.pfdPassword.setText(tPassword.concat("3"));
+        } else if (o == num4) {
+            general.pfdPassword.setText(tPassword.concat("4"));
+        } else if (o == num5) {
+            general.pfdPassword.setText(tPassword.concat("5"));
+        } else if (o == num6) {
+            general.pfdPassword.setText(tPassword.concat("6"));
+        } else if (o == num7) {
+            general.pfdPassword.setText(tPassword.concat("7"));
+        } else if (o == num8) {
+            general.pfdPassword.setText(tPassword.concat("8"));
+        } else if (o == num9) {
+            general.pfdPassword.setText(tPassword.concat("9"));
+        } else if (o == num0) {
+            general.pfdPassword.setText(tPassword.concat("0"));
         }
     }
 
+    @Override
     public Container getContainer() {
         return getContentPane();
     }
@@ -244,7 +256,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
 
         // 初始化－－－－－－－－－－－－－－－－
         general = new LoginGeneralPanel();
-        
+
         ok = new JButton("✔");
         back = new JButton("←");
         num1 = new JButton("1");
@@ -264,7 +276,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
         back.setFocusable(false);
         ok.setMnemonic('o');
         back.setMnemonic('c');
-        
+
         ok.setMargin(new Insets(0, 0, 0, 0));
         back.setMargin(ok.getMargin());
         num1.setMargin(ok.getMargin());
@@ -280,8 +292,8 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
         getRootPane().setDefaultButton(ok);
         // 布局---------------
         int tHight =
-                general.getPreferredSize().height + CustOpts.BTN_WIDTH_NUM * 4 + 5 * CustOpts.VER_GAP + CustOpts.SIZE_EDGE
-                        + CustOpts.SIZE_TITLE;
+                general.getPreferredSize().height + CustOpts.BTN_WIDTH_NUM * 4 + 5 * CustOpts.VER_GAP
+                        + CustOpts.SIZE_EDGE + CustOpts.SIZE_TITLE;
         int tWidth = 310;
         setBounds((CustOpts.SCRWIDTH - tWidth) / 2, (CustOpts.SCRHEIGHT - tHight) / 2, tWidth, tHight); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
@@ -318,8 +330,9 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
         // init Contents
         PASSED = false;
         USERTYPE = "100";
-        general.setUserName(CustOpts.custOps.getUserName());
+        // general.setUserName(CustOpts.custOps.getUserName());
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 general.pfdPassword.grabFocus();
             }

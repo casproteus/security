@@ -54,6 +54,10 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     final int TOTALCOLID = 4;
     final int COUNDCOLID = 2;
 
+    final int USER_STATUS = 1;
+    final int ADMIN_STATUS = 2;
+    int curSecurityStatus = USER_STATUS;
+
     public static String startTime;
 
     public BarGeneralPanel() {
@@ -110,18 +114,31 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         } else if (o == btnPageDownCategory) {
         } else if (o == btnPageUpMenu) {
         } else if (o == btnPageDownMenu) {
-        } else if (o == btnLine_3_1) { // Login
-            BarFrame.instance.setVisible(false);
+        } else if (o == btnLine_3_8) { // Logout
+            if (curSecurityStatus == ADMIN_STATUS) {
+                curSecurityStatus--;
+                // @TODO: might need to do some modification on the interface.
+                reLayout();
+            } else {
+                BarFrame.instance.setVisible(false);
+                new LoginDlg(null).setVisible(true);
+                if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+                    CustOpts.custOps.setUserName(LoginDlg.USERNAME);
+                    lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(
+                            CustOpts.custOps.getUserName()));
+                    reLayout();
+                    BarFrame.instance.setVisible(true);
+                }
+            }
+        } else if (o == btnLine_1_9) { // enter the setting mode.(admin interface)
             new LoginDlg(null).setVisible(true);
             if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-                CustOpts.custOps.setUserName(LoginDlg.USERNAME);
-                lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(
-                        CustOpts.custOps.getUserName()));
-                reLayout();
-                BarFrame.instance.setVisible(true);
+                if ("Admin".equals(CustOpts.custOps.getUserName())) {
+                    curSecurityStatus++;
+                    // @TODO: might need to do some modification on the interface.
+                    reLayout();
+                }
             }
-        } else if (o == btnLine_3_2) { // 交班
-            new OffDutyDlg(BarFrame.instance).setVisible(true);
         } else if (o == btnLine_3_3) { // 盘货,先检查是否存在尚未输入完整信息的产品，如果检查到存
             BarUtility.checkUnCompProdInfo(); // 在这种产品，方法中会自动弹出对话盒要求用户填写详细信息。
             new CheckStoreDlg(BarFrame.instance).setVisible(true);
@@ -372,7 +389,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         btnLine_3_5 = new JButton(BarDlgConst.VOID_ALL);
         btnLine_3_6 = new JButton(BarDlgConst.MODIFY);
         btnLine_3_7 = new JButton(BarDlgConst.DISC_VOLUMN);
-        btnLine_3_8 = new JButton("");
+        btnLine_3_8 = new JButton(BarDlgConst.Logout);
         btnLine_3_9 = new JButton(BarDlgConst.MORE);
 
         btnLine_2_1 = new JButton("");

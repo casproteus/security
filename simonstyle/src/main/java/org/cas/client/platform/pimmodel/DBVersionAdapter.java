@@ -52,7 +52,7 @@ class DBVersionAdapter {
     final String DB_EXCEPTION_FLAG_IMPORT = DB_EXCEPTION_FLAG_PREFIX.concat("IMPORT");
     /** 创建的临时表字段和类型,这里为了以后扩张用的，可以记录一些版本更新的信息 */
     final String[] TEMP_DB_TABLE_FIELD = { "VERSION", };
-    final String[] TEMP_DB_FIELD_TYPES = { " VARCHAR", };
+    final String[] TEMP_DB_FIELD_TYPES = { " VARCHAR(255)", };
 
     static int[] TYPE_INT_VALUE = new int[]/* TYPES所有值 */
     { -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 91, 92, 93, 1111 };

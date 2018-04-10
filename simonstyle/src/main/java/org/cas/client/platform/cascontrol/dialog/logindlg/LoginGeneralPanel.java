@@ -9,12 +9,10 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 import javax.swing.JTextField;
 import javax.swing.plaf.metal.MetalComboBoxEditor;
 
@@ -29,22 +27,26 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
     }
 
     /** Invoked when the component's size changes. */
+    @Override
     public void componentResized(
             ComponentEvent e) {
         reLayout();
     }
 
     /** Invoked when the component's position changes. */
+    @Override
     public void componentMoved(
             ComponentEvent e) {
     }
 
     /** Invoked when the component has been made visible. */
+    @Override
     public void componentShown(
             ComponentEvent e) {
     }
 
     /** Invoked when the component has been made invisible. */
+    @Override
     public void componentHidden(
             ComponentEvent e) {
     }
@@ -67,13 +69,14 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
         initContent();
         reLayout();
         // built
-        //add(lblUserName);
-        //add(cmbUserName);
+        // add(lblUserName);
+        // add(cmbUserName);
         add(lblPassword);
         add(pfdPassword);
 
         // add listener
         pfdPassword.addKeyListener(new KeyListener() { // 在密码框中相应上下左右键。使用户名做变化。
+                    @Override
                     public void keyPressed(
                             KeyEvent e) {
                         int tSeleIdx = cmbUserName.getSelectedIndex();
@@ -95,10 +98,12 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
                             cmbUserName.setSelectedIndex(cmbUserName.getItemCount() - 1);
                     }
 
+                    @Override
                     public void keyTyped(
                             KeyEvent e) {
                     }
 
+                    @Override
                     public void keyReleased(
                             KeyEvent e) {
                     }
@@ -136,8 +141,8 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
             ErrorUtil.write(e);
         }
 
-        cmbUserName.setModel(new DefaultComboBoxModel(subjectAry));
-        cmbUserName.setSelectedIndex(0);
+        // cmbUserName.setModel(new DefaultComboBoxModel(subjectAry));
+        // cmbUserName.setSelectedIndex(0);
     }
 
     /** 本方法用于设置View上各个组件的尺寸。 */
@@ -147,9 +152,9 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
                 CustOpts.BTN_HEIGHT);
         pfdPassword.setBounds(lblUserName.getX() + lblPassword.getWidth() + CustOpts.HOR_GAP, lblUserName.getY(),
                 prmWidth - lblPassword.getWidth() - CustOpts.HOR_GAP * 3, 40);
-//        lblPassword.setBounds(lblUserName.getX(), lblUserName.getY() + lblUserName.getHeight() + CustOpts.VER_GAP,
-//                lblUserName.getWidth(), CustOpts.BTN_HEIGHT);
-//        pfdPassword.setBounds(cmbUserName.getX(), lblPassword.getY(), cmbUserName.getWidth(), CustOpts.BTN_HEIGHT);
+        // lblPassword.setBounds(lblUserName.getX(), lblUserName.getY() + lblUserName.getHeight() + CustOpts.VER_GAP,
+        // lblUserName.getWidth(), CustOpts.BTN_HEIGHT);
+        // pfdPassword.setBounds(cmbUserName.getX(), lblPassword.getY(), cmbUserName.getWidth(), CustOpts.BTN_HEIGHT);
         setPreferredSize(new Dimension(getWidth(), pfdPassword.getY() + pfdPassword.getHeight() + CustOpts.VER_GAP));
     }
 
