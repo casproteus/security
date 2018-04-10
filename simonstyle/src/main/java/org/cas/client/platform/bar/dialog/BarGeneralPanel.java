@@ -11,15 +11,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -30,23 +25,18 @@ import java.util.Vector;
 import javax.comm.CommPortIdentifier;
 import javax.comm.ParallelPort;
 import javax.comm.PortInUseException;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
-import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -59,7 +49,7 @@ import org.cas.client.platform.refund.dialog.RefundDlg;
 import org.cas.client.resource.international.PaneConsts;
 
 //Identity表应该和Employ表合并。
-public class BarGeneralPanel extends JPanel implements ComponentListener, KeyListener, ActionListener, FocusListener{
+public class BarGeneralPanel extends JPanel implements ComponentListener, KeyListener, ActionListener, FocusListener {
     final int PRICECOLID = 3;
     final int TOTALCOLID = 4;
     final int COUNDCOLID = 2;
@@ -96,8 +86,6 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             ComponentEvent e) {
     }
 
- 
-
     @Override
     public void focusGained(
             FocusEvent e) {
@@ -116,33 +104,34 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     public void actionPerformed(
             ActionEvent e) {
         Object o = e.getSource();
-        if(o == btnPageUpTable) {
-        }else if(o == btnPageDownTable) {
-        }else if(o == btnPageUpCategory) {
-        }else if(o == btnPageDownCategory) {
-        }else if(o == btnPageUpMenu) {
-        }else if(o == btnPageDownMenu) {
-        }else if (o == btnLogout) { // Login
-        	BarFrame.instance.setVisible(false);
+        if (o == btnPageUpTable) {
+        } else if (o == btnPageDownTable) {
+        } else if (o == btnPageUpCategory) {
+        } else if (o == btnPageDownCategory) {
+        } else if (o == btnPageUpMenu) {
+        } else if (o == btnPageDownMenu) {
+        } else if (o == btnLine_3_1) { // Login
+            BarFrame.instance.setVisible(false);
             new LoginDlg(null).setVisible(true);
             if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-            	CustOpts.custOps.setUserName(LoginDlg.USERNAME);
-            	lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(CustOpts.custOps.getUserName()));
-            	reLayout();
-            	BarFrame.instance.setVisible(true);
+                CustOpts.custOps.setUserName(LoginDlg.USERNAME);
+                lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(
+                        CustOpts.custOps.getUserName()));
+                reLayout();
+                BarFrame.instance.setVisible(true);
             }
-        } else if (o == btnOffDuty) { // 交班
+        } else if (o == btnLine_3_2) { // 交班
             new OffDutyDlg(BarFrame.instance).setVisible(true);
-        } else if (o == btnCheck) { // 盘货,先检查是否存在尚未输入完整信息的产品，如果检查到存
+        } else if (o == btnLine_3_3) { // 盘货,先检查是否存在尚未输入完整信息的产品，如果检查到存
             BarUtility.checkUnCompProdInfo(); // 在这种产品，方法中会自动弹出对话盒要求用户填写详细信息。
             new CheckStoreDlg(BarFrame.instance).setVisible(true);
-        } else if (o == btnInput) {
+        } else if (o == btnLine_3_4) {
             new AddStoreDlg(BarFrame.instance).setVisible(true);
-        } else if (o == btnRefund) {
+        } else if (o == btnLine_3_5) {
             new RefundDlg(BarFrame.instance).setVisible(true);
-        } else if (o == btnHangup) {
+        } else if (o == btnLine_3_6) {
             hangup();
-        } else if (o == btnStatic) {
+        } else if (o == btnLine_3_7) {
             int tType = Integer.parseInt(CustOpts.custOps.getUserType());
             if (tType > 0) {// 如果当前登陆用户是个普通员工，则显示普通登陆对话盒。等待再次登陆
                 new LoginDlg(BarFrame.instance).setVisible(true);// 结果不会被保存到ini
@@ -154,9 +143,9 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             } else
                 // 如果当前的用户已经是管理员了，则弹出对话盒？
                 new Statistic(BarFrame.instance).setVisible(true);
-        } else if (o == btnOption) {
+        } else if (o == btnLine_3_8) {
             new BarOptionDlg(BarFrame.instance).setVisible(true);
-        } 
+        }
     }
 
     // Key Listener--------------------------------
@@ -170,20 +159,20 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             KeyEvent e) {
         int tKeyCode = e.getKeyCode();
         if (tKeyCode == 112) {// F1库存
-            if (btnCheck.isEnabled())
-                actionPerformed(new ActionEvent(btnCheck, 0, null));
+            if (btnLine_3_3.isEnabled())
+                actionPerformed(new ActionEvent(btnLine_3_3, 0, null));
         } else if (tKeyCode == 113) {// F2为进货
-            if (btnInput.isEnabled())
-                actionPerformed(new ActionEvent(btnInput, 0, null));
+            if (btnLine_3_4.isEnabled())
+                actionPerformed(new ActionEvent(btnLine_3_4, 0, null));
         } else if (tKeyCode == 114) {// F3退货
-            if (btnRefund.isEnabled())
-                actionPerformed(new ActionEvent(btnRefund, 0, null));
+            if (btnLine_3_5.isEnabled())
+                actionPerformed(new ActionEvent(btnLine_3_5, 0, null));
         } else if (tKeyCode == 115) {// F4挂单
-            if (btnHangup.isEnabled())
-                actionPerformed(new ActionEvent(btnHangup, 0, null));
+            if (btnLine_3_6.isEnabled())
+                actionPerformed(new ActionEvent(btnLine_3_6, 0, null));
         } else if (tKeyCode == 116) {// F5统计
-            if (btnStatic.isEnabled())
-                actionPerformed(new ActionEvent(btnStatic, 0, null));
+            if (btnLine_3_7.isEnabled())
+                actionPerformed(new ActionEvent(btnLine_3_7, 0, null));
         }
         // else if(tKeyCode == 119){//F8改汇率
         // if(btnMRate.isEnabled())
@@ -193,8 +182,8 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         // actionPerformed(new ActionEvent(btnMUser, 0, null));
         // }
         else if (tKeyCode == 117) {// F6系统设置
-            if (btnOption.isEnabled())
-                actionPerformed(new ActionEvent(btnOption, 0, null));
+            if (btnLine_3_8.isEnabled())
+                actionPerformed(new ActionEvent(btnLine_3_8, 0, null));
         } else if (tKeyCode == 27) {// ESC 表示取消对话盒区域内容，取消列表中项目，退出系统
             if (((JTextField) e.getSource()).getText().length() > 0)// 如果条码框或者产品名中有内容，就表示清空本条记录。
                 resetDlgArea();
@@ -203,7 +192,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                     resetAll();
                 } else
                     // 列表中也没有记录的话，就表示退出系统。提醒操作员盘点。
-                    actionPerformed(new ActionEvent(btnOffDuty, 0, null));
+                    actionPerformed(new ActionEvent(btnLine_3_2, 0, null));
             }
         } else if (tKeyCode == 17) {// 按"ctrl"键使光标跳至count.必须先输入数量再输入产品的道理是，扫描枪有可能会带回车，使你没有机会后敲数量。
         } else if (tKeyCode == 38) {
@@ -214,21 +203,21 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             tblContent.scrollToRect(tblContent.getSelectedRow(), tblContent.getSelectedColumn());
         } else if (tKeyCode == 8 || tKeyCode == 127) {
             // @NOTE:当Del键或者BackSpace键被按时，如果条码框中没有内容，则直接进行list中记录的删除动作。
-                int tRow = tblContent.getSelectedRow();
-                if (tRow < 0 || tRow > getUsedRowCount() - 1) { // 没有选中行的话，看看最后一行是第几行，选中它。
-                    tblContent.setSelectedRow(getUsedRowCount() - 1);
-                    tblContent.scrollToRect(tblContent.getSelectedRow(), tblContent.getSelectedColumn());
-                } else { // 有选中行的话，将选中行删除，应收金额相应减少
-                    Float tPrice = Float.parseFloat((String) tblContent.getValueAt(tRow, 4));
-                    shouldReceive = shouldReceive - tPrice;
-                    for (int j = tRow; j < tblContent.getRowCount(); j++)
-                        if (j == tblContent.getRowCount() - 1)
-                            for (int i = 0; i < tblContent.getColumnCount(); i++)
-                                tblContent.setValueAt(null, j, i);
-                        else
-                            for (int i = 0; i < tblContent.getColumnCount(); i++)
-                                tblContent.setValueAt(tblContent.getValueAt(j + 1, i), j, i);
-                }
+            int tRow = tblContent.getSelectedRow();
+            if (tRow < 0 || tRow > getUsedRowCount() - 1) { // 没有选中行的话，看看最后一行是第几行，选中它。
+                tblContent.setSelectedRow(getUsedRowCount() - 1);
+                tblContent.scrollToRect(tblContent.getSelectedRow(), tblContent.getSelectedColumn());
+            } else { // 有选中行的话，将选中行删除，应收金额相应减少
+                Float tPrice = Float.parseFloat((String) tblContent.getValueAt(tRow, 4));
+                shouldReceive = shouldReceive - tPrice;
+                for (int j = tRow; j < tblContent.getRowCount(); j++)
+                    if (j == tblContent.getRowCount() - 1)
+                        for (int i = 0; i < tblContent.getColumnCount(); i++)
+                            tblContent.setValueAt(null, j, i);
+                    else
+                        for (int i = 0; i < tblContent.getColumnCount(); i++)
+                            tblContent.setValueAt(tblContent.getValueAt(j + 1, i), j, i);
+            }
         }
         // 一时想不起来为什么加这么个处理，宏姐说不方便，于是就先注释掉试试再说。
         else if (tKeyCode == ' ') {
@@ -286,7 +275,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                     Thread.sleep(1000);
                     addContentToList(); // 将对话盒区域内容加入到列表中去。
                     shouldReceive += Float.parseFloat(tfdTotlePrice.getText());
-                    //tfdShoudReceive.setText(decimalFormat.format(shouldReceive));
+                    // tfdShoudReceive.setText(decimalFormat.format(shouldReceive));
                     resetDlgArea(); // 对话和区域内容复位。
                 } catch (Exception e) {
                 }
@@ -316,8 +305,6 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         enableBtns(false);
         setStatusMes(BarDlgConst.NotePordNumber3);
     }
-
-    
 
     private void openMoneyBox() {
         int[] ccs = new int[5];
@@ -374,36 +361,39 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         lblTSQ = new JLabel(BarDlgConst.QST);
         lblRSQ = new JLabel(BarDlgConst.RST);
         lblTotlePrice = new JLabel(BarDlgConst.Total);
-        
+
         tfdTotlePrice = new JTextField();
         tfdCustomer = new JTextField();
 
-        btnLogout = new JButton(BarDlgConst.Logout);
-        btnOffDuty = new JButton(BarDlgConst.OffDuty);
-        btnCheck = new JButton(BarDlgConst.Check);
-        btnInput = new JButton(BarDlgConst.Input);
-        btnRefund = new JButton(BarDlgConst.Refund);
-        btnHangup = new JButton(BarDlgConst.Hangup);
-        btnStatic = new JButton(BarDlgConst.Static);
-        btnOption = new JButton(BarDlgConst.Option);
-        
+        btnLine_3_1 = new JButton(BarDlgConst.SEND);
+        btnLine_3_2 = new JButton(BarDlgConst.PAY);
+        btnLine_3_3 = new JButton(BarDlgConst.PRINT_BILL);
+        btnLine_3_4 = new JButton(BarDlgConst.QUICK_OPEN);
+        btnLine_3_5 = new JButton(BarDlgConst.VOID_ALL);
+        btnLine_3_6 = new JButton(BarDlgConst.MODIFY);
+        btnLine_3_7 = new JButton(BarDlgConst.DISC_VOLUMN);
+        btnLine_3_8 = new JButton("");
+        btnLine_3_9 = new JButton(BarDlgConst.MORE);
+
         btnLine_2_1 = new JButton("");
         btnLine_2_2 = new JButton("");
         btnLine_2_3 = new JButton("");
-        btnLine_2_4 = new JButton("");
-        btnLine_2_5 = new JButton("");
-        btnLine_2_6 = new JButton("");
-        btnLine_2_7 = new JButton("");
-        btnLine_2_8 = new JButton("");
+        btnLine_2_4 = new JButton(BarDlgConst.MASTER);
+        btnLine_2_5 = new JButton(BarDlgConst.VOID_ITEM);
+        btnLine_2_6 = new JButton(BarDlgConst.PRICE);
+        btnLine_2_7 = new JButton(BarDlgConst.DISC_ITEM);
+        btnLine_2_8 = new JButton(BarDlgConst.SPLIT_BILL);
+        btnLine_2_9 = new JButton("");
 
-        btnLine_1_1 = new JButton("");
-        btnLine_1_2 = new JButton("");
-        btnLine_1_3 = new JButton("");
-        btnLine_1_4 = new JButton("");
-        btnLine_1_5 = new JButton("");
-        btnLine_1_6 = new JButton("");
-        btnLine_1_7 = new JButton("");
-        btnLine_1_8 = new JButton("");
+        btnLine_1_1 = new JButton(BarDlgConst.EXACT_CASH);
+        btnLine_1_2 = new JButton(BarDlgConst.CASH);
+        btnLine_1_3 = new JButton(BarDlgConst.DEBIT);
+        btnLine_1_4 = new JButton(BarDlgConst.VISA);
+        btnLine_1_5 = new JButton(BarDlgConst.CANCEL_ALL);
+        btnLine_1_6 = new JButton(BarDlgConst.QTY);
+        btnLine_1_7 = new JButton(BarDlgConst.FAST_DISCOUNT);
+        btnLine_1_8 = new JButton(BarDlgConst.EQUL_BILL);
+        btnLine_1_9 = new JButton(BarDlgConst.SETTINGS);
 
         btnPageUpTable = new JButton("↑");
         btnPageDownTable = new JButton("↓");
@@ -411,41 +401,41 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         btnPageDownCategory = new JButton("↓");
         btnPageUpMenu = new JButton("↑");
         btnPageDownMenu = new JButton("↓");
-        
+
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
         lblStatus = new JLabel();
-        
-        //menu buttons---------
-        categoryColumn = (categoryColumn == null || categoryColumn < 4)? 5 : categoryColumn;
+
+        // menu buttons---------
+        categoryColumn = (categoryColumn == null || categoryColumn < 4) ? 5 : categoryColumn;
         categoryRow = (categoryRow == null || categoryRow < 1 || categoryRow > 9) ? 3 : categoryRow;
         menuColumn = (menuColumn == null || menuColumn < 1) ? 4 : menuColumn;
         menuRow = (menuRow == null || menuRow < 1) ? 4 : menuRow;
-        
-        for(int r = 0; r < categoryRow; r++) {
-            ArrayList<JButton> btnCategoryArry = new ArrayList<JButton>();
-            for(int c = 0; c < categoryColumn; c++) {
-            	JButton btnCategory = new JButton("");
-            	btnCategory.setMargin(new Insets(0, 0, 0, 0));
-            	add(btnCategory);
-            	btnCategory.addActionListener(this);
-            	btnCategoryArry.add(btnCategory);
+
+        for (int r = 0; r < categoryRow; r++) {
+            ArrayList<JToggleButton> btnCategoryArry = new ArrayList<JToggleButton>();
+            for (int c = 0; c < categoryColumn; c++) {
+                JToggleButton btnCategory = new JToggleButton("");
+                btnCategory.setMargin(new Insets(0, 0, 0, 0));
+                add(btnCategory);
+                btnCategory.addActionListener(this);
+                btnCategoryArry.add(btnCategory);
             }
             categoryMatrix.add(btnCategoryArry);
         }
-        
-        for(int r = 0; r < menuRow; r++) {
+
+        for (int r = 0; r < menuRow; r++) {
             ArrayList<JButton> btnMenuArry = new ArrayList<JButton>();
-            for(int c = 0; c < menuColumn; c++) {
-            	JButton btnMenu = new JButton("");
-            	btnMenu.setMargin(new Insets(0, 0, 0, 0));
-            	add(btnMenu);
-            	btnMenu.addActionListener(this);
-            	btnMenuArry.add(btnMenu);
+            for (int c = 0; c < menuColumn; c++) {
+                JButton btnMenu = new JButton("");
+                btnMenu.setMargin(new Insets(0, 0, 0, 0));
+                add(btnMenu);
+                btnMenu.addActionListener(this);
+                btnMenuArry.add(btnMenu);
             }
             menuMatrix.add(btnMenuArry);
         }
-        
+
         // properties
         setLayout(null);
 
@@ -459,21 +449,21 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         Font tFont = PIMPool.pool.getFont((String) CustOpts.custOps.hash2.get(PaneConsts.DFT_FONT), Font.PLAIN, 40);
 
         // Margin-----------------
-        btnOffDuty.setMargin(new Insets(0, 0, 0, 0));
-        btnLogout.setMargin(btnOffDuty.getInsets());
-        btnCheck.setMargin(btnOffDuty.getInsets());
-        btnHangup.setMargin(btnOffDuty.getInsets());
-        btnStatic.setMargin(btnOffDuty.getInsets());
-        btnOption.setMargin(btnOffDuty.getInsets());
-        btnInput.setMargin(btnOffDuty.getInsets());
-        btnRefund.setMargin(btnOffDuty.getInsets());
-        btnPageUpTable.setMargin(btnOffDuty.getInsets());
-        btnPageDownTable.setMargin(btnOffDuty.getInsets());
-        btnPageUpCategory.setMargin(btnOffDuty.getInsets());
-        btnPageDownCategory.setMargin(btnOffDuty.getInsets());
-        btnPageUpMenu.setMargin(btnOffDuty.getInsets());
-        btnPageDownMenu.setMargin(btnOffDuty.getInsets());
-        
+        btnLine_3_2.setMargin(new Insets(0, 0, 0, 0));
+        btnLine_3_1.setMargin(btnLine_3_2.getInsets());
+        btnLine_3_3.setMargin(btnLine_3_2.getInsets());
+        btnLine_3_6.setMargin(btnLine_3_2.getInsets());
+        btnLine_3_7.setMargin(btnLine_3_2.getInsets());
+        btnLine_3_8.setMargin(btnLine_3_2.getInsets());
+        btnLine_3_4.setMargin(btnLine_3_2.getInsets());
+        btnLine_3_5.setMargin(btnLine_3_2.getInsets());
+        btnPageUpTable.setMargin(btnLine_3_2.getInsets());
+        btnPageDownTable.setMargin(btnLine_3_2.getInsets());
+        btnPageUpCategory.setMargin(btnLine_3_2.getInsets());
+        btnPageDownCategory.setMargin(btnLine_3_2.getInsets());
+        btnPageUpMenu.setMargin(btnLine_3_2.getInsets());
+        btnPageDownMenu.setMargin(btnLine_3_2.getInsets());
+
         // border----------
         tblContent.setBorder(null);
         lblStatus.setBorder(null);
@@ -481,15 +471,15 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         tfdTotlePrice.setFocusable(false);
         tfdCustomer.setFocusable(false);
 
-        btnOffDuty.setFocusable(false);
-        btnCheck.setFocusable(false);
-        btnHangup.setFocusable(false);
+        btnLine_3_2.setFocusable(false);
+        btnLine_3_3.setFocusable(false);
+        btnLine_3_6.setFocusable(false);
         // btnMUser.setFocusable(false);
         // btnMRate.setFocusable(false);
-        btnStatic.setFocusable(false);
-        btnOption.setFocusable(false);
-        btnInput.setFocusable(false);
-        btnRefund.setFocusable(false);
+        btnLine_3_7.setFocusable(false);
+        btnLine_3_8.setFocusable(false);
+        btnLine_3_4.setFocusable(false);
+        btnLine_3_5.setFocusable(false);
 
         tblContent.setFocusable(false);
 
@@ -497,32 +487,34 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         add(lblOperator);
         add(lblShoestring);
         add(lblStartTime);
-        
+
         add(lblSubTotle);
         add(lblTSQ);
         add(lblRSQ);
         add(lblTotlePrice);
-        
+
         add(tfdTotlePrice);
         add(tfdCustomer);
 
-        add(btnLogout);
-        add(btnOffDuty);
-        add(btnCheck);
-        add(btnHangup);
-        add(btnStatic);
-        add(btnOption);
-        add(btnInput);
-        add(btnRefund);
-        
-        add(btnLine_2_1);
-        add(btnLine_2_2);
-        add(btnLine_2_3);
+        add(btnLine_3_1);
+        add(btnLine_3_2);
+        add(btnLine_3_3);
+        add(btnLine_3_4);
+        add(btnLine_3_5);
+        add(btnLine_3_6);
+        add(btnLine_3_7);
+        add(btnLine_3_8);
+        add(btnLine_3_9);
+
+        // add(btnLine_2_1);
+        // add(btnLine_2_2);
+        // add(btnLine_2_3);
         add(btnLine_2_4);
         add(btnLine_2_5);
         add(btnLine_2_6);
         add(btnLine_2_7);
         add(btnLine_2_8);
+        add(btnLine_2_9);
 
         add(btnLine_1_1);
         add(btnLine_1_2);
@@ -532,6 +524,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         add(btnLine_1_6);
         add(btnLine_1_7);
         add(btnLine_1_8);
+        add(btnLine_1_9);
 
         add(btnPageUpTable);
         add(btnPageDownTable);
@@ -539,33 +532,32 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         add(btnPageDownCategory);
         add(btnPageUpMenu);
         add(btnPageDownMenu);
-        
+
         add(srpContent);
         add(lblStatus);
 
         // add listener
         addComponentListener(this);
 
-
         // 因为考虑到条码经常由扫描仪输入，不一定是靠键盘，所以专门为他加了DocumentListener，通过监视内容变化来自动识别输入完成，光标跳转。
-        //tfdProdNumber.getDocument().addDocumentListener(this); // 而其它组件如实收金额框不这样做为了节约（一个KeyListener接口全搞定）
-
-        btnLogout.addActionListener(this);
-        btnOffDuty.addActionListener(this);
-        btnCheck.addActionListener(this);
-        btnHangup.addActionListener(this);
-        btnStatic.addActionListener(this);
-        btnOption.addActionListener(this);
-        btnInput.addActionListener(this);
-        btnRefund.addActionListener(this);
-        
+        // tfdProdNumber.getDocument().addDocumentListener(this); // 而其它组件如实收金额框不这样做为了节约（一个KeyListener接口全搞定）
         btnPageUpTable.addActionListener(this);
         btnPageDownTable.addActionListener(this);
         btnPageUpCategory.addActionListener(this);
         btnPageDownCategory.addActionListener(this);
         btnPageUpMenu.addActionListener(this);
         btnPageDownMenu.addActionListener(this);
-        
+
+        btnLine_3_1.addActionListener(this);
+        btnLine_3_2.addActionListener(this);
+        btnLine_3_3.addActionListener(this);
+        btnLine_3_4.addActionListener(this);
+        btnLine_3_5.addActionListener(this);
+        btnLine_3_6.addActionListener(this);
+        btnLine_3_7.addActionListener(this);
+        btnLine_3_8.addActionListener(this);
+        btnLine_3_9.addActionListener(this);
+
         btnLine_2_1.addActionListener(this);
         btnLine_2_2.addActionListener(this);
         btnLine_2_3.addActionListener(this);
@@ -574,6 +566,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         btnLine_2_6.addActionListener(this);
         btnLine_2_7.addActionListener(this);
         btnLine_2_8.addActionListener(this);
+        btnLine_2_9.addActionListener(this);
 
         btnLine_1_1.addActionListener(this);
         btnLine_1_2.addActionListener(this);
@@ -583,6 +576,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         btnLine_1_6.addActionListener(this);
         btnLine_1_7.addActionListener(this);
         btnLine_1_8.addActionListener(this);
+        btnLine_1_9.addActionListener(this);
         // initContents--------------
         // SwingUtilities.invokeLater(new Runnable() { //@NOTE: it seems that it's not promised to be called before ui
         // updated.
@@ -636,115 +630,155 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         lblOperator.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblOperator.getPreferredSize().width,
                 lblOperator.getPreferredSize().height);
         int tHalfHeight = (panelHeight - lblOperator.getY() - lblOperator.getHeight()) / 2;
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 9) / 8;
+        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 10) / 9;
         int tBtnHeight = panelHeight / 10;
         int tGap = tHalfHeight / 11;
         int tVGap = tGap * 2 / 3;
         int tCompH = tGap + tGap - tVGap;
         int tFieldWidth1 = panelWidth / 2;
 
-        lblStartTime.setBounds(panelWidth - lblStartTime.getPreferredSize().width - CustOpts.HOR_GAP, lblOperator.getY(),
-                lblStartTime.getPreferredSize().width, lblOperator.getHeight());
+        lblStartTime.setBounds(panelWidth - lblStartTime.getPreferredSize().width - CustOpts.HOR_GAP,
+                lblOperator.getY(), lblStartTime.getPreferredSize().width, lblOperator.getHeight());
         lblShoestring.setBounds(
                 lblOperator.getX()
                         + lblOperator.getWidth()
                         + (lblStartTime.getX() - lblOperator.getX() - lblOperator.getWidth() - lblShoestring
                                 .getPreferredSize().width) / 2, lblOperator.getY(),
                 lblShoestring.getPreferredSize().width, lblOperator.getHeight());
-        
 
-        //status---------
-        lblStatus.setBounds(CustOpts.HOR_GAP, panelHeight - CustOpts.LBL_HEIGHT - CustOpts.VER_GAP, panelWidth - CustOpts.HOR_GAP, CustOpts.LBL_HEIGHT);
-        
-        //command buttons--------------
-        //line 3
-        btnLogout.setBounds(CustOpts.HOR_GAP, lblStatus.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
-        btnOffDuty.setBounds(btnLogout.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogout.getY(), tBtnWidht, tBtnHeight);
-        btnInput.setBounds(btnOffDuty.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogout.getY(), tBtnWidht, tBtnHeight);
-        btnRefund.setBounds(btnInput.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogout.getY(), tBtnWidht, tBtnHeight);
-        btnHangup.setBounds(btnRefund.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogout.getY(), tBtnWidht, tBtnHeight);
-        btnCheck.setBounds(btnHangup.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogout.getY(), tBtnWidht, tBtnHeight);
-        btnStatic.setBounds(btnCheck.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogout.getY(), tBtnWidht, tBtnHeight);
-        btnOption.setBounds(btnStatic.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLogout.getY(), tBtnWidht, tBtnHeight);
-        //line 2
-        btnLine_2_1.setBounds(CustOpts.HOR_GAP, btnLogout.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
-        btnLine_2_2.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_3.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_4.setBounds(btnLine_2_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_5.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_8.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        //line 1
-        btnLine_1_1.setBounds(CustOpts.HOR_GAP, btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
-        btnLine_1_2.setBounds(btnLine_1_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_3.setBounds(btnLine_1_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_4.setBounds(btnLine_1_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_5.setBounds(btnLine_1_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_6.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_7.setBounds(btnLine_1_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_8.setBounds(btnLine_1_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        
-        //TOP part============================
+        // status---------
+        lblStatus.setBounds(CustOpts.HOR_GAP, panelHeight - CustOpts.LBL_HEIGHT - CustOpts.VER_GAP, panelWidth
+                - CustOpts.HOR_GAP, CustOpts.LBL_HEIGHT);
+
+        // command buttons--------------
+        // line 3
+        btnLine_3_1
+                .setBounds(CustOpts.HOR_GAP, lblStatus.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
+        btnLine_3_2.setBounds(btnLine_3_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_3_3.setBounds(btnLine_3_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_3_4.setBounds(btnLine_3_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_3_5.setBounds(btnLine_3_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_3_6.setBounds(btnLine_3_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_3_7.setBounds(btnLine_3_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_3_8.setBounds(btnLine_3_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_3_9.setBounds(btnLine_3_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
+                tBtnHeight);
+
+        // line 2
+        btnLine_2_1.setBounds(CustOpts.HOR_GAP, btnLine_3_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
+                tBtnHeight);
+        btnLine_2_2.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_3.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_4.setBounds(btnLine_2_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_5.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_8.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_9.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        // line 1
+        btnLine_1_1.setBounds(CustOpts.HOR_GAP, btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
+                tBtnHeight * 2 + CustOpts.VER_GAP);
+        btnLine_1_2.setBounds(btnLine_1_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight * 2 + CustOpts.VER_GAP);
+        btnLine_1_3.setBounds(btnLine_1_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight * 2 + CustOpts.VER_GAP);
+        btnLine_1_4.setBounds(btnLine_1_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_1_5.setBounds(btnLine_1_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_1_6.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_1_7.setBounds(btnLine_1_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_1_8.setBounds(btnLine_1_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_1_9.setBounds(btnLine_1_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight);
+
+        // TOP part============================
         int topAreaHeight = btnLine_1_1.getY() - 3 * CustOpts.VER_GAP - lblOperator.getY() - lblOperator.getHeight();
-        //table area-------------
-        Double tableWidth = (Double)CustOpts.custOps.hash2.get("TableWidth");
+        // table area-------------
+        Double tableWidth = (Double) CustOpts.custOps.hash2.get("TableWidth");
         tableWidth = (tableWidth == null || tableWidth < 0.2) ? 0.4 : tableWidth;
-        srpContent.setBounds(CustOpts.HOR_GAP, lblOperator.getY() + lblOperator.getHeight() + CustOpts.VER_GAP, 
-        		(int)(panelWidth * tableWidth) - BarDlgConst.SCROLLBAR_WIDTH, 
-        		topAreaHeight - BarDlgConst.SubTotal_HEIGHT);
+        srpContent.setBounds(CustOpts.HOR_GAP, lblOperator.getY() + lblOperator.getHeight() + CustOpts.VER_GAP,
+                (int) (panelWidth * tableWidth) - BarDlgConst.SCROLLBAR_WIDTH, topAreaHeight
+                        - BarDlgConst.SubTotal_HEIGHT);
 
-        btnPageUpTable.setBounds(CustOpts.HOR_GAP + srpContent.getWidth(),
-        		srpContent.getY() + srpContent.getHeight() - BarDlgConst.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP, 
-        		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
-        btnPageDownTable.setBounds(btnPageUpTable.getX(), btnPageUpTable.getY() + btnPageUpTable.getHeight() + CustOpts.VER_GAP, 
-        		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
-        
-        //sub total-------
-        lblTSQ.setBounds(srpContent.getX(), srpContent.getY() + srpContent.getHeight(), 
-        		srpContent.getWidth()/4, BarDlgConst.SubTotal_HEIGHT * 1/3);
-        lblRSQ.setBounds(lblTSQ.getX() + lblTSQ.getWidth(), lblTSQ.getY(), 
-        		lblTSQ.getWidth(), lblTSQ.getHeight());
-        lblSubTotle.setBounds(lblRSQ.getX() + lblRSQ.getWidth(), lblTSQ.getY(), 
-        		lblRSQ.getWidth() * 2, lblTSQ.getHeight());
-        lblTotlePrice.setBounds(lblSubTotle.getX(), lblSubTotle.getY() + lblSubTotle.getHeight(), 
-        		lblSubTotle.getWidth(), BarDlgConst.SubTotal_HEIGHT * 2/3);
-        
-        //category area--------------
+        btnPageUpTable.setBounds(CustOpts.HOR_GAP + srpContent.getWidth(), srpContent.getY() + srpContent.getHeight()
+                - BarDlgConst.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH,
+                BarDlgConst.SCROLLBAR_WIDTH * 2);
+        btnPageDownTable.setBounds(btnPageUpTable.getX(), btnPageUpTable.getY() + btnPageUpTable.getHeight()
+                + CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
+
+        // sub total-------
+        lblTSQ.setBounds(srpContent.getX(), srpContent.getY() + srpContent.getHeight(), srpContent.getWidth() / 4,
+                BarDlgConst.SubTotal_HEIGHT * 1 / 3);
+        lblRSQ.setBounds(lblTSQ.getX() + lblTSQ.getWidth(), lblTSQ.getY(), lblTSQ.getWidth(), lblTSQ.getHeight());
+        lblSubTotle.setBounds(lblRSQ.getX() + lblRSQ.getWidth(), lblTSQ.getY(), lblRSQ.getWidth() * 2,
+                lblTSQ.getHeight());
+        lblTotlePrice.setBounds(lblSubTotle.getX(), lblSubTotle.getY() + lblSubTotle.getHeight(),
+                lblSubTotle.getWidth(), BarDlgConst.SubTotal_HEIGHT * 2 / 3);
+
+        // category area--------------
         int xMenuArea = srpContent.getX() + srpContent.getWidth() + CustOpts.HOR_GAP + BarDlgConst.SCROLLBAR_WIDTH;
-        int widthMenuArea = (panelWidth - srpContent.getWidth() - CustOpts.HOR_GAP * 3) - BarDlgConst.SCROLLBAR_WIDTH * 2;
-        Double categoryHeight = (Double)CustOpts.custOps.hash2.get("categoryHeight");
+        int widthMenuArea =
+                (panelWidth - srpContent.getWidth() - CustOpts.HOR_GAP * 3) - BarDlgConst.SCROLLBAR_WIDTH * 2;
+        Double categoryHeight = (Double) CustOpts.custOps.hash2.get("categoryHeight");
         categoryHeight = (categoryHeight == null || categoryHeight < 0.2) ? 0.4 : categoryHeight;
-        
-        
-        int categeryBtnWidth = (widthMenuArea - CustOpts.HOR_GAP * (categoryColumn - 1))/ categoryColumn;
-        int categeryBtnHeight = (int)((topAreaHeight * categoryHeight - CustOpts.VER_GAP * (categoryRow - 1))/categoryRow);
-        for(int r = 0; r < categoryRow; r++) {
-            for(int c = 0; c < categoryColumn; c++) {
-            	categoryMatrix.get(r).get(c).setBounds(xMenuArea + (categeryBtnWidth + CustOpts.HOR_GAP) * c,
-            			srpContent.getY() + (categeryBtnHeight + CustOpts.VER_GAP) * r, categeryBtnWidth, categeryBtnHeight);
+
+        int categeryBtnWidth = (widthMenuArea - CustOpts.HOR_GAP * (categoryColumn - 1)) / categoryColumn;
+        int categeryBtnHeight =
+                (int) ((topAreaHeight * categoryHeight - CustOpts.VER_GAP * (categoryRow - 1)) / categoryRow);
+        for (int r = 0; r < categoryRow; r++) {
+            for (int c = 0; c < categoryColumn; c++) {
+                categoryMatrix
+                        .get(r)
+                        .get(c)
+                        .setBounds(xMenuArea + (categeryBtnWidth + CustOpts.HOR_GAP) * c,
+                                srpContent.getY() + (categeryBtnHeight + CustOpts.VER_GAP) * r, categeryBtnWidth,
+                                categeryBtnHeight);
             }
         }
-        btnPageUpCategory.setBounds(xMenuArea + widthMenuArea, srpContent.getY(), 
-        		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
-        btnPageDownCategory.setBounds(btnPageUpCategory.getX(), btnPageUpCategory.getY() + btnPageUpCategory.getHeight() + CustOpts.VER_GAP, 
-        		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
-        
-        //menugory area--------------
+        btnPageUpCategory.setBounds(xMenuArea + widthMenuArea, srpContent.getY(), BarDlgConst.SCROLLBAR_WIDTH,
+                BarDlgConst.SCROLLBAR_WIDTH * 2);
+        btnPageDownCategory.setBounds(btnPageUpCategory.getX(),
+                btnPageUpCategory.getY() + btnPageUpCategory.getHeight() + CustOpts.VER_GAP,
+                BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
+
+        // menugory area--------------
         int menuY = srpContent.getY() + (categeryBtnHeight + CustOpts.VER_GAP) * categoryRow + CustOpts.VER_GAP;
-        int menuBtnWidth = (widthMenuArea - CustOpts.HOR_GAP * (menuColumn - 1))/ menuColumn;
-        int menuBtnHeight = (int)((topAreaHeight * (1-categoryHeight) - CustOpts.VER_GAP * (menuRow))/menuRow);
-        for(int r = 0; r < menuRow; r++) {
-            for(int c = 0; c < menuColumn; c++) {
-            	menuMatrix.get(r).get(c).setBounds(xMenuArea + (menuBtnWidth + CustOpts.HOR_GAP) * c,
-            			menuY + (menuBtnHeight + CustOpts.VER_GAP) * r, menuBtnWidth, menuBtnHeight);
+        int menuBtnWidth = (widthMenuArea - CustOpts.HOR_GAP * (menuColumn - 1)) / menuColumn;
+        int menuBtnHeight = (int) ((topAreaHeight * (1 - categoryHeight) - CustOpts.VER_GAP * (menuRow)) / menuRow);
+        for (int r = 0; r < menuRow; r++) {
+            for (int c = 0; c < menuColumn; c++) {
+                menuMatrix
+                        .get(r)
+                        .get(c)
+                        .setBounds(xMenuArea + (menuBtnWidth + CustOpts.HOR_GAP) * c,
+                                menuY + (menuBtnHeight + CustOpts.VER_GAP) * r, menuBtnWidth, menuBtnHeight);
             }
         }
-        btnPageUpMenu.setBounds(btnPageUpCategory.getX(), srpContent.getY() + topAreaHeight - BarDlgConst.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP, 
-        		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
-        btnPageDownMenu.setBounds(btnPageUpMenu.getX(),  btnPageUpMenu.getY() + btnPageUpMenu.getHeight() + CustOpts.VER_GAP, 
-        		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
-        
+        btnPageUpMenu.setBounds(btnPageUpCategory.getX(), srpContent.getY() + topAreaHeight
+                - BarDlgConst.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH,
+                BarDlgConst.SCROLLBAR_WIDTH * 2);
+        btnPageDownMenu.setBounds(btnPageUpMenu.getX(), btnPageUpMenu.getY() + btnPageUpMenu.getHeight()
+                + CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
+
         resetColWidth();
     }
 
@@ -780,7 +814,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     }
 
     private boolean isOnProcess() {
-        return getUsedRowCount() > 0 ;
+        return getUsedRowCount() > 0;
     }
 
     private int getUsedRowCount() {
@@ -811,11 +845,11 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
 
     private void enableBtns(
             boolean pIsEnable) {
-        btnLogout.setEnabled(pIsEnable);
-        btnOffDuty.setEnabled(pIsEnable);
-        btnCheck.setEnabled(pIsEnable);
-        btnInput.setEnabled(pIsEnable);
-        btnRefund.setEnabled(pIsEnable);
+        btnLine_3_1.setEnabled(pIsEnable);
+        btnLine_3_2.setEnabled(pIsEnable);
+        btnLine_3_3.setEnabled(pIsEnable);
+        btnLine_3_4.setEnabled(pIsEnable);
+        btnLine_3_5.setEnabled(pIsEnable);
     }
 
     public static void setStatusMes(
@@ -831,20 +865,21 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     private JLabel lblTSQ;
     private JLabel lblRSQ;
     private JLabel lblTotlePrice;
-    
+
     static JLabel lblStatus;
 
     private JTextField tfdTotlePrice;
     private JTextField tfdCustomer;
 
-    private JButton btnLogout;
-    private JButton btnOffDuty;
-    private JButton btnCheck;
-    private JButton btnInput;
-    private JButton btnRefund;
-    private JButton btnHangup;
-    private JButton btnStatic;
-    private JButton btnOption;
+    private JButton btnLine_3_1;
+    private JButton btnLine_3_2;
+    private JButton btnLine_3_3;
+    private JButton btnLine_3_4;
+    private JButton btnLine_3_5;
+    private JButton btnLine_3_6;
+    private JButton btnLine_3_7;
+    private JButton btnLine_3_8;
+    private JButton btnLine_3_9;
 
     private JButton btnLine_2_1;
     private JButton btnLine_2_2;
@@ -854,6 +889,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     private JButton btnLine_2_6;
     private JButton btnLine_2_7;
     private JButton btnLine_2_8;
+    private JButton btnLine_2_9;
 
     private JButton btnLine_1_1;
     private JButton btnLine_1_2;
@@ -863,6 +899,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     private JButton btnLine_1_6;
     private JButton btnLine_1_7;
     private JButton btnLine_1_8;
+    private JButton btnLine_1_9;
 
     private JButton btnPageUpTable;
     private JButton btnPageDownTable;
@@ -871,17 +908,17 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     private JButton btnPageUpMenu;
     private JButton btnPageDownMenu;
 
-    Integer categoryColumn = (Integer)CustOpts.custOps.hash2.get("categoryColumn");
-    Integer categoryRow = (Integer)CustOpts.custOps.hash2.get("categoryRow");
-    Integer menuColumn = (Integer)CustOpts.custOps.hash2.get("menuColumn");
-    Integer menuRow = (Integer)CustOpts.custOps.hash2.get("menuRow");
-    
-    private ArrayList<ArrayList<JButton>> categoryMatrix = new ArrayList<ArrayList<JButton>>();
+    Integer categoryColumn = (Integer) CustOpts.custOps.hash2.get("categoryColumn");
+    Integer categoryRow = (Integer) CustOpts.custOps.hash2.get("categoryRow");
+    Integer menuColumn = (Integer) CustOpts.custOps.hash2.get("menuColumn");
+    Integer menuRow = (Integer) CustOpts.custOps.hash2.get("menuRow");
+
+    private ArrayList<ArrayList<JToggleButton>> categoryMatrix = new ArrayList<ArrayList<JToggleButton>>();
     private ArrayList<ArrayList<JButton>> menuMatrix = new ArrayList<ArrayList<JButton>>();
-    
+
     private PIMTable tblContent;
     private PIMScrollPane srpContent;
-   
+
     public Vector hangupVec = new Vector();
     private int prodID;
     private float shouldReceive;

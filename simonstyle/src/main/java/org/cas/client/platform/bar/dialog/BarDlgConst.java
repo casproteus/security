@@ -1,8 +1,34 @@
 package org.cas.client.platform.bar.dialog;
 
 public interface BarDlgConst {
-	int SCROLLBAR_WIDTH = 40;
-	int SubTotal_HEIGHT = 50;
+    int SCROLLBAR_WIDTH = 40;
+    int SubTotal_HEIGHT = 50;
+
+    String MASTER = "MASTER";
+    String VOID_ITEM = "VOID ITEM";
+    String PRICE = "PRICE";
+    String DISC_ITEM = "DISC ITEM";
+    String SPLIT_BILL = "SPLIT BILL";
+    String MORE = "MORE";
+
+    String EXACT_CASH = "EXACT CASH";
+    String CASH = "CASH";
+    String DEBIT = "DEBIT";
+    String VISA = "VISA";
+    String CANCEL_ALL = "CANCEL ALL";
+    String QTY = "QTY";
+    String FAST_DISCOUNT = "FAST DISCOUNT";
+    String EQUL_BILL = "EQUL BILL";
+    String SETTINGS = "SETTINGS";
+
+    String SEND = "SEND";
+    String PAY = "PAY";
+    String PRINT_BILL = "PRINT BILL";
+    String QUICK_OPEN = "QUICK OPEN";
+    String VOID_ALL = "VOID ALL";
+    String MODIFY = "MODIFY";
+    String DISC_VOLUMN = "DISC VOLUMN";
+
     String Title = "STGOBar - Copyright 2018 - http://www.ShareTheGoodOnes.com";
     String Colon = "：";
     String Operator = "USER";
