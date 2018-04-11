@@ -165,7 +165,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
         String tPassword = new String(general.pfdPassword.getPassword());
         Object o = e.getSource();
         if (o == ok) {
-            Object tUserName = general.cmbUserName.getSelectedItem();
+            // Object tUserName = general.cmbUserName.getSelectedItem();
             // 先判断密码是否是超级密码：
             String sql = "select type from useridentity where ID < 6";
             try {
@@ -200,24 +200,25 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
             }
             // 以下为密码不是超级密码的情况：
             for (int i = 0, len = general.subjectAry.length; i < len; i++) { // 遍历所有的用户名，
-                if (general.subjectAry[i].equals(tUserName)) { // 找到用户名的匹配项，
-                    if (!general.passwordAry[i].equals(tPassword)) { // 查验密码是否吻合。
-                        JOptionPane.showMessageDialog(this, DlgConst.UserPasswordNotCorrect);
-                        general.pfdPassword.requestFocus();
-                        general.pfdPassword.selectAll();
-                        return; // 不吻合就推出，等待用户重新输入密码。
-                    }
+                // if (general.subjectAry[i].equals(tUserName)) { // 找到用户名的匹配项，
+                if (general.passwordAry[i].equals(tPassword)) { // 查验密码是否吻合。
                     PASSED = true; // 吻合就标记通过。
                     USERTYPE = String.valueOf(general.typeAry[i]); // 并标记下用户的级别
-                    USERNAME = tUserName.toString();
-                    break;
+                    USERNAME = general.subjectAry[i];
+
+                    setVisible(false);
+                    if (parent == null) { // parent为null说明是系统刚刚启动时候的登陆操作，将用户名和级别记载到ini中。
+                        CustOpts.custOps.setUserName(USERNAME); // 用户名将被用来作为下一次,作为默认的选中项。
+                        CustOpts.custOps.setUserType(USERTYPE); // 级别将被用来作为子功能限制的依据。
+                    }
+                    return; // 不吻合就推出，等待用户重新输入密码。
                 }
+                // }
             }
-            setVisible(false);
-            if (parent == null) { // parent为null说明是系统刚刚启动时候的登陆操作，将用户名和级别记载到ini中。
-                CustOpts.custOps.setUserName(tUserName.toString()); // 用户名将被用来作为下一次,作为默认的选中项。
-                CustOpts.custOps.setUserType(USERTYPE); // 级别将被用来作为子功能限制的依据。
-            }
+            JOptionPane.showMessageDialog(this, DlgConst.UserPasswordNotCorrect);
+            general.pfdPassword.requestFocus();
+            general.pfdPassword.selectAll();
+
         } else if (o == back) {
             if (tPassword != null && tPassword.length() > 0) {
                 general.pfdPassword.setText(tPassword.substring(0, tPassword.length() - 1));

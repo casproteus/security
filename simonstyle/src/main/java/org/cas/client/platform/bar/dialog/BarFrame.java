@@ -30,9 +30,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         if (instance == null) {
             CASControl.ctrl.initModel();
             new LoginDlg(instance).setVisible(true);
-            if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-                CustOpts.custOps.setUserName(LoginDlg.USERNAME);
-            } else {
+            if (LoginDlg.PASSED != true) { // 如果用户选择了确定按钮。
                 return;
             }
             instance = new BarFrame();

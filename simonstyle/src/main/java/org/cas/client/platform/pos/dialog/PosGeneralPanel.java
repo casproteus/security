@@ -1269,7 +1269,7 @@ public class PosGeneralPanel extends JPanel implements ComponentListener, KeyLis
     }
 
     public void initComponents() {
-        String sql = "select ID, SUBJECT from product where code = '' and deleted != 'true'";
+        String sql = "select ID, SUBJECT from product where code = '' and deleted != true";
         try {
             Connection connection = PIMDBModel.getConection();
             Statement statement =

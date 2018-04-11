@@ -133,8 +133,9 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         } else if (o == btnLine_1_9) { // enter the setting mode.(admin interface)
             new LoginDlg(null).setVisible(true);
             if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-                if ("Admin".equals(CustOpts.custOps.getUserName())) {
+                if ("admin".equalsIgnoreCase(CustOpts.custOps.getUserName())) {
                     curSecurityStatus++;
+                    initConponent();
                     // @TODO: might need to do some modification on the interface.
                     reLayout();
                 }
@@ -606,7 +607,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     }
 
     public void initComponents() {
-        String sql = "select ID, SUBJECT from product where code = '' and deleted != 'true'";
+        String sql = "select ID, SUBJECT from product where code = '' and deleted != true";
         try {
             Connection connection = PIMDBModel.getConection();
             Statement statement =

@@ -31,7 +31,6 @@ import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.platform.pimview.pimtable.PIMTableColumn;
-import org.cas.client.platform.pimview.pimtable.PIMTableModelAryBased;
 import org.cas.client.resource.international.DlgConst;
 
 public class CalculatePanel extends JTabbedPane implements ComponentListener, ActionListener {
@@ -78,6 +77,7 @@ public class CalculatePanel extends JTabbedPane implements ComponentListener, Ac
 
         // init contents-------------
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 initHeader();
                 Object[][] tValues = new Object[10][header.length];
@@ -100,26 +100,31 @@ public class CalculatePanel extends JTabbedPane implements ComponentListener, Ac
     }
 
     /** Invoked when the component's size changes. */
+    @Override
     public void componentResized(
             ComponentEvent e) {
         relayout();
     }
 
     /** Invoked when the component's position changes. */
+    @Override
     public void componentMoved(
             ComponentEvent e) {
     }
 
     /** Invoked when the component has been made visible. */
+    @Override
     public void componentShown(
             ComponentEvent e) {
     }
 
     /** Invoked when the component has been made invisible. */
+    @Override
     public void componentHidden(
             ComponentEvent e) {
     }
 
+    @Override
     public void actionPerformed(
             ActionEvent e) {
         Object tSource = e.getSource();
@@ -197,7 +202,7 @@ public class CalculatePanel extends JTabbedPane implements ComponentListener, Ac
                             "Select PRODUCTID, AMOUNT from Output where CONTACTID = "
                                     .concat(String.valueOf(contactIDAry[i])).concat(" and time >= '")
                                     .concat(tmpDate.toString()).concat(" ").concat(tmpTime.toString()).concat("'")
-                                    .concat(" and DELETED != 'true'");
+                                    .concat(" and DELETED != true");
                     try {
                         ResultSet rs =
                                 PIMDBModel.getConection()
@@ -278,7 +283,7 @@ public class CalculatePanel extends JTabbedPane implements ComponentListener, Ac
     }
 
     private String[] initHeader() {
-        String sql = "select ID, SUBJECT, PRICE from Product where DELETED != 'true'";
+        String sql = "select ID, SUBJECT, PRICE from Product where DELETED != true";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()
@@ -315,7 +320,7 @@ public class CalculatePanel extends JTabbedPane implements ComponentListener, Ac
     }
 
     public void initBoxNumbers() {
-        String sql = "select ID, SUBJECT from Contact where anniversary is not null and DELETED != 'true'";
+        String sql = "select ID, SUBJECT from Contact where anniversary is not null and DELETED != true";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()

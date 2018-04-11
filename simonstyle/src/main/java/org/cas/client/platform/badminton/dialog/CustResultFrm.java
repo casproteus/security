@@ -43,6 +43,7 @@ public class CustResultFrm extends JFrame implements ActionListener, FocusListen
     }
 
     /** Invoked when an action occurs. */
+    @Override
     public void actionPerformed(
             ActionEvent e) {
         Object s = e.getSource();
@@ -69,11 +70,13 @@ public class CustResultFrm extends JFrame implements ActionListener, FocusListen
     }
 
     /** Invoked when a component gains the keyboard focus. */
+    @Override
     public void focusGained(
             FocusEvent e) {
     }
 
     /** Invoked when a component loses the keyboard focus. */
+    @Override
     public void focusLost(
             FocusEvent e) {
         Object s = e.getSource();
@@ -92,22 +95,26 @@ public class CustResultFrm extends JFrame implements ActionListener, FocusListen
     }
 
     /** Invoked when the component's size changes. */
+    @Override
     public void componentResized(
             ComponentEvent e) {
         relayout();
     }
 
     /** Invoked when the component's position changes. */
+    @Override
     public void componentMoved(
             ComponentEvent e) {
     }
 
     /** Invoked when the component has been made visible. */
+    @Override
     public void componentShown(
             ComponentEvent e) {
     }
 
     /** Invoked when the component has been made invisible. */
+    @Override
     public void componentHidden(
             ComponentEvent e) {
     }
@@ -172,6 +179,7 @@ public class CustResultFrm extends JFrame implements ActionListener, FocusListen
         cmbVIPNumber.addFocusListener(this);
         cmbVIPNumber.addActionListener(this);
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 fldReceive.requestFocus();
             }
@@ -181,7 +189,7 @@ public class CustResultFrm extends JFrame implements ActionListener, FocusListen
     }
 
     private void initVipCompBox() {
-        String sql = "select ID, SUBJECT, ACCOUNT from contact where FolderID = 102 and DELETED != 'true'";
+        String sql = "select ID, SUBJECT, ACCOUNT from contact where FolderID = 102 and DELETED != true";
 
         try {
             ResultSet rs =

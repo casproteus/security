@@ -12,7 +12,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -171,20 +170,20 @@ class PIMDBConnecter {
      * @关闭后重新打开当前连接。方便内存回收
      */
     void reConnectDb() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if (connection != null)
-                    try {
-                        if (!connection.isClosed())
-                            connection.close();
-                        connection = buildConnection(defaultUserName, defaultPassword);
-                    } catch (SQLException e) {
-                        connection = null;
-                        e.printStackTrace();
-                    }
+        // SwingUtilities.invokeLater(new Runnable() {
+        // @Override
+        // public void run() {
+        if (connection != null)
+            try {
+                if (!connection.isClosed())
+                    connection.close();
+                connection = buildConnection(defaultUserName, defaultPassword);
+            } catch (SQLException e) {
+                connection = null;
+                e.printStackTrace();
             }
-        });
+        // }
+        // });
     }
 
     /**

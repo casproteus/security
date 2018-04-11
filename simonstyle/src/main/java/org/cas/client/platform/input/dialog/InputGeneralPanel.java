@@ -22,9 +22,9 @@ import org.cas.client.platform.casbeans.calendar.CalendarCombo;
 import org.cas.client.platform.cascontrol.dialog.CASDialogKit;
 import org.cas.client.platform.cascontrol.dialog.category.CategoryDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.PIMPool;
-import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.Releasable;
 import org.cas.client.platform.input.InputDefaultViews;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -43,21 +43,25 @@ class InputGeneralPanel extends JScrollPane implements MouseListener, ActionList
     }
 
     /** 当ArrowButton被按下时，记下拿一个Button被按。 */
+    @Override
     public void mousePressed(
             java.awt.event.MouseEvent e) {
     }
 
     /** Invoked when a mouse button has been released on a component. */
+    @Override
     public void mouseReleased(
             java.awt.event.MouseEvent e) {
     }
 
     /** Invoked when the mouse button has been clicked (pressed and released) on a component. */
+    @Override
     public void mouseClicked(
             java.awt.event.MouseEvent e) {
     }
 
     /** Invoked when the mouse enters a component. */
+    @Override
     public void mouseEntered(
             java.awt.event.MouseEvent e) {
     }
@@ -68,11 +72,13 @@ class InputGeneralPanel extends JScrollPane implements MouseListener, ActionList
      * @param e
      *            鼠标事件源
      */
+    @Override
     public void mouseExited(
             java.awt.event.MouseEvent e) {
     }
 
     /** Invoked when an action occurs. 保存ismail的状态。 */
+    @Override
     public void actionPerformed(
             ActionEvent e) {
         Object tmpObj = e.getSource();
@@ -102,6 +108,7 @@ class InputGeneralPanel extends JScrollPane implements MouseListener, ActionList
      *
      * @see java.lang.Thread#run()
      */
+    @Override
     public void run() {
         switch (swingInvoker) {
             case 1:
@@ -125,6 +132,7 @@ class InputGeneralPanel extends JScrollPane implements MouseListener, ActionList
      * 2、此方法中要特别注意监听器的移除、Hashtable、Hashmap、Vector等结构中数据的移除和释放、 视图中UI的卸载等
      *
      */
+    @Override
     public void release() {
         if (fldCode != null) {
             fldCode.setNextFocusableComponent(null);
@@ -363,7 +371,7 @@ class InputGeneralPanel extends JScrollPane implements MouseListener, ActionList
 
     private void initForeignKeys() {
         // for the Employee
-        String sql = "select ID, SUBJECT from Employee".concat(dlg.newFlag ? " where DELETED != 'true'" : "");
+        String sql = "select ID, SUBJECT from Employee".concat(dlg.newFlag ? " where DELETED != true" : "");
         try {
             ResultSet rs =
                     PIMDBModel.getConection()
@@ -390,7 +398,7 @@ class InputGeneralPanel extends JScrollPane implements MouseListener, ActionList
         cmdEmployee.setSelectedIndex(-1);
 
         // for the service.
-        sql = "select ID, SUBJECT from Product".concat(dlg.newFlag ? " where DELETED != 'true'" : "");
+        sql = "select ID, SUBJECT from Product".concat(dlg.newFlag ? " where DELETED != true" : "");
         try {
             ResultSet rs =
                     PIMDBModel.getConection()

@@ -1,7 +1,6 @@
 package org.cas.client.platform.pos.dialog;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -12,7 +11,7 @@ public class PosUtility {
 
     // 先检查是否存在尚未输入完整信息的产品，如果检查到存在这种产品，方法中会自动弹出对话盒要求用户填写详细信息。
     public static void checkUnCompProdInfo() {
-        String sql = "select * from product where subject = '' and DELETED != 'true'"; // 是否存在上没有名字的产品？
+        String sql = "select * from product where subject = '' and DELETED != true"; // 是否存在上没有名字的产品？
         try {
             ResultSet rs =
                     PIMDBModel.getConection()

@@ -90,6 +90,7 @@ public class OpenBoxPanel extends JTabbedPane implements ComponentListener, Acti
 
         // init contents-------------
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 initBoxNumbers(null, null);
             }
@@ -97,26 +98,31 @@ public class OpenBoxPanel extends JTabbedPane implements ComponentListener, Acti
     }
 
     /** Invoked when the component's size changes. */
+    @Override
     public void componentResized(
             ComponentEvent e) {
         relayout();
     }
 
     /** Invoked when the component's position changes. */
+    @Override
     public void componentMoved(
             ComponentEvent e) {
     }
 
     /** Invoked when the component has been made visible. */
+    @Override
     public void componentShown(
             ComponentEvent e) {
     }
 
     /** Invoked when the component has been made invisible. */
+    @Override
     public void componentHidden(
             ComponentEvent e) {
     }
 
+    @Override
     public void actionPerformed(
             ActionEvent e) {
         Object tSource = e.getSource();
@@ -197,7 +203,7 @@ public class OpenBoxPanel extends JTabbedPane implements ComponentListener, Acti
         }
         if (pCate != null || pSex != null)
             sql = sql.concat("and ");
-        sql = sql.concat("anniversary is null and DELETED != 'true'");
+        sql = sql.concat("anniversary is null and DELETED != true");
         try {
             ResultSet rs =
                     PIMDBModel.getConection()

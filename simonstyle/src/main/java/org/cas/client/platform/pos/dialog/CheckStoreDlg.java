@@ -20,7 +20,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -62,6 +61,7 @@ public class CheckStoreDlg extends JDialog implements ICASDialog, ActionListener
      * 对话盒的布局独立出来，为了在对话盒尺寸发生改变后，界面各元素能够重新布局， 使整体保持美观。尤其在Linux系列的操作系统上，所有的对话盒都必须准备好应对用户的拖拉改变尺寸。
      * @NOTE:因为setBounds方法本身不会触发事件导致重新布局，所以本方法中设置Bounds之后调用了reLayout。
      */
+    @Override
     public void reLayout() {
         srpContent.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP
                 * 2, getHeight() - CustOpts.SIZE_TITLE - CustOpts.SIZE_EDGE - CustOpts.VER_GAP * 3
@@ -94,27 +94,33 @@ public class CheckStoreDlg extends JDialog implements ICASDialog, ActionListener
         validate();
     }
 
+    @Override
     public PIMRecord getContents() {
         return null;
     }
 
+    @Override
     public boolean setContents(
             PIMRecord prmRecord) {
         return true;
     }
 
+    @Override
     public void makeBestUseOfTime() {
     }
 
+    @Override
     public void addAttach(
             File[] file,
             Vector actualAttachFiles) {
     }
 
+    @Override
     public PIMTextPane getTextPane() {
         return null;
     }
 
+    @Override
     public void release() {
         btnClose.removeActionListener(this);
         btnDelete.removeActionListener(this);
@@ -124,27 +130,33 @@ public class CheckStoreDlg extends JDialog implements ICASDialog, ActionListener
         System.gc();// @TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
     }
 
+    @Override
     public void componentResized(
             ComponentEvent e) {
         reLayout();
     };
 
+    @Override
     public void componentMoved(
             ComponentEvent e) {
     };
 
+    @Override
     public void componentShown(
             ComponentEvent e) {
     };
 
+    @Override
     public void componentHidden(
             ComponentEvent e) {
     };
 
+    @Override
     public void keyTyped(
             KeyEvent e) {
     }
 
+    @Override
     public void keyPressed(
             KeyEvent e) {
         Object o = e.getSource();
@@ -166,10 +178,12 @@ public class CheckStoreDlg extends JDialog implements ICASDialog, ActionListener
         }
     }
 
+    @Override
     public void keyReleased(
             KeyEvent e) {
     }
 
+    @Override
     public void actionPerformed(
             ActionEvent e) {
         Object o = e.getSource();
@@ -232,6 +246,7 @@ public class CheckStoreDlg extends JDialog implements ICASDialog, ActionListener
         }
     }
 
+    @Override
     public void mouseClicked(
             MouseEvent e) {
         if (e.getClickCount() > 1) {
@@ -281,26 +296,32 @@ public class CheckStoreDlg extends JDialog implements ICASDialog, ActionListener
         }
     }
 
+    @Override
     public void mousePressed(
             MouseEvent e) {
     }
 
+    @Override
     public void mouseReleased(
             MouseEvent e) {
     }
 
+    @Override
     public void mouseEntered(
             MouseEvent e) {
     }
 
+    @Override
     public void mouseExited(
             MouseEvent e) {
     }
 
+    @Override
     public Container getContainer() {
         return getContentPane();
     }
 
+    @Override
     public void focusGained(
             FocusEvent e) {
         Object o = e.getSource();
@@ -308,20 +329,24 @@ public class CheckStoreDlg extends JDialog implements ICASDialog, ActionListener
             ((JTextField) o).selectAll();
     }
 
+    @Override
     public void focusLost(
             FocusEvent e) {
     }
 
+    @Override
     public void insertUpdate(
             DocumentEvent e) {
         syncScroll(tfdProdCode.getText());
     }
 
+    @Override
     public void removeUpdate(
             DocumentEvent e) {
         syncScroll(tfdProdCode.getText());
     }
 
+    @Override
     public void changedUpdate(
             DocumentEvent e) {
         syncScroll(tfdProdCode.getText());
@@ -405,6 +430,7 @@ public class CheckStoreDlg extends JDialog implements ICASDialog, ActionListener
         getContentPane().addComponentListener(this);
         // initContents--------------
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 initTable();
             }
@@ -414,7 +440,7 @@ public class CheckStoreDlg extends JDialog implements ICASDialog, ActionListener
     private void initTable() {
         Object[][] tValues = null;
         String sql =
-                "select ID, CODE, SUBJECT, MNEMONIC, STORE, UNIT, PRICE, CATEGORY, CONTENT, COST from Product where DELETED != 'true'";
+                "select ID, CODE, SUBJECT, MNEMONIC, STORE, UNIT, PRICE, CATEGORY, CONTENT, COST from Product where DELETED != true";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()

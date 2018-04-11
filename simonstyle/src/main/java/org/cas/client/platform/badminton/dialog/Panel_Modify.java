@@ -21,9 +21,9 @@ import org.cas.client.platform.CASControl;
 import org.cas.client.platform.ICASModel;
 import org.cas.client.platform.cascontrol.dialog.category.CategoryDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.PIMPool;
-import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.contact.ContactDefaultViews;
 import org.cas.client.platform.employee.EmployeeDefaultViews;
 import org.cas.client.platform.input.InputDefaultViews;
@@ -171,8 +171,8 @@ public class Panel_Modify extends JPanel implements ActionListener {
                 - lblMonLeft.getX() - lblMonLeft.getWidth() - CustOpts.HOR_GAP, CustOpts.BTN_HEIGHT);
 
         lblEmpNumber.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblWidth, CustOpts.BTN_HEIGHT);
-        lblEmpName.setBounds((int) (tabEmploy.getWidth() / 3), CustOpts.VER_GAP, lblWidth, CustOpts.BTN_HEIGHT);
-        btnEmpCat.setBounds((int) (tabEmploy.getWidth() * 2 / 3), CustOpts.VER_GAP, lblWidth, CustOpts.BTN_HEIGHT - 1);
+        lblEmpName.setBounds(tabEmploy.getWidth() / 3, CustOpts.VER_GAP, lblWidth, CustOpts.BTN_HEIGHT);
+        btnEmpCat.setBounds(tabEmploy.getWidth() * 2 / 3, CustOpts.VER_GAP, lblWidth, CustOpts.BTN_HEIGHT - 1);
         cmbEmpNum.setBounds(lblEmpNumber.getX() + lblEmpNumber.getWidth(), CustOpts.VER_GAP, lblEmpName.getX()
                 - lblEmpNumber.getX() - lblEmpNumber.getWidth() - CustOpts.HOR_GAP, CustOpts.BTN_HEIGHT);
         cmbEmpName.setBounds(lblEmpName.getX() + lblEmpName.getWidth(), CustOpts.VER_GAP,
@@ -196,6 +196,7 @@ public class Panel_Modify extends JPanel implements ActionListener {
     }
 
     /** Invoked when an action occurs. */
+    @Override
     public void actionPerformed(
             ActionEvent e) {
         Object src = e.getSource();
@@ -242,7 +243,7 @@ public class Panel_Modify extends JPanel implements ActionListener {
 
     private void initComboBox() {
         // Box-----------
-        String sql = "select ID, SUBJECT, category from contact where DELETED != 'true' and FOLDERID = 101";
+        String sql = "select ID, SUBJECT, category from contact where DELETED != true and FOLDERID = 101";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()
@@ -273,7 +274,7 @@ public class Panel_Modify extends JPanel implements ActionListener {
         cmbBoxNum.setSelectedIndex(-1);
 
         // VIP----------------------
-        sql = "select ID, SUBJECT, ACCOUNT from contact where DELETED != 'true' and FOLDERID = 102";
+        sql = "select ID, SUBJECT, ACCOUNT from contact where DELETED != true and FOLDERID = 102";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()
@@ -304,7 +305,7 @@ public class Panel_Modify extends JPanel implements ActionListener {
         cmbVipNum.setSelectedIndex(-1);
 
         // Employee----------------
-        sql = "select ID, SUBJECT, CODE, CATEGORY from employee where DELETED != 'true'";
+        sql = "select ID, SUBJECT, CODE, CATEGORY from employee where DELETED != true";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()
@@ -339,7 +340,7 @@ public class Panel_Modify extends JPanel implements ActionListener {
         cmbEmpName.setSelectedIndex(-1);
 
         // Product----------------
-        sql = "select ID, SUBJECT, PRICE, CATEGORY from product where DELETED != 'true'";
+        sql = "select ID, SUBJECT, PRICE, CATEGORY from product where DELETED != true";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()
@@ -374,7 +375,7 @@ public class Panel_Modify extends JPanel implements ActionListener {
         cmbProdName.setModel(new DefaultComboBoxModel(prodSubAry));
         cmbProdName.setSelectedIndex(-1);
         // cost----------------
-        sql = "select ID, PRODUCTID, TOLTALPRICE from input where DELETED != 'true'";
+        sql = "select ID, PRODUCTID, TOLTALPRICE from input where DELETED != true";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()

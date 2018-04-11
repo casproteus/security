@@ -851,7 +851,7 @@ public class AddStoreDlg extends JDialog implements ICASDialog, ActionListener, 
     }
 
     private void initComponents() {
-        String sql = "select ID, SUBJECT from product where code = '' and deleted != 'true'";
+        String sql = "select ID, SUBJECT from product where code = '' and deleted != true";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()
@@ -872,7 +872,7 @@ public class AddStoreDlg extends JDialog implements ICASDialog, ActionListener, 
             }
             rs.close();// 关闭
 
-            sql = "select ID, SUBJECT from Contact where deleted != 'true'  and FOLDERID = 104";
+            sql = "select ID, SUBJECT from Contact where deleted != true  and FOLDERID = 104";
             rs =
                     PIMDBModel.getConection()
                             .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)

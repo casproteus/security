@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -84,6 +83,7 @@ public class AddServicePanel extends JTabbedPane implements ComponentListener, A
         ok.addActionListener(this);
 
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 initComponents();
             }
@@ -91,26 +91,31 @@ public class AddServicePanel extends JTabbedPane implements ComponentListener, A
     }
 
     /** Invoked when the component's size changes. */
+    @Override
     public void componentResized(
             ComponentEvent e) {
         relayout();
     }
 
     /** Invoked when the component's position changes. */
+    @Override
     public void componentMoved(
             ComponentEvent e) {
     }
 
     /** Invoked when the component has been made visible. */
+    @Override
     public void componentShown(
             ComponentEvent e) {
     }
 
     /** Invoked when the component has been made invisible. */
+    @Override
     public void componentHidden(
             ComponentEvent e) {
     }
 
+    @Override
     public void actionPerformed(
             ActionEvent e) {
         Object tSource = e.getSource();
@@ -205,7 +210,7 @@ public class AddServicePanel extends JTabbedPane implements ComponentListener, A
 
     private void initComponents() {
         // for the Employee
-        String sql = "select ID, SUBJECT from Employee where DELETED != 'true'";
+        String sql = "select ID, SUBJECT from Employee where DELETED != true";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()
@@ -232,7 +237,7 @@ public class AddServicePanel extends JTabbedPane implements ComponentListener, A
         cmbEmployee.setSelectedIndex(-1);
 
         // for the service.
-        sql = "select ID, SUBJECT from Product where DELETED != 'true'";
+        sql = "select ID, SUBJECT from Product where DELETED != true";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()
@@ -264,7 +269,7 @@ public class AddServicePanel extends JTabbedPane implements ComponentListener, A
     }
 
     public void initBoxNumbers() {
-        String sql = "select ID, SUBJECT from Contact where anniversary is not null and DELETED != 'true'";
+        String sql = "select ID, SUBJECT from Contact where anniversary is not null and DELETED != true";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()

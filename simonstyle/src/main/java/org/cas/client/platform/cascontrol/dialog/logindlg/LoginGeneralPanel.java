@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -141,8 +142,8 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
             ErrorUtil.write(e);
         }
 
-        // cmbUserName.setModel(new DefaultComboBoxModel(subjectAry));
-        // cmbUserName.setSelectedIndex(0);
+        cmbUserName.setModel(new DefaultComboBoxModel(subjectAry));
+        cmbUserName.setSelectedIndex(0);
     }
 
     /** 本方法用于设置View上各个组件的尺寸。 */

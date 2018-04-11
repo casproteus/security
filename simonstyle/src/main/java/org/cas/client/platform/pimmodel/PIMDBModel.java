@@ -2192,7 +2192,7 @@ public final class PIMDBModel extends AbstractModel {
 
             // UPDATE table SET column = Expression [, ...] ;
 
-            String updateSql = "UPDATE ACCOUNT SET IS_ACCOUNT_FORBID = 'FALSE'";
+            String updateSql = "UPDATE ACCOUNT SET IS_ACCOUNT_FORBID = FALSE";
             smt.executeUpdate(updateSql);
 
             smt.close();
@@ -3138,7 +3138,7 @@ public final class PIMDBModel extends AbstractModel {
         if (filterString != null)
             sb.append(" WHERE (").append(filterString).append(')');
         else
-            sb.append(" WHERE (FOLDERID = ").append(viewInfo.getPathID()).append(" and DELETED != 'true')");
+            sb.append(" WHERE (FOLDERID = ").append(viewInfo.getPathID()).append(" and DELETED != true)");
 
         String sortInfo = viewInfo.getSortString();// 排序条件字符串
         if (sortInfo != null) {

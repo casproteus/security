@@ -2,7 +2,6 @@ package org.cas.client.platform.magicbath.dialog;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -24,7 +23,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableModel;
 
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -111,6 +109,7 @@ public class CleanSalaryPanel extends JTabbedPane implements ComponentListener, 
 
         // init contents-------------
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 initComponents();
             }
@@ -118,26 +117,31 @@ public class CleanSalaryPanel extends JTabbedPane implements ComponentListener, 
     }
 
     /** Invoked when the component's size changes. */
+    @Override
     public void componentResized(
             ComponentEvent e) {
         relayout();
     }
 
     /** Invoked when the component's position changes. */
+    @Override
     public void componentMoved(
             ComponentEvent e) {
     }
 
     /** Invoked when the component has been made visible. */
+    @Override
     public void componentShown(
             ComponentEvent e) {
     }
 
     /** Invoked when the component has been made invisible. */
+    @Override
     public void componentHidden(
             ComponentEvent e) {
     }
 
+    @Override
     public void actionPerformed(
             ActionEvent e) {
         Object tSource = e.getSource();
@@ -196,7 +200,7 @@ public class CleanSalaryPanel extends JTabbedPane implements ComponentListener, 
                             "Select CONTACTID, PRODUCTID, AMOUNT from Output where EMPLOYEEID = "
                                     .concat(String.valueOf(employeeIDAry[i])).concat(" and time >= '")
                                     .concat(tmpDate.toString()).concat(" ").concat(tmpTime.toString())
-                                    .concat("' and DELETED != 'true'");
+                                    .concat("' and DELETED != true");
                     try {
                         ResultSet rs =
                                 PIMDBModel.getConection()
@@ -268,7 +272,7 @@ public class CleanSalaryPanel extends JTabbedPane implements ComponentListener, 
 
     private void initComponents() {
         // for the Employee
-        String sql = "select ID, SUBJECT from Employee where DELETED != 'true'";
+        String sql = "select ID, SUBJECT from Employee where DELETED != true";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()
@@ -295,7 +299,7 @@ public class CleanSalaryPanel extends JTabbedPane implements ComponentListener, 
         cmbEmployee.setSelectedIndex(-1);
 
         // for the service.
-        sql = "select ID, SUBJECT from Product where DELETED != 'true'";
+        sql = "select ID, SUBJECT from Product where DELETED != true";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()
@@ -320,7 +324,7 @@ public class CleanSalaryPanel extends JTabbedPane implements ComponentListener, 
         }
 
         // for the boxNumber
-        sql = "select ID, SUBJECT from Contact where DELETED != 'true'";
+        sql = "select ID, SUBJECT from Contact where DELETED != true";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()
@@ -345,7 +349,7 @@ public class CleanSalaryPanel extends JTabbedPane implements ComponentListener, 
         }
 
         // for the prices
-        sql = "select PRODUCTID, TOLTALPRICE from Input where DELETED != 'true'";
+        sql = "select PRODUCTID, TOLTALPRICE from Input where DELETED != true";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()

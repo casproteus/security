@@ -46,6 +46,7 @@ public class HangupDlg extends JDialog implements ICASDialog, ActionListener, Co
      * 对话盒的布局独立出来，为了在对话盒尺寸发生改变后，界面各元素能够重新布局， 使整体保持美观。尤其在Linux系列的操作系统上，所有的对话盒都必须准备好应对用户的拖拉改变尺寸。
      * @NOTE:因为setBounds方法本身不会触发事件导致重新布局，所以本方法中设置Bounds之后调用了reLayout。
      */
+    @Override
     public void reLayout() {
         srpContent.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP
                 * 2, getHeight() - CustOpts.SIZE_TITLE - CustOpts.SIZE_EDGE - CustOpts.VER_GAP * 3
@@ -64,33 +65,40 @@ public class HangupDlg extends JDialog implements ICASDialog, ActionListener, Co
         validate();
     }
 
+    @Override
     public PIMRecord getContents() {
         return null;
     }
 
+    @Override
     public boolean setContents(
             PIMRecord prmRecord) {
         return true;
     }
 
+    @Override
     public void makeBestUseOfTime() {
     }
 
+    @Override
     public void addAttach(
             File[] file,
             Vector actualAttachFiles) {
     }
 
+    @Override
     public PIMTextPane getTextPane() {
         return null;
     }
 
+    @Override
     public void release() {
         ok.removeActionListener(this);
         dispose();// 对于对话盒，如果不加这句话，就很难释放掉。
         System.gc();// @TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
     }
 
+    @Override
     public void keyPressed(
             KeyEvent e) {
         if (e.getSource() == ok) {
@@ -101,28 +109,34 @@ public class HangupDlg extends JDialog implements ICASDialog, ActionListener, Co
         }
     }
 
+    @Override
     public void keyReleased(
             KeyEvent e) {
     }
 
+    @Override
     public void keyTyped(
             KeyEvent e) {
     }
 
     /** Invoked when the component's size changes. */
+    @Override
     public void componentResized(
             ComponentEvent e) {
         reLayout();
     };
 
+    @Override
     public void componentMoved(
             ComponentEvent e) {
     };
 
+    @Override
     public void componentShown(
             ComponentEvent e) {
     };
 
+    @Override
     public void componentHidden(
             ComponentEvent e) {
     };
@@ -135,6 +149,7 @@ public class HangupDlg extends JDialog implements ICASDialog, ActionListener, Co
      * @param e
      *            动作事件
      */
+    @Override
     public void actionPerformed(
             ActionEvent e) {
         int tSelectedRow = tblContent.getSelectedRow();
@@ -144,6 +159,7 @@ public class HangupDlg extends JDialog implements ICASDialog, ActionListener, Co
         dispose();
     }
 
+    @Override
     public Container getContainer() {
         return getContentPane();
     }
@@ -187,6 +203,7 @@ public class HangupDlg extends JDialog implements ICASDialog, ActionListener, Co
         getContentPane().addComponentListener(this);
         // initContents--------------
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 initTable();
             }
@@ -210,7 +227,7 @@ public class HangupDlg extends JDialog implements ICASDialog, ActionListener, Co
         tblContent.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
         // Object[][] tValues = null;
         // String sql =
-        // "select CODE, SUBJECT, MNEMONIC, STORE, UNIT, PRICE, CATEGORY, CONTENT from Product where DELETED != 'true'";
+        // "select CODE, SUBJECT, MNEMONIC, STORE, UNIT, PRICE, CATEGORY, CONTENT from Product where DELETED != true";
         // try{
         // ResultSet rs = PIMDBModel.getConection().createStatement(
         // ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(sql);
