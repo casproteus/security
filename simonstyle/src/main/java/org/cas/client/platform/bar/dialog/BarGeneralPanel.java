@@ -61,7 +61,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     public static String startTime;
 
     public BarGeneralPanel() {
-        initConponent();
+        initComponent();
     }
 
     // ComponentListener-----------------------------
@@ -114,30 +114,14 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         } else if (o == btnPageDownCategory) {
         } else if (o == btnPageUpMenu) {
         } else if (o == btnPageDownMenu) {
-        } else if (o == btnLine_3_8) { // Logout
-            if (curSecurityStatus == ADMIN_STATUS) {
-                curSecurityStatus--;
-                // @TODO: might need to do some modification on the interface.
-                reLayout();
-            } else {
-                BarFrame.instance.setVisible(false);
-                new LoginDlg(null).setVisible(true);
-                if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-                    CustOpts.custOps.setUserName(LoginDlg.USERNAME);
-                    lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(
-                            CustOpts.custOps.getUserName()));
-                    reLayout();
-                    BarFrame.instance.setVisible(true);
-                }
-            }
         } else if (o == btnLine_1_9) { // enter the setting mode.(admin interface)
             new LoginDlg(null).setVisible(true);
             if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
                 if ("admin".equalsIgnoreCase(CustOpts.custOps.getUserName())) {
                     curSecurityStatus++;
-                    initConponent();
+                    setStatusMes(BarDlgConst.ADMIN_MODE);
                     // @TODO: might need to do some modification on the interface.
-                    reLayout();
+                    revalidate();
                 }
             }
         } else if (o == btnLine_3_3) { // 盘货,先检查是否存在尚未输入完整信息的产品，如果检查到存
@@ -161,9 +145,25 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             } else
                 // 如果当前的用户已经是管理员了，则弹出对话盒？
                 new Statistic(BarFrame.instance).setVisible(true);
-        } else if (o == btnLine_3_8) {
+        } else if (o == btnLine_3_8) { // Logout
+            if (curSecurityStatus == ADMIN_STATUS) {
+                curSecurityStatus--;
+                // @TODO: might need to do some modification on the interface.
+                setStatusMes(BarDlgConst.USE_MODE);
+            } else {
+                BarFrame.instance.setVisible(false);
+                new LoginDlg(null).setVisible(true);
+                if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+                    CustOpts.custOps.setUserName(LoginDlg.USERNAME);
+                    lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(
+                            CustOpts.custOps.getUserName()));
+                    reLayout();
+                    BarFrame.instance.setVisible(true);
+                }
+            }
+        } else if (o == btnLine_3_9) {
             new BarOptionDlg(BarFrame.instance).setVisible(true);
-        }
+        } 
     }
 
     // Key Listener--------------------------------
@@ -363,7 +363,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             String pDate) {
     }
 
-    private void initConponent() {
+    private void initComponent() {
         int tShoestring = 0;
         try {
             tShoestring = Integer.parseInt((String) CustOpts.custOps.getValue(BarDlgConst.Shoestring));

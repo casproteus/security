@@ -29,6 +29,8 @@ public interface BarDlgConst {
     String MODIFY = "MODIFY";
     String DISC_VOLUMN = "DISC VOLUMN";
 
+    String ADMIN_MODE = "System is in setting mode! Click logout button back to use mode.";
+    String USE_MODE =  "System is in operating mode!";
     String Title = "STGOBar - Copyright 2018 - http://www.ShareTheGoodOnes.com";
     String Colon = "：";
     String Operator = "USER";
