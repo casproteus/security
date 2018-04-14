@@ -59,7 +59,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     int curSecurityStatus = USER_STATUS;
 
     public static String startTime;
-
+    private JToggleButton activeToggleButton;
     public BarGeneralPanel() {
         initComponent();
     }
@@ -114,56 +114,83 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         } else if (o == btnPageDownCategory) {
         } else if (o == btnPageUpMenu) {
         } else if (o == btnPageDownMenu) {
-        } else if (o == btnLine_1_9) { // enter the setting mode.(admin interface)
-            new LoginDlg(null).setVisible(true);
-            if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-                if ("admin".equalsIgnoreCase(CustOpts.custOps.getUserName())) {
-                    curSecurityStatus++;
-                    setStatusMes(BarDlgConst.ADMIN_MODE);
+        } else if ( o instanceof JToggleButton) {
+        	JToggleButton jToggleButton = (JToggleButton)o;
+        	String text = jToggleButton.getText();
+        	if(text == null || text.length() == 0) {	//check if it's empty
+        		if(curSecurityStatus == ADMIN_STATUS) {		//and it's admin mode, add a Category.
+	        		AddCategoryDlg addCategoryDlg = new AddCategoryDlg(BarFrame.instance);
+	        		addCategoryDlg.setVisible(true);
+	        		//add a new category
+        		}
+        	}else {										//if it's not empty
+        		if(!jToggleButton.isSelected()){
+        			//TODO: fill menu buttons with menus belong to this category.
+	        	}else if(curSecurityStatus == ADMIN_STATUS) {
+	        		AddCategoryDlg addCategoryDlg = new AddCategoryDlg(BarFrame.instance);
+	        		//addCategoryDlg.setText(text);
+	        		addCategoryDlg.setVisible(true);
+	        	}
+        	}
+        	//TODO: change active toggle button, and update active menus.
+        	if(activeToggleButton != null) {
+        		activeToggleButton.setSelected(false);
+        	}
+        	activeToggleButton = jToggleButton;
+        	
+        }else if (o instanceof JButton) {
+        	JButton jButton = (JButton)o;
+    		if ( o == btnLine_1_9) { // enter the setting mode.(admin interface)
+    			new LoginDlg(null).setVisible(true);
+                if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+                    if ("admin".equalsIgnoreCase(CustOpts.custOps.getUserName())) {
+                        curSecurityStatus++;
+                        setStatusMes(BarDlgConst.ADMIN_MODE);
+                        // @TODO: might need to do some modification on the interface.
+                        revalidate();
+                    }
+                }
+    		} else if (o == btnLine_3_3) { // 盘货,先检查是否存在尚未输入完整信息的产品，如果检查到存
+                BarUtility.checkUnCompProdInfo(); // 在这种产品，方法中会自动弹出对话盒要求用户填写详细信息。
+                new CheckStoreDlg(BarFrame.instance).setVisible(true);
+            } else if (o == btnLine_3_4) {
+                new AddStoreDlg(BarFrame.instance).setVisible(true);
+            } else if (o == btnLine_3_5) {
+                new RefundDlg(BarFrame.instance).setVisible(true);
+            } else if (o == btnLine_3_6) {
+                hangup();
+            } else if (o == btnLine_3_7) {
+                int tType = Integer.parseInt(CustOpts.custOps.getUserType());
+                if (tType > 0) {// 如果当前登陆用户是个普通员工，则显示普通登陆对话盒。等待再次登陆
+                    new LoginDlg(BarFrame.instance).setVisible(true);// 结果不会被保存到ini
+                    if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+                        int tLevel = Integer.parseInt(LoginDlg.USERTYPE);
+                        if (tLevel <= 0)// 进一步判断，如果新登陆是经理，弹出对话盒
+                            new Statistic(BarFrame.instance).setVisible(true);
+                    }
+                } else
+                    // 如果当前的用户已经是管理员了，则弹出对话盒？
+                    new Statistic(BarFrame.instance).setVisible(true);
+            } else if (o == btnLine_3_8) { // Logout
+                if (curSecurityStatus == ADMIN_STATUS) {
+                    curSecurityStatus--;
                     // @TODO: might need to do some modification on the interface.
-                    revalidate();
+                    setStatusMes(BarDlgConst.USE_MODE);
+                } else {
+                    BarFrame.instance.setVisible(false);
+                    new LoginDlg(null).setVisible(true);
+                    if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+                        CustOpts.custOps.setUserName(LoginDlg.USERNAME);
+                        lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(
+                                CustOpts.custOps.getUserName()));
+                        reLayout();
+                        BarFrame.instance.setVisible(true);
+                    }
                 }
-            }
-        } else if (o == btnLine_3_3) { // 盘货,先检查是否存在尚未输入完整信息的产品，如果检查到存
-            BarUtility.checkUnCompProdInfo(); // 在这种产品，方法中会自动弹出对话盒要求用户填写详细信息。
-            new CheckStoreDlg(BarFrame.instance).setVisible(true);
-        } else if (o == btnLine_3_4) {
-            new AddStoreDlg(BarFrame.instance).setVisible(true);
-        } else if (o == btnLine_3_5) {
-            new RefundDlg(BarFrame.instance).setVisible(true);
-        } else if (o == btnLine_3_6) {
-            hangup();
-        } else if (o == btnLine_3_7) {
-            int tType = Integer.parseInt(CustOpts.custOps.getUserType());
-            if (tType > 0) {// 如果当前登陆用户是个普通员工，则显示普通登陆对话盒。等待再次登陆
-                new LoginDlg(BarFrame.instance).setVisible(true);// 结果不会被保存到ini
-                if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-                    int tLevel = Integer.parseInt(LoginDlg.USERTYPE);
-                    if (tLevel <= 0)// 进一步判断，如果新登陆是经理，弹出对话盒
-                        new Statistic(BarFrame.instance).setVisible(true);
-                }
-            } else
-                // 如果当前的用户已经是管理员了，则弹出对话盒？
-                new Statistic(BarFrame.instance).setVisible(true);
-        } else if (o == btnLine_3_8) { // Logout
-            if (curSecurityStatus == ADMIN_STATUS) {
-                curSecurityStatus--;
-                // @TODO: might need to do some modification on the interface.
-                setStatusMes(BarDlgConst.USE_MODE);
-            } else {
-                BarFrame.instance.setVisible(false);
-                new LoginDlg(null).setVisible(true);
-                if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-                    CustOpts.custOps.setUserName(LoginDlg.USERNAME);
-                    lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(
-                            CustOpts.custOps.getUserName()));
-                    reLayout();
-                    BarFrame.instance.setVisible(true);
-                }
-            }
-        } else if (o == btnLine_3_9) {
-            new BarOptionDlg(BarFrame.instance).setVisible(true);
-        } 
+            } else if (o == btnLine_3_9) {
+                new BarOptionDlg(BarFrame.instance).setVisible(true);
+            } 
+        }
     }
 
     // Key Listener--------------------------------
