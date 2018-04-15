@@ -35,6 +35,7 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
+import org.cas.client.platform.cascontrol.dialog.category.AddCategoryDlg;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -47,6 +48,7 @@ import org.cas.client.platform.pimview.pimtable.PIMTableColumn;
 import org.cas.client.platform.pos.dialog.statistics.Statistic;
 import org.cas.client.platform.refund.dialog.RefundDlg;
 import org.cas.client.resource.international.PaneConsts;
+import org.hsqldb.index.Index;
 
 //Identity表应该和Employ表合并。
 public class BarGeneralPanel extends JPanel implements ComponentListener, KeyListener, ActionListener, FocusListener {
@@ -57,9 +59,15 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     final int USER_STATUS = 1;
     final int ADMIN_STATUS = 2;
     int curSecurityStatus = USER_STATUS;
+    
+    int categoryBtnPageNum = 0;
+    int categoryNumPerPage = 0;
 
+    int menuBtnPageNum = 0;
+    int menuNumPerPage = 0;
+    
     public static String startTime;
-    private JToggleButton activeToggleButton;
+    private CategoryToggle activeToggleButton;
     public BarGeneralPanel() {
         initComponent();
     }
@@ -114,42 +122,48 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         } else if (o == btnPageDownCategory) {
         } else if (o == btnPageUpMenu) {
         } else if (o == btnPageDownMenu) {
-        } else if ( o instanceof JToggleButton) {
-        	JToggleButton jToggleButton = (JToggleButton)o;
-        	String text = jToggleButton.getText();
+        } else if ( o instanceof CategoryToggle) {
+        	CategoryToggle categoryToggle = (CategoryToggle)o;
+        	String text = categoryToggle.getText();
         	if(text == null || text.length() == 0) {	//check if it's empty
         		if(curSecurityStatus == ADMIN_STATUS) {		//and it's admin mode, add a Category.
 	        		AddCategoryDlg addCategoryDlg = new AddCategoryDlg(BarFrame.instance);
+	        		addCategoryDlg.setIndex(categoryToggle.getIndex() + (categoryBtnPageNum * categoryNumPerPage));
 	        		addCategoryDlg.setVisible(true);
+	        		initCategoryAndMenus();
+	        		reLayout();
 	        		//add a new category
+        		}else {
+        			if(adminAuthentication()) {
+        				AddCategoryDlg addCategoryDlg = new AddCategoryDlg(BarFrame.instance);
+        				addCategoryDlg.setIndex(categoryToggle.getIndex() + (categoryBtnPageNum * categoryNumPerPage));
+    	        		addCategoryDlg.setVisible(true);
+    	        		initCategoryAndMenus();
+    	        		reLayout();
+        			}
         		}
         	}else {										//if it's not empty
-        		if(!jToggleButton.isSelected()){
+        		if(!categoryToggle.isSelected()){
         			//TODO: fill menu buttons with menus belong to this category.
 	        	}else if(curSecurityStatus == ADMIN_STATUS) {
 	        		AddCategoryDlg addCategoryDlg = new AddCategoryDlg(BarFrame.instance);
-	        		//addCategoryDlg.setText(text);
+	        		addCategoryDlg.setText(text);
+	        		addCategoryDlg.setIndex(categoryToggle.getIndex() + (categoryBtnPageNum * categoryNumPerPage));
 	        		addCategoryDlg.setVisible(true);
+	        		initCategoryAndMenus();
+	        		reLayout();
 	        	}
         	}
         	//TODO: change active toggle button, and update active menus.
         	if(activeToggleButton != null) {
         		activeToggleButton.setSelected(false);
         	}
-        	activeToggleButton = jToggleButton;
+        	activeToggleButton = categoryToggle;
         	
         }else if (o instanceof JButton) {
         	JButton jButton = (JButton)o;
     		if ( o == btnLine_1_9) { // enter the setting mode.(admin interface)
-    			new LoginDlg(null).setVisible(true);
-                if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-                    if ("admin".equalsIgnoreCase(CustOpts.custOps.getUserName())) {
-                        curSecurityStatus++;
-                        setStatusMes(BarDlgConst.ADMIN_MODE);
-                        // @TODO: might need to do some modification on the interface.
-                        revalidate();
-                    }
-                }
+    			adminAuthentication();
     		} else if (o == btnLine_3_3) { // 盘货,先检查是否存在尚未输入完整信息的产品，如果检查到存
                 BarUtility.checkUnCompProdInfo(); // 在这种产品，方法中会自动弹出对话盒要求用户填写详细信息。
                 new CheckStoreDlg(BarFrame.instance).setVisible(true);
@@ -192,7 +206,20 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             } 
         }
     }
-
+    
+    private boolean adminAuthentication() {
+    	new LoginDlg(null).setVisible(true);
+        if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+            if ("admin".equalsIgnoreCase(CustOpts.custOps.getUserName())) {
+                curSecurityStatus++;
+                setStatusMes(BarDlgConst.ADMIN_MODE);
+                // @TODO: might need to do some modification on the interface.
+                revalidate();
+                return true;
+            }
+        }
+        return false;
+    }
     // Key Listener--------------------------------
     @Override
     public void keyPressed(
@@ -451,36 +478,6 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         srpContent = new PIMScrollPane(tblContent);
         lblStatus = new JLabel();
 
-        // menu buttons---------
-        categoryColumn = (categoryColumn == null || categoryColumn < 4) ? 5 : categoryColumn;
-        categoryRow = (categoryRow == null || categoryRow < 1 || categoryRow > 9) ? 3 : categoryRow;
-        menuColumn = (menuColumn == null || menuColumn < 1) ? 4 : menuColumn;
-        menuRow = (menuRow == null || menuRow < 1) ? 4 : menuRow;
-
-        for (int r = 0; r < categoryRow; r++) {
-            ArrayList<JToggleButton> btnCategoryArry = new ArrayList<JToggleButton>();
-            for (int c = 0; c < categoryColumn; c++) {
-                JToggleButton btnCategory = new JToggleButton("");
-                btnCategory.setMargin(new Insets(0, 0, 0, 0));
-                add(btnCategory);
-                btnCategory.addActionListener(this);
-                btnCategoryArry.add(btnCategory);
-            }
-            categoryMatrix.add(btnCategoryArry);
-        }
-
-        for (int r = 0; r < menuRow; r++) {
-            ArrayList<JButton> btnMenuArry = new ArrayList<JButton>();
-            for (int c = 0; c < menuColumn; c++) {
-                JButton btnMenu = new JButton("");
-                btnMenu.setMargin(new Insets(0, 0, 0, 0));
-                add(btnMenu);
-                btnMenu.addActionListener(this);
-                btnMenuArry.add(btnMenu);
-            }
-            menuMatrix.add(btnMenuArry);
-        }
-
         // properties
         setLayout(null);
 
@@ -527,7 +524,12 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         btnLine_3_5.setFocusable(false);
 
         tblContent.setFocusable(false);
-
+        
+        //disables
+        btnPageUpCategory.setEnabled(false);
+        btnPageUpMenu.setEnabled(false);
+        btnPageUpTable.setEnabled(false);
+        
         // built
         add(lblOperator);
         add(lblShoestring);
@@ -622,43 +624,127 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         btnLine_1_7.addActionListener(this);
         btnLine_1_8.addActionListener(this);
         btnLine_1_9.addActionListener(this);
+        
         // initContents--------------
-        // SwingUtilities.invokeLater(new Runnable() { //@NOTE: it seems that it's not promised to be called before ui
-        // updated.
-        // @Override
-        // public void run() {
-        initComponents();
+        initCategoryAndMenus();
         initTable();
-        // }
-        // });
     }
-
-    public void initComponents() {
-        String sql = "select ID, SUBJECT from product where code = '' and deleted != true";
+    
+    public void initCategoryAndMenus() {
         try {
             Connection connection = PIMDBModel.getConection();
             Statement statement =
                     connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ResultSet rs = statement.executeQuery(sql);
-            rs.afterLast();
-            rs.relative(-1);
-            int tmpPos = rs.getRow();
+
+        	//load all the products----------------------------
+            ResultSet productRS = statement.executeQuery("select ID, SUBJECT from product where code = '' and deleted != true");
+            productRS.afterLast();
+            productRS.relative(-1);
+            int tmpPos = productRS.getRow();
             prodIDAry = new int[tmpPos];
             prodSubjectAry = new String[tmpPos];
-            rs.beforeFirst();
+            productRS.beforeFirst();
 
             tmpPos = 0;
-            while (rs.next()) {
-                prodIDAry[tmpPos] = rs.getInt("ID");
-                prodSubjectAry[tmpPos] = rs.getString("SUBJECT");
+            while (productRS.next()) {
+                prodIDAry[tmpPos] = productRS.getInt("ID");
+                prodSubjectAry[tmpPos] = productRS.getString("SUBJECT");
                 tmpPos++;
             }
-            rs.close();// 关闭
+            productRS.close();// 关闭
+            
+            //load all the categorys---------------------------
+            ResultSet categoryRS = statement.executeQuery("select ID, NAME from CATEGORY order by DSP_INDEX");
+            categoryRS.afterLast();
+            categoryRS.relative(-1);
+            tmpPos = categoryRS.getRow();
+            categoryIdAry = new int[tmpPos];
+            categorySubjectAry = new String[tmpPos];
+            categoryRS.beforeFirst();
+
+            tmpPos = 0;
+            while (categoryRS.next()) {
+            	categoryIdAry[tmpPos] = categoryRS.getInt("ID");
+            	categorySubjectAry[tmpPos] = categoryRS.getString("NAME");
+                tmpPos++;
+            }
+            categoryRS.close();// 关闭
+
         } catch (Exception e) {
             ErrorUtil.write(e);
         }
+        reInitCategoryAndMenuBtns();
     }
 
+    private void reInitCategoryAndMenuBtns(){
+    	 // menu and category buttons must be init after initContent---------
+        categoryColumn = (categoryColumn == null || categoryColumn < 4) ? 5 : categoryColumn;
+        categoryRow = (categoryRow == null || categoryRow < 1 || categoryRow > 9) ? 3 : categoryRow;
+        menuColumn = (menuColumn == null || menuColumn < 1) ? 4 : menuColumn;
+        menuRow = (menuRow == null || menuRow < 1) ? 4 : menuRow;
+
+        for (int r = 0; r < categoryRow; r++) {
+        	if(r < categoryMatrix.size()) {
+	            for (int c = 0; c < categoryColumn; c++) {
+	            	if(c < categoryMatrix.get(r).size())
+	            		remove(categoryMatrix.get(r).get(c));
+	            }
+        	}
+        }
+
+        for (int r = 0; r < menuRow; r++) {
+        	if(r < menuMatrix.size()) {
+	            for (int c = 0; c < menuColumn; c++) {
+	            	if(c < menuMatrix.get(r).size())
+	            		remove(menuMatrix.get(r).get(c));
+	            }
+        	}
+        }
+        categoryMatrix.clear();
+        menuMatrix.clear();
+
+        int dspIndex = 0;
+        dspIndex = 0;
+        for (int r = 0; r < categoryRow; r++) {
+            ArrayList<CategoryToggle> btnCategoryArry = new ArrayList<CategoryToggle>();
+            for (int c = 0; c < categoryColumn; c++) {
+            	dspIndex++;
+            	CategoryToggle btnCategory = new CategoryToggle(dspIndex);
+                btnCategory.setMargin(new Insets(0, 0, 0, 0));
+                add(btnCategory);
+                btnCategory.addActionListener(this);
+                btnCategoryArry.add(btnCategory);
+                if(dspIndex <= categorySubjectAry.length) {
+            		btnCategory.setText(categorySubjectAry[dspIndex - 1]);
+            	}else {
+            		btnPageDownCategory.setEnabled(false);
+            	}
+            }
+            categoryMatrix.add(btnCategoryArry);
+        }
+        categoryNumPerPage = dspIndex;
+        
+        dspIndex = 0;
+        for (int r = 0; r < menuRow; r++) {
+            ArrayList<JButton> btnMenuArry = new ArrayList<JButton>();
+            for (int c = 0; c < menuColumn; c++) {
+            	dspIndex++;
+                JButton btnMenu = new JButton("");
+                btnMenu.setMargin(new Insets(0, 0, 0, 0));
+                add(btnMenu);
+                btnMenu.addActionListener(this);
+                btnMenuArry.add(btnMenu);
+                if(dspIndex <= prodSubjectAry.length) {
+                	btnMenu.setText(prodSubjectAry[dspIndex - 1]);
+                }else {
+                	btnPageDownMenu.setEnabled(false);
+                }
+            }
+            menuMatrix.add(btnMenuArry);
+        }
+        menuNumPerPage = dspIndex;
+    }
+    
     private void initTable() {
         Object[][] tValues = new Object[1][header.length];
         tblContent.setDataVector(tValues, header);
@@ -789,12 +875,11 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         int categeryBtnWidth = (widthMenuArea - CustOpts.HOR_GAP * (categoryColumn - 1)) / categoryColumn;
         int categeryBtnHeight =
                 (int) ((topAreaHeight * categoryHeight - CustOpts.VER_GAP * (categoryRow - 1)) / categoryRow);
+        
         for (int r = 0; r < categoryRow; r++) {
             for (int c = 0; c < categoryColumn; c++) {
-                categoryMatrix
-                        .get(r)
-                        .get(c)
-                        .setBounds(xMenuArea + (categeryBtnWidth + CustOpts.HOR_GAP) * c,
+            	JToggleButton toggleButton = categoryMatrix.get(r).get(c);
+            	toggleButton.setBounds(xMenuArea + (categeryBtnWidth + CustOpts.HOR_GAP) * c,
                                 srpContent.getY() + (categeryBtnHeight + CustOpts.VER_GAP) * r, categeryBtnWidth,
                                 categeryBtnHeight);
             }
@@ -958,7 +1043,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     Integer menuColumn = (Integer) CustOpts.custOps.hash2.get("menuColumn");
     Integer menuRow = (Integer) CustOpts.custOps.hash2.get("menuRow");
 
-    private ArrayList<ArrayList<JToggleButton>> categoryMatrix = new ArrayList<ArrayList<JToggleButton>>();
+    private ArrayList<ArrayList<CategoryToggle>> categoryMatrix = new ArrayList<ArrayList<CategoryToggle>>();
     private ArrayList<ArrayList<JButton>> menuMatrix = new ArrayList<ArrayList<JButton>>();
 
     private PIMTable tblContent;
@@ -969,7 +1054,20 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     private float shouldReceive;
     private int[] prodIDAry;
     private String[] prodSubjectAry;
+    private int[] categoryIdAry;
+    private String[] categorySubjectAry;
     private String[] header = new String[] { BarDlgConst.ProdNumber, BarDlgConst.ProdName, BarDlgConst.Count,
             BarDlgConst.Price, BarDlgConst.Subtotal };
     private DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+    
+    //============================================================
+    private class CategoryToggle extends JToggleButton{
+    	int index = 0;
+    	public CategoryToggle(int index) {
+    		this.index = index;
+    	}
+    	public int getIndex() {
+    		return index;
+    	}
+    }
 }

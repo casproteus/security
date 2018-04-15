@@ -16,8 +16,8 @@ public interface DlgConst
     String NodeDelNotAllow = "当前选中的节点是系统预设的节点，不可以删除。用户只可以对自己增加的节点进行删除操作。";
 
     
-    String OK = "确定(O)";			// text of ok button
-    String CANCEL = "取消(C)"; 		// text of cancel button
+    String OK = "OK";			// text of ok button
+    String CANCEL = "Cancel"; 		// text of cancel button
     String APPLY = "应用(A)";	// text of apply button
     String YES = "是(Y)";
     String NO = "否(N)";
@@ -224,4 +224,7 @@ public interface DlgConst
     String UNNORMALCLOSED = "为确保数据的安全性，请尽量不要非正常关闭程序。";
     String DEFAULTDBISREADY = "默认数据库创建完成！";
     String COMFIRMDELETEACTION = "该动作将导致选定的记录被删除，您确定吗？\n请选择[是]确定删除，或选择[否]取消删除。";
+    
+
+    String CategoryNameInUse = "The category name inputted is alreay used, please choose an other.";
 }

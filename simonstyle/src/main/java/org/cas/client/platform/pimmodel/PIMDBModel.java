@@ -1271,7 +1271,7 @@ public final class PIMDBModel extends AbstractModel {
             Statement smt = conn.createStatement();// 删除原来的类型表的名字
             smt.executeUpdate(sql);
 
-            PIMDBConnecter.instance.initCategory(conn, smt);// 初始化类型
+            //we don't need to give default set, use will set it.PIMDBConnecter.instance.initCategory(conn, smt);// 初始化类型
 
             smt.close();
             smt = null;

@@ -143,7 +143,9 @@ class PIMDBConnecter {
         {
             sb.setLength(0);
             sb.append("INSERT INTO CATEGORY VALUES(");
-            sb.append(i).append(",'").append(cate[i]).append("');");
+            sb.append(i).append(",'")
+              .append(cate[i]).append("',")
+              .append(i).append(");");
             stmt.executeUpdate(sb.toString());
         }
     }
@@ -250,7 +252,7 @@ class PIMDBConnecter {
         // for(int i = 0, len = CustOpts.custOps.APPNameVec.size(); i < len; i++) //再初始化各个应用的ViewInfo------
         // MainPane.getApp((String) CustOpts.custOps.APPNameVec.get(i)).initInfoInDB();
 
-        initCategory(connection, tmpStateMent);
+        //why do we neet to give a default category set ? initCategory(connection, tmpStateMent);
         initSystemInfo(connection, tmpStateMent); // 此表用来记录当前系统的版本信息,升级时使用
         initDefaulUser(connection, tmpStateMent);
 

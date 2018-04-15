@@ -4,7 +4,10 @@ package org.cas.client.resource.international;
 public interface CategoryDialogConstants
 {
     //
-    public static final String CATEGORYTITLE = "类别";
+    public static final String CATEGORYTITLE = "Category";
+    public static final String POSITION = "Index";
+    public static final String NAME = "Name";
+    public static final String CATEGORYEditorTITLE = "Category Editor";
     
     //
     public static final String TOP_LABEL = "项目属于这些类别(I)";
