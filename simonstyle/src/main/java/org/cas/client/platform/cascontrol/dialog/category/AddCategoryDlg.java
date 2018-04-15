@@ -39,15 +39,21 @@ import org.cas.client.resource.international.DlgConst;
 
 public class AddCategoryDlg  extends JDialog implements ICASDialog, ActionListener, ComponentListener{
 
+	String name;
+	int index;
+	
 	public AddCategoryDlg(JFrame pParent){
 		super(pParent, true);
 		initDialog();
 	}
 
 	public void setText(String name) {
+		this.name = name;
 		this.general.tfdCategoryName.setText(name);
 	}
+	
 	public void setIndex(int index) {
+		this.index = index;
 		this.general.dspIndex.setText(String.valueOf(index));
 	}
 	
@@ -109,35 +115,56 @@ public class AddCategoryDlg  extends JDialog implements ICASDialog, ActionListen
 		Object o = e.getSource();
 		if(o == ok){
 			String tCategory = general.tfdCategoryName.getText();
-			if(tCategory.length() < 1){										//非空判断
-				JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
-				general.tfdCategoryName.grabFocus();
-				return;
-			}		
 			
-			for(int i = 0; i < general.categoryNameAry.length; i++){			//无重复判断
-				if(tCategory.equalsIgnoreCase(general.categoryNameAry[i])){
-					JOptionPane.showMessageDialog(this, DlgConst.CategoryNameInUse);
-					general.tfdCategoryName.setText("");
-					general.tfdCategoryName.grabFocus();
-					return;
+			if(!tCategory.equalsIgnoreCase(name)) {							//if changed, need to check if new value duplicated with others.
+				for(int i = 0; i < general.categoryNameAry.length; i++){
+					if(tCategory.equalsIgnoreCase(general.categoryNameAry[i])){
+						JOptionPane.showMessageDialog(this, DlgConst.CategoryNameInUse);
+						general.tfdCategoryName.setText("");
+						general.tfdCategoryName.grabFocus();
+						return;
+					}
 				}
 			}
 			
 			String sql = "INSERT INTO Category(NAME, DSP_INDEX) VALUES('"
-				.concat(general.tfdCategoryName.getText()).concat("', ")
-				.concat(general.dspIndex.getText()).concat(")");
-			try{
+					.concat(general.tfdCategoryName.getText()).concat("', ")
+					.concat(general.dspIndex.getText()).concat(")");
+			
+			try{												
 				Connection conn = PIMDBModel.getConection();
 				Statement smt = conn.createStatement();
+				
+				int newIndex = Integer.valueOf(general.dspIndex.getText());		//display must be a integer
+				if(newIndex != index) {		//index modified, need to modify affected categories
+					if(newIndex > index) {
+						for(int i = index + 1; i <= newIndex; i++ ) {	//make index smaller
+							sql = "UPDATE Category SET DSP_INDEX = ".concat(String.valueOf(i - 1))
+									.concat(" where DSP_INDEX = ").concat(String.valueOf(i)).concat("");
+							smt.executeUpdate(sql.toString());
+						}
+					}else {
+						for(int i = newIndex; i < index; i++ ) {		//make index bigger
+							sql = "UPDATE Category SET DSP_INDEX = ".concat(String.valueOf(i + 1))
+									.concat(" where DSP_INDEX = ").concat(String.valueOf(i)).concat("");
+							smt.executeUpdate(sql.toString());
+						}
+					}
+				}
+					
+				if(name != null) {
+					sql = "UPDATE Category SET NAME = '".concat(general.tfdCategoryName.getText())
+							.concat("', DSP_INDEX = ").concat(general.dspIndex.getText()).concat(" where NAME = '").concat(name).concat("'");
+				}
+				
 				smt.executeUpdate(sql.toString());
-
 				smt.close();
 				smt = null;
 
 				dispose();
-			}catch (SQLException exp){
-				exp.printStackTrace();
+			}catch(Exception exception) {
+				exception.printStackTrace();
+				return;
 			}
 		}else if(o == cancel){
 			dispose();
