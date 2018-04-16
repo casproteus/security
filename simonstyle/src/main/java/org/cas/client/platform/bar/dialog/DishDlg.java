@@ -11,9 +11,13 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBox;
@@ -39,6 +43,7 @@ import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.platform.pos.dialog.modifyuser.MUserSwichDlg;
 import org.cas.client.platform.pos.dialog.modifyuser.ModifyPasswordDlg;
@@ -54,6 +59,10 @@ import com.jpos.POStest.POStestGUI;
  */
 public class DishDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
 	private int index;
+	private String activeCategory;
+    private int[] categoryIdAry;
+    private String[] categorySubjectAry;
+    
 	public void setIndex(int index) {
 		this.index = index;
 	}
@@ -208,18 +217,6 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         Object o = e.getSource();
         if (o == cbxMenuPomp) {
             CASControl.ctrl.showMainFrame(); // it will show login dialog first.
-        } else if (o == this.cmbCategory) {
-            for (int i = 0; i < 100000000; i++) {
-                String tStr = String.valueOf(480 / 100.0);
-                if (tStr.equals("4.79")) {
-                    ErrorUtil.write(String.valueOf(480 / 100.0));
-                }
-            }
-            POStestGUI gui = new POStestGUI();
-            JFrame frame = new JFrame("POStest");
-            frame.getContentPane().add(gui, BorderLayout.CENTER);
-            frame.setSize(700, 500);
-            frame.setVisible(true);
         } else if (o == ok) {
             int tSize = 12;
             try {
@@ -360,19 +357,53 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         getContentPane().addComponentListener(this);
 
         // Content
-        Object tIsUniOpenCmd = CustOpts.custOps.getValue(BarDlgConst.UniCommand);
-        cbxQST.setSelected(tIsUniOpenCmd == null || tIsUniOpenCmd.equals("true"));
-        if (!cbxQST.isSelected())
-            tfdPrice.setText(tIsUniOpenCmd.toString());
-        
-        Object tUseMoneyBox = CustOpts.custOps.getValue(BarDlgConst.UseMoenyBox);
-        cbxGST.setSelected(tUseMoneyBox == null || tUseMoneyBox.equals("true"));
-        Object tOneKeyOpenBox = CustOpts.custOps.getValue(BarDlgConst.OneKeyOpen);
-        cbxPricePomp.setSelected(tOneKeyOpenBox == null || tOneKeyOpenBox.equals("true"));
-        Object tUsePrinter = CustOpts.custOps.getValue(BarDlgConst.UsePrinter);
+        cbxQST.setSelected(true);
+        cbxGST.setSelected(true);
+        cbxSize1.setSelected(true);
+        cbxPrinter1.setSelected(true);
+        initCategory();
     }
     
-    private PIMSeparator sptName;
+    public void initCategory() {
+        try {
+            Connection connection = PIMDBModel.getConection();
+            Statement statement =
+                    connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            
+            //load all the categorys---------------------------
+            ResultSet categoryRS = statement.executeQuery("select ID, NAME from CATEGORY order by DSP_INDEX");
+            categoryRS.afterLast();
+            categoryRS.relative(-1);
+            int tmpPos = categoryRS.getRow();
+            categoryIdAry = new int[tmpPos];
+            categorySubjectAry = new String[tmpPos];
+            categoryRS.beforeFirst();
+
+            tmpPos = 0;
+            while (categoryRS.next()) {
+            	categoryIdAry[tmpPos] = categoryRS.getInt("ID");
+            	categorySubjectAry[tmpPos] = categoryRS.getString("NAME");
+                tmpPos++;
+            }
+            categoryRS.close();// 关闭
+
+        } catch (Exception e) {
+            ErrorUtil.write(e);
+        }
+        
+        if(categorySubjectAry.length > 0) {
+            cmbCategory.setModel(new DefaultComboBoxModel(categorySubjectAry));
+        }
+    }
+
+	public void setActiveCategory(String activeCategory) {
+		this.activeCategory = activeCategory;
+		if(activeCategory != null) {
+			cmbCategory.setSelectedItem(activeCategory);
+		}
+	}
+
+	private PIMSeparator sptName;
     private JLabel lblLanguage1;
     private JTextField tfdLanguage1;
     private JLabel lblLanguage2;

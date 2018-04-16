@@ -192,7 +192,14 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         			}
         		}
         	}else {										//if it's not empty
-        		if(!categoryToggle.isSelected()){
+        		if(!text.equals(activeToggleButton.getText())) {
+            			//TODO: change active toggle button, and update active menus.
+                	if(activeToggleButton != null) {
+                		activeToggleButton.setSelected(false);
+                	}
+                	activeToggleButton = categoryToggle;
+                	initCategoryAndMenus();
+	        		reLayout();
         			//TODO: fill menu buttons with menus belong to this category.
 	        	}else if(curSecurityStatus == ADMIN_STATUS) {
 	        		AddCategoryDlg addCategoryDlg = new AddCategoryDlg(BarFrame.instance);
@@ -203,11 +210,6 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
 	        		reLayout();
 	        	}
         	}
-        	//TODO: change active toggle button, and update active menus.
-        	if(activeToggleButton != null) {
-        		activeToggleButton.setSelected(false);
-        	}
-        	activeToggleButton = categoryToggle;
         }
         //menubuttons---------------
         else if(o instanceof MenuButton) {
@@ -217,6 +219,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         		if(curSecurityStatus == ADMIN_STATUS) {		//and it's admin mode, add a Category.
 	        		DishDlg dishDlg = new DishDlg(BarFrame.instance);
 	        		dishDlg.setIndex(menuButton.getIndex());
+	        		dishDlg.setActiveCategory(activeToggleButton.getText());
 	        		dishDlg.setVisible(true);
 	        		initCategoryAndMenus();
 	        		reLayout();
@@ -801,11 +804,19 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 btnCategoryArry.add(btnCategory);
                 if(dspIndex <= categorySubjectAry.length) {
             		btnCategory.setText(categorySubjectAry[dspIndex - 1]);
+            		if(activeToggleButton != null && categorySubjectAry[dspIndex - 1].equalsIgnoreCase(activeToggleButton.getText())) {
+            			btnCategory.setSelected(true);
+            		}
             	}else {
             		btnPageDownCategory.setEnabled(false);
             	}
             }
             onSrcCategoryMatrix.add(btnCategoryArry);
+        }
+        //if no activeCategory, use the first one on screen.
+        if(activeToggleButton == null) {
+        	activeToggleButton = onSrcCategoryMatrix.get(0).get(0);
+        	activeToggleButton.setSelected(true);
         }
         
         dspIndex = curMenuPageNum * curMenuPerPage;
