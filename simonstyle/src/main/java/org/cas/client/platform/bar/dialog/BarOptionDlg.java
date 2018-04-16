@@ -272,7 +272,7 @@ public class BarOptionDlg extends JDialog implements ICASDialog, ActionListener,
         // 初始化－－－－－－－－－－－－－－－－
         lblProdCodeLength = new JLabel(BarDlgConst.EncodeStyle);
         tfdEncodeStyle = new JTextField((String) CustOpts.custOps.getValue(BarDlgConst.EncodeStyle));
-        lblFontSize = new JLabel(BarDlgConst.FontSize);
+        lblFontSize = new JLabel(BarDlgConst.Size);
         tfdFontSize = new JTextField(String.valueOf(CustOpts.custOps.getFontSize()));
         checbox = new JCheckBox(BarDlgConst.UniCommand);
         btnOpenCmd = new JButton(BarDlgConst.SpecialCommand);
@@ -283,7 +283,7 @@ public class BarOptionDlg extends JDialog implements ICASDialog, ActionListener,
         cbxOneKeyOpenBox = new JCheckBox(BarDlgConst.OneKeyOpen);
         cbxUsePrinter = new JCheckBox(BarDlgConst.UsePrinter);
 
-        sptPrint = new PIMSeparator(BarDlgConst.PRINT);
+        sptPrint = new PIMSeparator(BarDlgConst.PRINTER);
         lblTiltle = new JLabel(BarDlgConst.PrintTitle);
         tfdTitle = new JTextField();
         lblThankWord = new JLabel(BarDlgConst.Thankword);

@@ -4,6 +4,11 @@ public interface DlgConst
 {
     int IMAGE_SIZE = 32;	// 正方行图片的边大小
 
+    //Product Info
+    String ProductInfo = "ProductInfo";
+    String Language1 = "Language1";
+    String Language2 = "Language2";
+    String Language3 = "Language3";
     // the title of dialog
     String DlgTitle = "无标题";
     

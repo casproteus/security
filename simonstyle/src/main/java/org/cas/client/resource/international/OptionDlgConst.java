@@ -11,7 +11,7 @@ public interface OptionDlgConst
     String OPTION_TASK = "任务";
     String OPTION_CONTACT = "联系人";
     String OPTION_DIARY = "手稿";
-    String OPTION_OTHER = "其他";
+    String OPTION_OTHER = "Other";
     
     /***********************************
      ********* DlgChangePassword *******

@@ -41,11 +41,13 @@ import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.platform.pimmodel.PIMDBModel;
+import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.platform.pimview.pimtable.PIMTableColumn;
 import org.cas.client.platform.pos.dialog.statistics.Statistic;
+import org.cas.client.platform.product.action.NewProductAction;
 import org.cas.client.platform.refund.dialog.RefundDlg;
 import org.cas.client.resource.international.PaneConsts;
 import org.hsqldb.index.Index;
@@ -167,7 +169,9 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         	}
         	reInitCategoryAndMenuBtns();
         	reLayout();
-        } else if ( o instanceof CategoryToggle) {
+        } 
+        //category buttons------------------------------------
+        else if ( o instanceof CategoryToggle) {
         	CategoryToggle categoryToggle = (CategoryToggle)o;
         	String text = categoryToggle.getText();
         	if(text == null || text.length() == 0) {	//check if it's empty
@@ -204,8 +208,44 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         		activeToggleButton.setSelected(false);
         	}
         	activeToggleButton = categoryToggle;
-        	
-        }else if (o instanceof JButton) {
+        }
+        //menubuttons---------------
+        else if(o instanceof MenuButton) {
+        	MenuButton menuButton = (MenuButton)o;
+        	String text = menuButton.getText();
+        	if(text == null || text.length() == 0) {	//check if it's empty
+        		if(curSecurityStatus == ADMIN_STATUS) {		//and it's admin mode, add a Category.
+	        		DishDlg dishDlg = new DishDlg(BarFrame.instance);
+	        		dishDlg.setIndex(menuButton.getIndex());
+	        		dishDlg.setVisible(true);
+	        		initCategoryAndMenus();
+	        		reLayout();
+	        		//add a new category
+        		}else {
+        			if(adminAuthentication()) {
+        				DishDlg dishDlg = new DishDlg(BarFrame.instance);
+        				dishDlg.setIndex(menuButton.getIndex());
+    	        		dishDlg.setVisible(true);
+    	        		initCategoryAndMenus();
+    	        		reLayout();
+        			}
+        		}
+        	}else {										//if it's not empty
+        		if(curSecurityStatus == ADMIN_STATUS) {
+        			DishDlg addCategoryDlg = new DishDlg(BarFrame.instance);
+	        		addCategoryDlg.setContents(new PIMRecord());
+	        		addCategoryDlg.setIndex(menuButton.getIndex());
+	        		addCategoryDlg.setVisible(true);
+	        		initCategoryAndMenus();
+	        		reLayout();
+	        	}
+        	}
+        	//TODO: change active toggle button, and update active menus.
+        	if(activeToggleButton != null) {
+        		activeToggleButton.setSelected(false);
+        	}
+        }
+        else if (o instanceof JButton) {
         	JButton jButton = (JButton)o;
     		if ( o == btnLine_1_9) { // enter the setting mode.(admin interface)
     			adminAuthentication();
@@ -475,7 +515,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         lblStartTime = new JLabel(BarDlgConst.StartTime.concat(BarDlgConst.Colon).concat(startTime));// @Todo:以后改为从服务器上获取。
         lblSubTotle = new JLabel(BarDlgConst.Subtotal);
         lblTSQ = new JLabel(BarDlgConst.QST);
-        lblRSQ = new JLabel(BarDlgConst.RST);
+        lblRSQ = new JLabel(BarDlgConst.GST);
         lblTotlePrice = new JLabel(BarDlgConst.Total);
 
         tfdTotlePrice = new JTextField();
@@ -773,10 +813,10 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         
         dspIndex = curMenuPageNum * curMenuPerPage;
         for (int r = 0; r < menuRow; r++) {
-            ArrayList<JButton> btnMenuArry = new ArrayList<JButton>();
+            ArrayList<MenuButton> btnMenuArry = new ArrayList<MenuButton>();
             for (int c = 0; c < menuColumn; c++) {
             	dspIndex++;
-                JButton btnMenu = new JButton("");
+            	MenuButton btnMenu = new MenuButton(dspIndex);
                 btnMenu.setMargin(new Insets(0, 0, 0, 0));
                 add(btnMenu);
                 btnMenu.addActionListener(this);
@@ -1059,7 +1099,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     Integer menuRow = (Integer) CustOpts.custOps.hash2.get("menuRow");
     
     private ArrayList<ArrayList<CategoryToggle>> onSrcCategoryMatrix = new ArrayList<ArrayList<CategoryToggle>>();
-    private ArrayList<ArrayList<JButton>> onSrcMenuMatrix = new ArrayList<ArrayList<JButton>>();
+    private ArrayList<ArrayList<MenuButton>> onSrcMenuMatrix = new ArrayList<ArrayList<MenuButton>>();
 
     private PIMTable tblContent;
     private PIMScrollPane srpContent;
@@ -1080,4 +1120,14 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     		return index;
     	}
     }
+    private class MenuButton extends JButton{
+    	int index = 0;
+    	public MenuButton(int index) {
+    		this.index = index;
+    	}
+    	public int getIndex() {
+    		return index;
+    	}
+    }
+    
 }

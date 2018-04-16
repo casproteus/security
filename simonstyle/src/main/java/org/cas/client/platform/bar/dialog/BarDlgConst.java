@@ -6,7 +6,7 @@ public interface BarDlgConst {
 
     String MASTER = "MASTER";
     String VOID_ITEM = "VOID ITEM";
-    String PRICE = "PRICE";
+    String PRICE = "Price";
     String DISC_ITEM = "DISC ITEM";
     String SPLIT_BILL = "SPLIT BILL";
     String MORE = "MORE";
@@ -29,6 +29,13 @@ public interface BarDlgConst {
     String MODIFY = "MODIFY";
     String DISC_VOLUMN = "DISC VOLUMN";
 
+    String Printer1 = "Printer1";
+    String Printer2 = "Printer2";
+    String Printer3 = "Printer3";
+    String Printer4 = "Printer4";
+    String Printer5 = "Printer5";
+    String Printer6 = "Printer6";
+    
     String ADMIN_MODE = "System is in setting mode! Click logout button back to use mode.";
     String USE_MODE =  "System is in operating mode!";
     String Title = "STGOBar - Copyright 2018 - http://www.ShareTheGoodOnes.com";
@@ -48,7 +55,10 @@ public interface BarDlgConst {
     String Subtotal = "SubTotal : ";
     String Total = "Total : ";
     String QST = "QST : ";
-    String RST = "RST : ";
+    String GST = "GST : ";
+    String PricePomp = "PricePomp";
+    String MenuPomp = "MenuPomp";
+    
     String Customer = "顾客";
     String Package = "单位";
     String Note = "说明";
@@ -100,7 +110,14 @@ public interface BarDlgConst {
     String MoneyInBox = "钱箱目前金额";
 
     String EncodeStyle = "编码方式：";
-    String FontSize = "字体大小：";
+    String Size = "Size Support";
+    String Size1 = "Size1";
+    String Size2 = "Size2";
+    String Size3 = "Size3";
+    String Size4 = "Size4";
+    String Size5 = "Size5";
+    String Size6 = "Size6";
+    
     String DspServer = "显示服务器";
     String DspSuperTool = "显示JPOS工具";
     String DspPrintTool = "显示打印测试器";
@@ -127,7 +144,7 @@ public interface BarDlgConst {
 
     String ProfitStatChange = "阶段盈利情况统计";
 
-    String Name = "姓名";
+    String Name = "Name";
     String JobTitle = "职位";
     String NickName = "昵称";
     String Cellphone = "手机";
@@ -166,7 +183,7 @@ public interface BarDlgConst {
     String UniCommand = "通用开钱箱命令";
     String SpecialCommand = "专用命令";
     String OneKeyOpen = "允许空格键开钱箱";
-    String PRINT = "打印";
+    String PRINTER = "Printer Support";
     String PrintDebugger = "打印样式设置";
     String PrintCommand = "命令";
     String parameters = "参数";
