@@ -224,6 +224,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         		}else {
         			if(adminAuthentication()) {
         				DishDlg dishDlg = new DishDlg(BarFrame.instance);
+        				//dishDlg.setMenu(menu);
         				dishDlg.setIndex(menuButton.getIndex());
     	        		dishDlg.setVisible(true);
     	        		initCategoryAndMenus();
@@ -239,10 +240,6 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
 	        		initCategoryAndMenus();
 	        		reLayout();
 	        	}
-        	}
-        	//TODO: change active toggle button, and update active menus.
-        	if(activeToggleButton != null) {
-        		activeToggleButton.setSelected(false);
         	}
         }
         else if (o instanceof JButton) {

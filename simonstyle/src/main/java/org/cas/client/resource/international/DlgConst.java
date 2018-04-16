@@ -6,9 +6,6 @@ public interface DlgConst
 
     //Product Info
     String ProductInfo = "ProductInfo";
-    String Language1 = "Language1";
-    String Language2 = "Language2";
-    String Language3 = "Language3";
     // the title of dialog
     String DlgTitle = "无标题";
     

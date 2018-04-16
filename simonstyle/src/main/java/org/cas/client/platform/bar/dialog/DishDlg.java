@@ -16,6 +16,8 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -69,61 +71,64 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
     public void reLayout() {
     	//name------------
         sptName.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
-        		getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP * 2, CustOpts.SEP_HEIGHT + 2);
+        		(getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP)/2, CustOpts.SEP_HEIGHT + 2);
+        
         lblLanguage1.setBounds(CustOpts.HOR_GAP * 2, sptName.getY() + sptName.getHeight() + CustOpts.VER_GAP, lblLanguage1.getPreferredSize().width,
                 CustOpts.BTN_HEIGHT);
         tfdLanguage1.setBounds(lblLanguage1.getX() + lblLanguage1.getWidth() + CustOpts.HOR_GAP,lblLanguage1.getY(),
-                (getWidth() - lblLanguage1.getX() * 2)/3 - CustOpts.HOR_GAP*2 - lblLanguage1.getWidth(), CustOpts.BTN_HEIGHT);
-        lblLanguage2.setBounds(tfdLanguage1.getX() + tfdLanguage1.getWidth() + CustOpts.HOR_GAP,
-                lblLanguage1.getY(), lblLanguage2.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+                sptName.getWidth() - lblLanguage1.getWidth()  - CustOpts.HOR_GAP*2, CustOpts.BTN_HEIGHT);
+        
+        lblLanguage2.setBounds(lblLanguage1.getX(),lblLanguage1.getY() + lblLanguage1.getHeight() + CustOpts.VER_GAP,
+        		lblLanguage2.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdLanguage2.setBounds(lblLanguage2.getX() + lblLanguage2.getWidth() + CustOpts.HOR_GAP, lblLanguage2.getY(), tfdLanguage1.getWidth(), CustOpts.BTN_HEIGHT);
         
-        lblLanguage3.setBounds(tfdLanguage2.getX() + tfdLanguage2.getWidth() + CustOpts.HOR_GAP,
-                lblLanguage2.getY(), lblLanguage3.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        tfdLanguage3.setBounds(lblLanguage3.getX() + lblLanguage3.getWidth() + CustOpts.HOR_GAP, lblLanguage3.getY(), tfdLanguage2.getWidth() + CustOpts.HOR_GAP, CustOpts.BTN_HEIGHT);
+        lblLanguage3.setBounds(lblLanguage2.getX(), lblLanguage2.getY() + lblLanguage2.getHeight() + CustOpts.VER_GAP,
+        		lblLanguage3.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdLanguage3.setBounds(lblLanguage3.getX() + lblLanguage3.getWidth() + CustOpts.HOR_GAP, lblLanguage3.getY(), tfdLanguage2.getWidth(), CustOpts.BTN_HEIGHT);
         //price---------
-        sptPrice.setBounds(CustOpts.HOR_GAP, lblLanguage1.getY() + lblLanguage1.getHeight()+ CustOpts.VER_GAP,
-        		getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP * 2, CustOpts.SEP_HEIGHT + 2);
-        lblPrice.setBounds(lblLanguage1.getX(), sptPrice.getY() + sptPrice.getHeight() + CustOpts.VER_GAP,
+        sptPrice.setBounds(sptName.getX() + sptName.getWidth() + CustOpts.HOR_GAP, sptName.getY(),
+        		sptName.getWidth(), CustOpts.SEP_HEIGHT + 2);
+        lblPrice.setBounds(sptPrice.getX() + CustOpts.HOR_GAP, sptPrice.getY() + sptPrice.getHeight() + CustOpts.VER_GAP,
         		lblPrice.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdPrice.setBounds(lblPrice.getX() + lblPrice.getWidth() + CustOpts.HOR_GAP, lblPrice.getY(),
-        		lblLanguage1.getWidth() + tfdLanguage1.getWidth() - lblPrice.getWidth(), CustOpts.BTN_HEIGHT);
-        checQST.setBounds(tfdLanguage2.getX(), lblPrice.getY(), checQST.getPreferredSize().width,
-                CustOpts.BTN_HEIGHT);
-        cbxGST.setBounds(lblLanguage3.getX(), lblPrice.getY(), cbxGST.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        		sptPrice.getWidth() - lblPrice.getWidth(), CustOpts.BTN_HEIGHT);
+        cbxQST.setBounds(tfdPrice.getX(), lblPrice.getY() + lblPrice.getHeight() + CustOpts.VER_GAP * 2, CustOpts.BTN_WIDTH,CustOpts.BTN_HEIGHT);
+        cbxGST.setBounds(cbxQST.getX() + cbxQST.getWidth() + CustOpts.HOR_GAP * 3, cbxQST.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
         //size--------
-        sptSize.setBounds(sptPrice.getX(), cbxGST.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
-                sptPrice.getWidth(), CustOpts.SEP_HEIGHT + 2);
-        cbxSize1.setBounds(lblPrice.getX(), sptSize.getY() + sptSize.getHeight() + CustOpts.VER_GAP,
-        		(getWidth() - CustOpts.HOR_GAP * 2)/6 - CustOpts.HOR_GAP, CustOpts.BTN_HEIGHT);
+        sptSize.setBounds(sptName.getX(), tfdLanguage3.getY() + tfdLanguage3.getHeight() + CustOpts.VER_GAP,
+        		sptName.getWidth(), CustOpts.SEP_HEIGHT + 2);
+        cbxSize1.setBounds(sptSize.getX() + CustOpts.HOR_GAP, sptSize.getY() + sptSize.getHeight() + CustOpts.VER_GAP,
+        		(sptSize.getWidth() - CustOpts.HOR_GAP * 2)/3 - CustOpts.HOR_GAP, CustOpts.BTN_HEIGHT);
         cbxSize2.setBounds(cbxSize1.getX() + cbxSize1.getWidth() + CustOpts.HOR_GAP, cbxSize1.getY(), cbxSize1.getWidth(), CustOpts.BTN_HEIGHT);
         cbxSize3.setBounds(cbxSize2.getX() + cbxSize1.getWidth() + CustOpts.HOR_GAP, cbxSize1.getY(), cbxSize1.getWidth(), CustOpts.BTN_HEIGHT);
-        cbxSize4.setBounds(cbxSize3.getX() + cbxSize1.getWidth() + CustOpts.HOR_GAP, cbxSize1.getY(), cbxSize1.getWidth(), CustOpts.BTN_HEIGHT);
-        cbxSize5.setBounds(cbxSize4.getX() + cbxSize1.getWidth() + CustOpts.HOR_GAP, cbxSize1.getY(), cbxSize1.getWidth(), CustOpts.BTN_HEIGHT);
-        cbxSize6.setBounds(cbxSize5.getX() + cbxSize1.getWidth() + CustOpts.HOR_GAP, cbxSize1.getY(), cbxSize1.getWidth(), CustOpts.BTN_HEIGHT);
+        cbxSize4.setBounds(cbxSize1.getX(), cbxSize1.getY() + cbxSize1.getHeight() + CustOpts.VER_GAP, cbxSize1.getWidth(), CustOpts.BTN_HEIGHT);
+        cbxSize5.setBounds(cbxSize2.getX(), cbxSize4.getY(), cbxSize1.getWidth(), CustOpts.BTN_HEIGHT);
+        cbxSize6.setBounds(cbxSize3.getX(), cbxSize4.getY(), cbxSize1.getWidth(), CustOpts.BTN_HEIGHT);
         //printers--------
-        sptPrinter.setBounds(sptSize.getX(), cbxSize6.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
-                sptPrice.getWidth(), CustOpts.SEP_HEIGHT + 2);
-        cbxPrinter1.setBounds(lblPrice.getX(), sptPrinter.getY() + sptPrinter.getHeight() + CustOpts.VER_GAP,
-        		(getWidth() - CustOpts.HOR_GAP * 2)/6 - CustOpts.HOR_GAP, CustOpts.BTN_HEIGHT);
+        sptPrinter.setBounds(sptPrice.getX(), sptSize.getY(), sptPrice.getWidth(), CustOpts.SEP_HEIGHT + 2);
+        cbxPrinter1.setBounds(sptPrinter.getX() + CustOpts.HOR_GAP, sptPrinter.getY() + sptPrinter.getHeight() + CustOpts.VER_GAP,
+        		(sptPrinter.getWidth() - CustOpts.HOR_GAP * 2)/3 - CustOpts.HOR_GAP, CustOpts.BTN_HEIGHT);
         cbxPrinter2.setBounds(cbxPrinter1.getX() + cbxPrinter1.getWidth() + CustOpts.HOR_GAP, cbxPrinter1.getY(), cbxPrinter1.getWidth(), CustOpts.BTN_HEIGHT);
         cbxPrinter3.setBounds(cbxPrinter2.getX() + cbxPrinter1.getWidth() + CustOpts.HOR_GAP, cbxPrinter1.getY(), cbxPrinter1.getWidth(), CustOpts.BTN_HEIGHT);
-        cbxPrinter4.setBounds(cbxPrinter3.getX() + cbxPrinter1.getWidth() + CustOpts.HOR_GAP, cbxPrinter1.getY(), cbxPrinter1.getWidth(), CustOpts.BTN_HEIGHT);
-        cbxPrinter5.setBounds(cbxPrinter4.getX() + cbxPrinter1.getWidth() + CustOpts.HOR_GAP, cbxPrinter1.getY(), cbxPrinter1.getWidth(), CustOpts.BTN_HEIGHT);
-        cbxPrinter6.setBounds(cbxPrinter5.getX() + cbxPrinter1.getWidth() + CustOpts.HOR_GAP, cbxPrinter1.getY(), cbxPrinter1.getWidth(), CustOpts.BTN_HEIGHT);
-
-        sptOther.setBounds(sptPrinter.getX(), cbxPrinter6.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
-                sptPrinter.getWidth(), CustOpts.SEP_HEIGHT + 2);
-        cmbCategory.setBounds(cbxPrinter1.getX(), sptOther.getY() + sptOther.getHeight() + CustOpts.VER_GAP,
-                lblLanguage1.getWidth() + tfdLanguage1.getWidth(), CustOpts.BTN_HEIGHT);
-        cbxPricePomp.setBounds(cmbCategory.getX(), cmbCategory.getY(), lblLanguage3.getWidth() + tfdLanguage3.getWidth(),
+        cbxPrinter4.setBounds(cbxPrinter1.getX(), cbxPrinter1.getY() + cbxPrinter1.getHeight() + CustOpts.VER_GAP, cbxPrinter1.getWidth(), CustOpts.BTN_HEIGHT);
+        cbxPrinter5.setBounds(cbxPrinter2.getX(), cbxPrinter4.getY(), cbxPrinter1.getWidth(), CustOpts.BTN_HEIGHT);
+        cbxPrinter6.setBounds(cbxPrinter3.getX(), cbxPrinter4.getY(), cbxPrinter1.getWidth(), CustOpts.BTN_HEIGHT);
+        //other-----------
+        sptOther.setBounds(sptSize.getX(), cbxPrinter6.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
+                sptPrinter.getWidth() * 2, CustOpts.SEP_HEIGHT + 2);
+        lblCategory.setBounds(sptOther.getX() + CustOpts.HOR_GAP, sptOther.getY() + sptOther.getHeight() + CustOpts.VER_GAP,
+        		lblCategory.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cmbCategory.setBounds(lblCategory.getX() + lblCategory.getWidth() + CustOpts.HOR_GAP, lblCategory.getY(),
+        		sptName.getWidth() - lblCategory.getWidth() - CustOpts.HOR_GAP * 2, CustOpts.BTN_HEIGHT);
+        cbxPricePomp.setBounds(cbxQST.getX(), cmbCategory.getY(), cbxPricePomp.getPreferredSize().width,
                 CustOpts.BTN_HEIGHT);
-        cbxMenuPomp.setBounds(cbxPricePomp.getX(), cbxPricePomp.getY() + cbxPricePomp.getHeight() + CustOpts.VER_GAP,
-        		cbxPricePomp.getWidth(), CustOpts.BTN_HEIGHT);
+        cbxMenuPomp.setBounds(cbxPricePomp.getX() + cbxPricePomp.getWidth() + CustOpts.HOR_GAP * 3, cbxPricePomp.getY(),
+        		cbxMenuPomp.getPreferredSize().width, CustOpts.BTN_HEIGHT);
 
-        ok.setBounds(getWidth() - CustOpts.HOR_GAP * 2 - CustOpts.SIZE_EDGE - CustOpts.BTN_WIDTH * 2,
-        		cbxMenuPomp.getY() + cbxMenuPomp.getHeight() + CustOpts.VER_GAP, CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
-        cancel.setBounds(ok.getWidth() + ok.getX() + CustOpts.HOR_GAP, ok.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+        ok.setBounds(getWidth()/2 - CustOpts.HOR_GAP  - CustOpts.BTN_WIDTH,
+        		cbxMenuPomp.getY() + cbxMenuPomp.getHeight() + CustOpts.VER_GAP * 3, CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+        cancel.setBounds(ok.getWidth() + ok.getX() + CustOpts.HOR_GAP * 2, ok.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+        
         validate();
     }
 
@@ -228,13 +233,15 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             CustOpts.custOps.setKeyAndValue(BarDlgConst.EncodeStyle, tfdLanguage1.getText());
 
             CustOpts.custOps.setKeyAndValue(BarDlgConst.UniCommand,
-                    checQST.isSelected() ? "true" : tfdPrice.getText());
+                    cbxQST.isSelected() ? "true" : tfdPrice.getText());
             CustOpts.custOps.setKeyAndValue(BarDlgConst.UseMoenyBox, cbxGST.isSelected() ? "true" : "false");
             CustOpts.custOps.setKeyAndValue(BarDlgConst.OneKeyOpen, cbxPricePomp.isSelected() ? "true" : "false");
             CustOpts.custOps.setFontSize(tSize);
             dispose();
-        } else if (o == checQST) {
-            tfdPrice.setEnabled(!checQST.isSelected());
+        } else if(o == cancel){
+        	dispose();
+        } else if (o == cbxQST) {
+            tfdPrice.setEnabled(!cbxQST.isSelected());
         } else if (o == cbxGST) {
             // 开个线程检查是否有连接。
         } else if (o == cbxPricePomp) {
@@ -250,22 +257,22 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
     }
 
     private void initDialog() {
-        setTitle(DlgConst.ProductInfo);
+        setTitle(BarDlgConst.Menu);
         setResizable(false);
         // 初始化－－－－－－－－－－－－－－－－
         sptName = new PIMSeparator(BarDlgConst.Name);
-        lblLanguage1 = new JLabel(DlgConst.Language1);
+        lblLanguage1 = new JLabel(BarDlgConst.Language1);
         tfdLanguage1 = new JTextField();
-        lblLanguage2 = new JLabel(DlgConst.Language2);
+        lblLanguage2 = new JLabel(BarDlgConst.Language2);
         tfdLanguage2 = new JTextField();
-        lblLanguage3 = new JLabel(DlgConst.Language3);
+        lblLanguage3 = new JLabel(BarDlgConst.Language3);
         tfdLanguage3 = new JTextField();
 
         sptPrice = new PIMSeparator(BarDlgConst.PRICE);
         lblPrice = new JLabel(BarDlgConst.PRICE);
         tfdPrice = new JTextField();
         cbxGST = new JCheckBox(BarDlgConst.GST);
-        checQST = new JCheckBox(BarDlgConst.QST);
+        cbxQST = new JCheckBox(BarDlgConst.QST);
 
         sptSize = new PIMSeparator(BarDlgConst.Size);
         cbxSize1 = new JCheckBox(BarDlgConst.Size1);
@@ -287,7 +294,8 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         sptOther = new PIMSeparator(OptionDlgConst.OPTION_OTHER);
         cbxPricePomp = new JCheckBox(BarDlgConst.PricePomp);
         cbxMenuPomp = new JCheckBox(BarDlgConst.MenuPomp);
-        cmbCategory = new JButton(BarDlgConst.DspSuperTool);
+        lblCategory = new JLabel(BarDlgConst.Categary);
+        cmbCategory = new JComboBox<String>();
 
         ok = new JButton(DlgConst.OK);
         cancel = new JButton(DlgConst.CANCEL);
@@ -295,10 +303,9 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         // 属性设置－－－－－－－－－－－－－－
         ok.setMnemonic('o');
         cbxMenuPomp.setMargin(new Insets(0, 0, 0, 0));
-        cmbCategory.setMargin(cbxMenuPomp.getMargin());
         ok.setMargin(cbxMenuPomp.getMargin());
 
-        setBounds((CustOpts.SCRWIDTH - 280) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 680, 320); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 280) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 680, 300); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
         getRootPane().setDefaultButton(ok);
 
@@ -314,7 +321,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         getContentPane().add(sptPrice);
         getContentPane().add(lblPrice);
         getContentPane().add(tfdPrice);
-        getContentPane().add(checQST);
+        getContentPane().add(cbxQST);
         getContentPane().add(cbxGST);
         
         getContentPane().add(sptSize);
@@ -334,6 +341,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         getContentPane().add(cbxPrinter6);
 
         getContentPane().add(sptOther);
+        getContentPane().add(lblCategory);
         getContentPane().add(cmbCategory);
         getContentPane().add(cbxPricePomp);
         getContentPane().add(cbxMenuPomp);
@@ -346,15 +354,15 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         cmbCategory.addActionListener(this);
         ok.addActionListener(this);
         cancel.addActionListener(this);
-        checQST.addActionListener(this);
+        cbxQST.addActionListener(this);
         cbxGST.addActionListener(this);
         cbxPricePomp.addActionListener(this);
         getContentPane().addComponentListener(this);
 
         // Content
         Object tIsUniOpenCmd = CustOpts.custOps.getValue(BarDlgConst.UniCommand);
-        checQST.setSelected(tIsUniOpenCmd == null || tIsUniOpenCmd.equals("true"));
-        if (!checQST.isSelected())
+        cbxQST.setSelected(tIsUniOpenCmd == null || tIsUniOpenCmd.equals("true"));
+        if (!cbxQST.isSelected())
             tfdPrice.setText(tIsUniOpenCmd.toString());
         
         Object tUseMoneyBox = CustOpts.custOps.getValue(BarDlgConst.UseMoenyBox);
@@ -376,7 +384,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
     private JLabel lblPrice;
     private JTextField tfdPrice;
     private JCheckBox cbxGST;
-    private JCheckBox checQST;
+    private JCheckBox cbxQST;
 
     private PIMSeparator sptSize;
     private JCheckBox cbxSize1;
@@ -395,9 +403,10 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
     private JCheckBox cbxPrinter6;
 
     private PIMSeparator sptOther;
+    private JLabel lblCategory;
+    private JComboBox<String> cmbCategory;
     private JCheckBox cbxPricePomp;
     private JCheckBox cbxMenuPomp;
-    private JButton cmbCategory;
     
     private JButton ok;
     private JButton cancel;

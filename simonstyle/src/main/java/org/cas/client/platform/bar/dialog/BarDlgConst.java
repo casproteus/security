@@ -3,7 +3,11 @@ package org.cas.client.platform.bar.dialog;
 public interface BarDlgConst {
     int SCROLLBAR_WIDTH = 40;
     int SubTotal_HEIGHT = 50;
-
+    String Menu = "Menu";
+    String Language1 = "Language1";
+    String Language2 = "Language2";
+    String Language3 = "Language3";
+    
     String MASTER = "MASTER";
     String VOID_ITEM = "VOID ITEM";
     String PRICE = "Price";
@@ -52,10 +56,10 @@ public interface BarDlgConst {
     String Pinyin = "助记";
     String Count = "数量";
     String Price = "单价";
-    String Subtotal = "SubTotal : ";
-    String Total = "Total : ";
-    String QST = "QST : ";
-    String GST = "GST : ";
+    String Subtotal = "SubTotal";
+    String Total = "Total";
+    String QST = "QST";
+    String GST = "GST";
     String PricePomp = "PricePomp";
     String MenuPomp = "MenuPomp";
     
@@ -152,7 +156,7 @@ public interface BarDlgConst {
     String HomeAddress = "家庭住址";
     String MailAddress = "电子邮件地址";
     String Account = "帐务";
-    String Categary = "分类";
+    String Categary = "Category";
 
     String CompName = "单位名称";
     String CompAddress = "单位地址";
