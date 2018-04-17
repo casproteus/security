@@ -7,7 +7,7 @@ public interface BarDlgConst {
     String Language1 = "Language1";
     String Language2 = "Language2";
     String Language3 = "Language3";
-    
+    String DSPINDEX = "Idx";
     String MASTER = "MASTER";
     String VOID_ITEM = "VOID ITEM";
     String PRICE = "Price";
@@ -39,9 +39,9 @@ public interface BarDlgConst {
     String Printer4 = "Printer4";
     String Printer5 = "Printer5";
     String Printer6 = "Printer6";
-    
+
     String ADMIN_MODE = "System is in setting mode! Click logout button back to use mode.";
-    String USE_MODE =  "System is in operating mode!";
+    String USE_MODE = "System is in operating mode!";
     String Title = "STGOBar - Copyright 2018 - http://www.ShareTheGoodOnes.com";
     String DuplicatedInput = "Dubplicated name found! please choose an other name.";
     String Colon = "：";
@@ -64,7 +64,7 @@ public interface BarDlgConst {
     String PricePomp = "PricePomp";
     String MenuPomp = "MenuPomp";
     String ModifyPomp = "ModifyPomp";
-    
+
     String Customer = "顾客";
     String Package = "单位";
     String Note = "说明";
@@ -123,7 +123,7 @@ public interface BarDlgConst {
     String Size4 = "Size4";
     String Size5 = "Size5";
     String Size6 = "Size6";
-    
+
     String DspServer = "显示服务器";
     String DspSuperTool = "显示JPOS工具";
     String DspPrintTool = "显示打印测试器";

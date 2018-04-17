@@ -20,7 +20,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
-import java.util.Vector;
 
 import javax.comm.CommPortIdentifier;
 import javax.comm.ParallelPort;
@@ -35,46 +34,47 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
-import org.cas.client.platform.cascontrol.dialog.category.AddCategoryDlg;
+import org.cas.client.platform.bar.beans.CategoryToggle;
+import org.cas.client.platform.bar.beans.MenuButton;
+import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.cascontrol.dialog.category.CategoryDlg;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.platform.pimmodel.PIMDBModel;
-import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.platform.pimview.pimtable.PIMTableColumn;
 import org.cas.client.platform.pos.dialog.statistics.Statistic;
-import org.cas.client.platform.product.action.NewProductAction;
 import org.cas.client.platform.refund.dialog.RefundDlg;
 import org.cas.client.resource.international.PaneConsts;
-import org.hsqldb.index.Index;
 
 //Identity表应该和Employ表合并。
 public class BarGeneralPanel extends JPanel implements ComponentListener, KeyListener, ActionListener, FocusListener {
-	private final int PRICECOLID = 3;
-	private final int TOTALCOLID = 4;
-	private final int COUNDCOLID = 2;
+    private final int PRICECOLID = 3;
+    private final int TOTALCOLID = 4;
+    private final int COUNDCOLID = 2;
 
-	private final int USER_STATUS = 1;
-	private final int ADMIN_STATUS = 2;
-	private int curSecurityStatus = USER_STATUS;
-    
-	private int curCategoryPage = 0;
-	private int categoryNumPerPage = 0;
+    private final int USER_STATUS = 1;
+    private final int ADMIN_STATUS = 2;
+    private int curSecurityStatus = USER_STATUS;
 
-	private int curMenuPageNum = 0;
-	private int curMenuPerPage = 0;
+    private int curCategoryPage = 0;
+    private int categoryNumPerPage = 0;
+
+    private int curMenuPageNum = 0;
+    private int curMenuPerPage = 0;
 
     private int[] prodIDAry;
-    private String[][] nameMetrix;//the struction must be [3][index]. it's more convenient than [index][3]
+    private String[][] nameMetrix;// the struction must be [3][index]. it's more convenient than [index][3]
     private int[] categoryIdAry;
     private String[] categorySubjectAry;
-    
+    private Dish[] dishAry;
     public static String startTime;
     private CategoryToggle activeToggleButton;
+
     public BarGeneralPanel() {
         initComponent();
     }
@@ -124,135 +124,135 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             ActionEvent e) {
         Object o = e.getSource();
         if (o == btnPageUpTable) {
-        	btnPageDownTable.setEnabled(true);
-	    	if(true) {
-	    		btnPageUpTable.setEnabled(false);
-	    	}
+            btnPageDownTable.setEnabled(true);
+            if (true) {
+                btnPageUpTable.setEnabled(false);
+            }
         } else if (o == btnPageDownTable) {
-        	btnPageUpTable.setEnabled(true);
-	    	if(true) {
-	    		btnPageDownTable.setEnabled(false);
-	    	}
+            btnPageUpTable.setEnabled(true);
+            if (true) {
+                btnPageDownTable.setEnabled(false);
+            }
         } else if (o == btnPageUpCategory) {
-        	curCategoryPage--;
-        	//adjust status
-        	btnPageDownCategory.setEnabled(true);
-        	if(curCategoryPage == 0) {
-        		btnPageUpCategory.setEnabled(false);
-        	}
-        	
-        	reInitCategoryAndMenuBtns();
-        	reLayout();
+            curCategoryPage--;
+            // adjust status
+            btnPageDownCategory.setEnabled(true);
+            if (curCategoryPage == 0) {
+                btnPageUpCategory.setEnabled(false);
+            }
+
+            reInitCategoryAndMenuBtns();
+            reLayout();
         } else if (o == btnPageDownCategory) {
-        	curCategoryPage++;
-        	//adjust status
-        	btnPageUpCategory.setEnabled(true);
-        	if(curCategoryPage * categoryNumPerPage > categorySubjectAry.length) {
-        		btnPageDownCategory.setEnabled(false);
-        	}
-        	
-        	reInitCategoryAndMenuBtns();
-        	reLayout();
+            curCategoryPage++;
+            // adjust status
+            btnPageUpCategory.setEnabled(true);
+            if (curCategoryPage * categoryNumPerPage > categorySubjectAry.length) {
+                btnPageDownCategory.setEnabled(false);
+            }
+
+            reInitCategoryAndMenuBtns();
+            reLayout();
         } else if (o == btnPageUpMenu) {
-        	curMenuPageNum--;
-        	btnPageDownMenu.setEnabled(true);
-        	if(curMenuPageNum == 0) {
-        		btnPageUpMenu.setEnabled(false);
-        	}
-        	reInitCategoryAndMenuBtns();
-        	reLayout();
+            curMenuPageNum--;
+            btnPageDownMenu.setEnabled(true);
+            if (curMenuPageNum == 0) {
+                btnPageUpMenu.setEnabled(false);
+            }
+            reInitCategoryAndMenuBtns();
+            reLayout();
         } else if (o == btnPageDownMenu) {
-        	curMenuPageNum++;
-        	btnPageUpMenu.setEnabled(true);
-        	if(curMenuPageNum * curMenuPerPage > nameMetrix.length) {
-        		btnPageDownMenu.setEnabled(false);
-        	}
-        	reInitCategoryAndMenuBtns();
-        	reLayout();
-        } 
-        //category buttons------------------------------------
-        else if ( o instanceof CategoryToggle) {
-        	CategoryToggle categoryToggle = (CategoryToggle)o;
-        	String text = categoryToggle.getText();
-        	if(text == null || text.length() == 0) {	//check if it's empty
-        		if(curSecurityStatus == ADMIN_STATUS) {		//and it's admin mode, add a Category.
-	        		AddCategoryDlg addCategoryDlg = new AddCategoryDlg(BarFrame.instance);
-	        		addCategoryDlg.setIndex(categoryToggle.getIndex());
-	        		addCategoryDlg.setVisible(true);
-	        		initCategoryAndMenus();
-	        		reLayout();
-	        		//add a new category
-        		}else {
-        			if(adminAuthentication()) {
-        				AddCategoryDlg addCategoryDlg = new AddCategoryDlg(BarFrame.instance);
-        				addCategoryDlg.setIndex(categoryToggle.getIndex());
-    	        		addCategoryDlg.setVisible(true);
-    	        		initCategoryAndMenus();
-    	        		reLayout();
-        			}
-        		}
-        	}else {										//if it's not empty
-        		if(!text.equals(activeToggleButton.getText())) {
-            			//TODO: change active toggle button, and update active menus.
-                	if(activeToggleButton != null) {
-                		activeToggleButton.setSelected(false);
-                	}
-                	activeToggleButton = categoryToggle;
-                	initCategoryAndMenus();
-	        		reLayout();
-        			//TODO: fill menu buttons with menus belong to this category.
-	        	}else if(curSecurityStatus == ADMIN_STATUS) {
-	        		AddCategoryDlg addCategoryDlg = new AddCategoryDlg(BarFrame.instance);
-	        		addCategoryDlg.setText(text);
-	        		addCategoryDlg.setIndex(categoryToggle.getIndex());
-	        		addCategoryDlg.setVisible(true);
-	        		initCategoryAndMenus();
-	        		reLayout();
-	        	}
-        	}
+            curMenuPageNum++;
+            btnPageUpMenu.setEnabled(true);
+            if (curMenuPageNum * curMenuPerPage > nameMetrix.length) {
+                btnPageDownMenu.setEnabled(false);
+            }
+            reInitCategoryAndMenuBtns();
+            reLayout();
         }
-        //menubuttons---------------
-        else if(o instanceof MenuButton) {
-        	MenuButton menuButton = (MenuButton)o;
-        	String text = menuButton.getText();
-        	if(text == null || text.length() == 0) {	//check if it's empty
-        		if(curSecurityStatus == ADMIN_STATUS) {		//and it's admin mode, add a Category.
-	        		DishDlg dishDlg = new DishDlg(BarFrame.instance);
-	        		dishDlg.setIndex(menuButton.getIndex());
-	        		dishDlg.setNameMetrix(nameMetrix);
-	        		dishDlg.setActiveCategory(activeToggleButton.getText());
-	        		dishDlg.setVisible(true);
-	        		initCategoryAndMenus();
-	        		reLayout();
-	        		//add a new category
-        		}else {
-        			if(adminAuthentication()) {
-        				DishDlg dishDlg = new DishDlg(BarFrame.instance);
-        				//dishDlg.setMenu(menu);
-        				dishDlg.setIndex(menuButton.getIndex());
-    	        		dishDlg.setNameMetrix(nameMetrix);
-    	        		dishDlg.setVisible(true);
-    	        		initCategoryAndMenus();
-    	        		reLayout();
-        			}
-        		}
-        	}else {										//if it's not empty
-        		if(curSecurityStatus == ADMIN_STATUS) {
-        			DishDlg dishDlg = new DishDlg(BarFrame.instance);
-        			dishDlg.setContents(new PIMRecord());
-        			dishDlg.setIndex(menuButton.getIndex());
-	        		dishDlg.setNameMetrix(nameMetrix);
-	        		dishDlg.setVisible(true);
-	        		initCategoryAndMenus();
-	        		reLayout();
-	        	}
-        	}
+        // category buttons------------------------------------
+        else if (o instanceof CategoryToggle) {
+            CategoryToggle categoryToggle = (CategoryToggle) o;
+            String text = categoryToggle.getText();
+            if (text == null || text.length() == 0) { // check if it's empty
+                if (curSecurityStatus == ADMIN_STATUS) { // and it's admin mode, add a Category.
+                    CategoryDlg addCategoryDlg = new CategoryDlg(BarFrame.instance);
+                    addCategoryDlg.setIndex(categoryToggle.getIndex());
+                    addCategoryDlg.setVisible(true);
+                    initCategoryAndMenus();
+                    reLayout();
+                    // add a new category
+                } else {
+                    if (adminAuthentication()) {
+                        CategoryDlg addCategoryDlg = new CategoryDlg(BarFrame.instance);
+                        addCategoryDlg.setIndex(categoryToggle.getIndex());
+                        addCategoryDlg.setVisible(true);
+                        initCategoryAndMenus();
+                        reLayout();
+                    }
+                }
+            } else { // if it's not empty
+                if (!text.equals(activeToggleButton.getText())) {
+                    // TODO: change active toggle button, and update active menus.
+                    if (activeToggleButton != null) {
+                        activeToggleButton.setSelected(false);
+                    }
+                    activeToggleButton = categoryToggle;
+                    initCategoryAndMenus();
+                    reLayout();
+                    // TODO: fill menu buttons with menus belong to this category.
+                } else if (curSecurityStatus == ADMIN_STATUS) {
+                    CategoryDlg addCategoryDlg = new CategoryDlg(BarFrame.instance);
+                    addCategoryDlg.setText(text);
+                    addCategoryDlg.setIndex(categoryToggle.getIndex());
+                    addCategoryDlg.setVisible(true);
+                    initCategoryAndMenus();
+                    reLayout();
+                }
+            }
         }
-        else if (o instanceof JButton) {
-        	JButton jButton = (JButton)o;
-    		if ( o == btnLine_1_9) { // enter the setting mode.(admin interface)
-    			adminAuthentication();
-    		} else if (o == btnLine_3_3) { // 盘货,先检查是否存在尚未输入完整信息的产品，如果检查到存
+        // menubuttons---------------
+        else if (o instanceof MenuButton) {
+            MenuButton menuButton = (MenuButton) o;
+            String text = menuButton.getText();
+            if (text == null || text.length() == 0) { // check if it's empty
+                if (curSecurityStatus == ADMIN_STATUS) { // and it's admin mode, add a Category.
+                    DishDlg dishDlg = new DishDlg(BarFrame.instance, null);
+                    dishDlg.setIndex(menuButton.getIndex());
+                    dishDlg.setNameMetrix(nameMetrix);
+                    dishDlg.setActiveCategory(activeToggleButton.getText());
+                    dishDlg.setVisible(true);
+                    initCategoryAndMenus();
+                    reLayout();
+                    // add a new category
+                } else {
+                    if (adminAuthentication()) {
+                        DishDlg dishDlg = new DishDlg(BarFrame.instance, null);
+                        dishDlg.setIndex(menuButton.getIndex());
+                        dishDlg.setNameMetrix(nameMetrix);
+                        dishDlg.setActiveCategory(activeToggleButton.getText());
+                        dishDlg.setVisible(true);
+                        initCategoryAndMenus();
+                        reLayout();
+                    }
+                }
+            } else { // if it's not empty
+                if (curSecurityStatus == ADMIN_STATUS) {
+                    DishDlg dishDlg = new DishDlg(BarFrame.instance, dishAry[menuButton.getIndex() - 1]);
+                    dishDlg.setIndex(menuButton.getIndex());
+                    dishDlg.setNameMetrix(nameMetrix);
+                    dishDlg.setVisible(true);
+                    initCategoryAndMenus();
+                    reLayout();
+                } else {
+                    // TODO: add into table model.
+                }
+            }
+        } else if (o instanceof JButton) {
+            JButton jButton = (JButton) o;
+            if (o == btnLine_1_9) { // enter the setting mode.(admin interface)
+                adminAuthentication();
+            } else if (o == btnLine_3_3) { // 盘货,先检查是否存在尚未输入完整信息的产品，如果检查到存
                 BarUtility.checkUnCompProdInfo(); // 在这种产品，方法中会自动弹出对话盒要求用户填写详细信息。
                 new CheckStoreDlg(BarFrame.instance).setVisible(true);
             } else if (o == btnLine_3_4) {
@@ -291,12 +291,12 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 }
             } else if (o == btnLine_3_9) {
                 new BarOptionDlg(BarFrame.instance).setVisible(true);
-            } 
+            }
         }
     }
-    
+
     private boolean adminAuthentication() {
-    	new LoginDlg(null).setVisible(true);
+        new LoginDlg(null).setVisible(true);
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
             if ("admin".equalsIgnoreCase(CustOpts.custOps.getUserName())) {
                 curSecurityStatus++;
@@ -308,6 +308,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         }
         return false;
     }
+
     // Key Listener--------------------------------
     @Override
     public void keyPressed(
@@ -612,12 +613,12 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         btnLine_3_5.setFocusable(false);
 
         tblContent.setFocusable(false);
-        
-        //disables
+
+        // disables
         btnPageUpCategory.setEnabled(false);
         btnPageUpMenu.setEnabled(false);
         btnPageUpTable.setEnabled(false);
-        
+
         // built
         add(lblOperator);
         add(lblShoestring);
@@ -712,53 +713,72 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         btnLine_1_7.addActionListener(this);
         btnLine_1_8.addActionListener(this);
         btnLine_1_9.addActionListener(this);
-        
+
         // initContents--------------
         initCategoryAndMenus();
         initTable();
     }
-    
+
     public void initCategoryAndMenus() {
         try {
             Connection connection = PIMDBModel.getConection();
             Statement statement =
                     connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
-        	//load all the products----------------------------
-            ResultSet productRS = statement.executeQuery("select ID, SUBJECT from product where code = '' and deleted != true");
-            productRS.afterLast();
-            productRS.relative(-1);
-            int tmpPos = productRS.getRow();
-            prodIDAry = new int[tmpPos];
-            nameMetrix = new String[3][tmpPos];
-            productRS.beforeFirst();
-
-            tmpPos = 0;
-            while (productRS.next()) {
-                prodIDAry[tmpPos] = productRS.getInt("ID");
-                nameMetrix[0][tmpPos] = productRS.getString("Language1");
-                nameMetrix[1][tmpPos] = productRS.getString("Language2");
-                nameMetrix[2][tmpPos] = productRS.getString("Language3");
-                tmpPos++;
-            }
-            productRS.close();// 关闭
-            
-            //load all the categorys---------------------------
+            // load all the categorys---------------------------
             ResultSet categoryRS = statement.executeQuery("select ID, NAME from CATEGORY order by DSP_INDEX");
             categoryRS.afterLast();
             categoryRS.relative(-1);
-            tmpPos = categoryRS.getRow();
+            int tmpPos = categoryRS.getRow();
             categoryIdAry = new int[tmpPos];
             categorySubjectAry = new String[tmpPos];
             categoryRS.beforeFirst();
 
             tmpPos = 0;
             while (categoryRS.next()) {
-            	categoryIdAry[tmpPos] = categoryRS.getInt("ID");
-            	categorySubjectAry[tmpPos] = categoryRS.getString("NAME");
+                categoryIdAry[tmpPos] = categoryRS.getInt("ID");
+                categorySubjectAry[tmpPos] = categoryRS.getString("NAME");
                 tmpPos++;
             }
             categoryRS.close();// 关闭
+
+            // load all the products----------------------------
+            ResultSet productRS =
+                    statement
+                            .executeQuery("select ID, CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, STORE,  COST, BRAND, CATEGORY, CONTENT, UNIT, PRODUCAREA from product where deleted != true");
+            productRS.afterLast();
+            productRS.relative(-1);
+            tmpPos = productRS.getRow();
+            prodIDAry = new int[tmpPos];
+            nameMetrix = new String[3][tmpPos];
+            dishAry = new Dish[tmpPos];
+            productRS.beforeFirst();
+
+            tmpPos = 0;
+            while (productRS.next()) { // @NOTE: don't load all the content, because menu can be many
+                prodIDAry[tmpPos] = productRS.getInt("ID");
+                nameMetrix[0][tmpPos] = productRS.getString("CODE");
+                nameMetrix[1][tmpPos] = productRS.getString("MNEMONIC");
+                nameMetrix[2][tmpPos] = productRS.getString("SUBJECT");
+
+                dishAry[tmpPos] = new Dish();
+                dishAry[tmpPos].setId(prodIDAry[tmpPos]);
+                dishAry[tmpPos].setLanguage1(nameMetrix[0][tmpPos]);
+                dishAry[tmpPos].setLanguage1(nameMetrix[1][tmpPos]);
+                dishAry[tmpPos].setLanguage1(nameMetrix[2][tmpPos]);
+                dishAry[tmpPos].setPrice(productRS.getInt("PRICE"));
+                dishAry[tmpPos].setGst(productRS.getInt("FOLDERID"));
+                dishAry[tmpPos].setQst(productRS.getInt("STORE"));
+                dishAry[tmpPos].setSize(productRS.getInt("COST"));
+                dishAry[tmpPos].setPrinter(productRS.getString("BRAND"));
+                dishAry[tmpPos].setCATEGORY(productRS.getString("CATEGORY"));
+                dishAry[tmpPos].setPrompPrice(productRS.getString("CONTENT"));
+                dishAry[tmpPos].setPrompMenu(productRS.getString("UNIT"));
+                dishAry[tmpPos].setPrompMofify(productRS.getString("PRODUCAREA"));
+                dishAry[tmpPos].setIndex(productRS.getInt("INDEX"));
+                tmpPos++;
+            }
+            productRS.close();// 关闭
 
         } catch (Exception e) {
             ErrorUtil.write(e);
@@ -767,84 +787,88 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     }
 
     // menu and category buttons must be init after initContent---------
-    private void reInitCategoryAndMenuBtns(){
-    	//validate rows and columns first(in case they are changed into bad value)--------
+    private void reInitCategoryAndMenuBtns() {
+        // validate rows and columns first(in case they are changed into bad value)--------
         categoryColumn = (categoryColumn == null || categoryColumn < 4) ? 5 : categoryColumn;
         categoryRow = (categoryRow == null || categoryRow < 1 || categoryRow > 9) ? 3 : categoryRow;
         categoryNumPerPage = categoryColumn * categoryRow;
-        
+
         menuColumn = (menuColumn == null || menuColumn < 1) ? 4 : menuColumn;
         menuRow = (menuRow == null || menuRow < 1) ? 4 : menuRow;
         curMenuPerPage = menuColumn * menuRow;
-        
-        //clean current catogory and menus from both screen and metrix if have---------------
+
+        // clean current catogory and menus from both screen and metrix if have---------------
         for (int r = 0; r < categoryRow; r++) {
-        	if(r < onSrcCategoryMatrix.size()) {
-	            for (int c = 0; c < categoryColumn; c++) {
-	            	if(c < onSrcCategoryMatrix.get(r).size())
-	            		remove(onSrcCategoryMatrix.get(r).get(c));
-	            }
-        	}
+            if (r < onSrcCategoryMatrix.size()) {
+                for (int c = 0; c < categoryColumn; c++) {
+                    if (c < onSrcCategoryMatrix.get(r).size())
+                        remove(onSrcCategoryMatrix.get(r).get(c));
+                }
+            }
         }
         for (int r = 0; r < menuRow; r++) {
-        	if(r < onSrcMenuMatrix.size()) {
-	            for (int c = 0; c < menuColumn; c++) {
-	            	if(c < onSrcMenuMatrix.get(r).size())
-	            		remove(onSrcMenuMatrix.get(r).get(c));
-	            }
-        	}
+            if (r < onSrcMenuMatrix.size()) {
+                for (int c = 0; c < menuColumn; c++) {
+                    if (c < onSrcMenuMatrix.get(r).size())
+                        remove(onSrcMenuMatrix.get(r).get(c));
+                }
+            }
         }
         onSrcCategoryMatrix.clear();
         onSrcMenuMatrix.clear();
 
-        //create new buttons and add onto the screen (no layout yet)------------
+        // create new buttons and add onto the screen (no layout yet)------------
         int dspIndex = curCategoryPage * categoryNumPerPage;
         for (int r = 0; r < categoryRow; r++) {
             ArrayList<CategoryToggle> btnCategoryArry = new ArrayList<CategoryToggle>();
             for (int c = 0; c < categoryColumn; c++) {
-            	dspIndex++;
-            	CategoryToggle btnCategory = new CategoryToggle(dspIndex);
+                dspIndex++;
+                CategoryToggle btnCategory = new CategoryToggle(dspIndex);
                 btnCategory.setMargin(new Insets(0, 0, 0, 0));
                 add(btnCategory);
                 btnCategory.addActionListener(this);
                 btnCategoryArry.add(btnCategory);
-                if(dspIndex <= categorySubjectAry.length) {
-            		btnCategory.setText(categorySubjectAry[dspIndex - 1]);
-            		if(activeToggleButton != null && categorySubjectAry[dspIndex - 1].equalsIgnoreCase(activeToggleButton.getText())) {
-            			btnCategory.setSelected(true);
-            		}
-            	}else {
-            		btnPageDownCategory.setEnabled(false);
-            	}
+                if (dspIndex <= categorySubjectAry.length) {
+                    btnCategory.setText(categorySubjectAry[dspIndex - 1]);
+                    if (activeToggleButton != null
+                            && categorySubjectAry[dspIndex - 1].equalsIgnoreCase(activeToggleButton.getText())) {
+                        btnCategory.setSelected(true);
+                    }
+                } else {
+                    btnPageDownCategory.setEnabled(false);
+                }
             }
             onSrcCategoryMatrix.add(btnCategoryArry);
         }
-        //if no activeCategory, use the first one on screen.
-        if(activeToggleButton == null) {
-        	activeToggleButton = onSrcCategoryMatrix.get(0).get(0);
-        	activeToggleButton.setSelected(true);
+
+        // if no activeCategory, use the first one on screen.
+        if (activeToggleButton == null) {
+            activeToggleButton = onSrcCategoryMatrix.get(0).get(0);
+            activeToggleButton.setSelected(true);
         }
-        
+
+        // initialize on screen menus-------------
         dspIndex = curMenuPageNum * curMenuPerPage;
         for (int r = 0; r < menuRow; r++) {
             ArrayList<MenuButton> btnMenuArry = new ArrayList<MenuButton>();
             for (int c = 0; c < menuColumn; c++) {
-            	dspIndex++;
-            	MenuButton btnMenu = new MenuButton(dspIndex);
+                dspIndex++;
+                MenuButton btnMenu = new MenuButton(dspIndex);
                 btnMenu.setMargin(new Insets(0, 0, 0, 0));
                 add(btnMenu);
                 btnMenu.addActionListener(this);
                 btnMenuArry.add(btnMenu);
-                if(dspIndex <= nameMetrix[0].length) {
-                	btnMenu.setText(nameMetrix[dspIndex - 1][CustOpts.custOps.getUserLang()]);//TODO: replace 0 with settings.
-                }else {
-                	btnPageDownMenu.setEnabled(false);
+                if (dspIndex <= nameMetrix[0].length) {
+                    btnMenu.setText(nameMetrix[CustOpts.custOps.getUserLang()][dspIndex - 1]);// TODO: replace 0 with
+                                                                                              // settings.
+                } else {
+                    btnPageDownMenu.setEnabled(false);
                 }
             }
             onSrcMenuMatrix.add(btnMenuArry);
         }
     }
-    
+
     private void initTable() {
         Object[][] tValues = new Object[1][header.length];
         tblContent.setDataVector(tValues, header);
@@ -975,13 +999,12 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         int categeryBtnWidth = (widthMenuArea - CustOpts.HOR_GAP * (categoryColumn - 1)) / categoryColumn;
         int categeryBtnHeight =
                 (int) ((topAreaHeight * categoryHeight - CustOpts.VER_GAP * (categoryRow - 1)) / categoryRow);
-        
+
         for (int r = 0; r < categoryRow; r++) {
             for (int c = 0; c < categoryColumn; c++) {
-            	JToggleButton toggleButton = onSrcCategoryMatrix.get(r).get(c);
-            	toggleButton.setBounds(xMenuArea + (categeryBtnWidth + CustOpts.HOR_GAP) * c,
-                                srpContent.getY() + (categeryBtnHeight + CustOpts.VER_GAP) * r, categeryBtnWidth,
-                                categeryBtnHeight);
+                JToggleButton toggleButton = onSrcCategoryMatrix.get(r).get(c);
+                toggleButton.setBounds(xMenuArea + (categeryBtnWidth + CustOpts.HOR_GAP) * c, srpContent.getY()
+                        + (categeryBtnHeight + CustOpts.VER_GAP) * r, categeryBtnWidth, categeryBtnHeight);
             }
         }
         btnPageUpCategory.setBounds(xMenuArea + widthMenuArea, srpContent.getY(), BarDlgConst.SCROLLBAR_WIDTH,
@@ -1111,7 +1134,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     Integer categoryRow = (Integer) CustOpts.custOps.hash2.get("categoryRow");
     Integer menuColumn = (Integer) CustOpts.custOps.hash2.get("menuColumn");
     Integer menuRow = (Integer) CustOpts.custOps.hash2.get("menuRow");
-    
+
     private ArrayList<ArrayList<CategoryToggle>> onSrcCategoryMatrix = new ArrayList<ArrayList<CategoryToggle>>();
     private ArrayList<ArrayList<MenuButton>> onSrcMenuMatrix = new ArrayList<ArrayList<MenuButton>>();
 
@@ -1123,25 +1146,5 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     private String[] header = new String[] { BarDlgConst.ProdNumber, BarDlgConst.ProdName, BarDlgConst.Count,
             BarDlgConst.Price, BarDlgConst.Subtotal };
     private DecimalFormat decimalFormat = new DecimalFormat("#0.00");
-    
-    //============================================================
-    private class CategoryToggle extends JToggleButton{
-    	int index = 0;
-    	public CategoryToggle(int index) {
-    		this.index = index;
-    	}
-    	public int getIndex() {
-    		return index;
-    	}
-    }
-    private class MenuButton extends JButton{
-    	int index = 0;
-    	public MenuButton(int index) {
-    		this.index = index;
-    	}
-    	public int getIndex() {
-    		return index;
-    	}
-    }
-    
+
 }

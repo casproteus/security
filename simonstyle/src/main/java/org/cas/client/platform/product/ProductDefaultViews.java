@@ -1,21 +1,20 @@
 package org.cas.client.platform.product;
 
-
 public interface ProductDefaultViews {
 
     String[] TEXTS = {
     /* 0 */"ID", "已删除", "位置", "品名", "备注",
     /* 5 */"条码", "单位", "售价", "产地", "品牌",
-    /* 10 */"类别", "助记", "成本价格", "库存" };
+    /* 10 */"类别", "助记", "成本价格", "库存", "on screen index" };
     String strForImportItem = "导入产品资料";
     String describeForImportItem = "导入外部产品资料数据";
     int[] importableFieldsIdx = { 3, 4, 5, 6, 7, 8, 9, 10 };
 
     String[] FIELDS = { "ID", "DELETED", "FOLDERID", "SUBJECT", "CONTENT", "CODE", "UNIT", "PRICE", "PRODUCAREA",
-            "BRAND", "CATEGORY", "MNEMONIC", "COST", "STORE" };
+            "BRAND", "CATEGORY", "MNEMONIC", "COST", "STORE", "INDEX" };
     String[] TYPES = { "INTEGER IDENTITY PRIMARY KEY", "BIT DEFAULT false", "INTEGER", "VARCHAR(255)", "VARCHAR(255)",
             "VARCHAR(255)", "VARCHAR(255)", "INTEGER", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)",
-            "INTEGER", "INTEGER" };
+            "INTEGER", "INTEGER", "INTEGER" };
 
     int ID = 0; // "ID",
     int DELETED = 1; // "已删除",
@@ -30,6 +29,7 @@ public interface ProductDefaultViews {
     int CATEGORY = 10;
     int MNEMONIC = 11;
     int COST = 12;
+    int INDEX = 12;
 
     /** 用来初始化pim系统在database中的缺省值 */
     final String INSERT_INTO =
