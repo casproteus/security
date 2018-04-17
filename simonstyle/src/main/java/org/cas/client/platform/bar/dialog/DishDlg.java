@@ -17,6 +17,7 @@ import java.sql.Statement;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -27,6 +28,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -58,13 +60,22 @@ import com.jpos.POStest.POStestGUI;
  * 微软的TextField的长度限制是228（约）， 本类的限制因为没有规格约束，暂定为912（约）
  */
 public class DishDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
+	//the position of current menu
 	private int index;
+	//all the name of the menu, used to validate the new input of the name.
+	//@NOTE: if the category is changed, please rember to update the nameMetrix according to the new category.
+	private String[][] nameMetrix;
+	//for initializing the status of category combobox.
 	private String activeCategory;
     private int[] categoryIdAry;
     private String[] categorySubjectAry;
     
 	public void setIndex(int index) {
 		this.index = index;
+	}
+
+	public void setNameMetrix(String[][] nameMetrix) {
+		this.nameMetrix = nameMetrix;
 	}
 	
     public DishDlg(JFrame pFrame) {
@@ -80,39 +91,39 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
     public void reLayout() {
     	//name------------
         sptName.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
-        		(getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP)/2, CustOpts.SEP_HEIGHT + 2);
+        		(getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP)/2 - CustOpts.HOR_GAP, CustOpts.SEP_HEIGHT + 2);
         
-        lblLanguage1.setBounds(CustOpts.HOR_GAP * 2, sptName.getY() + sptName.getHeight() + CustOpts.VER_GAP, lblLanguage1.getPreferredSize().width,
+        lblLanguages[0].setBounds(CustOpts.HOR_GAP * 2, sptName.getY() + sptName.getHeight() + CustOpts.VER_GAP, lblLanguages[0].getPreferredSize().width,
                 CustOpts.BTN_HEIGHT);
-        tfdLanguage1.setBounds(lblLanguage1.getX() + lblLanguage1.getWidth() + CustOpts.HOR_GAP,lblLanguage1.getY(),
-                sptName.getWidth() - lblLanguage1.getWidth()  - CustOpts.HOR_GAP*2, CustOpts.BTN_HEIGHT);
+        tfdLanguages[0].setBounds(lblLanguages[0].getX() + lblLanguages[0].getWidth() + CustOpts.HOR_GAP,lblLanguages[0].getY(),
+                sptName.getWidth() - lblLanguages[0].getWidth()  - CustOpts.HOR_GAP*2, CustOpts.BTN_HEIGHT);
         
-        lblLanguage2.setBounds(lblLanguage1.getX(),lblLanguage1.getY() + lblLanguage1.getHeight() + CustOpts.VER_GAP,
-        		lblLanguage2.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        tfdLanguage2.setBounds(lblLanguage2.getX() + lblLanguage2.getWidth() + CustOpts.HOR_GAP, lblLanguage2.getY(), tfdLanguage1.getWidth(), CustOpts.BTN_HEIGHT);
+        lblLanguages[1].setBounds(lblLanguages[0].getX(),lblLanguages[0].getY() + lblLanguages[0].getHeight() + CustOpts.VER_GAP,
+        		lblLanguages[1].getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdLanguages[1].setBounds(lblLanguages[1].getX() + lblLanguages[1].getWidth() + CustOpts.HOR_GAP, lblLanguages[1].getY(), tfdLanguages[0].getWidth(), CustOpts.BTN_HEIGHT);
         
-        lblLanguage3.setBounds(lblLanguage2.getX(), lblLanguage2.getY() + lblLanguage2.getHeight() + CustOpts.VER_GAP,
-        		lblLanguage3.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        tfdLanguage3.setBounds(lblLanguage3.getX() + lblLanguage3.getWidth() + CustOpts.HOR_GAP, lblLanguage3.getY(), tfdLanguage2.getWidth(), CustOpts.BTN_HEIGHT);
+        lblLanguages[2].setBounds(lblLanguages[1].getX(), lblLanguages[1].getY() + lblLanguages[1].getHeight() + CustOpts.VER_GAP,
+        		lblLanguages[2].getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdLanguages[2].setBounds(lblLanguages[2].getX() + lblLanguages[2].getWidth() + CustOpts.HOR_GAP, lblLanguages[2].getY(), tfdLanguages[0].getWidth(), CustOpts.BTN_HEIGHT);
         //price---------
         sptPrice.setBounds(sptName.getX() + sptName.getWidth() + CustOpts.HOR_GAP, sptName.getY(),
         		sptName.getWidth(), CustOpts.SEP_HEIGHT + 2);
         lblPrice.setBounds(sptPrice.getX() + CustOpts.HOR_GAP, sptPrice.getY() + sptPrice.getHeight() + CustOpts.VER_GAP,
         		lblPrice.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdPrice.setBounds(lblPrice.getX() + lblPrice.getWidth() + CustOpts.HOR_GAP, lblPrice.getY(),
-        		sptPrice.getWidth() - lblPrice.getWidth(), CustOpts.BTN_HEIGHT);
+        		sptPrice.getWidth() - lblPrice.getWidth() - CustOpts.HOR_GAP * 3, CustOpts.BTN_HEIGHT);
         cbxQST.setBounds(tfdPrice.getX(), lblPrice.getY() + lblPrice.getHeight() + CustOpts.VER_GAP * 2, CustOpts.BTN_WIDTH,CustOpts.BTN_HEIGHT);
         cbxGST.setBounds(cbxQST.getX() + cbxQST.getWidth() + CustOpts.HOR_GAP * 3, cbxQST.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
         //size--------
-        sptSize.setBounds(sptName.getX(), tfdLanguage3.getY() + tfdLanguage3.getHeight() + CustOpts.VER_GAP,
+        sptSize.setBounds(sptName.getX(), tfdLanguages[2].getY() + tfdLanguages[2].getHeight() + CustOpts.VER_GAP,
         		sptName.getWidth(), CustOpts.SEP_HEIGHT + 2);
-        cbxSize1.setBounds(sptSize.getX() + CustOpts.HOR_GAP, sptSize.getY() + sptSize.getHeight() + CustOpts.VER_GAP,
+        rdbSize1.setBounds(sptSize.getX() + CustOpts.HOR_GAP, sptSize.getY() + sptSize.getHeight() + CustOpts.VER_GAP,
         		(sptSize.getWidth() - CustOpts.HOR_GAP * 2)/3 - CustOpts.HOR_GAP, CustOpts.BTN_HEIGHT);
-        cbxSize2.setBounds(cbxSize1.getX() + cbxSize1.getWidth() + CustOpts.HOR_GAP, cbxSize1.getY(), cbxSize1.getWidth(), CustOpts.BTN_HEIGHT);
-        cbxSize3.setBounds(cbxSize2.getX() + cbxSize1.getWidth() + CustOpts.HOR_GAP, cbxSize1.getY(), cbxSize1.getWidth(), CustOpts.BTN_HEIGHT);
-        cbxSize4.setBounds(cbxSize1.getX(), cbxSize1.getY() + cbxSize1.getHeight() + CustOpts.VER_GAP, cbxSize1.getWidth(), CustOpts.BTN_HEIGHT);
-        cbxSize5.setBounds(cbxSize2.getX(), cbxSize4.getY(), cbxSize1.getWidth(), CustOpts.BTN_HEIGHT);
-        cbxSize6.setBounds(cbxSize3.getX(), cbxSize4.getY(), cbxSize1.getWidth(), CustOpts.BTN_HEIGHT);
+        rdbSize2.setBounds(rdbSize1.getX() + rdbSize1.getWidth() + CustOpts.HOR_GAP, rdbSize1.getY(), rdbSize1.getWidth(), CustOpts.BTN_HEIGHT);
+        rdbSize3.setBounds(rdbSize2.getX() + rdbSize1.getWidth() + CustOpts.HOR_GAP, rdbSize1.getY(), rdbSize1.getWidth(), CustOpts.BTN_HEIGHT);
+        rdbSize4.setBounds(rdbSize1.getX(), rdbSize1.getY() + rdbSize1.getHeight() + CustOpts.VER_GAP, rdbSize1.getWidth(), CustOpts.BTN_HEIGHT);
+        rdbSize5.setBounds(rdbSize2.getX(), rdbSize4.getY(), rdbSize1.getWidth(), CustOpts.BTN_HEIGHT);
+        rdbSize6.setBounds(rdbSize3.getX(), rdbSize4.getY(), rdbSize1.getWidth(), CustOpts.BTN_HEIGHT);
         //printers--------
         sptPrinter.setBounds(sptPrice.getX(), sptSize.getY(), sptPrice.getWidth(), CustOpts.SEP_HEIGHT + 2);
         cbxPrinter1.setBounds(sptPrinter.getX() + CustOpts.HOR_GAP, sptPrinter.getY() + sptPrinter.getHeight() + CustOpts.VER_GAP,
@@ -129,11 +140,13 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         		lblCategory.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cmbCategory.setBounds(lblCategory.getX() + lblCategory.getWidth() + CustOpts.HOR_GAP, lblCategory.getY(),
         		sptName.getWidth() - lblCategory.getWidth() - CustOpts.HOR_GAP * 2, CustOpts.BTN_HEIGHT);
-        cbxPricePomp.setBounds(cbxQST.getX(), cmbCategory.getY(), cbxPricePomp.getPreferredSize().width,
+        cbxPricePomp.setBounds(cbxPrinter4.getX(), cmbCategory.getY(), cbxPricePomp.getPreferredSize().width,
                 CustOpts.BTN_HEIGHT);
-        cbxMenuPomp.setBounds(cbxPricePomp.getX() + cbxPricePomp.getWidth() + CustOpts.HOR_GAP * 3, cbxPricePomp.getY(),
+        cbxMenuPomp.setBounds(cbxPrinter5.getX(), cbxPricePomp.getY(),
         		cbxMenuPomp.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-
+        cbxModifyPomp.setBounds(cbxPrinter6.getX(), cbxPricePomp.getY(),
+        		cbxModifyPomp.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        
         ok.setBounds(getWidth()/2 - CustOpts.HOR_GAP  - CustOpts.BTN_WIDTH,
         		cbxMenuPomp.getY() + cbxMenuPomp.getHeight() + CustOpts.VER_GAP * 3, CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
         cancel.setBounds(ok.getWidth() + ok.getX() + CustOpts.HOR_GAP * 2, ok.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
@@ -169,7 +182,6 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 
     @Override
     public void release() {
-        cbxMenuPomp.removeActionListener(this);
         cmbCategory.removeActionListener(this);
         ok.removeActionListener(this);
         cancel.removeActionListener(this);
@@ -203,6 +215,25 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             ComponentEvent e) {
     };
 
+    //if before is "", then it's consiered as not empty before.
+    private boolean isMenuNameModified(int lang) {
+    	
+    	boolean isNotInitYet = index - 1 >= nameMetrix[lang].length;
+    	String oldText = isNotInitYet ? null : nameMetrix[lang][index-1];
+    	boolean isEmptyBefore = oldText == null || oldText.length() == 0;
+    	String newText = tfdLanguages[lang].getText();
+    	boolean isEmptyNow = newText == null || newText.length() == 0;
+    	
+    	if((isNotInitYet || isEmptyBefore) && isEmptyNow) {		//if empty before, and empty now, return false
+    		return false;
+    	}else if((isNotInitYet || isEmptyBefore) && !isEmptyNow) {//if empty before, not empty now, return true
+    		return true;
+    	}else if(isEmptyNow) {									  //if not empty before, empty now, return true
+    		return true;
+    	}else {													  //if not empty before, not empty now, compare!
+    		return !newText.equals(oldText);
+    	}
+    }
     /**
      * Invoked when an action occurs. NOTE:PIM的绝大多数用于新建和编辑的对话盒，对于确定事件的处理，采用如下规则：
      * 即：先出发监听器事件，监听器根据IPIMDialog接口的方法getContent（）取出对话盒中的 记录。监听器负责将记录存入Model，监听器最后负责将对话盒释放。
@@ -215,25 +246,54 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
     public void actionPerformed(
             ActionEvent e) {
         Object o = e.getSource();
-        if (o == cbxMenuPomp) {
-            CASControl.ctrl.showMainFrame(); // it will show login dialog first.
-        } else if (o == ok) {
-            int tSize = 12;
+        if (o == ok) {
+        	// validate input=================
+        	//name check @NOTE: index is start from 1!!!
+        	if(tfdLanguages[0].getText() == null || tfdLanguages[0].getText().length() < 1) {
+        		JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
+        		tfdLanguages[0].grabFocus();
+        		return;
+        	}else if(isMenuNameModified(0)) {
+        		for(int i = 0; i < nameMetrix[0].length; i++) {
+        			if(i != index && tfdLanguages[0].getText().equalsIgnoreCase(nameMetrix[0][i])) {
+        				JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
+                		tfdLanguages[0].grabFocus();
+                		return;
+        			}
+        		}
+        	}else if(isMenuNameModified(1)) {
+        		if(!"".equals(tfdLanguages[1].getText()))
+	        		for(int i = 0; i < nameMetrix[1].length; i++) {
+	        			if(i != index && tfdLanguages[1].getText().equalsIgnoreCase(nameMetrix[1][i])) {
+	        				JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
+	                		tfdLanguages[1].grabFocus();
+	                		return;
+	        			}
+	        		}
+        	}else if(isMenuNameModified(2)) {
+        		if(!"".equals(tfdLanguages[2].getText()))
+	        		for(int i = 0; i < nameMetrix[2].length; i++) {
+	        			if(i != index && tfdLanguages[2].getText().equalsIgnoreCase(nameMetrix[2][i])) {
+	        				JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
+	                		tfdLanguages[2].grabFocus();
+	                		return;
+	        			}
+	        		}
+        	}
+        	
+        	//price check
+            float tPrice;
             try {
-                tSize = Integer.parseInt(tfdLanguage2.getText());
+                tPrice = Float.parseFloat(tfdPrice.getText());
             } catch (Exception exp) {
                 JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
-                tfdLanguage2.grabFocus();
-                tfdLanguage2.selectAll();
+                tfdPrice.grabFocus();
+                tfdPrice.selectAll();
                 return;
             }
-            CustOpts.custOps.setKeyAndValue(BarDlgConst.EncodeStyle, tfdLanguage1.getText());
-
-            CustOpts.custOps.setKeyAndValue(BarDlgConst.UniCommand,
-                    cbxQST.isSelected() ? "true" : tfdPrice.getText());
-            CustOpts.custOps.setKeyAndValue(BarDlgConst.UseMoenyBox, cbxGST.isSelected() ? "true" : "false");
-            CustOpts.custOps.setKeyAndValue(BarDlgConst.OneKeyOpen, cbxPricePomp.isSelected() ? "true" : "false");
-            CustOpts.custOps.setFontSize(tSize);
+            
+            //TODO update the product record into db.
+            
             dispose();
         } else if(o == cancel){
         	dispose();
@@ -258,12 +318,14 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         setResizable(false);
         // 初始化－－－－－－－－－－－－－－－－
         sptName = new PIMSeparator(BarDlgConst.Name);
-        lblLanguage1 = new JLabel(BarDlgConst.Language1);
-        tfdLanguage1 = new JTextField();
-        lblLanguage2 = new JLabel(BarDlgConst.Language2);
-        tfdLanguage2 = new JTextField();
-        lblLanguage3 = new JLabel(BarDlgConst.Language3);
-        tfdLanguage3 = new JTextField();
+        lblLanguages = new JLabel[3];
+        tfdLanguages = new JTextField[3];
+        lblLanguages[0] = new JLabel(BarDlgConst.Language1);
+        tfdLanguages[0] = new JTextField();
+        lblLanguages[1] = new JLabel(BarDlgConst.Language2);
+        tfdLanguages[1] = new JTextField();
+        lblLanguages[2] = new JLabel(BarDlgConst.Language3);
+        tfdLanguages[2] = new JTextField();
 
         sptPrice = new PIMSeparator(BarDlgConst.PRICE);
         lblPrice = new JLabel(BarDlgConst.PRICE);
@@ -272,12 +334,19 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         cbxQST = new JCheckBox(BarDlgConst.QST);
 
         sptSize = new PIMSeparator(BarDlgConst.Size);
-        cbxSize1 = new JCheckBox(BarDlgConst.Size1);
-        cbxSize2 = new JCheckBox(BarDlgConst.Size2);
-        cbxSize3 = new JCheckBox(BarDlgConst.Size3);
-        cbxSize4 = new JCheckBox(BarDlgConst.Size4);
-        cbxSize5 = new JCheckBox(BarDlgConst.Size5);
-        cbxSize6 = new JCheckBox(BarDlgConst.Size6);
+        rdbSize1 = new JRadioButton(BarDlgConst.Size1);
+        rdbSize2 = new JRadioButton(BarDlgConst.Size2);
+        rdbSize3 = new JRadioButton(BarDlgConst.Size3);
+        rdbSize4 = new JRadioButton(BarDlgConst.Size4);
+        rdbSize5 = new JRadioButton(BarDlgConst.Size5);
+        rdbSize6 = new JRadioButton(BarDlgConst.Size6);
+        ButtonGroup group = new ButtonGroup();
+        group.add(rdbSize1);
+        group.add(rdbSize2);
+        group.add(rdbSize3);
+        group.add(rdbSize4);
+        group.add(rdbSize5);
+        group.add(rdbSize6);
         
         sptPrinter = new PIMSeparator(BarDlgConst.PRINTER);
         cbxPrinter1 = new JCheckBox(BarDlgConst.Printer1);
@@ -291,6 +360,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         sptOther = new PIMSeparator(OptionDlgConst.OPTION_OTHER);
         cbxPricePomp = new JCheckBox(BarDlgConst.PricePomp);
         cbxMenuPomp = new JCheckBox(BarDlgConst.MenuPomp);
+        cbxModifyPomp = new JCheckBox(BarDlgConst.ModifyPomp);
         lblCategory = new JLabel(BarDlgConst.Categary);
         cmbCategory = new JComboBox<String>();
 
@@ -299,8 +369,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 
         // 属性设置－－－－－－－－－－－－－－
         ok.setMnemonic('o');
-        cbxMenuPomp.setMargin(new Insets(0, 0, 0, 0));
-        ok.setMargin(cbxMenuPomp.getMargin());
+        ok.setMargin(new Insets(0, 0, 0, 0));
 
         setBounds((CustOpts.SCRWIDTH - 280) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 680, 300); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
@@ -308,12 +377,12 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 
         // 搭建－－－－－－－－－－－－－
         getContentPane().add(sptName);
-        getContentPane().add(lblLanguage1);
-        getContentPane().add(tfdLanguage1);
-        getContentPane().add(lblLanguage2);
-        getContentPane().add(tfdLanguage2);
-        getContentPane().add(lblLanguage3);
-        getContentPane().add(tfdLanguage3);
+        getContentPane().add(lblLanguages[0]);
+        getContentPane().add(tfdLanguages[0]);
+        getContentPane().add(lblLanguages[1]);
+        getContentPane().add(tfdLanguages[1]);
+        getContentPane().add(lblLanguages[2]);
+        getContentPane().add(tfdLanguages[2]);
         
         getContentPane().add(sptPrice);
         getContentPane().add(lblPrice);
@@ -322,12 +391,12 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         getContentPane().add(cbxGST);
         
         getContentPane().add(sptSize);
-        getContentPane().add(cbxSize1);
-        getContentPane().add(cbxSize2);
-        getContentPane().add(cbxSize3);
-        getContentPane().add(cbxSize4);
-        getContentPane().add(cbxSize5);
-        getContentPane().add(cbxSize6);
+        getContentPane().add(rdbSize1);
+        getContentPane().add(rdbSize2);
+        getContentPane().add(rdbSize3);
+        getContentPane().add(rdbSize4);
+        getContentPane().add(rdbSize5);
+        getContentPane().add(rdbSize6);
         
         getContentPane().add(sptPrinter);
         getContentPane().add(cbxPrinter1);
@@ -342,12 +411,12 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         getContentPane().add(cmbCategory);
         getContentPane().add(cbxPricePomp);
         getContentPane().add(cbxMenuPomp);
+        getContentPane().add(cbxModifyPomp);
 
         getContentPane().add(cancel);
         getContentPane().add(ok);
 
         // 加监听器－－－－－－－－
-        cbxMenuPomp.addActionListener(this);
         cmbCategory.addActionListener(this);
         ok.addActionListener(this);
         cancel.addActionListener(this);
@@ -359,7 +428,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         // Content
         cbxQST.setSelected(true);
         cbxGST.setSelected(true);
-        cbxSize1.setSelected(true);
+        rdbSize1.setSelected(true);
         cbxPrinter1.setSelected(true);
         initCategory();
     }
@@ -404,12 +473,8 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 	}
 
 	private PIMSeparator sptName;
-    private JLabel lblLanguage1;
-    private JTextField tfdLanguage1;
-    private JLabel lblLanguage2;
-    private JTextField tfdLanguage2;
-    private JLabel lblLanguage3;
-    private JTextField tfdLanguage3;
+    private JLabel[] lblLanguages;
+    private JTextField[] tfdLanguages;
 
     private PIMSeparator sptPrice;
     private JLabel lblPrice;
@@ -418,12 +483,12 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
     private JCheckBox cbxQST;
 
     private PIMSeparator sptSize;
-    private JCheckBox cbxSize1;
-    private JCheckBox cbxSize2;
-    private JCheckBox cbxSize3;
-    private JCheckBox cbxSize4;
-    private JCheckBox cbxSize5;
-    private JCheckBox cbxSize6;
+    private JRadioButton rdbSize1;
+    private JRadioButton rdbSize2;
+    private JRadioButton rdbSize3;
+    private JRadioButton rdbSize4;
+    private JRadioButton rdbSize5;
+    private JRadioButton rdbSize6;
     
     private PIMSeparator sptPrinter;
     private JCheckBox cbxPrinter1;
@@ -438,6 +503,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
     private JComboBox<String> cmbCategory;
     private JCheckBox cbxPricePomp;
     private JCheckBox cbxMenuPomp;
+    private JCheckBox cbxModifyPomp;
     
     private JButton ok;
     private JButton cancel;

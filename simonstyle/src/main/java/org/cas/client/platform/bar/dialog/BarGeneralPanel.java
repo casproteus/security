@@ -69,7 +69,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
 	private int curMenuPerPage = 0;
 
     private int[] prodIDAry;
-    private String[] prodSubjectAry;
+    private String[][] nameMetrix;//the struction must be [3][index]. it's more convenient than [index][3]
     private int[] categoryIdAry;
     private String[] categorySubjectAry;
     
@@ -164,7 +164,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         } else if (o == btnPageDownMenu) {
         	curMenuPageNum++;
         	btnPageUpMenu.setEnabled(true);
-        	if(curMenuPageNum * curMenuPerPage > prodSubjectAry.length) {
+        	if(curMenuPageNum * curMenuPerPage > nameMetrix.length) {
         		btnPageDownMenu.setEnabled(false);
         	}
         	reInitCategoryAndMenuBtns();
@@ -219,6 +219,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         		if(curSecurityStatus == ADMIN_STATUS) {		//and it's admin mode, add a Category.
 	        		DishDlg dishDlg = new DishDlg(BarFrame.instance);
 	        		dishDlg.setIndex(menuButton.getIndex());
+	        		dishDlg.setNameMetrix(nameMetrix);
 	        		dishDlg.setActiveCategory(activeToggleButton.getText());
 	        		dishDlg.setVisible(true);
 	        		initCategoryAndMenus();
@@ -229,6 +230,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         				DishDlg dishDlg = new DishDlg(BarFrame.instance);
         				//dishDlg.setMenu(menu);
         				dishDlg.setIndex(menuButton.getIndex());
+    	        		dishDlg.setNameMetrix(nameMetrix);
     	        		dishDlg.setVisible(true);
     	        		initCategoryAndMenus();
     	        		reLayout();
@@ -236,10 +238,11 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         		}
         	}else {										//if it's not empty
         		if(curSecurityStatus == ADMIN_STATUS) {
-        			DishDlg addCategoryDlg = new DishDlg(BarFrame.instance);
-	        		addCategoryDlg.setContents(new PIMRecord());
-	        		addCategoryDlg.setIndex(menuButton.getIndex());
-	        		addCategoryDlg.setVisible(true);
+        			DishDlg dishDlg = new DishDlg(BarFrame.instance);
+        			dishDlg.setContents(new PIMRecord());
+        			dishDlg.setIndex(menuButton.getIndex());
+	        		dishDlg.setNameMetrix(nameMetrix);
+	        		dishDlg.setVisible(true);
 	        		initCategoryAndMenus();
 	        		reLayout();
 	        	}
@@ -279,6 +282,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                     new LoginDlg(null).setVisible(true);
                     if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
                         CustOpts.custOps.setUserName(LoginDlg.USERNAME);
+                        CustOpts.custOps.setUserLang(LoginDlg.USERLANG);
                         lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(
                                 CustOpts.custOps.getUserName()));
                         reLayout();
@@ -726,13 +730,15 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             productRS.relative(-1);
             int tmpPos = productRS.getRow();
             prodIDAry = new int[tmpPos];
-            prodSubjectAry = new String[tmpPos];
+            nameMetrix = new String[3][tmpPos];
             productRS.beforeFirst();
 
             tmpPos = 0;
             while (productRS.next()) {
                 prodIDAry[tmpPos] = productRS.getInt("ID");
-                prodSubjectAry[tmpPos] = productRS.getString("SUBJECT");
+                nameMetrix[0][tmpPos] = productRS.getString("Language1");
+                nameMetrix[1][tmpPos] = productRS.getString("Language2");
+                nameMetrix[2][tmpPos] = productRS.getString("Language3");
                 tmpPos++;
             }
             productRS.close();// 关闭
@@ -829,8 +835,8 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 add(btnMenu);
                 btnMenu.addActionListener(this);
                 btnMenuArry.add(btnMenu);
-                if(dspIndex <= prodSubjectAry.length) {
-                	btnMenu.setText(prodSubjectAry[dspIndex - 1]);
+                if(dspIndex <= nameMetrix[0].length) {
+                	btnMenu.setText(nameMetrix[dspIndex - 1][CustOpts.custOps.getUserLang()]);//TODO: replace 0 with settings.
                 }else {
                 	btnPageDownMenu.setEnabled(false);
                 }

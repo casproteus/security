@@ -43,6 +43,7 @@ public interface BarDlgConst {
     String ADMIN_MODE = "System is in setting mode! Click logout button back to use mode.";
     String USE_MODE =  "System is in operating mode!";
     String Title = "STGOBar - Copyright 2018 - http://www.ShareTheGoodOnes.com";
+    String DuplicatedInput = "Dubplicated name found! please choose an other name.";
     String Colon = "：";
     String Operator = "USER";
     String LeftMoney = "上次交班结余";
@@ -62,6 +63,7 @@ public interface BarDlgConst {
     String GST = "GST";
     String PricePomp = "PricePomp";
     String MenuPomp = "MenuPomp";
+    String ModifyPomp = "ModifyPomp";
     
     String Customer = "顾客";
     String Package = "单位";

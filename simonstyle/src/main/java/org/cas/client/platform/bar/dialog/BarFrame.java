@@ -194,7 +194,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         setTitle(BarDlgConst.Title);
         setIconImage(CustOpts.custOps.getFrameLogoImage()); // 设置主窗体的LOGO。
 
-        setBounds(0, 0, CustOpts.SCRWIDTH, CustOpts.SCRHEIGHT); // 对话框的默认尺寸。
+        setBounds(0, 0, CustOpts.SCRWIDTH, CustOpts.SCRHEIGHT - 30); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
         setResizable(true);
 

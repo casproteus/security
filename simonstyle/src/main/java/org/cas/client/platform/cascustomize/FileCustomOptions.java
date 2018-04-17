@@ -2289,6 +2289,18 @@ class FileCustomOptions extends CustOpts {
     private HashMap MenuTextVec = new HashMap();
     private HashMap MenuMnemVec = new HashMap();
     private HashMap MenuFlagVec = new HashMap();
+
+	@Override
+	public void setUserLang(int prmUserLang) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getUserLang() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
 // / **
 // * 向文件中写出各表字段数组名

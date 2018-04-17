@@ -375,25 +375,25 @@ class PIMDBConnecter {
     private void initDefaulUser(
             Connection conn,
             Statement stmt) throws SQLException {
-        String str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('Tropical_fish', '345', 432)";
+        String str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('Tropical_fish', '345', 432, 0)";
         stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('妙音居士', '453', 296)";
+        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('妙音居士', '453', 296, 0)";
         stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('Grace', '21', 0)";
+        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('Grace', '21', 0, 0)";
         stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('王竖', '328', 132)";
+        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('王竖', '328', 132, 0)";
         stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('小童', '378', 0)";
+        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('小童', '378', 0, 0)";
         stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('战', '8', 12)";
+        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('战', '8', 12, 0)";
         stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('admin', '5555', 0)";
+        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('admin', '5555', 0, 0)";
         stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('user1', '1111', 1)";
+        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('user1', '1111', 1, 0)";
         stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('user2', '2222', 1)";
+        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('user2', '2222', 1, 0)";
         stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type) VALUES ('user3', '3333', 1)";
+        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('user3', '3333', 1, 0)";
         stmt.executeUpdate(str);
     }
 

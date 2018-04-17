@@ -82,7 +82,12 @@ public abstract class CustOpts {
 
     public abstract void setUserType(
             String prmUserType);
-
+    
+    public abstract void setUserLang(
+            int prmUserLang);
+    
+    public abstract int getUserLang();
+    
     /******************************************************************************************************/
     /* 主界面公共部分 */
     /******************************************************************************************************/

@@ -218,7 +218,7 @@ public interface DlgConst
     
     String FORMATERROR = "系统检测到输入的内容存在格式错误,请重新输入.";
     String SAVEBEFORECLOSE = "系统检测到对话框内的内容发生了改变，是否需要再关闭前保存改变的内容？";
-	String InvalidInput = "系统发现有无效的输入，导致本操作不能执行。请确定后查看光标所在处是否输入了格式正确的内容。";
+	String InvalidInput = "Invalid input! Please input again.";
 
     String UserNameInUsed = "您刚才输入的用户名已经被他人使用，请重新输入。";
     String UserNameNotExist = "您刚才输入的用户名不存在，请重新输入。";

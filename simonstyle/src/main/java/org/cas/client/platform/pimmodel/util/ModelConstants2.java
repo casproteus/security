@@ -116,9 +116,9 @@ public interface ModelConstants2 {
     String[] SYSTEMINFO_TABLE_FIELE_TYPE = new String[] {// 字段类型
             TYPE_ID, " VARCHAR(255)" };// --------------------------------------------------------------
     // 保存用户登入的用户名、密码、类型（权限）================================
-    String[] USERIDENTITY_TABLE_FIELD = new String[] { "ID", USERNAME, "PASSWORD", "TYPE" };
+    String[] USERIDENTITY_TABLE_FIELD = new String[] { "ID", USERNAME, "PASSWORD", "TYPE", "LANG" };
     String[] USERIDENTITY_FIELD_TYPE = new String[] {// 字段类型,字段中没有添加这个四个字段对应的键值，目的：安全
-            TYPE_ID, TYPE_VARCHAR, TYPE_VARCHAR, " INTEGER" };// ================================================================
+            TYPE_ID, TYPE_VARCHAR, TYPE_VARCHAR, TYPE_INTEGER, " INTEGER" };// ================================================================
 
     /**
      * @Note：该表中的元素顺序必须跟数组TABLE_NAME_LIST中的元素位置顺序保持绝对一致，因为在初始化数据库时，将以TABLE_NAME_LIST中元素 的index号的2倍关系在本数组中找其字段名数组和字段类型数组。

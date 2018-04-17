@@ -113,7 +113,7 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
     }
 
     private void initContent() {
-        String sql = "select ID, Type, UserName, PASSWORD from useridentity where ID > 5";
+        String sql = "select ID, Type, UserName, PASSWORD, LANG from useridentity where ID > 5";
         try {
             ResultSet rs =
                     PIMDBModel.getConection()
@@ -128,6 +128,8 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
             typeAry = new int[tmpPos];
             subjectAry = new String[tmpPos];
             passwordAry = new String[tmpPos];
+            langAry = new int[tmpPos];
+            
             rs.beforeFirst();
             tmpPos = 0;
             while (rs.next()) {
@@ -135,6 +137,7 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
                 typeAry[tmpPos] = rs.getInt("type");
                 subjectAry[tmpPos] = rs.getString("UserName");
                 passwordAry[tmpPos] = rs.getString("PASSWORD");
+                langAry[tmpPos] = rs.getInt("LANG");
                 tmpPos++;
             }
             rs.close();// 关闭
@@ -190,4 +193,5 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
     int[] typeAry;
     String[] subjectAry;
     String[] passwordAry;
+    int[] langAry;
 }

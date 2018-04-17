@@ -31,7 +31,8 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
     public static boolean PASSED;
     public static String USERNAME;
     public static String USERTYPE;
-
+    public static int USERLANG;
+    
     /**
      * Creates a new instance of ContactDialog
      * 
@@ -205,11 +206,13 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                     PASSED = true; // 吻合就标记通过。
                     USERTYPE = String.valueOf(general.typeAry[i]); // 并标记下用户的级别
                     USERNAME = general.subjectAry[i];
-
+                    USERLANG = general.langAry[i];
+                    
                     setVisible(false);
                     if (parent == null) { // parent为null说明是系统刚刚启动时候的登陆操作，将用户名和级别记载到ini中。
                         CustOpts.custOps.setUserName(USERNAME); // 用户名将被用来作为下一次,作为默认的选中项。
                         CustOpts.custOps.setUserType(USERTYPE); // 级别将被用来作为子功能限制的依据。
+                        CustOpts.custOps.setUserLang(USERLANG);
                     }
                     return; // 不吻合就推出，等待用户重新输入密码。
                 }
