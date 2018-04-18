@@ -58,10 +58,14 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
     private String activeCategory;
     private int[] categoryIdAry;
     private String[] categorySubjectAry;
+    
+    private BarGeneralPanel barPanel;
 
-    public DishDlg(JFrame pFrame, Dish dish) {
+    public DishDlg(BarFrame pFrame, Dish dish) {
         super(pFrame, false);
+        this.barPanel = pFrame.general;
         if (dish != null) {
+        	prodID = dish.getId();
             this.dish = dish;
             setIndex(dish.getIndex());
         }
@@ -320,14 +324,17 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                 StringBuilder sql =
                         new StringBuilder(
                                 "INSERT INTO Product(CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, store, Cost,  BRAND, CATEGORY, INDEX, CONTENT, Unit, PRODUCAREA) VALUES ('")
-                                .append(tfdLanguages[0].getText()).append("', '").append(tfdLanguages[1].getText())
-                                .append("', '").append(tfdLanguages[2].getText()).append("', ")
+                                .append(tfdLanguages[0].getText()).append("', '")
+                                .append(tfdLanguages[1].getText()).append("', '")
+                                .append(tfdLanguages[2].getText()).append("', ")
                                 .append(String.valueOf((int) tPrice * 100)).append(", ")
                                 .append(cbxGST.isSelected() ? "1" : "0").append(", ")
-                                .append(cbxQST.isSelected() ? "1" : "0").append(", ").append(getSelectedSize())
-                                .append(", '").append(getSeletedPrinterString()).append("', '")
-                                .append(cmbCategory.getSelectedItem()).append("', ").append(tfdDspIndex.getText())
-                                .append(", '").append(cbxPricePomp.isSelected() ? "true" : "false").append("', '")
+                                .append(cbxQST.isSelected() ? "1" : "0").append(", ")
+                                .append(getSelectedSize()).append(", '")
+                                .append(getSeletedPrinterString()).append("', '")
+                                .append(cmbCategory.getSelectedItem()).append("', ")
+                                .append(tfdDspIndex.getText()).append(", '")
+                                .append(cbxPricePomp.isSelected() ? "true" : "false").append("', '")
                                 .append(cbxMenuPomp.isSelected() ? "true" : "false").append("', '")
                                 .append(cbxModifyPomp.isSelected() ? "true" : "false").append("')");
                 try {
@@ -361,18 +368,19 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             } else {
                 StringBuilder sql =
                         new StringBuilder("update product set code = '").append(tfdLanguages[0].getText())
-                                .append("', MNEMONIC = '").append(tfdLanguages[1].getText()).append("', SUBJECT = '")
-                                .append(tfdLanguages[2].getText()).append("', PRICE = ")
-                                .append(String.valueOf((int) tPrice * 100)).append(", FOLDERID = ")
-                                .append(cbxGST.isSelected() ? "1" : "0").append(", store = ")
-                                .append(cbxQST.isSelected() ? "1" : "0").append(", Cost = ").append(getSelectedSize())
-                                .append(", BRAND = '").append(getSeletedPrinterString()).append("', CATEGORY = '")
-                                .append(cmbCategory.getSelectedItem()).append("', INDEX = ")
-                                .append(tfdDspIndex.getText()).append(", CONTENT = '")
-                                .append(cbxPricePomp.isSelected() ? "true" : "false").append("', UNIT = '")
-                                .append(cbxMenuPomp.isSelected() ? "true" : "false").append("', PRODUCAREA = '")
-                                .append(cbxModifyPomp.isSelected() ? "true" : "false").append("' where ID = ")
-                                .append(String.valueOf(prodID));
+                                .append("', MNEMONIC = '").append(tfdLanguages[1].getText())
+                                .append("', SUBJECT = '").append(tfdLanguages[2].getText())
+                                .append("', PRICE = ").append(String.valueOf((int) tPrice * 100))
+                                .append(", FOLDERID = ").append(cbxGST.isSelected() ? "1" : "0")
+                                .append(", store = ").append(cbxQST.isSelected() ? "1" : "0")
+                                .append(", Cost = ").append(getSelectedSize())
+                                .append(", BRAND = '").append(getSeletedPrinterString())
+                                .append("', CATEGORY = '").append(cmbCategory.getSelectedItem())
+                                .append("', INDEX = ").append(tfdDspIndex.getText())
+                                .append(", CONTENT = '").append(cbxPricePomp.isSelected() ? "true" : "false")
+                                .append("', UNIT = '").append(cbxMenuPomp.isSelected() ? "true" : "false")
+                                .append("', PRODUCAREA = '").append(cbxModifyPomp.isSelected() ? "true" : "false")
+                                .append("' where ID = ").append(String.valueOf(prodID));
 
                 try {
                     Statement smt = PIMDBModel.getConection().createStatement();
@@ -386,6 +394,8 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                 }
             }
 
+            barPanel.initCategoryAndMenus();
+            barPanel.reLayout();
             dispose();
         } else if (o == cancel) {
             dispose();
@@ -406,37 +416,19 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 
     private String getSeletedPrinterString() {
         StringBuilder selectedPrinters = new StringBuilder();
-        if (cbxPrinters[0].isSelected())
-            selectedPrinters.append("1,");
-        if (cbxPrinters[1].isSelected())
-            selectedPrinters.append("2,");
-        if (cbxPrinters[2].isSelected())
-            selectedPrinters.append("3,");
-        if (cbxPrinters[3].isSelected())
-            selectedPrinters.append("4,");
-        if (cbxPrinters[4].isSelected())
-            selectedPrinters.append("5,");
-        if (cbxPrinters[5].isSelected())
-            selectedPrinters.append("6,");
-
+        for(int i = 0; i < cbxPrinters.length; i++) {
+            if (cbxPrinters[i].isSelected())
+                selectedPrinters.append(i).append(",");
+        }
         return selectedPrinters.toString();
     }
 
     private int getSelectedSize() {
-        if (rdbSizes[0].isSelected())
-            return 1;
-        else if (rdbSizes[1].isSelected())
-            return 2;
-        else if (rdbSizes[2].isSelected())
-            return 3;
-        else if (rdbSizes[3].isSelected())
-            return 4;
-        else if (rdbSizes[4].isSelected())
-            return 5;
-        else if (rdbSizes[5].isSelected())
-            return 6;
-        else
-            return 0;
+    	for(int i = 0; i < rdbSizes.length; i++) {
+            if (rdbSizes[i].isSelected())
+                return i;
+    	}
+    	return 0;
     }
 
     @Override
@@ -445,6 +437,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
     }
 
     private void initDialog() {
+    	setModal(true);
         setTitle(BarDlgConst.Menu);
         setResizable(false);
         // 初始化－－－－－－－－－－－－－－－－
@@ -567,12 +560,14 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             cbxGST.setSelected(true);
             rdbSizes[0].setSelected(true);
             cbxPrinters[0].setSelected(true);
+            tfdDspIndex.setText(String.valueOf(index));
         } else {
             tfdLanguages[0].setText(dish.getLanguage1());
             tfdLanguages[1].setText(dish.getLanguage2());
             tfdLanguages[2].setText(dish.getLanguage3());
             tfdPrice.setText(String.valueOf(Float.valueOf(dish.getPrice()) / 100));
-
+            cbxGST.setSelected(dish.getGst() == 1);
+            cbxQST.setSelected(dish.getQst() == 1);
             int size = dish.getSize();
             rdbSizes[size].setSelected(true);
 
@@ -583,7 +578,6 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                     int i = Integer.valueOf(string);
                     cbxPrinters[i].setSelected(true);
                 } catch (Exception e) {
-                    System.out.println("what's left by the hsql StingUtil.split?:" + string);
                 }
             }
 
@@ -627,15 +621,15 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 
         if (categorySubjectAry.length > 0) {
             cmbCategory.setModel(new DefaultComboBoxModel(categorySubjectAry));
+            if (activeCategory != null) {
+                cmbCategory.setSelectedItem(activeCategory);
+            }
         }
     }
 
     public void setActiveCategory(
             String activeCategory) {
         this.activeCategory = activeCategory;
-        if (activeCategory != null) {
-            cmbCategory.setSelectedItem(activeCategory);
-        }
     }
 
     public int getIndex() {

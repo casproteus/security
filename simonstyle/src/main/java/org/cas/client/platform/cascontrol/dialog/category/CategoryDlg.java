@@ -24,6 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.cas.client.platform.bar.dialog.BarDlgConst;
+import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.BarGeneralPanel;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -34,12 +36,13 @@ import org.cas.client.resource.international.CategoryDialogConstants;
 import org.cas.client.resource.international.DlgConst;
 
 public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
-
+	BarGeneralPanel parentPanel;
     String name;
     int index;
 
-    public CategoryDlg(JFrame pParent) {
+    public CategoryDlg(BarFrame pParent) {
         super(pParent, true);
+        parentPanel = pParent.general;
         initDialog();
     }
 
@@ -197,7 +200,8 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
                 smt.executeUpdate(sql.toString());
                 smt.close();
                 smt = null;
-
+                parentPanel.initCategoryAndMenus();
+                parentPanel.reLayout();
                 dispose();
             } catch (Exception exception) {
                 exception.printStackTrace();
@@ -215,6 +219,7 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
 
     private void initDialog() {
         setTitle(CategoryDialogConstants.CATEGORYEditorTITLE);
+        setModal(true);
         setResizable(false);
 
         // 初始化－－－－－－－－－－－－－－－－

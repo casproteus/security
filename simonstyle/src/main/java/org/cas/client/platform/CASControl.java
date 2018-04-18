@@ -522,7 +522,8 @@ public class CASControl {
                 } catch (Exception e) {
                     ErrorUtil.write(e);
                 } finally {
-                    // shall not do system exit, because it might be running in a container. System.exit(0);
+                    if(true)//isNotRunningInContainer())
+                    	System.exit(0);
                 }
             }
         };
