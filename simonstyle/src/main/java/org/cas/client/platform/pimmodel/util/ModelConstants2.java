@@ -102,9 +102,9 @@ public interface ModelConstants2 {
     String[] MAILRULE_TABLE_FIELD_TYPE = new String[] {// 字段类型
             TYPE_ID, TYPE_INTEGER, TYPE_INTEGER, TYPE_BIT, TYPE_BIT, TYPE_VARCHAR, TYPE_BINARY, TYPE_BINARY, " BINARY" };// ///////////////////////////////////////////////////////////////
     // 类别表字段----------------------------------------------------------
-    String[] CATEGORY_TABLE_FIELD = new String[] { "ID", "NAME", "DSP_INDEX" };
+    String[] CATEGORY_TABLE_FIELD = new String[] { "ID", "LANG1", "LANG2", "LANG3", "DSP_INDEX" };
     String[] CATEGORY_TABLE_FIELD_TYPE = new String[] {// 字段类型
-            TYPE_ID, TYPE_VARCHAR, TYPE_INTEGER};// ----------------------------------------------------------------
+            TYPE_ID, TYPE_VARCHAR, TYPE_VARCHAR, TYPE_VARCHAR, TYPE_INTEGER};// ----------------------------------------------------------------
     // 在自定义视图时定义的ViewFormat信息*************************************
     String[] VIEWFORMAT_TABLE_FIELD = new String[] { "ID", "APPTYPE", "MODETYPE", INFOLDER, "FONTSIZE", "FONTNAME",
             "FONTSTYLE", "HAVESTRIKETHROUGH", "FONTCOLOR", "UNREADED", "NUMBER", "SYCNSETTING", "SERVERFOLDER" };

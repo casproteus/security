@@ -1,4 +1,4 @@
-package org.cas.client.platform.cascontrol.dialog.category;
+package org.cas.client.platform.bar.dialog;
 
 import java.awt.Container;
 import java.awt.Dimension;
@@ -23,9 +23,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.cas.client.platform.bar.dialog.BarDlgConst;
-import org.cas.client.platform.bar.dialog.BarFrame;
-import org.cas.client.platform.bar.dialog.BarGeneralPanel;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -36,26 +33,24 @@ import org.cas.client.resource.international.CategoryDialogConstants;
 import org.cas.client.resource.international.DlgConst;
 
 public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
-	BarGeneralPanel parentPanel;
-    String name;
-    int index;
+	BarGeneralPanel barGeneralPanel;
+    int dspIndex;
 
     public CategoryDlg(BarFrame pParent) {
         super(pParent, true);
-        parentPanel = pParent.general;
+        barGeneralPanel = pParent.general;
         initDialog();
     }
 
-    public void setText(
-            String name) {
-        this.name = name;
-        this.general.tfdCategoryName.setText(name);
-    }
-
     public void setIndex(
-            int index) {
-        this.index = index;
-        this.general.dspIndex.setText(String.valueOf(index));
+            int dspIndex) {
+        this.dspIndex = dspIndex;
+        this.general.tfdDspIndex.setText(String.valueOf(dspIndex));
+        if(dspIndex <= barGeneralPanel.categoryNameMetrix[0].length) {
+        	this.general.tfdCategoryNames[0].setText(barGeneralPanel.categoryNameMetrix[0][dspIndex - 1]);
+        	this.general.tfdCategoryNames[1].setText(barGeneralPanel.categoryNameMetrix[1][dspIndex - 1]);
+        	this.general.tfdCategoryNames[2].setText(barGeneralPanel.categoryNameMetrix[2][dspIndex - 1]);
+        }
     }
 
     /*
@@ -64,10 +59,11 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
      */
     @Override
     public void reLayout() {
-        cancel.setBounds(getContainer().getWidth() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, getContainer().getHeight()
-                - CustOpts.BTN_HEIGHT - CustOpts.VER_GAP, CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);// 关闭
-        ok.setBounds(cancel.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, cancel.getY(), CustOpts.BTN_WIDTH,
-                CustOpts.BTN_HEIGHT);// 关闭
+        cancel.setBounds(getContainer().getWidth() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, 
+        		getContainer().getHeight() - CustOpts.BTN_HEIGHT - CustOpts.VER_GAP, 
+        		CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);// 关闭
+        ok.setBounds(cancel.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, cancel.getY(), 
+        		CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);// 关闭
         general.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, getContainer().getWidth() - 2 * CustOpts.HOR_GAP,
                 (ok.getY()) - 2 * CustOpts.VER_GAP);
         general.componentResized(null);
@@ -150,53 +146,90 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
             ActionEvent e) {
         Object o = e.getSource();
         if (o == ok) {
-            String tCategory = general.tfdCategoryName.getText();
+            String text = general.tfdCategoryNames[0].getText();
 
-            if (!tCategory.equalsIgnoreCase(name)) { // if name changed, need to check if new value duplicated with others.
-                for (int i = 0; i < general.categoryNameAry.length; i++) {
-                    if (tCategory.equalsIgnoreCase(general.categoryNameAry[i])) {
-                        JOptionPane.showMessageDialog(this, DlgConst.CategoryNameInUse);
-                        general.tfdCategoryName.setText("");
-                        general.tfdCategoryName.grabFocus();
+            // name check ----------------------------------
+            if (text == null || text.length() < 1) {
+                JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
+                general.tfdCategoryNames[0].grabFocus();
+                return;
+            } 
+
+            if (isCategoryNameModified(0)) {
+                for (int i = 0; i < barGeneralPanel.menuNameMetrix[0].length; i++) {
+                    if (i != dspIndex - 1 && text.equalsIgnoreCase(barGeneralPanel.menuNameMetrix[0][i])) {
+                        JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
+                        general.tfdCategoryNames[0].grabFocus();
                         return;
                     }
                 }
             }
 
+            if (isCategoryNameModified(1)) {
+            	text = general.tfdCategoryNames[1].getText();
+                if (text != null && !"".equals(text))//language2 is allowed to be empty.
+                    for (int i = 0; i < barGeneralPanel.menuNameMetrix[1].length; i++) {
+                        if (i != dspIndex - 1 && text.equalsIgnoreCase(barGeneralPanel.menuNameMetrix[1][i])) {
+                            JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
+                            general.tfdCategoryNames[1].grabFocus();
+                            return;
+                        }
+                    }
+            } 
+
+            if (isCategoryNameModified(2)) {
+            	text = general.tfdCategoryNames[2].getText();
+                if (text != null && !"".equals(text))//language3 is allowed to be empty.
+                    for (int i = 0; i < barGeneralPanel.menuNameMetrix[2].length; i++) {
+                        if (i != dspIndex - 1 && text.equalsIgnoreCase(barGeneralPanel.menuNameMetrix[2][i])) {
+                            JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
+                            general.tfdCategoryNames[2].grabFocus();
+                            return;
+                        }
+                    }
+            }
+            
             try {
                 Connection conn = PIMDBModel.getConection();
                 Statement smt = conn.createStatement();
 
-                int newIndex = Integer.valueOf(general.dspIndex.getText()); // display must be a integer
-                if (newIndex != index) { // index modified, need to modify affected categories
-                    if (newIndex > index) {
-                        for (int i = index + 1; i <= newIndex; i++) { // make index smaller
-                        	String sql = "UPDATE Category SET DSP_INDEX = ".concat(String.valueOf(i - 1))
-                            	.concat(" where DSP_INDEX = ").concat(String.valueOf(i)).concat("");
-                            smt.executeUpdate(sql.toString());
-                        }
-                    } else {
-                        for (int i = newIndex; i < index; i++) { // make index bigger
-                        	String sql = "UPDATE Category SET DSP_INDEX = ".concat(String.valueOf(i + 1))
-                            	.concat(" where DSP_INDEX = ").concat(String.valueOf(i)).concat("");
-                            smt.executeUpdate(sql.toString());
-                        }
+                //adjust affected category's Index
+                int newIndex = Integer.valueOf(general.tfdDspIndex.getText()); // display must be a integer
+                if (newIndex > dspIndex) {
+                	for (int i = dspIndex + 1; i <= newIndex; i++) { // make index smaller
+                    	String sql = "UPDATE Category SET DSP_INDEX = ".concat(String.valueOf(i - 1))
+                        	.concat(" where DSP_INDEX = ").concat(String.valueOf(i)).concat("");
+                        smt.executeUpdate(sql.toString());
+                    }
+                } else if (newIndex < dspIndex){
+                    for (int i = dspIndex - 1; i >= newIndex; i--) { // make index bigger @NOTE: have adjust from top to down.
+                    	String sql = "UPDATE Category SET DSP_INDEX = ".concat(String.valueOf(i + 1))
+                        	.concat(" where DSP_INDEX = ").concat(String.valueOf(i)).concat("");
+                        smt.executeUpdate(sql.toString());
                     }
                 }
-
-                String sql = name != null ? 	//if name was not null, it's an update, otherwise, an insert
-                		"UPDATE Category SET NAME = '".concat(general.tfdCategoryName.getText())
-                    	.concat("', DSP_INDEX = ").concat(general.dspIndex.getText())
-                    	.concat(" where NAME = '").concat(name).concat("'")
+                
+              //start to save to db-----	if name was not null, it's an update, otherwise, an insert
+                String sql = dspIndex <= barGeneralPanel.categoryNameMetrix[0].length 
+                		&& barGeneralPanel.categoryNameMetrix[0][dspIndex - 1] != null 
+                		? 
+                		"UPDATE Category SET LANG1 = '".concat(general.tfdCategoryNames[0].getText())
+                    	.concat("', LANG2 = '").concat(general.tfdCategoryNames[1].getText())
+                    	.concat("', LANG3 = '").concat(general.tfdCategoryNames[2].getText())
+                    	.concat("', DSP_INDEX = ").concat(general.tfdDspIndex.getText())
+                    	.concat(" where LANG1 = '").concat(barGeneralPanel.categoryNameMetrix[0][dspIndex - 1]).concat("'")
                     	:
-                    	"INSERT INTO Category(NAME, DSP_INDEX) VALUES('".concat(general.tfdCategoryName.getText())
-                        .concat("', ").concat(general.dspIndex.getText()).concat(")")	;
+                    	"INSERT INTO Category(LANG1, LANG2, LANG3, DSP_INDEX) VALUES('"
+                    		.concat(general.tfdCategoryNames[0].getText()).concat("', '")
+                    		.concat(general.tfdCategoryNames[1].getText()).concat("', '")
+                    		.concat(general.tfdCategoryNames[2].getText()).concat("', ")
+                    		.concat(general.tfdDspIndex.getText()).concat(")")	;
 
                 smt.executeUpdate(sql.toString());
                 smt.close();
                 smt = null;
-                parentPanel.initCategoryAndDishes();
-                parentPanel.reLayout();
+                barGeneralPanel.initCategoryAndDishes();
+                barGeneralPanel.reLayout();
                 dispose();
             } catch (Exception exception) {
             	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
@@ -207,7 +240,28 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
             dispose();
         }
     }
+    
+    private boolean isCategoryNameModified(int lang) {
 
+        boolean isNotInitYet = dspIndex - 1 >= barGeneralPanel.categoryNameMetrix[lang].length;
+        
+        String oldText = isNotInitYet ? null : barGeneralPanel.categoryNameMetrix[lang][dspIndex - 1];
+        boolean isEmptyBefore = oldText == null || oldText.length() == 0;
+        
+        String newText = general.tfdCategoryNames[lang].getText();
+        boolean isEmptyNow = newText == null || newText.length() == 0;
+
+        if ((isNotInitYet || isEmptyBefore) && isEmptyNow) { // if empty before, and empty now, return false
+            return false;
+        } else if ((isNotInitYet || isEmptyBefore) && !isEmptyNow) {// if empty before, not empty now, return true
+            return true;
+        } else if (isEmptyNow) { // if not empty before, empty now, return true
+            return true;
+        } else { // if not empty before, not empty now, compare!
+            return !newText.equals(oldText);
+        }
+    }
+    
     @Override
     public Container getContainer() {
         return getContentPane();
@@ -284,11 +338,17 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
         }
 
         private void initConponent() {
-            lblCategoryName = new JLabel(CategoryDialogConstants.NAME);
+        	lblCategoryNames =  new JLabel[3];
+            lblCategoryNames[0] = new JLabel(BarDlgConst.Language1);
+            lblCategoryNames[1] = new JLabel(BarDlgConst.Language2);
+            lblCategoryNames[2] = new JLabel(BarDlgConst.Language3);
             lblPosition = new JLabel(BarDlgConst.DSPINDEX);
 
-            tfdCategoryName = new JTextField();
-            dspIndex = new JTextField();
+            tfdCategoryNames = new JTextField[3];
+            tfdCategoryNames[0] = new JTextField();
+            tfdCategoryNames[1] = new JTextField();
+            tfdCategoryNames[2] = new JTextField();
+            tfdDspIndex = new JTextField();
 
             // properties
             setLayout(null);
@@ -296,15 +356,19 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
             initContent();
             reLayout();
             // built
-            add(lblCategoryName);
-            add(tfdCategoryName);
+            add(lblCategoryNames[0]);
+            add(lblCategoryNames[1]);
+            add(lblCategoryNames[2]);
+            add(tfdCategoryNames[0]);
+            add(tfdCategoryNames[1]);
+            add(tfdCategoryNames[2]);
             add(lblPosition);
-            add(dspIndex);
+            add(tfdDspIndex);
             addComponentListener(this);
         }
 
         private void initContent() {
-            String sql = "select ID, NAME, DSP_INDEX from CATEGORY";
+            String sql = "select ID, LANG1, LANG2, LANG3, DSP_INDEX from CATEGORY";
             try {
                 ResultSet rs =
                         PIMDBModel.getConection()
@@ -316,13 +380,15 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
                 rs.relative(-1);
                 int tmpPos = rs.getRow();
                 idAry = new int[tmpPos];
-                categoryNameAry = new String[tmpPos];
+                categoryNameMetrix = new String[3][tmpPos];
                 indexAry = new int[tmpPos];
                 rs.beforeFirst();
                 tmpPos = 0;
                 while (rs.next()) {
                     idAry[tmpPos] = rs.getInt("id");
-                    categoryNameAry[tmpPos] = rs.getString("NAME");
+                    categoryNameMetrix[0][tmpPos] = rs.getString("LANG1");
+                    categoryNameMetrix[1][tmpPos] = rs.getString("LANG2");
+                    categoryNameMetrix[2][tmpPos] = rs.getString("LANG3");
                     indexAry[tmpPos] = rs.getInt("DSP_INDEX");
                     tmpPos++;
                 }
@@ -337,27 +403,36 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
         	
             int prmWidth = getWidth();
             
-            lblCategoryName.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCategoryName.getPreferredSize().width,CustOpts.BTN_HEIGHT);
+           lblCategoryNames[0].setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCategoryNames[0].getPreferredSize().width,CustOpts.BTN_HEIGHT);
+           tfdCategoryNames[0].setBounds(lblCategoryNames[0].getX() + lblCategoryNames[0].getWidth() + CustOpts.HOR_GAP, lblCategoryNames[0].getY(), 
+                    prmWidth - lblCategoryNames[0].getWidth() - CustOpts.HOR_GAP * 3, CustOpts.BTN_HEIGHT);
             
-            tfdCategoryName.setBounds(lblCategoryName.getX() + lblCategoryName.getWidth() + CustOpts.HOR_GAP, lblCategoryName.getY(), 
-                    prmWidth - lblCategoryName.getWidth() - CustOpts.HOR_GAP * 3, CustOpts.BTN_HEIGHT);
+           lblCategoryNames[1].setBounds(CustOpts.HOR_GAP, lblCategoryNames[0].getY() + lblCategoryNames[0].getHeight() + CustOpts.VER_GAP, 
+        		   lblCategoryNames[0].getPreferredSize().width,CustOpts.BTN_HEIGHT);
+           tfdCategoryNames[1].setBounds(lblCategoryNames[1].getX() + lblCategoryNames[1].getWidth() + CustOpts.HOR_GAP, lblCategoryNames[1].getY(), 
+                    prmWidth - lblCategoryNames[1].getWidth() - CustOpts.HOR_GAP * 3, CustOpts.BTN_HEIGHT);
             
-            lblPosition.setBounds(lblCategoryName.getX(), lblCategoryName.getY() + lblCategoryName.getHeight() + CustOpts.VER_GAP,
-                    lblCategoryName.getWidth(), CustOpts.BTN_HEIGHT);
+           lblCategoryNames[2].setBounds(CustOpts.HOR_GAP, lblCategoryNames[1].getY() + lblCategoryNames[1].getHeight() + CustOpts.VER_GAP, 
+        		   lblCategoryNames[0].getPreferredSize().width,CustOpts.BTN_HEIGHT);
+           tfdCategoryNames[2].setBounds(lblCategoryNames[2].getX() + lblCategoryNames[2].getWidth() + CustOpts.HOR_GAP, lblCategoryNames[2].getY(), 
+                    prmWidth - lblCategoryNames[2].getWidth() - CustOpts.HOR_GAP * 3, CustOpts.BTN_HEIGHT);
             
-            dspIndex.setBounds(tfdCategoryName.getX(), lblPosition.getY(), tfdCategoryName.getWidth(), CustOpts.BTN_HEIGHT);
+            lblPosition.setBounds(lblCategoryNames[2].getX(), lblCategoryNames[2].getY() + lblCategoryNames[2].getHeight() + CustOpts.VER_GAP,
+                    lblCategoryNames[2].getWidth(), CustOpts.BTN_HEIGHT);
+            
+            tfdDspIndex.setBounds(tfdCategoryNames[2].getX(), lblPosition.getY(), tfdCategoryNames[2].getWidth(), CustOpts.BTN_HEIGHT);
 
-            setPreferredSize(new Dimension(getWidth(), dspIndex.getY() + dspIndex.getHeight() + CustOpts.VER_GAP));
+            setPreferredSize(new Dimension(getWidth(), tfdDspIndex.getY() + tfdDspIndex.getHeight() + CustOpts.VER_GAP));
         }
 
-        JLabel lblCategoryName;
+        JLabel[] lblCategoryNames;
         JLabel lblPosition;
 
-        JTextField tfdCategoryName;
-        JTextField dspIndex;
+        JTextField[] tfdCategoryNames;
+        JTextField tfdDspIndex;
 
         int[] idAry;
-        String[] categoryNameAry;
+        String[][] categoryNameMetrix;
         int[] indexAry;
     }
 }

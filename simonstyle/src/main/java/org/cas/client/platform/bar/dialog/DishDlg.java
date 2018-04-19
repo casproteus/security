@@ -359,7 +359,6 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                     }
                 }
                 
-                
                 // insert the product record into db.==========================
                 if (isCreatingNewDish()) {
                     StringBuilder sql = new StringBuilder(
@@ -620,7 +619,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                     connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
             // load all the categorys---------------------------
-            ResultSet categoryRS = statement.executeQuery("select ID, NAME from CATEGORY order by DSP_INDEX");
+            ResultSet categoryRS = statement.executeQuery("select ID, LANG1, LANG2, LANG3 from CATEGORY order by DSP_INDEX");
             categoryRS.afterLast();
             categoryRS.relative(-1);
             int tmpPos = categoryRS.getRow();
@@ -631,7 +630,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             tmpPos = 0;
             while (categoryRS.next()) {
                 categoryIdAry[tmpPos] = categoryRS.getInt("ID");
-                categorySubjectAry[tmpPos] = categoryRS.getString("NAME");
+                categorySubjectAry[tmpPos] = categoryRS.getString("LANG" + (CustOpts.custOps.getUserLang() + 1));
                 tmpPos++;
             }
             categoryRS.close();// 关闭

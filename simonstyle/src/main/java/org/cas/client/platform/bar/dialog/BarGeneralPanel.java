@@ -37,7 +37,6 @@ import javax.swing.SwingUtilities;
 import org.cas.client.platform.bar.beans.CategoryToggle;
 import org.cas.client.platform.bar.beans.MenuButton;
 import org.cas.client.platform.bar.model.Dish;
-import org.cas.client.platform.cascontrol.dialog.category.CategoryDlg;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -68,12 +67,13 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     private int curMenuPageNum = 0;
     private int curMenuPerPage = 0;
 
+    private int[] categoryIdAry;
+    String[][] categoryNameMetrix;
+    
     private int[] prodIDAry;
     String[][] menuNameMetrix;// the struction must be [3][index]. it's more convenient than [index][3]
     String[][] onScrMenuNameMetrix;// it's sub set of all menuNameMetrix
     
-    private int[] categoryIdAry;
-    private String[] categorySubjectAry;
     
     private Dish[] dishAry;
     private Dish[] onScrDishAry;
@@ -153,7 +153,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             curCategoryPage++;
             // adjust status
             btnPageUpCategory.setEnabled(true);
-            if (curCategoryPage * categoryNumPerPage > categorySubjectAry.length) {
+            if (curCategoryPage * categoryNumPerPage > categoryNameMetrix.length) {
                 btnPageDownCategory.setEnabled(false);
             }
 
@@ -199,12 +199,10 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                         activeCategoryButton.setSelected(false);
                     }
                     activeCategoryButton = categoryToggle;
-                    initCategoryAndDishes();
+                    initCategoryAndDishes();	//fill menu buttons with menus belong to this category.
                     reLayout();
-                    // TODO: fill menu buttons with menus belong to this category.
                 } else if (curSecurityStatus == ADMIN_STATUS) {
                     CategoryDlg categoryDlg = new CategoryDlg(BarFrame.instance);
-                    categoryDlg.setText(text);
                     categoryDlg.setIndex(categoryToggle.getIndex());
                     categoryDlg.setVisible(true);
                 }
@@ -706,18 +704,22 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                     connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
             // load all the categorys---------------------------
-            ResultSet categoryRS = statement.executeQuery("select ID, NAME from CATEGORY order by DSP_INDEX");
+            ResultSet categoryRS = statement.executeQuery("select ID, LANG1, LANG2, LANG3 from CATEGORY order by DSP_INDEX");
             categoryRS.afterLast();
             categoryRS.relative(-1);
             int tmpPos = categoryRS.getRow();
             categoryIdAry = new int[tmpPos];
-            categorySubjectAry = new String[tmpPos];
+            categoryNameMetrix = new String[3][tmpPos];
             categoryRS.beforeFirst();
 
             tmpPos = 0;
             while (categoryRS.next()) {
                 categoryIdAry[tmpPos] = categoryRS.getInt("ID");
-                categorySubjectAry[tmpPos] = categoryRS.getString("NAME");
+                
+                categoryNameMetrix[0][tmpPos] = categoryRS.getString("LANG1");
+                categoryNameMetrix[1][tmpPos] = categoryRS.getString("LANG2");
+                categoryNameMetrix[2][tmpPos] = categoryRS.getString("LANG3");
+                
                 tmpPos++;
             }
             categoryRS.close();// 关闭
@@ -809,10 +811,10 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 add(btnCategory);
                 btnCategory.addActionListener(this);
                 btnCategoryArry.add(btnCategory);
-                if (dspIndex <= categorySubjectAry.length) {
-                    btnCategory.setText(categorySubjectAry[dspIndex - 1]);
+                if (dspIndex <= categoryNameMetrix[0].length) {
+                    btnCategory.setText(categoryNameMetrix[CustOpts.custOps.getUserLang()][dspIndex - 1]);
                     if (activeCategoryButton != null
-                            && categorySubjectAry[dspIndex - 1].equalsIgnoreCase(activeCategoryButton.getText())) {
+                            && categoryNameMetrix[CustOpts.custOps.getUserLang()][dspIndex - 1].equalsIgnoreCase(activeCategoryButton.getText())) {
                         btnCategory.setSelected(true);
                     }
                 } else {
