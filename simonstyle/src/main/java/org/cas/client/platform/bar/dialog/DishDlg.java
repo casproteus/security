@@ -594,9 +594,9 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             rdbSizes[0].setSelected(true);
             cbxPrinters[0].setSelected(true);
         } else {
-            tfdLanguages[0].setText(dish.getLanguage1());
-            tfdLanguages[1].setText(dish.getLanguage2());
-            tfdLanguages[2].setText(dish.getLanguage3());
+            tfdLanguages[0].setText(dish.getLanguage(0));
+            tfdLanguages[1].setText(dish.getLanguage(1));
+            tfdLanguages[2].setText(dish.getLanguage(2));
             tfdPrice.setText(String.valueOf(Float.valueOf(dish.getPrice()) / 100));
             cbxGST.setSelected(dish.getGst() == 1);
             cbxQST.setSelected(dish.getQst() == 1);

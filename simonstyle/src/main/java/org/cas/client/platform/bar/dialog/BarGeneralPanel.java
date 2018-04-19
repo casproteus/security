@@ -52,7 +52,7 @@ import org.cas.client.resource.international.DlgConst;
 import org.cas.client.resource.international.PaneConsts;
 
 //Identity表应该和Employ表合并。
-public class BarGeneralPanel extends JPanel implements ComponentListener, KeyListener, ActionListener, FocusListener {
+public class BarGeneralPanel extends JPanel implements ComponentListener, ActionListener, FocusListener {
     private final int PRICECOLID = 3;
     private final int TOTALCOLID = 4;
     private final int COUNDCOLID = 2;
@@ -223,7 +223,8 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 if (curSecurityStatus == ADMIN_STATUS) {
                     new DishDlg(BarFrame.instance, menuButton.getDish()).setVisible(true);
                 } else {
-                    // TODO: add into table model.
+                    // add into table.
+                	addContentToList(menuButton.getDish());
                 }
             }
         } else if (o instanceof JButton) {
@@ -287,143 +288,31 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         return false;
     }
 
-    // Key Listener--------------------------------
-    @Override
-    public void keyPressed(
-            KeyEvent e) {
-        Object o = e.getSource();
-    }
+    private void resetColWidth(int tableWidth) {
+        PIMTableColumn tmpCol1 = tblContent.getColumnModel().getColumn(0);
+        tmpCol1.setWidth(40);
+        tmpCol1.setPreferredWidth(40);
+        PIMTableColumn tmpCol3 = tblContent.getColumnModel().getColumn(2);
+        tmpCol3.setWidth(40);
+        tmpCol3.setPreferredWidth(40);
+        PIMTableColumn tmpCol4 = tblContent.getColumnModel().getColumn(3);
+        tmpCol4.setWidth(40);
+        tmpCol4.setPreferredWidth(40);
+        PIMTableColumn tmpCol5 = tblContent.getColumnModel().getColumn(4);
+        tmpCol5.setWidth(40);
+        tmpCol5.setPreferredWidth(40);
 
-    private void commKeyProcess(
-            KeyEvent e) {
-        int tKeyCode = e.getKeyCode();
-        if (tKeyCode == 112) {// F1库存
-            if (btnLine_3_3.isEnabled())
-                actionPerformed(new ActionEvent(btnLine_3_3, 0, null));
-        } else if (tKeyCode == 113) {// F2为进货
-            if (btnLine_3_4.isEnabled())
-                actionPerformed(new ActionEvent(btnLine_3_4, 0, null));
-        } else if (tKeyCode == 114) {// F3退货
-            if (btnLine_3_5.isEnabled())
-                actionPerformed(new ActionEvent(btnLine_3_5, 0, null));
-        } else if (tKeyCode == 115) {// F4挂单
-            if (btnLine_3_6.isEnabled())
-                actionPerformed(new ActionEvent(btnLine_3_6, 0, null));
-        } else if (tKeyCode == 116) {// F5统计
-            if (btnLine_3_7.isEnabled())
-                actionPerformed(new ActionEvent(btnLine_3_7, 0, null));
-        }
-        // else if(tKeyCode == 119){//F8改汇率
-        // if(btnMRate.isEnabled())
-        // actionPerformed(new ActionEvent(btnMRate, 0, null));
-        // }else if(tKeyCode == 118){//F7改用户
-        // if(btnMUser.isEnabled())
-        // actionPerformed(new ActionEvent(btnMUser, 0, null));
-        // }
-        else if (tKeyCode == 117) {// F6系统设置
-            if (btnLine_3_8.isEnabled())
-                actionPerformed(new ActionEvent(btnLine_3_8, 0, null));
-        } else if (tKeyCode == 27) {// ESC 表示取消对话盒区域内容，取消列表中项目，退出系统
-            if (((JTextField) e.getSource()).getText().length() > 0)// 如果条码框或者产品名中有内容，就表示清空本条记录。
-                resetDlgArea();
-            else { // 如果是对话盒区域已经是空的了
-                if (getUsedRowCount() != 0) { // 就看列表中是否有记录，有的话，F1就表示情况列表。
-                    resetAll();
-                } else
-                    // 列表中也没有记录的话，就表示退出系统。提醒操作员盘点。
-                    actionPerformed(new ActionEvent(btnLine_3_2, 0, null));
-            }
-        } else if (tKeyCode == 17) {// 按"ctrl"键使光标跳至count.必须先输入数量再输入产品的道理是，扫描枪有可能会带回车，使你没有机会后敲数量。
-        } else if (tKeyCode == 38) {
-            tblContent.setSelectedRow(tblContent.getSelectedRow() - 1);
-            tblContent.scrollToRect(tblContent.getSelectedRow(), tblContent.getSelectedColumn());
-        } else if (tKeyCode == 40) {
-            tblContent.setSelectedRow(tblContent.getSelectedRow() + 1);
-            tblContent.scrollToRect(tblContent.getSelectedRow(), tblContent.getSelectedColumn());
-        } else if (tKeyCode == 8 || tKeyCode == 127) {
-            // @NOTE:当Del键或者BackSpace键被按时，如果条码框中没有内容，则直接进行list中记录的删除动作。
-            int tRow = tblContent.getSelectedRow();
-            if (tRow < 0 || tRow > getUsedRowCount() - 1) { // 没有选中行的话，看看最后一行是第几行，选中它。
-                tblContent.setSelectedRow(getUsedRowCount() - 1);
-                tblContent.scrollToRect(tblContent.getSelectedRow(), tblContent.getSelectedColumn());
-            } else { // 有选中行的话，将选中行删除，应收金额相应减少
-                Float tPrice = Float.parseFloat((String) tblContent.getValueAt(tRow, 4));
-                shouldReceive = shouldReceive - tPrice;
-                for (int j = tRow; j < tblContent.getRowCount(); j++)
-                    if (j == tblContent.getRowCount() - 1)
-                        for (int i = 0; i < tblContent.getColumnCount(); i++)
-                            tblContent.setValueAt(null, j, i);
-                    else
-                        for (int i = 0; i < tblContent.getColumnCount(); i++)
-                            tblContent.setValueAt(tblContent.getValueAt(j + 1, i), j, i);
-            }
-        }
-        // 一时想不起来为什么加这么个处理，宏姐说不方便，于是就先注释掉试试再说。
-        else if (tKeyCode == ' ') {
-            Object tOneKeyOpen = CustOpts.custOps.getValue(BarDlgConst.OneKeyOpen);
-            if ("true".equals(tOneKeyOpen) || tOneKeyOpen == null) {
-                Object tUniCommand = CustOpts.custOps.getValue(BarDlgConst.UniCommand);
-                if ("true".equals(tUniCommand) || tUniCommand == null) {// 如果是采用通用命令（没有钱箱卡），则向端口写数据
-                    openMoneyBox();
-                } else { // 如果是Windows系统，则直接调用exe格式的开钱箱程序
-                    String tSrcPath = tUniCommand.toString();
-                    try {
-                        Runtime.getRuntime().exec(tSrcPath);
-                    } catch (Exception exp) {
-
-                    }
-                }
-            }
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                }
-            });
-        }
-    }
-
-    @Override
-    public void keyReleased(
-            KeyEvent e) {
-    }
-
-    @Override
-    public void keyTyped(
-            KeyEvent e) {
-    }
-
-    private void resetColWidth() {
-        for (int i = 0, len = header.length; i < len; i++) {
-            PIMTableColumn tmpCol = tblContent.getColumnModel().getColumn(i);
-            tmpCol.setWidth(i == 1 ? getWidth() * 3 / 5 - 243 : 60);
-            tmpCol.setPreferredWidth(i == 1 ? getWidth() * 3 / 5 - 243 : 60);
-        }
+        PIMTableColumn tmpCol2 = tblContent.getColumnModel().getColumn(1);
+        tmpCol2.setWidth(tableWidth - tmpCol1.getWidth() - tmpCol3.getWidth() - tmpCol4.getWidth() - tmpCol5.getWidth() - 3);
+        tmpCol2.setPreferredWidth(tmpCol2.getWidth());
+        
         tblContent.validate();
         tblContent.revalidate();
         tblContent.invalidate();
     }
 
-    // 当对话盒区域内容填写完了以后，通过本方法启动一个线程，实现休眠500ms之后将对话盒区域内容增加到表中。
-    // 同时更新tfdShoudReceive的内容。
-    private void startWaitThread() {
-        setStatusMes(BarDlgConst.NotePordNumber2);
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(1000);
-                    addContentToList(); // 将对话盒区域内容加入到列表中去。
-                    shouldReceive += Float.parseFloat(tfdTotlePrice.getText());
-                    // tfdShoudReceive.setText(decimalFormat.format(shouldReceive));
-                    resetDlgArea(); // 对话和区域内容复位。
-                } catch (Exception e) {
-                }
-            }
-        });
-    }
-
     // 将对话盒区域的内容加入到列表
-    private void addContentToList() {
+    private void addContentToList(Dish dish) {
         int tRowCount = tblContent.getRowCount(); // add content to the table.
         int tColCount = tblContent.getColumnCount();
         int tValidRowCount = getUsedRowCount(); // get the used RowCount
@@ -433,13 +322,15 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 for (int c = 0; c < tColCount; c++)
                     tValues[r][c] = tblContent.getValueAt(r, c);
             tblContent.setDataVector(tValues, header);
-            resetColWidth();
+            resetColWidth(srpContent.getWidth());
+        }else {
+        	tRowCount--;
         }
-        tblContent.setValueAt(Integer.valueOf(prodID), tValidRowCount, 0); // set the code.
-        tblContent.setValueAt("replace with real name", tValidRowCount, 1);// set the Name.
-        tblContent.setValueAt("replace with real count", tValidRowCount, 2); // set the count.
-        tblContent.setValueAt("replace with real count", tValidRowCount, 3); // set the price.
-        tblContent.setValueAt(tfdTotlePrice.getText(), tValidRowCount, 4); // set the total price.
+        tblContent.setValueAt(tRowCount + 1, tValidRowCount, 0); // set the code.
+        tblContent.setValueAt(dish.getLanguage(CustOpts.custOps.getUserLang()), tValidRowCount, 1);// set the Name.
+        tblContent.setValueAt(dish.getSize() > 1 ? dish.getSize() : "", tValidRowCount, 2); // set the count.
+        tblContent.setValueAt(1, tValidRowCount, 3); // set the count.
+        tblContent.setValueAt(dish.getPrice()/100f, tValidRowCount, 4); // set the price.
 
         enableBtns(false);
         setStatusMes(BarDlgConst.NotePordNumber3);
@@ -746,9 +637,9 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
 
                 dishAry[tmpPos] = new Dish();
                 dishAry[tmpPos].setId(prodIDAry[tmpPos]);
-                dishAry[tmpPos].setLanguage1(menuNameMetrix[0][tmpPos]);
-                dishAry[tmpPos].setLanguage2(menuNameMetrix[1][tmpPos]);
-                dishAry[tmpPos].setLanguage3(menuNameMetrix[2][tmpPos]);
+                dishAry[tmpPos].setLanguage(0, menuNameMetrix[0][tmpPos]);
+                dishAry[tmpPos].setLanguage(1, menuNameMetrix[1][tmpPos]);
+                dishAry[tmpPos].setLanguage(2, menuNameMetrix[2][tmpPos]);
                 dishAry[tmpPos].setPrice(productRS.getInt("PRICE"));
                 dishAry[tmpPos].setGst(productRS.getInt("FOLDERID"));
                 dishAry[tmpPos].setQst(productRS.getInt("STORE"));
@@ -1031,7 +922,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 btnPageUpCategory.getY() + btnPageUpCategory.getHeight() + CustOpts.VER_GAP,
                 BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
 
-        // menugory area--------------
+        // menu area--------------
         int menuY = srpContent.getY() + (categeryBtnHeight + CustOpts.VER_GAP) * categoryRow + CustOpts.VER_GAP;
         int menuBtnWidth = (widthMenuArea - CustOpts.HOR_GAP * (menuColumn - 1)) / menuColumn;
         int menuBtnHeight = (int) ((topAreaHeight * (1 - categoryHeight) - CustOpts.VER_GAP * (menuRow)) / menuRow);
@@ -1050,7 +941,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         btnPageDownMenu.setBounds(btnPageUpMenu.getX(), btnPageUpMenu.getY() + btnPageUpMenu.getHeight()
                 + CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
 
-        resetColWidth();
+        resetColWidth(srpContent.getWidth());
     }
 
     private boolean isOnProcess() {
@@ -1067,7 +958,6 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     private void resetAll() {
         resetDlgArea();
         resetListArea();
-        shouldReceive = 0;
     }
 
     private void resetDlgArea() {
@@ -1158,11 +1048,9 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
 
     private PIMTable tblContent;
     private PIMScrollPane srpContent;
-
-    private int prodID;
-    private float shouldReceive;
-    private String[] header = new String[] { BarDlgConst.ProdNumber, BarDlgConst.ProdName, BarDlgConst.Count,
-            BarDlgConst.Price, BarDlgConst.Subtotal };
+    private String[] header = new String[] { BarDlgConst.ProdNumber, BarDlgConst.ProdName, BarDlgConst.Size, BarDlgConst.Count,
+            BarDlgConst.Price};
+    
     private DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 
 }

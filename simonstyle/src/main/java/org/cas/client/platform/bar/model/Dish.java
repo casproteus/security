@@ -20,31 +20,13 @@ public class Dish {
         this.dspIndex = index;
     }
 
-    public String getLanguage1() {
-        return language1;
+    public String getLanguage(int i) {
+        return language[i];
     }
 
-    public void setLanguage1(
-            String language1) {
-        this.language1 = language1;
-    }
-
-    public String getLanguage2() {
-        return language2;
-    }
-
-    public void setLanguage2(
-            String language2) {
-        this.language2 = language2;
-    }
-
-    public String getLanguage3() {
-        return language3;
-    }
-
-    public void setLanguage3(
-            String language3) {
-        this.language3 = language3;
+    public void setLanguage(int i,
+            String language) {
+        this.language[i] = language;
     }
 
     public int getPrice() {
@@ -130,9 +112,7 @@ public class Dish {
 
     private int id = 0;
     private int dspIndex = 0; // display position on screen.
-    private String language1; // CODE VARCHAR(255)
-    private String language2; // MNEMONIC VARCHAR(255)
-    private String language3; // SUBJECT VARCHAR(255)
+    private String language[] = new String[3]; // CODE VARCHAR(255), MNEMONIC VARCHAR(255),SUBJECT VARCHAR(255)
     private int price; // PRICE INTEGER
     private int gst; // FOLDERID INTEGER
     private int qst; // STORE INTEGER

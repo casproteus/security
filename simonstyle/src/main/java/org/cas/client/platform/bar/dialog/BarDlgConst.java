@@ -52,11 +52,11 @@ public interface BarDlgConst {
     String Profit = "当班盈利";
 
     String OtherCost = "其他开支";
-    String ProdNumber = "货号";
-    String ProdName = "品名";
+    String ProdNumber = "Index";
+    String ProdName = "Name";
     String Pinyin = "助记";
-    String Count = "数量";
-    String Price = "单价";
+    String Count = "Number";
+    String Price = "Price";
     String Subtotal = "SubTotal";
     String Total = "Total";
     String QST = "QST";
@@ -116,7 +116,7 @@ public interface BarDlgConst {
     String MoneyInBox = "钱箱目前金额";
 
     String EncodeStyle = "编码方式：";
-    String Size = "Size Support";
+    String Size = "Size";
     String Size1 = "Size1";
     String Size2 = "Size2";
     String Size3 = "Size3";
