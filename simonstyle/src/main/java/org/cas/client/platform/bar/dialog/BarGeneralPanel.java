@@ -124,7 +124,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             FocusEvent e) {
     }
 
-    // ActionListner----------------------------------
+    // ActionListner-------------------------------
     @Override
     public void actionPerformed(
             ActionEvent e) {
@@ -194,7 +194,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 }
             } else { // if it's not empty
                 if (!text.equals(activeCategoryButton.getText())) {
-                    // TODO: change active toggle button, and update active menus.
+                    //change active toggle button, and update active menus.
                     if (activeCategoryButton != null) {
                         activeCategoryButton.setSelected(false);
                     }
@@ -790,15 +790,15 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             }
         }
         for (int r = 0; r < menuRow; r++) {
-            if (r < onSrcMenuMatrix.size()) {
+            if (r < onSrcMenuBtnMatrix.size()) {
                 for (int c = 0; c < menuColumn; c++) {
-                    if (c < onSrcMenuMatrix.get(r).size())
-                        remove(onSrcMenuMatrix.get(r).get(c));
+                    if (c < onSrcMenuBtnMatrix.get(r).size())
+                        remove(onSrcMenuBtnMatrix.get(r).get(c));
                 }
             }
         }
         onSrcCategoryMatrix.clear();
-        onSrcMenuMatrix.clear();
+        onSrcMenuBtnMatrix.clear();
 
         // create new buttons and add onto the screen (no layout yet)------------
         int dspIndex = curCategoryPage * categoryNumPerPage;
@@ -883,7 +883,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
 
                 dspIndex++;
             }
-            onSrcMenuMatrix.add(btnMenuArry);
+            onSrcMenuBtnMatrix.add(btnMenuArry);
         }
     }
 
@@ -1037,7 +1037,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         int menuBtnHeight = (int) ((topAreaHeight * (1 - categoryHeight) - CustOpts.VER_GAP * (menuRow)) / menuRow);
         for (int r = 0; r < menuRow; r++) {
             for (int c = 0; c < menuColumn; c++) {
-                onSrcMenuMatrix
+                onSrcMenuBtnMatrix
                         .get(r)
                         .get(c)
                         .setBounds(xMenuArea + (menuBtnWidth + CustOpts.HOR_GAP) * c,
@@ -1153,8 +1153,8 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     Integer menuColumn = (Integer) CustOpts.custOps.hash2.get("menuColumn");
     Integer menuRow = (Integer) CustOpts.custOps.hash2.get("menuRow");
 
-    private ArrayList<ArrayList<CategoryToggle>> onSrcCategoryMatrix = new ArrayList<ArrayList<CategoryToggle>>();
-    private ArrayList<ArrayList<MenuButton>> onSrcMenuMatrix = new ArrayList<ArrayList<MenuButton>>();
+    ArrayList<ArrayList<CategoryToggle>> onSrcCategoryMatrix = new ArrayList<ArrayList<CategoryToggle>>();
+    private ArrayList<ArrayList<MenuButton>> onSrcMenuBtnMatrix = new ArrayList<ArrayList<MenuButton>>();
 
     private PIMTable tblContent;
     private PIMScrollPane srpContent;

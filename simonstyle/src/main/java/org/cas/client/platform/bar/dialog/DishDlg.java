@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -25,6 +26,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import org.cas.client.platform.bar.beans.CategoryToggle;
+import org.cas.client.platform.bar.beans.MenuButton;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.casbeans.PIMSeparator;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
@@ -273,7 +276,15 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         	//@Note: must be done first--if category changed, the array to compare/adjust will be different.
         	String newCategory = cmbCategory.getSelectedItem().toString();
         	if(!newCategory.equals(activeCategory)) {
-        		// TODO:
+        		barGeneralPanel.activeCategoryButton.setSelected(false);
+        		//find new button.
+        		for (ArrayList<CategoryToggle> btns : barGeneralPanel.onSrcCategoryMatrix) {
+					for(CategoryToggle btn : btns) {
+						if (newCategory.equals(btn.getText())){
+			        		barGeneralPanel.activeCategoryButton = btn;
+						}
+					}
+				}
         	}
         	
             // name check ----------------------------------
