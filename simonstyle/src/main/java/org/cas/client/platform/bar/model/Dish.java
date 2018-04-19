@@ -11,13 +11,13 @@ public class Dish {
         this.id = id;
     }
 
-    public int getIndex() {
-        return index;
+    public int getDspIndex() {
+        return dspIndex;
     }
 
-    public void setIndex(
+    public void setDspIndex(
             int index) {
-        this.index = index;
+        this.dspIndex = index;
     }
 
     public String getLanguage1() {
@@ -129,7 +129,7 @@ public class Dish {
     }
 
     private int id = 0;
-    private int index = 0; // display position on screen.
+    private int dspIndex = 0; // display position on screen.
     private String language1; // CODE VARCHAR(255)
     private String language2; // MNEMONIC VARCHAR(255)
     private String language3; // SUBJECT VARCHAR(255)

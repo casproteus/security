@@ -47,28 +47,35 @@ import org.hsqldb.lib.StringUtil;
 public class DishDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
     public boolean ADDED;
     private int prodID = -1;
-    private int index;
+    //@NOTE this is the position on screen, could be different than the index in dish
+    //e.g. index in dish could be not lined.
+    private int dspIndex;
     private Dish dish;
 
     // all the name of the menu, used to validate the new input of the name.
     // @NOTE: if the category is changed, please rember to update the nameMetrix according to the new category.
     // @NOTE: this is the model Metrix, not the onscreen metrix, it's using metrix because each dish has 3 names.
-    private String[][] nameMetrix;
+
     // for initializing the status of category combobox.
     private String activeCategory;
     private int[] categoryIdAry;
     private String[] categorySubjectAry;
     
-    private BarGeneralPanel barPanel;
+    private BarGeneralPanel barGeneralPanel;
+    
+    public DishDlg(BarFrame pFrame, int dspIndex) {
+    	super(pFrame, false);
+        this.barGeneralPanel = pFrame.general;
+        this.dspIndex = dspIndex;
+        initDialog();
+    }
 
     public DishDlg(BarFrame pFrame, Dish dish) {
         super(pFrame, false);
-        this.barPanel = pFrame.general;
-        if (dish != null) {
-        	prodID = dish.getId();
-            this.dish = dish;
-            setIndex(dish.getIndex());
-        }
+        this.barGeneralPanel = pFrame.general;
+        this.dish = dish;
+    	this.prodID = dish.getId();
+        this.dspIndex = dish.getDspIndex();
         initDialog();
     }
 
@@ -228,13 +235,13 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             ComponentEvent e) {
     };
 
-    // if before is "", then it's consiered as not empty before.
-    private boolean isMenuNameModified(
-            int lang) {
+    private boolean isMenuNameModified(int lang) {
 
-        boolean isNotInitYet = getIndex() - 1 >= nameMetrix[lang].length;
-        String oldText = isNotInitYet ? null : nameMetrix[lang][getIndex() - 1];
+        boolean isNotInitYet = dspIndex - 1 >= barGeneralPanel.onScrMenuNameMetrix[lang].length;
+        
+        String oldText = isNotInitYet ? null : barGeneralPanel.onScrMenuNameMetrix[lang][dspIndex - 1];
         boolean isEmptyBefore = oldText == null || oldText.length() == 0;
+        
         String newText = tfdLanguages[lang].getText();
         boolean isEmptyNow = newText == null || newText.length() == 0;
 
@@ -262,33 +269,47 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             ActionEvent e) {
         Object o = e.getSource();
         if (o == ok) {
-            // validate input=================
-            // name check @NOTE: index is start from 1!!!
+            //category check ----------
+        	//@Note: must be done first--if category changed, the array to compare/adjust will be different.
+        	String newCategory = cmbCategory.getSelectedItem().toString();
+        	if(!newCategory.equals(activeCategory)) {
+        		// TODO:
+        	}
+        	
+            // name check ----------------------------------
             if (tfdLanguages[0].getText() == null || tfdLanguages[0].getText().length() < 1) {
                 JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
                 tfdLanguages[0].grabFocus();
                 return;
-            } else if (isMenuNameModified(0)) {
-                for (int i = 0; i < nameMetrix[0].length; i++) {
-                    if (i != getIndex() && tfdLanguages[0].getText().equalsIgnoreCase(nameMetrix[0][i])) {
+            } 
+
+            if (isMenuNameModified(0)) {
+                for (int i = 0; i < barGeneralPanel.menuNameMetrix[0].length; i++) {
+                    if (i != dspIndex && tfdLanguages[0].getText().equalsIgnoreCase(barGeneralPanel.menuNameMetrix[0][i])) {
                         JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
                         tfdLanguages[0].grabFocus();
                         return;
                     }
                 }
-            } else if (isMenuNameModified(1)) {
-                if (!"".equals(tfdLanguages[1].getText()))
-                    for (int i = 0; i < nameMetrix[1].length; i++) {
-                        if (i != getIndex() && tfdLanguages[1].getText().equalsIgnoreCase(nameMetrix[1][i])) {
+            }
+
+            if (isMenuNameModified(1)) {
+            	String text = tfdLanguages[1].getText();
+                if (text != null && !"".equals(text))//language2 is allowed to be empty.
+                    for (int i = 0; i < barGeneralPanel.menuNameMetrix[1].length; i++) {
+                        if (i != dspIndex && text.equalsIgnoreCase(barGeneralPanel.menuNameMetrix[1][i])) {
                             JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
                             tfdLanguages[1].grabFocus();
                             return;
                         }
                     }
-            } else if (isMenuNameModified(2)) {
-                if (!"".equals(tfdLanguages[2].getText()))
-                    for (int i = 0; i < nameMetrix[2].length; i++) {
-                        if (i != getIndex() && tfdLanguages[2].getText().equalsIgnoreCase(nameMetrix[2][i])) {
+            } 
+
+            if (isMenuNameModified(2)) {
+            	String text = tfdLanguages[2].getText();
+                if (text != null && !"".equals(text))//language3 is allowed to be empty.
+                    for (int i = 0; i < barGeneralPanel.menuNameMetrix[2].length; i++) {
+                        if (i != dspIndex && text.equalsIgnoreCase(barGeneralPanel.menuNameMetrix[2][i])) {
                             JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
                             tfdLanguages[2].grabFocus();
                             return;
@@ -296,7 +317,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                     }
             }
 
-            // price check
+            // price check----------------------------------
             String priceText = tfdPrice.getText();
             float tPrice;
             try {
@@ -314,104 +335,106 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                 tfdPrice.selectAll();
                 return;
             }
+            
+            try {
+                Connection conn = PIMDBModel.getConection();
+                Statement smt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
-            // TODO:dspIndex check
-
-            // TODO:category check
-
-            // update the product record into db.
-            if (isCreatingNewDish()) {
-                StringBuilder sql =
-                        new StringBuilder(
-                                "INSERT INTO Product(CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, store, Cost,  BRAND, CATEGORY, INDEX, CONTENT, Unit, PRODUCAREA) VALUES ('")
-                                .append(tfdLanguages[0].getText()).append("', '")
-                                .append(tfdLanguages[1].getText()).append("', '")
-                                .append(tfdLanguages[2].getText()).append("', ")
-                                .append(String.valueOf((int) tPrice * 100)).append(", ")
-                                .append(cbxGST.isSelected() ? "1" : "0").append(", ")
-                                .append(cbxQST.isSelected() ? "1" : "0").append(", ")
-                                .append(getSelectedSize()).append(", '")
-                                .append(getSeletedPrinterString()).append("', '")
-                                .append(cmbCategory.getSelectedItem()).append("', ")
-                                .append(tfdDspIndex.getText()).append(", '")
-                                .append(cbxPricePomp.isSelected() ? "true" : "false").append("', '")
-                                .append(cbxMenuPomp.isSelected() ? "true" : "false").append("', '")
-                                .append(cbxModifyPomp.isSelected() ? "true" : "false").append("')");
-                try {
-                    Connection conn = PIMDBModel.getConection();
-                    Statement smt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                //dspIndex check----------------------------
+	            int newIndex = Integer.valueOf(tfdDspIndex.getText()); // display must be a integer
+                // index modified, need to modify affected categories
+            	if (newIndex > dspIndex) {
+                    for (int i = dspIndex + 1; i <= newIndex; i++) { // make index smaller
+                    	StringBuilder sql = new StringBuilder("UPDATE product SET INDEX = ").append(String.valueOf(i - 1))
+                        	.append(" where INDEX = ").append(i)
+                        	.append(" and category = '").append(newCategory).append("'");
+                        smt.executeUpdate(sql.toString());
+                    }
+                } else if (newIndex < dspIndex){
+                    for (int i = dspIndex - 1; i >= newIndex; i--) { // make index bigger @NOTE: have adjust from top to down.
+                    	StringBuilder sql = new StringBuilder("UPDATE product SET INDEX = ").append(String.valueOf(i + 1))
+                        	.append(" where INDEX = ").append(i)
+                        	.append(" and category = '").append(newCategory).append("'");
+                        smt.executeUpdate(sql.toString());
+                    }
+                }
+                
+                
+                // insert the product record into db.==========================
+                if (isCreatingNewDish()) {
+                    StringBuilder sql = new StringBuilder(
+                        "INSERT INTO Product(CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, store, Cost,  BRAND, CATEGORY, INDEX, CONTENT, Unit, PRODUCAREA) VALUES ('")
+                        .append(tfdLanguages[0].getText()).append("', '")
+                        .append(tfdLanguages[1].getText()).append("', '")
+                        .append(tfdLanguages[2].getText()).append("', ")
+                        .append(String.valueOf((int) tPrice * 100)).append(", ")
+                        .append(cbxGST.isSelected() ? "1" : "0").append(", ")
+                        .append(cbxQST.isSelected() ? "1" : "0").append(", ")
+                        .append(getSelectedSize()).append(", '")
+                        .append(getSeletedPrinterString()).append("', '")
+                        .append(newCategory).append("', ")
+                        .append(newIndex).append(", '")
+                        .append(cbxPricePomp.isSelected() ? "true" : "false").append("', '")
+                        .append(cbxMenuPomp.isSelected() ? "true" : "false").append("', '")
+                        .append(cbxModifyPomp.isSelected() ? "true" : "false").append("')");
                     smt.executeUpdate(sql.toString());
 
-                    sql =
-                            new StringBuilder("Select id from product where code = '")
-                                    .append(tfdLanguages[0].getText()).append("' and PRICE = ")
-                                    .append(String.valueOf((int) tPrice * 100)).append(" and MNEMONIC = '")
-                                    .append(tfdLanguages[1].getText()).append("' and SUBJECT = '")
-                                    .append(tfdLanguages[2].getText()).append("' and store = ")
-                                    .append(cbxGST.isSelected() ? "1" : "0").append(" and UNIT = '")
-                                    .append(cbxMenuPomp.isSelected() ? "true" : "false").append("' and CATEGORY = '")
-                                    .append(cmbCategory.getSelectedItem()).append("' and Cost = ")
-                                    .append(getSelectedSize()).append(" and CONTENT = '")
-                                    .append(cbxPricePomp.isSelected() ? "true" : "false").append("'");
+                    sql = new StringBuilder("Select id from product where code = '")
+                        .append(tfdLanguages[0].getText()).append("' and PRICE = ")
+                        .append(String.valueOf((int) tPrice * 100)).append(" and MNEMONIC = '")
+                        .append(tfdLanguages[1].getText()).append("' and SUBJECT = '")
+                        .append(tfdLanguages[2].getText()).append("' and store = ")
+                        .append(cbxGST.isSelected() ? "1" : "0").append(" and UNIT = '")
+                        .append(cbxMenuPomp.isSelected() ? "true" : "false").append("' and CATEGORY = '")
+                        .append(newCategory).append("' and Cost = ")
+                        .append(getSelectedSize()).append(" and CONTENT = '")
+                        .append(cbxPricePomp.isSelected() ? "true" : "false").append("'");
                     ResultSet rs = smt.executeQuery(sql.toString());
                     rs.beforeFirst();
                     rs.next();
                     prodID = rs.getInt("id");
                     rs.close();
-                    smt.close();
-                    smt = null;
                     ADDED = true;
-                    dispose();
-                } catch (SQLException exp) {
-                    exp.printStackTrace();
-                }
-            } else {
-                StringBuilder sql =
-                        new StringBuilder("update product set code = '").append(tfdLanguages[0].getText())
-                                .append("', MNEMONIC = '").append(tfdLanguages[1].getText())
-                                .append("', SUBJECT = '").append(tfdLanguages[2].getText())
-                                .append("', PRICE = ").append(String.valueOf((int) tPrice * 100))
-                                .append(", FOLDERID = ").append(cbxGST.isSelected() ? "1" : "0")
-                                .append(", store = ").append(cbxQST.isSelected() ? "1" : "0")
-                                .append(", Cost = ").append(getSelectedSize())
-                                .append(", BRAND = '").append(getSeletedPrinterString())
-                                .append("', CATEGORY = '").append(cmbCategory.getSelectedItem())
-                                .append("', INDEX = ").append(tfdDspIndex.getText())
-                                .append(", CONTENT = '").append(cbxPricePomp.isSelected() ? "true" : "false")
-                                .append("', UNIT = '").append(cbxMenuPomp.isSelected() ? "true" : "false")
-                                .append("', PRODUCAREA = '").append(cbxModifyPomp.isSelected() ? "true" : "false")
-                                .append("' where ID = ").append(String.valueOf(prodID));
+                } else {
+                    StringBuilder sql = new StringBuilder("update product set code = '").append(tfdLanguages[0].getText())
+	                    .append("', MNEMONIC = '").append(tfdLanguages[1].getText())
+	                    .append("', SUBJECT = '").append(tfdLanguages[2].getText())
+	                    .append("', PRICE = ").append(String.valueOf((int) tPrice * 100))
+	                    .append(", FOLDERID = ").append(cbxGST.isSelected() ? "1" : "0")
+	                    .append(", store = ").append(cbxQST.isSelected() ? "1" : "0")
+	                    .append(", Cost = ").append(getSelectedSize())
+	                    .append(", BRAND = '").append(getSeletedPrinterString())
+	                    .append("', CATEGORY = '").append(newCategory)
+	                    .append("', INDEX = ").append(newIndex)
+	                    .append(", CONTENT = '").append(cbxPricePomp.isSelected() ? "true" : "false")
+	                    .append("', UNIT = '").append(cbxMenuPomp.isSelected() ? "true" : "false")
+	                    .append("', PRODUCAREA = '").append(cbxModifyPomp.isSelected() ? "true" : "false")
+	                    .append("' where ID = ").append(String.valueOf(prodID));
 
-                try {
-                    Statement smt = PIMDBModel.getConection().createStatement();
                     smt.executeUpdate(sql.toString());
-                    smt.close();
-                    smt = null;
                     ADDED = true;
-                    dispose();
-                } catch (Exception exp) {
-                    exp.printStackTrace();
                 }
+                smt.close();
+                smt = null;
+            }catch(Exception exp) {
+            	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
+                exp.printStackTrace();
             }
 
-            barPanel.initCategoryAndMenus();
-            barPanel.reLayout();
+            barGeneralPanel.initCategoryAndDishes();
+            barGeneralPanel.reLayout();
             dispose();
         } else if (o == cancel) {
             dispose();
-        } else if (o == cbxQST) {
-            tfdPrice.setEnabled(!cbxQST.isSelected());
-        } else if (o == cbxGST) {
-            // 开个线程检查是否有连接。
-        } else if (o == cbxPricePomp) {
-            // 开个线程检查是否有连接。
-        } else if (o == cbxPrinters[0]) {
-            // 开个线程检查是否有连接。
         }
     }
 
     private boolean isCreatingNewDish() {
-        return nameMetrix[2].length < getIndex() || nameMetrix[2][getIndex() - 1].length() < 1;
+    	//currently the onScrAry is as long ad whole ary. so this will not work.
+    	//so, check only if the original language1 is empty or not.
+        return dspIndex - 1 >= barGeneralPanel.onScrMenuNameMetrix[0].length 
+        		|| barGeneralPanel.onScrMenuNameMetrix[0][dspIndex - 1] == null
+        		|| barGeneralPanel.onScrMenuNameMetrix[0][dspIndex - 1].length() < 1;
     }
 
     private String getSeletedPrinterString() {
@@ -560,7 +583,6 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             cbxGST.setSelected(true);
             rdbSizes[0].setSelected(true);
             cbxPrinters[0].setSelected(true);
-            tfdDspIndex.setText(String.valueOf(index));
         } else {
             tfdLanguages[0].setText(dish.getLanguage1());
             tfdLanguages[1].setText(dish.getLanguage2());
@@ -581,14 +603,13 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                 }
             }
 
-            setActiveCategory(dish.getCATEGORY());
-
             cbxPricePomp.setSelected("true".equals(dish.getPrompPrice()));
             cbxMenuPomp.setSelected("true".equals(dish.getPrompMenu()));
             cbxModifyPomp.setSelected("true".equals(dish.getPrompMofify()));
-
-            tfdDspIndex.setText(String.valueOf(dish.getIndex()));
         }
+        activeCategory = barGeneralPanel.activeCategoryButton.getText();
+        tfdDspIndex.setText(String.valueOf(dspIndex));
+        
         initCategory();
     }
 
@@ -625,25 +646,6 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                 cmbCategory.setSelectedItem(activeCategory);
             }
         }
-    }
-
-    public void setActiveCategory(
-            String activeCategory) {
-        this.activeCategory = activeCategory;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(
-            int index) {
-        this.index = index;
-    }
-
-    public void setNameMetrix(
-            String[][] nameMetrix) {
-        this.nameMetrix = nameMetrix;
     }
 
     private PIMSeparator sptName;

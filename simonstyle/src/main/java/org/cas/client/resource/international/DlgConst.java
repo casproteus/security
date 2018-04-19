@@ -216,7 +216,7 @@ public interface DlgConst
     String DATE_DESCRIPTION1 = "请通过点击文本框右侧的下拉按钮，选择目标日期。";
     String DATE_DESCRIPTION2 = "也可以在文本框中直接输入日期，格式为\"年－月－日\"。";
     
-    String FORMATERROR = "系统检测到输入的内容存在格式错误,请重新输入.";
+    String FORMATERROR = "Invalid input format found, please correct and try again.";
     String SAVEBEFORECLOSE = "系统检测到对话框内的内容发生了改变，是否需要再关闭前保存改变的内容？";
 	String InvalidInput = "Invalid input! Please input again.";
 

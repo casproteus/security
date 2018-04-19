@@ -49,6 +49,7 @@ import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.platform.pimview.pimtable.PIMTableColumn;
 import org.cas.client.platform.pos.dialog.statistics.Statistic;
 import org.cas.client.platform.refund.dialog.RefundDlg;
+import org.cas.client.resource.international.DlgConst;
 import org.cas.client.resource.international.PaneConsts;
 
 //Identity表应该和Employ表合并。
@@ -68,12 +69,17 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
     private int curMenuPerPage = 0;
 
     private int[] prodIDAry;
-    private String[][] menuNameMetrix;// the struction must be [3][index]. it's more convenient than [index][3]
+    String[][] menuNameMetrix;// the struction must be [3][index]. it's more convenient than [index][3]
+    String[][] onScrMenuNameMetrix;// it's sub set of all menuNameMetrix
+    
     private int[] categoryIdAry;
     private String[] categorySubjectAry;
+    
     private Dish[] dishAry;
+    private Dish[] onScrDishAry;
+    
     public static String startTime;
-    private CategoryToggle activeToggleButton;
+    CategoryToggle activeCategoryButton;
 
     public BarGeneralPanel() {
         initComponent();
@@ -187,13 +193,13 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                     }
                 }
             } else { // if it's not empty
-                if (!text.equals(activeToggleButton.getText())) {
+                if (!text.equals(activeCategoryButton.getText())) {
                     // TODO: change active toggle button, and update active menus.
-                    if (activeToggleButton != null) {
-                        activeToggleButton.setSelected(false);
+                    if (activeCategoryButton != null) {
+                        activeCategoryButton.setSelected(false);
                     }
-                    activeToggleButton = categoryToggle;
-                    initCategoryAndMenus();
+                    activeCategoryButton = categoryToggle;
+                    initCategoryAndDishes();
                     reLayout();
                     // TODO: fill menu buttons with menus belong to this category.
                 } else if (curSecurityStatus == ADMIN_STATUS) {
@@ -210,26 +216,14 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             String text = menuButton.getText();
             if (text == null || text.length() == 0) { // check if it's empty
                 if (curSecurityStatus == ADMIN_STATUS) { // and it's admin mode, add a Category.
-                    DishDlg dishDlg = new DishDlg(BarFrame.instance, null);
-                    dishDlg.setIndex(menuButton.getIndex());
-                    dishDlg.setNameMetrix(menuNameMetrix);
-                    dishDlg.setActiveCategory(activeToggleButton.getText());
-                    dishDlg.setVisible(true);
+                    new DishDlg(BarFrame.instance, menuButton.getDspIndex()).setVisible(true);
                 } else {
-                    if (adminAuthentication()) {
-                        DishDlg dishDlg = new DishDlg(BarFrame.instance, null);
-                        dishDlg.setIndex(menuButton.getIndex());
-                        dishDlg.setNameMetrix(menuNameMetrix);
-                        dishDlg.setActiveCategory(activeToggleButton.getText());
-                        dishDlg.setVisible(true);
-                    }
+                    if (adminAuthentication())
+                        new DishDlg(BarFrame.instance, menuButton.getDspIndex()).setVisible(true);
                 }
             } else { // if it's not empty
                 if (curSecurityStatus == ADMIN_STATUS) {
-                    DishDlg dishDlg = new DishDlg(BarFrame.instance, dishAry[menuButton.getIndex() - 1]);
-                    dishDlg.setIndex(menuButton.getIndex());
-                    dishDlg.setNameMetrix(menuNameMetrix);
-                    dishDlg.setVisible(true);
+                    new DishDlg(BarFrame.instance, menuButton.getDish()).setVisible(true);
                 } else {
                     // TODO: add into table model.
                 }
@@ -701,11 +695,11 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         btnLine_1_9.addActionListener(this);
 
         // initContents--------------
-        initCategoryAndMenus();
+        initCategoryAndDishes();
         initTable();
     }
 
-    public void initCategoryAndMenus() {
+    public void initCategoryAndDishes() {
         try {
             Connection connection = PIMDBModel.getConection();
             Statement statement =
@@ -728,10 +722,10 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             }
             categoryRS.close();// 关闭
 
-            // load all the products----------------------------
+            // load all the dishes----------------------------
             ResultSet productRS =
                     statement
-                            .executeQuery("select ID, CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, STORE,  COST, BRAND, CATEGORY, CONTENT, UNIT, PRODUCAREA, INDEX from product where deleted != true");
+                            .executeQuery("select ID, CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, STORE,  COST, BRAND, CATEGORY, CONTENT, UNIT, PRODUCAREA, INDEX from product where deleted != true order by index");
             productRS.afterLast();
             productRS.relative(-1);
             tmpPos = productRS.getRow();
@@ -739,7 +733,8 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
             menuNameMetrix = new String[3][tmpPos];
             dishAry = new Dish[tmpPos];
             productRS.beforeFirst();
-
+            
+            //compose the record into dish objects--------------
             tmpPos = 0;
             while (productRS.next()) { // @NOTE: don't load all the content, because menu can be many
                 prodIDAry[tmpPos] = productRS.getInt("ID");
@@ -761,7 +756,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 dishAry[tmpPos].setPrompPrice(productRS.getString("CONTENT"));
                 dishAry[tmpPos].setPrompMenu(productRS.getString("UNIT"));
                 dishAry[tmpPos].setPrompMofify(productRS.getString("PRODUCAREA"));
-                dishAry[tmpPos].setIndex(productRS.getInt("INDEX"));
+                dishAry[tmpPos].setDspIndex(productRS.getInt("INDEX"));
                 tmpPos++;
             }
             productRS.close();// 关闭
@@ -816,8 +811,8 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 btnCategoryArry.add(btnCategory);
                 if (dspIndex <= categorySubjectAry.length) {
                     btnCategory.setText(categorySubjectAry[dspIndex - 1]);
-                    if (activeToggleButton != null
-                            && categorySubjectAry[dspIndex - 1].equalsIgnoreCase(activeToggleButton.getText())) {
+                    if (activeCategoryButton != null
+                            && categorySubjectAry[dspIndex - 1].equalsIgnoreCase(activeCategoryButton.getText())) {
                         btnCategory.setSelected(true);
                     }
                 } else {
@@ -828,35 +823,58 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, KeyLis
         }
 
         // if no activeCategory, use the first one on screen.
-        if (activeToggleButton == null) {
-            activeToggleButton = onSrcCategoryMatrix.get(0).get(0);
-            activeToggleButton.setSelected(true);
+        if (activeCategoryButton == null) {
+            activeCategoryButton = onSrcCategoryMatrix.get(0).get(0);
+            activeCategoryButton.setSelected(true);
         }
 
         // initialize on screen menus===============================================================
         //find out menus matching to current category and current lang
-        String[][] curNameMetrix = new String[3][menuNameMetrix[0].length];
-        int onscrMenuNameNum = 0;
+        onScrMenuNameMetrix = new String[3][menuNameMetrix[0].length];
+        onScrDishAry = new Dish[menuNameMetrix[0].length];
+        
+        int onscrMenuIndex = 0;
         for (int i = 0; i < dishAry.length; i++) {
-			if(dishAry[i].getCATEGORY().equals(activeToggleButton.getText())) {
-				curNameMetrix[0][onscrMenuNameNum] = menuNameMetrix[0][i];
-				curNameMetrix[1][onscrMenuNameNum] = menuNameMetrix[1][i];
-				curNameMetrix[2][onscrMenuNameNum] = menuNameMetrix[2][i];
-				onscrMenuNameNum++;
+			if(dishAry[i].getCATEGORY().equals(activeCategoryButton.getText())) {
+				
+				onScrMenuNameMetrix[0][onscrMenuIndex] = menuNameMetrix[0][i];
+				onScrMenuNameMetrix[1][onscrMenuIndex] = menuNameMetrix[1][i];
+				onScrMenuNameMetrix[2][onscrMenuIndex] = menuNameMetrix[2][i];
+				
+				onScrDishAry[onscrMenuIndex] = dishAry[i];
+				//make sure the display index are lined
+				if(dishAry[i].getDspIndex() != onscrMenuIndex + 1) {
+					try {
+		                Connection conn = PIMDBModel.getConection();
+		                Statement smt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+			            StringBuilder sql = new StringBuilder("UPDATE product SET INDEX = ").append(onscrMenuIndex + 1)
+			                            	.append(" where ID = ").append(dishAry[i].getId());
+			            smt.executeUpdate(sql.toString());
+			            smt.close();
+		                smt = null;
+		            }catch(Exception exp) {
+		                exp.printStackTrace();
+		            }
+					dishAry[i].setDspIndex(onscrMenuIndex + 1);
+				}
+				
+				onscrMenuIndex++;
 			}
 		}
+        
         dspIndex = curMenuPageNum * curMenuPerPage;
         for (int r = 0; r < menuRow; r++) {
             ArrayList<MenuButton> btnMenuArry = new ArrayList<MenuButton>();
             for (int c = 0; c < menuColumn; c++) {
-                MenuButton btnMenu = new MenuButton(dspIndex);
+                MenuButton btnMenu = new MenuButton(dspIndex + 1);
                 btnMenu.setMargin(new Insets(0, 0, 0, 0));
                 add(btnMenu);
                 btnMenu.addActionListener(this);
                 btnMenuArry.add(btnMenu);
-                if (dspIndex < onscrMenuNameNum) {
-                    btnMenu.setText(curNameMetrix[CustOpts.custOps.getUserLang()][dspIndex]);// TODO: replace 0 with
-                                                                                              // settings.
+                if (dspIndex < onscrMenuIndex) {
+                    btnMenu.setText(onScrMenuNameMetrix[CustOpts.custOps.getUserLang()][dspIndex]);// TODO: replace 0 with
+                    btnMenu.setDish(onScrDishAry[dspIndex]);// TODO: replace 0 with
                 } else {
                     btnPageDownMenu.setEnabled(false);
                 }

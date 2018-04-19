@@ -152,7 +152,7 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
         if (o == ok) {
             String tCategory = general.tfdCategoryName.getText();
 
-            if (!tCategory.equalsIgnoreCase(name)) { // if changed, need to check if new value duplicated with others.
+            if (!tCategory.equalsIgnoreCase(name)) { // if name changed, need to check if new value duplicated with others.
                 for (int i = 0; i < general.categoryNameAry.length; i++) {
                     if (tCategory.equalsIgnoreCase(general.categoryNameAry[i])) {
                         JOptionPane.showMessageDialog(this, DlgConst.CategoryNameInUse);
@@ -163,10 +163,6 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
                 }
             }
 
-            String sql =
-                    "INSERT INTO Category(NAME, DSP_INDEX) VALUES('".concat(general.tfdCategoryName.getText())
-                            .concat("', ").concat(general.dspIndex.getText()).concat(")");
-
             try {
                 Connection conn = PIMDBModel.getConection();
                 Statement smt = conn.createStatement();
@@ -175,35 +171,35 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
                 if (newIndex != index) { // index modified, need to modify affected categories
                     if (newIndex > index) {
                         for (int i = index + 1; i <= newIndex; i++) { // make index smaller
-                            sql =
-                                    "UPDATE Category SET DSP_INDEX = ".concat(String.valueOf(i - 1))
-                                            .concat(" where DSP_INDEX = ").concat(String.valueOf(i)).concat("");
+                        	String sql = "UPDATE Category SET DSP_INDEX = ".concat(String.valueOf(i - 1))
+                            	.concat(" where DSP_INDEX = ").concat(String.valueOf(i)).concat("");
                             smt.executeUpdate(sql.toString());
                         }
                     } else {
                         for (int i = newIndex; i < index; i++) { // make index bigger
-                            sql =
-                                    "UPDATE Category SET DSP_INDEX = ".concat(String.valueOf(i + 1))
-                                            .concat(" where DSP_INDEX = ").concat(String.valueOf(i)).concat("");
+                        	String sql = "UPDATE Category SET DSP_INDEX = ".concat(String.valueOf(i + 1))
+                            	.concat(" where DSP_INDEX = ").concat(String.valueOf(i)).concat("");
                             smt.executeUpdate(sql.toString());
                         }
                     }
                 }
 
-                if (name != null) {
-                    sql =
-                            "UPDATE Category SET NAME = '".concat(general.tfdCategoryName.getText())
-                                    .concat("', DSP_INDEX = ").concat(general.dspIndex.getText())
-                                    .concat(" where NAME = '").concat(name).concat("'");
-                }
+                String sql = name != null ? 	//if name was not null, it's an update, otherwise, an insert
+                		"UPDATE Category SET NAME = '".concat(general.tfdCategoryName.getText())
+                    	.concat("', DSP_INDEX = ").concat(general.dspIndex.getText())
+                    	.concat(" where NAME = '").concat(name).concat("'")
+                    	:
+                    	"INSERT INTO Category(NAME, DSP_INDEX) VALUES('".concat(general.tfdCategoryName.getText())
+                        .concat("', ").concat(general.dspIndex.getText()).concat(")")	;
 
                 smt.executeUpdate(sql.toString());
                 smt.close();
                 smt = null;
-                parentPanel.initCategoryAndMenus();
+                parentPanel.initCategoryAndDishes();
                 parentPanel.reLayout();
                 dispose();
             } catch (Exception exception) {
+            	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
                 exception.printStackTrace();
                 return;
             }
@@ -236,8 +232,7 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
         cancel.setMargin(ok.getMargin());
         getRootPane().setDefaultButton(ok);
         // 布局---------------
-        int tHight =
-                general.getPreferredSize().height + CustOpts.BTN_HEIGHT + 2 * CustOpts.VER_GAP + CustOpts.SIZE_EDGE
+        int tHight = general.getPreferredSize().height + CustOpts.BTN_HEIGHT + 2 * CustOpts.VER_GAP + CustOpts.SIZE_EDGE
                         + CustOpts.SIZE_TITLE;
         setBounds((CustOpts.SCRWIDTH - 260) / 2, (CustOpts.SCRHEIGHT - tHight) / 2, 260, tHight); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
@@ -339,16 +334,18 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
 
         /** 本方法用于设置View上各个组件的尺寸。 */
         public void reLayout() {
+        	
             int prmWidth = getWidth();
-            lblCategoryName.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCategoryName.getPreferredSize().width,
-                    CustOpts.BTN_HEIGHT);
-            tfdCategoryName.setBounds(lblCategoryName.getX() + lblCategoryName.getWidth() + CustOpts.HOR_GAP,
-                    lblCategoryName.getY(), prmWidth - lblCategoryName.getWidth() - CustOpts.HOR_GAP * 3,
-                    CustOpts.BTN_HEIGHT);
-            lblPosition.setBounds(lblCategoryName.getX(), lblCategoryName.getY() + lblCategoryName.getHeight()
-                    + CustOpts.VER_GAP, lblCategoryName.getWidth(), CustOpts.BTN_HEIGHT);
-            dspIndex.setBounds(tfdCategoryName.getX(), lblPosition.getY(), tfdCategoryName.getWidth(),
-                    CustOpts.BTN_HEIGHT);
+            
+            lblCategoryName.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCategoryName.getPreferredSize().width,CustOpts.BTN_HEIGHT);
+            
+            tfdCategoryName.setBounds(lblCategoryName.getX() + lblCategoryName.getWidth() + CustOpts.HOR_GAP, lblCategoryName.getY(), 
+                    prmWidth - lblCategoryName.getWidth() - CustOpts.HOR_GAP * 3, CustOpts.BTN_HEIGHT);
+            
+            lblPosition.setBounds(lblCategoryName.getX(), lblCategoryName.getY() + lblCategoryName.getHeight() + CustOpts.VER_GAP,
+                    lblCategoryName.getWidth(), CustOpts.BTN_HEIGHT);
+            
+            dspIndex.setBounds(tfdCategoryName.getX(), lblPosition.getY(), tfdCategoryName.getWidth(), CustOpts.BTN_HEIGHT);
 
             setPreferredSize(new Dimension(getWidth(), dspIndex.getY() + dspIndex.getHeight() + CustOpts.VER_GAP));
         }
