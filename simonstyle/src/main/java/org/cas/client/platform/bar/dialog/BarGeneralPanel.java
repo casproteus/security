@@ -34,7 +34,7 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
-import org.cas.client.platform.bar.beans.CategoryToggle;
+import org.cas.client.platform.bar.beans.CategoryToggleButton;
 import org.cas.client.platform.bar.beans.MenuButton;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -67,19 +67,27 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     private int curMenuPageNum = 0;
     private int curMenuPerPage = 0;
 
+
+    Integer categoryColumn = (Integer) CustOpts.custOps.hash2.get("categoryColumn");
+    Integer categoryRow = (Integer) CustOpts.custOps.hash2.get("categoryRow");
+    Integer menuColumn = (Integer) CustOpts.custOps.hash2.get("menuColumn");
+    Integer menuRow = (Integer) CustOpts.custOps.hash2.get("menuRow");
+    
     private int[] categoryIdAry;
     String[][] categoryNameMetrix;
+    ArrayList<ArrayList<CategoryToggleButton>> onSrcCategoryTgbMatrix = new ArrayList<ArrayList<CategoryToggleButton>>();
+    CategoryToggleButton tgbActiveCategory;
     
-    private int[] prodIDAry;
-    String[][] menuNameMetrix;// the struction must be [3][index]. it's more convenient than [index][3]
-    String[][] onScrMenuNameMetrix;// it's sub set of all menuNameMetrix
-    
+    //Dish is more complecated than category, it's devided by category first, then divided by page.
+    String[][] dishNameMetrix;// the struction must be [3][index]. it's more convenient than [index][3]
+    String[][] onScrDishNameMetrix;// it's sub set of all menuNameMetrix
+    private ArrayList<ArrayList<MenuButton>> onSrcMenuBtnMatrix = new ArrayList<ArrayList<MenuButton>>();
     
     private Dish[] dishAry;
     private Dish[] onScrDishAry;
+    private ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
     
     public static String startTime;
-    CategoryToggle activeCategoryButton;
 
     public BarGeneralPanel() {
         initComponent();
@@ -170,15 +178,15 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         } else if (o == btnPageDownMenu) {
             curMenuPageNum++;
             btnPageUpMenu.setEnabled(true);
-            if (curMenuPageNum * curMenuPerPage > menuNameMetrix.length) {
+            if (curMenuPageNum * curMenuPerPage > dishNameMetrix.length) {
                 btnPageDownMenu.setEnabled(false);
             }
             reInitCategoryAndMenuBtns();
             reLayout();
         }
         // category buttons------------------------------------
-        else if (o instanceof CategoryToggle) {
-            CategoryToggle categoryToggle = (CategoryToggle) o;
+        else if (o instanceof CategoryToggleButton) {
+            CategoryToggleButton categoryToggle = (CategoryToggleButton) o;
             String text = categoryToggle.getText();
             if (text == null || text.length() == 0) { // check if it's empty
                 if (curSecurityStatus == ADMIN_STATUS) { // and it's admin mode, add a Category.
@@ -193,12 +201,12 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
                     }
                 }
             } else { // if it's not empty
-                if (!text.equals(activeCategoryButton.getText())) {
+                if (!text.equals(tgbActiveCategory.getText())) {
                     //change active toggle button, and update active menus.
-                    if (activeCategoryButton != null) {
-                        activeCategoryButton.setSelected(false);
+                    if (tgbActiveCategory != null) {
+                        tgbActiveCategory.setSelected(false);
                     }
-                    activeCategoryButton = categoryToggle;
+                    tgbActiveCategory = categoryToggle;
                     initCategoryAndDishes();	//fill menu buttons with menus belong to this category.
                     reLayout();
                 } else if (curSecurityStatus == ADMIN_STATUS) {
@@ -332,10 +340,35 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         tblContent.setValueAt(1, tValidRowCount, 3); // set the count.
         tblContent.setValueAt(dish.getPrice()/100f, tValidRowCount, 4); // set the price.
 
-        enableBtns(false);
-        setStatusMes(BarDlgConst.NotePordNumber3);
+        selectdDishAry.add(dish);
+        
+        updateTotleArea();
     }
 
+    private void updateTotleArea() {
+    	Object g = CustOpts.custOps.getValue(BarDlgConst.GST);
+    	Object q = CustOpts.custOps.getValue(BarDlgConst.QST);
+    	float gstRate = g == null ? 5 : Float.valueOf((String)g);
+    	float qstRate = q == null ? 9.975f : Float.valueOf((String)q);
+    	float totalGst = 0;
+    	float totalQst = 0;
+    	int subTotal = 0;
+    	
+    	for(Dish dish: selectdDishAry) {
+    		int price = dish.getPrice();
+    		int gst = (int) (price * (dish.getGst() * gstRate / 100f));
+    		int qst = (int) (price * (dish.getQst() * qstRate / 100f));
+    		subTotal += price;
+    		totalGst += gst;
+    		totalQst += qst;
+    	}
+    	
+    	lblSubTotle.setText(BarDlgConst.Subtotal + " : " + String.valueOf(subTotal/100f));
+        lblGSQ.setText(BarDlgConst.QST + " : " + String.valueOf(((int)totalGst)/100f));
+        lblQSQ.setText(BarDlgConst.GST + " : " + String.valueOf(((int)totalQst)/100f));
+        lblTotlePrice.setText(BarDlgConst.Total + " : " + String.valueOf(((int) (subTotal + totalGst + totalQst))/100f));
+    }
+    
     private void openMoneyBox() {
         int[] ccs = new int[5];
         ccs[0] = 27;
@@ -388,12 +421,9 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
                         .concat(decimalFormat.format(tShoestring / 100.0)).concat(BarDlgConst.Unit));
         lblStartTime = new JLabel(BarDlgConst.StartTime.concat(BarDlgConst.Colon).concat(startTime));// @Todo:以后改为从服务器上获取。
         lblSubTotle = new JLabel(BarDlgConst.Subtotal);
-        lblTSQ = new JLabel(BarDlgConst.QST);
-        lblRSQ = new JLabel(BarDlgConst.GST);
+        lblGSQ = new JLabel(BarDlgConst.QST);
+        lblQSQ = new JLabel(BarDlgConst.GST);
         lblTotlePrice = new JLabel(BarDlgConst.Total);
-
-        tfdTotlePrice = new JTextField();
-        tfdCustomer = new JTextField();
 
         btnLine_3_1 = new JButton(BarDlgConst.SEND);
         btnLine_3_2 = new JButton(BarDlgConst.PAY);
@@ -468,9 +498,6 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         tblContent.setBorder(null);
         lblStatus.setBorder(null);
         // forcus-------------
-        tfdTotlePrice.setFocusable(false);
-        tfdCustomer.setFocusable(false);
-
         btnLine_3_2.setFocusable(false);
         btnLine_3_3.setFocusable(false);
         btnLine_3_6.setFocusable(false);
@@ -494,12 +521,9 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         add(lblStartTime);
 
         add(lblSubTotle);
-        add(lblTSQ);
-        add(lblRSQ);
+        add(lblGSQ);
+        add(lblQSQ);
         add(lblTotlePrice);
-
-        add(tfdTotlePrice);
-        add(tfdCustomer);
 
         add(btnLine_3_1);
         add(btnLine_3_2);
@@ -622,24 +646,22 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
             productRS.afterLast();
             productRS.relative(-1);
             tmpPos = productRS.getRow();
-            prodIDAry = new int[tmpPos];
-            menuNameMetrix = new String[3][tmpPos];
+            dishNameMetrix = new String[3][tmpPos];
             dishAry = new Dish[tmpPos];
             productRS.beforeFirst();
             
             //compose the record into dish objects--------------
             tmpPos = 0;
             while (productRS.next()) { // @NOTE: don't load all the content, because menu can be many
-                prodIDAry[tmpPos] = productRS.getInt("ID");
-                menuNameMetrix[0][tmpPos] = productRS.getString("CODE");
-                menuNameMetrix[1][tmpPos] = productRS.getString("MNEMONIC");
-                menuNameMetrix[2][tmpPos] = productRS.getString("SUBJECT");
+                dishNameMetrix[0][tmpPos] = productRS.getString("CODE");
+                dishNameMetrix[1][tmpPos] = productRS.getString("MNEMONIC");
+                dishNameMetrix[2][tmpPos] = productRS.getString("SUBJECT");
 
                 dishAry[tmpPos] = new Dish();
-                dishAry[tmpPos].setId(prodIDAry[tmpPos]);
-                dishAry[tmpPos].setLanguage(0, menuNameMetrix[0][tmpPos]);
-                dishAry[tmpPos].setLanguage(1, menuNameMetrix[1][tmpPos]);
-                dishAry[tmpPos].setLanguage(2, menuNameMetrix[2][tmpPos]);
+                dishAry[tmpPos].setId(productRS.getInt("ID"));
+                dishAry[tmpPos].setLanguage(0, dishNameMetrix[0][tmpPos]);
+                dishAry[tmpPos].setLanguage(1, dishNameMetrix[1][tmpPos]);
+                dishAry[tmpPos].setLanguage(2, dishNameMetrix[2][tmpPos]);
                 dishAry[tmpPos].setPrice(productRS.getInt("PRICE"));
                 dishAry[tmpPos].setGst(productRS.getInt("FOLDERID"));
                 dishAry[tmpPos].setQst(productRS.getInt("STORE"));
@@ -673,10 +695,10 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
 
         // clean current catogory and menus from both screen and metrix if have---------------
         for (int r = 0; r < categoryRow; r++) {
-            if (r < onSrcCategoryMatrix.size()) {
+            if (r < onSrcCategoryTgbMatrix.size()) {
                 for (int c = 0; c < categoryColumn; c++) {
-                    if (c < onSrcCategoryMatrix.get(r).size())
-                        remove(onSrcCategoryMatrix.get(r).get(c));
+                    if (c < onSrcCategoryTgbMatrix.get(r).size())
+                        remove(onSrcCategoryTgbMatrix.get(r).get(c));
                 }
             }
         }
@@ -688,51 +710,51 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
                 }
             }
         }
-        onSrcCategoryMatrix.clear();
+        onSrcCategoryTgbMatrix.clear();
         onSrcMenuBtnMatrix.clear();
 
         // create new buttons and add onto the screen (no layout yet)------------
         int dspIndex = curCategoryPage * categoryNumPerPage;
         for (int r = 0; r < categoryRow; r++) {
-            ArrayList<CategoryToggle> btnCategoryArry = new ArrayList<CategoryToggle>();
+            ArrayList<CategoryToggleButton> btnCategoryArry = new ArrayList<CategoryToggleButton>();
             for (int c = 0; c < categoryColumn; c++) {
                 dspIndex++;
-                CategoryToggle btnCategory = new CategoryToggle(dspIndex);
+                CategoryToggleButton btnCategory = new CategoryToggleButton(dspIndex);
                 btnCategory.setMargin(new Insets(0, 0, 0, 0));
                 add(btnCategory);
                 btnCategory.addActionListener(this);
                 btnCategoryArry.add(btnCategory);
                 if (dspIndex <= categoryNameMetrix[0].length) {
                     btnCategory.setText(categoryNameMetrix[CustOpts.custOps.getUserLang()][dspIndex - 1]);
-                    if (activeCategoryButton != null
-                            && categoryNameMetrix[CustOpts.custOps.getUserLang()][dspIndex - 1].equalsIgnoreCase(activeCategoryButton.getText())) {
+                    if (tgbActiveCategory != null
+                            && categoryNameMetrix[CustOpts.custOps.getUserLang()][dspIndex - 1].equalsIgnoreCase(tgbActiveCategory.getText())) {
                         btnCategory.setSelected(true);
                     }
                 } else {
                     btnPageDownCategory.setEnabled(false);
                 }
             }
-            onSrcCategoryMatrix.add(btnCategoryArry);
+            onSrcCategoryTgbMatrix.add(btnCategoryArry);
         }
 
         // if no activeCategory, use the first one on screen.
-        if (activeCategoryButton == null) {
-            activeCategoryButton = onSrcCategoryMatrix.get(0).get(0);
-            activeCategoryButton.setSelected(true);
+        if (tgbActiveCategory == null) {
+            tgbActiveCategory = onSrcCategoryTgbMatrix.get(0).get(0);
+            tgbActiveCategory.setSelected(true);
         }
 
         // initialize on screen menus===============================================================
         //find out menus matching to current category and current lang
-        onScrMenuNameMetrix = new String[3][menuNameMetrix[0].length];
-        onScrDishAry = new Dish[menuNameMetrix[0].length];
+        onScrDishNameMetrix = new String[3][dishNameMetrix[0].length];
+        onScrDishAry = new Dish[dishNameMetrix[0].length];
         
         int onscrMenuIndex = 0;
         for (int i = 0; i < dishAry.length; i++) {
-			if(dishAry[i].getCATEGORY().equals(activeCategoryButton.getText())) {
+			if(dishAry[i].getCATEGORY().equals(tgbActiveCategory.getText())) {
 				
-				onScrMenuNameMetrix[0][onscrMenuIndex] = menuNameMetrix[0][i];
-				onScrMenuNameMetrix[1][onscrMenuIndex] = menuNameMetrix[1][i];
-				onScrMenuNameMetrix[2][onscrMenuIndex] = menuNameMetrix[2][i];
+				onScrDishNameMetrix[0][onscrMenuIndex] = dishNameMetrix[0][i];
+				onScrDishNameMetrix[1][onscrMenuIndex] = dishNameMetrix[1][i];
+				onScrDishNameMetrix[2][onscrMenuIndex] = dishNameMetrix[2][i];
 				
 				onScrDishAry[onscrMenuIndex] = dishAry[i];
 				//make sure the display index are lined
@@ -766,7 +788,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
                 btnMenu.addActionListener(this);
                 btnMenuArry.add(btnMenu);
                 if (dspIndex < onscrMenuIndex) {
-                    btnMenu.setText(onScrMenuNameMetrix[CustOpts.custOps.getUserLang()][dspIndex]);// TODO: replace 0 with
+                    btnMenu.setText(onScrDishNameMetrix[CustOpts.custOps.getUserLang()][dspIndex]);// TODO: replace 0 with
                     btnMenu.setDish(onScrDishAry[dspIndex]);// TODO: replace 0 with
                 } else {
                     btnPageDownMenu.setEnabled(false);
@@ -890,11 +912,11 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
                 + CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
 
         // sub total-------
-        lblTSQ.setBounds(srpContent.getX(), srpContent.getY() + srpContent.getHeight(), srpContent.getWidth() / 4,
+        lblGSQ.setBounds(srpContent.getX(), srpContent.getY() + srpContent.getHeight(), srpContent.getWidth() / 4,
                 BarDlgConst.SubTotal_HEIGHT * 1 / 3);
-        lblRSQ.setBounds(lblTSQ.getX() + lblTSQ.getWidth(), lblTSQ.getY(), lblTSQ.getWidth(), lblTSQ.getHeight());
-        lblSubTotle.setBounds(lblRSQ.getX() + lblRSQ.getWidth(), lblTSQ.getY(), lblRSQ.getWidth() * 2,
-                lblTSQ.getHeight());
+        lblQSQ.setBounds(lblGSQ.getX() + lblGSQ.getWidth(), lblGSQ.getY(), lblGSQ.getWidth(), lblGSQ.getHeight());
+        lblSubTotle.setBounds(lblQSQ.getX() + lblQSQ.getWidth(), lblGSQ.getY(), lblQSQ.getWidth() * 2,
+                lblGSQ.getHeight());
         lblTotlePrice.setBounds(lblSubTotle.getX(), lblSubTotle.getY() + lblSubTotle.getHeight(),
                 lblSubTotle.getWidth(), BarDlgConst.SubTotal_HEIGHT * 2 / 3);
 
@@ -911,7 +933,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
 
         for (int r = 0; r < categoryRow; r++) {
             for (int c = 0; c < categoryColumn; c++) {
-                JToggleButton toggleButton = onSrcCategoryMatrix.get(r).get(c);
+                JToggleButton toggleButton = onSrcCategoryTgbMatrix.get(r).get(c);
                 toggleButton.setBounds(xMenuArea + (categeryBtnWidth + CustOpts.HOR_GAP) * c, srpContent.getY()
                         + (categeryBtnHeight + CustOpts.VER_GAP) * r, categeryBtnWidth, categeryBtnHeight);
             }
@@ -956,13 +978,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     }
 
     private void resetAll() {
-        resetDlgArea();
         resetListArea();
-    }
-
-    private void resetDlgArea() {
-        tfdTotlePrice.setText("");
-        tfdCustomer.setText("");
     }
 
     private void resetListArea() {
@@ -992,14 +1008,11 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     private JLabel lblStartTime;
 
     private JLabel lblSubTotle;
-    private JLabel lblTSQ;
-    private JLabel lblRSQ;
+    private JLabel lblGSQ;
+    private JLabel lblQSQ;
     private JLabel lblTotlePrice;
 
     static JLabel lblStatus;
-
-    private JTextField tfdTotlePrice;
-    private JTextField tfdCustomer;
 
     private JButton btnLine_3_1;
     private JButton btnLine_3_2;
@@ -1037,14 +1050,6 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     private JButton btnPageDownCategory;
     private JButton btnPageUpMenu;
     private JButton btnPageDownMenu;
-
-    Integer categoryColumn = (Integer) CustOpts.custOps.hash2.get("categoryColumn");
-    Integer categoryRow = (Integer) CustOpts.custOps.hash2.get("categoryRow");
-    Integer menuColumn = (Integer) CustOpts.custOps.hash2.get("menuColumn");
-    Integer menuRow = (Integer) CustOpts.custOps.hash2.get("menuRow");
-
-    ArrayList<ArrayList<CategoryToggle>> onSrcCategoryMatrix = new ArrayList<ArrayList<CategoryToggle>>();
-    private ArrayList<ArrayList<MenuButton>> onSrcMenuBtnMatrix = new ArrayList<ArrayList<MenuButton>>();
 
     private PIMTable tblContent;
     private PIMScrollPane srpContent;

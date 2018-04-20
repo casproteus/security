@@ -156,8 +156,8 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
             } 
 
             if (isCategoryNameModified(0)) {
-                for (int i = 0; i < barGeneralPanel.menuNameMetrix[0].length; i++) {
-                    if (i != dspIndex - 1 && text.equalsIgnoreCase(barGeneralPanel.menuNameMetrix[0][i])) {
+                for (int i = 0; i < barGeneralPanel.dishNameMetrix[0].length; i++) {
+                    if (i != dspIndex - 1 && text.equalsIgnoreCase(barGeneralPanel.dishNameMetrix[0][i])) {
                         JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
                         general.tfdCategoryNames[0].grabFocus();
                         return;
@@ -168,8 +168,8 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
             if (isCategoryNameModified(1)) {
             	text = general.tfdCategoryNames[1].getText();
                 if (text != null && !"".equals(text))//language2 is allowed to be empty.
-                    for (int i = 0; i < barGeneralPanel.menuNameMetrix[1].length; i++) {
-                        if (i != dspIndex - 1 && text.equalsIgnoreCase(barGeneralPanel.menuNameMetrix[1][i])) {
+                    for (int i = 0; i < barGeneralPanel.dishNameMetrix[1].length; i++) {
+                        if (i != dspIndex - 1 && text.equalsIgnoreCase(barGeneralPanel.dishNameMetrix[1][i])) {
                             JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
                             general.tfdCategoryNames[1].grabFocus();
                             return;
@@ -180,8 +180,8 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
             if (isCategoryNameModified(2)) {
             	text = general.tfdCategoryNames[2].getText();
                 if (text != null && !"".equals(text))//language3 is allowed to be empty.
-                    for (int i = 0; i < barGeneralPanel.menuNameMetrix[2].length; i++) {
-                        if (i != dspIndex - 1 && text.equalsIgnoreCase(barGeneralPanel.menuNameMetrix[2][i])) {
+                    for (int i = 0; i < barGeneralPanel.dishNameMetrix[2].length; i++) {
+                        if (i != dspIndex - 1 && text.equalsIgnoreCase(barGeneralPanel.dishNameMetrix[2][i])) {
                             JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
                             general.tfdCategoryNames[2].grabFocus();
                             return;

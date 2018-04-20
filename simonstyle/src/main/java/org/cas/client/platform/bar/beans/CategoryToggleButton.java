@@ -2,10 +2,10 @@ package org.cas.client.platform.bar.beans;
 
 import javax.swing.JToggleButton;
 
-public class CategoryToggle extends JToggleButton {
+public class CategoryToggleButton extends JToggleButton {
     int index = 0;
 
-    public CategoryToggle(int index) {
+    public CategoryToggleButton(int index) {
         this.index = index;
     }
 
