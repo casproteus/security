@@ -24,6 +24,7 @@ import java.util.Enumeration;
 import javax.comm.CommPortIdentifier;
 import javax.comm.ParallelPort;
 import javax.comm.PortInUseException;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,7 +33,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.bar.beans.CategoryToggleButton;
 import org.cas.client.platform.bar.beans.MenuButton;
@@ -52,7 +56,7 @@ import org.cas.client.resource.international.DlgConst;
 import org.cas.client.resource.international.PaneConsts;
 
 //Identity表应该和Employ表合并。
-public class BarGeneralPanel extends JPanel implements ComponentListener, ActionListener, FocusListener {
+public class BarGeneralPanel extends JPanel implements ComponentListener, ActionListener, FocusListener, ListSelectionListener {
     private final int PRICECOLID = 3;
     private final int TOTALCOLID = 4;
     private final int COUNDCOLID = 2;
@@ -282,6 +286,37 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         }
     }
 
+    //table selection listener---------------------
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		if(true) {	//if it is not saved yet.
+			DefaultListSelectionModel selectionModel = (DefaultListSelectionModel)e.getSource();
+			int selectedRow =  selectionModel.getMinSelectionIndex();
+			if(selectedRow < 0) 
+				return;
+			
+			selectdDishAry.remove(selectedRow);
+			
+	        int tColCount = tblContent.getColumnCount();
+	        int tValidRowCount = getUsedRowCount(); // get the used RowCount
+	        Object[][] tValues = new Object[tValidRowCount - 1][tColCount];
+            for (int r = 0; r < tValidRowCount; r++) {
+            	int rowNum = r + 1;
+            	if(r == selectedRow) 
+            		continue;
+            	else if(r > selectedRow)
+            		rowNum--;
+            	
+                for (int c = 0; c < tColCount; c++)
+                    tValues[rowNum-1][c] = c == 0 ? rowNum: tblContent.getValueAt(r, c);
+            }
+            tblContent.setDataVector(tValues, header);
+            resetColWidth(srpContent.getWidth());
+	
+	        updateTotleArea();
+		}
+	}
+	
     private boolean adminAuthentication() {
         new LoginDlg(null).setVisible(true);
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
@@ -788,8 +823,8 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
                 btnMenu.addActionListener(this);
                 btnMenuArry.add(btnMenu);
                 if (dspIndex < onscrMenuIndex) {
-                    btnMenu.setText(onScrDishNameMetrix[CustOpts.custOps.getUserLang()][dspIndex]);// TODO: replace 0 with
-                    btnMenu.setDish(onScrDishAry[dspIndex]);// TODO: replace 0 with
+                    btnMenu.setText(onScrDishNameMetrix[CustOpts.custOps.getUserLang()][dspIndex]);
+                    btnMenu.setDish(onScrDishAry[dspIndex]);
                 } else {
                     btnPageDownMenu.setEnabled(false);
                 }
@@ -807,6 +842,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         tCellRender.setOpaque(true);
         tCellRender.setBackground(Color.LIGHT_GRAY);
         tblContent.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
+        tblContent.getSelectionModel().addListSelectionListener(this);
     }
 
     /** 本方法用于设置View上各个组件的尺寸。 */
