@@ -8,31 +8,35 @@ public interface BarDlgConst {
     String Language2 = "Language2";
     String Language3 = "Language3";
     String DSPINDEX = "Idx";
-    String MASTER = "MASTER";
-    String VOID_ITEM = "VOID ITEM";
     String PRICE = "Price";
-    String DISC_ITEM = "DISC ITEM";
-    String SPLIT_BILL = "SPLIT BILL";
-    String MORE = "MORE";
 
-    String EXACT_CASH = "EXACT CASH";
+    String EXACT_AMOUNT = "EXACT AMOUNT";
     String CASH = "CASH";
+    String PAY = "PAY";
+    String REMOVE = "REMOVE";
+    String VOID_ITEM = "VOID ITEM";
+    String SPLIT_BILL = "SPLIT BILL";
+    String QTY = "QTY";
+    String QTYNOTICE = "will be applied to selected dish!";
+    String DISC_ITEM = "DISC";
+    String PRINT_BILL = "PRINT BILL";
+
     String DEBIT = "DEBIT";
     String VISA = "VISA";
+    String MASTER = "MASTER";
     String CANCEL_ALL = "CANCEL ALL";
-    String QTY = "QTY";
-    String FAST_DISCOUNT = "FAST DISCOUNT";
-    String EQUL_BILL = "EQUL BILL";
+    String VOID_ORDER = "VOID ORDER";
     String SETTINGS = "SETTINGS";
-
+    String LOGOUT = "LOGOUT";//
+    String MORE = "MORE";
     String SEND = "SEND";
-    String PAY = "PAY";
-    String PRINT_BILL = "PRINT BILL";
+
+    String EQUL_BILL = "EQUL BILL";
+    String FAST_DISCOUNT = "FAST DISCOUNT";
     String QUICK_OPEN = "QUICK OPEN";
-    String VOID_ALL = "VOID ALL";
     String MODIFY = "MODIFY";
     String DISC_VOLUMN = "DISC VOLUMN";
-
+    
     String Printer1 = "Printer1";
     String Printer2 = "Printer2";
     String Printer3 = "Printer3";
@@ -70,7 +74,6 @@ public interface BarDlgConst {
     String Note = "说明";
     String Cost = "进价";
 
-    String Logout = "Logout";
     String OffDuty = "当日结算";
     String Check = "库存信息";
     String Hangup = "挂单";

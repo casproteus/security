@@ -29,11 +29,12 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
             String[] args) {
         CASControl.ctrl.initModel();
         new LoginDlg(instance).setVisible(true);
-        if (LoginDlg.PASSED != true) { // 如果用户选择了确定按钮。
-            return;
+        if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+            instance = new BarFrame();
+            instance.setVisible(true);
+        }else {	//the case that user clicked X button.
+            System.exit(0);
         }
-        instance = new BarFrame();
-        instance.setVisible(true);
     }
 
     /**
@@ -150,17 +151,10 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     @Override
     public void windowClosing(
             WindowEvent e) {
-        setVisible(false);
         if (CASControl.ctrl.getMainFrame() != null)
-            CASControl.ctrl.getMainFrame().dispose(); // 先隐藏视图，为的是给用户感觉关闭得比较快。
+            CASControl.ctrl.getMainFrame().dispose();
         dispose();
-        try {
-            CASControl.ctrl.exitSystem(); // 保存所有状态和数据后退出。
-        } catch (Exception exp) {
-            ErrorUtil.write(exp);
-            // System.exit(0);
-        }
-        instance = null;
+        CASControl.ctrl.exitSystem(); // 保存所有状态和数据后退出。
     }
 
     @Override

@@ -38,6 +38,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.cas.client.platform.bar.beans.ArrayButton;
 import org.cas.client.platform.bar.beans.CategoryToggleButton;
 import org.cas.client.platform.bar.beans.MenuButton;
 import org.cas.client.platform.bar.model.Dish;
@@ -93,6 +94,9 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     
     public static String startTime;
 
+    //flags
+    NumberPanelDlg qtyDlg; 
+    
     public BarGeneralPanel() {
         initComponent();
     }
@@ -141,54 +145,57 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     public void actionPerformed(
             ActionEvent e) {
         Object o = e.getSource();
-        if (o == btnPageUpTable) {
-            btnPageDownTable.setEnabled(true);
-            if (true) {
-                btnPageUpTable.setEnabled(false);
-            }
-        } else if (o == btnPageDownTable) {
-            btnPageUpTable.setEnabled(true);
-            if (true) {
-                btnPageDownTable.setEnabled(false);
-            }
-        } else if (o == btnPageUpCategory) {
-            curCategoryPage--;
-            // adjust status
-            btnPageDownCategory.setEnabled(true);
-            if (curCategoryPage == 0) {
-                btnPageUpCategory.setEnabled(false);
-            }
-
-            reInitCategoryAndMenuBtns();
-            reLayout();
-        } else if (o == btnPageDownCategory) {
-            curCategoryPage++;
-            // adjust status
-            btnPageUpCategory.setEnabled(true);
-            if (curCategoryPage * categoryNumPerPage > categoryNameMetrix.length) {
-                btnPageDownCategory.setEnabled(false);
-            }
-
-            reInitCategoryAndMenuBtns();
-            reLayout();
-        } else if (o == btnPageUpMenu) {
-            curMenuPageNum--;
-            btnPageDownMenu.setEnabled(true);
-            if (curMenuPageNum == 0) {
-                btnPageUpMenu.setEnabled(false);
-            }
-            reInitCategoryAndMenuBtns();
-            reLayout();
-        } else if (o == btnPageDownMenu) {
-            curMenuPageNum++;
-            btnPageUpMenu.setEnabled(true);
-            if (curMenuPageNum * curMenuPerPage > dishNameMetrix.length) {
-                btnPageDownMenu.setEnabled(false);
-            }
-            reInitCategoryAndMenuBtns();
-            reLayout();
+        //array button------------------------------------------------------------------------------------------
+        if(o instanceof ArrayButton) {
+	        if (o == btnPageUpTable) {
+	            btnPageDownTable.setEnabled(true);
+	            if (true) {
+	                btnPageUpTable.setEnabled(false);
+	            }
+	        } else if (o == btnPageDownTable) {
+	            btnPageUpTable.setEnabled(true);
+	            if (true) {
+	                btnPageDownTable.setEnabled(false);
+	            }
+	        } else if (o == btnPageUpCategory) {
+	            curCategoryPage--;
+	            // adjust status
+	            btnPageDownCategory.setEnabled(true);
+	            if (curCategoryPage == 0) {
+	                btnPageUpCategory.setEnabled(false);
+	            }
+	
+	            reInitCategoryAndMenuBtns();
+	            reLayout();
+	        } else if (o == btnPageDownCategory) {
+	            curCategoryPage++;
+	            // adjust status
+	            btnPageUpCategory.setEnabled(true);
+	            if (curCategoryPage * categoryNumPerPage > categoryNameMetrix.length) {
+	                btnPageDownCategory.setEnabled(false);
+	            }
+	
+	            reInitCategoryAndMenuBtns();
+	            reLayout();
+	        } else if (o == btnPageUpMenu) {
+	            curMenuPageNum--;
+	            btnPageDownMenu.setEnabled(true);
+	            if (curMenuPageNum == 0) {
+	                btnPageUpMenu.setEnabled(false);
+	            }
+	            reInitCategoryAndMenuBtns();
+	            reLayout();
+	        } else if (o == btnPageDownMenu) {
+	            curMenuPageNum++;
+	            btnPageUpMenu.setEnabled(true);
+	            if (curMenuPageNum * curMenuPerPage > dishNameMetrix.length) {
+	                btnPageDownMenu.setEnabled(false);
+	            }
+	            reInitCategoryAndMenuBtns();
+	            reLayout();
+	        }
         }
-        // category buttons------------------------------------
+        // category buttons---------------------------------------------------------------------------------
         else if (o instanceof CategoryToggleButton) {
             CategoryToggleButton categoryToggle = (CategoryToggleButton) o;
             String text = categoryToggle.getText();
@@ -220,7 +227,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
                 }
             }
         }
-        // menu buttons---------------
+        // menu buttons------------------------------------------------------------------------------------------
         else if (o instanceof MenuButton) {
             MenuButton menuButton = (MenuButton) o;
             String text = menuButton.getText();
@@ -239,31 +246,33 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
                 	addContentToList(menuButton.getDish());
                 }
             }
-        } else if (o instanceof JButton) {
-            JButton jButton = (JButton) o;
-            if (o == btnLine_1_9) { // enter the setting mode.(admin interface)
+        } 
+        //JButton------------------------------------------------------------------------------------------------
+        else if (o instanceof JButton) {
+        	if (o == btnLine_1_1) { // cancel all
+        		selectdDishAry.clear();
+    	        Object[][] tValues = new Object[0][tblOrder.getColumnCount()];
+                tblOrder.setDataVector(tValues, header);
+                resetColWidth(srpContent.getWidth());
+    	        updateTotleArea();
+            } else if (o == btnLine_1_7) { // cancel all
+        		
+            } else if (o == btnLine_2_4) { // cancel all
+        		selectdDishAry.clear();
+    	        Object[][] tValues = new Object[0][tblOrder.getColumnCount()];
+                tblOrder.setDataVector(tValues, header);
+                resetColWidth(srpContent.getWidth());
+    	        updateTotleArea();
+            } else if (o == btnLine_2_5) { // cancel all
+        		selectdDishAry.clear();
+    	        Object[][] tValues = new Object[0][tblOrder.getColumnCount()];
+                tblOrder.setDataVector(tValues, header);
+                resetColWidth(srpContent.getWidth());
+    	        updateTotleArea();
+    	        //TODO update db, delete relevant orders.
+            } else if (o == btnLine_2_6) { // enter the setting mode.(admin interface)
                 adminAuthentication();
-            } else if (o == btnLine_3_3) { // 盘货,先检查是否存在尚未输入完整信息的产品，如果检查到存
-                BarUtility.checkUnCompProdInfo(); // 在这种产品，方法中会自动弹出对话盒要求用户填写详细信息。
-                new CheckStoreDlg(BarFrame.instance).setVisible(true);
-            } else if (o == btnLine_3_4) {
-                new AddStoreDlg(BarFrame.instance).setVisible(true);
-            } else if (o == btnLine_3_5) {
-                new RefundDlg(BarFrame.instance).setVisible(true);
-            } else if (o == btnLine_3_6) {
-            } else if (o == btnLine_3_7) {
-                int tType = Integer.parseInt(CustOpts.custOps.getUserType());
-                if (tType > 0) {// 如果当前登陆用户是个普通员工，则显示普通登陆对话盒。等待再次登陆
-                    new LoginDlg(BarFrame.instance).setVisible(true);// 结果不会被保存到ini
-                    if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-                        int tLevel = Integer.parseInt(LoginDlg.USERTYPE);
-                        if (tLevel <= 0)// 进一步判断，如果新登陆是经理，弹出对话盒
-                            new Statistic(BarFrame.instance).setVisible(true);
-                    }
-                } else
-                    // 如果当前的用户已经是管理员了，则弹出对话盒？
-                    new Statistic(BarFrame.instance).setVisible(true);
-            } else if (o == btnLine_3_8) { // Logout
+            } else if (o == btnLine_2_7) { // Logout
                 if (curSecurityStatus == ADMIN_STATUS) {
                     curSecurityStatus--;
                     // @TODO: might need to do some modification on the interface.
@@ -278,26 +287,48 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
                                 CustOpts.custOps.getUserName()));
                         BarFrame.instance = new BarFrame();
                         BarFrame.instance.setVisible(true);
+                    }else {
+                    	System.exit(0);
                     }
                 }
-            } else if (o == btnLine_3_9) {
-                new BarOptionDlg(BarFrame.instance).setVisible(true);
+            }else if (o == btnLine_2_8) {//more
+            	new MoreButtonsDlg(this).show((JButton)o);
+            }else if (o == btnLine_2_9) {//send
+            	//TODO:send to printer
+            	//TODO:save to db output
             }
+        }
+        //JToggleButton-------------------------------------------------------------------------------------
+        else if(o instanceof JToggleButton) {
+        	if(o == btnLine_1_4) {
+        	}else if (o == btnLine_1_5) {
+        		
+        	}else if (o == btnLine_1_7) {	//QTY
+        		//pomp up a numberPanelDlg
+        		if(qtyDlg == null) {
+        			qtyDlg = new NumberPanelDlg(BarFrame.instance, btnLine_1_7);
+        		}
+        		qtyDlg.setVisible(btnLine_1_7.isSelected());
+        		if(tblOrder.getSelectedRow() > 0) {
+        			Object obj = tblOrder.getValueAt(tblOrder.getSelectedRow(), 3);
+        			qtyDlg.setContents(obj.toString());
+        		}
+        	}
         }
     }
 
     //table selection listener---------------------
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		if(true) {	//if it is not saved yet.
-			DefaultListSelectionModel selectionModel = (DefaultListSelectionModel)e.getSource();
-			int selectedRow =  selectionModel.getMinSelectionIndex();
-			if(selectedRow < 0) 
-				return;
-			
+		DefaultListSelectionModel selectionModel = (DefaultListSelectionModel)e.getSource();
+		int selectedRow =  selectionModel.getMinSelectionIndex();
+		if(selectedRow < 0 || selectedRow >= selectdDishAry.size()) 
+			return;
+		
+		if(!btnLine_1_7.isSelected()) {	//if qty button not seleted.
 			selectdDishAry.remove(selectedRow);
 			
-	        int tColCount = tblContent.getColumnCount();
+	        int tColCount = tblOrder.getColumnCount();
 	        int tValidRowCount = getUsedRowCount(); // get the used RowCount
 	        Object[][] tValues = new Object[tValidRowCount - 1][tColCount];
             for (int r = 0; r < tValidRowCount; r++) {
@@ -308,15 +339,161 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
             		rowNum--;
             	
                 for (int c = 0; c < tColCount; c++)
-                    tValues[rowNum-1][c] = c == 0 ? rowNum: tblContent.getValueAt(r, c);
+                    tValues[rowNum-1][c] = c == 0 ? rowNum: tblOrder.getValueAt(r, c);
             }
-            tblContent.setDataVector(tValues, header);
+            tblOrder.setDataVector(tValues, header);
             resetColWidth(srpContent.getWidth());
 	
 	        updateTotleArea();
+		}else {
+			Object obj = tblOrder.getValueAt(selectedRow,3);
+			//update the qty in qtyDlg.
+			if(obj != null)
+				qtyDlg.setContents(obj.toString());
 		}
 	}
-	
+    
+	public static void setStatusMes(
+            String pMes) {
+        lblStatus.setText(pMes);
+    }
+
+    void reLayout() {
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
+        lblOperator.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblOperator.getPreferredSize().width,
+                lblOperator.getPreferredSize().height);
+        int tHalfHeight = (panelHeight - lblOperator.getY() - lblOperator.getHeight()) / 2;
+        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 10) / 9;
+        int tBtnHeight = panelHeight / 10;
+        int tGap = tHalfHeight / 11;
+        int tVGap = tGap * 2 / 3;
+        int tCompH = tGap + tGap - tVGap;
+        int tFieldWidth1 = panelWidth / 2;
+
+        lblStartTime.setBounds(panelWidth - lblStartTime.getPreferredSize().width - CustOpts.HOR_GAP,
+                lblOperator.getY(), lblStartTime.getPreferredSize().width, lblOperator.getHeight());
+        lblShoestring.setBounds(
+                lblOperator.getX()
+                        + lblOperator.getWidth()
+                        + (lblStartTime.getX() - lblOperator.getX() - lblOperator.getWidth() - lblShoestring
+                                .getPreferredSize().width) / 2, lblOperator.getY(),
+                lblShoestring.getPreferredSize().width, lblOperator.getHeight());
+
+        // status---------
+        lblStatus.setBounds(CustOpts.HOR_GAP, panelHeight - CustOpts.LBL_HEIGHT - CustOpts.VER_GAP, panelWidth
+                - CustOpts.HOR_GAP, CustOpts.LBL_HEIGHT);
+
+        // command buttons--------------
+        // line 2
+        btnLine_2_1.setBounds(CustOpts.HOR_GAP, lblStatus.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
+                tBtnHeight);
+        btnLine_2_2.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_3.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_4.setBounds(btnLine_2_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_5.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_8.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_9.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        // line 1
+        btnLine_1_1.setBounds(CustOpts.HOR_GAP, btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
+                tBtnHeight);
+        btnLine_1_2.setBounds(btnLine_1_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_1_3.setBounds(btnLine_1_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_1_4.setBounds(btnLine_1_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_1_5.setBounds(btnLine_1_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_1_6.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_1_7.setBounds(btnLine_1_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_1_8.setBounds(btnLine_1_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_1_9.setBounds(btnLine_1_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+                tBtnHeight);
+        
+        // TOP part============================
+        int topAreaHeight = btnLine_1_1.getY() - 3 * CustOpts.VER_GAP - lblOperator.getY() - lblOperator.getHeight();
+        // table area-------------
+        Double tableWidth = (Double) CustOpts.custOps.hash2.get("TableWidth");
+        tableWidth = (tableWidth == null || tableWidth < 0.2) ? 0.4 : tableWidth;
+        srpContent.setBounds(CustOpts.HOR_GAP, lblOperator.getY() + lblOperator.getHeight() + CustOpts.VER_GAP,
+                (int) (panelWidth * tableWidth) - BarDlgConst.SCROLLBAR_WIDTH, topAreaHeight
+                        - BarDlgConst.SubTotal_HEIGHT);
+
+        btnPageUpTable.setBounds(CustOpts.HOR_GAP + srpContent.getWidth(), srpContent.getY() + srpContent.getHeight()
+                - BarDlgConst.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH,
+                BarDlgConst.SCROLLBAR_WIDTH * 2);
+        btnPageDownTable.setBounds(btnPageUpTable.getX(), btnPageUpTable.getY() + btnPageUpTable.getHeight()
+                + CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
+
+        // sub total-------
+        lblGSQ.setBounds(srpContent.getX(), srpContent.getY() + srpContent.getHeight(), srpContent.getWidth() / 4,
+                BarDlgConst.SubTotal_HEIGHT * 1 / 3);
+        lblQSQ.setBounds(lblGSQ.getX() + lblGSQ.getWidth(), lblGSQ.getY(), lblGSQ.getWidth(), lblGSQ.getHeight());
+        lblSubTotle.setBounds(lblQSQ.getX() + lblQSQ.getWidth(), lblGSQ.getY(), lblQSQ.getWidth() * 2,
+                lblGSQ.getHeight());
+        lblTotlePrice.setBounds(lblSubTotle.getX(), lblSubTotle.getY() + lblSubTotle.getHeight(),
+                lblSubTotle.getWidth(), BarDlgConst.SubTotal_HEIGHT * 2 / 3);
+
+        // category area--------------
+        int xMenuArea = srpContent.getX() + srpContent.getWidth() + CustOpts.HOR_GAP + BarDlgConst.SCROLLBAR_WIDTH;
+        int widthMenuArea =
+                (panelWidth - srpContent.getWidth() - CustOpts.HOR_GAP * 3) - BarDlgConst.SCROLLBAR_WIDTH * 2;
+        Double categoryHeight = (Double) CustOpts.custOps.hash2.get("categoryHeight");
+        categoryHeight = (categoryHeight == null || categoryHeight < 0.2) ? 0.4 : categoryHeight;
+
+        int categeryBtnWidth = (widthMenuArea - CustOpts.HOR_GAP * (categoryColumn - 1)) / categoryColumn;
+        int categeryBtnHeight =
+                (int) ((topAreaHeight * categoryHeight - CustOpts.VER_GAP * (categoryRow - 1)) / categoryRow);
+
+        for (int r = 0; r < categoryRow; r++) {
+            for (int c = 0; c < categoryColumn; c++) {
+                JToggleButton toggleButton = onSrcCategoryTgbMatrix.get(r).get(c);
+                toggleButton.setBounds(xMenuArea + (categeryBtnWidth + CustOpts.HOR_GAP) * c, srpContent.getY()
+                        + (categeryBtnHeight + CustOpts.VER_GAP) * r, categeryBtnWidth, categeryBtnHeight);
+            }
+        }
+        btnPageUpCategory.setBounds(xMenuArea + widthMenuArea, srpContent.getY(), BarDlgConst.SCROLLBAR_WIDTH,
+                BarDlgConst.SCROLLBAR_WIDTH * 2);
+        btnPageDownCategory.setBounds(btnPageUpCategory.getX(),
+                btnPageUpCategory.getY() + btnPageUpCategory.getHeight() + CustOpts.VER_GAP,
+                BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
+
+        // menu area--------------
+        int menuY = srpContent.getY() + (categeryBtnHeight + CustOpts.VER_GAP) * categoryRow + CustOpts.VER_GAP;
+        int menuBtnWidth = (widthMenuArea - CustOpts.HOR_GAP * (menuColumn - 1)) / menuColumn;
+        int menuBtnHeight = (int) ((topAreaHeight * (1 - categoryHeight) - CustOpts.VER_GAP * (menuRow)) / menuRow);
+        for (int r = 0; r < menuRow; r++) {
+            for (int c = 0; c < menuColumn; c++) {
+                onSrcMenuBtnMatrix
+                        .get(r)
+                        .get(c)
+                        .setBounds(xMenuArea + (menuBtnWidth + CustOpts.HOR_GAP) * c,
+                                menuY + (menuBtnHeight + CustOpts.VER_GAP) * r, menuBtnWidth, menuBtnHeight);
+            }
+        }
+        btnPageUpMenu.setBounds(btnPageUpCategory.getX(), srpContent.getY() + topAreaHeight
+                - BarDlgConst.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH,
+                BarDlgConst.SCROLLBAR_WIDTH * 2);
+        btnPageDownMenu.setBounds(btnPageUpMenu.getX(), btnPageUpMenu.getY() + btnPageUpMenu.getHeight()
+                + CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
+
+        resetColWidth(srpContent.getWidth());
+    }
+
     private boolean adminAuthentication() {
         new LoginDlg(null).setVisible(true);
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
@@ -332,50 +509,51 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     }
 
     private void resetColWidth(int tableWidth) {
-        PIMTableColumn tmpCol1 = tblContent.getColumnModel().getColumn(0);
+        PIMTableColumn tmpCol1 = tblOrder.getColumnModel().getColumn(0);
         tmpCol1.setWidth(40);
         tmpCol1.setPreferredWidth(40);
-        PIMTableColumn tmpCol3 = tblContent.getColumnModel().getColumn(2);
+        PIMTableColumn tmpCol3 = tblOrder.getColumnModel().getColumn(2);
         tmpCol3.setWidth(40);
         tmpCol3.setPreferredWidth(40);
-        PIMTableColumn tmpCol4 = tblContent.getColumnModel().getColumn(3);
+        PIMTableColumn tmpCol4 = tblOrder.getColumnModel().getColumn(3);
         tmpCol4.setWidth(40);
         tmpCol4.setPreferredWidth(40);
-        PIMTableColumn tmpCol5 = tblContent.getColumnModel().getColumn(4);
+        PIMTableColumn tmpCol5 = tblOrder.getColumnModel().getColumn(4);
         tmpCol5.setWidth(40);
         tmpCol5.setPreferredWidth(40);
 
-        PIMTableColumn tmpCol2 = tblContent.getColumnModel().getColumn(1);
+        PIMTableColumn tmpCol2 = tblOrder.getColumnModel().getColumn(1);
         tmpCol2.setWidth(tableWidth - tmpCol1.getWidth() - tmpCol3.getWidth() - tmpCol4.getWidth() - tmpCol5.getWidth() - 3);
         tmpCol2.setPreferredWidth(tmpCol2.getWidth());
         
-        tblContent.validate();
-        tblContent.revalidate();
-        tblContent.invalidate();
+        tblOrder.validate();
+        tblOrder.revalidate();
+        tblOrder.invalidate();
     }
 
     // 将对话盒区域的内容加入到列表
     private void addContentToList(Dish dish) {
-        int tRowCount = tblContent.getRowCount(); // add content to the table.
-        int tColCount = tblContent.getColumnCount();
+        int tRowCount = tblOrder.getRowCount(); // add content to the table.
+        int tColCount = tblOrder.getColumnCount();
         int tValidRowCount = getUsedRowCount(); // get the used RowCount
         if (tRowCount == tValidRowCount) { // no line is empty, add a new Line.
             Object[][] tValues = new Object[tRowCount + 1][tColCount];
             for (int r = 0; r < tRowCount; r++)
                 for (int c = 0; c < tColCount; c++)
-                    tValues[r][c] = tblContent.getValueAt(r, c);
-            tblContent.setDataVector(tValues, header);
+                    tValues[r][c] = tblOrder.getValueAt(r, c);
+            tblOrder.setDataVector(tValues, header);
             resetColWidth(srpContent.getWidth());
         }else {
         	tRowCount--;
         }
-        tblContent.setValueAt(tRowCount + 1, tValidRowCount, 0); // set the code.
-        tblContent.setValueAt(dish.getLanguage(CustOpts.custOps.getUserLang()), tValidRowCount, 1);// set the Name.
-        tblContent.setValueAt(dish.getSize() > 1 ? dish.getSize() : "", tValidRowCount, 2); // set the count.
-        tblContent.setValueAt(1, tValidRowCount, 3); // set the count.
-        tblContent.setValueAt(dish.getPrice()/100f, tValidRowCount, 4); // set the price.
-
-        selectdDishAry.add(dish);
+        tblOrder.setValueAt(tRowCount + 1, tValidRowCount, 0); // set the code.
+        tblOrder.setValueAt(dish.getLanguage(CustOpts.custOps.getUserLang()), tValidRowCount, 1);// set the Name.
+        tblOrder.setValueAt(dish.getSize() > 1 ? dish.getSize() : "", tValidRowCount, 2); // set the count.
+        tblOrder.setValueAt(1, tValidRowCount, 3); // set the count.
+        tblOrder.setValueAt(dish.getPrice()/100f, tValidRowCount, 4); // set the price.
+        
+        tblOrder.setSelectedRow(tValidRowCount);	//@NOTE:must before adding into the array, so it can be ignored by 
+        selectdDishAry.add(dish);					//valueChanged process. not being cleared immediately
         
         updateTotleArea();
     }
@@ -459,54 +637,43 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         lblGSQ = new JLabel(BarDlgConst.QST);
         lblQSQ = new JLabel(BarDlgConst.GST);
         lblTotlePrice = new JLabel(BarDlgConst.Total);
-
-        btnLine_3_1 = new JButton(BarDlgConst.SEND);
-        btnLine_3_2 = new JButton(BarDlgConst.PAY);
-        btnLine_3_3 = new JButton(BarDlgConst.PRINT_BILL);
-        btnLine_3_4 = new JButton(BarDlgConst.QUICK_OPEN);
-        btnLine_3_5 = new JButton(BarDlgConst.VOID_ALL);
-        btnLine_3_6 = new JButton(BarDlgConst.MODIFY);
-        btnLine_3_7 = new JButton(BarDlgConst.DISC_VOLUMN);
-        btnLine_3_8 = new JButton(BarDlgConst.Logout);
-        btnLine_3_9 = new JButton(BarDlgConst.MORE);
-
-        btnLine_2_1 = new JButton("");
-        btnLine_2_2 = new JButton("");
-        btnLine_2_3 = new JButton("");
-        btnLine_2_4 = new JButton(BarDlgConst.MASTER);
-        btnLine_2_5 = new JButton(BarDlgConst.VOID_ITEM);
-        btnLine_2_6 = new JButton(BarDlgConst.PRICE);
-        btnLine_2_7 = new JButton(BarDlgConst.DISC_ITEM);
-        btnLine_2_8 = new JButton(BarDlgConst.SPLIT_BILL);
-        btnLine_2_9 = new JButton("");
-
-        btnLine_1_1 = new JButton(BarDlgConst.EXACT_CASH);
+        
+        btnLine_1_1 = new JButton(BarDlgConst.EXACT_AMOUNT);
         btnLine_1_2 = new JButton(BarDlgConst.CASH);
-        btnLine_1_3 = new JButton(BarDlgConst.DEBIT);
-        btnLine_1_4 = new JButton(BarDlgConst.VISA);
-        btnLine_1_5 = new JButton(BarDlgConst.CANCEL_ALL);
-        btnLine_1_6 = new JButton(BarDlgConst.QTY);
-        btnLine_1_7 = new JButton(BarDlgConst.FAST_DISCOUNT);
-        btnLine_1_8 = new JButton(BarDlgConst.EQUL_BILL);
-        btnLine_1_9 = new JButton(BarDlgConst.SETTINGS);
+        btnLine_1_3 = new JButton(BarDlgConst.PAY);
+        btnLine_1_4 = new JToggleButton("");//BarDlgConst.REMOVE);
+        btnLine_1_5 = new JToggleButton("");//BarDlgConst.VOID_ITEM);
+        btnLine_1_6 = new JButton(BarDlgConst.SPLIT_BILL);
+        btnLine_1_7 = new JToggleButton(BarDlgConst.QTY);
+        btnLine_1_8 = new JButton(BarDlgConst.DISC_ITEM);
+        btnLine_1_9 = new JButton(BarDlgConst.PRINT_BILL);
+        
+        btnLine_2_1 = new JButton(BarDlgConst.DEBIT);
+        btnLine_2_2 = new JButton(BarDlgConst.VISA);
+        btnLine_2_3 = new JButton(BarDlgConst.MASTER);
+        btnLine_2_4 = new JButton(BarDlgConst.CANCEL_ALL);
+        btnLine_2_5 = new JButton(BarDlgConst.VOID_ORDER);
+        btnLine_2_6 = new JButton(BarDlgConst.SETTINGS);
+        btnLine_2_7 = new JButton(BarDlgConst.LOGOUT);
+        btnLine_2_8 = new JButton(BarDlgConst.MORE);
+        btnLine_2_9 = new JButton(BarDlgConst.SEND);
+        
+        btnPageUpTable = new ArrayButton("↑");
+        btnPageDownTable = new ArrayButton("↓");
+        btnPageUpCategory = new ArrayButton("↑");
+        btnPageDownCategory = new ArrayButton("↓");
+        btnPageUpMenu = new ArrayButton("↑");
+        btnPageDownMenu = new ArrayButton("↓");
 
-        btnPageUpTable = new JButton("↑");
-        btnPageDownTable = new JButton("↓");
-        btnPageUpCategory = new JButton("↑");
-        btnPageDownCategory = new JButton("↓");
-        btnPageUpMenu = new JButton("↑");
-        btnPageDownMenu = new JButton("↓");
-
-        tblContent = new PIMTable();// 显示字段的表格,设置模型
-        srpContent = new PIMScrollPane(tblContent);
+        tblOrder = new PIMTable();// 显示字段的表格,设置模型
+        srpContent = new PIMScrollPane(tblOrder);
         lblStatus = new JLabel();
 
         // properties
         setLayout(null);
-
-        tblContent.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        tblContent.setAutoscrolls(true);
-        tblContent.setRowHeight(20);
+        tblOrder.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        tblOrder.setAutoscrolls(true);
+        tblOrder.setRowHeight(20);
         JLabel tLbl = new JLabel();
         tLbl.setOpaque(true);
         tLbl.setBackground(Color.GRAY);
@@ -514,36 +681,18 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         Font tFont = PIMPool.pool.getFont((String) CustOpts.custOps.hash2.get(PaneConsts.DFT_FONT), Font.PLAIN, 40);
 
         // Margin-----------------
-        btnLine_3_2.setMargin(new Insets(0, 0, 0, 0));
-        btnLine_3_1.setMargin(btnLine_3_2.getInsets());
-        btnLine_3_3.setMargin(btnLine_3_2.getInsets());
-        btnLine_3_6.setMargin(btnLine_3_2.getInsets());
-        btnLine_3_7.setMargin(btnLine_3_2.getInsets());
-        btnLine_3_8.setMargin(btnLine_3_2.getInsets());
-        btnLine_3_4.setMargin(btnLine_3_2.getInsets());
-        btnLine_3_5.setMargin(btnLine_3_2.getInsets());
-        btnPageUpTable.setMargin(btnLine_3_2.getInsets());
-        btnPageDownTable.setMargin(btnLine_3_2.getInsets());
-        btnPageUpCategory.setMargin(btnLine_3_2.getInsets());
-        btnPageDownCategory.setMargin(btnLine_3_2.getInsets());
-        btnPageUpMenu.setMargin(btnLine_3_2.getInsets());
-        btnPageDownMenu.setMargin(btnLine_3_2.getInsets());
+        btnPageUpTable.setMargin(new Insets(0,0,0,0));
+        btnPageDownTable.setMargin(btnPageUpTable.getInsets());
+        btnPageUpCategory.setMargin(btnPageUpTable.getInsets());
+        btnPageDownCategory.setMargin(btnPageUpTable.getInsets());
+        btnPageUpMenu.setMargin(btnPageUpTable.getInsets());
+        btnPageDownMenu.setMargin(btnPageUpTable.getInsets());
 
         // border----------
-        tblContent.setBorder(null);
+        tblOrder.setBorder(null);
         lblStatus.setBorder(null);
         // forcus-------------
-        btnLine_3_2.setFocusable(false);
-        btnLine_3_3.setFocusable(false);
-        btnLine_3_6.setFocusable(false);
-        // btnMUser.setFocusable(false);
-        // btnMRate.setFocusable(false);
-        btnLine_3_7.setFocusable(false);
-        btnLine_3_8.setFocusable(false);
-        btnLine_3_4.setFocusable(false);
-        btnLine_3_5.setFocusable(false);
-
-        tblContent.setFocusable(false);
+        tblOrder.setFocusable(false);
 
         // disables
         btnPageUpCategory.setEnabled(false);
@@ -560,19 +709,9 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         add(lblQSQ);
         add(lblTotlePrice);
 
-        add(btnLine_3_1);
-        add(btnLine_3_2);
-        add(btnLine_3_3);
-        add(btnLine_3_4);
-        add(btnLine_3_5);
-        add(btnLine_3_6);
-        add(btnLine_3_7);
-        add(btnLine_3_8);
-        add(btnLine_3_9);
-
-        // add(btnLine_2_1);
-        // add(btnLine_2_2);
-        // add(btnLine_2_3);
+        add(btnLine_2_1);
+        add(btnLine_2_2);
+        add(btnLine_2_3);
         add(btnLine_2_4);
         add(btnLine_2_5);
         add(btnLine_2_6);
@@ -611,16 +750,6 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         btnPageDownCategory.addActionListener(this);
         btnPageUpMenu.addActionListener(this);
         btnPageDownMenu.addActionListener(this);
-
-        btnLine_3_1.addActionListener(this);
-        btnLine_3_2.addActionListener(this);
-        btnLine_3_3.addActionListener(this);
-        btnLine_3_4.addActionListener(this);
-        btnLine_3_5.addActionListener(this);
-        btnLine_3_6.addActionListener(this);
-        btnLine_3_7.addActionListener(this);
-        btnLine_3_8.addActionListener(this);
-        btnLine_3_9.addActionListener(this);
 
         btnLine_2_1.addActionListener(this);
         btnLine_2_2.addActionListener(this);
@@ -837,180 +966,24 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
 
     private void initTable() {
         Object[][] tValues = new Object[1][header.length];
-        tblContent.setDataVector(tValues, header);
+        tblOrder.setDataVector(tValues, header);
         DefaultPIMTableCellRenderer tCellRender = new DefaultPIMTableCellRenderer();
         tCellRender.setOpaque(true);
         tCellRender.setBackground(Color.LIGHT_GRAY);
-        tblContent.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
-        tblContent.getSelectionModel().addListSelectionListener(this);
+        tblOrder.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
+        tblOrder.getSelectionModel().addListSelectionListener(this);
     }
 
     /** 本方法用于设置View上各个组件的尺寸。 */
-    public void reLayout() {
-        int panelWidth = getWidth();
-        int panelHeight = getHeight();
-        lblOperator.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblOperator.getPreferredSize().width,
-                lblOperator.getPreferredSize().height);
-        int tHalfHeight = (panelHeight - lblOperator.getY() - lblOperator.getHeight()) / 2;
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 10) / 9;
-        int tBtnHeight = panelHeight / 10;
-        int tGap = tHalfHeight / 11;
-        int tVGap = tGap * 2 / 3;
-        int tCompH = tGap + tGap - tVGap;
-        int tFieldWidth1 = panelWidth / 2;
-
-        lblStartTime.setBounds(panelWidth - lblStartTime.getPreferredSize().width - CustOpts.HOR_GAP,
-                lblOperator.getY(), lblStartTime.getPreferredSize().width, lblOperator.getHeight());
-        lblShoestring.setBounds(
-                lblOperator.getX()
-                        + lblOperator.getWidth()
-                        + (lblStartTime.getX() - lblOperator.getX() - lblOperator.getWidth() - lblShoestring
-                                .getPreferredSize().width) / 2, lblOperator.getY(),
-                lblShoestring.getPreferredSize().width, lblOperator.getHeight());
-
-        // status---------
-        lblStatus.setBounds(CustOpts.HOR_GAP, panelHeight - CustOpts.LBL_HEIGHT - CustOpts.VER_GAP, panelWidth
-                - CustOpts.HOR_GAP, CustOpts.LBL_HEIGHT);
-
-        // command buttons--------------
-        // line 3
-        btnLine_3_1
-                .setBounds(CustOpts.HOR_GAP, lblStatus.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
-        btnLine_3_2.setBounds(btnLine_3_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_3_3.setBounds(btnLine_3_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_3_4.setBounds(btnLine_3_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_3_5.setBounds(btnLine_3_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_3_6.setBounds(btnLine_3_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_3_7.setBounds(btnLine_3_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_3_8.setBounds(btnLine_3_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_3_9.setBounds(btnLine_3_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_3_1.getY(), tBtnWidht,
-                tBtnHeight);
-
-        // line 2
-        btnLine_2_1.setBounds(CustOpts.HOR_GAP, btnLine_3_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
-                tBtnHeight);
-        btnLine_2_2.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_3.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_4.setBounds(btnLine_2_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_5.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_8.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_9.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        // line 1
-        btnLine_1_1.setBounds(CustOpts.HOR_GAP, btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
-                tBtnHeight * 2 + CustOpts.VER_GAP);
-        btnLine_1_2.setBounds(btnLine_1_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight * 2 + CustOpts.VER_GAP);
-        btnLine_1_3.setBounds(btnLine_1_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight * 2 + CustOpts.VER_GAP);
-        btnLine_1_4.setBounds(btnLine_1_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_5.setBounds(btnLine_1_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_6.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_7.setBounds(btnLine_1_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_8.setBounds(btnLine_1_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_9.setBounds(btnLine_1_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight);
-
-        // TOP part============================
-        int topAreaHeight = btnLine_1_1.getY() - 3 * CustOpts.VER_GAP - lblOperator.getY() - lblOperator.getHeight();
-        // table area-------------
-        Double tableWidth = (Double) CustOpts.custOps.hash2.get("TableWidth");
-        tableWidth = (tableWidth == null || tableWidth < 0.2) ? 0.4 : tableWidth;
-        srpContent.setBounds(CustOpts.HOR_GAP, lblOperator.getY() + lblOperator.getHeight() + CustOpts.VER_GAP,
-                (int) (panelWidth * tableWidth) - BarDlgConst.SCROLLBAR_WIDTH, topAreaHeight
-                        - BarDlgConst.SubTotal_HEIGHT);
-
-        btnPageUpTable.setBounds(CustOpts.HOR_GAP + srpContent.getWidth(), srpContent.getY() + srpContent.getHeight()
-                - BarDlgConst.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH,
-                BarDlgConst.SCROLLBAR_WIDTH * 2);
-        btnPageDownTable.setBounds(btnPageUpTable.getX(), btnPageUpTable.getY() + btnPageUpTable.getHeight()
-                + CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
-
-        // sub total-------
-        lblGSQ.setBounds(srpContent.getX(), srpContent.getY() + srpContent.getHeight(), srpContent.getWidth() / 4,
-                BarDlgConst.SubTotal_HEIGHT * 1 / 3);
-        lblQSQ.setBounds(lblGSQ.getX() + lblGSQ.getWidth(), lblGSQ.getY(), lblGSQ.getWidth(), lblGSQ.getHeight());
-        lblSubTotle.setBounds(lblQSQ.getX() + lblQSQ.getWidth(), lblGSQ.getY(), lblQSQ.getWidth() * 2,
-                lblGSQ.getHeight());
-        lblTotlePrice.setBounds(lblSubTotle.getX(), lblSubTotle.getY() + lblSubTotle.getHeight(),
-                lblSubTotle.getWidth(), BarDlgConst.SubTotal_HEIGHT * 2 / 3);
-
-        // category area--------------
-        int xMenuArea = srpContent.getX() + srpContent.getWidth() + CustOpts.HOR_GAP + BarDlgConst.SCROLLBAR_WIDTH;
-        int widthMenuArea =
-                (panelWidth - srpContent.getWidth() - CustOpts.HOR_GAP * 3) - BarDlgConst.SCROLLBAR_WIDTH * 2;
-        Double categoryHeight = (Double) CustOpts.custOps.hash2.get("categoryHeight");
-        categoryHeight = (categoryHeight == null || categoryHeight < 0.2) ? 0.4 : categoryHeight;
-
-        int categeryBtnWidth = (widthMenuArea - CustOpts.HOR_GAP * (categoryColumn - 1)) / categoryColumn;
-        int categeryBtnHeight =
-                (int) ((topAreaHeight * categoryHeight - CustOpts.VER_GAP * (categoryRow - 1)) / categoryRow);
-
-        for (int r = 0; r < categoryRow; r++) {
-            for (int c = 0; c < categoryColumn; c++) {
-                JToggleButton toggleButton = onSrcCategoryTgbMatrix.get(r).get(c);
-                toggleButton.setBounds(xMenuArea + (categeryBtnWidth + CustOpts.HOR_GAP) * c, srpContent.getY()
-                        + (categeryBtnHeight + CustOpts.VER_GAP) * r, categeryBtnWidth, categeryBtnHeight);
-            }
-        }
-        btnPageUpCategory.setBounds(xMenuArea + widthMenuArea, srpContent.getY(), BarDlgConst.SCROLLBAR_WIDTH,
-                BarDlgConst.SCROLLBAR_WIDTH * 2);
-        btnPageDownCategory.setBounds(btnPageUpCategory.getX(),
-                btnPageUpCategory.getY() + btnPageUpCategory.getHeight() + CustOpts.VER_GAP,
-                BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
-
-        // menu area--------------
-        int menuY = srpContent.getY() + (categeryBtnHeight + CustOpts.VER_GAP) * categoryRow + CustOpts.VER_GAP;
-        int menuBtnWidth = (widthMenuArea - CustOpts.HOR_GAP * (menuColumn - 1)) / menuColumn;
-        int menuBtnHeight = (int) ((topAreaHeight * (1 - categoryHeight) - CustOpts.VER_GAP * (menuRow)) / menuRow);
-        for (int r = 0; r < menuRow; r++) {
-            for (int c = 0; c < menuColumn; c++) {
-                onSrcMenuBtnMatrix
-                        .get(r)
-                        .get(c)
-                        .setBounds(xMenuArea + (menuBtnWidth + CustOpts.HOR_GAP) * c,
-                                menuY + (menuBtnHeight + CustOpts.VER_GAP) * r, menuBtnWidth, menuBtnHeight);
-            }
-        }
-        btnPageUpMenu.setBounds(btnPageUpCategory.getX(), srpContent.getY() + topAreaHeight
-                - BarDlgConst.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH,
-                BarDlgConst.SCROLLBAR_WIDTH * 2);
-        btnPageDownMenu.setBounds(btnPageUpMenu.getX(), btnPageUpMenu.getY() + btnPageUpMenu.getHeight()
-                + CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
-
-        resetColWidth(srpContent.getWidth());
-    }
-
     private boolean isOnProcess() {
         return getUsedRowCount() > 0;
     }
 
     private int getUsedRowCount() {
-        for (int i = 0, len = tblContent.getRowCount(); i < len; i++)
-            if (tblContent.getValueAt(i, 0) == null)
+        for (int i = 0, len = tblOrder.getRowCount(); i < len; i++)
+            if (tblOrder.getValueAt(i, 0) == null)
                 return i; // 至此得到 the used RowCount。
-        return tblContent.getRowCount();
+        return tblOrder.getRowCount();
     }
 
     private void resetAll() {
@@ -1018,25 +991,15 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     }
 
     private void resetListArea() {
-        int tRowCount = tblContent.getRowCount();
-        int tColCount = tblContent.getColumnCount();
+        int tRowCount = tblOrder.getRowCount();
+        int tColCount = tblOrder.getColumnCount();
         for (int j = 0; j < tRowCount; j++)
             for (int i = 0; i < tColCount; i++)
-                tblContent.setValueAt(null, j, i);
+                tblOrder.setValueAt(null, j, i);
     }
 
     private void enableBtns(
             boolean pIsEnable) {
-        btnLine_3_1.setEnabled(pIsEnable);
-        btnLine_3_2.setEnabled(pIsEnable);
-        btnLine_3_3.setEnabled(pIsEnable);
-        btnLine_3_4.setEnabled(pIsEnable);
-        btnLine_3_5.setEnabled(pIsEnable);
-    }
-
-    public static void setStatusMes(
-            String pMes) {
-        lblStatus.setText(pMes);
     }
 
     private JLabel lblOperator;
@@ -1050,16 +1013,16 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
 
     static JLabel lblStatus;
 
-    private JButton btnLine_3_1;
-    private JButton btnLine_3_2;
-    private JButton btnLine_3_3;
-    private JButton btnLine_3_4;
-    private JButton btnLine_3_5;
-    private JButton btnLine_3_6;
-    private JButton btnLine_3_7;
-    private JButton btnLine_3_8;
-    private JButton btnLine_3_9;
-
+    private JButton btnLine_1_1;
+    private JButton btnLine_1_2;
+    private JButton btnLine_1_3;
+    private JToggleButton btnLine_1_4;
+    private JToggleButton btnLine_1_5;
+    private JButton btnLine_1_6;
+    private JToggleButton btnLine_1_7;
+    private JButton btnLine_1_8;
+    private JButton btnLine_1_9;
+    
     private JButton btnLine_2_1;
     private JButton btnLine_2_2;
     private JButton btnLine_2_3;
@@ -1070,24 +1033,14 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     private JButton btnLine_2_8;
     private JButton btnLine_2_9;
 
-    private JButton btnLine_1_1;
-    private JButton btnLine_1_2;
-    private JButton btnLine_1_3;
-    private JButton btnLine_1_4;
-    private JButton btnLine_1_5;
-    private JButton btnLine_1_6;
-    private JButton btnLine_1_7;
-    private JButton btnLine_1_8;
-    private JButton btnLine_1_9;
+    private ArrayButton btnPageUpTable;
+    private ArrayButton btnPageDownTable;
+    private ArrayButton btnPageUpCategory;
+    private ArrayButton btnPageDownCategory;
+    private ArrayButton btnPageUpMenu;
+    private ArrayButton btnPageDownMenu;
 
-    private JButton btnPageUpTable;
-    private JButton btnPageDownTable;
-    private JButton btnPageUpCategory;
-    private JButton btnPageDownCategory;
-    private JButton btnPageUpMenu;
-    private JButton btnPageDownMenu;
-
-    private PIMTable tblContent;
+    PIMTable tblOrder;
     private PIMScrollPane srpContent;
     private String[] header = new String[] { BarDlgConst.ProdNumber, BarDlgConst.ProdName, BarDlgConst.Size, BarDlgConst.Count,
             BarDlgConst.Price};
