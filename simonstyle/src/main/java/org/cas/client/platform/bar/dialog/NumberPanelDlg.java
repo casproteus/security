@@ -87,6 +87,22 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
     }
 
     public void setContents(String qty) {
+    	
+    	if(qty!= null) { //remove the "x" in the string.
+    		if(qty.startsWith("x")) {
+    			qty = qty.substring(1).trim();
+    			try {
+    				Integer.valueOf(qty);
+    			}catch(Exception e) {
+    				ErrorUtil.write("non integer string found! when setontents() called in NumberPanelDlg class.");
+    			}
+    		}else {
+        		ErrorUtil.write("String not start with 'x'! when setontents() called in NumberPanelDlg class.");
+    		}
+    	}else {
+    		ErrorUtil.write("unexpected null String when setontents() called in NumberPanelDlg class.");
+    	}
+    	
         tfdQTY.setText(qty);
         tfdQTY.requestFocus();
         tfdQTY.selectAll();
@@ -109,7 +125,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         Object o = e.getSource();
         if (o == ok) {
         	int row = table.getSelectedRow();
-        	table.setValueAt(curContent, row, 3);
+        	table.setValueAt("x" + curContent, row, 3);
         	this.setVisible(false);
             return;
         } 

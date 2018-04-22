@@ -110,7 +110,39 @@ public class Dish {
         this.prompMofify = prompMofify;
     }
 
-    private int id = 0;
+    public int getNum() {
+		return num;
+	}
+
+	public void setNum(int num) {
+		this.num = num;
+	}
+
+	public int getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(int discount) {
+		this.discount = discount;
+	}
+
+	public int getOutputID() {
+		return outputID;
+	}
+
+	public void setOutputID(int outputID) {
+		this.outputID = outputID;
+	}
+
+	public String getModification() {
+		return modification;
+	}
+
+	public void setModification(String modification) {
+		this.modification = modification;
+	}
+
+	private int id = 0;
     private int dspIndex = 0; // display position on screen.
     private String language[] = new String[3]; // CODE VARCHAR(255), MNEMONIC VARCHAR(255),SUBJECT VARCHAR(255)
     private int price; // PRICE INTEGER
@@ -122,4 +154,10 @@ public class Dish {
     private String prompPrice; // CONTENT VARCHAR(255)
     private String prompMenu; // UNIT VARCHAR(255)
     private String prompMofify; // /PRODUCAREA VARCHAR(255)
+    //none saving fields-----------------------------------------
+    private int num;
+    private int discount;
+    private int outputID;
+    private String modification;
+    
 }

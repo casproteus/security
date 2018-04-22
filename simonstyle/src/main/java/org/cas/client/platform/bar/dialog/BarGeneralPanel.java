@@ -19,6 +19,7 @@ import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Enumeration;
 
 import javax.comm.CommPortIdentifier;
@@ -65,7 +66,9 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     private final int USER_STATUS = 1;
     private final int ADMIN_STATUS = 2;
     private int curSecurityStatus = USER_STATUS;
-
+    
+    private String curTable = "";
+    
     private int curCategoryPage = 0;
     private int categoryNumPerPage = 0;
 
@@ -296,6 +299,45 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
             }else if (o == btnLine_2_9) {//send
             	//TODO:send to printer
             	//TODO:save to db output
+                try {
+                    Connection conn = PIMDBModel.getConection();
+                    Statement smt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    for (Dish dish : selectdDishAry) {
+                    	String time = new Date().toLocaleString();
+	                    StringBuilder sql = new StringBuilder(
+	                        "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME) VALUES ('")
+	                        .append(curTable).append("', '")
+	                        .append("1").append("', '")
+	                        .append(dish.getId()).append("', ")
+	                        .append(dish.getNum()).append(", ")
+	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(", ")
+	                        .append(dish.getDiscount() * dish.getNum()).append(", ")
+	                        .append(dish.getModification()).append(", '")
+	                        .append(CustOpts.custOps.getUserName()).append("', '")
+	                        .append(time).append("') ");
+	                    smt.executeUpdate(sql.toString());
+                    
+	                    sql = new StringBuilder("Select id from product where SUBJECT = '")
+	                        .append(curTable).append("' and CONTACTID = ")
+	                        .append("'1'").append(" and PRODUCTID = '")
+	                        .append(dish.getId()).append("' and AMOUNT = '")
+	                        .append(dish.getNum()).append("' and TOLTALPRICE = ")
+	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = '")
+	                        .append(dish.getDiscount() * dish.getNum()).append("' and EMPLOYEEID = '")
+	                        .append(CustOpts.custOps.getUserName()).append("' and TIME = ")
+	                        .append(time).append("'");
+	                    ResultSet rs = smt.executeQuery(sql.toString());
+	                    rs.beforeFirst();
+	                    rs.next();
+	                    dish.setOutputID(rs.getInt("id"));
+	                    rs.close();
+                    }
+                    smt.close();
+                    smt = null;
+                }catch(Exception exp) {
+                	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
+                    exp.printStackTrace();
+                }
             }
         }
         //JToggleButton-------------------------------------------------------------------------------------
@@ -549,7 +591,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         tblOrder.setValueAt(tRowCount + 1, tValidRowCount, 0); // set the code.
         tblOrder.setValueAt(dish.getLanguage(CustOpts.custOps.getUserLang()), tValidRowCount, 1);// set the Name.
         tblOrder.setValueAt(dish.getSize() > 1 ? dish.getSize() : "", tValidRowCount, 2); // set the count.
-        tblOrder.setValueAt(1, tValidRowCount, 3); // set the count.
+        tblOrder.setValueAt("x1", tValidRowCount, 3); // set the count.
         tblOrder.setValueAt(dish.getPrice()/100f, tValidRowCount, 4); // set the price.
         
         tblOrder.setSelectedRow(tValidRowCount);	//@NOTE:must before adding into the array, so it can be ignored by 
@@ -571,7 +613,9 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     		int price = dish.getPrice();
     		int gst = (int) (price * (dish.getGst() * gstRate / 100f));
     		int qst = (int) (price * (dish.getQst() * qstRate / 100f));
-    		subTotal += price;
+    		int num = dish.getNum();
+    	
+    		subTotal += price * num;
     		totalGst += gst;
     		totalQst += qst;
     	}
