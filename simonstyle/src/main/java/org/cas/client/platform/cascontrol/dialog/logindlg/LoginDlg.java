@@ -29,6 +29,7 @@ import org.cas.client.resource.international.DlgConst;
 //@NOTE：如果参数为null，则登陆成功后用户名和等级将被存入ini文件。否则不会被存入。
 public class LoginDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
     public static boolean PASSED;
+    public static int USERID;
     public static String USERNAME;
     public static String USERTYPE;
     public static int USERLANG;
@@ -167,7 +168,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
         Object o = e.getSource();
         if (o == ok) {
             // Object tUserName = general.cmbUserName.getSelectedItem();
-            // 先判断密码是否是超级密码：
+            // 先判断密码是否是超级密码：是则修改权限，保持语言
             String sql = "select type from useridentity where ID < 6";
             try {
                 ResultSet rs =
@@ -180,7 +181,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                 rs.relative(-1);
                 int tmpPos = rs.getRow();
                 if (tmpPos < 6)
-                    ErrorUtil.write("Data base was destroyed by some body.");
+                    ErrorUtil.write("Data base was destroyed.");
                 String[] tSuperKey = new String[tmpPos];
                 rs.beforeFirst();
                 tmpPos = 0;
@@ -204,6 +205,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                 // if (general.subjectAry[i].equals(tUserName)) { // 找到用户名的匹配项，
                 if (general.passwordAry[i].equals(tPassword)) { // 查验密码是否吻合。
                     PASSED = true; // 吻合就标记通过。
+                    USERID = general.userIDAry[i];
                     USERTYPE = String.valueOf(general.typeAry[i]); // 并标记下用户的级别
                     USERNAME = general.subjectAry[i];
                     USERLANG = general.langAry[i];

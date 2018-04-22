@@ -42,6 +42,7 @@ import javax.swing.event.ListSelectionListener;
 import org.cas.client.platform.bar.beans.ArrayButton;
 import org.cas.client.platform.bar.beans.CategoryToggleButton;
 import org.cas.client.platform.bar.beans.MenuButton;
+import org.cas.client.platform.bar.beans.User;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -68,6 +69,9 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     private int curSecurityStatus = USER_STATUS;
     
     private String curTable = "";
+    int curBillID;
+    
+    User curUser;
     
     private int curCategoryPage = 0;
     private int categoryNumPerPage = 0;
@@ -281,14 +285,16 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
                     // @TODO: might need to do some modification on the interface.
                     setStatusMes(BarDlgConst.USE_MODE);
                 } else {
-                    BarFrame.instance.dispose();
+                    BarFrame.instance.setVisible(false); //TODO： do we need to dispose?
                     new LoginDlg(null).setVisible(true);
                     if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-                        CustOpts.custOps.setUserName(LoginDlg.USERNAME);
-                        CustOpts.custOps.setUserLang(LoginDlg.USERLANG);
+                    	curUser.setId(LoginDlg.USERID);
+                    	curUser.setName(LoginDlg.USERNAME);
+                    	curUser.setType(LoginDlg.USERTYPE);
+                    	curUser.setLang(LoginDlg.USERLANG);
                         lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(
-                                CustOpts.custOps.getUserName()));
-                        BarFrame.instance = new BarFrame();
+                                curUser.getName()));
+                        
                         BarFrame.instance.setVisible(true);
                     }else {
                     	System.exit(0);
@@ -298,7 +304,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
             	new MoreButtonsDlg(this).show((JButton)o);
             }else if (o == btnLine_2_9) {//send
             	//TODO:send to printer
-            	//TODO:save to db output
+            	//save to db output
                 try {
                     Connection conn = PIMDBModel.getConection();
                     Statement smt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -306,25 +312,25 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
                     	String time = new Date().toLocaleString();
 	                    StringBuilder sql = new StringBuilder(
 	                        "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME) VALUES ('")
-	                        .append(curTable).append("', '")
-	                        .append("1").append("', '")
-	                        .append(dish.getId()).append("', ")
-	                        .append(dish.getNum()).append(", ")
-	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(", ")
-	                        .append(dish.getDiscount() * dish.getNum()).append(", ")
-	                        .append(dish.getModification()).append(", '")
-	                        .append(CustOpts.custOps.getUserName()).append("', '")
+	                        .append(curTable).append("', ")	//subject ->table id
+	                        .append(curBillID).append(", ")			//contactID ->bill id
+	                        .append(dish.getId()).append(", ")	//productid
+	                        .append(dish.getNum()).append(", ")	//amount
+	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(", ")	//totalprice int
+	                        .append(dish.getDiscount() * dish.getNum()).append(", '")	//discount
+	                        .append(dish.getModification()).append("', ")				//content
+	                        .append(curUser.getId()).append(", '")		//emoployid
 	                        .append(time).append("') ");
 	                    smt.executeUpdate(sql.toString());
                     
-	                    sql = new StringBuilder("Select id from product where SUBJECT = '")
+	                    sql = new StringBuilder("Select id from output where SUBJECT = '")
 	                        .append(curTable).append("' and CONTACTID = ")
-	                        .append("'1'").append(" and PRODUCTID = '")
-	                        .append(dish.getId()).append("' and AMOUNT = '")
-	                        .append(dish.getNum()).append("' and TOLTALPRICE = ")
-	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = '")
-	                        .append(dish.getDiscount() * dish.getNum()).append("' and EMPLOYEEID = '")
-	                        .append(CustOpts.custOps.getUserName()).append("' and TIME = ")
+	                        .append(curBillID).append(" and PRODUCTID = ")
+	                        .append(dish.getId()).append(" and AMOUNT = ")
+	                        .append(dish.getNum()).append(" and TOLTALPRICE = ")
+	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = ")
+	                        .append(dish.getDiscount() * dish.getNum()).append(" and EMPLOYEEID = ")
+	                        .append(curUser.getId()).append(" and TIME = '")
 	                        .append(time).append("'");
 	                    ResultSet rs = smt.executeQuery(sql.toString());
 	                    rs.beforeFirst();
@@ -539,7 +545,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     private boolean adminAuthentication() {
         new LoginDlg(null).setVisible(true);
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-            if ("admin".equalsIgnoreCase(CustOpts.custOps.getUserName())) {
+            if ("System".equalsIgnoreCase(LoginDlg.USERNAME)) {
                 curSecurityStatus++;
                 setStatusMes(BarDlgConst.ADMIN_MODE);
                 // @TODO: might need to do some modification on the interface.
@@ -672,7 +678,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         } catch (Exception exp) {
         }
         startTime = Calendar.getInstance().getTime().toLocaleString();
-        lblOperator = new JLabel(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(CustOpts.custOps.getUserName()));
+        lblOperator = new JLabel(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(LoginDlg.USERNAME));
         lblShoestring =
                 new JLabel(BarDlgConst.LeftMoney.concat(BarDlgConst.Colon)
                         .concat(decimalFormat.format(tShoestring / 100.0)).concat(BarDlgConst.Unit));

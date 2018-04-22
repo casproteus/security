@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.beans.User;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -31,6 +32,14 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         new LoginDlg(instance).setVisible(true);
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
             instance = new BarFrame();
+            
+            User user = new User();
+            user.setId(LoginDlg.USERID);
+            user.setName(LoginDlg.USERNAME);
+            user.setType(LoginDlg.USERTYPE);
+            user.setLang(LoginDlg.USERLANG);
+            instance.general.curUser = user;
+            
             instance.setVisible(true);
         }else {	//the case that user clicked X button.
             System.exit(0);
