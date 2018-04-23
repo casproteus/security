@@ -13,6 +13,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -44,6 +46,7 @@ import org.cas.client.platform.bar.beans.CategoryToggleButton;
 import org.cas.client.platform.bar.beans.MenuButton;
 import org.cas.client.platform.bar.beans.User;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.print.Command;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -306,7 +309,25 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
             	new MoreButtonsDlg(this).show((JButton)o);
             }else if (o == btnLine_2_9) {//send
             	//TODO:send to printer
-            	
+				for (Dish dish : selectdDishAry) {
+					String printer = dish.getPrinter();
+					String[] ips = printer.split(",");
+					try {
+						Socket socket = new Socket("192.168.1.88", 9100);
+						OutputStream outputStream = socket.getOutputStream();
+						outputStream.write(Command.BEEP);
+
+						outputStream.write(Command.BEEP);
+
+						outputStream.flush();
+						socket.close();
+					} catch (Exception exp) {
+
+					}
+				}
+        		
+
+        		
             	//save to db output
                 try {
                     Connection conn = PIMDBModel.getConection();
