@@ -48,18 +48,20 @@ import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.PIMPool;
+import org.cas.client.platform.contact.dialog.selectcontacts.SelectedNewMemberDlg;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.platform.pimview.pimtable.PIMTableColumn;
+import org.cas.client.platform.pimview.pimtable.PIMTableRenderAgent;
 import org.cas.client.platform.pos.dialog.statistics.Statistic;
 import org.cas.client.platform.refund.dialog.RefundDlg;
 import org.cas.client.resource.international.DlgConst;
 import org.cas.client.resource.international.PaneConsts;
 
 //Identity表应该和Employ表合并。
-public class BarGeneralPanel extends JPanel implements ComponentListener, ActionListener, FocusListener, ListSelectionListener {
+public class BarGeneralPanel extends JPanel implements ComponentListener, ActionListener, FocusListener, ListSelectionListener, PIMTableRenderAgent {
     private final int PRICECOLID = 3;
     private final int TOTALCOLID = 4;
     private final int COUNDCOLID = 2;
@@ -340,6 +342,8 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
                     }
                     smt.close();
                     smt = null;
+                    tblOrder.invalidate();
+                    //tblOrder.repaint();
                 }catch(Exception exp) {
                 	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
                     exp.printStackTrace();
@@ -360,6 +364,8 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         		if(tblOrder.getSelectedRow() > 0) {
         			Object obj = tblOrder.getValueAt(tblOrder.getSelectedRow(), 3);
         			qtyDlg.setContents(obj.toString());
+        		}else {
+        			tblOrder.setSelectedRow(tblOrder.getRowCount()-1);
         		}
         	}
         }
@@ -400,7 +406,27 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
 				qtyDlg.setContents(obj.toString());
 		}
 	}
-    
+
+	//table row color----------------------------------------------------------
+	@Override
+	public Color getBackgroundAtRow(int row) {
+		if(selectdDishAry.size() > row) {
+			Dish dish = selectdDishAry.get(row);
+			if(dish.getOutputID() > 0) {
+				return new Color(222, 111, 34);
+			}else {
+				return new Color(250, 250, 250);
+			}
+		}else
+			return null;
+	}
+
+	@Override
+	public Color getForegroundAtRow(int row) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public static void setStatusMes(
             String pMes) {
         lblStatus.setText(pMes);
@@ -600,8 +626,8 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         tblOrder.setValueAt("x1", tValidRowCount, 3); // set the count.
         tblOrder.setValueAt(dish.getPrice()/100f, tValidRowCount, 4); // set the price.
         
-        tblOrder.setSelectedRow(tValidRowCount);	//@NOTE:must before adding into the array, so it can be ignored by 
-        selectdDishAry.add(dish);					//valueChanged process. not being cleared immediately
+        //tblOrder.setSelectedRow(tValidRowCount);	//@NOTE:must before adding into the array, so it can be ignored by 
+        selectdDishAry.add(dish.clone());					//valueChanged process. not being cleared immediately
         
         updateTotleArea();
     }
@@ -723,7 +749,10 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         setLayout(null);
         tblOrder.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         tblOrder.setAutoscrolls(true);
-        tblOrder.setRowHeight(20);
+        tblOrder.setRowHeight(30);
+        tblOrder.setCellEditable(false);
+        tblOrder.setRenderAgent(this);
+        
         JLabel tLbl = new JLabel();
         tLbl.setOpaque(true);
         tLbl.setBackground(Color.GRAY);
@@ -1096,5 +1125,4 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
             BarDlgConst.Price};
     
     private DecimalFormat decimalFormat = new DecimalFormat("#0.00");
-
 }

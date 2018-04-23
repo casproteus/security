@@ -80,6 +80,13 @@ public class DefaultPIMTableCellRenderer extends JLabel implements IPIMCellRende
                                                                                                                    // PIMTable
                                                                                                                    // 的背景色传给父类
         }
+        if(prmTable.getForegroundAtRow(prmRow) != null) {
+        	setForeground(prmTable.getForegroundAtRow(prmRow));
+        }
+        if(prmTable.getBackgroundAtRow(prmRow) != null) {
+        	setBackground(prmTable.getBackgroundAtRow(prmRow));
+        }
+        
         // 字体设置---------------- TODO:以后对所有的应用中的字体都要根据用户的设置做处理.
         if (prmTable.getView() != null) {
             setFont((Font) prmTable.getFontAttribute(Integer.toString(prmRow)));

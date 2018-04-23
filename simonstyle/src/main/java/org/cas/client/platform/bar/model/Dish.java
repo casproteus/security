@@ -1,7 +1,27 @@
 package org.cas.client.platform.bar.model;
 
 public class Dish {
-
+	public Dish clone(){
+		Dish dish = new Dish();
+		dish.setCATEGORY(CATEGORY);
+		dish.setDiscount(discount);
+		dish.setDspIndex(dspIndex);
+		dish.setGst(gst);
+		dish.setQst(qst);
+		dish.setId(id);
+		dish.setLanguage(0, language[0]);
+		dish.setLanguage(1, language[1]);
+		dish.setLanguage(2, language[2]);
+		dish.setModification(modification);
+		dish.setNum(num);
+		dish.setOutputID(outputID);
+		dish.setPrice(price);
+		dish.setPrinter(printer);
+		dish.setPrompMenu(prompMenu);
+		dish.setPrompMofify(prompMofify);
+		dish.setPrompPrice(prompPrice);
+		return dish;
+	}
     public int getId() {
         return id;
     }
@@ -142,7 +162,7 @@ public class Dish {
 		this.modification = modification;
 	}
 
-	private int id = 0;
+	private int id = -1;
     private int dspIndex = 0; // display position on screen.
     private String language[] = new String[3]; // CODE VARCHAR(255), MNEMONIC VARCHAR(255),SUBJECT VARCHAR(255)
     private int price; // PRICE INTEGER
@@ -157,7 +177,7 @@ public class Dish {
     //none saving fields-----------------------------------------
     private int num;
     private int discount;
-    private int outputID;
+    private int outputID = -1;
     private String modification;
     
 }

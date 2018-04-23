@@ -4471,7 +4471,20 @@ public class PIMTable extends JComponent implements IPIMTableModelListener, IPIM
             repaint();
         }
     }
+    
+    Color getBackgroundAtRow(int row){
+    	if(getRenderAgent() != null)
+    		return getRenderAgent().getBackgroundAtRow(row);
+    	else 
+    		return null;
+    }
 
+    Color getForegroundAtRow(int row){
+    	if(getRenderAgent() != null)
+    		return getRenderAgent().getForegroundAtRow(row);
+    	else 
+    		return null;
+    }
     /**
      * 设置(当一个编辑器被激活时)是否由键盘事件转移焦点给它以响应键盘事件 Sets whether editors in this PIMTable get the keyboard focus when an editor is
      * activated as a result of the PIMTable forwarding keyboard events for a cell. By default, this property is false,
@@ -4928,7 +4941,15 @@ public class PIMTable extends JComponent implements IPIMTableModelListener, IPIM
 
     // 以下为变量声明========================================================================================================================================================
 
-    private boolean specialProcess;
+    public PIMTableRenderAgent getRenderAgent() {
+		return renderAgent;
+	}
+
+	public void setRenderAgent(PIMTableRenderAgent renderAgent) {
+		this.renderAgent = renderAgent;
+	}
+
+	private boolean specialProcess;
 
     /**
      * 和视图操作有关,以后要去掉
@@ -5113,6 +5134,7 @@ public class PIMTable extends JComponent implements IPIMTableModelListener, IPIM
      */
     private Hashtable fontAttrubutePool = new Hashtable();
 
+    private PIMTableRenderAgent renderAgent;
     // **********************************************************************************************************************************
     // 以下是一些本表格用得到的缺省绘制器
     /**
@@ -5291,6 +5313,12 @@ public class PIMTable extends JComponent implements IPIMTableModelListener, IPIM
             else {
                 setForeground(table.getForeground());
                 setBackground(table.getBackground());
+            }
+            if(table.getForegroundAtRow(row) != null) {
+            	setForeground(table.getForegroundAtRow(row));
+            }
+            if(table.getBackgroundAtRow(row) != null) {
+            	setForeground(table.getBackgroundAtRow(row));
             }
             // 根据传入值设置选中状态
             setSelected((prmValue != null && ((Boolean) prmValue).booleanValue()));
