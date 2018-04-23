@@ -175,7 +175,7 @@ public class Dish {
     private String prompMenu; // UNIT VARCHAR(255)
     private String prompMofify; // /PRODUCAREA VARCHAR(255)
     //none saving fields-----------------------------------------
-    private int num;
+    private int num = 1;
     private int discount;
     private int outputID = -1;
     private String modification;

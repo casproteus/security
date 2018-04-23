@@ -99,12 +99,12 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     
     private Dish[] dishAry;
     private Dish[] onScrDishAry;
-    private ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
+    ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
     
     public static String startTime;
 
     //flags
-    NumberPanelDlg qtyDlg; 
+    NumberPanelDlg numberPanelDlg; 
     
     public BarGeneralPanel() {
         initComponent();
@@ -306,11 +306,15 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
             	new MoreButtonsDlg(this).show((JButton)o);
             }else if (o == btnLine_2_9) {//send
             	//TODO:send to printer
+            	
             	//save to db output
                 try {
                     Connection conn = PIMDBModel.getConection();
                     Statement smt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                     for (Dish dish : selectdDishAry) {
+                    	if(dish.getOutputID() > -1)	//if it's already saved into db, don't ignore.
+                    		continue;
+                    	
                     	String time = new Date().toLocaleString();
 	                    StringBuilder sql = new StringBuilder(
 	                        "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME) VALUES ('")
@@ -342,8 +346,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
                     }
                     smt.close();
                     smt = null;
-                    tblOrder.invalidate();
-                    //tblOrder.repaint();
+                    tblOrder.repaint();
                 }catch(Exception exp) {
                 	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
                     exp.printStackTrace();
@@ -357,13 +360,13 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         		
         	}else if (o == btnLine_1_7) {	//QTY
         		//pomp up a numberPanelDlg
-        		if(qtyDlg == null) {
-        			qtyDlg = new NumberPanelDlg(BarFrame.instance, btnLine_1_7);
+        		if(numberPanelDlg == null) {
+        			numberPanelDlg = new NumberPanelDlg(BarFrame.instance, btnLine_1_7);
         		}
-        		qtyDlg.setVisible(btnLine_1_7.isSelected());
+        		numberPanelDlg.setVisible(btnLine_1_7.isSelected());	//@NOTE: it's not model mode.
         		if(tblOrder.getSelectedRow() > 0) {
         			Object obj = tblOrder.getValueAt(tblOrder.getSelectedRow(), 3);
-        			qtyDlg.setContents(obj.toString());
+        			numberPanelDlg.setContents(obj.toString());
         		}else {
         			tblOrder.setSelectedRow(tblOrder.getRowCount()-1);
         		}
@@ -380,6 +383,13 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
 			return;
 		
 		if(!btnLine_1_7.isSelected()) {	//if qty button not seleted.
+			if(selectdDishAry.get(selectedRow).getOutputID() >= 0) {
+				if (JOptionPane.showConfirmDialog(this, BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle,
+	                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
+					tblOrder.setSelectedRow(-1);
+					return;
+				}
+			}
 			selectdDishAry.remove(selectedRow);
 			
 	        int tColCount = tblOrder.getColumnCount();
@@ -403,7 +413,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
 			Object obj = tblOrder.getValueAt(selectedRow,3);
 			//update the qty in qtyDlg.
 			if(obj != null)
-				qtyDlg.setContents(obj.toString());
+				numberPanelDlg.setContents(obj.toString());
 		}
 	}
 
@@ -415,7 +425,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
 			if(dish.getOutputID() > 0) {
 				return new Color(222, 111, 34);
 			}else {
-				return new Color(250, 250, 250);
+				return new Color(150, 150, 150);
 			}
 		}else
 			return null;
@@ -632,7 +642,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         updateTotleArea();
     }
 
-    private void updateTotleArea() {
+    void updateTotleArea() {
     	Object g = CustOpts.custOps.getValue(BarDlgConst.GST);
     	Object q = CustOpts.custOps.getValue(BarDlgConst.QST);
     	float gstRate = g == null ? 5 : Float.valueOf((String)g);
@@ -752,6 +762,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
         tblOrder.setRowHeight(30);
         tblOrder.setCellEditable(false);
         tblOrder.setRenderAgent(this);
+        tblOrder.setHasSorter(false);
         
         JLabel tLbl = new JLabel();
         tLbl.setOpaque(true);

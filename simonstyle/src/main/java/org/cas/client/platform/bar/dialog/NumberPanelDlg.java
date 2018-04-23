@@ -44,7 +44,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 	private JToggleButton btnSource;
 	private PIMTable table;
 	//flag
-	boolean isAllSelected;
+	boolean isAllContentSelected;
 	
     /**
      * Creates a new instance of ContactDialog
@@ -106,7 +106,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         tfdQTY.setText(qty);
         tfdQTY.requestFocus();
         tfdQTY.selectAll();
-        isAllSelected = true;
+        isAllContentSelected = true;
     }
 
     /**
@@ -124,13 +124,21 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         
         Object o = e.getSource();
         if (o == ok) {
-        	int row = table.getSelectedRow();
-        	table.setValueAt("x" + curContent, row, 3);
+        	try {
+        		int tQTY = Integer.valueOf(curContent);
+            	int row = table.getSelectedRow();
+            	table.setValueAt("x" + curContent, row, 3);
+            	barFrame.general.selectdDishAry.get(row).setNum(tQTY);
+            	barFrame.general.updateTotleArea();
+        	}catch(Exception exp) {
+            	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
+        		return;
+        	}
         	this.setVisible(false);
             return;
         } 
         
-        if(isAllSelected) {
+        if(isAllContentSelected) {
         	curContent = "";
         }
         
@@ -160,7 +168,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
             tfdQTY.setText(curContent.concat("0"));
         }
         
-        isAllSelected = false;
+        isAllContentSelected = false;
     }
 
 	@Override

@@ -50,6 +50,7 @@ public interface BarDlgConst {
     String DuplicatedInput = "Dubplicated name found! please choose an other name.";
     String Colon = "：";
     String Operator = "USER";
+    String COMFIRMDELETEACTION = "This dish might allready be prepared, are you sure to delete?";
     String LeftMoney = "上次交班结余";
     String StartTime = "开始时间";
     String EndTime = "结束时间";

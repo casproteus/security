@@ -7,7 +7,7 @@ public interface DlgConst
     //Product Info
     String ProductInfo = "ProductInfo";
     // the title of dialog
-    String DlgTitle = "无标题";
+    String DlgTitle = "WARNING!";
     
     //For ConfirmDialog
     String CONFIRM_TITLE = "确认密码";
