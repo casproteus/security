@@ -1,4 +1,4 @@
-package org.cas.client.platform.bar.beans;
+package org.cas.client.platform.bar.model;
 
 public class User {
 	private int id;

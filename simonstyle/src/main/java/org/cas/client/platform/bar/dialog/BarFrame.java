@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
-import org.cas.client.platform.bar.beans.User;
+import org.cas.client.platform.bar.model.User;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;

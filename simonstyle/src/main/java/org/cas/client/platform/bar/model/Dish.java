@@ -169,7 +169,7 @@ public class Dish {
     private int gst; // FOLDERID INTEGER
     private int qst; // STORE INTEGER
     private int size; // COST INTEGER
-    private String printer; // BRAND VARCHAR(255)
+    private String printer; // BRAND VARCHAR(255) comma separated ip string.
     private String CATEGORY; // CATEGORY VARCHAR(255)
     private String prompPrice; // CONTENT VARCHAR(255)
     private String prompMenu; // UNIT VARCHAR(255)

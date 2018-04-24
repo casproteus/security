@@ -14,15 +14,25 @@ import java.awt.event.KeyListener;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.comm.CommPortIdentifier;
 import javax.comm.ParallelPort;
@@ -44,9 +54,13 @@ import javax.swing.event.ListSelectionListener;
 import org.cas.client.platform.bar.beans.ArrayButton;
 import org.cas.client.platform.bar.beans.CategoryToggleButton;
 import org.cas.client.platform.bar.beans.MenuButton;
-import org.cas.client.platform.bar.beans.User;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.model.Mark;
+import org.cas.client.platform.bar.model.Printer;
+import org.cas.client.platform.bar.model.User;
+import org.cas.client.platform.bar.model.Category;
 import org.cas.client.platform.bar.print.Command;
+import org.cas.client.platform.bar.print.WifiPrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -77,6 +91,11 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     int curBillID;
     
     User curUser;
+
+    private int width = 24;
+    private String code = "GBK";
+    private String SEP_STR1 = "=";
+    private String SEP_STR2 = "-";
     
     private int curCategoryPage = 0;
     private int categoryNumPerPage = 0;
@@ -89,8 +108,7 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
     Integer categoryRow = (Integer) CustOpts.custOps.hash2.get("categoryRow");
     Integer menuColumn = (Integer) CustOpts.custOps.hash2.get("menuColumn");
     Integer menuRow = (Integer) CustOpts.custOps.hash2.get("menuRow");
-    
-    private int[] categoryIdAry;
+
     String[][] categoryNameMetrix;
     ArrayList<ArrayList<CategoryToggleButton>> onSrcCategoryTgbMatrix = new ArrayList<ArrayList<CategoryToggleButton>>();
     CategoryToggleButton tgbActiveCategory;
@@ -108,6 +126,11 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
 
     //flags
     NumberPanelDlg numberPanelDlg; 
+    
+    //for print
+    public static String SUCCESS = "0";
+    public static String ERROR = "2";
+    
     
     public BarGeneralPanel() {
         initComponent();
@@ -308,26 +331,9 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
             }else if (o == btnLine_2_8) {//more
             	new MoreButtonsDlg(this).show((JButton)o);
             }else if (o == btnLine_2_9) {//send
-            	//TODO:send to printer
-				for (Dish dish : selectdDishAry) {
-					String printer = dish.getPrinter();
-					String[] ips = printer.split(",");
-					try {
-						Socket socket = new Socket("192.168.1.88", 9100);
-						OutputStream outputStream = socket.getOutputStream();
-						outputStream.write(Command.BEEP);
-
-						outputStream.write(Command.BEEP);
-
-						outputStream.flush();
-						socket.close();
-					} catch (Exception exp) {
-
-					}
-				}
-        		
-
-        		
+            	//send to printer
+            	//prepare the printing String
+            	WifiPrintService.exePrintCommand(selectdDishAry, curTable);
             	//save to db output
                 try {
                     Connection conn = PIMDBModel.getConection();
@@ -898,17 +904,21 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
             categoryRS.afterLast();
             categoryRS.relative(-1);
             int tmpPos = categoryRS.getRow();
-            categoryIdAry = new int[tmpPos];
             categoryNameMetrix = new String[3][tmpPos];
+            WifiPrintService.allCategory = new Category[tmpPos];
             categoryRS.beforeFirst();
 
             tmpPos = 0;
             while (categoryRS.next()) {
-                categoryIdAry[tmpPos] = categoryRS.getInt("ID");
-                
                 categoryNameMetrix[0][tmpPos] = categoryRS.getString("LANG1");
                 categoryNameMetrix[1][tmpPos] = categoryRS.getString("LANG2");
                 categoryNameMetrix[2][tmpPos] = categoryRS.getString("LANG3");
+                
+                WifiPrintService.allCategory[tmpPos] =  new Category();
+                WifiPrintService.allCategory[tmpPos].setID(categoryRS.getInt("ID"));
+                WifiPrintService.allCategory[tmpPos].setDspIndex(tmpPos);
+                WifiPrintService.allCategory[tmpPos].setLanguage(new String[]{categoryNameMetrix[0][tmpPos],
+                		categoryNameMetrix[1][tmpPos], categoryNameMetrix[2][tmpPos]});
                 
                 tmpPos++;
             }
@@ -950,9 +960,44 @@ public class BarGeneralPanel extends JPanel implements ComponentListener, Action
                 tmpPos++;
             }
             productRS.close();// 关闭
+            
+            //load all printers--------------------------
+			String sql = "select ID, Type, UserName, PASSWORD, LANG from useridentity where Type = 'PRINTER'";
 
+			ResultSet rs = statement.executeQuery(sql);
+
+			ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
+			rs.afterLast();
+			rs.relative(-1);
+			tmpPos = rs.getRow();
+			Printer[] printers = new Printer[tmpPos];
+			rs.beforeFirst();
+			tmpPos = 0;
+			while (rs.next()) {
+				printers[tmpPos] = new Printer();
+				printers[tmpPos].setId(rs.getInt("id"));
+				printers[tmpPos].setPname(rs.getString("UserName"));
+				printers[tmpPos].setIp(rs.getString("PASSWORD"));
+				printers[tmpPos].setFirstPrint(rs.getInt("TYPE")); // index p1, p2.....
+				printers[tmpPos].setType(rs.getInt("LANG"));
+				tmpPos++;
+			}
+			rs.close();
+			// rearrange into map
+			for(Printer printer:printers){
+	            WifiPrintService.ipPrinterMap.put(printer.getIp(),printer);
+	        }
+			
         } catch (Exception e) {
             ErrorUtil.write(e);
+          //TODDO: delete this line
+            Printer[] printers = new Printer[1];
+			printers[0] = new Printer();
+			printers[0].setPname("p1");
+			printers[0].setIp("192.168.1.88");
+			printers[0].setFirstPrint(1); // index p1, p2.....
+			printers[0].setType(0);
+			WifiPrintService.ipPrinterMap.put(printers[0].getIp(),printers[0]);
         }
         reInitCategoryAndMenuBtns();
     }

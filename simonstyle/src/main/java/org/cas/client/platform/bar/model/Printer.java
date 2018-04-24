@@ -1,11 +1,11 @@
-package org.cas.client.platform.bar.beans;
+package org.cas.client.platform.bar.model;
 
 /**
  * Entity mapped to table PRINTER.
  */
 public class Printer {
 
-    private Long id;
+    private int id;
     private String ip;
     private String pname;
     private String note;
@@ -17,26 +17,26 @@ public class Printer {
     public Printer() {
     }
 
-    public Printer(Long id) {
+    public Printer(int id) {
         this.id = id;
     }
 
-    public Printer(Long id, String ip, String pname, String note, Integer firstPrint, Integer type, Integer state, Long version) {
+    public Printer(int id, String ip, String pname, String note, Integer firstPrint, Integer type, Integer state, Long version) {
         this.id = id;
         this.ip = ip;
         this.pname = pname;
         this.note = note;
-        this.firstPrint = firstPrint;
-        this.type = type;
+        this.firstPrint = firstPrint;		//all print/ single print flag
+        this.type = type;					//language flag
         this.state = state;
         this.version = version;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
