@@ -120,30 +120,30 @@ public class App_Bar extends AbstractApp {
             Statement stmt = PIMDBModel.getConection().createStatement();
             stmt.executeUpdate(sql);
             
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T1', '0', 10, 10, 60, 30, 0)";
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T1', '0', 10, 10, 120, 60, 0)";
             stmt.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T2', '1', 110, 10, 60, 30, 0)";
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T2', '1', 160, 10, 120, 60, 0)";
             stmt.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T3', '2', 210, 10, 60, 30, 0)";
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T3', '2', 320, 10, 120, 60, 0)";
             stmt.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T4', '3', 310, 10, 60, 30, 0)";
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T4', '3', 480, 10, 120, 60, 0)";
             stmt.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T5', '4', 410, 10, 60, 30, 0)";
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T5', '4', 640, 10, 120, 60, 0)";
             stmt.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T6', '5', 10, 10, 60, 30, 0)";
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T6', '5', 10, 10, 120, 60, 0)";
             stmt.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T7', '6', 110, 110, 60, 30, 0)";
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T7', '6', 160, 110, 120, 60, 0)";
             stmt.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T8', '7', 210, 110, 60, 30, 0)";
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T8', '7', 320, 110, 120, 60, 0)";
             stmt.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T9', '8', 310, 110, 60, 30, 0)";
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T9', '8', 480, 110, 120, 60, 0)";
             stmt.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T10', '9', 410, 110, 60, 30, 0)";
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T10', '9', 640, 110, 120, 60, 0)";
             stmt.executeUpdate(sql);
 
             stmt.close();
         } catch (Exception e) {
-        	System.out.println("..............");
+        	ErrorUtil.write(e);
         }
     }
 

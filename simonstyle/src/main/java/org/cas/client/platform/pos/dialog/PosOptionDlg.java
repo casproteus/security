@@ -248,8 +248,7 @@ public class PosOptionDlg extends JDialog implements ICASDialog, ActionListener,
             if (tType > 0) {// 如果当前登陆用户是个普通员工，则显示普通登陆对话盒。等待再次登陆
                 new LoginDlg(PosFrame.instance).setVisible(true);// 结果不会被保存到ini
                 if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-                    int tLevel = Integer.parseInt(LoginDlg.USERTYPE);
-                    if (tLevel > 0) {// 进一步判断，如果新登陆不是为经理，弹出该密码对话盒（显示一个只有名字，密码，验证三项的LoginDlg）。
+                    if (LoginDlg.USERTYPE < 2) {// 进一步判断，如果新登陆不是为经理，弹出该密码对话盒（显示一个只有名字，密码，验证三项的LoginDlg）。
                         new ModifyPasswordDlg(PosFrame.instance, LoginDlg.USERNAME).setVisible(true);
                     } else
                         // 如果新登陆为经理，则弹出SwitchDlg，

@@ -387,7 +387,7 @@ class PIMDBConnecter {
         stmt.executeUpdate(str);
         str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('战', '8', 12, 0)";
         stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('admin', '5555', 0, 0)";
+        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('admin', '5555', 2, 0)";
         stmt.executeUpdate(str);
         str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('user1', '1111', 1, 0)";
         stmt.executeUpdate(str);

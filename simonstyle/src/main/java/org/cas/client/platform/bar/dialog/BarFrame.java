@@ -70,6 +70,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         }
         startTime = Calendar.getInstance().getTime().toLocaleString();
         lblOperator = new JLabel(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(LoginDlg.USERNAME));
+        lblCurTable = new JLabel(BarDlgConst.TableID.concat(BarDlgConst.Colon).concat(curTable));
         lblShoestring =
                 new JLabel(BarDlgConst.LeftMoney.concat(BarDlgConst.Colon)
                         .concat(decimalFormat.format(tShoestring / 100.0)).concat(BarDlgConst.Unit));
@@ -85,6 +86,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         
         // 搭建－－－－－－－－－－－－－
         add(lblOperator);
+        add(lblCurTable);
         add(lblShoestring);
         add(lblStartTime);
         
@@ -116,7 +118,18 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 		if (i == 2) {
 			if (!adminAuthentication()) 
 				return;
+		}else if(i == 1) {
+			if(!isSingleUser()) {
+				new LoginDlg(null).setVisible(true);
+	            if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+	            	lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(LoginDlg.USERNAME));
+	            	lblCurTable.setText(BarDlgConst.TableID.concat(BarDlgConst.Colon).concat(curTable));
+	            }else {
+	            	return;
+	            }
+			}
 		}
+		
     	for (JPanel panel : panels)
     		panel.setVisible(false);
 		
@@ -147,8 +160,10 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
      */
     @Override
     public void reLayout() {
-        lblOperator.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblOperator.getPreferredSize().width,
+        lblOperator.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 180,
                 lblOperator.getPreferredSize().height);
+        lblCurTable.setBounds(lblOperator.getX() + lblOperator.getWidth() + CustOpts.HOR_GAP*2, CustOpts.VER_GAP, 180,
+        		lblCurTable.getPreferredSize().height);
         lblStartTime.setBounds(getWidth() - lblStartTime.getPreferredSize().width - CustOpts.HOR_GAP,
                 lblOperator.getY(), lblStartTime.getPreferredSize().width, lblOperator.getPreferredSize().height);
         lblShoestring.setBounds(
@@ -163,7 +178,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         		getContainer().getWidth() - CustOpts.HOR_GAP * 2, CustOpts.LBL_HEIGHT);
         for (JPanel panel : panels) {
         	panel.setBounds(0, lblOperator.getY() + lblOperator.getHeight(), 
-        			getContainer().getWidth(), getContainer().getHeight() - lblStatus.getHeight());
+        			getContainer().getWidth(), lblStatus.getY() - lblOperator.getY() - lblOperator.getHeight());
 		}
         validate();
     }
@@ -290,6 +305,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     boolean hasClose; // 标志对话框是否已关闭
 
     private JLabel lblOperator;
+    private JLabel lblCurTable;
     private JLabel lblShoestring;
     private JLabel lblStartTime;
 

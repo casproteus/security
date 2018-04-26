@@ -253,8 +253,7 @@ public class CheckStoreDlg extends JDialog implements ICASDialog, ActionListener
             if (Integer.parseInt(CustOpts.custOps.getUserType()) > 0) {// 如果当前登陆用户是个普通员工，则显示普通登陆对话盒。等待再次登陆
                 new LoginDlg(PosFrame.instance).setVisible(true);// 结果不会被保存到ini
                 if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-                    int tLevel = Integer.parseInt(LoginDlg.USERTYPE);
-                    if (tLevel <= 0) {// 进一步判断，如果新登陆是经理，弹出对话盒
+                    if (LoginDlg.USERTYPE >= 2) {// 进一步判断，如果新登陆是经理，弹出对话盒
                         int tRow = tblContent.getSelectedRow();
                         MerchandiseDlg tDlg =
                                 new MerchandiseDlg(

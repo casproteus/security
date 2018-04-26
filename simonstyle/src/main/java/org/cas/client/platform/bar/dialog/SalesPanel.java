@@ -169,6 +169,59 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	            if (true) {
 	                btnPageDownTable.setEnabled(false);
 	            }
+	        } else if(o == btnMore) {
+	        	int selectedRow =  tblSelectedDish.getSelectedRow();
+				if(selectdDishAry.get(selectedRow).getOutputID() >= 0) {	//already saved
+					addContentToList(selectdDishAry.get(selectedRow));
+					tblSelectedDish.setSelectedRow(selectdDishAry.size() - 1);
+				}else {
+					int tQTY = selectdDishAry.get(selectedRow).getNum() + 1;
+					int row = tblSelectedDish.getSelectedRow();
+					tblSelectedDish.setValueAt("x" + tQTY, row, 3);
+					selectdDishAry.get(row).setNum(tQTY);
+				}
+				updateTotleArea();
+				tblSelectedDish.setSelectedRow(selectedRow);
+	        } else if (o == btnLess) {
+	    		int selectedRow =  tblSelectedDish.getSelectedRow();
+				if(selectdDishAry.get(selectedRow).getOutputID() >= 0) {
+					if (JOptionPane.showConfirmDialog(this, BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle,
+		                    JOptionPane.YES_NO_OPTION) != 0) {
+						return;
+					}
+				}
+				
+				if(selectdDishAry.get(selectedRow).getNum()== 1) {
+					if (JOptionPane.showConfirmDialog(this, BarDlgConst.COMFIRMDELETEACTION2, DlgConst.DlgTitle,
+		                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
+						tblSelectedDish.setSelectedRow(-1);
+						return;
+					}
+					
+					int tColCount = tblSelectedDish.getColumnCount();
+			        int tValidRowCount = getUsedRowCount(); // get the used RowCount
+			        Object[][] tValues = new Object[tValidRowCount - 1][tColCount];
+		            for (int r = 0; r < tValidRowCount; r++) {
+		            	int rowNum = r + 1;
+		            	if(r == selectedRow) {
+		            		selectdDishAry.remove(r);
+		            		continue;
+		            	}else if(r > selectedRow)
+		            		rowNum--;
+		            	
+		                for (int c = 0; c < tColCount; c++)
+		                    tValues[rowNum-1][c] = c == 0 ? rowNum: tblSelectedDish.getValueAt(r, c);
+		            }
+		            tblSelectedDish.setDataVector(tValues, header);
+		            resetColWidth(srpContent.getWidth());
+				} else {
+					int tQTY = selectdDishAry.get(selectedRow).getNum() - 1;
+					int row = tblSelectedDish.getSelectedRow();
+					tblSelectedDish.setValueAt("x" + tQTY, row, 3);
+					selectdDishAry.get(row).setNum(tQTY);
+				}
+
+				updateTotleArea();
 	        }
         }
         
@@ -180,8 +233,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                 tblSelectedDish.setDataVector(tValues, header);
                 resetColWidth(srpContent.getWidth());
     	        updateTotleArea();
-            } else if (o == btnLine_1_7) { // cancel all
-        		
             } else if (o == btnLine_1_9) {//send
             	//send to printer
             	//prepare the printing String
@@ -270,13 +321,14 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		if(numberPanelDlg == null) {
         			numberPanelDlg = new NumberPanelDlg(BarFrame.instance, btnLine_1_7);
         		}
+        		//should no record selected, select the last one.
         		numberPanelDlg.setVisible(btnLine_1_7.isSelected());	//@NOTE: it's not model mode.
-        		if(tblSelectedDish.getSelectedRow() > 0) {
-        			Object obj = tblSelectedDish.getValueAt(tblSelectedDish.getSelectedRow(), 3);
-        			numberPanelDlg.setContents(obj.toString());
-        		}else {
+        		if(tblSelectedDish.getSelectedRow() < 0) {
         			tblSelectedDish.setSelectedRow(tblSelectedDish.getRowCount()-1);
         		}
+        		//present the value in number dialog.
+        		Object obj = tblSelectedDish.getValueAt(tblSelectedDish.getSelectedRow(), 3);
+        		numberPanelDlg.setContents(obj.toString());
         	}
         }
     }
@@ -286,38 +338,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	public void valueChanged(ListSelectionEvent e) {
 		DefaultListSelectionModel selectionModel = (DefaultListSelectionModel)e.getSource();
 		int selectedRow =  selectionModel.getMinSelectionIndex();
-		if(selectedRow < 0 || selectedRow >= selectdDishAry.size()) 
+		btnMore.setEnabled(selectedRow >= 0 && selectedRow <= selectdDishAry.size());
+		btnLess.setEnabled(selectedRow >= 0 && selectedRow <= selectdDishAry.size());
+		if(!btnMore.isEnabled()) {
 			return;
+		}
 		
-		if(!btnLine_1_7.isSelected()) {	//if qty button not seleted.
-			//base on the design change, don't use touch to delete for now.
-//			if(selectdDishAry.get(selectedRow).getOutputID() >= 0) {
-//				if (JOptionPane.showConfirmDialog(this, BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle,
-//	                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
-//					tblOrder.setSelectedRow(-1);
-//					return;
-//				}
-//			}
-//			selectdDishAry.remove(selectedRow);
-//			
-//	        int tColCount = tblOrder.getColumnCount();
-//	        int tValidRowCount = getUsedRowCount(); // get the used RowCount
-//	        Object[][] tValues = new Object[tValidRowCount - 1][tColCount];
-//            for (int r = 0; r < tValidRowCount; r++) {
-//            	int rowNum = r + 1;
-//            	if(r == selectedRow) 
-//            		continue;
-//            	else if(r > selectedRow)
-//            		rowNum--;
-//            	
-//                for (int c = 0; c < tColCount; c++)
-//                    tValues[rowNum-1][c] = c == 0 ? rowNum: tblOrder.getValueAt(r, c);
-//            }
-//            tblOrder.setDataVector(tValues, header);
-//            resetColWidth(srpContent.getWidth());
-//	
-//	        updateTotleArea();
-		}else {
+		if(btnLine_1_7.isSelected()) {	//if qty button seleted.
 			Object obj = tblSelectedDish.getValueAt(selectedRow,3);
 			//update the qty in qtyDlg.
 			if(obj != null)
@@ -341,7 +368,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
 	@Override
 	public Color getForegroundAtRow(int row) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -399,8 +425,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         srpContent.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
                 (int) (getWidth() * tableWidth) - BarDlgConst.SCROLLBAR_WIDTH, topAreaHeight
                         - BarDlgConst.SubTotal_HEIGHT);
+        
+        btnMore.setBounds(CustOpts.HOR_GAP + srpContent.getWidth(), srpContent.getY(), 
+        		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH);
+        btnLess.setBounds(btnMore.getX(), btnMore.getY() + btnMore.getHeight() + CustOpts.VER_GAP, 
+        		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH);
 
-        btnPageUpTable.setBounds(CustOpts.HOR_GAP + srpContent.getWidth(), srpContent.getY() + srpContent.getHeight()
+        btnPageUpTable.setBounds(btnLess.getX(), srpContent.getY() + srpContent.getHeight()
                 - BarDlgConst.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH,
                 BarDlgConst.SCROLLBAR_WIDTH * 2);
         btnPageDownTable.setBounds(btnPageUpTable.getX(), btnPageUpTable.getY() + btnPageUpTable.getHeight()
@@ -470,10 +501,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         tblSelectedDish.setValueAt("x1", tValidRowCount, 3); // set the count.
         tblSelectedDish.setValueAt(dish.getPrice()/100f, tValidRowCount, 4); // set the price.
         
-        //tblOrder.setSelectedRow(tValidRowCount);	//@NOTE:must before adding into the array, so it can be ignored by 
-        selectdDishAry.add(dish.clone());					//valueChanged process. not being cleared immediately
-        
-        updateTotleArea();
+        tblSelectedDish.setSelectedRow(tValidRowCount);	//@NOTE:must before adding into the array, so it can be ignored by 
+        selectdDishAry.add(dish.clone());				//valueChanged process. not being cleared immediately-----while now dosn't matter
+        updateTotleArea();								//because value change will not be used to remove the record.
     }
 
     void updateTotleArea() {
@@ -567,7 +597,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_2_7 = new JButton(BarDlgConst.PRINT_BILL);
         btnLine_2_8 = new JButton(BarDlgConst.MORE);
         btnLine_2_9 = new JButton(BarDlgConst.RETURN);
-        
+
+        btnMore = new ArrayButton("+");
+        btnLess = new ArrayButton("-");
         btnPageUpTable = new ArrayButton("↑");
         btnPageDownTable = new ArrayButton("↓");
 
@@ -593,7 +625,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         // Margin-----------------
         btnPageUpTable.setMargin(new Insets(0,0,0,0));
         btnPageDownTable.setMargin(btnPageUpTable.getInsets());
-
+        btnMore.setMargin(btnPageUpTable.getInsets());
+        btnLess.setMargin(btnPageUpTable.getInsets());
+        
         // border----------
         tblSelectedDish.setBorder(null);
         // forcus-------------
@@ -601,7 +635,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
         // disables
         btnPageUpTable.setEnabled(false);
-
+        btnMore.setEnabled(false);
+        btnLess.setEnabled(false);
+        
         // built
         add(lblSubTotle);
         add(lblGSQ);
@@ -628,6 +664,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         add(btnLine_1_8);
         add(btnLine_2_7);
 
+        add(btnMore);
+        add(btnLess);
         add(btnPageUpTable);
         add(btnPageDownTable);
 
@@ -638,6 +676,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
         // 因为考虑到条码经常由扫描仪输入，不一定是靠键盘，所以专门为他加了DocumentListener，通过监视内容变化来自动识别输入完成，光标跳转。
         // tfdProdNumber.getDocument().addDocumentListener(this); // 而其它组件如实收金额框不这样做为了节约（一个KeyListener接口全搞定）
+        btnMore.addActionListener(this);
+        btnLess.addActionListener(this);
         btnPageUpTable.addActionListener(this);
         btnPageDownTable.addActionListener(this);
 
@@ -667,6 +707,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         	}
         	public void mouseMoved(MouseEvent e) {}
         });
+        
         tblSelectedDish.addMouseListener(new MouseListener(){
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -724,6 +765,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			public void mouseClicked(MouseEvent e) {
 			}
 		});
+        
         // initContents--------------
         initTable();
     }
@@ -791,6 +833,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private JButton btnLine_2_8;
     private JButton btnLine_1_9;
 
+    private ArrayButton btnMore;
+    private ArrayButton btnLess;
     private ArrayButton btnPageUpTable;
     private ArrayButton btnPageDownTable;
     

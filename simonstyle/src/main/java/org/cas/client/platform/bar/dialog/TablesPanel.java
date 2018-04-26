@@ -166,8 +166,8 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 //                    addCategoryDlg.setIndex(tableToggle.getIndex());
 //                    addCategoryDlg.setVisible(true);
                 } else {
-                    BarFrame.curTable = text;
-                    BarFrame.instance.switchMode(1);
+	             	BarFrame.curTable = text;
+	            	BarFrame.instance.switchMode(1);
                 }
             } else { // if it's not empty
                 

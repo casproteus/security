@@ -93,46 +93,46 @@ class DefaultConfigInfoLoader {
             Hashtable prmHash) {
         // 将磁盘中文件中的信息读入字符串tmpFileText。----------------------------------------
         StringBuilder sb = new StringBuilder("");
-		try {
-			System.out.println("URL:" + getClass().getResource("/config.ini"));
-			InputStream tmpSream = getClass().getResourceAsStream("/config.ini");
-			BufferedReader tmpBufReader = new BufferedReader(new InputStreamReader(tmpSream));
-			String tS = "";
-			while ((tS = tmpBufReader.readLine()) != null) { // 将用户初始化设置文件信息读入字符串。
-				sb.append(tS).append("\n");
-			}
-			tmpBufReader.close();
-			tmpSream.close();
-		} catch (Exception e) {
-			ErrorUtil.write("fail: " + e.toString());
-			return;
-		}
+//		try {
+//			System.out.println("URL:" + getClass().getResource("/config.ini"));
+//			InputStream tmpSream = getClass().getResourceAsStream("/config.ini");
+//			BufferedReader tmpBufReader = new BufferedReader(new InputStreamReader(tmpSream));
+//			String tS = "";
+//			while ((tS = tmpBufReader.readLine()) != null) { // 将用户初始化设置文件信息读入字符串。
+//				sb.append(tS).append("\n");
+//			}
+//			tmpBufReader.close();
+//			tmpSream.close();
+//		} catch (Exception e) {
+//			ErrorUtil.write("fail: " + e.toString());
+//			return;
+//		}
 
-		String tmpFileText = sb.toString();
-//                "{\r\n"
-//                        + "APP_Captions=客户关系类/人力资源类/产品与服务/销售类/库存类/退货类;\r\n"
-//                        + "APP_Names=Contact/Employee/Product/Output/Input/Refund;\r\n"
-//                        + "Menus=文件(F)/编辑(E)/视图(V)/工具(T)/帮助(H);\r\n"
-//                        + "Mnemonic=F/E/V/T/H;\r\n"
-//                        + "文件(F)=添加记录(N)/打开选中(O).../-/文件夹(F)/-/导入和导出(T).../-/退出(X);\r\n"
-//                        + "文件(F)_Mnemonic=N/O/F/T/X;\r\n"
-//                        + "文件(F)_ActionID=N/OpenAction/FolderPropertyAction/ImportExportAction/FileExitAction;\r\n"
-//                        + "添加记录(N)=销售记录(S)/进货记录(I)/产品资料(P)/联系人(C)/职员信息(E);\r\n"
-//                        + "添加记录(N)_Mnemonic= S/I/P/C/E;\r\n"
-//                        + "添加记录(N)_ActionID=NewOutputAction/NewInputAction/NewProductAction/NewContactAction/NewEmployeeAction;\r\n"
-//                        + "文件夹(F)=新建文件夹(N)/重命名(R)/删除文件夹(D);\r\n"
-//                        + "文件夹(F)_Mnemonic=N/R/D;\r\n"
-//                        + "文件夹(F)_ActionID=FolderNewAction/FolderRenameAction/FolderDelAction;\r\n"
-//                        + "编辑(E)=全选(A)/删除(D)/-/查找(F)/-/类别(C);\r\n"
-//                        + "编辑(E)_Mnemonic=A/D/F/C;\r\n"
-//                        + "编辑(E)_ActionID=SelectAllAction/DeleteAction/FindAction/CategoriesAction;\r\n"
-//                        + "视图(V)=上一个(R)/下一个(X)/-/旋转视图(C)/-/显示&隐藏导航面板(P)/显示&隐藏书本(B)/显示&隐藏预览(N)/-/更换背景(F)/自定义背景(M)...;\r\n"
-//                        + "视图(V)_Mnemonic=R/X/C/P/B/N/F/M;\r\n"
-//                        + "视图(V)_ActionID=LastFolderAction/NextFolderAction/CircumViewAction/PaneAction/HideBookAction/PreviewAction/NextMainBGAction/CustomizeBGAction;\r\n"
-//                        + "工具(T)=数据维护(M);\r\n" + "工具(T)_Mnemonic=M;\r\n" + "工具(T)_ActionID=ModifyData;\r\n"
-//                        + "帮助(H)=视频讲解(I)/在线注册(R).../-/关于(A)...;\r\n" + "帮助(H)_Mnemonic=I/R/A;\r\n"
-//                        + "帮助(H)_ActionID=VedioExplain/OnlineRegister/AboutAction;\r\n" + "DefaultFont=宋体;\r\n"
-//                        + "}\r\n" + "";
+		String tmpFileText = //sb.toString();
+                "{\r\n"
+                        + "APP_Captions=客户关系类/人力资源类/产品与服务/销售类/库存类/退货类/Bar;\r\n"
+                        + "APP_Names=Contact/Employee/Product/Output/Input/Refund/Bar;\r\n"
+                        + "Menus=文件(F)/编辑(E)/视图(V)/工具(T)/帮助(H);\r\n"
+                        + "Mnemonic=F/E/V/T/H;\r\n"
+                        + "文件(F)=添加记录(N)/打开选中(O).../-/文件夹(F)/-/导入和导出(T).../-/退出(X);\r\n"
+                        + "文件(F)_Mnemonic=N/O/F/T/X;\r\n"
+                        + "文件(F)_ActionID=N/OpenAction/FolderPropertyAction/ImportExportAction/FileExitAction;\r\n"
+                        + "添加记录(N)=销售记录(S)/进货记录(I)/产品资料(P)/联系人(C)/职员信息(E);\r\n"
+                        + "添加记录(N)_Mnemonic= S/I/P/C/E;\r\n"
+                        + "添加记录(N)_ActionID=NewOutputAction/NewInputAction/NewProductAction/NewContactAction/NewEmployeeAction;\r\n"
+                        + "文件夹(F)=新建文件夹(N)/重命名(R)/删除文件夹(D);\r\n"
+                        + "文件夹(F)_Mnemonic=N/R/D;\r\n"
+                        + "文件夹(F)_ActionID=FolderNewAction/FolderRenameAction/FolderDelAction;\r\n"
+                        + "编辑(E)=全选(A)/删除(D)/-/查找(F)/-/类别(C);\r\n"
+                        + "编辑(E)_Mnemonic=A/D/F/C;\r\n"
+                        + "编辑(E)_ActionID=SelectAllAction/DeleteAction/FindAction/CategoriesAction;\r\n"
+                        + "视图(V)=上一个(R)/下一个(X)/-/旋转视图(C)/-/显示&隐藏导航面板(P)/显示&隐藏书本(B)/显示&隐藏预览(N)/-/更换背景(F)/自定义背景(M)...;\r\n"
+                        + "视图(V)_Mnemonic=R/X/C/P/B/N/F/M;\r\n"
+                        + "视图(V)_ActionID=LastFolderAction/NextFolderAction/CircumViewAction/PaneAction/HideBookAction/PreviewAction/NextMainBGAction/CustomizeBGAction;\r\n"
+                        + "工具(T)=数据维护(M);\r\n" + "工具(T)_Mnemonic=M;\r\n" + "工具(T)_ActionID=ModifyData;\r\n"
+                        + "帮助(H)=视频讲解(I)/在线注册(R).../-/关于(A)...;\r\n" + "帮助(H)_Mnemonic=I/R/A;\r\n"
+                        + "帮助(H)_ActionID=VedioExplain/OnlineRegister/AboutAction;\r\n" + "DefaultFont=宋体;\r\n"
+                        + "}\r\n" + "";
         // 将字符串中的信息存入Hashtable。----------------------------------------
         int tmpLINKPos;
         int tmpENTERPos = 0;
