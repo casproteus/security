@@ -8,9 +8,13 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.text.DecimalFormat;
+import java.util.Calendar;
 import java.util.Vector;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
@@ -25,50 +29,142 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
 
     public static BarFrame instance;
+    int curPanel;
+    static String curTable = "";
 
+    public static String startTime;
+    
     public static void main(
             String[] args) {
         CASControl.ctrl.initModel();
-        new LoginDlg(instance).setVisible(true);
-        if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-            instance = new BarFrame();
-            
-            User user = new User();
-            user.setId(LoginDlg.USERID);
-            user.setName(LoginDlg.USERNAME);
-            user.setType(LoginDlg.USERTYPE);
-            user.setLang(LoginDlg.USERLANG);
-            instance.general.curUser = user;
-            
-            instance.setVisible(true);
-        }else {	//the case that user clicked X button.
-            System.exit(0);
+        instance = new BarFrame();
+        if(isSingleUser()) {
+	        new LoginDlg(instance).setVisible(true);
+	        if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+	            instance.setVisible(true);
+	        }else {	//the case that user clicked X button.
+	            System.exit(0);
+	        }
+        }else {
+        	instance.setVisible(true);
         }
     }
 
-    /**
-     * Creates a new instance of ContactDialog
-     * 
-     * @called by PasteAction 为Copy邮件到联系人应用。
-     * @param prmAction
-     *            OK时的操作
-     * @param prmRecord
-     *            一条记录
-     * @param parent
-     *            弹出对话框的Frame
-     */
-    public BarFrame() {
-        initDialog();
+    public static boolean isSingleUser() {
+    	return CustOpts.custOps.getValue("SingleUserMode") != null;
     }
+    
+    public BarFrame() {
+        setTitle(BarDlgConst.Title);
+        setIconImage(CustOpts.custOps.getFrameLogoImage()); // 设置主窗体的LOGO。
 
+        setBounds(0, 0, CustOpts.SCRWIDTH, CustOpts.SCRHEIGHT - 30); // 对话框的默认尺寸。
+        getContentPane().setLayout(null);
+        setResizable(true);
+
+        // 初始化－－－－－－－－－－－－－－－－
+        int tShoestring = 0;
+        try {
+            tShoestring = Integer.parseInt((String) CustOpts.custOps.getValue(BarDlgConst.Shoestring));
+        } catch (Exception exp) {
+        }
+        startTime = Calendar.getInstance().getTime().toLocaleString();
+        lblOperator = new JLabel(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(LoginDlg.USERNAME));
+        lblShoestring =
+                new JLabel(BarDlgConst.LeftMoney.concat(BarDlgConst.Colon)
+                        .concat(decimalFormat.format(tShoestring / 100.0)).concat(BarDlgConst.Unit));
+        lblStartTime = new JLabel(BarDlgConst.StartTime.concat(BarDlgConst.Colon).concat(startTime));// @Todo:以后改为从服务器上获取。
+
+        lblStatus = new JLabel();
+        menuPanel = new MenuPanel();
+        panels[0] = new TablesPanel();
+        panels[1] = new SalesPanel();
+        panels[2] = new SettingPanel();
+
+        lblStatus.setBorder(null);
+        
+        // 搭建－－－－－－－－－－－－－
+        add(lblOperator);
+        add(lblShoestring);
+        add(lblStartTime);
+        
+        getContentPane().add(lblStatus);
+        getContentPane().add(panels[0]);
+        getContentPane().add(panels[1]);
+        getContentPane().add(panels[2]);
+
+        // 加监听器－－－－－－－－
+        addWindowListener(this);
+        getContentPane().addComponentListener(this);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                // general.tfdProdNumber.grabFocus();
+            }
+        });
+        
+        //hide sales and setting pannel.
+        switchMode(0);
+    }
+    
+	public static void setStatusMes(
+            String pMes) {
+        lblStatus.setText(pMes);
+    }
+	
+    public void switchMode(int i) {
+		if (i == 2) {
+			if (!adminAuthentication()) 
+				return;
+		}
+    	for (JPanel panel : panels)
+    		panel.setVisible(false);
+		
+    	panels[i].setVisible(true);
+    	if(i != 0) {
+    		panels[i].add(menuPanel);
+    	}
+    	
+    	curPanel = i;
+	}
+
+    private boolean adminAuthentication() {
+        new LoginDlg(null).setVisible(true);
+        if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+            if ("admin".equalsIgnoreCase(LoginDlg.USERNAME)) {
+                BarFrame.setStatusMes(BarDlgConst.ADMIN_MODE);
+                // @TODO: might need to do some modification on the interface.
+                revalidate();
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /*
      * 对话盒的布局独立出来，为了在对话盒尺寸发生改变后，界面各元素能够重新布局， 使整体保持美观。尤其在Linux系列的操作系统上，所有的对话盒都必须准备好应对用户的拖拉改变尺寸。
      * @NOTE:因为setBounds方法本身不会触发事件导致重新布局，所以本方法中设置Bounds之后调用了reLayout。
      */
     @Override
     public void reLayout() {
-        general.setBounds(0, 0, getContainer().getWidth(), getContainer().getHeight());
-        general.componentResized(null);
+        lblOperator.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblOperator.getPreferredSize().width,
+                lblOperator.getPreferredSize().height);
+        lblStartTime.setBounds(getWidth() - lblStartTime.getPreferredSize().width - CustOpts.HOR_GAP,
+                lblOperator.getY(), lblStartTime.getPreferredSize().width, lblOperator.getPreferredSize().height);
+        lblShoestring.setBounds(
+                lblOperator.getX()
+                        + lblOperator.getWidth()
+                        + (lblStartTime.getX() - lblOperator.getX() - lblOperator.getWidth() - lblShoestring
+                                .getPreferredSize().width) / 2, lblOperator.getY(),
+                lblShoestring.getPreferredSize().width, lblOperator.getHeight());
+        
+        // status---------
+        lblStatus.setBounds(CustOpts.HOR_GAP, getContainer().getHeight() - CustOpts.LBL_HEIGHT - CustOpts.VER_GAP, 
+        		getContainer().getWidth() - CustOpts.HOR_GAP * 2, CustOpts.LBL_HEIGHT);
+        for (JPanel panel : panels) {
+        	panel.setBounds(0, lblOperator.getY() + lblOperator.getHeight(), 
+        			getContainer().getWidth(), getContainer().getHeight() - lblStatus.getHeight());
+		}
         validate();
     }
 
@@ -101,10 +197,10 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     @Override
     public void release() {
         removeWindowListener(this);
-        if (general != null) {
-            general.removeAll();
-            general = null;
-        }
+        for (JPanel panel : panels) {
+    		panel.removeAll();
+    		panel = null;
+		}
         dispose();// 对于对话盒，如果不加这句话，就很难释放掉。
         System.gc();// @TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
     }
@@ -191,31 +287,15 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         return getContentPane();
     }
 
-    private void initDialog() {
-        setTitle(BarDlgConst.Title);
-        setIconImage(CustOpts.custOps.getFrameLogoImage()); // 设置主窗体的LOGO。
-
-        setBounds(0, 0, CustOpts.SCRWIDTH, CustOpts.SCRHEIGHT - 30); // 对话框的默认尺寸。
-        getContentPane().setLayout(null);
-        setResizable(true);
-
-        // 初始化－－－－－－－－－－－－－－－－
-        general = new BarGeneralPanel();
-
-        // 搭建－－－－－－－－－－－－－
-        getContentPane().add(general);
-
-        // 加监听器－－－－－－－－
-        addWindowListener(this);
-        getContentPane().addComponentListener(this);
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                // general.tfdProdNumber.grabFocus();
-            }
-        });
-    }
-
     boolean hasClose; // 标志对话框是否已关闭
-    public BarGeneralPanel general;
+
+    private JLabel lblOperator;
+    private JLabel lblShoestring;
+    private JLabel lblStartTime;
+
+    private DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+    
+    JPanel[] panels = new JPanel[3];
+    MenuPanel menuPanel;
+    static JLabel lblStatus;
 }

@@ -347,7 +347,7 @@ public class MerchandiseDlg extends JDialog implements ICASDialog, ActionListene
                     exp.printStackTrace();
                 }
             }
-            BarFrame.instance.general.initCategoryAndDishes();// 更新PosGeneralPanel中的品名组件内容。
+
         } else if (o == cancel) {
             dispose();
         }

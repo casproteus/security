@@ -33,12 +33,12 @@ import org.cas.client.resource.international.CategoryDialogConstants;
 import org.cas.client.resource.international.DlgConst;
 
 public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
-	BarGeneralPanel barGeneralPanel;
+	MenuPanel menuPanel;
     int dspIndex;
 
     public CategoryDlg(BarFrame pParent) {
         super(pParent, true);
-        barGeneralPanel = pParent.general;
+        menuPanel = pParent.menuPanel;
         initDialog();
     }
 
@@ -46,10 +46,10 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
             int dspIndex) {
         this.dspIndex = dspIndex;
         this.general.tfdDspIndex.setText(String.valueOf(dspIndex));
-        if(dspIndex <= barGeneralPanel.categoryNameMetrix[0].length) {
-        	this.general.tfdCategoryNames[0].setText(barGeneralPanel.categoryNameMetrix[0][dspIndex - 1]);
-        	this.general.tfdCategoryNames[1].setText(barGeneralPanel.categoryNameMetrix[1][dspIndex - 1]);
-        	this.general.tfdCategoryNames[2].setText(barGeneralPanel.categoryNameMetrix[2][dspIndex - 1]);
+        if(dspIndex <= menuPanel.categoryNameMetrix[0].length) {
+        	this.general.tfdCategoryNames[0].setText(menuPanel.categoryNameMetrix[0][dspIndex - 1]);
+        	this.general.tfdCategoryNames[1].setText(menuPanel.categoryNameMetrix[1][dspIndex - 1]);
+        	this.general.tfdCategoryNames[2].setText(menuPanel.categoryNameMetrix[2][dspIndex - 1]);
         }
     }
 
@@ -156,8 +156,8 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
             } 
 
             if (isCategoryNameModified(0)) {
-                for (int i = 0; i < barGeneralPanel.dishNameMetrix[0].length; i++) {
-                    if (i != dspIndex - 1 && text.equalsIgnoreCase(barGeneralPanel.dishNameMetrix[0][i])) {
+                for (int i = 0; i < menuPanel.dishNameMetrix[0].length; i++) {
+                    if (i != dspIndex - 1 && text.equalsIgnoreCase(menuPanel.dishNameMetrix[0][i])) {
                         JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
                         general.tfdCategoryNames[0].grabFocus();
                         return;
@@ -168,8 +168,8 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
             if (isCategoryNameModified(1)) {
             	text = general.tfdCategoryNames[1].getText();
                 if (text != null && !"".equals(text))//language2 is allowed to be empty.
-                    for (int i = 0; i < barGeneralPanel.dishNameMetrix[1].length; i++) {
-                        if (i != dspIndex - 1 && text.equalsIgnoreCase(barGeneralPanel.dishNameMetrix[1][i])) {
+                    for (int i = 0; i < menuPanel.dishNameMetrix[1].length; i++) {
+                        if (i != dspIndex - 1 && text.equalsIgnoreCase(menuPanel.dishNameMetrix[1][i])) {
                             JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
                             general.tfdCategoryNames[1].grabFocus();
                             return;
@@ -180,8 +180,8 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
             if (isCategoryNameModified(2)) {
             	text = general.tfdCategoryNames[2].getText();
                 if (text != null && !"".equals(text))//language3 is allowed to be empty.
-                    for (int i = 0; i < barGeneralPanel.dishNameMetrix[2].length; i++) {
-                        if (i != dspIndex - 1 && text.equalsIgnoreCase(barGeneralPanel.dishNameMetrix[2][i])) {
+                    for (int i = 0; i < menuPanel.dishNameMetrix[2].length; i++) {
+                        if (i != dspIndex - 1 && text.equalsIgnoreCase(menuPanel.dishNameMetrix[2][i])) {
                             JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
                             general.tfdCategoryNames[2].grabFocus();
                             return;
@@ -210,14 +210,14 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
                 }
                 
               //start to save to db-----	if name was not null, it's an update, otherwise, an insert
-                String sql = dspIndex <= barGeneralPanel.categoryNameMetrix[0].length 
-                		&& barGeneralPanel.categoryNameMetrix[0][dspIndex - 1] != null 
+                String sql = dspIndex <= menuPanel.categoryNameMetrix[0].length 
+                		&& menuPanel.categoryNameMetrix[0][dspIndex - 1] != null 
                 		? 
                 		"UPDATE Category SET LANG1 = '".concat(general.tfdCategoryNames[0].getText())
                     	.concat("', LANG2 = '").concat(general.tfdCategoryNames[1].getText())
                     	.concat("', LANG3 = '").concat(general.tfdCategoryNames[2].getText())
                     	.concat("', DSP_INDEX = ").concat(general.tfdDspIndex.getText())
-                    	.concat(" where LANG1 = '").concat(barGeneralPanel.categoryNameMetrix[0][dspIndex - 1]).concat("'")
+                    	.concat(" where LANG1 = '").concat(menuPanel.categoryNameMetrix[0][dspIndex - 1]).concat("'")
                     	:
                     	"INSERT INTO Category(LANG1, LANG2, LANG3, DSP_INDEX) VALUES('"
                     		.concat(general.tfdCategoryNames[0].getText()).concat("', '")
@@ -228,8 +228,8 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
                 smt.executeUpdate(sql.toString());
                 smt.close();
                 smt = null;
-                barGeneralPanel.initCategoryAndDishes();
-                barGeneralPanel.reLayout();
+                menuPanel.initCategoryAndDishes();
+                menuPanel.reLayout();
                 dispose();
             } catch (Exception exception) {
             	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
@@ -243,9 +243,9 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
     
     private boolean isCategoryNameModified(int lang) {
 
-        boolean isNotInitYet = dspIndex - 1 >= barGeneralPanel.categoryNameMetrix[lang].length;
+        boolean isNotInitYet = dspIndex - 1 >= menuPanel.categoryNameMetrix[lang].length;
         
-        String oldText = isNotInitYet ? null : barGeneralPanel.categoryNameMetrix[lang][dspIndex - 1];
+        String oldText = isNotInitYet ? null : menuPanel.categoryNameMetrix[lang][dspIndex - 1];
         boolean isEmptyBefore = oldText == null || oldText.length() == 0;
         
         String newText = general.tfdCategoryNames[lang].getText();

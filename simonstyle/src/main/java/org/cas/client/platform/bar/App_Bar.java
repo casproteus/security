@@ -3,6 +3,8 @@ package org.cas.client.platform.bar;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Vector;
@@ -110,21 +112,38 @@ public class App_Bar extends AbstractApp {
     /** 每个希望加入到PIM系统的应用都必须实现该方法，使系统在ViewInfo系统表中为其初始化ViewInfo。 */
     @Override
     public void initInfoInDB() {
-        Statement stmt = null;
-        for (int j = 0; j < ForegroundingDefaultViews.INIT_DB_VIEWINFO.length; j++)
-            try {
-                stmt = PIMDBModel.getConection().createStatement();
-                stmt.executeUpdate(BarDefaultViews.INIT_DB_VIEWINFO[j]);
-            } catch (Exception exp) {
-                ErrorUtil.write("Error occured when insert view infos:" + exp);
-            }
-        // 增建一个雇员绩效考评表。
+        // 增建一个Table表。select ID, Name, posX, posY, width, height, type from Tables order by DSP_INDEX"
         String sql =
-                "CREATE CACHED TABLE evaluation (ID INTEGER IDENTITY PRIMARY KEY, startTime VARCHAR(255),"
-                        .concat(" endTime VARCHAR(255), SUBJECT VARCHAR(255), receive INTEGER, target INTEGER, profit INTEGER);");
+                "CREATE CACHED TABLE DINING_TABLE (ID INTEGER IDENTITY PRIMARY KEY, name VARCHAR(255),"
+                .concat(" DSP_INDEX INTEGER, posX INTEGER, posY INTEGER, width INTEGER, height INTEGER, type INTEGER);");
         try {
+            Statement stmt = PIMDBModel.getConection().createStatement();
             stmt.executeUpdate(sql);
+            
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T1', '0', 10, 10, 60, 30, 0)";
+            stmt.executeUpdate(sql);
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T2', '1', 110, 10, 60, 30, 0)";
+            stmt.executeUpdate(sql);
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T3', '2', 210, 10, 60, 30, 0)";
+            stmt.executeUpdate(sql);
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T4', '3', 310, 10, 60, 30, 0)";
+            stmt.executeUpdate(sql);
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T5', '4', 410, 10, 60, 30, 0)";
+            stmt.executeUpdate(sql);
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T6', '5', 10, 10, 60, 30, 0)";
+            stmt.executeUpdate(sql);
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T7', '6', 110, 110, 60, 30, 0)";
+            stmt.executeUpdate(sql);
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T8', '7', 210, 110, 60, 30, 0)";
+            stmt.executeUpdate(sql);
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T9', '8', 310, 110, 60, 30, 0)";
+            stmt.executeUpdate(sql);
+            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T10', '9', 410, 110, 60, 30, 0)";
+            stmt.executeUpdate(sql);
+
+            stmt.close();
         } catch (Exception e) {
+        	System.out.println("..............");
         }
     }
 

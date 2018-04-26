@@ -136,7 +136,7 @@ public class WifiPrintService{
         }
 
         //L.d(TAG, "Order is translated into ipContentMap map and ready for print.");
-        BarFrame.instance.general.setStatusMes("PRINTED...");
+        BarFrame.instance.setStatusMes("PRINTED...");
         for(Entry<String,List<String>> entry : ipContentMap.entrySet()) {
         	List<String> contents = entry.getValue();
         	for(String sndMes: contents) {

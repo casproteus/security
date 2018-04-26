@@ -28,10 +28,14 @@ import org.cas.client.resource.international.DlgConst;
 
 //@NOTE：如果参数为null，则登陆成功后用户名和等级将被存入ini文件。否则不会被存入。
 public class LoginDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
-    public static boolean PASSED;
-    public static int USERID;
-    public static String USERNAME;
-    public static String USERTYPE;
+	
+	public static final int USER_STATUS = 1;
+	public static  final int ADMIN_STATUS = 2;
+
+	public static boolean PASSED;
+	public static int USERID = -1;
+	public static String USERNAME = "";
+    public static int USERTYPE = -1;
     public static int USERLANG;
     
     /**
@@ -192,7 +196,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                 rs.close();// 关闭
                 if (tSuperKey[0].concat(tSuperKey[1]).concat(tSuperKey[3]).concat(tSuperKey[5]).equals(tPassword)) {
                     PASSED = true;
-                    USERTYPE = "-1";// 无论姓名选的是什么，只要密码和超级密码相符，则级别就是经理人（或者更高）。
+                    USERTYPE = 2;// 无论姓名选的是什么，只要密码和超级密码相符，则级别就是经理人（或者更高）。
                     USERNAME = "System";// 无论姓名选的是什么，只要密码和超级密码相符，则级别就是经理人（或者更高）。
                     setVisible(false);
                     return;
@@ -206,19 +210,13 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                 if (general.passwordAry[i].equals(tPassword)) { // 查验密码是否吻合。
                     PASSED = true; // 吻合就标记通过。
                     USERID = general.userIDAry[i];
-                    USERTYPE = String.valueOf(general.typeAry[i]); // 并标记下用户的级别
+                    USERTYPE = general.typeAry[i]; // 并标记下用户的级别
                     USERNAME = general.subjectAry[i];
                     USERLANG = general.langAry[i];
                     
                     setVisible(false);
-                    if (parent == null) { // parent为null说明是系统刚刚启动时候的登陆操作，将用户名和级别记载到ini中。
-                        CustOpts.custOps.setUserName(USERNAME); // 用户名将被用来作为下一次,作为默认的选中项。
-                        CustOpts.custOps.setUserType(USERTYPE); // 级别将被用来作为子功能限制的依据。
-                        CustOpts.custOps.setUserLang(USERLANG);
-                    }
-                    return; // 不吻合就推出，等待用户重新输入密码。
+                    return;
                 }
-                // }
             }
             JOptionPane.showMessageDialog(this, DlgConst.UserPasswordNotCorrect);
             general.pfdPassword.requestFocus();
@@ -251,6 +249,14 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
         }
     }
 
+    public static void reset() {
+    	PASSED = false;
+        USERID = -1;
+        USERNAME = "";
+        USERTYPE = -1;
+        USERLANG = 0;
+    }
+    
     @Override
     public Container getContainer() {
         return getContentPane();
@@ -333,9 +339,6 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
         num0.addActionListener(this);
         getContentPane().addComponentListener(this);
 
-        // init Contents
-        PASSED = false;
-        USERTYPE = "100";
         // general.setUserName(CustOpts.custOps.getUserName());
         SwingUtilities.invokeLater(new Runnable() {
             @Override

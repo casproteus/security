@@ -396,7 +396,7 @@ public class OffDutyDlg extends JDialog implements ICASDialog, ActionListener, C
             int profit = 0; // 累加每笔交易的收益得到今天的真实收益
             sql =
                     "Select TOLTALPRICE, PROFIT from Output where EMPLOYEEID = ".concat(String.valueOf(tID))
-                            .concat(" and time >= '").concat(BarGeneralPanel.startTime).concat("' and time <= '")
+                            .concat(" and time >= '").concat(SalesPanel.startTime).concat("' and time <= '")
                             .concat(Calendar.getInstance().getTime().toLocaleString()).concat("'");
             try {
                 ResultSet rs =
@@ -424,7 +424,7 @@ public class OffDutyDlg extends JDialog implements ICASDialog, ActionListener, C
             // 增加一条绩效记录到数据库员工绩效考核表。
             sql =
                     "INSERT INTO evaluation(startTime, endTime, SUBJECT, receive, target, profit) VALUES ('"
-                            .concat(BarGeneralPanel.startTime.concat("', '")
+                            .concat(SalesPanel.startTime.concat("', '")
                                     .concat(Calendar.getInstance().getTime().toLocaleString()).concat("', '")
                                     .concat(CustOpts.custOps.getUserName()).concat("', ")
                                     .concat(String.valueOf(tReceived)).concat(", ").concat(String.valueOf(target))

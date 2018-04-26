@@ -17,9 +17,9 @@ import javax.swing.JPanel;
 import org.cas.client.platform.cascustomize.CustOpts;
 
 public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocusListener{
-	BarGeneralPanel barGeneralPanel;
+	SalesPanel barGeneralPanel;
 
-    public MoreButtonsDlg(BarGeneralPanel general) {
+    public MoreButtonsDlg(SalesPanel general) {
     	super();
     	setTitle(BarDlgConst.MORE);
         barGeneralPanel = general;

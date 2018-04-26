@@ -27,7 +27,7 @@ public interface BarDlgConst {
     String CANCEL_ALL = "CANCEL ALL";
     String VOID_ORDER = "VOID ORDER";
     String SETTINGS = "SETTINGS";
-    String LOGOUT = "LOGOUT";//
+    String RETURN = "RETURN";//
     String MORE = "MORE";
     String SEND = "SEND";
 
@@ -51,6 +51,7 @@ public interface BarDlgConst {
     String Colon = "：";
     String Operator = "USER";
     String COMFIRMDELETEACTION = "This dish might allready be prepared, are you sure to delete?";
+    String COMFIRMLOSTACTION = "Are you sure not to send or save the new input content?";
     String LeftMoney = "上次交班结余";
     String StartTime = "开始时间";
     String EndTime = "结束时间";

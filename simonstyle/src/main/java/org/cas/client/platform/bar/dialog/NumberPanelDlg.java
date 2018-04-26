@@ -40,7 +40,7 @@ import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.resource.international.DlgConst;
 
 public class NumberPanelDlg extends JDialog implements ActionListener, ComponentListener{
-	
+	private SalesPanel salesPanel;
 	private JToggleButton btnSource;
 	private PIMTable table;
 	//flag
@@ -54,7 +54,8 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
     public NumberPanelDlg(BarFrame pParent, JToggleButton btnQTY ) {
         super(pParent, true);
         barFrame = pParent;
-        table = barFrame.general.tblOrder;
+        salesPanel = (SalesPanel)barFrame.panels[1];
+        table = salesPanel.tblSelectedDish;
         this.btnSource = btnQTY;
         
         initDialog();
@@ -128,8 +129,8 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         		int tQTY = Integer.valueOf(curContent);
             	int row = table.getSelectedRow();
             	table.setValueAt("x" + curContent, row, 3);
-            	barFrame.general.selectdDishAry.get(row).setNum(tQTY);
-            	barFrame.general.updateTotleArea();
+            	salesPanel.selectdDishAry.get(row).setNum(tQTY);
+            	salesPanel.updateTotleArea();
         	}catch(Exception exp) {
             	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
         		return;

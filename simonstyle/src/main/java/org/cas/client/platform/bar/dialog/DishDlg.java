@@ -64,18 +64,18 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
     private int[] categoryIdAry;
     private String[] categorySubjectAry;
     
-    private BarGeneralPanel barGeneralPanel;
+    private MenuPanel menuPanel;
     
     public DishDlg(BarFrame pFrame, int dspIndex) {
     	super(pFrame, false);
-        this.barGeneralPanel = pFrame.general;
+        this.menuPanel = pFrame.menuPanel;
         this.dspIndex = dspIndex;
         initDialog();
     }
 
     public DishDlg(BarFrame pFrame, Dish dish) {
         super(pFrame, false);
-        this.barGeneralPanel = pFrame.general;
+        this.menuPanel = pFrame.menuPanel;
         this.dish = dish;
     	this.prodID = dish.getId();
         this.dspIndex = dish.getDspIndex();
@@ -240,9 +240,9 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 
     private boolean isMenuNameModified(int lang) {
 
-        boolean isNotInitYet = dspIndex - 1 >= barGeneralPanel.onScrDishNameMetrix[lang].length;
+        boolean isNotInitYet = dspIndex - 1 >= menuPanel.onScrDishNameMetrix[lang].length;
         
-        String oldText = isNotInitYet ? null : barGeneralPanel.onScrDishNameMetrix[lang][dspIndex - 1];
+        String oldText = isNotInitYet ? null : menuPanel.onScrDishNameMetrix[lang][dspIndex - 1];
         boolean isEmptyBefore = oldText == null || oldText.length() == 0;
         
         String newText = tfdLanguages[lang].getText();
@@ -276,12 +276,12 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         	//@Note: must be done first--if category changed, the array to compare/adjust will be different.
         	String newCategory = cmbCategory.getSelectedItem().toString();
         	if(!newCategory.equals(activeCategory)) {
-        		barGeneralPanel.tgbActiveCategory.setSelected(false);
+        		menuPanel.tgbActiveCategory.setSelected(false);
         		//find new button.
-        		for (ArrayList<CategoryToggleButton> btns : barGeneralPanel.onSrcCategoryTgbMatrix) {
+        		for (ArrayList<CategoryToggleButton> btns : menuPanel.onSrcCategoryTgbMatrix) {
 					for(CategoryToggleButton btn : btns) {
 						if (newCategory.equals(btn.getText())){
-			        		barGeneralPanel.tgbActiveCategory = btn;
+			        		menuPanel.tgbActiveCategory = btn;
 						}
 					}
 				}
@@ -295,10 +295,10 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             } 
 
             if (isMenuNameModified(0)) {
-                for (int i = 0; i < barGeneralPanel.dishNameMetrix[0].length; i++) {
-                    if (i != dspIndex && tfdLanguages[0].getText().equalsIgnoreCase(barGeneralPanel.dishNameMetrix[0][i])) {
+                for (int i = 0; i < menuPanel.dishNameMetrix[0].length; i++) {
+                    if (i != dspIndex && tfdLanguages[0].getText().equalsIgnoreCase(menuPanel.dishNameMetrix[0][i])) {
                         JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
-                        tfdLanguages[0].grabFocus();
+                        tfdLanguages[0].selectAll();
                         return;
                     }
                 }
@@ -307,10 +307,10 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             if (isMenuNameModified(1)) {
             	String text = tfdLanguages[1].getText();
                 if (text != null && !"".equals(text))//language2 is allowed to be empty.
-                    for (int i = 0; i < barGeneralPanel.dishNameMetrix[1].length; i++) {
-                        if (i != dspIndex && text.equalsIgnoreCase(barGeneralPanel.dishNameMetrix[1][i])) {
+                    for (int i = 0; i < menuPanel.dishNameMetrix[1].length; i++) {
+                        if (i != dspIndex && text.equalsIgnoreCase(menuPanel.dishNameMetrix[1][i])) {
                             JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
-                            tfdLanguages[1].grabFocus();
+                            tfdLanguages[1].selectAll();
                             return;
                         }
                     }
@@ -319,10 +319,10 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             if (isMenuNameModified(2)) {
             	String text = tfdLanguages[2].getText();
                 if (text != null && !"".equals(text))//language3 is allowed to be empty.
-                    for (int i = 0; i < barGeneralPanel.dishNameMetrix[2].length; i++) {
-                        if (i != dspIndex && text.equalsIgnoreCase(barGeneralPanel.dishNameMetrix[2][i])) {
+                    for (int i = 0; i < menuPanel.dishNameMetrix[2].length; i++) {
+                        if (i != dspIndex && text.equalsIgnoreCase(menuPanel.dishNameMetrix[2][i])) {
                             JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
-                            tfdLanguages[2].grabFocus();
+                            tfdLanguages[2].selectAll();
                             return;
                         }
                     }
@@ -431,8 +431,8 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                 exp.printStackTrace();
             }
 
-            barGeneralPanel.initCategoryAndDishes();
-            barGeneralPanel.reLayout();
+            menuPanel.initCategoryAndDishes();
+            menuPanel.reLayout();
             dispose();
         } else if (o == cancel) {
             dispose();
@@ -442,9 +442,9 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
     private boolean isCreatingNewDish() {
     	//currently the onScrAry is as long ad whole ary. so this will not work.
     	//so, check only if the original language1 is empty or not.
-        return dspIndex - 1 >= barGeneralPanel.onScrDishNameMetrix[0].length 
-        		|| barGeneralPanel.onScrDishNameMetrix[0][dspIndex - 1] == null
-        		|| barGeneralPanel.onScrDishNameMetrix[0][dspIndex - 1].length() < 1;
+        return dspIndex - 1 >= menuPanel.onScrDishNameMetrix[0].length 
+        		|| menuPanel.onScrDishNameMetrix[0][dspIndex - 1] == null
+        		|| menuPanel.onScrDishNameMetrix[0][dspIndex - 1].length() < 1;
     }
 
     private String getSeletedPrinterString() {
@@ -617,7 +617,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             cbxMenuPomp.setSelected("true".equals(dish.getPrompMenu()));
             cbxModifyPomp.setSelected("true".equals(dish.getPrompMofify()));
         }
-        activeCategory = barGeneralPanel.tgbActiveCategory.getText();
+        activeCategory = menuPanel.tgbActiveCategory.getText();
         tfdDspIndex.setText(String.valueOf(dspIndex));
         
         initCategory();
