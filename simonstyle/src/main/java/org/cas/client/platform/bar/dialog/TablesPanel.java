@@ -157,21 +157,20 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         // category buttons---------------------------------------------------------------------------------
         if (o instanceof TableToggleButton) {
             TableToggleButton tableToggle = (TableToggleButton) o;
+         	BarFrame.curTable = tableToggle;
+         	
+        	if(((TableToggleButton) o).isSelected()){
+        		return;
+        	}
             
-            String text = tableToggle.getText();
             int num = tableToggle.getBillCount();
             if (num == 0) { // check if it's empty
-                if (curSecurityStatus == ADMIN_STATUS) { // and it's admin mode, add a Category.
-//                    CategoryDlg addCategoryDlg = new CategoryDlg(BarFrame.instance);
-//                    addCategoryDlg.setIndex(tableToggle.getIndex());
-//                    addCategoryDlg.setVisible(true);
-                } else {
-	             	BarFrame.curTable = text;
-	            	BarFrame.instance.switchMode(1);
-                }
-            } else { // if it's not empty
-                
+	        	BarFrame.curBill = 0;
+	        	BarFrame.instance.switchMode(1);
+            } else { // if it's not empty, display a dialog to show all the bills.
+            	new BillListDlg(tableToggle.getText()).setVisible(true);
             }
+            tableToggle.setSelected(true);
         }
         //JButton------------------------------------------------------------------------------------------------
         else if (o instanceof JButton) {
@@ -350,18 +349,19 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
                     connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
             // load all the categorys---------------------------
-            ResultSet categoryRS = statement.executeQuery("select ID, Name, posX, posY, width, height, type from dining_Table order by DSP_INDEX");
-            categoryRS.beforeFirst();
+            ResultSet rs = statement.executeQuery("select ID, Name, posX, posY, width, height, type, billNum from dining_Table order by DSP_INDEX");
+            rs.beforeFirst();
 
             int tmpPos = 0;
-            while (categoryRS.next()) {
+            while (rs.next()) {
             	TableToggleButton tableToggleButton = new TableToggleButton();
+            	
             	tableToggleButton.setIndex(tmpPos);
-            	tableToggleButton.setText(categoryRS.getString("Name"));
-            	tableToggleButton.setBounds(categoryRS.getInt("posX"), categoryRS.getInt("posY"), 
-            			categoryRS.getInt("width"), categoryRS.getInt("height"));
-            	tableToggleButton.setType(categoryRS.getInt("type"));
-
+            	tableToggleButton.setText(rs.getString("Name"));
+            	tableToggleButton.setBounds(rs.getInt("posX"), rs.getInt("posY"), rs.getInt("width"), rs.getInt("height"));
+            	tableToggleButton.setType(rs.getInt("type"));		//it's rectanglee or round?
+            	tableToggleButton.setBillCount(rs.getInt("billNum"));
+            	
             	tableToggleButton.setMargin(new Insets(0, 0, 0, 0));
     			tableToggleButton.addActionListener(this);
     			add(tableToggleButton);
@@ -370,7 +370,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
                 tmpPos++;
             }
             
-            categoryRS.close();// 关闭
+            rs.close();// 关闭
             statement.close();
 		}catch(Exception e) {
 			ErrorUtil.write("Unexpected exception when init the tables from db." + e);

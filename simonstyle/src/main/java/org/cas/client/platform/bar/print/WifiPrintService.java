@@ -23,8 +23,8 @@ import org.cas.client.platform.casutil.ErrorUtil;
 
 public class WifiPrintService{
 
-    public static String SUCCESS = "0";
-    public static String ERROR = "2";
+    public static int SUCCESS = 0;
+    public static int ERROR = 2;
     
     public static Category[] allCategory;
     
@@ -57,11 +57,17 @@ public class WifiPrintService{
     public static final int ERR_PROCESSING = 1001;	//processing error
     public static final int ERR_PARAM = 1002;		//parameter error
 
-    public static String exePrintCommand(ArrayList<Dish> selectdDishAry, String curTable){
+    public static int exePrintCommand(List<Dish> selectdDishAry, String curTable, int billID){
         //ErrorUtil.(TAG,"start to translate selection into ipContent for printing.");
         if(!isIpContentMapEmpty()){
             //L.d(TAG,"ipContent not empty, means last print job not finished yet! returning not success flag.");
-            return ERROR;                     //未打印完毕
+        	 for(Entry<String,List<String>> entry : ipContentMap.entrySet()) {
+             	List<String> contents = entry.getValue();
+             	for(String sndMes: contents) {
+                 	doZiJiangPrint(entry.getKey(), null, sndMes);
+             	}
+             }
+        	return ERROR;                     //未打印完毕
         }
         
         reInitPrintRelatedMaps();

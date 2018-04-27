@@ -85,7 +85,6 @@ import org.cas.client.resource.international.PaneConsts;
 public class SalesPanel extends JPanel implements ComponentListener, ActionListener, FocusListener, ListSelectionListener, PIMTableRenderAgent {
     
     private boolean isDragging;
-    int curBillID;
     
     String[][] categoryNameMetrix;
     ArrayList<ArrayList<CategoryToggleButton>> onSrcCategoryTgbMatrix = new ArrayList<ArrayList<CategoryToggleButton>>();
@@ -234,22 +233,46 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                 resetColWidth(srpContent.getWidth());
     	        updateTotleArea();
             } else if (o == btnLine_1_9) {//send
+            	List<Dish> newDishes = new ArrayList<Dish>();
+            	for (Dish dish : selectdDishAry) {
+                	if(dish.getOutputID() > -1)	//if it's already saved into db, don't ignore.
+                		continue;
+                	else {
+                		newDishes.add(dish);
+                	}
+            	}
+            	 //if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
+            	if(newDishes.size() == selectdDishAry.size()) {
+            		try {
+	                    Statement smt = PIMDBModel.getConection().createStatement();
+	                    smt.executeQuery("update dining_Table set billNum = billNum + 1 WHERE name = " + BarFrame.curTable.getText());
+	                    smt.close();
+	                    BarFrame.curTable.setBillCount(BarFrame.curTable.getBillCount() + 1);
+            		}catch(Exception exp) {
+            			ErrorUtil.write(exp);
+            		}
+            	}
+            	
             	//send to printer
             	//prepare the printing String
-            	WifiPrintService.exePrintCommand(selectdDishAry, BarFrame.curTable);
+            	if(WifiPrintService.SUCCESS != WifiPrintService.exePrintCommand(newDishes, BarFrame.curTable.getText(), BarFrame.curBill)) {
+            		BarFrame.setStatusMes("WARNING!!!!!!!!!!!!! print error, please try again.");
+            		return;
+            	}
+            	
             	//save to db output
                 try {
                     Connection conn = PIMDBModel.getConection();
                     Statement smt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                    for (Dish dish : selectdDishAry) {
-                    	if(dish.getOutputID() > -1)	//if it's already saved into db, don't ignore.
-                    		continue;
+                    for (Dish dish : newDishes) {
+//                    	if(dish.getOutputID() > -1)	//if it's already saved into db, don't ignore.
+//                    		continue;
                     	
                     	String time = new Date().toLocaleString();
 	                    StringBuilder sql = new StringBuilder(
 	                        "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME) VALUES ('")
-	                        .append(BarFrame.curTable).append("', ")	//subject ->table id
-	                        .append(curBillID).append(", ")			//contactID ->bill id
+	                        .append(BarFrame.curTable.getText()).append("', ")	//subject ->table id
+	                        .append(BarFrame.curBill).append(", ")			//contactID ->bill id
 	                        .append(dish.getId()).append(", ")	//productid
 	                        .append(dish.getNum()).append(", ")	//amount
 	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(", ")	//totalprice int
@@ -260,8 +283,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	                    smt.executeUpdate(sql.toString());
                     
 	                    sql = new StringBuilder("Select id from output where SUBJECT = '")
-	                        .append(BarFrame.curTable).append("' and CONTACTID = ")
-	                        .append(curBillID).append(" and PRODUCTID = ")
+	                        .append(BarFrame.curTable.getText()).append("' and CONTACTID = ")
+	                        .append(BarFrame.curBill).append(" and PRODUCTID = ")
 	                        .append(dish.getId()).append(" and AMOUNT = ")
 	                        .append(dish.getNum()).append(" and TOLTALPRICE = ")
 	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = ")
@@ -276,23 +299,19 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     }
                     smt.close();
                     smt = null;
-                    tblSelectedDish.repaint();
+                    if("true".equalsIgnoreCase((String)CustOpts.custOps.getValue("isCounterMode"))) {
+                    	resetTableArea();
+                    }else {
+                    	BarFrame.instance.switchMode(0);
+                    }
                 }catch(Exception exp) {
                 	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
                     exp.printStackTrace();
                 }
             }else if (o == btnLine_2_4) { // cancel all
-        		selectdDishAry.clear();
-    	        Object[][] tValues = new Object[0][tblSelectedDish.getColumnCount()];
-                tblSelectedDish.setDataVector(tValues, header);
-                resetColWidth(srpContent.getWidth());
-    	        updateTotleArea();
-            } else if (o == btnLine_2_5) { // cancel all
-        		selectdDishAry.clear();
-    	        Object[][] tValues = new Object[0][tblSelectedDish.getColumnCount()];
-                tblSelectedDish.setDataVector(tValues, header);
-                resetColWidth(srpContent.getWidth());
-    	        updateTotleArea();
+        		resetTableArea();
+            } else if (o == btnLine_2_5) { // cancel all includ saved ones
+            	resetTableArea();
     	        //TODO update db, delete relevant orders.
             } else if (o == btnLine_2_6) { // enter the setting mode.(admin interface)
                 BarFrame.instance.switchMode(2);
@@ -333,6 +352,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         }
     }
     
+    private void resetTableArea() {
+    	selectdDishAry.clear();
+        Object[][] tValues = new Object[0][tblSelectedDish.getColumnCount()];
+        tblSelectedDish.setDataVector(tValues, header);
+        resetColWidth(srpContent.getWidth());
+        updateTotleArea();
+    }
     //table selection listener---------------------
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
@@ -472,8 +498,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         tmpCol5.setPreferredWidth(40);
 
         PIMTableColumn tmpCol2 = tblSelectedDish.getColumnModel().getColumn(1);
-        tmpCol2.setWidth(tableWidth - tmpCol1.getWidth() - tmpCol3.getWidth() - tmpCol4.getWidth() - tmpCol5.getWidth() - 3);
-        tmpCol2.setPreferredWidth(tmpCol2.getWidth());
+        int width = tableWidth - tmpCol1.getWidth() - tmpCol3.getWidth() - tmpCol4.getWidth() - tmpCol5.getWidth() - 3;
+        width -= srpContent.getVerticalScrollBar().isVisible() ? srpContent.getVerticalScrollBar().getWidth() : 0;
+        tmpCol2.setWidth(width);
+        tmpCol2.setPreferredWidth(width);
         
         tblSelectedDish.validate();
         tblSelectedDish.revalidate();
@@ -502,6 +530,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         tblSelectedDish.setValueAt(dish.getPrice()/100f, tValidRowCount, 4); // set the price.
         
         tblSelectedDish.setSelectedRow(tValidRowCount);	//@NOTE:must before adding into the array, so it can be ignored by 
+        
         selectdDishAry.add(dish.clone());				//valueChanged process. not being cleared immediately-----while now dosn't matter
         updateTotleArea();								//because value change will not be used to remove the record.
     }
@@ -615,6 +644,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         tblSelectedDish.setRenderAgent(this);
         tblSelectedDish.setHasSorter(false);
         tblSelectedDish.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+
+        tblSelectedDish.setDataVector(new Object[1][header.length], header);
+        DefaultPIMTableCellRenderer tCellRender = new DefaultPIMTableCellRenderer();
+        tCellRender.setOpaque(true);
+        tCellRender.setBackground(Color.LIGHT_GRAY);
+        tblSelectedDish.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
         
         JLabel tLbl = new JLabel();
         tLbl.setOpaque(true);
@@ -748,36 +783,75 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 					}
 				}
 			}
-			
 			@Override
-			public void mousePressed(MouseEvent e) {				
-			}
-			
+			public void mousePressed(MouseEvent e) {}
 			@Override
-			public void mouseExited(MouseEvent e) {			
-			}
-			
+			public void mouseExited(MouseEvent e) {}
 			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-			
+			public void mouseEntered(MouseEvent e) {}
 			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
+			public void mouseClicked(MouseEvent e) {}
 		});
         
-        // initContents--------------
-        initTable();
+        tblSelectedDish.getSelectionModel().addListSelectionListener(this);
     }
 
-    private void initTable() {
-        Object[][] tValues = new Object[1][header.length];
-        tblSelectedDish.setDataVector(tValues, header);
-        DefaultPIMTableCellRenderer tCellRender = new DefaultPIMTableCellRenderer();
-        tCellRender.setOpaque(true);
-        tCellRender.setBackground(Color.LIGHT_GRAY);
-        tblSelectedDish.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
-        tblSelectedDish.getSelectionModel().addListSelectionListener(this);
+    void initTable() {
+    	selectdDishAry.clear();
+    	//get outputs of current table and bill id.
+		try {
+			 Connection connection = PIMDBModel.getConection();
+	         Statement smt =
+	                    connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+			String sql = "select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '" 
+					+ BarFrame.curTable.getText() + "' and CONTACTID = " + BarFrame.curBill + " and deleted = false AND OUTPUT.PRODUCTID = PRODUCT.ID";
+			ResultSet rs = smt.executeQuery(sql);
+			rs.afterLast();
+			rs.relative(-1);
+			int tmpPos = rs.getRow();
+
+			int tColCount = tblSelectedDish.getColumnCount();
+			Object[][] tValues = new Object[tmpPos][tColCount];
+			rs.beforeFirst();
+			tmpPos = 0;
+			while (rs.next()) {
+				Dish dish = new Dish();
+				dish.setCATEGORY(rs.getString("PRODUCT.CATEGORY"));
+				dish.setDiscount(rs.getInt("OUTPUT.discount"));//
+				dish.setDspIndex(rs.getInt("PRODUCT.INDEX"));
+				dish.setGst(rs.getInt("PRODUCT.FOLDERID"));
+				dish.setId(rs.getInt("PRODUCT.ID"));
+				dish.setLanguage(0, rs.getString("PRODUCT.CODE"));
+				dish.setLanguage(1, rs.getString("PRODUCT.MNEMONIC"));
+				dish.setLanguage(2, rs.getString("PRODUCT.SUBJECT"));
+				dish.setModification(rs.getString("OUTPUT.CONTENT"));//
+				dish.setNum(rs.getInt("OUTPUT.AMOUNT"));//
+				dish.setOutputID(rs.getInt("OUTPUT.ID"));//
+				dish.setPrice(rs.getInt("PRODUCT.PRICE"));
+				dish.setPrinter(rs.getString("PRODUCT.BRAND"));
+				dish.setPrompMenu(rs.getString("PRODUCT.UNIT"));
+				dish.setPrompMofify(rs.getString("PRODUCT.PRODUCAREA"));
+				dish.setPrompPrice(rs.getString("PRODUCT.CONTENT"));
+				dish.setQst(rs.getInt("PRODUCT.STORE"));
+				dish.setSize(rs.getInt("PRODUCT.COST"));
+				selectdDishAry.add(dish);
+
+				tValues[tmpPos][0] = tmpPos + 1;
+				tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
+				tValues[tmpPos][3] = "x" + rs.getInt("AMOUNT");
+				tValues[tmpPos][4] = rs.getInt("TOLTALPRICE")/100f;
+				tmpPos++;
+			}
+			
+			tblSelectedDish.setDataVector(tValues, header);
+	        tblSelectedDish.setSelectedRow(tmpPos - 1);
+			rs.close();
+		} catch (Exception e) {
+			ErrorUtil.write(e);
+    	}
+		
+        resetColWidth(srpContent.getWidth());
     }
 
     /** 本方法用于设置View上各个组件的尺寸。 */

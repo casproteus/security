@@ -51,6 +51,8 @@ public interface BarDlgConst {
     String Colon = "：";
     String Operator = "USER";
     String TableID = "Table";
+    String BillID = "Bill";
+    
     String COMFIRMDELETEACTION = "The dish might allready be prepared, are you sure to cancel?";
     String COMFIRMDELETEACTION2 = "Are you sure to remove it from list?";
     String COMFIRMLOSTACTION = "Are you sure not to send or save the new input content?";

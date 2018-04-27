@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.beans.TableToggleButton;
 import org.cas.client.platform.bar.model.User;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
@@ -30,8 +31,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 
     public static BarFrame instance;
     int curPanel;
-    static String curTable = "";
-
+    static TableToggleButton curTable = new TableToggleButton();
+    static int curBill;
+    
     public static String startTime;
     
     public static void main(
@@ -70,7 +72,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         }
         startTime = Calendar.getInstance().getTime().toLocaleString();
         lblOperator = new JLabel(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(LoginDlg.USERNAME));
-        lblCurTable = new JLabel(BarDlgConst.TableID.concat(BarDlgConst.Colon).concat(curTable));
+        lblCurTable = new JLabel(BarDlgConst.TableID.concat(BarDlgConst.Colon).concat(curTable.getText()));
+        lblBill = new JLabel(BarDlgConst.BillID.concat(BarDlgConst.Colon + curBill));
+        
         lblShoestring =
                 new JLabel(BarDlgConst.LeftMoney.concat(BarDlgConst.Colon)
                         .concat(decimalFormat.format(tShoestring / 100.0)).concat(BarDlgConst.Unit));
@@ -87,6 +91,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         // 搭建－－－－－－－－－－－－－
         add(lblOperator);
         add(lblCurTable);
+        add(lblBill);
         add(lblShoestring);
         add(lblStartTime);
         
@@ -123,11 +128,13 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 				new LoginDlg(null).setVisible(true);
 	            if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
 	            	lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(LoginDlg.USERNAME));
-	            	lblCurTable.setText(BarDlgConst.TableID.concat(BarDlgConst.Colon).concat(curTable));
+	            	lblCurTable.setText(BarDlgConst.TableID.concat(BarDlgConst.Colon).concat(curTable.getText()));
+	            	lblBill.setText(BarDlgConst.BillID.concat(BarDlgConst.Colon + curBill));
 	            }else {
 	            	return;
 	            }
 			}
+			((SalesPanel)panels[i]).initTable();
 		}
 		
     	for (JPanel panel : panels)
@@ -162,8 +169,10 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     public void reLayout() {
         lblOperator.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 180,
                 lblOperator.getPreferredSize().height);
-        lblCurTable.setBounds(lblOperator.getX() + lblOperator.getWidth() + CustOpts.HOR_GAP*2, CustOpts.VER_GAP, 180,
+        lblCurTable.setBounds(lblOperator.getX() + lblOperator.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 180,
         		lblCurTable.getPreferredSize().height);
+        lblBill.setBounds(lblCurTable.getX() + lblCurTable.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 180,
+        		lblBill.getPreferredSize().height);
         lblStartTime.setBounds(getWidth() - lblStartTime.getPreferredSize().width - CustOpts.HOR_GAP,
                 lblOperator.getY(), lblStartTime.getPreferredSize().width, lblOperator.getPreferredSize().height);
         lblShoestring.setBounds(
@@ -306,6 +315,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 
     private JLabel lblOperator;
     private JLabel lblCurTable;
+    private JLabel lblBill;
     private JLabel lblShoestring;
     private JLabel lblStartTime;
 
