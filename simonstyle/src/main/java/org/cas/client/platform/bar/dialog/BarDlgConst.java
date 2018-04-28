@@ -100,7 +100,10 @@ public interface BarDlgConst {
     String Change = "找零";
     String Continue = "继续收银";
 
-    String AddUser = "添加用户";
+    String AddUser = "Add";
+    String PrintAll = "Print All";
+    String CompleteAll = "Complete";
+    String CancelAll = "Cancel All";
     String UserName = "用户名";
     String Password = "密码";
     String Makesure = "确认";

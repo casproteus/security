@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -14,32 +15,39 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JSeparator;
 
+import org.cas.client.platform.bar.beans.TableToggleButton;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
 public class BillListDlg extends JDialog implements ActionListener, ComponentListener{
-
-	public BillListDlg(String tableID) {
+	TableToggleButton tbnTable;
+	public BillListDlg(TableToggleButton tbnTable, String tableID) {
 		
 		super(BarFrame.instance, tableID);
+		this.tbnTable = tbnTable;
 		
 		btns = new ArrayList<>();
-		btnNew = new JButton();
-		btnPrintAll = new JButton();
-		btnCompleteAll = new JButton();
-		btnCancelAll = new JButton();
+		btnAddUser = new JButton(BarDlgConst.AddUser);
+		btnPrintAll = new JButton(BarDlgConst.PrintAll);
+		btnCompleteAll = new JButton(BarDlgConst.CompleteAll);
+		btnCancelAll = new JButton(BarDlgConst.CancelAll);
 		separator= new JSeparator();
+		
+		btnAddUser.setMargin(new Insets(0, 0, 0, 0));
+		btnPrintAll.setMargin(new Insets(0, 0, 0, 0));
+		btnCompleteAll.setMargin(new Insets(0, 0, 0, 0));
+		btnCancelAll.setMargin(new Insets(0, 0, 0, 0));
 		
 		setLayout(null);
 		
-		add(btnNew);
+		add(btnAddUser);
 		add(separator);
 		add(btnPrintAll);
 		add(btnCompleteAll);
 		add(btnCancelAll);
 		
-		btnNew.addActionListener(this);
+		btnAddUser.addActionListener(this);
 		btnPrintAll.addActionListener(this);
 		btnCompleteAll.addActionListener(this);
 		btnCancelAll.addActionListener(this);
@@ -51,22 +59,26 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 	private void initContent(String tableID) {
 		// load all the unclosed outputs under this table with ---------------------------
     	try {
-        	Statement stmt = PIMDBModel.getConection().createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
+        	Connection connection = PIMDBModel.getConection();
+	        Statement smt =
+	                    connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
                     + tableID + "' and deleted = false order by contactID");
             rs.beforeFirst();
 
              while (rs.next()) {
              	JButton tableToggleButton = new JButton();
              	tableToggleButton.setText(String.valueOf(rs.getInt("contactID")));
-             	tableToggleButton.setBounds(0, 0, 0, 0);
              	tableToggleButton.setMargin(new Insets(0, 0, 0, 0));
      			tableToggleButton.addActionListener(this);
      			btns.add(tableToggleButton);
+     			
+     			add(tableToggleButton);
+     			tableToggleButton.addActionListener(this);
              }
-             
+             btns.add(btnAddUser);
              rs.close();// 关闭
-             stmt.close();
+             smt.close();
  		}catch(Exception e) {
  			ErrorUtil.write("Unexpected exception when init the tables from db." + e);
  		}
@@ -74,16 +86,19 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 	
 	private void reLayout() {
 		int col = btns.size() + 1;	//calculate together with the new button.
-		col = col > 5 ? 5 : col;
+		col = col > 5 ? 5 : 1;
 		int row = (btns.size() + 1) / 5 + 1;
 		row = (row - 1) * 5 == btns.size() + 1 ? row - 1 : row;
+		row = col == 1 ? btns.size() + 1 : row;	//if less than 5 button, then one button/row
 				
-		int width = (CustOpts.BTN_WIDTH + CustOpts.HOR_GAP) * col + CustOpts.HOR_GAP + CustOpts.SIZE_EDGE * 2;
-		int height = (CustOpts.BAR_HEIGHT + CustOpts.VER_GAP) * (row + 2) + CustOpts.SIZE_EDGE * 2 +  CustOpts.VER_GAP;
-		setSize(width, height);
+		int width = col == 1 ?  
+				(CustOpts.BTN_WIDTH + CustOpts.HOR_GAP) * 3 + CustOpts.SIZE_EDGE * 2 + CustOpts.HOR_GAP * 3
+				: (CustOpts.BTN_WIDTH + CustOpts.HOR_GAP) * col + CustOpts.HOR_GAP * 2 + CustOpts.SIZE_EDGE * 2;
+		int height = (CustOpts.BAR_HEIGHT + CustOpts.VER_GAP) * (row + 1) + CustOpts.SIZE_EDGE * 2 +  CustOpts.VER_GAP * 3;
+		setBounds(tbnTable.getX(), tbnTable.getY(), width , height);
 		
-		btnCancelAll.setBounds(width / 2 - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, 
-				height - CustOpts.SIZE_EDGE - CustOpts.VER_GAP - CustOpts.BTN_HEIGHT,
+		btnCancelAll.setBounds(width / 2 - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP * 2 - CustOpts.BTN_WIDTH/2, 
+				getHeight() - CustOpts.SIZE_EDGE * 3 - CustOpts.VER_GAP * 3 - CustOpts.BTN_HEIGHT * 2,
 				CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
 		btnPrintAll.setBounds(btnCancelAll.getX() + btnCancelAll.getWidth() + CustOpts.HOR_GAP, 
 				btnCancelAll.getY(),
@@ -92,17 +107,21 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 				btnPrintAll.getY(),
 				CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
 		separator.setBounds(CustOpts.HOR_GAP, 
-				btnCancelAll.getY() - CustOpts.BTN_HEIGHT - CustOpts.VER_GAP,
+				btnCancelAll.getY() - CustOpts.VER_GAP * 2,
 				width - CustOpts.HOR_GAP * 2, CustOpts.BTN_HEIGHT);
 		
 		int i = 0;
 		for (; i < btns.size(); i++) {
-			btns.get(i).setBounds((CustOpts.HOR_GAP + CustOpts.BTN_WIDTH) * i + CustOpts.HOR_GAP,
-					(CustOpts.VER_GAP + CustOpts.BTN_HEIGHT) * (i / 5), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+			if(col == 1) {
+				btns.get(i).setBounds(width / 2 - CustOpts.BTN_WIDTH /2,
+					(CustOpts.VER_GAP + CustOpts.BTN_HEIGHT) * i + CustOpts.VER_GAP,
+					CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+			}else {
+				btns.get(i).setBounds((CustOpts.HOR_GAP + CustOpts.BTN_WIDTH) * i + CustOpts.HOR_GAP,
+						(CustOpts.VER_GAP + CustOpts.BTN_HEIGHT) * (i / 5) + CustOpts.VER_GAP,
+						CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+			}
 		}
-		
-		btnNew.setBounds((CustOpts.HOR_GAP + CustOpts.BTN_WIDTH) * i + CustOpts.HOR_GAP,
-				(CustOpts.VER_GAP + CustOpts.BTN_HEIGHT) * (i / 5), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
 	}
 	
 	@Override
@@ -130,12 +149,23 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+		Object o = e.getSource();
+		if(o == btnCancelAll) {
+			
+		}else if(o == btnPrintAll) {
+			
+		}else if( o == btnCompleteAll) {
+			
+		}else {
+        	BarFrame.curBill = 0;
+        	BarFrame.instance.switchMode(1);
+		}
+
+		this.setVisible(false);
 	}
 	
 	List<JButton> btns;
-	JButton btnNew;
+	JButton btnAddUser;
 	JSeparator separator;
 	JButton btnPrintAll;
 	JButton btnCompleteAll;

@@ -168,7 +168,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 	        	BarFrame.curBill = 0;
 	        	BarFrame.instance.switchMode(1);
             } else { // if it's not empty, display a dialog to show all the bills.
-            	new BillListDlg(tableToggle.getText()).setVisible(true);
+            	new BillListDlg(tableToggle, tableToggle.getText()).setVisible(true);
             }
             tableToggle.setSelected(true);
         }

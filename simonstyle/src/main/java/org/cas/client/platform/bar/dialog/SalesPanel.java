@@ -196,23 +196,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 						tblSelectedDish.setSelectedRow(-1);
 						return;
 					}
-					
-					int tColCount = tblSelectedDish.getColumnCount();
-			        int tValidRowCount = getUsedRowCount(); // get the used RowCount
-			        Object[][] tValues = new Object[tValidRowCount - 1][tColCount];
-		            for (int r = 0; r < tValidRowCount; r++) {
-		            	int rowNum = r + 1;
-		            	if(r == selectedRow) {
-		            		selectdDishAry.remove(r);
-		            		continue;
-		            	}else if(r > selectedRow)
-		            		rowNum--;
-		            	
-		                for (int c = 0; c < tColCount; c++)
-		                    tValues[rowNum-1][c] = c == 0 ? rowNum: tblSelectedDish.getValueAt(r, c);
-		            }
-		            tblSelectedDish.setDataVector(tValues, header);
-		            resetColWidth(srpContent.getWidth());
+					removeFromSelection(selectedRow);
 				} else {
 					int tQTY = selectdDishAry.get(selectedRow).getNum() - 1;
 					int row = tblSelectedDish.getSelectedRow();
@@ -245,9 +229,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	if(newDishes.size() == selectdDishAry.size()) {
             		try {
 	                    Statement smt = PIMDBModel.getConection().createStatement();
-	                    smt.executeQuery("update dining_Table set billNum = billNum + 1 WHERE name = " + BarFrame.curTable.getText());
+	                    smt.executeQuery("update dining_Table set billNum = billNum + 1 WHERE name = '" + BarFrame.curTable.getText() + "'");
 	                    smt.close();
 	                    BarFrame.curTable.setBillCount(BarFrame.curTable.getBillCount() + 1);
+	                    BarFrame.curBill = BarFrame.curTable.getBillCount();
             		}catch(Exception exp) {
             			ErrorUtil.write(exp);
             		}
@@ -281,7 +266,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	                        .append(LoginDlg.USERID).append(", '")		//emoployid
 	                        .append(time).append("') ");
 	                    smt.executeUpdate(sql.toString());
-                    
+
 	                    sql = new StringBuilder("Select id from output where SUBJECT = '")
 	                        .append(BarFrame.curTable.getText()).append("' and CONTACTID = ")
 	                        .append(BarFrame.curBill).append(" and PRODUCTID = ")
@@ -359,6 +344,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         resetColWidth(srpContent.getWidth());
         updateTotleArea();
     }
+    
     //table selection listener---------------------
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
@@ -383,7 +369,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	public Color getBackgroundAtRow(int row) {
 		if(selectdDishAry.size() > row) {
 			Dish dish = selectdDishAry.get(row);
-			if(dish.getOutputID() > 0) {
+			if(dish.getOutputID() > -1) {
 				return new Color(222, 111, 34);
 			}else {
 				return new Color(150, 150, 150);
@@ -761,28 +747,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 								return;
 							}
 						}
-						selectdDishAry.remove(selectedRow);
-						
-				        int tColCount = tblSelectedDish.getColumnCount();
-				        int tValidRowCount = getUsedRowCount(); // get the used RowCount
-				        Object[][] tValues = new Object[tValidRowCount - 1][tColCount];
-			            for (int r = 0; r < tValidRowCount; r++) {
-			            	int rowNum = r + 1;
-			            	if(r == selectedRow) 
-			            		continue;
-			            	else if(r > selectedRow)
-			            		rowNum--;
-			            	
-			                for (int c = 0; c < tColCount; c++)
-			                    tValues[rowNum-1][c] = c == 0 ? rowNum: tblSelectedDish.getValueAt(r, c);
-			            }
-			            tblSelectedDish.setDataVector(tValues, header);
-			            resetColWidth(srpContent.getWidth());
-				
-				        updateTotleArea();
+						removeFromSelection(selectedRow);
 					}
 				}
 			}
+			
 			@Override
 			public void mousePressed(MouseEvent e) {}
 			@Override
@@ -795,7 +764,29 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         
         tblSelectedDish.getSelectionModel().addListSelectionListener(this);
     }
-
+    
+    private void removeFromSelection(int selectedRow) {
+    	//update array first.
+		selectdDishAry.remove(selectedRow);
+		//update the table view
+		int tColCount = tblSelectedDish.getColumnCount();
+		int tValidRowCount = getUsedRowCount(); // get the used RowCount
+		Object[][] tValues = new Object[tValidRowCount - 1][tColCount];
+		for (int r = 0; r < tValidRowCount; r++) {
+			if(r == selectedRow) {
+				continue;
+			}else {
+				int rowNum = r > selectedRow ? r : r + 1;
+			    for (int c = 0; c < tColCount; c++)
+			        tValues[rowNum-1][c] = c == 0 ? rowNum: tblSelectedDish.getValueAt(r, c);
+			}
+		}
+		tblSelectedDish.setDataVector(tValues, header);
+		resetColWidth(srpContent.getWidth());
+		tblSelectedDish.setSelectedRow(tValues.length - 1);
+		updateTotleArea();
+	}
+    
     void initTable() {
     	selectdDishAry.clear();
     	//get outputs of current table and bill id.

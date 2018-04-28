@@ -23,8 +23,7 @@ import org.cas.client.platform.casutil.ErrorUtil;
 
 public class WifiPrintService{
 
-    public static int SUCCESS = 0;
-    public static int ERROR = 2;
+    public static int SUCCESS = -1;	//@NOTE:must be less than 0, because if it's 0, means the first element caused error.
     
     public static Category[] allCategory;
     
@@ -60,14 +59,7 @@ public class WifiPrintService{
     public static int exePrintCommand(List<Dish> selectdDishAry, String curTable, int billID){
         //ErrorUtil.(TAG,"start to translate selection into ipContent for printing.");
         if(!isIpContentMapEmpty()){
-            //L.d(TAG,"ipContent not empty, means last print job not finished yet! returning not success flag.");
-        	 for(Entry<String,List<String>> entry : ipContentMap.entrySet()) {
-             	List<String> contents = entry.getValue();
-             	for(String sndMes: contents) {
-                 	doZiJiangPrint(entry.getKey(), null, sndMes);
-             	}
-             }
-        	return ERROR;                     //未打印完毕
+        	return printContents();
         }
         
         reInitPrintRelatedMaps();
@@ -142,17 +134,27 @@ public class WifiPrintService{
         }
 
         //L.d(TAG, "Order is translated into ipContentMap map and ready for print.");
-        BarFrame.instance.setStatusMes("PRINTED...");
+        return printContents();
+    }
+    
+    private static int printContents() {
+    	BarFrame.instance.setStatusMes("PRINTED...");
         for(Entry<String,List<String>> entry : ipContentMap.entrySet()) {
         	List<String> contents = entry.getValue();
-        	for(String sndMes: contents) {
-            	doZiJiangPrint(entry.getKey(), null, sndMes);
+        	for(int i = contents.size() - 1; i >= 0 ; i--) {
+        		String sndMes = contents.get(i);
+            	if(doZiJiangPrint(entry.getKey(), null, sndMes)) {
+            		contents.remove(i);//clean ipcontent;
+            	}else {
+            		return i;	//stop here, and return the error index.
+            	}
         	}
+        	ipContentMap.remove(entry.getKey());
         }
         return SUCCESS;
     }
-
-    private static void doZiJiangPrint(String ip, String font, String sndMsg){
+    
+    private static boolean doZiJiangPrint(String ip, String font, String sndMsg){
 		try {
 			Socket socket = new Socket(ip, 9100);
 			OutputStream outputStream = socket.getOutputStream();
@@ -198,8 +200,10 @@ public class WifiPrintService{
 
 			outputStream.flush();
 			socket.close();
+			return true;
 		} catch (Exception exp) {
-
+			ErrorUtil.write(exp);
+			return false;
 		}
     }
     
