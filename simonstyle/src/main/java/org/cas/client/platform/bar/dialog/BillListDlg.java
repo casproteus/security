@@ -15,14 +15,14 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JSeparator;
 
-import org.cas.client.platform.bar.beans.TableToggleButton;
+import org.cas.client.platform.bar.beans.TableButton;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
 public class BillListDlg extends JDialog implements ActionListener, ComponentListener{
-	TableToggleButton tbnTable;
-	public BillListDlg(TableToggleButton tbnTable, String tableID) {
+	TableButton tbnTable;
+	public BillListDlg(TableButton tbnTable, String tableID) {
 		
 		super(BarFrame.instance, tableID);
 		this.tbnTable = tbnTable;
@@ -149,7 +149,7 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Object o = e.getSource();
+		JButton o = (JButton)e.getSource();
 		if(o == btnCancelAll) {
 			
 		}else if(o == btnPrintAll) {
@@ -158,6 +158,11 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 			
 		}else {
         	BarFrame.curBill = 0;
+        	try {
+        		BarFrame.curBill = Integer.valueOf(o.getText());
+        	}catch(Exception exp) {
+        		//keep the curBill 0. 
+        	}
         	BarFrame.instance.switchMode(1);
 		}
 

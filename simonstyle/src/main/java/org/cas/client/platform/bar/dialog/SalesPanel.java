@@ -219,7 +219,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             } else if (o == btnLine_1_9) {//send
             	List<Dish> newDishes = new ArrayList<Dish>();
             	for (Dish dish : selectdDishAry) {
-                	if(dish.getOutputID() > -1)	//if it's already saved into db, don't ignore.
+                	if(dish.getOutputID() > -1)	//if it's already saved into db, ignore.
                 		continue;
                 	else {
                 		newDishes.add(dish);
@@ -228,10 +228,20 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	 //if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
             	if(newDishes.size() == selectdDishAry.size()) {
             		try {
-	                    Statement smt = PIMDBModel.getConection().createStatement();
-	                    smt.executeQuery("update dining_Table set billNum = billNum + 1 WHERE name = '" + BarFrame.curTable.getText() + "'");
-	                    smt.close();
-	                    BarFrame.curTable.setBillCount(BarFrame.curTable.getBillCount() + 1);
+	                    Statement smt = PIMDBModel.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+	                    ResultSet rs = smt.executeQuery("select billNum from dining_Table where name = '" + BarFrame.curTable.getText() + "'");
+	                    rs.afterLast();
+	                    rs.relative(-1);
+	                    int i = rs.getInt("billNum");
+	                    
+	                    smt.executeQuery("update dining_Table set billNum = " + (i + 1) + " WHERE name = '" + BarFrame.curTable.getText() + "'");
+	                    
+	                    rs = smt.executeQuery("select billNum from dining_Table where name = '" + BarFrame.curTable.getText() + "'");
+	                    rs.afterLast();
+	                    rs.relative(-1);
+	                    i = rs.getInt("billNum");
+	                    rs.beforeFirst();
+	                    BarFrame.curTable.setBillCount(i);
 	                    BarFrame.curBill = BarFrame.curTable.getBillCount();
             		}catch(Exception exp) {
             			ErrorUtil.write(exp);

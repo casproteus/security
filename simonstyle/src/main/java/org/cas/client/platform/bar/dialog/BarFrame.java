@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
-import org.cas.client.platform.bar.beans.TableToggleButton;
+import org.cas.client.platform.bar.beans.TableButton;
 import org.cas.client.platform.bar.model.User;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
@@ -31,7 +31,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 
     public static BarFrame instance;
     int curPanel;
-    static TableToggleButton curTable = new TableToggleButton();
+    static TableButton curTable = new TableButton();
     static int curBill;
     
     public static String startTime;
@@ -135,6 +135,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 	            }
 			}
 			((SalesPanel)panels[i]).initTable();
+		}else if(i == 0) {
+			((TablesPanel)panels[i]).initTableBtns();
 		}
 		
     	for (JPanel panel : panels)

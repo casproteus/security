@@ -115,7 +115,7 @@ public class App_Bar extends AbstractApp {
         // 增建一个Table表。select ID, Name, posX, posY, width, height, type from Tables order by DSP_INDEX"
         String sql =
                 "CREATE CACHED TABLE DINING_TABLE (ID INTEGER IDENTITY PRIMARY KEY, name VARCHAR(255),"
-                .concat(" DSP_INDEX INTEGER, posX INTEGER, posY INTEGER, width INTEGER, height INTEGER, type INTEGER, billNum INTEGER);");
+                .concat(" DSP_INDEX INTEGER, posX INTEGER, posY INTEGER, width INTEGER, height INTEGER, type INTEGER, billNum INTEGER, status INTEGER);");
         try {
             Statement stmt = PIMDBModel.getConection().createStatement();
             stmt.executeUpdate(sql);

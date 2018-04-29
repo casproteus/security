@@ -1,13 +1,14 @@
 package org.cas.client.platform.bar.beans;
 
+import javax.swing.JButton;
 import javax.swing.JToggleButton;
 
-public class TableToggleButton extends JToggleButton {
+public class TableButton extends JButton {
     private int index;
     private int billCount;
     private int type;
 
-    public TableToggleButton() {
+    public TableButton() {
     }
 
     public int getIndex() {

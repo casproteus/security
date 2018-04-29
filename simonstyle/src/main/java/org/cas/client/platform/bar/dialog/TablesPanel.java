@@ -43,6 +43,7 @@ import javax.comm.ParallelPort;
 import javax.comm.PortInUseException;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -56,9 +57,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.bar.beans.ArrayButton;
-import org.cas.client.platform.bar.beans.TableToggleButton;
+import org.cas.client.platform.bar.beans.TableButton;
 import org.cas.client.platform.bar.beans.MenuButton;
-import org.cas.client.platform.bar.beans.TableToggleButton;
+import org.cas.client.platform.bar.beans.TableButton;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.model.Mark;
 import org.cas.client.platform.bar.model.Printer;
@@ -85,10 +86,12 @@ import org.cas.client.resource.international.PaneConsts;
 //Identity表应该和Employ表合并。
 public class TablesPanel extends JPanel implements ComponentListener, ActionListener, FocusListener {
 
-    ArrayList<TableToggleButton> btnTables = new ArrayList<TableToggleButton>();
+    ArrayList<TableButton> btnTables = new ArrayList<TableButton>();
     
     private final int USER_STATUS = 1;
     private final int ADMIN_STATUS = 2;
+    Color colorSelected = new Color(123, 213, 132);
+    
     private int curSecurityStatus = USER_STATUS;
     
     User curUser;
@@ -153,24 +156,30 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     @Override
     public void actionPerformed(
             ActionEvent e) {
-        Object o = e.getSource();
+        JComponent o = (JComponent)e.getSource();
         // category buttons---------------------------------------------------------------------------------
-        if (o instanceof TableToggleButton) {
-            TableToggleButton tableToggle = (TableToggleButton) o;
+        if (o instanceof TableButton) {
+            TableButton tableToggle = (TableButton) o;
          	BarFrame.curTable = tableToggle;
          	
-        	if(((TableToggleButton) o).isSelected()){
-        		return;
+        	if(((TableButton) o).getBackground() != colorSelected){	//if before is not selected, then update the status
+        		o.setBackground(colorSelected);
+        		try {
+        			Statement smt = PIMDBModel.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        			smt.executeQuery("update dining_Table set status = 1 WHERE name = '" + tableToggle.getText() + "'");
+        		}catch(Exception exp) {
+        			ErrorUtil.write(exp);
+        		}
+        	}else {
+	            int num = tableToggle.getBillCount();
+	            if (num == 0) { // check if it's empty
+		        	BarFrame.curBill = 0;
+		        	BarFrame.instance.switchMode(1);
+	            } else { // if it's not empty, display a dialog to show all the bills.
+	            	new BillListDlg(tableToggle, tableToggle.getText()).setVisible(true);
+	            }
+	            tableToggle.setSelected(true);
         	}
-            
-            int num = tableToggle.getBillCount();
-            if (num == 0) { // check if it's empty
-	        	BarFrame.curBill = 0;
-	        	BarFrame.instance.switchMode(1);
-            } else { // if it's not empty, display a dialog to show all the bills.
-            	new BillListDlg(tableToggle, tableToggle.getText()).setVisible(true);
-            }
-            tableToggle.setSelected(true);
         }
         //JButton------------------------------------------------------------------------------------------------
         else if (o instanceof JButton) {
@@ -284,8 +293,6 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         btnLine_2_7 = new JButton(BarDlgConst.RETURN);
         btnLine_2_8 = new JButton(BarDlgConst.MORE);
         btnLine_2_9 = new JButton(BarDlgConst.SEND);
-        
-        
 
         // border----------
         setLayout(null);
@@ -337,31 +344,37 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         btnLine_1_8.addActionListener(this);
         btnLine_1_9.addActionListener(this);
         
-        // initContents--------------
-        reInitTableBtns();
     }
 
     // menu and category buttons must be init after initContent---------
-	private void reInitTableBtns() {
+	void initTableBtns() {
+		//clean existing btns
+		for (int i = btnTables.size() - 1; i >=0; i--) {
+			TableButton tableToggleButton = btnTables.get(i);
+			btnTables.remove(i);
+			remove(tableToggleButton);
+		}
+		//renite buttons.
 		try {
             Connection connection = PIMDBModel.getConection();
-            Statement statement =
+            Statement smt =
                     connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
             // load all the categorys---------------------------
-            ResultSet rs = statement.executeQuery("select ID, Name, posX, posY, width, height, type, billNum from dining_Table order by DSP_INDEX");
+            ResultSet rs = smt.executeQuery("select ID, Name, posX, posY, width, height, type, billNum, status from dining_Table order by DSP_INDEX");
             rs.beforeFirst();
 
             int tmpPos = 0;
             while (rs.next()) {
-            	TableToggleButton tableToggleButton = new TableToggleButton();
+            	TableButton tableToggleButton = new TableButton();
             	
             	tableToggleButton.setIndex(tmpPos);
             	tableToggleButton.setText(rs.getString("Name"));
             	tableToggleButton.setBounds(rs.getInt("posX"), rs.getInt("posY"), rs.getInt("width"), rs.getInt("height"));
             	tableToggleButton.setType(rs.getInt("type"));		//it's rectanglee or round?
             	tableToggleButton.setBillCount(rs.getInt("billNum"));
-            	
+            	if(rs.getInt("status") > 0)
+            		tableToggleButton.setBackground(colorSelected);
             	tableToggleButton.setMargin(new Insets(0, 0, 0, 0));
     			tableToggleButton.addActionListener(this);
     			add(tableToggleButton);
@@ -371,7 +384,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             }
             
             rs.close();// 关闭
-            statement.close();
+            smt.close();
 		}catch(Exception e) {
 			ErrorUtil.write("Unexpected exception when init the tables from db." + e);
 		}

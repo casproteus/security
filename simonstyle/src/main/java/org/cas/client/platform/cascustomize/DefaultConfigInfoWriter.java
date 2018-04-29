@@ -3,7 +3,12 @@ package org.cas.client.platform.cascustomize;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Hashtable;
+
+import org.cas.client.platform.casutil.ErrorUtil;
 
 /**
  * ＠Note：只有Config.ini也即hash中的内容需要保存，其他内容是只读的。
@@ -21,12 +26,9 @@ class DefaultConfigInfoWriter {
     void saveData(
             Hashtable prmHash) {
         try {
-            fileOutput = new FileOutputStream(configFilePath);
-            OutputStreamWriter writer = new OutputStreamWriter(fileOutput, "UTF-8");
-            writer.write(prmHash.toString());
-            fileOutput.flush();
-            fileOutput.close();
+			Files.write(Paths.get(configFilePath), prmHash.toString().getBytes("UTF-8"));
         } catch (IOException e) {
+        	ErrorUtil.write(e);
         }
     }
 
