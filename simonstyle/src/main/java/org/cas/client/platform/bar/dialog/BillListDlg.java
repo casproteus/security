@@ -59,9 +59,7 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 	private void initContent(String tableID) {
 		// load all the unclosed outputs under this table with ---------------------------
     	try {
-        	Connection connection = PIMDBModel.getConection();
-	        Statement smt =
-	                    connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+	        Statement smt = PIMDBModel.getReadOnlyStatement();
             ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
                     + tableID + "' and deleted = false order by contactID");
             rs.beforeFirst();
@@ -151,11 +149,14 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 	public void actionPerformed(ActionEvent e) {
 		JButton o = (JButton)e.getSource();
 		if(o == btnCancelAll) {
-			
+			//select all output of each bill wich curtable and status is not completed, and set the status to be cancelled.
+			//set the table as unselected.
 		}else if(o == btnPrintAll) {
-			
+
+			//set the table as unselected.
 		}else if( o == btnCompleteAll) {
-			
+			//select all output of each bill wich curtable and status is not completed, and set the status to be cancelled.
+			//set the table as unselected.
 		}else {
         	BarFrame.curBill = 0;
         	try {

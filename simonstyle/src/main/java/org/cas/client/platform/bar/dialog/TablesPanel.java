@@ -165,7 +165,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         	if(((TableButton) o).getBackground() != colorSelected){	//if before is not selected, then update the status
         		o.setBackground(colorSelected);
         		try {
-        			Statement smt = PIMDBModel.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        			Statement smt = PIMDBModel.getReadOnlyStatement();
         			smt.executeQuery("update dining_Table set status = 1 WHERE name = '" + tableToggle.getText() + "'");
         		}catch(Exception exp) {
         			ErrorUtil.write(exp);
@@ -356,9 +356,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 		}
 		//renite buttons.
 		try {
-            Connection connection = PIMDBModel.getConection();
-            Statement smt =
-                    connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement smt = PIMDBModel.getReadOnlyStatement();
 
             // load all the categorys---------------------------
             ResultSet rs = smt.executeQuery("select ID, Name, posX, posY, width, height, type, billNum, status from dining_Table order by DSP_INDEX");

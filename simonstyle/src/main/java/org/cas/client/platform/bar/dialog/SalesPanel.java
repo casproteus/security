@@ -228,7 +228,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	 //if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
             	if(newDishes.size() == selectdDishAry.size()) {
             		try {
-	                    Statement smt = PIMDBModel.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+	                    Statement smt =  PIMDBModel.getReadOnlyStatement();
 	                    ResultSet rs = smt.executeQuery("select billNum from dining_Table where name = '" + BarFrame.curTable.getText() + "'");
 	                    rs.afterLast();
 	                    rs.relative(-1);
@@ -257,8 +257,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	
             	//save to db output
                 try {
-                    Connection conn = PIMDBModel.getConection();
-                    Statement smt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    Statement smt =  PIMDBModel.getReadOnlyStatement();
                     for (Dish dish : newDishes) {
 //                    	if(dish.getOutputID() > -1)	//if it's already saved into db, don't ignore.
 //                    		continue;
@@ -801,9 +800,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	selectdDishAry.clear();
     	//get outputs of current table and bill id.
 		try {
-			 Connection connection = PIMDBModel.getConection();
-	         Statement smt =
-	                    connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+	         Statement smt = PIMDBModel.getReadOnlyStatement();
 
 			String sql = "select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '" 
 					+ BarFrame.curTable.getText() + "' and CONTACTID = " + BarFrame.curBill + " and deleted = false AND OUTPUT.PRODUCTID = PRODUCT.ID";

@@ -119,8 +119,7 @@ public class ModifyUserDlg extends JDialog implements ICASDialog, ActionListener
 			.concat("', type = ").concat(String.valueOf(general.cmbType.getSelectedIndex()))
 			.concat(" where username = '").concat(general.cmbUserName.getSelectedItem().toString()).concat("'");
 			try{
-				Connection conn = PIMDBModel.getConection();
-				Statement smt = conn.createStatement();
+				Statement smt = PIMDBModel.getStatement();
 				smt.executeUpdate(sql.toString());
 	
 				smt.close();

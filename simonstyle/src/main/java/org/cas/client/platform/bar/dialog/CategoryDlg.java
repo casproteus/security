@@ -190,8 +190,7 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
             }
             
             try {
-                Connection conn = PIMDBModel.getConection();
-                Statement smt = conn.createStatement();
+                Statement smt = PIMDBModel.getStatement();
 
                 //adjust affected category's Index
                 int newIndex = Integer.valueOf(general.tfdDspIndex.getText()); // display must be a integer
@@ -370,10 +369,7 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
         private void initContent() {
             String sql = "select ID, LANG1, LANG2, LANG3, DSP_INDEX from CATEGORY";
             try {
-                ResultSet rs =
-                        PIMDBModel.getConection()
-                                .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                                .executeQuery(sql);
+                ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                 ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
 
                 rs.afterLast();

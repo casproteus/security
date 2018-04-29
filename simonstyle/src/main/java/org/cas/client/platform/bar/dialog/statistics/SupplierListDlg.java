@@ -300,8 +300,7 @@ public class SupplierListDlg extends JDialog implements ICASDialog, ActionListen
                     "delete from Contact where ID = '".concat(
                             ((Integer) tblContent.getValueAt(tSeleRow, IDCOLUM)).toString()).concat("'");
             try {
-                Connection conn = PIMDBModel.getConection();
-                Statement smt = conn.createStatement();
+                Statement smt = PIMDBModel.getStatement();
                 smt.executeUpdate(sql.toString());
                 smt.close();
                 smt = null;
@@ -395,10 +394,7 @@ public class SupplierListDlg extends JDialog implements ICASDialog, ActionListen
                 "select SUBJECT,CONTENT,TITLE,COMPANY,COMPTEL,COMPATTR,CPHONE,EMAIL,COMPFAX,ACCOUNT,ID from contact where folderid = 104 and DELETED != true";
 
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();

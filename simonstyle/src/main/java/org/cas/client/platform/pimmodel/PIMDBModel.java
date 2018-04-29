@@ -63,7 +63,7 @@ public final class PIMDBModel extends AbstractModel {
         // printTableContent(ModelConstants2.VIEWINFO_TABLE_NAME);
     }
 
-    public static Connection getConection() {
+    private static Connection getConection() {
         try {
             return PIMDBConnecter.instance.getConnection();
         } catch (Exception e) {
@@ -71,6 +71,22 @@ public final class PIMDBModel extends AbstractModel {
         }
     }
 
+    public static Statement getStatement() {
+    	try {
+            return PIMDBConnecter.instance.getConnection().createStatement();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    public static Statement getReadOnlyStatement() {
+        try {
+            return PIMDBConnecter.instance.getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
     /**
      * 检查当前输入的用户名和密码是否有效，如果数据库表中没有用户名和密码记录时，则会在用户第一次输入时保存用户输入的用户名和密码。 用户名不能为null, 也不能为""字符,
      * 密码不能为null,但是可以为""字符.【用户名和密码大小写敏感】 用户名和密码最大长度都为15个[char]，eio中定义最大为15『位』。超过长度只匹配前15个char
@@ -1000,7 +1016,7 @@ public final class PIMDBModel extends AbstractModel {
         try {
             Connection conn = PIMDBConnecter.instance.getConnection();// 得到数据库连接
             String sql = "SELECT ID FROM CONTACT";
-            Statement ps = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement ps =  PIMDBModel.getReadOnlyStatement();
             ResultSet rs = ps.executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
@@ -1036,9 +1052,8 @@ public final class PIMDBModel extends AbstractModel {
     @Override
     public String[] getAllContactDisplayAs() {
         try {
-            Connection conn = PIMDBConnecter.instance.getConnection(); // 得到数据库连接
             String sql = "SELECT SUBJECT FROM CONTACT";
-            Statement ps = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement ps =  PIMDBModel.getReadOnlyStatement();
             ResultSet rs = ps.executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
@@ -1074,9 +1089,8 @@ public final class PIMDBModel extends AbstractModel {
     @Override
     public String[][] getAllEmailAddress() {
         try {
-            Connection conn = PIMDBConnecter.instance.getConnection(); // 得到数据库连接
             String sql = "SELECT EMAIL FROM CONTACT";
-            Statement ps = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement ps =  PIMDBModel.getReadOnlyStatement();
             ResultSet rs = ps.executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
@@ -1901,8 +1915,7 @@ public final class PIMDBModel extends AbstractModel {
     public int[] getAllCommGroupAttrList() {
         String sql = "SELECT TYPE FROM Contact"; // 查询语句
         try {
-            Connection conn = PIMDBConnecter.instance.getConnection(); // 数据库连接
-            Statement smt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY); // 建立状态集
+            Statement smt =  PIMDBModel.getReadOnlyStatement(); // 建立状态集
             ResultSet rs = smt.executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
@@ -3046,7 +3059,7 @@ public final class PIMDBModel extends AbstractModel {
             }
 
             // 准备SQL语句
-            Statement stmt = tmpConn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement stmt =  PIMDBModel.getReadOnlyStatement();
 
             StringBuffer sql = new StringBuffer();
 
@@ -3415,8 +3428,7 @@ public final class PIMDBModel extends AbstractModel {
             Object prmEntendedObejct) {
         Object[][] selectResults = null;
         try {
-            Connection conn = PIMDBConnecter.instance.getConnection(); // 得到数据库连接
-            Statement smt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY); // 建立可以滚动的结果集
+            Statement smt =  PIMDBModel.getReadOnlyStatement(); // 建立可以滚动的结果集
             ResultSet rst = smt.executeQuery(createSelectedSQL(prmFields, prmTableName, prmCondition));
             selectResults = getRecAryFromResultSet(rst, prmEntendedObejct, prmFields.length); // 从结果集中返回查找的对象数组
 
@@ -4496,9 +4508,7 @@ public final class PIMDBModel extends AbstractModel {
 //
 // int resultAryLength = 0;
 // //准备SQL语句
-// Statement stmt =
-// tmpConn.createStatement(
-// ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+// Statement stmt = PIMDBModel.getStatement();
 // StringBuffer sql = new StringBuffer();
 //
 // for (int i = 0; i < len; i++)
@@ -4591,9 +4601,7 @@ public final class PIMDBModel extends AbstractModel {
 //
 // int resultAryLength = 0;
 // //准备SQL语句
-// Statement stmt =
-// tmpConn.createStatement(
-// ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+// Statement stmt = PIMDBModel.getStatement();
 // StringBuffer sql = new StringBuffer();
 //
 // for (int i = 0; i < len; i++)
@@ -4651,8 +4659,7 @@ public final class PIMDBModel extends AbstractModel {
 // }
 //
 // //建立数据库连接状态
-// Statement stmt =
-// conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+// Statement stmt = PIMDBModel.getStatement();
 // ResultSet rs = stmt.executeQuery(sql);
 // Object[][] values = getRecordArrayFromResultSet(rs, null, -1);
 // //@NOTE:这个地方可以优化的第一次知道了各个列的类型以后,以后各个列的类型也就知道了,所以不用每次都判断为什么类型,如果有多条记录是,可以有优化的空间

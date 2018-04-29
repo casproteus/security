@@ -101,8 +101,7 @@ public class DeleteUserDlg  extends JDialog implements ICASDialog, ActionListene
 			String sql = "delete from UserIdentity where username = '"
 				.concat(general.cmbUserName.getSelectedItem().toString()).concat("'");
 			try{
-				Connection conn = PIMDBModel.getConection();
-				Statement smt = conn.createStatement();
+				Statement smt = PIMDBModel.getStatement();
 				smt.executeUpdate(sql.toString());
 	
 				smt.close();

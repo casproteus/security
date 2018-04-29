@@ -1957,9 +1957,7 @@ public class CASUtility {
         sysValue = new String[10];
         Statement stmt = null;
         try {
-            stmt =
-                    PIMDBModel.getConection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-                            ResultSet.CONCUR_READ_ONLY);
+            stmt = PIMDBModel.getReadOnlyStatement();
             ResultSet rs = stmt.executeQuery(sql);
             rs.beforeFirst();
             int i = 0;
@@ -2023,7 +2021,7 @@ public class CASUtility {
         if (sysValue[1].length() < 1) {
             try {
                 String tStr = "UPDATE SYSTEMINFO  SET VERSION = '".concat(getSerialNumber()).concat("' where id = 1");
-                PIMDBModel.getConection().createStatement().executeUpdate(tStr);
+                PIMDBModel.getStatement().executeUpdate(tStr);
             } catch (SQLException e) {
                 ErrorUtil.write(e);
             }
@@ -2206,7 +2204,7 @@ public class CASUtility {
         String sql = "update systeminfo set Version = '".concat(sysValue[3]).concat("' where id = 3");
         Statement stmt;
         try {
-            stmt = PIMDBModel.getConection().createStatement();
+            stmt = PIMDBModel.getStatement();
             stmt.executeUpdate(sql);
             stmt.close();
         } catch (SQLException e) {
@@ -2220,7 +2218,7 @@ public class CASUtility {
         String sql = "update systeminfo set Version = '".concat(sysValue[4]).concat("' where id = 4");
         Statement stmt;
         try {
-            stmt = PIMDBModel.getConection().createStatement();
+            stmt = PIMDBModel.getStatement();
             stmt.executeUpdate(sql);
             stmt.close();
         } catch (SQLException e) {

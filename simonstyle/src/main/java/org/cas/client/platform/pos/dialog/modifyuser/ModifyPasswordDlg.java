@@ -113,8 +113,7 @@ public class ModifyPasswordDlg  extends JDialog implements ICASDialog, ActionLis
 				String sql = "UPDATE UserIdentity SET Password = '".concat(tPassword1)
 				.concat("' where UserName = '").concat(general.tfdUserName.getText()).concat("'");
 				try{
-					Connection conn = PIMDBModel.getConection();
-					Statement smt = conn.createStatement();
+					Statement smt = PIMDBModel.getStatement();
 					smt.executeUpdate(sql.toString());
 
 					smt.close();

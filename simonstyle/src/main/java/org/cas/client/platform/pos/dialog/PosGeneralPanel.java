@@ -105,10 +105,7 @@ public class PosGeneralPanel extends JPanel implements ComponentListener, KeyLis
                     "select id, subject, price, unit, content from product where code = '".concat(tProdNumber).concat(
                             "'");
             try {
-                ResultSet rs =
-                        PIMDBModel.getConection()
-                                .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                                .executeQuery(sql);
+                ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                 rs.afterLast();
                 rs.relative(-1);
                 if (rs.getRow() > 0) {
@@ -392,10 +389,7 @@ public class PosGeneralPanel extends JPanel implements ComponentListener, KeyLis
                         "select id, subject, price, unit, content from product where code like '%".concat(tProdNumber)
                                 .concat("'");
                 try {
-                    ResultSet rs =
-                            PIMDBModel.getConection()
-                                    .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                                    .executeQuery(sql);
+                    ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                     rs.afterLast();
                     rs.relative(-1);
                     if (rs.getRow() > 0) {
@@ -484,11 +478,7 @@ public class PosGeneralPanel extends JPanel implements ComponentListener, KeyLis
                                 "select code, price, unit, content from product where id = ".concat(String
                                         .valueOf(prodIDAry[i]));
                         try {
-                            ResultSet rs =
-                                    PIMDBModel
-                                            .getConection()
-                                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-                                                    ResultSet.CONCUR_READ_ONLY).executeQuery(sql);
+                            ResultSet rs = PIMDBModel.getStatement().executeQuery(sql);
                             rs.afterLast();
                             rs.relative(-1);
                             rs.beforeFirst();
@@ -868,10 +858,7 @@ public class PosGeneralPanel extends JPanel implements ComponentListener, KeyLis
                                 "'");
                 int tID = -1;
                 try {
-                    ResultSet rs =
-                            PIMDBModel.getConection()
-                                    .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                                    .executeQuery(sql);
+                    ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                     ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
 
                     rs.afterLast();
@@ -887,8 +874,7 @@ public class PosGeneralPanel extends JPanel implements ComponentListener, KeyLis
                 for (int i = 0, len = getUsedRowCount(); i < len; i++) { // 遍历有效行。
                     int tProdId = ((Integer) tblContent.getValueAt(i, 0)).intValue(); // 先取出产品ID，
                     sql = "select PRICE, COST, STORE from product where id = ".concat(String.valueOf(tProdId));
-                    Connection conn = PIMDBModel.getConection();
-                    Statement smt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    Statement smt =  PIMDBModel.getReadOnlyStatement();
                     ResultSet rs = smt.executeQuery(sql);
                     rs.beforeFirst();
                     rs.next();
@@ -1270,9 +1256,7 @@ public class PosGeneralPanel extends JPanel implements ComponentListener, KeyLis
     public void initComponents() {
         String sql = "select ID, SUBJECT from product where code = '' and deleted != true";
         try {
-            Connection connection = PIMDBModel.getConection();
-            Statement statement =
-                    connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement statement = PIMDBModel.getReadOnlyStatement();
             ResultSet rs = statement.executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);

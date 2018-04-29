@@ -276,10 +276,7 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
                 "select EMPLOYEEID, TIME, PRODUCTID, AMOUNT, TOLTALPRICE, PROFIT from output where DELETED != true";
 
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
@@ -312,10 +309,7 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
     private void initPordAndEmploy() {
         String sql = "select ID, UserName from UserIdentity";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
@@ -339,10 +333,7 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
         // for the service.
         sql = "select ID, SUBJECT from Product";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();

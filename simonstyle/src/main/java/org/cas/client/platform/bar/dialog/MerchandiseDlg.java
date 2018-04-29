@@ -304,8 +304,7 @@ public class MerchandiseDlg extends JDialog implements ICASDialog, ActionListene
                                 .concat(pack).concat("', '").concat(getProdType()).concat("', ").concat(cost)
                                 .concat(", '").concat(remark).concat("', 5103)");
                 try {
-                    Connection conn = PIMDBModel.getConection();
-                    Statement smt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                    Statement smt =  PIMDBModel.getReadOnlyStatement();
                     smt.executeUpdate(sql);
 
                     sql =
@@ -337,7 +336,7 @@ public class MerchandiseDlg extends JDialog implements ICASDialog, ActionListene
                                 .concat(String.valueOf(prodID));
 
                 try {
-                    Statement smt = PIMDBModel.getConection().createStatement();
+                    Statement smt = PIMDBModel.getStatement();
                     smt.executeUpdate(sql);
                     smt.close();
                     smt = null;

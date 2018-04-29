@@ -348,8 +348,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             }
             
             try {
-                Connection conn = PIMDBModel.getConection();
-                Statement smt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                Statement smt =  PIMDBModel.getReadOnlyStatement();
 
                 //dspIndex check----------------------------
 	            int newIndex = Integer.valueOf(tfdDspIndex.getText()); // display must be a integer
@@ -625,9 +624,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 
     public void initCategory() {
         try {
-            Connection connection = PIMDBModel.getConection();
-            Statement statement =
-                    connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            Statement statement = PIMDBModel.getReadOnlyStatement();
 
             // load all the categorys---------------------------
             ResultSet categoryRS = statement.executeQuery("select ID, LANG1, LANG2, LANG3 from CATEGORY order by DSP_INDEX");

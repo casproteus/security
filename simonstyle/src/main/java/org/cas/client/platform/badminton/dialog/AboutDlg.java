@@ -90,10 +90,7 @@ public class AboutDlg extends JDialog implements ActionListener {
         String tSN = null;
         String sql = "select VERSION from SYSTEMINFO where ID = 1";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.beforeFirst();
             while (rs.next()) {
                 tSN = rs.getString("VERSION");

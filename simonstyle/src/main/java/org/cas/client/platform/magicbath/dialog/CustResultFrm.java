@@ -192,10 +192,7 @@ public class CustResultFrm extends JFrame implements ActionListener, FocusListen
         String sql = "select ID, SUBJECT, ACCOUNT from contact where FolderID = 102 and DELETED != true";
 
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
 
             rs.afterLast();

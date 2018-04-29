@@ -74,8 +74,7 @@ public class DeleteUserGeneralPanel  extends JPanel implements ComponentListener
 	private void initContent(){
 		String sql = "select ID, Type, UserName, PASSWORD from useridentity where ID > 5";
     	try{
-    		ResultSet rs = PIMDBModel.getConection().createStatement(
-    				ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(sql);
+    		ResultSet rs =  PIMDBModel.getReadOnlyStatement().executeQuery(sql);
     		ResultSetMetaData rd = rs.getMetaData(); //得到结果集相关信息
     		
     		rs.afterLast();

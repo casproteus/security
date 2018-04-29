@@ -226,8 +226,7 @@ public class RefundListDlg extends JDialog
 		Object[][] tValues = null;
 		String sql = "select TIME, PRODUCTID, AMOUNT, TOLTALPRICE, PROFIT from refund";
 		try{
-    		ResultSet rs = PIMDBModel.getConection().createStatement(
-    				ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(sql);
+    		ResultSet rs =  PIMDBModel.getReadOnlyStatement().executeQuery(sql);
     		rs.afterLast();
 			rs.relative(-1);
 			int tmpPos = rs.getRow();
@@ -257,8 +256,7 @@ public class RefundListDlg extends JDialog
     	//for the service.
     	String sql = "select ID, SUBJECT from Product";
     	try{
-    		ResultSet rs = PIMDBModel.getConection().createStatement(
-    				ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(sql);
+    		ResultSet rs =  PIMDBModel.getReadOnlyStatement().executeQuery(sql);
     		rs.afterLast();
 			rs.relative(-1);
 			int tmpPos = rs.getRow();

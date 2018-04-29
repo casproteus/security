@@ -245,10 +245,7 @@ public class Panel_Modify extends JPanel implements ActionListener {
         // Box-----------
         String sql = "select ID, SUBJECT, category from contact where DELETED != true and FOLDERID = 101";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
 
             rs.afterLast();
@@ -276,10 +273,7 @@ public class Panel_Modify extends JPanel implements ActionListener {
         // VIP----------------------
         sql = "select ID, SUBJECT, ACCOUNT from contact where DELETED != true and FOLDERID = 102";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
 
             rs.afterLast();
@@ -307,10 +301,7 @@ public class Panel_Modify extends JPanel implements ActionListener {
         // Employee----------------
         sql = "select ID, SUBJECT, CODE, CATEGORY from employee where DELETED != true";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
 
             rs.afterLast();
@@ -342,10 +333,7 @@ public class Panel_Modify extends JPanel implements ActionListener {
         // Product----------------
         sql = "select ID, SUBJECT, PRICE, CATEGORY from product where DELETED != true";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
 
             rs.afterLast();
@@ -377,10 +365,7 @@ public class Panel_Modify extends JPanel implements ActionListener {
         // cost----------------
         sql = "select ID, PRODUCTID, TOLTALPRICE from input where DELETED != true";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
 
             rs.afterLast();

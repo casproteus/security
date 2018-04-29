@@ -254,8 +254,7 @@ public class EvaluationDlg  extends JDialog
 		String sql = "select * from evaluation";
 		
 		try{
-    		ResultSet rs = PIMDBModel.getConection().createStatement(
-    				ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(sql);
+    		ResultSet rs =  PIMDBModel.getReadOnlyStatement().executeQuery(sql);
     		rs.afterLast();
 			rs.relative(-1);
 			int tmpPos = rs.getRow();

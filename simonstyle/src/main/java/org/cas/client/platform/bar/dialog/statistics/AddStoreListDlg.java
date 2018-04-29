@@ -274,10 +274,7 @@ public class AddStoreListDlg extends JDialog implements ICASDialog, ActionListen
         String sql = "select EMPLOYEEID, TIME, PRODUCTID, AMOUNT, TOLTALPRICE from input where DELETED != true";
 
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
@@ -308,10 +305,7 @@ public class AddStoreListDlg extends JDialog implements ICASDialog, ActionListen
     private void initPordAndSuplier() {
         String sql = "select ID, Subject from Contact";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
@@ -335,10 +329,7 @@ public class AddStoreListDlg extends JDialog implements ICASDialog, ActionListen
         // for the service.
         sql = "select ID, SUBJECT from Product";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();

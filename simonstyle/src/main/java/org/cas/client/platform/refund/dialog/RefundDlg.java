@@ -244,10 +244,7 @@ public class RefundDlg extends JDialog implements ICASDialog, ActionListener, Co
                     "select id, subject, price, unit, content from product where code = '".concat(tProdNumber).concat(
                             "'");
             try {
-                ResultSet rs =
-                        PIMDBModel.getConection()
-                                .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                                .executeQuery(sql);
+                ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                 rs.afterLast();
                 rs.relative(-1);
                 if (rs.getRow() > 0) {
@@ -339,9 +336,8 @@ public class RefundDlg extends JDialog implements ICASDialog, ActionListener, Co
                 for (int i = 0, len = getUsedRowCount(); i < len; i++) { // 遍历有效行。
                     int tProdId = ((Integer) tblContent.getValueAt(i, 0)).intValue(); // 先取出产品ID，
                     String sql = "select PRICE, COST, STORE from product where id = ".concat(String.valueOf(tProdId));
-                    Connection conn = PIMDBModel.getConection();
-                    Statement smt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                    ResultSet rs = smt.executeQuery(sql);
+                    Statement smt =  PIMDBModel.getReadOnlyStatement();
+                    ResultSet rs =  PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                     rs.beforeFirst();
                     rs.next();
                     int tCount = Integer.parseInt((String) tblContent.getValueAt(i, 2));
@@ -398,10 +394,7 @@ public class RefundDlg extends JDialog implements ICASDialog, ActionListener, Co
                         "select id, subject, price, unit, content from product where code = '".concat(tProdNumber)
                                 .concat("'");
                 try {
-                    ResultSet rs =
-                            PIMDBModel.getConection()
-                                    .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                                    .executeQuery(sql);
+                    ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                     rs.afterLast();
                     rs.relative(-1);
                     if (rs.getRow() > 0) {
@@ -472,11 +465,7 @@ public class RefundDlg extends JDialog implements ICASDialog, ActionListener, Co
                                 "select code, price, unit, content from product where id = ".concat(String
                                         .valueOf(prodIDAry[i]));
                         try {
-                            ResultSet rs =
-                                    PIMDBModel
-                                            .getConection()
-                                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-                                                    ResultSet.CONCUR_READ_ONLY).executeQuery(sql);
+                            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                             rs.afterLast();
                             rs.relative(-1);
                             rs.beforeFirst();
@@ -627,10 +616,7 @@ public class RefundDlg extends JDialog implements ICASDialog, ActionListener, Co
     private void initComponents() {
         String sql = "select ID, SUBJECT from product where code = '' and deleted != true";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();

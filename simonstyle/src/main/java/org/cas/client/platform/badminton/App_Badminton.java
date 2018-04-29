@@ -72,7 +72,7 @@ public class App_Badminton extends AbstractApp {
     public void initInfoInDB() {
         for (int j = 0; j < BadmintonDefaultViews.INIT_DB_VIEWINFO.length; j++)
             try {
-                Statement stmt = PIMDBModel.getConection().createStatement();
+                Statement stmt = PIMDBModel.getStatement();
                 stmt.executeUpdate(BadmintonDefaultViews.INIT_DB_VIEWINFO[j]);
             } catch (Exception exp) {
                 ErrorUtil.write("Error occured when insert view infos:" + exp);

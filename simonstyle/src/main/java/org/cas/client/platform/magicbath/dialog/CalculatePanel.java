@@ -180,10 +180,7 @@ public class CalculatePanel extends JTabbedPane implements ComponentListener, Ac
                     Date tmpDate = null;
                     String sql = "Select ANNIVERSARY from Contact where ID = ".concat(String.valueOf(contactIDAry[i]));
                     try {
-                        ResultSet rs =
-                                PIMDBModel.getConection()
-                                        .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                                        .executeQuery(sql);
+                        ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                         rs.beforeFirst();
                         while (rs.next()) {
                             tmpTime = rs.getTime("ANNIVERSARY");
@@ -204,10 +201,7 @@ public class CalculatePanel extends JTabbedPane implements ComponentListener, Ac
                                     .concat(tmpDate.toString()).concat(" ").concat(tmpTime.toString()).concat("'")
                                     .concat(" and DELETED != true");
                     try {
-                        ResultSet rs =
-                                PIMDBModel.getConection()
-                                        .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                                        .executeQuery(sql);
+                        ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                         ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
 
                         rs.afterLast();
@@ -285,10 +279,7 @@ public class CalculatePanel extends JTabbedPane implements ComponentListener, Ac
     private String[] initHeader() {
         String sql = "select ID, SUBJECT, PRICE from Product where DELETED != true";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
@@ -322,10 +313,7 @@ public class CalculatePanel extends JTabbedPane implements ComponentListener, Ac
     public void initBoxNumbers() {
         String sql = "select ID, SUBJECT from Contact where anniversary is not null and DELETED != true";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();

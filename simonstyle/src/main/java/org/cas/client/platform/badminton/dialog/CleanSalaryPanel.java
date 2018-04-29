@@ -177,10 +177,7 @@ public class CleanSalaryPanel extends JTabbedPane implements ComponentListener, 
                     Date tmpDate = null;
                     String sql = "Select JOINTIME from Employee where ID = ".concat(String.valueOf(employeeIDAry[i]));
                     try {
-                        ResultSet rs =
-                                PIMDBModel.getConection()
-                                        .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                                        .executeQuery(sql);
+                        ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                         rs.beforeFirst();
                         while (rs.next()) {
                             tmpTime = rs.getTime("JOINTIME");
@@ -202,10 +199,7 @@ public class CleanSalaryPanel extends JTabbedPane implements ComponentListener, 
                                     .concat(tmpDate.toString()).concat(" ").concat(tmpTime.toString())
                                     .concat("' and DELETED != true");
                     try {
-                        ResultSet rs =
-                                PIMDBModel.getConection()
-                                        .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                                        .executeQuery(sql);
+                        ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                         ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
 
                         rs.afterLast();
@@ -274,10 +268,7 @@ public class CleanSalaryPanel extends JTabbedPane implements ComponentListener, 
         // for the Employee
         String sql = "select ID, SUBJECT from Employee where DELETED != true";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
@@ -301,10 +292,7 @@ public class CleanSalaryPanel extends JTabbedPane implements ComponentListener, 
         // for the service.
         sql = "select ID, SUBJECT from Product where DELETED != true";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
@@ -326,10 +314,7 @@ public class CleanSalaryPanel extends JTabbedPane implements ComponentListener, 
         // for the boxNumber
         sql = "select ID, SUBJECT from Contact where DELETED != true";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
@@ -351,10 +336,7 @@ public class CleanSalaryPanel extends JTabbedPane implements ComponentListener, 
         // for the prices
         sql = "select PRODUCTID, TOLTALPRICE from Input where DELETED != true";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();

@@ -117,7 +117,7 @@ public class App_Bar extends AbstractApp {
                 "CREATE CACHED TABLE DINING_TABLE (ID INTEGER IDENTITY PRIMARY KEY, name VARCHAR(255),"
                 .concat(" DSP_INDEX INTEGER, posX INTEGER, posY INTEGER, width INTEGER, height INTEGER, type INTEGER, billNum INTEGER, status INTEGER);");
         try {
-            Statement stmt = PIMDBModel.getConection().createStatement();
+            Statement stmt = PIMDBModel.getStatement();
             stmt.executeUpdate(sql);
             
             sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T1', '0', 10, 10, 120, 60, 0)";

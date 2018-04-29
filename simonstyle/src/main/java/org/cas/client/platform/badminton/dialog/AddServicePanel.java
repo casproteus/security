@@ -212,10 +212,7 @@ public class AddServicePanel extends JTabbedPane implements ComponentListener, A
         // for the Employee
         String sql = "select ID, SUBJECT from Employee where DELETED != true";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
@@ -239,10 +236,7 @@ public class AddServicePanel extends JTabbedPane implements ComponentListener, A
         // for the service.
         sql = "select ID, SUBJECT from Product where DELETED != true";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
@@ -271,10 +265,7 @@ public class AddServicePanel extends JTabbedPane implements ComponentListener, A
     public void initBoxNumbers() {
         String sql = "select ID, SUBJECT from Contact where anniversary is not null and DELETED != true";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();

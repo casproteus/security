@@ -105,7 +105,7 @@ public class App_Refund extends AbstractApp {
         tmpSQL.append(tmpNameAry[tmpLength - 1]).append(" ").append(tmpTypeAry[tmpLength - 1]);
         tmpSQL.append(");");
         try {
-            stmt = PIMDBModel.getConection().createStatement();
+            stmt =  PIMDBModel.getStatement();
             stmt.executeUpdate(tmpSQL.toString());
             stmt.executeUpdate("create index folderidx_" + "Refund" + " on " + "Refund" + " ( folderID)");
         } catch (Exception exp) {
@@ -366,10 +366,7 @@ public class App_Refund extends AbstractApp {
         // for the Employee
         String sql = "select ID, SUBJECT from Employee";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
@@ -393,10 +390,7 @@ public class App_Refund extends AbstractApp {
         // for the service.
         sql = "select ID, SUBJECT from Product";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
@@ -418,10 +412,7 @@ public class App_Refund extends AbstractApp {
         // for the boxNumber
         sql = "select ID, SUBJECT from Contact";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();

@@ -205,10 +205,7 @@ public class PlatPanel extends JTabbedPane implements ComponentListener, ActionL
             sql = sql.concat("and ");
         sql = sql.concat("anniversary is null and DELETED != true");
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
 
             rs.afterLast();

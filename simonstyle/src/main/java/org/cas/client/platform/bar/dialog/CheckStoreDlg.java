@@ -199,8 +199,7 @@ public class CheckStoreDlg extends JDialog implements ICASDialog, ActionListener
                     "delete from Product where ID = '".concat(
                             ((Integer) tblContent.getValueAt(tSeleRow, IDCOLUM)).toString()).concat("'");
             try {
-                Connection conn = PIMDBModel.getConection();
-                Statement smt = conn.createStatement();
+                Statement smt = PIMDBModel.getStatement();
                 smt.executeUpdate(sql.toString());
                 smt.close();
                 smt = null;
@@ -441,10 +440,7 @@ public class CheckStoreDlg extends JDialog implements ICASDialog, ActionListener
         String sql =
                 "select ID, CODE, SUBJECT, MNEMONIC, STORE, UNIT, PRICE, CATEGORY, CONTENT, COST from Product where DELETED != true";
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();

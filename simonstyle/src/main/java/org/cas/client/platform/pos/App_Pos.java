@@ -113,7 +113,7 @@ public class App_Pos extends AbstractApp {
         Statement stmt = null;
         for (int j = 0; j < ForegroundingDefaultViews.INIT_DB_VIEWINFO.length; j++)
             try {
-                stmt = PIMDBModel.getConection().createStatement();
+                stmt =  PIMDBModel.getStatement();
                 stmt.executeUpdate(PosDefaultViews.INIT_DB_VIEWINFO[j]);
             } catch (Exception exp) {
                 ErrorUtil.write("Error occured when insert view infos:" + exp);

@@ -127,8 +127,7 @@ public class AddUserDlg  extends JDialog implements ICASDialog, ActionListener, 
 				.concat(general.tfdUserName.getText()).concat("', '").concat(tPassword1).concat("', ")
 				.concat(String.valueOf(general.cmbType.getSelectedIndex())).concat(")");
 			try{
-				Connection conn = PIMDBModel.getConection();
-				Statement smt = conn.createStatement();
+				Statement smt = PIMDBModel.getStatement();
 				smt.executeUpdate(sql.toString());
 
 				smt.close();

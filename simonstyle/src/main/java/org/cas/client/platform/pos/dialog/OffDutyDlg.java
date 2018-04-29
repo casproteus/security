@@ -376,10 +376,7 @@ public class OffDutyDlg extends JDialog implements ICASDialog, ActionListener, C
                     "Select id from userIdentity where username = '".concat(CustOpts.custOps.getUserName()).concat("'");
             int tID = -1;
             try {
-                ResultSet rs =
-                        PIMDBModel.getConection()
-                                .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                                .executeQuery(sql);
+                ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                 ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
 
                 rs.afterLast();
@@ -399,10 +396,7 @@ public class OffDutyDlg extends JDialog implements ICASDialog, ActionListener, C
                             .concat(" and time >= '").concat(PosGeneralPanel.startTime).concat("' and time <= '")
                             .concat(Calendar.getInstance().getTime().toLocaleString()).concat("'");
             try {
-                ResultSet rs =
-                        PIMDBModel.getConection()
-                                .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                                .executeQuery(sql);
+                ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                 ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
 
                 rs.afterLast();
@@ -430,8 +424,7 @@ public class OffDutyDlg extends JDialog implements ICASDialog, ActionListener, C
                                     .concat(String.valueOf(tReceived)).concat(", ").concat(String.valueOf(target))
                                     .concat(", ").concat(String.valueOf(profit)).concat(")"));
             try {
-                Connection conn = PIMDBModel.getConection();
-                Statement smt = conn.createStatement();
+                Statement smt =  PIMDBModel.getStatement();
                 smt.executeUpdate(sql.toString());
 
                 smt.close();

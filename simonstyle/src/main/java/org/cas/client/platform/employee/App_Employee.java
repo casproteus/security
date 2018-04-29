@@ -176,7 +176,7 @@ public class App_Employee extends AbstractApp {
         tmpSQL.append(tmpNameAry[tmpLength - 1]).append(" ").append(tmpTypeAry[tmpLength - 1]);
         tmpSQL.append(");");
         try {
-            stmt = PIMDBModel.getConection().createStatement();
+            stmt = PIMDBModel.getStatement();
             stmt.executeUpdate(tmpSQL.toString());
             stmt.executeUpdate("create index folderidx_" + "Employee" + " on " + "Employee" + " ( folderID)");
         } catch (Exception exp) {

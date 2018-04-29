@@ -13,10 +13,7 @@ public class PosUtility {
     public static void checkUnCompProdInfo() {
         String sql = "select * from product where subject = '' and DELETED != true"; // 是否存在上没有名字的产品？
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tRowCount = rs.getRow();

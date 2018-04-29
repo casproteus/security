@@ -24,6 +24,7 @@ import javax.swing.SwingUtilities;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
@@ -229,8 +230,7 @@ public class HangupDlg extends JDialog implements ICASDialog, ActionListener, Co
         // String sql =
         // "select CODE, SUBJECT, MNEMONIC, STORE, UNIT, PRICE, CATEGORY, CONTENT from Product where DELETED != true";
         // try{
-        // ResultSet rs = PIMDBModel.getConection().createStatement(
-        // ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(sql);
+        // ResultSet rs =  PIMDBModel.getStatement().executeQuery(sql);
         // rs.afterLast();
         // rs.relative(-1);
         // int tmpPos = rs.getRow();

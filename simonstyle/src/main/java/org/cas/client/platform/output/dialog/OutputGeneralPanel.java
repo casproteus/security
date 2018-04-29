@@ -351,10 +351,7 @@ class OutputGeneralPanel extends JScrollPane implements ActionListener, Runnable
         // for the Employee
         String sql = "select ID, SUBJECT from Employee".concat(dlg.newFlag ? " where DELETED != true" : "");
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
@@ -378,10 +375,7 @@ class OutputGeneralPanel extends JScrollPane implements ActionListener, Runnable
         // for the service.
         sql = "select ID, SUBJECT from Product".concat(dlg.newFlag ? " where DELETED != true" : "");
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
@@ -405,10 +399,7 @@ class OutputGeneralPanel extends JScrollPane implements ActionListener, Runnable
         // for the boxNumber
         sql = "select ID, SUBJECT from Contact".concat(dlg.newFlag ? " where DELETED != true" : "");
         try {
-            ResultSet rs =
-                    PIMDBModel.getConection()
-                            .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-                            .executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
