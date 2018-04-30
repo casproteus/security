@@ -70,15 +70,18 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
             tShoestring = Integer.parseInt((String) CustOpts.custOps.getValue(BarDlgConst.Shoestring));
         } catch (Exception exp) {
         }
-        startTime = Calendar.getInstance().getTime().toLocaleString();
-        lblOperator = new JLabel(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(LoginDlg.USERNAME));
-        lblCurTable = new JLabel(BarDlgConst.TableID.concat(BarDlgConst.Colon).concat(curTable.getText()));
-        lblBill = new JLabel(BarDlgConst.BillID.concat(BarDlgConst.Colon + curBill));
-        
         lblShoestring =
                 new JLabel(BarDlgConst.LeftMoney.concat(BarDlgConst.Colon)
                         .concat(decimalFormat.format(tShoestring / 100.0)).concat(BarDlgConst.Unit));
-        lblStartTime = new JLabel(BarDlgConst.StartTime.concat(BarDlgConst.Colon).concat(startTime));// @Todo:以后改为从服务器上获取。
+        
+        startTime = Calendar.getInstance().getTime().toLocaleString();
+        lblOperator = new JLabel();
+        lblCurTable = new JLabel();
+        lblBill = new JLabel();
+        
+        lblShoestring = new JLabel();
+                        
+        lblStartTime = new JLabel();
 
         lblStatus = new JLabel();
         menuPanel = new MenuPanel();
@@ -119,10 +122,10 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         lblStatus.setText(pMes);
     }
 	
-    public void switchMode(int i) {
+    public int switchMode(int i) {
 		if (i == 2) {
 			if (!adminAuthentication()) 
-				return;
+				return -1;
 		}else if(i == 1) {
 			if(!isSingleUser()) {
 				new LoginDlg(null).setVisible(true);
@@ -131,11 +134,12 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 	            	lblCurTable.setText(BarDlgConst.TableID.concat(BarDlgConst.Colon).concat(curTable.getText()));
 	            	lblBill.setText(BarDlgConst.BillID.concat(BarDlgConst.Colon + curBill));
 	            }else {
-	            	return;
+	            	return -1;
 	            }
 			}
 			((SalesPanel)panels[i]).initTable();
 		}else if(i == 0) {
+			resetStatus();
 			((TablesPanel)panels[i]).initTableBtns();
 		}
 		
@@ -148,8 +152,17 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     	}
     	
     	curPanel = i;
+    	return 0;
 	}
-
+    
+    private void resetStatus() {
+    	 lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(LoginDlg.USERNAME));
+         lblCurTable.setText("");
+         lblBill.setText("");
+         
+         lblStartTime.setText(BarDlgConst.StartTime.concat(BarDlgConst.Colon).concat(startTime));
+    }
+    
     private boolean adminAuthentication() {
         new LoginDlg(null).setVisible(true);
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。

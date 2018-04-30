@@ -39,14 +39,13 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
     public static int USERLANG;
     
     /**
-     * Creates a new instance of ContactDialog
-     * 
-     * @called by PasteAction 为Copy邮件到联系人应用。
+     * @NOTE: need to reset the PASSED status, because it's static, might be set value by last time.
      */
     public LoginDlg(JFrame pParent) {
         super(pParent, true);
         parent = pParent;
         initDialog();
+        PASSED = false;
     }
 
     /*
@@ -169,7 +168,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
     public void actionPerformed(
             ActionEvent e) {
         String tPassword = new String(general.pfdPassword.getPassword());
-        Object o = e.getSource();
+        JButton o = (JButton)e.getSource();
         if (o == ok) {
             // Object tUserName = general.cmbUserName.getSelectedItem();
             // 先判断密码是否是超级密码：是则修改权限，保持语言
@@ -223,26 +222,13 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
             if (tPassword != null && tPassword.length() > 0) {
                 general.pfdPassword.setText(tPassword.substring(0, tPassword.length() - 1));
             }
-        } else if (o == num1) {
-            general.pfdPassword.setText(tPassword.concat("1"));
-        } else if (o == num2) {
-            general.pfdPassword.setText(tPassword.concat("2"));
-        } else if (o == num3) {
-            general.pfdPassword.setText(tPassword.concat("3"));
-        } else if (o == num4) {
-            general.pfdPassword.setText(tPassword.concat("4"));
-        } else if (o == num5) {
-            general.pfdPassword.setText(tPassword.concat("5"));
-        } else if (o == num6) {
-            general.pfdPassword.setText(tPassword.concat("6"));
-        } else if (o == num7) {
-            general.pfdPassword.setText(tPassword.concat("7"));
-        } else if (o == num8) {
-            general.pfdPassword.setText(tPassword.concat("8"));
-        } else if (o == num9) {
-            general.pfdPassword.setText(tPassword.concat("9"));
-        } else if (o == num0) {
-            general.pfdPassword.setText(tPassword.concat("0"));
+        } else {
+        	String selectedText = general.pfdPassword.getSelectedText();
+        	if(selectedText != null) {
+	        	int i = tPassword.indexOf(selectedText);
+	        	tPassword = tPassword.substring(0, i) + tPassword.substring(i + selectedText.length());
+        	}
+	        general.pfdPassword.setText(tPassword.concat(o.getText()));
         }
     }
 

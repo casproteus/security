@@ -56,9 +56,9 @@ public interface BarDlgConst {
     String COMFIRMDELETEACTION = "The dish might allready be prepared, are you sure to cancel?";
     String COMFIRMDELETEACTION2 = "Are you sure to remove it from list?";
     String COMFIRMLOSTACTION = "Are you sure not to send or save the new input content?";
-    String LeftMoney = "上次交班结余";
-    String StartTime = "开始时间";
-    String EndTime = "结束时间";
+    String LeftMoney = "From Last Session";
+    String StartTime = "Start Time";
+    String EndTime = "End Time";
     String Profit = "当班盈利";
 
     String OtherCost = "其他开支";

@@ -222,7 +222,7 @@ public interface DlgConst
 
     String UserNameInUsed = "您刚才输入的用户名已经被他人使用，请重新输入。";
     String UserNameNotExist = "您刚才输入的用户名不存在，请重新输入。";
-    String UserPasswordNotCorrect = "密码错误，请重新输入。";
+    String UserPasswordNotCorrect = "Invalid password! please try again.";
     String UNNORMALCLOSED = "为确保数据的安全性，请尽量不要非正常关闭程序。";
     String DEFAULTDBISREADY = "默认数据库创建完成！";
     String COMFIRMDELETEACTION = "该动作将导致选定的记录被删除，您确定吗？\n请选择[是]确定删除，或选择[否]取消删除。";

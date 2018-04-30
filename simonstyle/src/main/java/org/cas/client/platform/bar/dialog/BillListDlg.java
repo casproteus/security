@@ -146,7 +146,7 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) {	//@NOTE: the bill button could trigger two times of event.
 		JButton o = (JButton)e.getSource();
 		if(o == btnCancelAll) {
 			//select all output of each bill wich curtable and status is not completed, and set the status to be cancelled.
@@ -158,13 +158,14 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 			//select all output of each bill wich curtable and status is not completed, and set the status to be cancelled.
 			//set the table as unselected.
 		}else {
-        	BarFrame.curBill = 0;
         	try {
-        		BarFrame.curBill = Integer.valueOf(o.getText());
+        		if(Integer.valueOf(o.getText()) != BarFrame.curBill) {
+        			BarFrame.curBill = Integer.valueOf(o.getText());
+                	BarFrame.instance.switchMode(1);
+        		}
         	}catch(Exception exp) {
-        		//keep the curBill 0. 
+        		ErrorUtil.write(exp);
         	}
-        	BarFrame.instance.switchMode(1);
 		}
 
 		this.setVisible(false);
