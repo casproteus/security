@@ -5,7 +5,6 @@ import javax.swing.JToggleButton;
 
 public class TableButton extends JButton {
     private int index;
-    private int billCount;
     private int type;
 
     public TableButton() {
@@ -14,14 +13,6 @@ public class TableButton extends JButton {
     public int getIndex() {
         return index;
     }
-
-	public int getBillCount() {
-		return billCount;
-	}
-
-	public void setBillCount(int billCount) {
-		this.billCount = billCount;
-	}
 
 	public int getType() {
 		return type;

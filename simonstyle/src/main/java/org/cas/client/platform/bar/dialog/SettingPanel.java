@@ -1,6 +1,7 @@
 package org.cas.client.platform.bar.dialog;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -159,19 +160,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         else if(o instanceof JToggleButton) {
         	if(o == btnLine_1_4) {
         	}else if (o == btnLine_1_5) {
-        		
-        	}else if (o == btnLine_1_7) {	//QTY
-        		//pomp up a numberPanelDlg
-        		if(numberPanelDlg == null) {
-        			numberPanelDlg = new NumberPanelDlg(BarFrame.instance, btnLine_1_7);
-        		}
-        		numberPanelDlg.setVisible(btnLine_1_7.isSelected());	//@NOTE: it's not model mode.
-        		if(tblSelectedDish.getSelectedRow() > 0) {
-        			Object obj = tblSelectedDish.getValueAt(tblSelectedDish.getSelectedRow(), 3);
-        			numberPanelDlg.setContents(obj.toString());
-        		}else {
-        			tblSelectedDish.setSelectedRow(tblSelectedDish.getRowCount()-1);
-        		}
+        	}else if (o == btnLine_1_7) {
         	}
         }
     }
@@ -231,12 +220,14 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         srpContent.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
                 (int) (getWidth() * tableWidth) - BarDlgConst.SCROLLBAR_WIDTH, topAreaHeight
                 - BarDlgConst.SubTotal_HEIGHT);
-
-        btnPageUpTable.setBounds(CustOpts.HOR_GAP + srpContent.getWidth(), srpContent.getY() + srpContent.getHeight()
+        pnlTable.setSize(getWidth() - CustOpts.SIZE_EDGE*2, srpContent.getHeight());
+        pnlTable.setPreferredSize(new Dimension(getWidth() - CustOpts.SIZE_EDGE*2, srpContent.getHeight()));
+        
+        btnAddTable.setBounds(CustOpts.HOR_GAP + srpContent.getWidth(), srpContent.getY() + srpContent.getHeight()
                 - BarDlgConst.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH,
-                BarDlgConst.SCROLLBAR_WIDTH * 2);
-        btnPageDownTable.setBounds(btnPageUpTable.getX(), btnPageUpTable.getY() + btnPageUpTable.getHeight()
-                + CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
+                BarDlgConst.SCROLLBAR_WIDTH);
+        btnRemoveTable.setBounds(btnAddTable.getX(), btnAddTable.getY() + btnAddTable.getHeight()
+                + CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH);
 
         // sub total-------
         lblGSQ.setBounds(srpContent.getX(), srpContent.getY() + srpContent.getHeight(), srpContent.getWidth() / 4,
@@ -254,8 +245,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 
         BarFrame.instance.menuPanel.setBounds(xMenuArea, srpContent.getY(), widthMenuArea, topAreaHeight);
         BarFrame.instance.menuPanel.reLayout();
-
-        resetColWidth(srpContent.getWidth());
     }
 
     private boolean adminAuthentication() {
@@ -271,30 +260,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         return false;
     }
 
-    private void resetColWidth(int tableWidth) {
-        PIMTableColumn tmpCol1 = tblSelectedDish.getColumnModel().getColumn(0);
-        tmpCol1.setWidth(0);
-        tmpCol1.setPreferredWidth(0);
-        PIMTableColumn tmpCol3 = tblSelectedDish.getColumnModel().getColumn(2);
-        tmpCol3.setWidth(40);
-        tmpCol3.setPreferredWidth(0);
-        PIMTableColumn tmpCol4 = tblSelectedDish.getColumnModel().getColumn(3);
-        tmpCol4.setWidth(40);
-        tmpCol4.setPreferredWidth(0);
-        PIMTableColumn tmpCol5 = tblSelectedDish.getColumnModel().getColumn(4);
-        tmpCol5.setWidth(40);
-        tmpCol5.setPreferredWidth(0);
-
-        PIMTableColumn tmpCol2 = tblSelectedDish.getColumnModel().getColumn(1);
-        tmpCol2.setWidth(tableWidth - tmpCol1.getWidth() - tmpCol3.getWidth() - tmpCol4.getWidth() - tmpCol5.getWidth() - 3);
-        tmpCol2.setPreferredWidth(tmpCol2.getWidth());
-        
-        tblSelectedDish.validate();
-        tblSelectedDish.revalidate();
-        tblSelectedDish.invalidate();
-    }
-
-    
     private void openMoneyBox() {
         int[] ccs = new int[5];
         ccs[0] = 27;
@@ -336,7 +301,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         lblQSQ = new JLabel(BarDlgConst.GST);
         lblTotlePrice = new JLabel(BarDlgConst.Total);
         
-        btnLine_1_1 = new JButton(BarDlgConst.EXACT_AMOUNT);
+        btnLine_1_1 = new JButton(BarDlgConst.Table);
         btnLine_1_2 = new JButton(BarDlgConst.CASH);
         btnLine_1_3 = new JButton(BarDlgConst.PAY);
         btnLine_1_4 = new JToggleButton("");//BarDlgConst.REMOVE);
@@ -356,38 +321,28 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_2_9 = new JButton(BarDlgConst.RETURN);
         btnLine_2_8 = new JButton(BarDlgConst.MORE);
         
-        btnPageUpTable = new ArrayButton("↑");
-        btnPageDownTable = new ArrayButton("↓");
-
-        tblSelectedDish = new PIMTable();// 显示字段的表格,设置模型
-        srpContent = new PIMScrollPane(tblSelectedDish);
+        btnAddTable = new ArrayButton("+");
+        btnRemoveTable = new ArrayButton("-");
+        pnlTable = new JPanel();
+        srpContent = new PIMScrollPane(pnlTable);
 
         // properties
+        pnlTable.setLayout(null);
         setLayout(null);
-        tblSelectedDish.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        tblSelectedDish.setAutoscrolls(true);
-        tblSelectedDish.setRowHeight(30);
-        tblSelectedDish.setCellEditable(false);
-        tblSelectedDish.setHasSorter(false);
-        tblSelectedDish.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         
         JLabel tLbl = new JLabel();
         tLbl.setOpaque(true);
         tLbl.setBackground(Color.GRAY);
         srpContent.setCorner(JScrollPane.LOWER_RIGHT_CORNER, tLbl);
+        TablesPanel.initTableBtns(pnlTable, this);
         Font tFont = PIMPool.pool.getFont((String) CustOpts.custOps.hash2.get(PaneConsts.DFT_FONT), Font.PLAIN, 40);
 
         // Margin-----------------
-        btnPageUpTable.setMargin(new Insets(0,0,0,0));
-        btnPageDownTable.setMargin(btnPageUpTable.getInsets());
-
-        // border----------
-        tblSelectedDish.setBorder(null);
-        // forcus-------------
-        tblSelectedDish.setFocusable(false);
+        btnAddTable.setMargin(new Insets(0,0,0,0));
+        btnRemoveTable.setMargin(btnAddTable.getInsets());
 
         // disables
-        btnPageUpTable.setEnabled(false);
+        btnAddTable.setEnabled(false);
 
         // built
         add(lblSubTotle);
@@ -415,8 +370,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(btnLine_1_8);
         add(btnLine_1_9);
 
-        add(btnPageUpTable);
-        add(btnPageDownTable);
+        add(btnAddTable);
+        add(btnRemoveTable);
 
         add(srpContent);
 
@@ -425,8 +380,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 
         // 因为考虑到条码经常由扫描仪输入，不一定是靠键盘，所以专门为他加了DocumentListener，通过监视内容变化来自动识别输入完成，光标跳转。
         // tfdProdNumber.getDocument().addDocumentListener(this); // 而其它组件如实收金额框不这样做为了节约（一个KeyListener接口全搞定）
-        btnPageUpTable.addActionListener(this);
-        btnPageDownTable.addActionListener(this);
+        btnAddTable.addActionListener(this);
+        btnRemoveTable.addActionListener(this);
 
         btnLine_2_1.addActionListener(this);
         btnLine_2_2.addActionListener(this);
@@ -448,59 +403,22 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_1_8.addActionListener(this);
         btnLine_1_9.addActionListener(this);
         
-        tblSelectedDish.addMouseMotionListener(new MouseMotionListener(){
+        pnlTable.addMouseMotionListener(new MouseMotionListener(){
         	public void mouseDragged(MouseEvent e) {
         		isDragging = true;
         	}
         	public void mouseMoved(MouseEvent e) {}
         });
-        // initContents--------------
-        initTable();
     }
 
-
-    private void initTable() {
-        Object[][] tValues = new Object[1][header.length];
-        tblSelectedDish.setDataVector(tValues, header);
-        DefaultPIMTableCellRenderer tCellRender = new DefaultPIMTableCellRenderer();
-        tCellRender.setOpaque(true);
-        tCellRender.setBackground(Color.LIGHT_GRAY);
-        tblSelectedDish.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
-    }
-
-    /** 本方法用于设置View上各个组件的尺寸。 */
-    private boolean isOnProcess() {
-        return getUsedRowCount() > 0;
-    }
-
-    private int getUsedRowCount() {
-        for (int i = 0, len = tblSelectedDish.getRowCount(); i < len; i++)
-            if (tblSelectedDish.getValueAt(i, 0) == null)
-                return i; // 至此得到 the used RowCount。
-        return tblSelectedDish.getRowCount();
-    }
-
-    private void resetAll() {
-        resetListArea();
-    }
-
-    private void resetListArea() {
-        int tRowCount = tblSelectedDish.getRowCount();
-        int tColCount = tblSelectedDish.getColumnCount();
-        for (int j = 0; j < tRowCount; j++)
-            for (int i = 0; i < tColCount; i++)
-                tblSelectedDish.setValueAt(null, j, i);
-    }
-
-    private void enableBtns(
-            boolean pIsEnable) {
-    }
 
     private JLabel lblSubTotle;
     private JLabel lblGSQ;
     private JLabel lblQSQ;
     private JLabel lblTotlePrice;
-
+    
+    private JPanel pnlTable;
+    
     private JButton btnLine_1_1;
     private JButton btnLine_1_2;
     private JButton btnLine_1_3;
@@ -521,10 +439,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     private JButton btnLine_2_8;
     private JButton btnLine_2_9;
 
-    private ArrayButton btnPageUpTable;
-    private ArrayButton btnPageDownTable;
+    private ArrayButton btnAddTable;
+    private ArrayButton btnRemoveTable;
 
-    PIMTable tblSelectedDish;
     private PIMScrollPane srpContent;
     private String[] header = new String[] { BarDlgConst.ProdNumber, BarDlgConst.ProdName, BarDlgConst.Size, BarDlgConst.Count,
             BarDlgConst.Price};

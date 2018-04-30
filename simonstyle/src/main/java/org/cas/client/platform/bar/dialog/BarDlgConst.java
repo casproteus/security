@@ -50,8 +50,8 @@ public interface BarDlgConst {
     String DuplicatedInput = "Dubplicated name found! please choose an other name.";
     String Colon = "：";
     String Operator = "USER";
-    String TableID = "Table";
-    String BillID = "Bill";
+    String Table = "Table";
+    String Bill = "Bill";
     
     String COMFIRMDELETEACTION = "The dish might allready be prepared, are you sure to cancel?";
     String COMFIRMDELETEACTION2 = "Are you sure to remove it from list?";

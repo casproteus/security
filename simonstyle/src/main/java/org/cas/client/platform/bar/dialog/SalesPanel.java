@@ -80,6 +80,7 @@ import org.cas.client.platform.pos.dialog.statistics.Statistic;
 import org.cas.client.platform.refund.dialog.RefundDlg;
 import org.cas.client.resource.international.DlgConst;
 import org.cas.client.resource.international.PaneConsts;
+import org.hsqldb.Table;
 
 //Identity表应该和Employ表合并。
 public class SalesPanel extends JPanel implements ComponentListener, ActionListener, FocusListener, ListSelectionListener, PIMTableRenderAgent {
@@ -217,19 +218,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	if(newDishes.size() == selectdDishAry.size()) {
             		try {
 	                    Statement smt =  PIMDBModel.getReadOnlyStatement();
+	                    smt.executeQuery("update dining_Table set billNum = billNum + 1 WHERE name = '" + BarFrame.btnCurTable.getText() + "'");
+	                    
 	                    ResultSet rs = smt.executeQuery("select billNum from dining_Table where name = '" + BarFrame.btnCurTable.getText() + "'");
 	                    rs.afterLast();
 	                    rs.relative(-1);
 	                    int i = rs.getInt("billNum");
-	                    
-	                    smt.executeQuery("update dining_Table set billNum = " + (i + 1) + " WHERE name = '" + BarFrame.btnCurTable.getText() + "'");
-	                    
-	                    rs = smt.executeQuery("select billNum from dining_Table where name = '" + BarFrame.btnCurTable.getText() + "'");
-	                    rs.afterLast();
-	                    rs.relative(-1);
-	                    i = rs.getInt("billNum");
-	                    rs.beforeFirst();
-	                    BarFrame.btnCurTable.setBillCount(i);
 	                    BarFrame.instance.lblCurBill.setText(String.valueOf(i));
             		}catch(Exception exp) {
             			ErrorUtil.write(exp);
@@ -310,6 +304,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		tblSelectedDish.setSelectedRow(tValues.length - 1);
             		updateTotleArea();
             	}else {
+            		//update db, make billnum of dining-table 1 less.
+                	try {
+    	            	Statement smt =  PIMDBModel.getStatement();
+    	                smt.executeQuery("update dining_Table set status = 0 WHERE name = '" + BarFrame.btnCurTable.getText() + "'");
+                	}catch(Exception exp) {
+                		ErrorUtil.write(exp);
+                	}
             		BarFrame.instance.switchMode(0);
             	}
             } else if (o == btnLine_2_5) { // void all includ saved ones
@@ -317,9 +318,16 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	for (Dish dish : selectdDishAry) {
             		Dish.delete(dish);
 				}
+            	//update db, make billnum of dining-table 1 less.
+            	try {
+	            	Statement smt =  PIMDBModel.getStatement();
+	                smt.executeQuery("update dining_Table set billNum = billNum - 1 WHERE name = '" + BarFrame.btnCurTable.getText() + "'");
+	                smt.executeQuery("update dining_Table set status = 0 WHERE name = '" + BarFrame.btnCurTable.getText() + "'");
+            	}catch(Exception exp) {
+            		ErrorUtil.write(exp);
+            	}
+            	
             	resetTableArea();
-            	BarFrame.btnCurTable.setBillCount(BarFrame.btnCurTable.getBillCount() - 1);
-            	BarFrame.btnCurTable.setBackground(null);
             	BarFrame.instance.switchMode(0);
             } else if (o == btnLine_2_6) { // enter the setting mode.(admin interface)
                 BarFrame.instance.switchMode(2);

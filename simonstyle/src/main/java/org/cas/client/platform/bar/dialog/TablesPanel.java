@@ -1,6 +1,7 @@
 package org.cas.client.platform.bar.dialog;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -86,11 +87,12 @@ import org.cas.client.resource.international.PaneConsts;
 //Identity表应该和Employ表合并。
 public class TablesPanel extends JPanel implements ComponentListener, ActionListener, FocusListener {
 
-    ArrayList<TableButton> btnTables = new ArrayList<TableButton>();
+    static ArrayList<TableButton> btnTables = new ArrayList<TableButton>();
     
     private final int USER_STATUS = 1;
     private final int ADMIN_STATUS = 2;
-    Color colorSelected = new Color(123, 213, 132);
+    static Color colorSelected = new Color(123, 213, 132);
+    static Color colorDefault = new Color(255, 255, 255);
     
     private int curSecurityStatus = USER_STATUS;
     
@@ -171,14 +173,24 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         			ErrorUtil.write(exp);
         		}
         	}else {
-	            int num = tableToggle.getBillCount();
-	            if (num == 0) { // check if it's empty
-		        	BarFrame.instance.lblCurBill.setText("0");
-		        	BarFrame.instance.switchMode(1);
-	            } else { // if it's not empty, display a dialog to show all the bills.
-	            	new BillListDlg(tableToggle, tableToggle.getText()).setVisible(true);
-	            }
-	            tableToggle.setSelected(true);
+				try {
+					Statement smt = PIMDBModel.getReadOnlyStatement();
+					ResultSet rs = smt.executeQuery(
+							"select billNum from dining_Table where name = '" + tableToggle.getText() + "'");
+					rs.afterLast();
+					rs.relative(-1);
+					int num = rs.getInt("billNum");
+
+					if (num == 0) { // check if it's empty
+						BarFrame.instance.lblCurBill.setText("0");
+						BarFrame.instance.switchMode(1);
+					} else { // if it's not empty, display a dialog to show all the bills.
+						new BillListDlg(tableToggle, tableToggle.getText()).setVisible(true);
+					}
+					tableToggle.setSelected(true);
+				} catch (Exception exp) {
+        			ErrorUtil.write(exp);
+        		}
         	}
         }
         //JButton------------------------------------------------------------------------------------------------
@@ -347,12 +359,12 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     }
 
     // menu and category buttons must be init after initContent---------
-	void initTableBtns() {
+	static void initTableBtns(Container container, ActionListener actionListener) {
 		//clean existing btns
 		for (int i = btnTables.size() - 1; i >=0; i--) {
 			TableButton tableToggleButton = btnTables.get(i);
 			btnTables.remove(i);
-			remove(tableToggleButton);
+			container.remove(tableToggleButton);
 		}
 		//renite buttons.
 		try {
@@ -370,12 +382,11 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             	tableToggleButton.setText(rs.getString("Name"));
             	tableToggleButton.setBounds(rs.getInt("posX"), rs.getInt("posY"), rs.getInt("width"), rs.getInt("height"));
             	tableToggleButton.setType(rs.getInt("type"));		//it's rectanglee or round?
-            	tableToggleButton.setBillCount(rs.getInt("billNum"));
             	if(rs.getInt("status") > 0)
             		tableToggleButton.setBackground(colorSelected);
             	tableToggleButton.setMargin(new Insets(0, 0, 0, 0));
-    			tableToggleButton.addActionListener(this);
-    			add(tableToggleButton);
+    			tableToggleButton.addActionListener(actionListener);
+    			container.add(tableToggleButton);
     			
             	btnTables.add(tableToggleButton);
                 tmpPos++;

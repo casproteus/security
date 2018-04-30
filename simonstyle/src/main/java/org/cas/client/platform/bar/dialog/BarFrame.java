@@ -77,9 +77,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         startTime = Calendar.getInstance().getTime().toLocaleString();
         lblOperator = new JLabel(BarDlgConst.Operator.concat(BarDlgConst.Colon));
         valOperator = new JLabel();
-        lblCurTable = new JLabel(BarDlgConst.TableID.concat(BarDlgConst.Colon));
+        lblCurTable = new JLabel(BarDlgConst.Table.concat(BarDlgConst.Colon));
         valCurTable = new JLabel();
-        lblBill = new JLabel(BarDlgConst.BillID.concat(BarDlgConst.Colon));
+        lblBill = new JLabel(BarDlgConst.Bill.concat(BarDlgConst.Colon));
         lblCurBill = new JLabel();
         
         lblShoestring = new JLabel();
@@ -145,7 +145,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 			((SalesPanel)panels[i]).initTable();
 		}else if(i == 0) {
 			resetStatus();
-			((TablesPanel)panels[i]).initTableBtns();
+			TablesPanel panel = (TablesPanel)panels[i];
+			panel.initTableBtns(panel, panel);
 		}
 		
     	for (JPanel panel : panels)
