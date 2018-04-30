@@ -31,7 +31,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 
     public static BarFrame instance;
     int curPanel;
-    static TableButton curTable = new TableButton();
+    static TableButton btnCurTable = new TableButton();
+    JLabel lblCurBill;
     
     public static String startTime;
     
@@ -79,7 +80,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         lblCurTable = new JLabel(BarDlgConst.TableID.concat(BarDlgConst.Colon));
         valCurTable = new JLabel();
         lblBill = new JLabel(BarDlgConst.BillID.concat(BarDlgConst.Colon));
-        curBill = new JLabel();
+        lblCurBill = new JLabel();
         
         lblShoestring = new JLabel();
                         
@@ -99,7 +100,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         add(lblCurTable);
         add(valCurTable);
         add(lblBill);
-        add(curBill);
+        add(lblCurBill);
         add(lblShoestring);
         add(lblStartTime);
         
@@ -136,7 +137,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 				new LoginDlg(null).setVisible(true);
 	            if (LoginDlg.PASSED == true) {
 	            	valOperator.setText(LoginDlg.USERNAME);
-	            	valCurTable.setText(curTable.getText());
+	            	valCurTable.setText(btnCurTable.getText());
 	            }else {
 	            	return -1;
 	            }
@@ -166,7 +167,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 			valOperator.setText("");
 		}
 		valCurTable.setText("");
-		curBill.setText("");
+		lblCurBill.setText("");
 
 		lblStartTime.setText(BarDlgConst.StartTime.concat(BarDlgConst.Colon).concat(startTime));
 	}
@@ -177,7 +178,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
             if ("admin".equalsIgnoreCase(LoginDlg.USERNAME)) {
             	valOperator.setText(LoginDlg.USERNAME);
             	valCurTable.setText("");
-            	curBill.setText("");
+            	lblCurBill.setText("");
                 BarFrame.setStatusMes(BarDlgConst.ADMIN_MODE);
                 // @TODO: might need to do some modification on the interface.
                 revalidate();
@@ -203,7 +204,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         		lblCurTable.getPreferredSize().height);
         lblBill.setBounds(valCurTable.getX() + valCurTable.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, lblBill.getPreferredSize().width,
         		lblBill.getPreferredSize().height);
-        curBill.setBounds(lblBill.getX() + lblBill.getWidth(), CustOpts.VER_GAP, 180 - lblBill.getWidth(),
+        lblCurBill.setBounds(lblBill.getX() + lblBill.getWidth(), CustOpts.VER_GAP, 180 - lblBill.getWidth(),
         		lblBill.getPreferredSize().height);
         lblStartTime.setBounds(getWidth() - lblStartTime.getPreferredSize().width - CustOpts.HOR_GAP*2 - CustOpts.SIZE_EDGE * 2,
                 lblOperator.getY(), lblStartTime.getPreferredSize().width, lblOperator.getPreferredSize().height);
@@ -350,7 +351,6 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     private JLabel lblCurTable;
     private JLabel valCurTable;
     private JLabel lblBill;
-    JLabel curBill;
     private JLabel lblShoestring;
     private JLabel lblStartTime;
 

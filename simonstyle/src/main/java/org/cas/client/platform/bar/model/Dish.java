@@ -1,6 +1,26 @@
 package org.cas.client.platform.bar.model;
 
+
+import java.sql.Statement;
+
+import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.pimmodel.PIMDBModel;
+
+
 public class Dish {
+	public static void delete(Dish dish) {
+		if(dish.getOutputID() < 0) {
+			return;
+		}
+		
+		Statement smt = PIMDBModel.getStatement();
+		try {
+			smt.execute("update output set deleted = 100 where id = " + dish.getOutputID());
+		} catch (Exception exp) {
+			ErrorUtil.write(exp);
+		}
+	}
+	
 	public Dish clone(){
 		Dish dish = new Dish();
 		dish.setCATEGORY(CATEGORY);

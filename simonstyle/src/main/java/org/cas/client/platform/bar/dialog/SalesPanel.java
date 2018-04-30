@@ -196,7 +196,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 						tblSelectedDish.setSelectedRow(-1);
 						return;
 					}
-					removeFromSelection(selectedRow);
+					removeAtSelection(selectedRow);
 				} else {
 					int tQTY = selectdDishAry.get(selectedRow).getNum() - 1;
 					int row = tblSelectedDish.getSelectedRow();
@@ -210,39 +210,27 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         
         //JButton------------------------------------------------------------------------------------------------
         else if (o instanceof JButton) {
-        	if (o == btnLine_1_1) { // cancel all
-        		selectdDishAry.clear();
-    	        Object[][] tValues = new Object[0][tblSelectedDish.getColumnCount()];
-                tblSelectedDish.setDataVector(tValues, header);
-                resetColWidth(srpContent.getWidth());
-    	        updateTotleArea();
+        	if (o == btnLine_1_1) {
             } else if (o == btnLine_1_9) {//send
-            	List<Dish> newDishes = new ArrayList<Dish>();
-            	for (Dish dish : selectdDishAry) {
-                	if(dish.getOutputID() > -1)	//if it's already saved into db, ignore.
-                		continue;
-                	else {
-                		newDishes.add(dish);
-                	}
-            	}
+            	List<Dish> newDishes = getNewDishes();
             	 //if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
             	if(newDishes.size() == selectdDishAry.size()) {
             		try {
 	                    Statement smt =  PIMDBModel.getReadOnlyStatement();
-	                    ResultSet rs = smt.executeQuery("select billNum from dining_Table where name = '" + BarFrame.curTable.getText() + "'");
+	                    ResultSet rs = smt.executeQuery("select billNum from dining_Table where name = '" + BarFrame.btnCurTable.getText() + "'");
 	                    rs.afterLast();
 	                    rs.relative(-1);
 	                    int i = rs.getInt("billNum");
 	                    
-	                    smt.executeQuery("update dining_Table set billNum = " + (i + 1) + " WHERE name = '" + BarFrame.curTable.getText() + "'");
+	                    smt.executeQuery("update dining_Table set billNum = " + (i + 1) + " WHERE name = '" + BarFrame.btnCurTable.getText() + "'");
 	                    
-	                    rs = smt.executeQuery("select billNum from dining_Table where name = '" + BarFrame.curTable.getText() + "'");
+	                    rs = smt.executeQuery("select billNum from dining_Table where name = '" + BarFrame.btnCurTable.getText() + "'");
 	                    rs.afterLast();
 	                    rs.relative(-1);
 	                    i = rs.getInt("billNum");
 	                    rs.beforeFirst();
-	                    BarFrame.curTable.setBillCount(i);
-	                    BarFrame.instance.curBill.setText(String.valueOf(i));
+	                    BarFrame.btnCurTable.setBillCount(i);
+	                    BarFrame.instance.lblCurBill.setText(String.valueOf(i));
             		}catch(Exception exp) {
             			ErrorUtil.write(exp);
             		}
@@ -250,7 +238,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	
             	//send to printer
             	//prepare the printing String
-            	if(WifiPrintService.SUCCESS != WifiPrintService.exePrintCommand(newDishes, BarFrame.curTable.getText())) {
+            	if(WifiPrintService.SUCCESS != WifiPrintService.exePrintCommand(newDishes, BarFrame.btnCurTable.getText())) {
             		BarFrame.setStatusMes("WARNING!!!!!!!!!!!!! print error, please try again.");
             		return;
             	}
@@ -265,8 +253,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     	String time = new Date().toLocaleString();
 	                    StringBuilder sql = new StringBuilder(
 	                        "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME) VALUES ('")
-	                        .append(BarFrame.curTable.getText()).append("', ")	//subject ->table id
-	                        .append(BarFrame.instance.curBill.getText()).append(", ")			//contactID ->bill id
+	                        .append(BarFrame.btnCurTable.getText()).append("', ")	//subject ->table id
+	                        .append(BarFrame.instance.lblCurBill.getText()).append(", ")			//contactID ->bill id
 	                        .append(dish.getId()).append(", ")	//productid
 	                        .append(dish.getNum()).append(", ")	//amount
 	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(", ")	//totalprice int
@@ -277,8 +265,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	                    smt.executeUpdate(sql.toString());
 
 	                    sql = new StringBuilder("Select id from output where SUBJECT = '")
-	                        .append(BarFrame.curTable.getText()).append("' and CONTACTID = ")
-	                        .append(BarFrame.instance.curBill.getText()).append(" and PRODUCTID = ")
+	                        .append(BarFrame.btnCurTable.getText()).append("' and CONTACTID = ")
+	                        .append(BarFrame.instance.lblCurBill.getText()).append(" and PRODUCTID = ")
 	                        .append(dish.getId()).append(" and AMOUNT = ")
 	                        .append(dish.getNum()).append(" and TOLTALPRICE = ")
 	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = ")
@@ -303,15 +291,35 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     exp.printStackTrace();
                 }
             }else if (o == btnLine_2_4) { // cancel all
-            	if(selectdDishAry.size() > 0)
-            		resetTableArea();
-            	else {
+            	if(selectdDishAry.size() > 0) {
+            		int lastSavedRow = selectdDishAry.size() - 1 - getNewDishes().size();
+            		//update array first.
+            		for(int i = selectdDishAry.size() - 1; i > lastSavedRow; i--) {
+            			selectdDishAry.remove(i);
+            		}
+            		//update the table view
+            		int tColCount = tblSelectedDish.getColumnCount();
+            		int tValidRowCount = selectdDishAry.size(); // get the used RowCount
+            		Object[][] tValues = new Object[tValidRowCount][tColCount];
+            		for (int r = 0; r < tValidRowCount; r++) {
+            			for (int c = 0; c < tColCount; c++)
+            				tValues[r][c] = c == 0 ? r + 1: tblSelectedDish.getValueAt(r, c);
+            		}
+            		tblSelectedDish.setDataVector(tValues, header);
+            		resetColWidth(srpContent.getWidth());
+            		tblSelectedDish.setSelectedRow(tValues.length - 1);
+            		updateTotleArea();
+            	}else {
             		BarFrame.instance.switchMode(0);
             	}
-            } else if (o == btnLine_2_5) { // cancel all includ saved ones
+            } else if (o == btnLine_2_5) { // void all includ saved ones
+    	        //update db, delete relevant orders.
+            	for (Dish dish : selectdDishAry) {
+            		Dish.delete(dish);
+				}
             	resetTableArea();
-    	        //TODO update db, delete relevant orders.
-            	BarFrame.curTable.setBackground(null);
+            	BarFrame.btnCurTable.setBillCount(BarFrame.btnCurTable.getBillCount() - 1);
+            	BarFrame.btnCurTable.setBackground(null);
             	BarFrame.instance.switchMode(0);
             } else if (o == btnLine_2_6) { // enter the setting mode.(admin interface)
                 BarFrame.instance.switchMode(2);
@@ -351,6 +359,18 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         	}
         }
     }
+
+	private List<Dish> getNewDishes() {
+		List<Dish> newDishes = new ArrayList<Dish>();
+		for (Dish dish : selectdDishAry) {
+			if(dish.getOutputID() > -1)	//if it's already saved into db, ignore.
+				continue;
+			else {
+				newDishes.add(dish);
+			}
+		}
+		return newDishes;
+	}
     
     private void resetTableArea() {
     	selectdDishAry.clear();
@@ -532,7 +552,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         
         tblSelectedDish.setSelectedRow(tValidRowCount);	//@NOTE:must before adding into the array, so it can be ignored by 
         
-        selectdDishAry.add(dish.clone());				//valueChanged process. not being cleared immediately-----while now dosn't matter
+        Dish newDish = dish.clone();		//@NOTE: incase the cloned dish contains outpurID properties.
+        newDish.setOutputID(-1);
+        selectdDishAry.add(newDish);				//valueChanged process. not being cleared immediately-----while now dosn't matter
         updateTotleArea();								//because value change will not be used to remove the record.
     }
 
@@ -762,7 +784,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 								return;
 							}
 						}
-						removeFromSelection(selectedRow);
+						removeAtSelection(selectedRow);
 					}
 				}
 			}
@@ -780,8 +802,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         tblSelectedDish.getSelectionModel().addListSelectionListener(this);
     }
     
-    private void removeFromSelection(int selectedRow) {
-    	//update array first.
+    private void removeAtSelection(int selectedRow) {
+    	//update db first
+    	Dish dish = selectdDishAry.get(selectedRow);
+    	if(dish.getOutputID() > -1) {
+    		Dish.delete(dish);
+    	}
+    	//update array second.
 		selectdDishAry.remove(selectedRow);
 		//update the table view
 		int tColCount = tblSelectedDish.getColumnCount();
@@ -809,7 +836,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	         Statement smt = PIMDBModel.getReadOnlyStatement();
 
 			String sql = "select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '" 
-					+ BarFrame.curTable.getText() + "' and CONTACTID = " + BarFrame.instance.curBill.getText() + " and deleted = false AND OUTPUT.PRODUCTID = PRODUCT.ID";
+					+ BarFrame.btnCurTable.getText() + "' and CONTACTID = " + BarFrame.instance.lblCurBill.getText() + " and deleted = false AND OUTPUT.PRODUCTID = PRODUCT.ID";
 			ResultSet rs = smt.executeQuery(sql);
 			rs.afterLast();
 			rs.relative(-1);
