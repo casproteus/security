@@ -158,6 +158,7 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 			//select all output of each bill wich curtable and status is not completed, and set the status to be cancelled.
 			//set the table as unselected.
 		}else if(o == btnAddUser){
+			BarFrame.instance.curBill.setText("0");
 			BarFrame.instance.switchMode(1);
 		}else {
     		if(!o.getText().equals(BarFrame.instance.curBill.getText())) {
