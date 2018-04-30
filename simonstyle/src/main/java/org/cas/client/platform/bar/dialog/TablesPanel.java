@@ -162,7 +162,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             TableButton tableToggle = (TableButton) o;
          	BarFrame.curTable = tableToggle;
          	
-        	if(((TableButton) o).getBackground() != colorSelected){	//if before is not selected, then update the status
+        	if(((TableButton)o).getBackground() != colorSelected){	//if before is not selected, then update the status
         		o.setBackground(colorSelected);
         		try {
         			Statement smt = PIMDBModel.getReadOnlyStatement();
@@ -173,7 +173,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         	}else {
 	            int num = tableToggle.getBillCount();
 	            if (num == 0) { // check if it's empty
-		        	BarFrame.curBill = 0;
+		        	BarFrame.instance.curBill.setText("0");
 		        	BarFrame.instance.switchMode(1);
 	            } else { // if it's not empty, display a dialog to show all the bills.
 	            	new BillListDlg(tableToggle, tableToggle.getText()).setVisible(true);

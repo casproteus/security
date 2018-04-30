@@ -56,7 +56,7 @@ public class WifiPrintService{
     public static final int ERR_PROCESSING = 1001;	//processing error
     public static final int ERR_PARAM = 1002;		//parameter error
 
-    public static int exePrintCommand(List<Dish> selectdDishAry, String curTable, int billID){
+    public static int exePrintCommand(List<Dish> selectdDishAry, String curTable){
         //ErrorUtil.(TAG,"start to translate selection into ipContent for printing.");
         if(!isIpContentMapEmpty()){
         	return printContents();

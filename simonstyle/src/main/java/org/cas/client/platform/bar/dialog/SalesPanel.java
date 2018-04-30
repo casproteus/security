@@ -242,7 +242,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	                    i = rs.getInt("billNum");
 	                    rs.beforeFirst();
 	                    BarFrame.curTable.setBillCount(i);
-	                    BarFrame.curBill = BarFrame.curTable.getBillCount();
+	                    BarFrame.instance.curBill.setText(String.valueOf(i));
             		}catch(Exception exp) {
             			ErrorUtil.write(exp);
             		}
@@ -250,7 +250,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	
             	//send to printer
             	//prepare the printing String
-            	if(WifiPrintService.SUCCESS != WifiPrintService.exePrintCommand(newDishes, BarFrame.curTable.getText(), BarFrame.curBill)) {
+            	if(WifiPrintService.SUCCESS != WifiPrintService.exePrintCommand(newDishes, BarFrame.curTable.getText())) {
             		BarFrame.setStatusMes("WARNING!!!!!!!!!!!!! print error, please try again.");
             		return;
             	}
@@ -266,7 +266,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	                    StringBuilder sql = new StringBuilder(
 	                        "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME) VALUES ('")
 	                        .append(BarFrame.curTable.getText()).append("', ")	//subject ->table id
-	                        .append(BarFrame.curBill).append(", ")			//contactID ->bill id
+	                        .append(BarFrame.instance.curBill.getText()).append(", ")			//contactID ->bill id
 	                        .append(dish.getId()).append(", ")	//productid
 	                        .append(dish.getNum()).append(", ")	//amount
 	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(", ")	//totalprice int
@@ -278,7 +278,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
 	                    sql = new StringBuilder("Select id from output where SUBJECT = '")
 	                        .append(BarFrame.curTable.getText()).append("' and CONTACTID = ")
-	                        .append(BarFrame.curBill).append(" and PRODUCTID = ")
+	                        .append(BarFrame.instance.curBill.getText()).append(" and PRODUCTID = ")
 	                        .append(dish.getId()).append(" and AMOUNT = ")
 	                        .append(dish.getNum()).append(" and TOLTALPRICE = ")
 	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = ")
@@ -303,10 +303,16 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     exp.printStackTrace();
                 }
             }else if (o == btnLine_2_4) { // cancel all
-        		resetTableArea();
+            	if(selectdDishAry.size() > 0)
+            		resetTableArea();
+            	else {
+            		BarFrame.instance.switchMode(0);
+            	}
             } else if (o == btnLine_2_5) { // cancel all includ saved ones
             	resetTableArea();
     	        //TODO update db, delete relevant orders.
+            	BarFrame.curTable.setBackground(null);
+            	BarFrame.instance.switchMode(0);
             } else if (o == btnLine_2_6) { // enter the setting mode.(admin interface)
                 BarFrame.instance.switchMode(2);
             } else if (o == btnLine_2_8) {//more
@@ -803,7 +809,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	         Statement smt = PIMDBModel.getReadOnlyStatement();
 
 			String sql = "select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '" 
-					+ BarFrame.curTable.getText() + "' and CONTACTID = " + BarFrame.curBill + " and deleted = false AND OUTPUT.PRODUCTID = PRODUCT.ID";
+					+ BarFrame.curTable.getText() + "' and CONTACTID = " + BarFrame.instance.curBill.getText() + " and deleted = false AND OUTPUT.PRODUCTID = PRODUCT.ID";
 			ResultSet rs = smt.executeQuery(sql);
 			rs.afterLast();
 			rs.relative(-1);

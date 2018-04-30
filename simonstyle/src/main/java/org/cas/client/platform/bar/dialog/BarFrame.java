@@ -32,7 +32,6 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     public static BarFrame instance;
     int curPanel;
     static TableButton curTable = new TableButton();
-    static int curBill;
     
     public static String startTime;
     
@@ -75,9 +74,12 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
                         .concat(decimalFormat.format(tShoestring / 100.0)).concat(BarDlgConst.Unit));
         
         startTime = Calendar.getInstance().getTime().toLocaleString();
-        lblOperator = new JLabel();
-        lblCurTable = new JLabel();
-        lblBill = new JLabel();
+        lblOperator = new JLabel(BarDlgConst.Operator.concat(BarDlgConst.Colon));
+        valOperator = new JLabel();
+        lblCurTable = new JLabel(BarDlgConst.TableID.concat(BarDlgConst.Colon));
+        valCurTable = new JLabel();
+        lblBill = new JLabel(BarDlgConst.BillID.concat(BarDlgConst.Colon));
+        curBill = new JLabel();
         
         lblShoestring = new JLabel();
                         
@@ -93,8 +95,11 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         
         // 搭建－－－－－－－－－－－－－
         add(lblOperator);
+        add(valOperator);
         add(lblCurTable);
+        add(valCurTable);
         add(lblBill);
+        add(curBill);
         add(lblShoestring);
         add(lblStartTime);
         
@@ -129,10 +134,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 		}else if(i == 1) {
 			if(!isSingleUser()) {
 				new LoginDlg(null).setVisible(true);
-	            if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-	            	lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(LoginDlg.USERNAME));
-	            	lblCurTable.setText(BarDlgConst.TableID.concat(BarDlgConst.Colon).concat(curTable.getText()));
-	            	lblBill.setText(BarDlgConst.BillID.concat(BarDlgConst.Colon + curBill));
+	            if (LoginDlg.PASSED == true) {
+	            	valOperator.setText(LoginDlg.USERNAME);
+	            	valCurTable.setText(curTable.getText());
 	            }else {
 	            	return -1;
 	            }
@@ -155,18 +159,25 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     	return 0;
 	}
     
-    private void resetStatus() {
-    	 lblOperator.setText(BarDlgConst.Operator.concat(BarDlgConst.Colon).concat(LoginDlg.USERNAME));
-         lblCurTable.setText("");
-         lblBill.setText("");
-         
-         lblStartTime.setText(BarDlgConst.StartTime.concat(BarDlgConst.Colon).concat(startTime));
-    }
+	private void resetStatus() {
+		if (isSingleUser()) {
+			valOperator.setText(LoginDlg.USERNAME);
+		}else {
+			valOperator.setText("");
+		}
+		valCurTable.setText("");
+		curBill.setText("");
+
+		lblStartTime.setText(BarDlgConst.StartTime.concat(BarDlgConst.Colon).concat(startTime));
+	}
     
     private boolean adminAuthentication() {
         new LoginDlg(null).setVisible(true);
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
             if ("admin".equalsIgnoreCase(LoginDlg.USERNAME)) {
+            	valOperator.setText(LoginDlg.USERNAME);
+            	valCurTable.setText("");
+            	curBill.setText("");
                 BarFrame.setStatusMes(BarDlgConst.ADMIN_MODE);
                 // @TODO: might need to do some modification on the interface.
                 revalidate();
@@ -182,13 +193,19 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
      */
     @Override
     public void reLayout() {
-        lblOperator.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 180,
+        lblOperator.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblOperator.getPreferredSize().width,
                 lblOperator.getPreferredSize().height);
-        lblCurTable.setBounds(lblOperator.getX() + lblOperator.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 180,
+        valOperator.setBounds(lblOperator.getX() + lblOperator.getWidth(), CustOpts.VER_GAP, 180 - lblOperator.getWidth(),
+                lblOperator.getPreferredSize().height);
+        lblCurTable.setBounds(valOperator.getX() + valOperator.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCurTable.getPreferredSize().width,
         		lblCurTable.getPreferredSize().height);
-        lblBill.setBounds(lblCurTable.getX() + lblCurTable.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 180,
+        valCurTable.setBounds(lblCurTable.getX() + lblCurTable.getWidth(), CustOpts.VER_GAP, 180 - lblCurTable.getWidth(),
+        		lblCurTable.getPreferredSize().height);
+        lblBill.setBounds(valCurTable.getX() + valCurTable.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, lblBill.getPreferredSize().width,
         		lblBill.getPreferredSize().height);
-        lblStartTime.setBounds(getWidth() - lblStartTime.getPreferredSize().width - CustOpts.HOR_GAP,
+        curBill.setBounds(lblBill.getX() + lblBill.getWidth(), CustOpts.VER_GAP, 180 - lblBill.getWidth(),
+        		lblBill.getPreferredSize().height);
+        lblStartTime.setBounds(getWidth() - lblStartTime.getPreferredSize().width - CustOpts.HOR_GAP*2 - CustOpts.SIZE_EDGE * 2,
                 lblOperator.getY(), lblStartTime.getPreferredSize().width, lblOperator.getPreferredSize().height);
         lblShoestring.setBounds(
                 lblOperator.getX()
@@ -329,8 +346,11 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     boolean hasClose; // 标志对话框是否已关闭
 
     private JLabel lblOperator;
+    private JLabel valOperator;
     private JLabel lblCurTable;
+    private JLabel valCurTable;
     private JLabel lblBill;
+    JLabel curBill;
     private JLabel lblShoestring;
     private JLabel lblStartTime;
 
