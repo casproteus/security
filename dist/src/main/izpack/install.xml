@@ -103,6 +103,8 @@
 			parse="yes" /> 
 		<res id="HTMLInfoPanel.info" src="welcome_panel.txt" />
 		<res id="userInputSpec.xml" src="userInputSpec.xml" />
+		<!-- @TODO: before release, might need to remove this and make the app managed by service.
+		so user will not run the instance two times. -->
 		<res id="shortcutSpec.xml" src="shortcutSpec.xml"/>
 		<res id="ProcessPanel.Spec.xml" src="ProcessPanel.Spec.xml" />
 		<res id="userInputLang.xml_eng" src="i18n/userInputLang.xml_eng" />
