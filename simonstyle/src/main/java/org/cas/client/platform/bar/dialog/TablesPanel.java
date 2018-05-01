@@ -2,7 +2,6 @@ package org.cas.client.platform.bar.dialog;
 
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,79 +9,22 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.Socket;
-import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.EventListener;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.comm.CommPortIdentifier;
-import javax.comm.ParallelPort;
-import javax.comm.PortInUseException;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
-import org.cas.client.platform.bar.beans.ArrayButton;
 import org.cas.client.platform.bar.beans.TableButton;
-import org.cas.client.platform.bar.beans.MenuButton;
-import org.cas.client.platform.bar.beans.TableButton;
-import org.cas.client.platform.bar.model.Dish;
-import org.cas.client.platform.bar.model.Mark;
-import org.cas.client.platform.bar.model.Printer;
 import org.cas.client.platform.bar.model.User;
-import org.cas.client.platform.bar.model.Category;
-import org.cas.client.platform.bar.print.Command;
-import org.cas.client.platform.bar.print.WifiPrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
-import org.cas.client.platform.casutil.PIMPool;
-import org.cas.client.platform.contact.dialog.selectcontacts.SelectedNewMemberDlg;
 import org.cas.client.platform.pimmodel.PIMDBModel;
-import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
-import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
-import org.cas.client.platform.pimview.pimtable.PIMTable;
-import org.cas.client.platform.pimview.pimtable.PIMTableColumn;
-import org.cas.client.platform.pimview.pimtable.PIMTableRenderAgent;
-import org.cas.client.platform.pos.dialog.statistics.Statistic;
-import org.cas.client.platform.refund.dialog.RefundDlg;
-import org.cas.client.resource.international.DlgConst;
-import org.cas.client.resource.international.PaneConsts;
 
 //Identity表应该和Employ表合并。
 public class TablesPanel extends JPanel implements ComponentListener, ActionListener, FocusListener {
@@ -200,6 +142,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             } else if (o == btnLine_2_4) {
             } else if (o == btnLine_2_5) {
             } else if (o == btnLine_2_6) {
+                BarFrame.instance.switchMode(2);
             } else if (o == btnLine_2_7) {
             }else if (o == btnLine_2_8) {
             }else if (o == btnLine_2_9) {
@@ -218,13 +161,8 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     void reLayout() {
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        lblOperator.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblOperator.getPreferredSize().width,
-                lblOperator.getPreferredSize().height);
         int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 10) / 9;
         int tBtnHeight = panelHeight / 10;
-
-        lblStartTime.setBounds(panelWidth - lblStartTime.getPreferredSize().width - CustOpts.HOR_GAP,
-                lblOperator.getY(), lblStartTime.getPreferredSize().width, lblOperator.getHeight());
 
         // command buttons--------------
         // line 2
@@ -282,10 +220,6 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     }
 
     private void initComponent() {
-        startTime = Calendar.getInstance().getTime().toLocaleString();
-        lblOperator = new JLabel();
-        lblStartTime = new JLabel(BarDlgConst.StartTime.concat(BarDlgConst.Colon).concat(startTime));// @Todo:以后改为从服务器上获取。
-        
         btnLine_1_1 = new JButton(BarDlgConst.EXACT_AMOUNT);
         btnLine_1_2 = new JButton(BarDlgConst.CASH);
         btnLine_1_3 = new JButton(BarDlgConst.PAY);
@@ -310,9 +244,6 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         setLayout(null);
 
         // built
-        add(lblOperator);
-        add(lblStartTime);
-
         add(btnLine_2_1);
         add(btnLine_2_2);
         add(btnLine_2_3);
@@ -378,7 +309,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             while (rs.next()) {
             	TableButton tableToggleButton = new TableButton();
             	
-            	tableToggleButton.setIndex(tmpPos);
+            	tableToggleButton.setId(tmpPos);
             	tableToggleButton.setText(rs.getString("Name"));
             	tableToggleButton.setBounds(rs.getInt("posX"), rs.getInt("posY"), rs.getInt("width"), rs.getInt("height"));
             	tableToggleButton.setType(rs.getInt("type"));		//it's rectanglee or round?
@@ -398,9 +329,6 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 			ErrorUtil.write("Unexpected exception when init the tables from db." + e);
 		}
 	}
-
-    private JLabel lblOperator;
-    private JLabel lblStartTime;
 
     private JButton btnLine_1_1;
     private JButton btnLine_1_2;

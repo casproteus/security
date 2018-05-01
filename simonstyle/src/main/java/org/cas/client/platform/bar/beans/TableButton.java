@@ -4,14 +4,14 @@ import javax.swing.JButton;
 import javax.swing.JToggleButton;
 
 public class TableButton extends JButton {
-    private int index;
+    private int id;
     private int type;
 
     public TableButton() {
     }
 
-    public int getIndex() {
-        return index;
+    public int getId() {
+        return id;
     }
 
 	public int getType() {
@@ -22,8 +22,8 @@ public class TableButton extends JButton {
 		this.type = type;
 	}
 
-	public void setIndex(int index) {
-		this.index = index;
+	public void setId(int index) {
+		this.id = index;
 	}
 
 }

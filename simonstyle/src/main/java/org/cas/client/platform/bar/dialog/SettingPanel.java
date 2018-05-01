@@ -84,8 +84,6 @@ import org.cas.client.resource.international.PaneConsts;
 
 //Identity表应该和Employ表合并。
 public class SettingPanel extends JPanel implements ComponentListener, ActionListener, FocusListener {
-
-    private boolean isDragging;
     
     private int width = 24;
     private String code = "GBK";
@@ -151,7 +149,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
             ActionEvent e) {
         Object o = e.getSource();
         if (o instanceof JButton) {
-        	if(o == btnLine_2_9) {
+        	if(o == btnLine_1_1) {
+        		new SettingTabbleDlg(BarFrame.instance).setVisible(true);
+        	}else if(o == btnLine_2_9) {
         		LoginDlg.reset();
         		BarFrame.instance.switchMode(0);
         	}
@@ -220,8 +220,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         srpContent.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
                 (int) (getWidth() * tableWidth) - BarDlgConst.SCROLLBAR_WIDTH, topAreaHeight
                 - BarDlgConst.SubTotal_HEIGHT);
-        pnlTable.setSize(getWidth() - CustOpts.SIZE_EDGE*2, srpContent.getHeight());
-        pnlTable.setPreferredSize(new Dimension(getWidth() - CustOpts.SIZE_EDGE*2, srpContent.getHeight()));
         
         btnAddTable.setBounds(CustOpts.HOR_GAP + srpContent.getWidth(), srpContent.getY() + srpContent.getHeight()
                 - BarDlgConst.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH,
@@ -323,18 +321,15 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         
         btnAddTable = new ArrayButton("+");
         btnRemoveTable = new ArrayButton("-");
-        pnlTable = new JPanel();
-        srpContent = new PIMScrollPane(pnlTable);
+        srpContent = new PIMScrollPane();
 
         // properties
-        pnlTable.setLayout(null);
         setLayout(null);
         
         JLabel tLbl = new JLabel();
         tLbl.setOpaque(true);
         tLbl.setBackground(Color.GRAY);
         srpContent.setCorner(JScrollPane.LOWER_RIGHT_CORNER, tLbl);
-        TablesPanel.initTableBtns(pnlTable, this);
         Font tFont = PIMPool.pool.getFont((String) CustOpts.custOps.hash2.get(PaneConsts.DFT_FONT), Font.PLAIN, 40);
 
         // Margin-----------------
@@ -402,22 +397,14 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_1_7.addActionListener(this);
         btnLine_1_8.addActionListener(this);
         btnLine_1_9.addActionListener(this);
-        
-        pnlTable.addMouseMotionListener(new MouseMotionListener(){
-        	public void mouseDragged(MouseEvent e) {
-        		isDragging = true;
-        	}
-        	public void mouseMoved(MouseEvent e) {}
-        });
     }
-
 
     private JLabel lblSubTotle;
     private JLabel lblGSQ;
     private JLabel lblQSQ;
     private JLabel lblTotlePrice;
     
-    private JPanel pnlTable;
+//    private JPanel pnlTable;
     
     private JButton btnLine_1_1;
     private JButton btnLine_1_2;
