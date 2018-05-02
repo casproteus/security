@@ -58,6 +58,10 @@ class PIMDBConnecter {
         if (connection == null) {
             JOptionPane.showMessageDialog(null, DlgConst.UNNORMALCLOSED);
             connection = buildConnection(defaultUserName, defaultPassword);
+            if(connection == null) {
+            	ErrorUtil.write("Cannot generate coneection to db, system exit.");
+            	System.exit(0);
+            }
         }
 
         try {

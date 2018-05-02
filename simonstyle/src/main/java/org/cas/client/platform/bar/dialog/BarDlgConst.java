@@ -36,7 +36,8 @@ public interface BarDlgConst {
     String QUICK_OPEN = "QUICK OPEN";
     String MODIFY = "MODIFY";
     String DISC_VOLUMN = "DISC VOLUMN";
-    
+
+    String Printer = "Printer";
     String Printer1 = "Printer1";
     String Printer2 = "Printer2";
     String Printer3 = "Printer3";
@@ -163,6 +164,7 @@ public interface BarDlgConst {
     String ProfitStatChange = "阶段盈利情况统计";
 
     String Name = "Name";
+    String IPAddress = "IPAddress";
     String JobTitle = "职位";
     String NickName = "昵称";
     String Cellphone = "手机";

@@ -151,6 +151,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         if (o instanceof JButton) {
         	if(o == btnLine_1_1) {
         		new SettingTabbleDlg(BarFrame.instance).setVisible(true);
+        	}else if(o == btnLine_1_2) {
+        		new SettingPrinterDlg(BarFrame.instance).setVisible(true);
         	}else if(o == btnLine_2_9) {
         		LoginDlg.reset();
         		BarFrame.instance.switchMode(0);
@@ -221,21 +223,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
                 (int) (getWidth() * tableWidth) - BarDlgConst.SCROLLBAR_WIDTH, topAreaHeight
                 - BarDlgConst.SubTotal_HEIGHT);
         
-        btnAddTable.setBounds(CustOpts.HOR_GAP + srpContent.getWidth(), srpContent.getY() + srpContent.getHeight()
-                - BarDlgConst.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH,
-                BarDlgConst.SCROLLBAR_WIDTH);
-        btnRemoveTable.setBounds(btnAddTable.getX(), btnAddTable.getY() + btnAddTable.getHeight()
-                + CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH);
-
-        // sub total-------
-        lblGSQ.setBounds(srpContent.getX(), srpContent.getY() + srpContent.getHeight(), srpContent.getWidth() / 4,
-                BarDlgConst.SubTotal_HEIGHT * 1 / 3);
-        lblQSQ.setBounds(lblGSQ.getX() + lblGSQ.getWidth(), lblGSQ.getY(), lblGSQ.getWidth(), lblGSQ.getHeight());
-        lblSubTotle.setBounds(lblQSQ.getX() + lblQSQ.getWidth(), lblGSQ.getY(), lblQSQ.getWidth() * 2,
-                lblGSQ.getHeight());
-        lblTotlePrice.setBounds(lblSubTotle.getX(), lblSubTotle.getY() + lblSubTotle.getHeight(),
-                lblSubTotle.getWidth(), BarDlgConst.SubTotal_HEIGHT * 2 / 3);
-
         //menu area----------
         int xMenuArea = srpContent.getX() + srpContent.getWidth() + CustOpts.HOR_GAP + BarDlgConst.SCROLLBAR_WIDTH;
         int widthMenuArea =
@@ -294,33 +281,26 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     }
 
     private void initComponent() {
-        lblSubTotle = new JLabel(BarDlgConst.Subtotal);
-        lblGSQ = new JLabel(BarDlgConst.QST);
-        lblQSQ = new JLabel(BarDlgConst.GST);
-        lblTotlePrice = new JLabel(BarDlgConst.Total);
-        
         btnLine_1_1 = new JButton(BarDlgConst.Table);
-        btnLine_1_2 = new JButton(BarDlgConst.CASH);
-        btnLine_1_3 = new JButton(BarDlgConst.PAY);
+        btnLine_1_2 = new JButton(BarDlgConst.Printer);
+        btnLine_1_3 = new JButton("");
         btnLine_1_4 = new JToggleButton("");//BarDlgConst.REMOVE);
         btnLine_1_5 = new JToggleButton("");//BarDlgConst.VOID_ITEM);
-        btnLine_1_6 = new JButton(BarDlgConst.SPLIT_BILL);
-        btnLine_1_7 = new JToggleButton(BarDlgConst.QTY);
-        btnLine_1_8 = new JButton(BarDlgConst.DISC_ITEM);
-        btnLine_1_9 = new JButton(BarDlgConst.SEND);
+        btnLine_1_6 = new JButton("");
+        btnLine_1_7 = new JToggleButton("");
+        btnLine_1_8 = new JButton("");
+        btnLine_1_9 = new JButton("");
         
-        btnLine_2_1 = new JButton(BarDlgConst.DEBIT);
-        btnLine_2_2 = new JButton(BarDlgConst.VISA);
-        btnLine_2_3 = new JButton(BarDlgConst.MASTER);
-        btnLine_2_4 = new JButton(BarDlgConst.CANCEL_ALL);
-        btnLine_2_5 = new JButton(BarDlgConst.VOID_ORDER);
-        btnLine_2_6 = new JButton(BarDlgConst.SETTINGS);
-        btnLine_2_7 = new JButton(BarDlgConst.PRINT_BILL);
+        btnLine_2_1 = new JButton("");
+        btnLine_2_2 = new JButton("");
+        btnLine_2_3 = new JButton("");
+        btnLine_2_4 = new JButton("");
+        btnLine_2_5 = new JButton("");
+        btnLine_2_6 = new JButton("");
+        btnLine_2_7 = new JButton("");
         btnLine_2_9 = new JButton(BarDlgConst.RETURN);
-        btnLine_2_8 = new JButton(BarDlgConst.MORE);
-        
-        btnAddTable = new ArrayButton("+");
-        btnRemoveTable = new ArrayButton("-");
+        btnLine_2_8 = new JButton("");
+
         srpContent = new PIMScrollPane();
 
         // properties
@@ -332,19 +312,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         srpContent.setCorner(JScrollPane.LOWER_RIGHT_CORNER, tLbl);
         Font tFont = PIMPool.pool.getFont((String) CustOpts.custOps.hash2.get(PaneConsts.DFT_FONT), Font.PLAIN, 40);
 
-        // Margin-----------------
-        btnAddTable.setMargin(new Insets(0,0,0,0));
-        btnRemoveTable.setMargin(btnAddTable.getInsets());
-
-        // disables
-        btnAddTable.setEnabled(false);
-
         // built
-        add(lblSubTotle);
-        add(lblGSQ);
-        add(lblQSQ);
-        add(lblTotlePrice);
-
         add(btnLine_2_1);
         add(btnLine_2_2);
         add(btnLine_2_3);
@@ -365,9 +333,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(btnLine_1_8);
         add(btnLine_1_9);
 
-        add(btnAddTable);
-        add(btnRemoveTable);
-
         add(srpContent);
 
         // add listener
@@ -375,9 +340,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 
         // 因为考虑到条码经常由扫描仪输入，不一定是靠键盘，所以专门为他加了DocumentListener，通过监视内容变化来自动识别输入完成，光标跳转。
         // tfdProdNumber.getDocument().addDocumentListener(this); // 而其它组件如实收金额框不这样做为了节约（一个KeyListener接口全搞定）
-        btnAddTable.addActionListener(this);
-        btnRemoveTable.addActionListener(this);
-
         btnLine_2_1.addActionListener(this);
         btnLine_2_2.addActionListener(this);
         btnLine_2_3.addActionListener(this);
@@ -399,13 +361,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_1_9.addActionListener(this);
     }
 
-    private JLabel lblSubTotle;
-    private JLabel lblGSQ;
-    private JLabel lblQSQ;
-    private JLabel lblTotlePrice;
-    
-//    private JPanel pnlTable;
-    
     private JButton btnLine_1_1;
     private JButton btnLine_1_2;
     private JButton btnLine_1_3;
@@ -425,9 +380,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     private JButton btnLine_1_9;
     private JButton btnLine_2_8;
     private JButton btnLine_2_9;
-
-    private ArrayButton btnAddTable;
-    private ArrayButton btnRemoveTable;
 
     private PIMScrollPane srpContent;
     private String[] header = new String[] { BarDlgConst.ProdNumber, BarDlgConst.ProdName, BarDlgConst.Size, BarDlgConst.Count,

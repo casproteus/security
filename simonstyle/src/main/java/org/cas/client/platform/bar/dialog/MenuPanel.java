@@ -23,6 +23,7 @@ import org.cas.client.platform.bar.model.Printer;
 import org.cas.client.platform.bar.print.WifiPrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
 public class MenuPanel extends JPanel implements ActionListener {
@@ -147,8 +148,7 @@ public class MenuPanel extends JPanel implements ActionListener {
             productRS.close();// 关闭
             
             //load all printers--------------------------
-			String sql = "select ID, Type, UserName, PASSWORD, LANG from useridentity where Type = 'PRINTER'";
-
+			String sql = "select * from hardware where category = 0";
 			ResultSet rs = statement.executeQuery(sql);
 
 			ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
@@ -161,10 +161,10 @@ public class MenuPanel extends JPanel implements ActionListener {
 			while (rs.next()) {
 				printers[tmpPos] = new Printer();
 				printers[tmpPos].setId(rs.getInt("id"));
-				printers[tmpPos].setPname(rs.getString("UserName"));
-				printers[tmpPos].setIp(rs.getString("PASSWORD"));
-				printers[tmpPos].setFirstPrint(rs.getInt("TYPE")); // index p1, p2.....
-				printers[tmpPos].setType(rs.getInt("LANG"));
+				printers[tmpPos].setPname(rs.getString("name"));
+				printers[tmpPos].setIp(rs.getString("ip"));
+				printers[tmpPos].setFirstPrint(rs.getInt("style")); // index p1, p2.....
+				printers[tmpPos].setType(rs.getInt("langType"));
 				tmpPos++;
 			}
 			rs.close();
@@ -174,15 +174,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	        }
 			
         } catch (Exception e) {
-           // ErrorUtil.write(e);
-          //TODDO: delete this line
-            Printer[] printers = new Printer[1];
-			printers[0] = new Printer();
-			printers[0].setPname("p1");
-			printers[0].setIp("192.168.1.88");
-			printers[0].setFirstPrint(1); // index p1, p2.....
-			printers[0].setType(0);
-			WifiPrintService.ipPrinterMap.put(printers[0].getIp(),printers[0]);
+            ErrorUtil.write(e);
         }
         reInitCategoryAndMenuBtns();
     }

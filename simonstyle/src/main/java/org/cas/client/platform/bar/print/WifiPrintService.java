@@ -149,8 +149,8 @@ public class WifiPrintService{
             		return i;	//stop here, and return the error index.
             	}
         	}
-        	ipContentMap.remove(entry.getKey());
         }
+    	ipContentMap.clear();
         return SUCCESS;
     }
     

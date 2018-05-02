@@ -220,25 +220,25 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     }
 
     private void initComponent() {
-        btnLine_1_1 = new JButton(BarDlgConst.EXACT_AMOUNT);
-        btnLine_1_2 = new JButton(BarDlgConst.CASH);
-        btnLine_1_3 = new JButton(BarDlgConst.PAY);
+        btnLine_1_1 = new JButton("");
+        btnLine_1_2 = new JButton("");
+        btnLine_1_3 = new JButton("");
         btnLine_1_4 = new JToggleButton("");//BarDlgConst.REMOVE);
         btnLine_1_5 = new JToggleButton("");//BarDlgConst.VOID_ITEM);
-        btnLine_1_6 = new JButton(BarDlgConst.SPLIT_BILL);
-        btnLine_1_7 = new JToggleButton(BarDlgConst.QTY);
-        btnLine_1_8 = new JButton(BarDlgConst.DISC_ITEM);
-        btnLine_1_9 = new JButton(BarDlgConst.PRINT_BILL);
+        btnLine_1_6 = new JButton("");
+        btnLine_1_7 = new JToggleButton("");
+        btnLine_1_8 = new JButton("");
+        btnLine_1_9 = new JButton("");
         
-        btnLine_2_1 = new JButton(BarDlgConst.DEBIT);
-        btnLine_2_2 = new JButton(BarDlgConst.VISA);
-        btnLine_2_3 = new JButton(BarDlgConst.MASTER);
-        btnLine_2_4 = new JButton(BarDlgConst.CANCEL_ALL);
-        btnLine_2_5 = new JButton(BarDlgConst.VOID_ORDER);
+        btnLine_2_1 = new JButton("");
+        btnLine_2_2 = new JButton("");
+        btnLine_2_3 = new JButton("");
+        btnLine_2_4 = new JButton("");
+        btnLine_2_5 = new JButton("");
         btnLine_2_6 = new JButton(BarDlgConst.SETTINGS);
-        btnLine_2_7 = new JButton(BarDlgConst.RETURN);
-        btnLine_2_8 = new JButton(BarDlgConst.MORE);
-        btnLine_2_9 = new JButton(BarDlgConst.SEND);
+        btnLine_2_7 = new JButton("");
+        btnLine_2_8 = new JButton("");
+        btnLine_2_9 = new JButton("");
 
         // border----------
         setLayout(null);

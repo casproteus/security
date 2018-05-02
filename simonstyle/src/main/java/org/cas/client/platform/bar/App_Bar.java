@@ -112,36 +112,55 @@ public class App_Bar extends AbstractApp {
     /** 每个希望加入到PIM系统的应用都必须实现该方法，使系统在ViewInfo系统表中为其初始化ViewInfo。 */
     @Override
     public void initInfoInDB() {
-        // 增建一个Table表。select ID, Name, posX, posY, width, height, type from Tables order by DSP_INDEX"
-        String sql =
-                "CREATE CACHED TABLE DINING_TABLE (ID INTEGER IDENTITY PRIMARY KEY, name VARCHAR(255),"
-                .concat(" DSP_INDEX INTEGER, posX INTEGER, posY INTEGER, width INTEGER, height INTEGER, type INTEGER, billNum INTEGER, status INTEGER);");
+        Statement stm = PIMDBModel.getStatement();
         try {
-            Statement stmt = PIMDBModel.getStatement();
-            stmt.executeUpdate(sql);
+            // 增建一个dining_Table表。select ID, Name, posX, posY, width, height, type from Tables order by DSP_INDEX"
+            String sql =
+                    "CREATE CACHED TABLE DINING_TABLE (ID INTEGER IDENTITY PRIMARY KEY, name VARCHAR(255),"
+                    .concat(" DSP_INDEX INTEGER, posX INTEGER, posY INTEGER, width INTEGER, height INTEGER, type INTEGER, billNum INTEGER, status INTEGER);");
+            stm.executeUpdate(sql);
             
             sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T1', '0', 10, 10, 120, 60, 0)";
-            stmt.executeUpdate(sql);
+            stm.executeUpdate(sql);
             sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T2', '1', 160, 10, 120, 60, 0)";
-            stmt.executeUpdate(sql);
+            stm.executeUpdate(sql);
             sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T3', '2', 320, 10, 120, 60, 0)";
-            stmt.executeUpdate(sql);
+            stm.executeUpdate(sql);
             sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T4', '3', 480, 10, 120, 60, 0)";
-            stmt.executeUpdate(sql);
+            stm.executeUpdate(sql);
             sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T5', '4', 640, 10, 120, 60, 0)";
-            stmt.executeUpdate(sql);
+            stm.executeUpdate(sql);
             sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T6', '5', 10, 10, 120, 60, 0)";
-            stmt.executeUpdate(sql);
+            stm.executeUpdate(sql);
             sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T7', '6', 160, 110, 120, 60, 0)";
-            stmt.executeUpdate(sql);
+            stm.executeUpdate(sql);
             sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T8', '7', 320, 110, 120, 60, 0)";
-            stmt.executeUpdate(sql);
+            stm.executeUpdate(sql);
             sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T9', '8', 480, 110, 120, 60, 0)";
-            stmt.executeUpdate(sql);
+            stm.executeUpdate(sql);
             sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T10', '9', 640, 110, 120, 60, 0)";
-            stmt.executeUpdate(sql);
+            stm.executeUpdate(sql);
 
-            stmt.close();
+            //create a printer device table
+            sql =
+                    "CREATE CACHED TABLE Hardware (ID INTEGER IDENTITY PRIMARY KEY, name VARCHAR(255),"
+                    .concat(" category INTEGER, langType INTEGER,  ip VARCHAR(255), style INTEGER, status INTEGER);");
+            stm.executeUpdate(sql);
+
+            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P1', 0, 0, '192.168.1.86', 1, 0)";	//打印机，全打
+            stm.executeUpdate(sql);
+            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P2', 0, 0, '192.168.1.87', 0, 0)";
+            stm.executeUpdate(sql);
+            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P3', 0, 0, '192.168.1.88', 0, 0)";
+            stm.executeUpdate(sql);
+            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P4', 0, 0, '192.168.1.89', 0, 0)";
+            stm.executeUpdate(sql);
+            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P5', 0, 0, '192.168.1.90', 0, 0)";
+            stm.executeUpdate(sql);
+            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P6', 0, 0, '192.168.1.91', 0, 0)";
+            stm.executeUpdate(sql);
+            
+            stm.close();
         } catch (Exception e) {
         	ErrorUtil.write(e);
         }
