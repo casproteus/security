@@ -380,7 +380,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                         .append(cbxGST.isSelected() ? "1" : "0").append(", ")
                         .append(cbxQST.isSelected() ? "1" : "0").append(", ")
                         .append(getSelectedSize()).append(", '")
-                        .append(getSeletedPrinterString()).append("', '")
+                        .append(getSeletedPrinterIdStr()).append("', '")
                         .append(newCategory).append("', ")
                         .append(newIndex).append(", '")
                         .append(cbxPricePomp.isSelected() ? "true" : "false").append("', '")
@@ -412,7 +412,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 	                    .append(", FOLDERID = ").append(cbxGST.isSelected() ? "1" : "0")
 	                    .append(", store = ").append(cbxQST.isSelected() ? "1" : "0")
 	                    .append(", Cost = ").append(getSelectedSize())
-	                    .append(", BRAND = '").append(getSeletedPrinterString())
+	                    .append(", BRAND = '").append(getSeletedPrinterIdStr())
 	                    .append("', CATEGORY = '").append(newCategory)
 	                    .append("', INDEX = ").append(newIndex)
 	                    .append(", CONTENT = '").append(cbxPricePomp.isSelected() ? "true" : "false")
@@ -446,11 +446,12 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         		|| menuPanel.onScrDishNameMetrix[0][dspIndex - 1].length() < 1;
     }
 
-    private String getSeletedPrinterString() {
+    //save printer id into dish relevant printer field. so when name changed, the dish can still find printer.
+    private String getSeletedPrinterIdStr() {
         StringBuilder selectedPrinters = new StringBuilder();
         for(int i = 0; i < cbxPrinters.length; i++) {
             if (cbxPrinters[i].isSelected())
-                selectedPrinters.append(i).append(",");
+                selectedPrinters.append(menuPanel.printers[i].getId()).append(",");
         }
         return selectedPrinters.toString();
     }
@@ -491,28 +492,19 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 
         sptSize = new PIMSeparator(BarDlgConst.Size);
         rdbSizes = new JRadioButton[6];
-        rdbSizes[0] = new JRadioButton(BarDlgConst.Size1);
-        rdbSizes[1] = new JRadioButton(BarDlgConst.Size2);
-        rdbSizes[2] = new JRadioButton(BarDlgConst.Size3);
-        rdbSizes[3] = new JRadioButton(BarDlgConst.Size4);
-        rdbSizes[4] = new JRadioButton(BarDlgConst.Size5);
-        rdbSizes[5] = new JRadioButton(BarDlgConst.Size6);
         ButtonGroup group = new ButtonGroup();
-        group.add(rdbSizes[0]);
-        group.add(rdbSizes[1]);
-        group.add(rdbSizes[2]);
-        group.add(rdbSizes[3]);
-        group.add(rdbSizes[4]);
-        group.add(rdbSizes[5]);
-
+        for(int i = 0; i < 6; i++) {
+            rdbSizes[i] = new JRadioButton(BarDlgConst.Sizes[i]);
+            group.add(rdbSizes[i]);
+            getContentPane().add(rdbSizes[i]);
+        }
+        
         sptPrinter = new PIMSeparator(BarDlgConst.PRINTER);
         cbxPrinters = new JCheckBox[6];
-        cbxPrinters[0] = new JCheckBox(BarDlgConst.Printer1);
-        cbxPrinters[1] = new JCheckBox(BarDlgConst.Printer2);
-        cbxPrinters[2] = new JCheckBox(BarDlgConst.Printer3);
-        cbxPrinters[3] = new JCheckBox(BarDlgConst.Printer4);
-        cbxPrinters[4] = new JCheckBox(BarDlgConst.Printer5);
-        cbxPrinters[5] = new JCheckBox(BarDlgConst.Printer6);
+        for(int i = 0; i < 6; i++) {
+	        cbxPrinters[i] = new JCheckBox(menuPanel.printers[i].getPname());
+	        getContentPane().add(cbxPrinters[i]);
+        }
 
         sptOther = new PIMSeparator(OptionDlgConst.OPTION_OTHER);
         cbxPricePomp = new JCheckBox(BarDlgConst.PricePomp);
@@ -543,6 +535,8 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         getContentPane().add(lblLanguages[2]);
         getContentPane().add(tfdLanguages[2]);
 
+        getContentPane().add(sptPrinter);
+        
         getContentPane().add(sptPrice);
         getContentPane().add(lblPrice);
         getContentPane().add(tfdPrice);
@@ -550,20 +544,6 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         getContentPane().add(cbxGST);
 
         getContentPane().add(sptSize);
-        getContentPane().add(rdbSizes[0]);
-        getContentPane().add(rdbSizes[1]);
-        getContentPane().add(rdbSizes[2]);
-        getContentPane().add(rdbSizes[3]);
-        getContentPane().add(rdbSizes[4]);
-        getContentPane().add(rdbSizes[5]);
-
-        getContentPane().add(sptPrinter);
-        getContentPane().add(cbxPrinters[0]);
-        getContentPane().add(cbxPrinters[1]);
-        getContentPane().add(cbxPrinters[2]);
-        getContentPane().add(cbxPrinters[3]);
-        getContentPane().add(cbxPrinters[4]);
-        getContentPane().add(cbxPrinters[5]);
 
         getContentPane().add(sptOther);
         getContentPane().add(lblCategory);

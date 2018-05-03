@@ -55,8 +55,18 @@ public class WifiPrintService{
     public static final int POS_SUCCESS=1000;		//success
     public static final int ERR_PROCESSING = 1001;	//processing error
     public static final int ERR_PARAM = 1002;		//parameter error
-
-    public static int exePrintCommand(List<Dish> selectdDishAry, String curTable){
+    
+    private static String mapToIP(Printer[] printers, int id){
+    	String ip = "";
+    	for (Printer printer : printers) {
+			if(printer.getId() == id) {
+				return printer.getIp();
+			}
+		}
+    	return ip;
+    }
+    
+    public static int exePrintCommand(List<Dish> selectdDishAry, Printer[] printers, String curTable){
         //ErrorUtil.(TAG,"start to translate selection into ipContent for printing.");
         if(!isIpContentMapEmpty()){
         	return printContents();
@@ -67,9 +77,11 @@ public class WifiPrintService{
         //1、遍历每个选中的菜，并分别遍历加在其上的打印机。并在ipSelectionsMap上对应IP后面增加菜品
         for(Dish dish : selectdDishAry){
             String printerStr = dish.getPrinter();
-            //TODO: delete me 
-            printerStr = "192.168.1.88,";
-            String[] ips = printerStr.split(",");
+            String[] ids = printerStr.split(",");
+            String[] ips = new String[ids.length];
+            for(int i = 0; i < ids.length; i++) {
+            	ips[i] = mapToIP(printers, Integer.valueOf(ids[i]));
+            }
             for(String ip: ips) {
                 Printer printer = ipPrinterMap.get(ip);
                 if(printer == null) {                   //should never happen, jist in case someone changed db.

@@ -214,7 +214,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         	if (o == btnLine_1_1) {
             } else if (o == btnLine_1_9) {//send
             	List<Dish> newDishes = getNewDishes();
-            	 //if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
+            	
+            	//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
             	if(newDishes.size() == selectdDishAry.size()) {
             		try {
 	                    Statement smt =  PIMDBModel.getReadOnlyStatement();
@@ -231,8 +232,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	}
             	
             	//send to printer
-            	//prepare the printing String
-            	if(WifiPrintService.SUCCESS != WifiPrintService.exePrintCommand(newDishes, BarFrame.btnCurTable.getText())) {
+            	//prepare the printing String and do printing
+            	if(WifiPrintService.SUCCESS != WifiPrintService.exePrintCommand(newDishes, BarFrame.instance.menuPanel.printers, BarFrame.btnCurTable.getText())) {
             		BarFrame.setStatusMes("WARNING!!!!!!!!!!!!! print error, please try again.");
             		return;
             	}
@@ -245,9 +246,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 //                    		continue;
                     	
                     	String time = new Date().toLocaleString();
+                    	String curBillId = BarFrame.instance.lblCurBill.getText();
+                    	if("0".equals(curBillId))
+                    		curBillId = "1";
 	                    StringBuilder sql = new StringBuilder(
 	                        "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME) VALUES ('")
-	                        .append(BarFrame.btnCurTable.getText()).append("', ")	//subject ->table id
+	                        .append(curBillId).append("', ")	//subject ->table id
 	                        .append(BarFrame.instance.lblCurBill.getText()).append(", ")			//contactID ->bill id
 	                        .append(dish.getId()).append(", ")	//productid
 	                        .append(dish.getNum()).append(", ")	//amount
@@ -269,8 +273,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	                        .append(time).append("'");
 	                    ResultSet rs = smt.executeQuery(sql.toString());
 	                    rs.beforeFirst();
-	                    rs.next();
-	                    dish.setOutputID(rs.getInt("id"));
+                        while (rs.next()) {
+                        	dish.setOutputID(rs.getInt("id"));
+                        }
+	                    
 	                    rs.close();
                     }
                     smt.close();

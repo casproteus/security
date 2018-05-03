@@ -38,12 +38,6 @@ public interface BarDlgConst {
     String DISC_VOLUMN = "DISC VOLUMN";
 
     String Printer = "Printer";
-    String Printer1 = "Printer1";
-    String Printer2 = "Printer2";
-    String Printer3 = "Printer3";
-    String Printer4 = "Printer4";
-    String Printer5 = "Printer5";
-    String Printer6 = "Printer6";
 
     String ADMIN_MODE = "System is in setting mode! Click logout button back to use mode.";
     String USE_MODE = "System is in operating mode!";
@@ -130,12 +124,7 @@ public interface BarDlgConst {
 
     String EncodeStyle = "编码方式：";
     String Size = "Size";
-    String Size1 = "Size1";
-    String Size2 = "Size2";
-    String Size3 = "Size3";
-    String Size4 = "Size4";
-    String Size5 = "Size5";
-    String Size6 = "Size6";
+    String[] Sizes = {"Size1","Size2","Size3","Size4","Size5","Size6"};
 
     String DspServer = "显示服务器";
     String DspSuperTool = "显示JPOS工具";

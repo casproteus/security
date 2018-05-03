@@ -47,11 +47,11 @@ public class MenuPanel extends JPanel implements ActionListener {
     String[][] dishNameMetrix;// the struction must be [3][index]. it's more convenient than [index][3]
     String[][] onScrDishNameMetrix;// it's sub set of all menuNameMetrix
     private ArrayList<ArrayList<MenuButton>> onSrcMenuBtnMatrix = new ArrayList<ArrayList<MenuButton>>();
-    
+
+    Printer[] printers;
     private Dish[] dishAry;
     private Dish[] onScrDishAry;
     ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
-
 	public MenuPanel() {
 		
 		btnPageUpCategory = new ArrayButton("↑");
@@ -148,14 +148,14 @@ public class MenuPanel extends JPanel implements ActionListener {
             productRS.close();// 关闭
             
             //load all printers--------------------------
-			String sql = "select * from hardware where category = 0";
+			String sql = "select * from hardware where category = 0 order by id";
 			ResultSet rs = statement.executeQuery(sql);
 
 			ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
 			rs.afterLast();
 			rs.relative(-1);
 			tmpPos = rs.getRow();
-			Printer[] printers = new Printer[tmpPos];
+			printers = new Printer[tmpPos];
 			rs.beforeFirst();
 			tmpPos = 0;
 			while (rs.next()) {

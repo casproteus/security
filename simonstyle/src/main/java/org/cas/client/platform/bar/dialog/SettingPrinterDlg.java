@@ -204,7 +204,7 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
     }
 
     private void initContent() {
-    	 String sql = "select * from hardware where category = 0 and status = 0"; // 是否存在上没有名字的产品？
+    	 String sql = "select * from hardware where category = 0 and status = 0 order by id"; // 是否存在上没有名字的产品？
          try {
              ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
              rs.afterLast();
