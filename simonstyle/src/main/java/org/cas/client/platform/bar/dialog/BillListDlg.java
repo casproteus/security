@@ -72,7 +72,6 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
      			btns.add(tableToggleButton);
      			
      			add(tableToggleButton);
-     			tableToggleButton.addActionListener(this);
              }
              btns.add(btnAddUser);
              rs.close();// 关闭
@@ -161,10 +160,8 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 			BarFrame.instance.lblCurBill.setText("0");
 			BarFrame.instance.switchMode(1);
 		}else {
-    		if(!o.getText().equals(BarFrame.instance.lblCurBill.getText())) {
-    			BarFrame.instance.lblCurBill.setText(o.getText());
-            	BarFrame.instance.switchMode(1);
-    		}
+    		BarFrame.instance.lblCurBill.setText(o.getText());
+            BarFrame.instance.switchMode(1);
 		}
 
 		this.setVisible(false);

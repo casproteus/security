@@ -117,11 +117,11 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         	}else {
 				try {
 					Statement smt = PIMDBModel.getReadOnlyStatement();
-					ResultSet rs = smt.executeQuery(
-							"select billNum from dining_Table where name = '" + tableToggle.getText() + "'");
+		            ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
+		                    + tableToggle.getText() + "' and deleted = false order by contactID");
 					rs.afterLast();
 					rs.relative(-1);
-					int num = rs.getInt("billNum");
+					int num = rs.getRow();
 
 					if (num == 0) { // check if it's empty
 						BarFrame.instance.lblCurBill.setText("0");
@@ -302,7 +302,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             Statement smt = PIMDBModel.getReadOnlyStatement();
 
             // load all the categorys---------------------------
-            ResultSet rs = smt.executeQuery("select ID, Name, posX, posY, width, height, type, billNum, status from dining_Table order by DSP_INDEX");
+            ResultSet rs = smt.executeQuery("select ID, Name, posX, posY, width, height, type, status from dining_Table order by DSP_INDEX");
             rs.beforeFirst();
 
             int tmpPos = 0;

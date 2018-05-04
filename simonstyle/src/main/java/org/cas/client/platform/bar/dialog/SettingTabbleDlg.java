@@ -244,7 +244,7 @@ public class SettingTabbleDlg extends JDialog implements ICASDialog, ActionListe
             Statement smt = PIMDBModel.getReadOnlyStatement();
 
             // load all the categorys---------------------------
-            ResultSet rs = smt.executeQuery("select ID, Name, posX, posY, width, height, type, billNum, status from dining_Table order by DSP_INDEX");
+            ResultSet rs = smt.executeQuery("select ID, Name, posX, posY, width, height, type, status from dining_Table order by DSP_INDEX");
             rs.beforeFirst();
 
             while (rs.next()) {

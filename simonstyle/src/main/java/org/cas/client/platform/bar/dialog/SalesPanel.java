@@ -212,23 +212,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         //JButton------------------------------------------------------------------------------------------------
         else if (o instanceof JButton) {
         	if (o == btnLine_1_1) {
+        		
             } else if (o == btnLine_1_9) {//send
             	List<Dish> newDishes = getNewDishes();
             	
             	//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
             	if(newDishes.size() == selectdDishAry.size()) {
-            		try {
-	                    Statement smt =  PIMDBModel.getReadOnlyStatement();
-	                    smt.executeQuery("update dining_Table set billNum = billNum + 1 WHERE name = '" + BarFrame.btnCurTable.getText() + "'");
-	                    
-	                    ResultSet rs = smt.executeQuery("select billNum from dining_Table where name = '" + BarFrame.btnCurTable.getText() + "'");
-	                    rs.afterLast();
-	                    rs.relative(-1);
-	                    int i = rs.getInt("billNum");
-	                    BarFrame.instance.lblCurBill.setText(String.valueOf(i));
-            		}catch(Exception exp) {
-            			ErrorUtil.write(exp);
-            		}
+                    BarFrame.instance.lblCurBill.setText(getANewBillNumber());
             	}
             	
             	//send to printer
@@ -251,8 +241,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     		curBillId = "1";
 	                    StringBuilder sql = new StringBuilder(
 	                        "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME) VALUES ('")
-	                        .append(curBillId).append("', ")	//subject ->table id
-	                        .append(BarFrame.instance.lblCurBill.getText()).append(", ")			//contactID ->bill id
+	                        .append(BarFrame.btnCurTable.getText()).append("', ")	//subject ->table id
+	                        .append(curBillId).append(", ")			//contactID ->bill id
 	                        .append(dish.getId()).append(", ")	//productid
 	                        .append(dish.getNum()).append(", ")	//amount
 	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(", ")	//totalprice int
@@ -262,22 +252,23 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	                        .append(time).append("') ");
 	                    smt.executeUpdate(sql.toString());
 
-	                    sql = new StringBuilder("Select id from output where SUBJECT = '")
-	                        .append(BarFrame.btnCurTable.getText()).append("' and CONTACTID = ")
-	                        .append(BarFrame.instance.lblCurBill.getText()).append(" and PRODUCTID = ")
-	                        .append(dish.getId()).append(" and AMOUNT = ")
-	                        .append(dish.getNum()).append(" and TOLTALPRICE = ")
-	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = ")
-	                        .append(dish.getDiscount() * dish.getNum()).append(" and EMPLOYEEID = ")
-	                        .append(LoginDlg.USERID).append(" and TIME = '")
-	                        .append(time).append("'");
-	                    ResultSet rs = smt.executeQuery(sql.toString());
-	                    rs.beforeFirst();
-                        while (rs.next()) {
-                        	dish.setOutputID(rs.getInt("id"));
-                        }
-	                    
-	                    rs.close();
+	                    //in case some store need to stay in the interface after clicking the send button. 
+//	                    sql = new StringBuilder("Select id from output where SUBJECT = '")
+//	                        .append(BarFrame.btnCurTable.getText()).append("' and CONTACTID = ")
+//	                        .append(BarFrame.instance.lblCurBill.getText()).append(" and PRODUCTID = ")
+//	                        .append(dish.getId()).append(" and AMOUNT = ")
+//	                        .append(dish.getNum()).append(" and TOLTALPRICE = ")
+//	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = ")
+//	                        .append(dish.getDiscount() * dish.getNum()).append(" and EMPLOYEEID = ")
+//	                        .append(LoginDlg.USERID).append(" and TIME = '")
+//	                        .append(time).append("'");
+//	                    ResultSet rs = smt.executeQuery(sql.toString());
+//	                    rs.beforeFirst();
+//                        while (rs.next()) {
+//                        	dish.setOutputID(rs.getInt("id"));
+//                        }
+//	                    
+//	                    rs.close();
                     }
                     smt.close();
                     smt = null;
@@ -310,13 +301,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		tblSelectedDish.setSelectedRow(tValues.length - 1);
             		updateTotleArea();
             	}else {
-            		//update db, make billnum of dining-table 1 less.
-                	try {
-    	            	Statement smt =  PIMDBModel.getStatement();
-    	                smt.executeQuery("update dining_Table set status = 0 WHERE name = '" + BarFrame.btnCurTable.getText() + "'");
-                	}catch(Exception exp) {
-                		ErrorUtil.write(exp);
-                	}
+            		//update db.
+            		if(isLastBillOfCurTable()) {
+            			resetCurTableDBStatus();
+            		}
             		BarFrame.instance.switchMode(0);
             	}
             } else if (o == btnLine_2_5) { // void all includ saved ones
@@ -324,16 +312,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	for (Dish dish : selectdDishAry) {
             		Dish.delete(dish);
 				}
-            	//update db, make billnum of dining-table 1 less.
-            	try {
-	            	Statement smt =  PIMDBModel.getStatement();
-	                smt.executeQuery("update dining_Table set billNum = billNum - 1 WHERE name = '" + BarFrame.btnCurTable.getText() + "'");
-	                smt.executeQuery("update dining_Table set status = 0 WHERE name = '" + BarFrame.btnCurTable.getText() + "'");
-            	}catch(Exception exp) {
-            		ErrorUtil.write(exp);
-            	}
-            	
-            	resetTableArea();
+            	//if the bill amount is 1, cancel the selected status of the table.
+        		if(isLastBillOfCurTable()) {
+        			resetCurTableDBStatus();
+        		}
             	BarFrame.instance.switchMode(0);
             } else if (o == btnLine_2_6) { // enter the setting mode.(admin interface)
                 BarFrame.instance.switchMode(2);
@@ -373,7 +355,46 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         	}
         }
     }
-
+    
+    private String getANewBillNumber(){
+    	int num = 0;
+    	try {
+			Statement smt = PIMDBModel.getReadOnlyStatement();
+            ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
+                    + BarFrame.instance.btnCurTable.getText() + "' and deleted = false order by contactID");
+			rs.afterLast();
+			rs.relative(-1);
+			num = rs.getInt("contactID");
+		} catch (Exception exp) {
+			System.out.println("lagest num is 0.");
+		}
+    	return String.valueOf(num + 1);
+    }
+    
+    private boolean isLastBillOfCurTable(){
+    	int num = 0;
+    	try {
+			Statement smt = PIMDBModel.getReadOnlyStatement();
+            ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
+                    + BarFrame.instance.btnCurTable.getText() + "' and deleted = false order by contactID");
+			rs.afterLast();
+			rs.relative(-1);
+			num = rs.getRow();
+		} catch (Exception exp) {
+			ErrorUtil.write(exp);
+		}
+    	return num <= 1;
+    }
+    
+    private void resetCurTableDBStatus(){
+    	try {
+        	Statement smt =  PIMDBModel.getStatement();
+            smt.executeQuery("update dining_Table set status = 0 WHERE name = '" + BarFrame.btnCurTable.getText() + "'");
+    	}catch(Exception exp) {
+    		ErrorUtil.write(exp);
+    	}
+    }
+    
 	private List<Dish> getNewDishes() {
 		List<Dish> newDishes = new ArrayList<Dish>();
 		for (Dish dish : selectdDishAry) {
