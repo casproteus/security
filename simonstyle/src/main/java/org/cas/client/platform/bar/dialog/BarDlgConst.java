@@ -1,5 +1,7 @@
 package org.cas.client.platform.bar.dialog;
 
+import javax.swing.JButton;
+
 public interface BarDlgConst {
     int SCROLLBAR_WIDTH = 40;
     int SubTotal_HEIGHT = 50;
@@ -97,6 +99,12 @@ public interface BarDlgConst {
 
     String AddUser = "Add";
     String PrintAll = "Print All";
+
+    String EqualBill = "EqualBill";
+    String EqualItem = "EqualItem";
+    String SplitItem = "SplitItem";
+    String CombineAll = "CombineAll";
+	
     String CompleteAll = "Complete";
     String CancelAll = "Cancel All";
     String UserName = "用户名";

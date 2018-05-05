@@ -138,6 +138,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 	            if (LoginDlg.PASSED == true) {
 	            	valOperator.setText(LoginDlg.USERNAME);
 	            	valCurTable.setText(btnCurTable.getText());
+	            	//@note: lowdown a little the level, to enable the admin do sales work.
+	            	if ("admin".equalsIgnoreCase(LoginDlg.USERNAME))
+	            		 LoginDlg.USERTYPE = LoginDlg.USER_STATUS;
 	            }else {
 	            	return -1;
 	            }

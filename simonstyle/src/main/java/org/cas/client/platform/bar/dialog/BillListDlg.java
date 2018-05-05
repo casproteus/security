@@ -30,25 +30,43 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 		btns = new ArrayList<>();
 		btnAddUser = new JButton(BarDlgConst.AddUser);
 		btnPrintAll = new JButton(BarDlgConst.PrintAll);
+
+		btnEqualBill = new JButton(BarDlgConst.EqualBill);
+		btnEqualItem = new JButton(BarDlgConst.EqualItem);
+		btnSplitItem = new JButton(BarDlgConst.SplitItem);
+		btnCombineAll = new JButton(BarDlgConst.CombineAll);
+		
 		btnCompleteAll = new JButton(BarDlgConst.CompleteAll);
 		btnCancelAll = new JButton(BarDlgConst.CancelAll);
 		separator= new JSeparator();
 		
 		btnAddUser.setMargin(new Insets(0, 0, 0, 0));
-		btnPrintAll.setMargin(new Insets(0, 0, 0, 0));
-		btnCompleteAll.setMargin(new Insets(0, 0, 0, 0));
-		btnCancelAll.setMargin(new Insets(0, 0, 0, 0));
+		btnPrintAll.setMargin(btnAddUser.getMargin());
+		btnEqualBill.setMargin(btnAddUser.getMargin());
+		btnEqualItem.setMargin(btnAddUser.getMargin());
+		btnSplitItem.setMargin(btnAddUser.getMargin());
+		btnCombineAll.setMargin(btnAddUser.getMargin());
+		btnCompleteAll.setMargin(btnAddUser.getMargin());
+		btnCancelAll.setMargin(btnAddUser.getMargin());
 		
 		setLayout(null);
 		
 		add(btnAddUser);
 		add(separator);
 		add(btnPrintAll);
+		add(btnEqualBill);
+		add(btnEqualItem);
+		add(btnSplitItem);
+		add(btnCombineAll);
 		add(btnCompleteAll);
 		add(btnCancelAll);
 		
 		btnAddUser.addActionListener(this);
 		btnPrintAll.addActionListener(this);
+		btnEqualBill.addActionListener(this);
+		btnEqualItem.addActionListener(this);
+		btnSplitItem.addActionListener(this);
+		btnCombineAll.addActionListener(this);
 		btnCompleteAll.addActionListener(this);
 		btnCancelAll.addActionListener(this);
 
@@ -89,18 +107,32 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 		row = col == 1 ? btns.size() + 1 : row;	//if less than 5 button, then one button/row
 				
 		int width = col == 1 ?  
-				(CustOpts.BTN_WIDTH + CustOpts.HOR_GAP) * 3 + CustOpts.SIZE_EDGE * 2 + CustOpts.HOR_GAP * 3
+				(CustOpts.BTN_WIDTH + CustOpts.HOR_GAP) * 7 + CustOpts.SIZE_EDGE * 2 + CustOpts.HOR_GAP * 7
 				: (CustOpts.BTN_WIDTH + CustOpts.HOR_GAP) * col + CustOpts.HOR_GAP * 2 + CustOpts.SIZE_EDGE * 2;
 		int height = (CustOpts.BAR_HEIGHT + CustOpts.VER_GAP) * (row + 1) + CustOpts.SIZE_EDGE * 2 +  CustOpts.VER_GAP * 3;
 		setBounds(tbnTable.getX(), tbnTable.getY(), width , height);
 		
-		btnCancelAll.setBounds(width / 2 - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP * 2 - CustOpts.BTN_WIDTH/2, 
+		btnCancelAll.setBounds(width / 2 - (CustOpts.BTN_WIDTH + CustOpts.HOR_GAP) * 3 - CustOpts.BTN_WIDTH/2, 
 				getHeight() - CustOpts.SIZE_EDGE * 3 - CustOpts.VER_GAP * 3 - CustOpts.BTN_HEIGHT * 2,
 				CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
 		btnPrintAll.setBounds(btnCancelAll.getX() + btnCancelAll.getWidth() + CustOpts.HOR_GAP, 
 				btnCancelAll.getY(),
 				CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
-		btnCompleteAll.setBounds(btnPrintAll.getX() + btnPrintAll.getWidth() + CustOpts.HOR_GAP, 
+		
+		btnEqualBill.setBounds(btnPrintAll.getX() + btnPrintAll.getWidth() + CustOpts.HOR_GAP, 
+				btnPrintAll.getY(),
+				CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+		btnEqualItem.setBounds(btnEqualBill.getX() + btnEqualBill.getWidth() + CustOpts.HOR_GAP, 
+				btnPrintAll.getY(),
+				CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+		btnSplitItem.setBounds(btnEqualItem.getX() + btnEqualItem.getWidth() + CustOpts.HOR_GAP, 
+				btnPrintAll.getY(),
+				CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+		btnCombineAll.setBounds(btnSplitItem.getX() + btnSplitItem.getWidth() + CustOpts.HOR_GAP, 
+				btnPrintAll.getY(),
+				CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+		
+		btnCompleteAll.setBounds(btnCombineAll.getX() + btnCombineAll.getWidth() + CustOpts.HOR_GAP, 
 				btnPrintAll.getY(),
 				CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
 		separator.setBounds(CustOpts.HOR_GAP, 
@@ -171,6 +203,11 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 	JButton btnAddUser;
 	JSeparator separator;
 	JButton btnPrintAll;
+	JButton btnEqualBill;
+	JButton btnEqualItem;
+	JButton btnSplitItem;
+	JButton btnCombineAll;
+	
 	JButton btnCompleteAll;
 	JButton btnCancelAll;
 }
