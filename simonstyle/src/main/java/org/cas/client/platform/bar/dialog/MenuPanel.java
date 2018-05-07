@@ -433,7 +433,7 @@ public class MenuPanel extends JPanel implements ActionListener {
                     new DishDlg(BarFrame.instance, menuButton.getDish()).setVisible(true);
                 } else {
                     // add into table.
-                	((SalesPanel)BarFrame.instance.panels[1]).addContentToList(menuButton.getDish());
+                	((SalesPanel)BarFrame.instance.panels[1]).billPanel.addContentToList(menuButton.getDish());
                 }
             }
         } 

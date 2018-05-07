@@ -59,7 +59,7 @@ public interface BarDlgConst {
     String Profit = "当班盈利";
 
     String OtherCost = "其他开支";
-    String ProdNumber = "Index";
+    String ProdNumber = "Id";
     String ProdName = "Name";
     String Pinyin = "助记";
     String Count = "Number";
@@ -97,12 +97,13 @@ public interface BarDlgConst {
     String Change = "找零";
     String Continue = "继续收银";
 
-    String AddUser = "Add";
+    String AddUser = "Add Client";
     String PrintAll = "Print All";
 
     String EqualBill = "EqualBill";
     String EqualItem = "EqualItem";
     String SplitItem = "SplitItem";
+    String MoveItem = "MoveItem";
     String CombineAll = "CombineAll";
 	
     String CompleteAll = "Complete";

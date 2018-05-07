@@ -31,8 +31,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 
     public static BarFrame instance;
     int curPanel;
-    static TableButton btnCurTable = new TableButton();
     JLabel lblCurBill;
+    static NumberPanelDlg numberPanelDlg; 
     
     public static String startTime;
     
@@ -40,6 +40,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
             String[] args) {
         CASControl.ctrl.initModel();
         instance = new BarFrame();
+        numberPanelDlg = new NumberPanelDlg(instance);
         if(isSingleUser()) {
 	        new LoginDlg(instance).setVisible(true);
 	        if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
@@ -133,19 +134,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 			if (!adminAuthentication()) 
 				return -1;
 		}else if(i == 1) {
-			if(!isSingleUser()) {
-				new LoginDlg(null).setVisible(true);
-	            if (LoginDlg.PASSED == true) {
-	            	valOperator.setText(LoginDlg.USERNAME);
-	            	valCurTable.setText(btnCurTable.getText());
-	            	//@note: lowdown a little the level, to enable the admin do sales work.
-	            	if ("admin".equalsIgnoreCase(LoginDlg.USERNAME))
-	            		 LoginDlg.USERTYPE = LoginDlg.USER_STATUS;
-	            }else {
-	            	return -1;
-	            }
-			}
-			((SalesPanel)panels[i]).initTable();
+			((SalesPanel)panels[i]).billPanel.initTable();
 		}else if(i == 0) {
 			resetStatus();
 			TablesPanel panel = (TablesPanel)panels[i];
@@ -181,8 +170,6 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
             if ("admin".equalsIgnoreCase(LoginDlg.USERNAME)) {
             	valOperator.setText(LoginDlg.USERNAME);
-            	valCurTable.setText("");
-            	lblCurBill.setText("");
                 BarFrame.setStatusMes(BarDlgConst.ADMIN_MODE);
                 // @TODO: might need to do some modification on the interface.
                 revalidate();
@@ -351,9 +338,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     boolean hasClose; // 标志对话框是否已关闭
 
     private JLabel lblOperator;
-    private JLabel valOperator;
+    JLabel valOperator;
     private JLabel lblCurTable;
-    private JLabel valCurTable;
+    JLabel valCurTable;
     private JLabel lblBill;
     private JLabel lblShoestring;
     private JLabel lblStartTime;

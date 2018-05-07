@@ -83,11 +83,9 @@ import org.cas.client.resource.international.PaneConsts;
 import org.hsqldb.Table;
 
 //Identity表应该和Employ表合并。
-public class SalesPanel extends JPanel implements ComponentListener, ActionListener, FocusListener, ListSelectionListener, PIMTableRenderAgent {
-    
-    private boolean isDragging;
-    
-    String[][] categoryNameMetrix;
+public class SalesPanel extends JPanel implements ComponentListener, ActionListener, FocusListener {
+
+	String[][] categoryNameMetrix;
     ArrayList<ArrayList<CategoryToggleButton>> onSrcCategoryTgbMatrix = new ArrayList<ArrayList<CategoryToggleButton>>();
     CategoryToggleButton tgbActiveCategory;
     
@@ -95,15 +93,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     String[][] dishNameMetrix;// the struction must be [3][index]. it's more convenient than [index][3]
     String[][] onScrDishNameMetrix;// it's sub set of all menuNameMetrix
     private ArrayList<ArrayList<MenuButton>> onSrcMenuBtnMatrix = new ArrayList<ArrayList<MenuButton>>();
-    
-    private Dish[] dishAry;
-    private Dish[] onScrDishAry;
-    ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
-    
 
-    //flags
-    NumberPanelDlg numberPanelDlg; 
-    
     //for print
     public static String SUCCESS = "0";
     public static String ERROR = "2";
@@ -157,73 +147,22 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     public void actionPerformed(
             ActionEvent e) {
         Object o = e.getSource();
-        //array button------------------------------------------------------------------------------------------
-        if(o instanceof ArrayButton) {
-	        if (o == btnPageUpTable) {
-	            btnPageDownTable.setEnabled(true);
-	            if (true) {
-	                btnPageUpTable.setEnabled(false);
-	            }
-	        } else if (o == btnPageDownTable) {
-	            btnPageUpTable.setEnabled(true);
-	            if (true) {
-	                btnPageDownTable.setEnabled(false);
-	            }
-	        } else if(o == btnMore) {
-	        	int selectedRow =  tblSelectedDish.getSelectedRow();
-				if(selectdDishAry.get(selectedRow).getOutputID() >= 0) {	//already saved
-					addContentToList(selectdDishAry.get(selectedRow));
-					tblSelectedDish.setSelectedRow(selectdDishAry.size() - 1);
-				}else {
-					int tQTY = selectdDishAry.get(selectedRow).getNum() + 1;
-					int row = tblSelectedDish.getSelectedRow();
-					tblSelectedDish.setValueAt("x" + tQTY, row, 3);
-					selectdDishAry.get(row).setNum(tQTY);
-				}
-				updateTotleArea();
-				tblSelectedDish.setSelectedRow(selectedRow);
-	        } else if (o == btnLess) {
-	    		int selectedRow =  tblSelectedDish.getSelectedRow();
-				if(selectdDishAry.get(selectedRow).getOutputID() >= 0) {
-					if (JOptionPane.showConfirmDialog(this, BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle,
-		                    JOptionPane.YES_NO_OPTION) != 0) {
-						return;
-					}
-				}
-				
-				if(selectdDishAry.get(selectedRow).getNum()== 1) {
-					if (JOptionPane.showConfirmDialog(this, BarDlgConst.COMFIRMDELETEACTION2, DlgConst.DlgTitle,
-		                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
-						tblSelectedDish.setSelectedRow(-1);
-						return;
-					}
-					removeAtSelection(selectedRow);
-				} else {
-					int tQTY = selectdDishAry.get(selectedRow).getNum() - 1;
-					int row = tblSelectedDish.getSelectedRow();
-					tblSelectedDish.setValueAt("x" + tQTY, row, 3);
-					selectdDishAry.get(row).setNum(tQTY);
-				}
-
-				updateTotleArea();
-	        }
-        }
-        
         //JButton------------------------------------------------------------------------------------------------
-        else if (o instanceof JButton) {
+        if (o instanceof JButton) {
         	if (o == btnLine_1_1) {
         		
             } else if (o == btnLine_1_9) {//send
             	List<Dish> newDishes = getNewDishes();
             	
             	//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
-            	if(newDishes.size() == selectdDishAry.size()) {
+            	if(newDishes.size() == billPanel.selectdDishAry.size()) {
                     BarFrame.instance.lblCurBill.setText(getANewBillNumber());
             	}
             	
             	//send to printer
             	//prepare the printing String and do printing
-            	if(WifiPrintService.SUCCESS != WifiPrintService.exePrintCommand(newDishes, BarFrame.instance.menuPanel.printers, BarFrame.btnCurTable.getText())) {
+            	if(WifiPrintService.SUCCESS != WifiPrintService.exePrintCommand(
+            			newDishes, BarFrame.instance.menuPanel.printers, BarFrame.instance.valCurTable.getText())) {
             		BarFrame.setStatusMes("WARNING!!!!!!!!!!!!! print error, please try again.");
             		return;
             	}
@@ -241,7 +180,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     		curBillId = "1";
 	                    StringBuilder sql = new StringBuilder(
 	                        "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME) VALUES ('")
-	                        .append(BarFrame.btnCurTable.getText()).append("', ")	//subject ->table id
+	                        .append(BarFrame.instance.valCurTable.getText()).append("', ")	//subject ->table id
 	                        .append(curBillId).append(", ")			//contactID ->bill id
 	                        .append(dish.getId()).append(", ")	//productid
 	                        .append(dish.getNum()).append(", ")	//amount
@@ -273,7 +212,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     smt.close();
                     smt = null;
                     if("true".equalsIgnoreCase((String)CustOpts.custOps.getValue("isCounterMode"))) {
-                    	resetTableArea();
+                    	billPanel.resetTableArea();
                     }else {
                     	BarFrame.instance.switchMode(0);
                     }
@@ -282,24 +221,24 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     exp.printStackTrace();
                 }
             }else if (o == btnLine_2_4) { // cancel all
-            	if(selectdDishAry.size() > 0) {
-            		int lastSavedRow = selectdDishAry.size() - 1 - getNewDishes().size();
+            	if(billPanel.selectdDishAry.size() > 0) {
+            		int lastSavedRow = billPanel.selectdDishAry.size() - 1 - getNewDishes().size();
             		//update array first.
-            		for(int i = selectdDishAry.size() - 1; i > lastSavedRow; i--) {
-            			selectdDishAry.remove(i);
+            		for(int i = billPanel.selectdDishAry.size() - 1; i > lastSavedRow; i--) {
+            			billPanel.selectdDishAry.remove(i);
             		}
             		//update the table view
-            		int tColCount = tblSelectedDish.getColumnCount();
-            		int tValidRowCount = selectdDishAry.size(); // get the used RowCount
+            		int tColCount = billPanel.tblSelectedDish.getColumnCount();
+            		int tValidRowCount = billPanel.selectdDishAry.size(); // get the used RowCount
             		Object[][] tValues = new Object[tValidRowCount][tColCount];
             		for (int r = 0; r < tValidRowCount; r++) {
             			for (int c = 0; c < tColCount; c++)
-            				tValues[r][c] = c == 0 ? r + 1: tblSelectedDish.getValueAt(r, c);
+            				tValues[r][c] = c == 0 ? r + 1: billPanel.tblSelectedDish.getValueAt(r, c);
             		}
-            		tblSelectedDish.setDataVector(tValues, header);
-            		resetColWidth(srpContent.getWidth());
-            		tblSelectedDish.setSelectedRow(tValues.length - 1);
-            		updateTotleArea();
+            		billPanel.tblSelectedDish.setDataVector(tValues, billPanel.header);
+            		billPanel.resetColWidth(billPanel.getWidth());
+            		billPanel.tblSelectedDish.setSelectedRow(tValues.length - 1);
+            		billPanel.updateTotleArea();
             	}else {
             		//update db.
             		if(isLastBillOfCurTable()) {
@@ -309,7 +248,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	}
             } else if (o == btnLine_2_5) { // void all includ saved ones
     	        //update db, delete relevant orders.
-            	for (Dish dish : selectdDishAry) {
+            	for (Dish dish : billPanel.selectdDishAry) {
             		Dish.delete(dish);
 				}
             	//if the bill amount is 1, cancel the selected status of the table.
@@ -322,8 +261,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             } else if (o == btnLine_2_8) {//more
             	new MoreButtonsDlg(this).show((JButton)o);
             } else if (o == btnLine_2_9) { // return
-            	if(selectdDishAry.size() > 0) {
-	            	Dish dish = selectdDishAry.get(selectdDishAry.size() - 1);
+            	if(billPanel.selectdDishAry.size() > 0) {
+	            	Dish dish = billPanel.selectdDishAry.get(billPanel.selectdDishAry.size() - 1);
 	            	if(dish.getId() < 0) {	//has new record.
 	            		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
 	            				BarDlgConst.COMFIRMLOSTACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
@@ -341,17 +280,15 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		
         	}else if (o == btnLine_1_7) {	//QTY
         		//pomp up a numberPanelDlg
-        		if(numberPanelDlg == null) {
-        			numberPanelDlg = new NumberPanelDlg(BarFrame.instance, btnLine_1_7);
-        		}
+        		BarFrame.instance.numberPanelDlg.setBtnSource(btnLine_1_7);
         		//should no record selected, select the last one.
-        		numberPanelDlg.setVisible(btnLine_1_7.isSelected());	//@NOTE: it's not model mode.
-        		if(tblSelectedDish.getSelectedRow() < 0) {
-        			tblSelectedDish.setSelectedRow(tblSelectedDish.getRowCount()-1);
+        		BarFrame.instance.numberPanelDlg.setVisible(btnLine_1_7.isSelected());	//@NOTE: it's not model mode.
+        		if(billPanel.tblSelectedDish.getSelectedRow() < 0) {
+        			billPanel.tblSelectedDish.setSelectedRow(billPanel.tblSelectedDish.getRowCount()-1);
         		}
         		//present the value in number dialog.
-        		Object obj = tblSelectedDish.getValueAt(tblSelectedDish.getSelectedRow(), 3);
-        		numberPanelDlg.setContents(obj.toString());
+        		Object obj = billPanel.tblSelectedDish.getValueAt(billPanel.tblSelectedDish.getSelectedRow(), 3);
+        		BarFrame.instance.numberPanelDlg.setContents(obj.toString());
         	}
         }
     }
@@ -361,7 +298,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
             ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
-                    + BarFrame.instance.btnCurTable.getText() + "' and deleted = false order by contactID");
+                    + BarFrame.instance.valCurTable.getText() + "' and deleted = false order by contactID");
 			rs.afterLast();
 			rs.relative(-1);
 			num = rs.getInt("contactID");
@@ -376,7 +313,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
             ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
-                    + BarFrame.instance.btnCurTable.getText() + "' and deleted = false order by contactID");
+                    + BarFrame.instance.valCurTable.getText() + "' and deleted = false order by contactID");
 			rs.afterLast();
 			rs.relative(-1);
 			num = rs.getRow();
@@ -389,7 +326,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private void resetCurTableDBStatus(){
     	try {
         	Statement smt =  PIMDBModel.getStatement();
-            smt.executeQuery("update dining_Table set status = 0 WHERE name = '" + BarFrame.btnCurTable.getText() + "'");
+            smt.executeQuery("update dining_Table set status = 0 WHERE name = '" + BarFrame.instance.valCurTable.getText() + "'");
     	}catch(Exception exp) {
     		ErrorUtil.write(exp);
     	}
@@ -397,7 +334,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     
 	private List<Dish> getNewDishes() {
 		List<Dish> newDishes = new ArrayList<Dish>();
-		for (Dish dish : selectdDishAry) {
+		for (Dish dish : billPanel.selectdDishAry) {
 			if(dish.getOutputID() > -1)	//if it's already saved into db, ignore.
 				continue;
 			else {
@@ -407,52 +344,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		return newDishes;
 	}
     
-    private void resetTableArea() {
-    	selectdDishAry.clear();
-        Object[][] tValues = new Object[0][tblSelectedDish.getColumnCount()];
-        tblSelectedDish.setDataVector(tValues, header);
-        resetColWidth(srpContent.getWidth());
-        updateTotleArea();
-    }
-    
-    //table selection listener---------------------
-	@Override
-	public void valueChanged(ListSelectionEvent e) {
-		DefaultListSelectionModel selectionModel = (DefaultListSelectionModel)e.getSource();
-		int selectedRow =  selectionModel.getMinSelectionIndex();
-		btnMore.setEnabled(selectedRow >= 0 && selectedRow <= selectdDishAry.size());
-		btnLess.setEnabled(selectedRow >= 0 && selectedRow <= selectdDishAry.size());
-		if(!btnMore.isEnabled()) {
-			return;
-		}
-		
-		if(btnLine_1_7.isSelected()) {	//if qty button seleted.
-			Object obj = tblSelectedDish.getValueAt(selectedRow,3);
-			//update the qty in qtyDlg.
-			if(obj != null)
-				numberPanelDlg.setContents(obj.toString());
-		}
-	}
-
-	//table row color----------------------------------------------------------
-	@Override
-	public Color getBackgroundAtRow(int row) {
-		if(selectdDishAry.size() > row) {
-			Dish dish = selectdDishAry.get(row);
-			if(dish.getOutputID() > -1) {
-				return new Color(222, 111, 34);
-			}else {
-				return new Color(150, 150, 150);
-			}
-		}else
-			return null;
-	}
-
-	@Override
-	public Color getForegroundAtRow(int row) {
-		return null;
-	}
-
     void reLayout() {
         int panelHeight = getHeight();
 
@@ -501,124 +392,23 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         
         // TOP part============================
         int topAreaHeight = btnLine_1_1.getY() - 3 * CustOpts.VER_GAP;
-        // table area-------------
+
         Double tableWidth = (Double) CustOpts.custOps.hash2.get("TableWidth");
         tableWidth = (tableWidth == null || tableWidth < 0.2) ? 0.4 : tableWidth;
-        srpContent.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
-                (int) (getWidth() * tableWidth) - BarDlgConst.SCROLLBAR_WIDTH, topAreaHeight
-                        - BarDlgConst.SubTotal_HEIGHT);
         
-        btnMore.setBounds(CustOpts.HOR_GAP + srpContent.getWidth(), srpContent.getY(), 
-        		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH);
-        btnLess.setBounds(btnMore.getX(), btnMore.getY() + btnMore.getHeight() + CustOpts.VER_GAP, 
-        		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH);
-
-        btnPageUpTable.setBounds(btnLess.getX(), srpContent.getY() + srpContent.getHeight()
-                - BarDlgConst.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH,
-                BarDlgConst.SCROLLBAR_WIDTH * 2);
-        btnPageDownTable.setBounds(btnPageUpTable.getX(), btnPageUpTable.getY() + btnPageUpTable.getHeight()
-                + CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
-
-        // sub total-------
-        lblGSQ.setBounds(srpContent.getX(), srpContent.getY() + srpContent.getHeight(), srpContent.getWidth() / 4,
-                BarDlgConst.SubTotal_HEIGHT * 1 / 3);
-        lblQSQ.setBounds(lblGSQ.getX() + lblGSQ.getWidth(), lblGSQ.getY(), lblGSQ.getWidth(), lblGSQ.getHeight());
-        lblSubTotle.setBounds(lblQSQ.getX() + lblQSQ.getWidth(), lblGSQ.getY(), lblQSQ.getWidth() * 2,
-                lblGSQ.getHeight());
-        lblTotlePrice.setBounds(lblSubTotle.getX(), lblSubTotle.getY() + lblSubTotle.getHeight(),
-                lblSubTotle.getWidth(), BarDlgConst.SubTotal_HEIGHT * 2 / 3);
-
+        billPanel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
+                (int) (getWidth() * tableWidth), topAreaHeight);
+        
         // menu area--------------
-        int xMenuArea = srpContent.getX() + srpContent.getWidth() + CustOpts.HOR_GAP + BarDlgConst.SCROLLBAR_WIDTH;
-        int widthMenuArea =
-                (getWidth() - srpContent.getWidth() - CustOpts.HOR_GAP * 2) - BarDlgConst.SCROLLBAR_WIDTH;
+        int xMenuArea = billPanel.getX() + billPanel.getWidth() + CustOpts.HOR_GAP;
+        int widthMenuArea = getWidth() - billPanel.getWidth() - CustOpts.HOR_GAP * 2;
 
-        BarFrame.instance.menuPanel.setBounds(xMenuArea, srpContent.getY(), widthMenuArea, topAreaHeight);
+        BarFrame.instance.menuPanel.setBounds(xMenuArea, billPanel.getY(), widthMenuArea, topAreaHeight);
         BarFrame.instance.menuPanel.reLayout();
 
-        resetColWidth(srpContent.getWidth());
+        billPanel.resetColWidth(billPanel.getWidth());
     }
 
-    private void resetColWidth(int tableWidth) {
-        PIMTableColumn tmpCol1 = tblSelectedDish.getColumnModel().getColumn(0);
-        tmpCol1.setWidth(40);
-        tmpCol1.setPreferredWidth(40);
-        PIMTableColumn tmpCol3 = tblSelectedDish.getColumnModel().getColumn(2);
-        tmpCol3.setWidth(40);
-        tmpCol3.setPreferredWidth(40);
-        PIMTableColumn tmpCol4 = tblSelectedDish.getColumnModel().getColumn(3);
-        tmpCol4.setWidth(40);
-        tmpCol4.setPreferredWidth(40);
-        PIMTableColumn tmpCol5 = tblSelectedDish.getColumnModel().getColumn(4);
-        tmpCol5.setWidth(40);
-        tmpCol5.setPreferredWidth(40);
-
-        PIMTableColumn tmpCol2 = tblSelectedDish.getColumnModel().getColumn(1);
-        int width = tableWidth - tmpCol1.getWidth() - tmpCol3.getWidth() - tmpCol4.getWidth() - tmpCol5.getWidth() - 3;
-        width -= srpContent.getVerticalScrollBar().isVisible() ? srpContent.getVerticalScrollBar().getWidth() : 0;
-        tmpCol2.setWidth(width);
-        tmpCol2.setPreferredWidth(width);
-        
-        tblSelectedDish.validate();
-        tblSelectedDish.revalidate();
-        tblSelectedDish.invalidate();
-    }
-
-    // 将对话盒区域的内容加入到列表
-    void addContentToList(Dish dish) {
-        int tRowCount = tblSelectedDish.getRowCount(); // add content to the table.
-        int tColCount = tblSelectedDish.getColumnCount();
-        int tValidRowCount = getUsedRowCount(); // get the used RowCount
-        if (tRowCount == tValidRowCount) { // no line is empty, add a new Line.
-            Object[][] tValues = new Object[tRowCount + 1][tColCount];
-            for (int r = 0; r < tRowCount; r++)
-                for (int c = 0; c < tColCount; c++)
-                    tValues[r][c] = tblSelectedDish.getValueAt(r, c);
-            tblSelectedDish.setDataVector(tValues, header);
-            resetColWidth(srpContent.getWidth());
-        }else {
-        	tRowCount--;
-        }
-        tblSelectedDish.setValueAt(tRowCount + 1, tValidRowCount, 0); // set the code.
-        tblSelectedDish.setValueAt(dish.getLanguage(CustOpts.custOps.getUserLang()), tValidRowCount, 1);// set the Name.
-        tblSelectedDish.setValueAt(dish.getSize() > 1 ? dish.getSize() : "", tValidRowCount, 2); // set the count.
-        tblSelectedDish.setValueAt("x1", tValidRowCount, 3); // set the count.
-        tblSelectedDish.setValueAt(dish.getPrice()/100f, tValidRowCount, 4); // set the price.
-        
-        tblSelectedDish.setSelectedRow(tValidRowCount);	//@NOTE:must before adding into the array, so it can be ignored by 
-        
-        Dish newDish = dish.clone();		//@NOTE: incase the cloned dish contains outpurID properties.
-        newDish.setOutputID(-1);
-        selectdDishAry.add(newDish);				//valueChanged process. not being cleared immediately-----while now dosn't matter
-        updateTotleArea();								//because value change will not be used to remove the record.
-    }
-
-    void updateTotleArea() {
-    	Object g = CustOpts.custOps.getValue(BarDlgConst.GST);
-    	Object q = CustOpts.custOps.getValue(BarDlgConst.QST);
-    	float gstRate = g == null ? 5 : Float.valueOf((String)g);
-    	float qstRate = q == null ? 9.975f : Float.valueOf((String)q);
-    	float totalGst = 0;
-    	float totalQst = 0;
-    	int subTotal = 0;
-    	
-    	for(Dish dish: selectdDishAry) {
-    		int price = dish.getPrice();
-    		int gst = (int) (price * (dish.getGst() * gstRate / 100f));
-    		int qst = (int) (price * (dish.getQst() * qstRate / 100f));
-    		int num = dish.getNum();
-    	
-    		subTotal += price * num;
-    		totalGst += gst;
-    		totalQst += qst;
-    	}
-    	
-    	lblSubTotle.setText(BarDlgConst.Subtotal + " : " + String.valueOf(subTotal/100f));
-        lblGSQ.setText(BarDlgConst.QST + " : " + String.valueOf(((int)totalGst)/100f));
-        lblQSQ.setText(BarDlgConst.GST + " : " + String.valueOf(((int)totalQst)/100f));
-        lblTotlePrice.setText(BarDlgConst.Total + " : " + String.valueOf(((int) (subTotal + totalGst + totalQst))/100f));
-    }
-    
     private void openMoneyBox() {
         int[] ccs = new int[5];
         ccs[0] = 27;
@@ -660,11 +450,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
     private void initComponent() {
         
-        lblSubTotle = new JLabel(BarDlgConst.Subtotal);
-        lblGSQ = new JLabel(BarDlgConst.QST);
-        lblQSQ = new JLabel(BarDlgConst.GST);
-        lblTotlePrice = new JLabel(BarDlgConst.Total);
-        
         btnLine_1_1 = new JButton(BarDlgConst.EXACT_AMOUNT);
         btnLine_1_2 = new JButton(BarDlgConst.CASH);
         btnLine_1_3 = new JButton(BarDlgConst.PAY);
@@ -685,58 +470,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_2_8 = new JButton(BarDlgConst.MORE);
         btnLine_2_9 = new JButton(BarDlgConst.RETURN);
 
-        btnMore = new ArrayButton("+");
-        btnLess = new ArrayButton("-");
-        btnPageUpTable = new ArrayButton("↑");
-        btnPageDownTable = new ArrayButton("↓");
-
-        tblSelectedDish = new PIMTable();// 显示字段的表格,设置模型
-        srpContent = new PIMScrollPane(tblSelectedDish);
-
+        billPanel = new BillPanel(this);
         // properties
         setLayout(null);
-        tblSelectedDish.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        tblSelectedDish.setAutoscrolls(true);
-        tblSelectedDish.setRowHeight(30);
-        tblSelectedDish.setCellEditable(false);
-        tblSelectedDish.setRenderAgent(this);
-        tblSelectedDish.setHasSorter(false);
-        tblSelectedDish.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-
-        tblSelectedDish.setDataVector(new Object[1][header.length], header);
-        DefaultPIMTableCellRenderer tCellRender = new DefaultPIMTableCellRenderer();
-        tCellRender.setOpaque(true);
-        tCellRender.setBackground(Color.LIGHT_GRAY);
-        tblSelectedDish.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
-        
-        JLabel tLbl = new JLabel();
-        tLbl.setOpaque(true);
-        tLbl.setBackground(Color.GRAY);
-        srpContent.setCorner(JScrollPane.LOWER_RIGHT_CORNER, tLbl);
-        Font tFont = PIMPool.pool.getFont((String) CustOpts.custOps.hash2.get(PaneConsts.DFT_FONT), Font.PLAIN, 40);
-
-        // Margin-----------------
-        btnPageUpTable.setMargin(new Insets(0,0,0,0));
-        btnPageDownTable.setMargin(btnPageUpTable.getInsets());
-        btnMore.setMargin(btnPageUpTable.getInsets());
-        btnLess.setMargin(btnPageUpTable.getInsets());
-        
-        // border----------
-        tblSelectedDish.setBorder(null);
-        // forcus-------------
-        tblSelectedDish.setFocusable(false);
-
-        // disables
-        btnPageUpTable.setEnabled(false);
-        btnMore.setEnabled(false);
-        btnLess.setEnabled(false);
         
         // built
-        add(lblSubTotle);
-        add(lblGSQ);
-        add(lblQSQ);
-        add(lblTotlePrice);
-
         add(btnLine_2_1);
         add(btnLine_2_2);
         add(btnLine_2_3);
@@ -757,22 +495,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         add(btnLine_1_8);
         add(btnLine_2_7);
 
-        add(btnMore);
-        add(btnLess);
-        add(btnPageUpTable);
-        add(btnPageDownTable);
-
-        add(srpContent);
-
+        add(billPanel);
         // add listener
         addComponentListener(this);
 
         // 因为考虑到条码经常由扫描仪输入，不一定是靠键盘，所以专门为他加了DocumentListener，通过监视内容变化来自动识别输入完成，光标跳转。
         // tfdProdNumber.getDocument().addDocumentListener(this); // 而其它组件如实收金额框不这样做为了节约（一个KeyListener接口全搞定）
-        btnMore.addActionListener(this);
-        btnLess.addActionListener(this);
-        btnPageUpTable.addActionListener(this);
-        btnPageDownTable.addActionListener(this);
 
         btnLine_2_1.addActionListener(this);
         btnLine_2_2.addActionListener(this);
@@ -793,165 +521,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_1_7.addActionListener(this);
         btnLine_1_8.addActionListener(this);
         btnLine_2_7.addActionListener(this);
-        
-        tblSelectedDish.addMouseMotionListener(new MouseMotionListener(){
-        	public void mouseDragged(MouseEvent e) {
-        		isDragging = true;
-        	}
-        	public void mouseMoved(MouseEvent e) {}
-        });
-        
-        tblSelectedDish.addMouseListener(new MouseListener(){
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				if(isDragging == true) {
-					isDragging = false;
-					ListSelectionModel selectionModel = ((PIMTable)e.getSource()).getSelectionModel();
-					int selectedRow =  selectionModel.getMinSelectionIndex();
-					if(selectedRow < 0 || selectedRow >= selectdDishAry.size()) 
-						return;
-					
-					if(!btnLine_1_7.isSelected()) {	//if qty button not seleted.
-						if(selectdDishAry.get(selectedRow).getOutputID() >= 0) {
-							if (JOptionPane.showConfirmDialog(BarFrame.instance, BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle,
-				                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
-								tblSelectedDish.setSelectedRow(-1);
-								return;
-							}
-						}
-						removeAtSelection(selectedRow);
-					}
-				}
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {}
-			@Override
-			public void mouseExited(MouseEvent e) {}
-			@Override
-			public void mouseEntered(MouseEvent e) {}
-			@Override
-			public void mouseClicked(MouseEvent e) {}
-		});
-        
-        tblSelectedDish.getSelectionModel().addListSelectionListener(this);
-    }
-    
-    private void removeAtSelection(int selectedRow) {
-    	//update db first
-    	Dish dish = selectdDishAry.get(selectedRow);
-    	if(dish.getOutputID() > -1) {
-    		Dish.delete(dish);
-    	}
-    	//update array second.
-		selectdDishAry.remove(selectedRow);
-		//update the table view
-		int tColCount = tblSelectedDish.getColumnCount();
-		int tValidRowCount = getUsedRowCount(); // get the used RowCount
-		Object[][] tValues = new Object[tValidRowCount - 1][tColCount];
-		for (int r = 0; r < tValidRowCount; r++) {
-			if(r == selectedRow) {
-				continue;
-			}else {
-				int rowNum = r > selectedRow ? r : r + 1;
-			    for (int c = 0; c < tColCount; c++)
-			        tValues[rowNum-1][c] = c == 0 ? rowNum: tblSelectedDish.getValueAt(r, c);
-			}
-		}
-		tblSelectedDish.setDataVector(tValues, header);
-		resetColWidth(srpContent.getWidth());
-		tblSelectedDish.setSelectedRow(tValues.length - 1);
-		updateTotleArea();
-	}
-    
-    void initTable() {
-    	selectdDishAry.clear();
-    	//get outputs of current table and bill id.
-		try {
-	         Statement smt = PIMDBModel.getReadOnlyStatement();
-
-			String sql = "select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '" 
-					+ BarFrame.btnCurTable.getText() + "' and CONTACTID = " + BarFrame.instance.lblCurBill.getText() + " and deleted = false AND OUTPUT.PRODUCTID = PRODUCT.ID";
-			ResultSet rs = smt.executeQuery(sql);
-			rs.afterLast();
-			rs.relative(-1);
-			int tmpPos = rs.getRow();
-
-			int tColCount = tblSelectedDish.getColumnCount();
-			Object[][] tValues = new Object[tmpPos][tColCount];
-			rs.beforeFirst();
-			tmpPos = 0;
-			while (rs.next()) {
-				Dish dish = new Dish();
-				dish.setCATEGORY(rs.getString("PRODUCT.CATEGORY"));
-				dish.setDiscount(rs.getInt("OUTPUT.discount"));//
-				dish.setDspIndex(rs.getInt("PRODUCT.INDEX"));
-				dish.setGst(rs.getInt("PRODUCT.FOLDERID"));
-				dish.setId(rs.getInt("PRODUCT.ID"));
-				dish.setLanguage(0, rs.getString("PRODUCT.CODE"));
-				dish.setLanguage(1, rs.getString("PRODUCT.MNEMONIC"));
-				dish.setLanguage(2, rs.getString("PRODUCT.SUBJECT"));
-				dish.setModification(rs.getString("OUTPUT.CONTENT"));//
-				dish.setNum(rs.getInt("OUTPUT.AMOUNT"));//
-				dish.setOutputID(rs.getInt("OUTPUT.ID"));//
-				dish.setPrice(rs.getInt("PRODUCT.PRICE"));
-				dish.setPrinter(rs.getString("PRODUCT.BRAND"));
-				dish.setPrompMenu(rs.getString("PRODUCT.UNIT"));
-				dish.setPrompMofify(rs.getString("PRODUCT.PRODUCAREA"));
-				dish.setPrompPrice(rs.getString("PRODUCT.CONTENT"));
-				dish.setQst(rs.getInt("PRODUCT.STORE"));
-				dish.setSize(rs.getInt("PRODUCT.COST"));
-				selectdDishAry.add(dish);
-
-				tValues[tmpPos][0] = tmpPos + 1;
-				tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
-				tValues[tmpPos][3] = "x" + rs.getInt("AMOUNT");
-				tValues[tmpPos][4] = rs.getInt("TOLTALPRICE")/100f;
-				tmpPos++;
-			}
-			
-			tblSelectedDish.setDataVector(tValues, header);
-	        tblSelectedDish.setSelectedRow(tmpPos - 1);
-			rs.close();
-		} catch (Exception e) {
-			ErrorUtil.write(e);
-    	}
-		
-        resetColWidth(srpContent.getWidth());
-    }
-
-    /** 本方法用于设置View上各个组件的尺寸。 */
-    private boolean isOnProcess() {
-        return getUsedRowCount() > 0;
-    }
-
-    private int getUsedRowCount() {
-        for (int i = 0, len = tblSelectedDish.getRowCount(); i < len; i++)
-            if (tblSelectedDish.getValueAt(i, 0) == null)
-                return i; // 至此得到 the used RowCount。
-        return tblSelectedDish.getRowCount();
-    }
-
-    private void resetAll() {
-        resetListArea();
-    }
-
-    private void resetListArea() {
-        int tRowCount = tblSelectedDish.getRowCount();
-        int tColCount = tblSelectedDish.getColumnCount();
-        for (int j = 0; j < tRowCount; j++)
-            for (int i = 0; i < tColCount; i++)
-                tblSelectedDish.setValueAt(null, j, i);
     }
 
     private void enableBtns(
             boolean pIsEnable) {
     }
-
-    private JLabel lblSubTotle;
-    private JLabel lblGSQ;
-    private JLabel lblQSQ;
-    private JLabel lblTotlePrice;
 
     private JButton btnLine_1_1;
     private JButton btnLine_1_2;
@@ -959,7 +533,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private JToggleButton btnLine_1_4;
     private JToggleButton btnLine_1_5;
     private JButton btnLine_1_6;
-    private JToggleButton btnLine_1_7;
+    JToggleButton btnLine_1_7;
     private JButton btnLine_1_8;
     private JButton btnLine_2_7;
     
@@ -972,14 +546,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private JButton btnLine_2_9;
     private JButton btnLine_2_8;
     private JButton btnLine_1_9;
-
-    private ArrayButton btnMore;
-    private ArrayButton btnLess;
-    private ArrayButton btnPageUpTable;
-    private ArrayButton btnPageDownTable;
     
-    PIMTable tblSelectedDish;
-    private PIMScrollPane srpContent;
-    private String[] header = new String[] { BarDlgConst.ProdNumber, BarDlgConst.ProdName, BarDlgConst.Size, BarDlgConst.Count,
-            BarDlgConst.Price};
+    BillPanel billPanel;
 }

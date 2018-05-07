@@ -51,12 +51,11 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
      * 
      * @called by PasteAction 为Copy邮件到联系人应用。
      */
-    public NumberPanelDlg(BarFrame pParent, JToggleButton btnQTY ) {
+    public NumberPanelDlg(BarFrame pParent) {
         super(pParent, true);
         barFrame = pParent;
         salesPanel = (SalesPanel)barFrame.panels[1];
-        table = salesPanel.tblSelectedDish;
-        this.btnSource = btnQTY;
+        table = salesPanel.billPanel.tblSelectedDish;
         
         initDialog();
     }
@@ -129,8 +128,8 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         		int tQTY = Integer.valueOf(curContent);
             	int row = table.getSelectedRow();
             	table.setValueAt("x" + curContent, row, 3);
-            	salesPanel.selectdDishAry.get(row).setNum(tQTY);
-            	salesPanel.updateTotleArea();
+            	salesPanel.billPanel.selectdDishAry.get(row).setNum(tQTY);
+            	salesPanel.billPanel.updateTotleArea();
         	}catch(Exception exp) {
             	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
         		return;
@@ -183,7 +182,8 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 
 	@Override
 	public void componentHidden(ComponentEvent e) {
-		btnSource.setSelected(false);
+		if(btnSource != null)
+			btnSource.setSelected(false);
 	}
 
     private void initDialog() {
@@ -270,7 +270,11 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         });
     }
 
-    private BarFrame barFrame;
+	public void setBtnSource(JToggleButton btnSource) {
+		this.btnSource = btnSource;
+	}
+
+	private BarFrame barFrame;
     private JButton num1;
     private JButton num2;
     private JButton num3;

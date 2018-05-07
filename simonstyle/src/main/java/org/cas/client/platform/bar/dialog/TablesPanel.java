@@ -104,9 +104,20 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         // category buttons---------------------------------------------------------------------------------
         if (o instanceof TableButton) {
             TableButton tableToggle = (TableButton) o;
-         	BarFrame.btnCurTable = tableToggle;
+			if(!BarFrame.isSingleUser()) {
+				new LoginDlg(null).setVisible(true);
+	            if (LoginDlg.PASSED == true) {
+	            	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
+	            	BarFrame.instance.valCurTable.setText(tableToggle.getText());
+	            	//@note: lowdown a little the level, to enable the admin do sales work.
+	            	if ("admin".equalsIgnoreCase(LoginDlg.USERNAME))
+	            		 LoginDlg.USERTYPE = LoginDlg.USER_STATUS;
+	            }else {
+	            	return;
+	            }
+			}
          	
-        	if(((TableButton)o).getBackground() != colorSelected){	//if before is not selected, then update the status
+        	if(tableToggle.getBackground() != colorSelected){	//if before is not selected, then update the status
         		o.setBackground(colorSelected);
         		try {
         			Statement smt = PIMDBModel.getReadOnlyStatement();
@@ -114,27 +125,26 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         		}catch(Exception exp) {
         			ErrorUtil.write(exp);
         		}
-        	}else {
-				try {
-					Statement smt = PIMDBModel.getReadOnlyStatement();
-		            ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
-		                    + tableToggle.getText() + "' and deleted = false order by contactID");
-					rs.afterLast();
-					rs.relative(-1);
-					int num = rs.getRow();
+			}
+			try {
+				Statement smt = PIMDBModel.getReadOnlyStatement();
+				ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
+						+ tableToggle.getText() + "' and deleted = false order by contactID");
+				rs.afterLast();
+				rs.relative(-1);
+				int num = rs.getRow();
 
-					if (num == 0) { // check if it's empty
-						BarFrame.instance.lblCurBill.setText("0");
-						BarFrame.instance.switchMode(1);
-					} else { // if it's not empty, display a dialog to show all the bills.
-						new BillListDlg(tableToggle, tableToggle.getText()).setVisible(true);
-					}
-					tableToggle.setSelected(true);
-				} catch (Exception exp) {
-        			ErrorUtil.write(exp);
-        		}
-        	}
-        }
+				if (num == 0) { // check if it's empty
+					BarFrame.instance.lblCurBill.setText("0");
+					BarFrame.instance.switchMode(1);
+				} else { // if it's not empty, display a dialog to show all the bills.
+					new BillListDlg(tableToggle, tableToggle.getText()).setVisible(true);
+				}
+				tableToggle.setSelected(true);
+			} catch (Exception exp) {
+				ErrorUtil.write(exp);
+			}
+		}
         //JButton------------------------------------------------------------------------------------------------
         else if (o instanceof JButton) {
         	if (o == btnLine_1_1) {
