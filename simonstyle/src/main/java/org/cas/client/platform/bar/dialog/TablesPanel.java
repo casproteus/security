@@ -44,10 +44,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     Integer tableRow = (Integer) CustOpts.custOps.hash2.get("tableRow");
 
     public static String startTime;
-
-    //flags
-    NumberPanelDlg numberPanelDlg; 
-    
+   
     //for print
     public static String SUCCESS = "0";
     public static String ERROR = "2";
@@ -102,13 +99,14 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             ActionEvent e) {
         JComponent o = (JComponent)e.getSource();
         // category buttons---------------------------------------------------------------------------------
-        if (o instanceof TableButton) {
+        if (o instanceof TableButton) {            
             TableButton tableToggle = (TableButton) o;
+        	BarFrame.instance.valCurTable.setText(tableToggle.getText());
+        	
 			if(!BarFrame.isSingleUser()) {
 				new LoginDlg(null).setVisible(true);
 	            if (LoginDlg.PASSED == true) {
 	            	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
-	            	BarFrame.instance.valCurTable.setText(tableToggle.getText());
 	            	//@note: lowdown a little the level, to enable the admin do sales work.
 	            	if ("admin".equalsIgnoreCase(LoginDlg.USERNAME))
 	            		 LoginDlg.USERTYPE = LoginDlg.USER_STATUS;
@@ -126,6 +124,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         			ErrorUtil.write(exp);
         		}
 			}
+        	
 			try {
 				Statement smt = PIMDBModel.getReadOnlyStatement();
 				ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
@@ -136,9 +135,9 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 
 				if (num == 0) { // check if it's empty
 					BarFrame.instance.lblCurBill.setText("0");
-					BarFrame.instance.switchMode(1);
+					BarFrame.instance.switchMode(2);
 				} else { // if it's not empty, display a dialog to show all the bills.
-					new BillListDlg(tableToggle, tableToggle.getText()).setVisible(true);
+					BarFrame.instance.switchMode(1);
 				}
 				tableToggle.setSelected(true);
 			} catch (Exception exp) {
@@ -152,7 +151,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             } else if (o == btnLine_2_4) {
             } else if (o == btnLine_2_5) {
             } else if (o == btnLine_2_6) {
-                BarFrame.instance.switchMode(2);
+                BarFrame.instance.switchMode(3);
             } else if (o == btnLine_2_7) {
             }else if (o == btnLine_2_8) {
             }else if (o == btnLine_2_9) {
@@ -300,12 +299,12 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     }
 
     // menu and category buttons must be init after initContent---------
-	static void initTableBtns(Container container, ActionListener actionListener) {
+	void initTableBtns() {
 		//clean existing btns
 		for (int i = btnTables.size() - 1; i >=0; i--) {
 			TableButton tableToggleButton = btnTables.get(i);
 			btnTables.remove(i);
-			container.remove(tableToggleButton);
+			remove(tableToggleButton);
 		}
 		//renite buttons.
 		try {
@@ -326,9 +325,8 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             	if(rs.getInt("status") > 0)
             		tableToggleButton.setBackground(colorSelected);
             	tableToggleButton.setMargin(new Insets(0, 0, 0, 0));
-    			tableToggleButton.addActionListener(actionListener);
-    			container.add(tableToggleButton);
-    			
+    			tableToggleButton.addActionListener(this);
+    			add(tableToggleButton);
             	btnTables.add(tableToggleButton);
                 tmpPos++;
             }

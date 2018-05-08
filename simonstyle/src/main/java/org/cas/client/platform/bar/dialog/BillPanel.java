@@ -21,7 +21,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -43,8 +46,8 @@ import org.cas.client.resource.international.PaneConsts;
 public class BillPanel extends JPanel implements ActionListener, ComponentListener, PIMTableRenderAgent, ListSelectionListener, MouseMotionListener, MouseListener{
 	
 	SalesPanel salesPanel;
-	BillListDlg billListDlg;
-	JButton billButton;
+	BillListPanel billListDlg;
+	JToggleButton billButton;
     private boolean isDragging;
     
 	public BillPanel(SalesPanel salesPanel) {
@@ -52,7 +55,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		initComponent();
 	}
 
-	public BillPanel(BillListDlg billListDlg, JButton billButton) {
+	public BillPanel(BillListPanel billListDlg, JToggleButton billButton) {
 		this.billListDlg = billListDlg;
 		this.billButton = billButton;
 	}
@@ -229,6 +232,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	 			if(billListDlg.curDish != null && billListDlg.curBillButton != billButton) {
 					billListDlg.moveDishToBill(this);
 					billListDlg.curDish = null;
+				}else {
+					billButton.setSelected(!billButton.isSelected());
 				}
 			}
 		}

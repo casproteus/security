@@ -107,28 +107,21 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     // ComponentListener-----------------------------
     /** Invoked when the component's size changes. */
     @Override
-    public void componentResized(
-            ComponentEvent e) {
+    public void componentResized(ComponentEvent e) {
         reLayout();
     }
 
     /** Invoked when the component's position changes. */
     @Override
-    public void componentMoved(
-            ComponentEvent e) {
-    }
+    public void componentMoved(ComponentEvent e) {}
 
     /** Invoked when the component has been made visible. */
     @Override
-    public void componentShown(
-            ComponentEvent e) {
-    }
+    public void componentShown(ComponentEvent e) {}
 
     /** Invoked when the component has been made invisible. */
     @Override
-    public void componentHidden(
-            ComponentEvent e) {
-    }
+    public void componentHidden(ComponentEvent e) {}
 
     @Override
     public void focusGained(
@@ -139,9 +132,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     }
 
     @Override
-    public void focusLost(
-            FocusEvent e) {
-    }
+    public void focusLost(FocusEvent e) {}
 
     // ActionListner-------------------------------
     @Override

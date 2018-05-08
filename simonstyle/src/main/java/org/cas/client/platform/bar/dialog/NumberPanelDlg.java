@@ -40,9 +40,9 @@ import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.resource.international.DlgConst;
 
 public class NumberPanelDlg extends JDialog implements ActionListener, ComponentListener{
-	private SalesPanel salesPanel;
+	static String curContent = "";
+	public static boolean confirmed;
 	private JToggleButton btnSource;
-	private PIMTable table;
 	//flag
 	boolean isAllContentSelected;
 	
@@ -54,8 +54,6 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
     public NumberPanelDlg(BarFrame pParent) {
         super(pParent, true);
         barFrame = pParent;
-        salesPanel = (SalesPanel)barFrame.panels[1];
-        table = salesPanel.billPanel.tblSelectedDish;
         
         initDialog();
     }
@@ -120,20 +118,19 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
     @Override
     public void actionPerformed(
             ActionEvent e) {
-        String curContent = tfdQTY.getText();
+        curContent = tfdQTY.getText();
         
         Object o = e.getSource();
         if (o == ok) {
+        	//check content
         	try {
-        		int tQTY = Integer.valueOf(curContent);
-            	int row = table.getSelectedRow();
-            	table.setValueAt("x" + curContent, row, 3);
-            	salesPanel.billPanel.selectdDishAry.get(row).setNum(tQTY);
-            	salesPanel.billPanel.updateTotleArea();
+        		Integer.valueOf(curContent);
         	}catch(Exception exp) {
-            	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
+                JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
         		return;
         	}
+        	
+        	confirmed = true;
         	this.setVisible(false);
             return;
         } 
@@ -272,6 +269,8 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 
 	public void setBtnSource(JToggleButton btnSource) {
 		this.btnSource = btnSource;
+		confirmed = false;
+		curContent = "";
 	}
 
 	private BarFrame barFrame;

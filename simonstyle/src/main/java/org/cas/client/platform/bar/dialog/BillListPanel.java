@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 
@@ -25,16 +26,12 @@ import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.jfree.chart.labels.CustomXYToolTipGenerator;
 
-public class BillListDlg extends JDialog implements ActionListener, ComponentListener{
-	TableButton tbnTable;
+public class BillListPanel extends  JPanel  implements ActionListener, ComponentListener{
 	int TBN_WIDTH = 300;
 	Dish curDish;
-	JButton curBillButton;
+	JToggleButton curBillButton;
 	
-	public BillListDlg(TableButton tbnTable, String tableID) {
-		
-		super(BarFrame.instance, tableID);
-		this.tbnTable = tbnTable;
+	public BillListPanel() {
 		
 		billPanels= new ArrayList<BillPanel>();
 		onScrBills= new ArrayList<BillPanel>();
@@ -50,6 +47,8 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 		
 		btnCompleteAll = new JButton(BarDlgConst.CompleteAll);
 		btnCancelAll = new JButton(BarDlgConst.CancelAll);
+		btnReturn = new JButton(BarDlgConst.RETURN);
+		
 		separator= new JSeparator();
 		
 		btnAddUser.setMargin(new Insets(0, 0, 0, 0));
@@ -61,10 +60,9 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 		btnCombineAll.setMargin(btnAddUser.getMargin());
 		btnCompleteAll.setMargin(btnAddUser.getMargin());
 		btnCancelAll.setMargin(btnAddUser.getMargin());
+		btnReturn.setMargin(btnAddUser.getMargin());
 		
-		setModal(true);
 		setLayout(null);
-		setResizable(false);
 		
 		add(btnAddUser);
 		add(separator);
@@ -76,7 +74,9 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 		add(btnCombineAll);
 		add(btnCompleteAll);
 		add(btnCancelAll);
+		add(btnReturn);
 		
+		addComponentListener(this);
 		btnAddUser.addActionListener(this);
 		btnPrintAll.addActionListener(this);
 		btnEqualBill.addActionListener(this);
@@ -86,11 +86,10 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 		btnCombineAll.addActionListener(this);
 		btnCompleteAll.addActionListener(this);
 		btnCancelAll.addActionListener(this);
-
-		initContent(tableID);
+		btnReturn.addActionListener(this);
 	}
 	
-	private void initContent(String tableID) {
+	void initContent() {
 		for(int i = billPanels.size() - 1; i >= 0; i--) {
 			remove(billPanels.get(i));
 		}
@@ -100,12 +99,12 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 		// load all the unclosed outputs under this table with ---------------------------
 		try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
-			ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '" + tableID
+			ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
 					+ "' and deleted = false order by contactID");
 			rs.beforeFirst();
 
 			while (rs.next()) {
-				JButton billButton = new JButton();
+				JToggleButton billButton = new JToggleButton();
 				billButton.setText(String.valueOf(rs.getInt("contactID")));
 				billButton.setMargin(new Insets(0, 0, 0, 0));
 				billButton.addActionListener(this);
@@ -128,18 +127,16 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 	}
 	
 	private void reLayout() {
+
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
+        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 10) / 9;
+        int tBtnHeight = panelHeight / 10;
+        
 		int col = billPanels.size();	//calculate together with the new button.
 		col = col > 4 ? 4 : col;		//I think the screen is enought for only 4 column.
-		
-		int width = col < 3 ?  (CustOpts.BTN_WIDTH + CustOpts.HOR_GAP) * 9 + CustOpts.SIZE_EDGE * 2 + CustOpts.HOR_GAP * 8 
-				: (TBN_WIDTH + CustOpts.HOR_GAP) * col + CustOpts.SIZE_EDGE * 2 + CustOpts.HOR_GAP *2;
-		
-		int height = BarFrame.instance.getHeight()*2/3;
-		
-		setBounds((BarFrame.instance.getWidth() - width) / 2, (BarFrame.instance.getHeight() - height)/2, width , height);
-		
-		btnCancelAll.setBounds(width / 2 - (CustOpts.BTN_WIDTH + CustOpts.HOR_GAP) * 4 + 40 , 
-				height - CustOpts.SIZE_EDGE - CustOpts.VER_GAP - CustOpts.BTN_WIDTH_NUM - 40,
+		btnCancelAll.setBounds(getWidth() / 2 - (CustOpts.BTN_WIDTH + CustOpts.HOR_GAP) * 4 + 40 , 
+				panelHeight - tBtnHeight - CustOpts.VER_GAP,
 				CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
 		btnPrintAll.setBounds(btnCancelAll.getX() + btnCancelAll.getWidth() + CustOpts.HOR_GAP, 
 				btnCancelAll.getY(),
@@ -161,18 +158,21 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 				btnPrintAll.getY(),
 				CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
 		
-		btnCompleteAll.setBounds(width - CustOpts.SIZE_EDGE*2 - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP*2, 
+		btnCompleteAll.setBounds(btnCombineAll.getX() + btnCombineAll.getWidth() + CustOpts.HOR_GAP, 
 				btnPrintAll.getY(),
 				CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
 		separator.setBounds(CustOpts.HOR_GAP, 
 				btnCancelAll.getY() - CustOpts.VER_GAP * 2,
-				width - CustOpts.HOR_GAP * 2, CustOpts.BTN_WIDTH_NUM);
+				getWidth() - CustOpts.HOR_GAP * 2, CustOpts.BTN_WIDTH_NUM);
 
 		btnAddUser.setBounds(CustOpts.SIZE_EDGE, btnCancelAll.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
+		btnReturn.setBounds(getWidth() - CustOpts.SIZE_EDGE*2 - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP*2, 
+				btnPrintAll.getY(),
+				CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
 		
 		for (int i = 0; i < onScrBills.size(); i++) {
 			int x = col < 4 ? 	//there move than 4 bills. put from left to right
-					(width  - (TBN_WIDTH + CustOpts.HOR_GAP)* col) / 2 + ((TBN_WIDTH + CustOpts.HOR_GAP)) * i
+					(getWidth()  - (TBN_WIDTH + CustOpts.HOR_GAP)* col) / 2 + ((TBN_WIDTH + CustOpts.HOR_GAP)) * i
 					:(CustOpts.HOR_GAP + CustOpts.BTN_WIDTH) * i + CustOpts.HOR_GAP + CustOpts.SIZE_EDGE;
 			
 			onScrBills.get(i).setBounds(x, CustOpts.VER_GAP,
@@ -197,7 +197,7 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 		}
 		
 		// update all the table content.
-		initContent(BarFrame.instance.valCurTable.getText());
+		initContent();
 	}
 	
 	@Override
@@ -228,10 +228,14 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 		Object o = e.getSource();
 		if(o instanceof JToggleButton) {
 			if(o == btnEqualBill) {
-				this.setModal(false);
 				BarFrame.numberPanelDlg.setBtnSource(btnEqualBill);
-				BarFrame.numberPanelDlg.setVisible(btnEqualBill.isSelected());
 				BarFrame.numberPanelDlg.setModal(true);
+				BarFrame.numberPanelDlg.setVisible(btnEqualBill.isSelected());
+				if(NumberPanelDlg.confirmed) {
+					int num = Integer.valueOf(NumberPanelDlg.curContent);
+					//TODO:splet into num bills. each dish's number and price will be devide by "num".
+					
+				}
 			}else if(o == btnEqualItem) {
 				
 			}else if(o == btnSplitItem) {
@@ -251,12 +255,14 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 				//set the table as unselected.
 			}else if(o == btnAddUser){
 				BarFrame.instance.lblCurBill.setText("0");
-				BarFrame.instance.switchMode(1);
+				BarFrame.instance.switchMode(2);
+			}else if(o == btnReturn) {
+				BarFrame.instance.lblCurBill.setText("0");
+				BarFrame.instance.switchMode(0);
 			}else {		//when table buttons are clicked.
 	    		BarFrame.instance.lblCurBill.setText(((JButton)o).getText());
-	            BarFrame.instance.switchMode(1);
+	            BarFrame.instance.switchMode(2);
 			}
-			this.setVisible(false);
 		}
 	}
 
@@ -274,4 +280,6 @@ public class BillListDlg extends JDialog implements ActionListener, ComponentLis
 	
 	JButton btnCompleteAll;
 	JButton btnCancelAll;
+
+	JButton btnReturn;
 }

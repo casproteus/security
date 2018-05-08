@@ -400,7 +400,7 @@ public class MenuPanel extends JPanel implements ActionListener {
                     addCategoryDlg.setIndex(categoryToggle.getIndex());
                     addCategoryDlg.setVisible(true);
                 } else {
-                    BarFrame.instance.switchMode(2);
+                    BarFrame.instance.switchMode(3);
                 }
             } else { // if it's not empty
                 if (!text.equals(tgbActiveCategory.getText())) {
@@ -426,14 +426,14 @@ public class MenuPanel extends JPanel implements ActionListener {
                 if (LoginDlg.USERTYPE == LoginDlg.ADMIN_STATUS) { // and it's admin mode, add a Category.
                     new DishDlg(BarFrame.instance, menuButton.getDspIndex()).setVisible(true);
                 } else {
-                    BarFrame.instance.switchMode(2);
+                    BarFrame.instance.switchMode(3);
                 }
             } else { // if it's not empty
                 if (LoginDlg.USERTYPE == LoginDlg.ADMIN_STATUS) {
                     new DishDlg(BarFrame.instance, menuButton.getDish()).setVisible(true);
                 } else {
                     // add into table.
-                	((SalesPanel)BarFrame.instance.panels[1]).billPanel.addContentToList(menuButton.getDish());
+                	((SalesPanel)BarFrame.instance.panels[2]).billPanel.addContentToList(menuButton.getDish());
                 }
             }
         } 

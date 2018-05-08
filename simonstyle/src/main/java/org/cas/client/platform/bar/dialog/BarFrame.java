@@ -41,6 +41,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         CASControl.ctrl.initModel();
         instance = new BarFrame();
         numberPanelDlg = new NumberPanelDlg(instance);
+        
         if(isSingleUser()) {
 	        new LoginDlg(instance).setVisible(true);
 	        if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
@@ -90,8 +91,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         lblStatus = new JLabel();
         menuPanel = new MenuPanel();
         panels[0] = new TablesPanel();
-        panels[1] = new SalesPanel();
-        panels[2] = new SettingPanel();
+        panels[1] = new BillListPanel();
+        panels[2] = new SalesPanel();
+        panels[3] = new SettingPanel();
 
         lblStatus.setBorder(null);
         
@@ -109,6 +111,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         getContentPane().add(panels[0]);
         getContentPane().add(panels[1]);
         getContentPane().add(panels[2]);
+        getContentPane().add(panels[3]);
 
         // 加监听器－－－－－－－－
         addWindowListener(this);
@@ -130,22 +133,23 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     }
 	
     public int switchMode(int i) {
-		if (i == 2) {
+		if (i == 3) {
 			if (!adminAuthentication()) 
 				return -1;
-		}else if(i == 1) {
+		}else if(i == 2) {
 			((SalesPanel)panels[i]).billPanel.initTable();
+		}else if(i == 1) {
+			((BillListPanel)panels[i]).initContent();
 		}else if(i == 0) {
 			resetStatus();
-			TablesPanel panel = (TablesPanel)panels[i];
-			panel.initTableBtns(panel, panel);
+			((TablesPanel)panels[i]).initTableBtns();
 		}
 		
     	for (JPanel panel : panels)
     		panel.setVisible(false);
 		
     	panels[i].setVisible(true);
-    	if(i != 0) {
+    	if(i > 1) {	//salespanel and setting pannel need menu panel on it.
     		panels[i].add(menuPanel);
     	}
     	
@@ -347,7 +351,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 
     private DecimalFormat decimalFormat = new DecimalFormat("#0.00");
     
-    JPanel[] panels = new JPanel[3];
+    JPanel[] panels = new JPanel[4];
     MenuPanel menuPanel;
     static JLabel lblStatus;
 }

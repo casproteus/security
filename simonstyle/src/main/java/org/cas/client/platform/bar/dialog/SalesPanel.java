@@ -257,7 +257,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		}
             	BarFrame.instance.switchMode(0);
             } else if (o == btnLine_2_6) { // enter the setting mode.(admin interface)
-                BarFrame.instance.switchMode(2);
+                BarFrame.instance.switchMode(3);
             } else if (o == btnLine_2_8) {//more
             	new MoreButtonsDlg(this).show((JButton)o);
             } else if (o == btnLine_2_9) { // return
@@ -283,6 +283,19 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		BarFrame.instance.numberPanelDlg.setBtnSource(btnLine_1_7);
         		//should no record selected, select the last one.
         		BarFrame.instance.numberPanelDlg.setVisible(btnLine_1_7.isSelected());	//@NOTE: it's not model mode.
+        		if(btnLine_1_7.isSelected()) {
+        			try {
+        				String curContent = BarFrame.instance.numberPanelDlg.curContent;
+                		int tQTY = Integer.valueOf(curContent);
+                    	int row = billPanel.tblSelectedDish.getSelectedRow();
+                    	billPanel.tblSelectedDish.setValueAt("x" + curContent, row, 3);
+                    	billPanel.selectdDishAry.get(row).setNum(tQTY);
+                    	billPanel.updateTotleArea();
+                	}catch(Exception exp) {
+                    	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
+                		return;
+                	}
+        		}
         		if(billPanel.tblSelectedDish.getSelectedRow() < 0) {
         			billPanel.tblSelectedDish.setSelectedRow(billPanel.tblSelectedDish.getRowCount()-1);
         		}
