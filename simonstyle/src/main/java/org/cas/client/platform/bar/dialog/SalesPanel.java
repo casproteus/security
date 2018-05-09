@@ -156,7 +156,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	
             	//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
             	if(newDishes.size() == billPanel.selectdDishAry.size()) {
-                    BarFrame.instance.lblCurBill.setText(getANewBillNumber());
+                    BarFrame.instance.lblCurBill.setText(BillListPanel.getANewBillNumber());
             	}
             	
             	//send to printer
@@ -304,21 +304,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		BarFrame.instance.numberPanelDlg.setContents(obj.toString());
         	}
         }
-    }
-    
-    private String getANewBillNumber(){
-    	int num = 0;
-    	try {
-			Statement smt = PIMDBModel.getReadOnlyStatement();
-            ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
-                    + BarFrame.instance.valCurTable.getText() + "' and deleted = false order by contactID");
-			rs.afterLast();
-			rs.relative(-1);
-			num = rs.getInt("contactID");
-		} catch (Exception exp) {
-			System.out.println("lagest num is 0.");
-		}
-    	return String.valueOf(num + 1);
     }
     
     private boolean isLastBillOfCurTable(){

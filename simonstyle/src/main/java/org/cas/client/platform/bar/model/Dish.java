@@ -8,6 +8,21 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 
 
 public class Dish {
+	
+	//create new outputs.
+	public static void split(Dish dish, int num) {
+		if(dish.getOutputID() >= 0) {
+			Statement smt = PIMDBModel.getStatement();
+			try {
+				smt.execute("update output set deleted = 100 " + " where id = " + dish.getOutputID());
+			} catch (Exception exp) {
+				ErrorUtil.write(exp);
+			}
+		}else {
+			
+		}
+	}
+	
 	public static void delete(Dish dish) {
 		if(dish.getOutputID() < 0) {
 			return;
@@ -42,7 +57,8 @@ public class Dish {
 		dish.setPrompPrice(prompPrice);
 		return dish;
 	}
-    public int getId() {
+    
+	public int getId() {
         return id;
     }
 

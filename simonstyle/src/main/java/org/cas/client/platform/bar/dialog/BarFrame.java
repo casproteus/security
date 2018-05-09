@@ -344,7 +344,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     private JLabel lblOperator;
     JLabel valOperator;
     private JLabel lblCurTable;
-    JLabel valCurTable;
+    public JLabel valCurTable;
     private JLabel lblBill;
     private JLabel lblShoestring;
     private JLabel lblStartTime;

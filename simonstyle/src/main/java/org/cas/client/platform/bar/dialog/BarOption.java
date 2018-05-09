@@ -34,9 +34,10 @@ import org.cas.client.resource.international.OptionDlgConst;
 
 import com.jpos.POStest.POStestGUI;
 
-public class BarOptionDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
-
-    public BarOptionDlg(JFrame pFrame) {
+public class BarOption extends JDialog implements ICASDialog, ActionListener, ComponentListener {
+	public static final int MaxQTY = 10000;
+	
+    public BarOption(JFrame pFrame) {
         super(pFrame, false);
         initDialog();
     }

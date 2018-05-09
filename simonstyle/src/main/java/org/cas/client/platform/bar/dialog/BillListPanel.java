@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
@@ -29,7 +30,6 @@ import org.jfree.chart.labels.CustomXYToolTipGenerator;
 public class BillListPanel extends  JPanel  implements ActionListener, ComponentListener{
 	int TBN_WIDTH = 300;
 	Dish curDish;
-	JToggleButton curBillButton;
 	
 	public BillListPanel() {
 		
@@ -228,13 +228,26 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		Object o = e.getSource();
 		if(o instanceof JToggleButton) {
 			if(o == btnEqualBill) {
+				BillPanel panel = getCurBillPanel();
+				if(panel == null) {
+					JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.OnlyOneShouldBeSelected);
+					return;
+				}
 				BarFrame.numberPanelDlg.setBtnSource(btnEqualBill);
 				BarFrame.numberPanelDlg.setModal(true);
 				BarFrame.numberPanelDlg.setVisible(btnEqualBill.isSelected());
 				if(NumberPanelDlg.confirmed) {
 					int num = Integer.valueOf(NumberPanelDlg.curContent);
+					if(num < 2) {
+						JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.InvalidInput);
+						return;
+					}
 					//TODO:splet into num bills. each dish's number and price will be devide by "num".
-					
+					//update existing outputs
+					for(int i = 0; i < panel.selectdDishAry.size(); i++) {
+						Dish dish = panel.selectdDishAry.get(i);
+						Dish.split(dish, num);
+					}
 				}
 			}else if(o == btnEqualItem) {
 				
@@ -265,7 +278,36 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			}
 		}
 	}
+	
+    static String getANewBillNumber(){
+    	int num = 0;
+    	try {
+			Statement smt = PIMDBModel.getReadOnlyStatement();
+            ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
+                    + BarFrame.instance.valCurTable.getText() + "' and deleted = false order by contactID");
+			rs.afterLast();
+			rs.relative(-1);
+			num = rs.getInt("contactID");
+		} catch (Exception exp) {
+			System.out.println("lagest num is 0.");
+		}
+    	return String.valueOf(num + 1);
+    }
 
+	BillPanel getCurBillPanel(){
+		List<BillPanel> panels = getSelectedBillPannels();
+		return panels.size() == 1 ? panels.get(0) : null;
+	}
+    
+	List<BillPanel> getSelectedBillPannels(){
+		List<BillPanel> panels = new ArrayList<>();
+		for (BillPanel billPanel : billPanels) {
+			if(billPanel.billButton.isSelected())
+				panels.add(billPanel);
+		}
+		return panels;
+	}
+	
 	List<BillPanel> billPanels;
 	List<BillPanel> onScrBills;
 	

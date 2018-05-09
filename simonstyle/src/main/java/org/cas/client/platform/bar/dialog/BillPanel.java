@@ -49,6 +49,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	BillListPanel billListDlg;
 	JToggleButton billButton;
     private boolean isDragging;
+    ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
     
 	public BillPanel(SalesPanel salesPanel) {
 		this.salesPanel = salesPanel;
@@ -59,8 +60,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		this.billListDlg = billListDlg;
 		this.billButton = billButton;
 	}
-	
-    ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
 	
     @Override
 	public void actionPerformed(ActionEvent e) {
@@ -85,7 +84,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				}else {
 					int tQTY = selectdDishAry.get(selectedRow).getNum() + 1;
 					int row = tblSelectedDish.getSelectedRow();
-					tblSelectedDish.setValueAt("x" + tQTY, row, 3);
+					tblSelectedDish.setValueAt("x" + tQTY % BarOption.MaxQTY, row, 3);
 					selectdDishAry.get(row).setNum(tQTY);
 				}
 				updateTotleArea();
@@ -168,12 +167,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				BarFrame.instance.numberPanelDlg.setContents(obj.toString());
 		}else if(billListDlg != null) {
 			Dish selectedDish = selectdDishAry.get(selectedRow);
- 			if(billListDlg.curDish != null && billListDlg.curBillButton != billButton) {
+ 			if(billListDlg.curDish != null && billListDlg.getCurBillPanel() != this) {
 				billListDlg.moveDishToBill(this);
 				billListDlg.curDish = null;
 			}else {
 				billListDlg.curDish = selectedDish;
-				billListDlg.curBillButton = billButton;
 			}
 		}
 	}
@@ -229,7 +227,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == srpContent.getViewport()) {
 			if(billListDlg != null) {
-	 			if(billListDlg.curDish != null && billListDlg.curBillButton != billButton) {
+	 			if(billListDlg.curDish != null && billListDlg.getCurBillPanel() != this) {
 					billListDlg.moveDishToBill(this);
 					billListDlg.curDish = null;
 				}else {
@@ -288,7 +286,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		int price = dish.getPrice();
     		int gst = (int) (price * (dish.getGst() * gstRate / 100f));
     		int qst = (int) (price * (dish.getQst() * qstRate / 100f));
-    		int num = dish.getNum();
+    		float num = dish.getNum();
+    		if(num > BarOption.MaxQTY)
+    			num = num % BarOption.MaxQTY / (num / BarOption.MaxQTY);
     	
     		subTotal += price * num;
     		totalGst += gst;
@@ -412,23 +412,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		updateTotleArea();
 	}
     
-    private void resetAll() {
-        resetListArea();
-    }
-    
     private int getUsedRowCount() {
         for (int i = 0, len = tblSelectedDish.getRowCount(); i < len; i++)
             if (tblSelectedDish.getValueAt(i, 0) == null)
                 return i; // 至此得到 the used RowCount。
         return tblSelectedDish.getRowCount();
-    }
-    
-    private void resetListArea() {
-        int tRowCount = tblSelectedDish.getRowCount();
-        int tColCount = tblSelectedDish.getColumnCount();
-        for (int j = 0; j < tRowCount; j++)
-            for (int i = 0; i < tColCount; i++)
-                tblSelectedDish.setValueAt(null, j, i);
     }
     
     void reLayout() {
