@@ -5,12 +5,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
+import javax.comm.CommPortIdentifier;
+import javax.comm.ParallelPort;
+import javax.comm.PortInUseException;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -331,6 +337,45 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		return panels;
 	}
 	
+    private void openMoneyBox() {
+        int[] ccs = new int[5];
+        ccs[0] = 27;
+        ccs[1] = 112;
+        ccs[2] = 0;
+        ccs[3] = 80;
+        ccs[4] = 250;
+
+        CommPortIdentifier tPortIdty;
+        try {
+            Enumeration tPorts = CommPortIdentifier.getPortIdentifiers();
+            if (tPorts == null)
+                JOptionPane.showMessageDialog(this, "no comm ports found!");
+            else
+                while (tPorts.hasMoreElements()) {
+                    tPortIdty = (CommPortIdentifier) tPorts.nextElement();
+                    if (tPortIdty.getName().equals("LPT1")) {
+                        if (!tPortIdty.isCurrentlyOwned()) {
+                            ParallelPort tParallelPort = (ParallelPort) tPortIdty.open("ParallelBlackBox", 2000);
+                            DataOutputStream tOutStream = new DataOutputStream(tParallelPort.getOutputStream());
+                            for (int i = 0; i < 5; i++)
+                                tOutStream.write(ccs[i]);
+                            tOutStream.flush();
+                            tOutStream.close();
+                            tParallelPort.close();
+                        }
+                    }
+                }
+        } catch (PortInUseException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void printInvoice(
+            String pDate) {
+    }
+    
 	List<BillPanel> billPanels;
 	List<BillPanel> onScrBills;
 	

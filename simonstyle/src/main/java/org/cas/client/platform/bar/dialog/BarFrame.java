@@ -200,7 +200,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         lblStartTime.setBounds(getWidth() - lblStartTime.getPreferredSize().width - 200 - CustOpts.HOR_GAP*2 - CustOpts.SIZE_EDGE * 2,
         		 CustOpts.VER_GAP, lblStartTime.getPreferredSize().width, lblOperator.getPreferredSize().height);
         valStartTime.setBounds(lblStartTime.getX() + lblStartTime.getWidth() + CustOpts.HOR_GAP, lblStartTime.getY(),
-        		valStartTime.getPreferredSize().width, valStartTime.getPreferredSize().height);
+        		200 - lblStartTime.getWidth(), lblStartTime.getHeight());
         lblOperator.setBounds(lblStartTime.getX() - 180 - CustOpts.HOR_GAP, CustOpts.VER_GAP, lblOperator.getPreferredSize().width,
                 lblOperator.getPreferredSize().height);
         valOperator.setBounds(lblOperator.getX() + lblOperator.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 180 - lblOperator.getWidth(),

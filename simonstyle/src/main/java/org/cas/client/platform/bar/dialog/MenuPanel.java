@@ -11,6 +11,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
@@ -424,6 +425,10 @@ public class MenuPanel extends JPanel implements ActionListener {
             String text = menuButton.getText();
             if (text == null || text.length() == 0) { // check if it's empty
                 if (LoginDlg.USERTYPE == LoginDlg.ADMIN_STATUS) { // and it's admin mode, add a Category.
+                	if(tgbActiveCategory == null || tgbActiveCategory.getText() == null || tgbActiveCategory.getText().length() < 1) {
+    					JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.SetCatogoryFirst);
+    					return;
+                	}
                     new DishDlg(BarFrame.instance, menuButton.getDspIndex()).setVisible(true);
                 } else {
                     BarFrame.instance.switchMode(3);

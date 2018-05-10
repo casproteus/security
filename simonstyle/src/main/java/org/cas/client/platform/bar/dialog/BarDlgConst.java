@@ -55,6 +55,7 @@ public interface BarDlgConst {
     String COMFIRMDELETEACTION = "The dish might allready be prepared, are you sure to cancel?";
     String COMFIRMDELETEACTION2 = "Are you sure to remove it from list?";
     String COMFIRMLOSTACTION = "Are you sure not to send or save the new input content?";
+    String SetCatogoryFirst = "Please Set Category First.";
     String LeftMoney = "From Last Session";
     String StartTime = "Start Time";
     String EndTime = "End Time";

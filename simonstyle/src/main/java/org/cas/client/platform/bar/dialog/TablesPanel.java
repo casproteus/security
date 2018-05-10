@@ -106,7 +106,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             TableButton tableToggle = (TableButton) o;
         	BarFrame.instance.valCurTable.setText(tableToggle.getText());
         	
-			if(!BarFrame.isSingleUser()) {
+			if(!BarFrame.isSingleUser()) {	//if it's multi user, then login every time open table.
 				new LoginDlg(null).setVisible(true);
 	            if (LoginDlg.PASSED == true) {
 	            	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
@@ -137,7 +137,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 			}
         	
 			try {
-	        	BarFrame.instance.valStartTime.setText(BarOption.df.format(tableToggle.getOpenTime()));
+	        	BarFrame.instance.valStartTime.setText(BarOption.df.format(tableToggle.getOpenTime()));	//update ui's time field.
 	        	
 				Statement smt = PIMDBModel.getReadOnlyStatement();
 				ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
@@ -150,7 +150,12 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 					BarFrame.instance.lblCurBill.setText("0");
 					BarFrame.instance.switchMode(2);
 				} else { // if it's not empty, display a dialog to show all the bills.
-					BarFrame.instance.switchMode(1);
+					if(num == 1 && CustOpts.custOps.getValue("FrobiddenQuickEnter") == null) {
+						BarFrame.instance.lblCurBill.setText(rs.getString("contactID"));
+						BarFrame.instance.switchMode(2);
+					}else {
+						BarFrame.instance.switchMode(1);
+					}
 				}
 				tableToggle.setSelected(true);
 			} catch (Exception exp) {
