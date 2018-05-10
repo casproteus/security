@@ -2,7 +2,14 @@ package org.cas.client.platform.bar.model;
 
 
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
+import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.BarOption;
+import org.cas.client.platform.bar.dialog.BillListPanel;
+import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
@@ -10,16 +17,76 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 public class Dish {
 	
 	//create new outputs.
-	public static void split(Dish dish, int num) {
-		if(dish.getOutputID() >= 0) {
+	public static void split(ArrayList<Dish> selectdDishAry, int splitAmount, String billID) {
+		for(int i = 0; i < selectdDishAry.size(); i++) {
+			Dish dish = selectdDishAry.get(i);
+			split(dish, splitAmount, billID);
+		}
+	}
+
+	public static void split(Dish dish, int splitAmount, String billID) {
+		int num = dish.getNum();			//current amount
+		//first pick out the number on 100,0000 and 10000 position
+		int pK = num /(BarOption.MaxQTY * 100);
+		if(num > BarOption.MaxQTY * 100) {
+			num = num %(BarOption.MaxQTY * 100);
+		}
+		int pS = (int)num /BarOption.MaxQTY;
+		if(num > BarOption.MaxQTY) {
+			num = num % BarOption.MaxQTY;
+		}
+		//calculate the new rate of dividing price, and the new num to update into the db.
+		float priceChange = (float)num / splitAmount;	//default division rate.
+		int pX = splitAmount * BarOption.MaxQTY;
+		if(pS > 0) {	//while if it's already a float, then reset the division rate.
+			priceChange = priceChange / pS;
+			num += pS * BarOption.MaxQTY ;		//if more than one time division, put the number on higher position.
+			pX *= 100;
+		}
+		if(pK > 0) {
+			priceChange = priceChange / pK;
+			num += pK * BarOption.MaxQTY * 100;
+			pX *= 100;
+		}
+		num += pX;
+		
+		if(billID == null) {		//updating the original one.
 			Statement smt = PIMDBModel.getStatement();
 			try {
-				smt.execute("update output set deleted = 100 " + " where id = " + dish.getOutputID());
+				smt.execute("update output set amount = " + num
+						+ ", TOLTALPRICE = " + (dish.getPrice() - dish.getDiscount()) * priceChange + " where id = " + dish.getOutputID());
 			} catch (Exception exp) {
 				ErrorUtil.write(exp);
 			}
-		}else {
-			
+		}else {						//creating a splited one.
+			dish.setNum(num);
+			createSplitedOutput(dish, billID, priceChange);
+		}
+	}
+
+	public static void createOutput(Dish dish, String billID) {
+		createSplitedOutput(dish, billID, dish.getNum());
+	}
+	
+	public static void createSplitedOutput(Dish dish, String billID, float priceChange) {
+		int num = dish.getNum();
+		Statement smt = PIMDBModel.getStatement();
+		try {
+			StringBuilder sql = new StringBuilder(
+		            "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME) VALUES ('")
+		            .append(BarFrame.instance.valCurTable.getText()).append("', ")	//subject ->table id
+		            .append(billID).append(", ")			//contactID ->bill id
+		            .append(dish.getId()).append(", ")	//productid
+		            .append(dish.getNum()).append(", ")	//amount
+		            .append((dish.getPrice() - dish.getDiscount()) * priceChange).append(", ")	//totalprice int
+		            .append(dish.getDiscount() * dish.getNum()).append(", '")	//discount
+		            .append(dish.getModification()).append("', ")				//content
+		            .append(LoginDlg.USERID).append(", '")		//emoployid
+		            .append(BarOption.df.format(new Date())).append("') ");
+		        smt.executeUpdate(sql.toString());
+		
+		} catch (Exception exp) {
+			ErrorUtil.write(exp);
 		}
 	}
 	
@@ -55,6 +122,7 @@ public class Dish {
 		dish.setPrompMenu(prompMenu);
 		dish.setPrompMofify(prompMofify);
 		dish.setPrompPrice(prompPrice);
+		dish.setBillID(billID);
 		return dish;
 	}
     
@@ -198,6 +266,14 @@ public class Dish {
 		this.modification = modification;
 	}
 
+	public String getBillID() {
+		return billID;
+	}
+
+	public void setBillID(String billID) {
+		this.billID = billID;
+	}
+
 	private int id = -1;
     private int dspIndex = 0; // display position on screen.
     private String language[] = new String[3]; // CODE VARCHAR(255), MNEMONIC VARCHAR(255),SUBJECT VARCHAR(255)
@@ -215,5 +291,6 @@ public class Dish {
     private int discount;
     private int outputID = -1;
     private String modification;
+    private String billID;
     
 }

@@ -34,8 +34,6 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     JLabel lblCurBill;
     static NumberPanelDlg numberPanelDlg; 
     
-    public static String startTime;
-    
     public static void main(
             String[] args) {
         CASControl.ctrl.initModel();
@@ -76,7 +74,6 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
                 new JLabel(BarDlgConst.LeftMoney.concat(BarDlgConst.Colon)
                         .concat(decimalFormat.format(tShoestring / 100.0)).concat(BarDlgConst.Unit));
         
-        startTime = Calendar.getInstance().getTime().toLocaleString();
         lblOperator = new JLabel(BarDlgConst.Operator.concat(BarDlgConst.Colon));
         valOperator = new JLabel();
         lblCurTable = new JLabel(BarDlgConst.Table.concat(BarDlgConst.Colon));
@@ -85,9 +82,10 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         lblCurBill = new JLabel();
         
         lblShoestring = new JLabel();
-                        
-        lblStartTime = new JLabel();
 
+        lblStartTime = new JLabel();
+        valStartTime = new JLabel();
+        
         lblStatus = new JLabel();
         menuPanel = new MenuPanel();
         panels[0] = new TablesPanel();
@@ -106,6 +104,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         add(lblCurBill);
         add(lblShoestring);
         add(lblStartTime);
+        add(valStartTime);
         
         getContentPane().add(lblStatus);
         getContentPane().add(panels[0]);
@@ -137,12 +136,12 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 			if (!adminAuthentication()) 
 				return -1;
 		}else if(i == 2) {
-			((SalesPanel)panels[i]).billPanel.initTable();
+			((SalesPanel)panels[i]).billPanel.initContent();
 		}else if(i == 1) {
 			((BillListPanel)panels[i]).initContent();
 		}else if(i == 0) {
 			resetStatus();
-			((TablesPanel)panels[i]).initTableBtns();
+			((TablesPanel)panels[i]).initContent();
 		}
 		
     	for (JPanel panel : panels)
@@ -166,7 +165,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 		valCurTable.setText("");
 		lblCurBill.setText("");
 
-		lblStartTime.setText(BarDlgConst.StartTime.concat(BarDlgConst.Colon).concat(startTime));
+		lblStartTime.setText(BarDlgConst.StartTime.concat(BarDlgConst.Colon));
 	}
     
     private boolean adminAuthentication() {
@@ -189,11 +188,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
      */
     @Override
     public void reLayout() {
-        lblOperator.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblOperator.getPreferredSize().width,
-                lblOperator.getPreferredSize().height);
-        valOperator.setBounds(lblOperator.getX() + lblOperator.getWidth(), CustOpts.VER_GAP, 180 - lblOperator.getWidth(),
-                lblOperator.getPreferredSize().height);
-        lblCurTable.setBounds(valOperator.getX() + valOperator.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCurTable.getPreferredSize().width,
+        lblCurTable.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCurTable.getPreferredSize().width,
         		lblCurTable.getPreferredSize().height);
         valCurTable.setBounds(lblCurTable.getX() + lblCurTable.getWidth(), CustOpts.VER_GAP, 180 - lblCurTable.getWidth(),
         		lblCurTable.getPreferredSize().height);
@@ -201,15 +196,22 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         		lblBill.getPreferredSize().height);
         lblCurBill.setBounds(lblBill.getX() + lblBill.getWidth(), CustOpts.VER_GAP, 180 - lblBill.getWidth(),
         		lblBill.getPreferredSize().height);
-        lblStartTime.setBounds(getWidth() - lblStartTime.getPreferredSize().width - CustOpts.HOR_GAP*2 - CustOpts.SIZE_EDGE * 2,
-                lblOperator.getY(), lblStartTime.getPreferredSize().width, lblOperator.getPreferredSize().height);
-        lblShoestring.setBounds(
-                lblOperator.getX()
-                        + lblOperator.getWidth()
-                        + (lblStartTime.getX() - lblOperator.getX() - lblOperator.getWidth() - lblShoestring
-                                .getPreferredSize().width) / 2, lblOperator.getY(),
-                lblShoestring.getPreferredSize().width, lblOperator.getHeight());
         
+        lblStartTime.setBounds(getWidth() - lblStartTime.getPreferredSize().width - 200 - CustOpts.HOR_GAP*2 - CustOpts.SIZE_EDGE * 2,
+        		 CustOpts.VER_GAP, lblStartTime.getPreferredSize().width, lblOperator.getPreferredSize().height);
+        valStartTime.setBounds(lblStartTime.getX() + lblStartTime.getWidth() + CustOpts.HOR_GAP, lblStartTime.getY(),
+        		valStartTime.getPreferredSize().width, valStartTime.getPreferredSize().height);
+        lblOperator.setBounds(lblStartTime.getX() - 180 - CustOpts.HOR_GAP, CustOpts.VER_GAP, lblOperator.getPreferredSize().width,
+                lblOperator.getPreferredSize().height);
+        valOperator.setBounds(lblOperator.getX() + lblOperator.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 180 - lblOperator.getWidth(),
+                lblOperator.getPreferredSize().height);
+        
+        lblShoestring.setBounds(
+        		lblCurBill.getX()
+                        + lblCurBill.getWidth()
+                        + (lblOperator.getX() + lblCurBill.getX()) / 2 - lblCurBill.getWidth() - lblShoestring.getPreferredSize().width,  CustOpts.VER_GAP,
+                lblShoestring.getPreferredSize().width, lblOperator.getHeight());
+
         // status---------
         lblStatus.setBounds(CustOpts.HOR_GAP, getContainer().getHeight() - CustOpts.LBL_HEIGHT - CustOpts.VER_GAP, 
         		getContainer().getWidth() - CustOpts.HOR_GAP * 2, CustOpts.LBL_HEIGHT);
@@ -348,6 +350,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     private JLabel lblBill;
     private JLabel lblShoestring;
     private JLabel lblStartTime;
+    JLabel valStartTime;
 
     private DecimalFormat decimalFormat = new DecimalFormat("#0.00");
     

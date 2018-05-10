@@ -40,12 +40,13 @@ public interface BarDlgConst {
     String DISC_VOLUMN = "DISC VOLUMN";
 
     String Printer = "Printer";
-    String OnlyOneShouldBeSelected = "Please make sure only one selected, then try again.";
+    String OnlyOneShouldBeSelected = "Please make sure one and only one item selected, then try again.";
     String InvalidInput = "The inputted content is invalid for this function.";
     String ADMIN_MODE = "System is in setting mode! Click logout button back to use mode.";
     String USE_MODE = "System is in operating mode!";
     String Title = "STGOBar - Copyright 2018 - http://www.ShareTheGoodOnes.com";
     String DuplicatedInput = "Dubplicated name found! please choose an other name.";
+    String NoBillSeleted = "Found no bill to split the item to. Please select at least one other bill before release the button.";
     String Colon = "：";
     String Operator = "USER";
     String Table = "Table";
@@ -102,7 +103,6 @@ public interface BarDlgConst {
     String PrintAll = "Print All";
 
     String EqualBill = "EqualBill";
-    String EqualItem = "EqualItem";
     String SplitItem = "SplitItem";
     String MoveItem = "MoveItem";
     String CombineAll = "CombineAll";

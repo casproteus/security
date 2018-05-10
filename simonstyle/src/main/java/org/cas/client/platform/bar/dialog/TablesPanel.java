@@ -11,7 +11,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -114,21 +117,31 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 	            	return;
 	            }
 			}
-         	
+
         	if(tableToggle.getBackground() != colorSelected){	//if before is not selected, then update the status
         		o.setBackground(colorSelected);
+        		Timestamp openTime = tableToggle.getOpenTime();
+        		if(openTime == null) {
+        			openTime = new Timestamp(System.currentTimeMillis());
+        			tableToggle.setOpenTime(openTime);
+        		}
+        		
         		try {
         			Statement smt = PIMDBModel.getReadOnlyStatement();
-        			smt.executeQuery("update dining_Table set status = 1 WHERE name = '" + tableToggle.getText() + "'");
+        			smt.executeQuery("update dining_Table set status = 1, opentime = '"
+        			+ openTime + "' WHERE name = '" + tableToggle.getText() + "'");
+        			
         		}catch(Exception exp) {
         			ErrorUtil.write(exp);
         		}
 			}
         	
 			try {
+	        	BarFrame.instance.valStartTime.setText(BarOption.df.format(tableToggle.getOpenTime()));
+	        	
 				Statement smt = PIMDBModel.getReadOnlyStatement();
 				ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
-						+ tableToggle.getText() + "' and deleted = false order by contactID");
+						+ tableToggle.getText() + "' and deleted = false and time > '" + BarOption.df.format(tableToggle.getOpenTime()) + "' order by contactID");
 				rs.afterLast();
 				rs.relative(-1);
 				int num = rs.getRow();
@@ -299,7 +312,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     }
 
     // menu and category buttons must be init after initContent---------
-	void initTableBtns() {
+	void initContent() {
 		//clean existing btns
 		for (int i = btnTables.size() - 1; i >=0; i--) {
 			TableButton tableToggleButton = btnTables.get(i);
@@ -311,7 +324,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             Statement smt = PIMDBModel.getReadOnlyStatement();
 
             // load all the categorys---------------------------
-            ResultSet rs = smt.executeQuery("select ID, Name, posX, posY, width, height, type, status from dining_Table order by DSP_INDEX");
+            ResultSet rs = smt.executeQuery("select * from dining_Table order by DSP_INDEX");
             rs.beforeFirst();
 
             int tmpPos = 0;
@@ -322,6 +335,8 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             	tableToggleButton.setText(rs.getString("Name"));
             	tableToggleButton.setBounds(rs.getInt("posX"), rs.getInt("posY"), rs.getInt("width"), rs.getInt("height"));
             	tableToggleButton.setType(rs.getInt("type"));		//it's rectanglee or round?
+            	Timestamp time = rs.getTimestamp("openTime");
+            	tableToggleButton.setOpenTime(time);
             	if(rs.getInt("status") > 0)
             		tableToggleButton.setBackground(colorSelected);
             	tableToggleButton.setMargin(new Insets(0, 0, 0, 0));

@@ -169,27 +169,14 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	
             	//save to db output
                 try {
-                    Statement smt =  PIMDBModel.getReadOnlyStatement();
                     for (Dish dish : newDishes) {
 //                    	if(dish.getOutputID() > -1)	//if it's already saved into db, don't ignore.
 //                    		continue;
                     	
-                    	String time = new Date().toLocaleString();
                     	String curBillId = BarFrame.instance.lblCurBill.getText();
                     	if("0".equals(curBillId))
                     		curBillId = "1";
-	                    StringBuilder sql = new StringBuilder(
-	                        "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME) VALUES ('")
-	                        .append(BarFrame.instance.valCurTable.getText()).append("', ")	//subject ->table id
-	                        .append(curBillId).append(", ")			//contactID ->bill id
-	                        .append(dish.getId()).append(", ")	//productid
-	                        .append(dish.getNum()).append(", ")	//amount
-	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(", ")	//totalprice int
-	                        .append(dish.getDiscount() * dish.getNum()).append(", '")	//discount
-	                        .append(dish.getModification()).append("', ")				//content
-	                        .append(LoginDlg.USERID).append(", '")		//emoployid
-	                        .append(time).append("') ");
-	                    smt.executeUpdate(sql.toString());
+                    	Dish.createOutput(dish, curBillId);	//at this moment, the num shoul have not been soplitted.
 
 	                    //in case some store need to stay in the interface after clicking the send button. 
 //	                    sql = new StringBuilder("Select id from output where SUBJECT = '")
@@ -209,8 +196,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 //	                    
 //	                    rs.close();
                     }
-                    smt.close();
-                    smt = null;
                     if("true".equalsIgnoreCase((String)CustOpts.custOps.getValue("isCounterMode"))) {
                     	billPanel.resetTableArea();
                     }else {

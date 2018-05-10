@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -36,6 +37,8 @@ import com.jpos.POStest.POStestGUI;
 
 public class BarOption extends JDialog implements ICASDialog, ActionListener, ComponentListener {
 	public static final int MaxQTY = 10000;
+
+	public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
     public BarOption(JFrame pFrame) {
         super(pFrame, false);

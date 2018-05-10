@@ -40,9 +40,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnPrintAll = new JButton(BarDlgConst.PrintAll);
 
 		btnEqualBill = new JToggleButton(BarDlgConst.EqualBill);
-		btnEqualItem = new JButton(BarDlgConst.EqualItem);
-		btnSplitItem = new JButton(BarDlgConst.SplitItem);
-		btnMoveItem = new JButton(BarDlgConst.MoveItem);
+		btnSplitItem = new JToggleButton(BarDlgConst.SplitItem);
 		btnCombineAll = new JButton(BarDlgConst.CombineAll);
 		
 		btnCompleteAll = new JButton(BarDlgConst.CompleteAll);
@@ -54,10 +52,8 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnAddUser.setMargin(new Insets(0, 0, 0, 0));
 		btnPrintAll.setMargin(btnAddUser.getMargin());
 		btnEqualBill.setMargin(btnAddUser.getMargin());
-		btnEqualItem.setMargin(btnAddUser.getMargin());
-		btnSplitItem.setMargin(btnAddUser.getMargin());
-		btnMoveItem.setMargin(btnAddUser.getMargin());
 		btnCombineAll.setMargin(btnAddUser.getMargin());
+		btnSplitItem.setMargin(btnAddUser.getMargin());
 		btnCompleteAll.setMargin(btnAddUser.getMargin());
 		btnCancelAll.setMargin(btnAddUser.getMargin());
 		btnReturn.setMargin(btnAddUser.getMargin());
@@ -68,10 +64,8 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		add(separator);
 		add(btnPrintAll);
 		add(btnEqualBill);
-		add(btnEqualItem);
-		add(btnSplitItem);
-		add(btnMoveItem);
 		add(btnCombineAll);
+		add(btnSplitItem);
 		add(btnCompleteAll);
 		add(btnCancelAll);
 		add(btnReturn);
@@ -80,10 +74,8 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnAddUser.addActionListener(this);
 		btnPrintAll.addActionListener(this);
 		btnEqualBill.addActionListener(this);
-		btnEqualItem.addActionListener(this);
-		btnSplitItem.addActionListener(this);
-		btnMoveItem.addActionListener(this);
 		btnCombineAll.addActionListener(this);
+		btnSplitItem.addActionListener(this);
 		btnCompleteAll.addActionListener(this);
 		btnCancelAll.addActionListener(this);
 		btnReturn.addActionListener(this);
@@ -107,7 +99,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				JToggleButton billButton = new JToggleButton();
 				billButton.setText(String.valueOf(rs.getInt("contactID")));
 				billButton.setMargin(new Insets(0, 0, 0, 0));
-				billButton.addActionListener(this);
+				
 				BillPanel billPanel = new BillPanel(this, billButton);
 				billPanels.add(billPanel);
 				add(billPanel);
@@ -116,7 +108,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			//do it outside the above loop, because there's another qb query inside.
 			for(int i = 0; i < billPanels.size(); i++) {
 				billPanels.get(i).initComponent();
-				billPanels.get(i).initTable();
+				billPanels.get(i).initContent();
 				if(i < 4)
 					onScrBills.add(billPanels.get(i));
 			}
@@ -137,47 +129,40 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		col = col > 4 ? 4 : col;		//I think the screen is enought for only 4 column.
 		btnCancelAll.setBounds(getWidth() / 2 - (CustOpts.BTN_WIDTH + CustOpts.HOR_GAP) * 4 + 40 , 
 				panelHeight - tBtnHeight - CustOpts.VER_GAP,
-				CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
+				CustOpts.BTN_WIDTH, tBtnHeight);
 		btnPrintAll.setBounds(btnCancelAll.getX() + btnCancelAll.getWidth() + CustOpts.HOR_GAP, 
 				btnCancelAll.getY(),
-				CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
+				CustOpts.BTN_WIDTH, tBtnHeight);
 		
 		btnEqualBill.setBounds(btnPrintAll.getX() + btnPrintAll.getWidth() + CustOpts.HOR_GAP, 
 				btnPrintAll.getY(),
-				CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
-		btnEqualItem.setBounds(btnEqualBill.getX() + btnEqualBill.getWidth() + CustOpts.HOR_GAP, 
+				CustOpts.BTN_WIDTH, tBtnHeight);
+		btnCombineAll.setBounds(btnEqualBill.getX() + btnEqualBill.getWidth() + CustOpts.HOR_GAP, 
 				btnPrintAll.getY(),
-				CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
-		btnSplitItem.setBounds(btnEqualItem.getX() + btnEqualItem.getWidth() + CustOpts.HOR_GAP, 
+				CustOpts.BTN_WIDTH, tBtnHeight);
+		btnSplitItem.setBounds(btnCombineAll.getX() + btnCombineAll.getWidth() + CustOpts.HOR_GAP, 
 				btnPrintAll.getY(),
-				CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
-		btnMoveItem.setBounds(btnSplitItem.getX() + btnSplitItem.getWidth() + CustOpts.HOR_GAP, 
+				CustOpts.BTN_WIDTH, tBtnHeight);
+		btnCompleteAll.setBounds(btnSplitItem.getX() + btnSplitItem.getWidth() + CustOpts.HOR_GAP, 
 				btnPrintAll.getY(),
-				CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
-		btnCombineAll.setBounds(btnMoveItem.getX() + btnMoveItem.getWidth() + CustOpts.HOR_GAP, 
-				btnPrintAll.getY(),
-				CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
-		
-		btnCompleteAll.setBounds(btnCombineAll.getX() + btnCombineAll.getWidth() + CustOpts.HOR_GAP, 
-				btnPrintAll.getY(),
-				CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
+				CustOpts.BTN_WIDTH, tBtnHeight);
 		separator.setBounds(CustOpts.HOR_GAP, 
 				btnCancelAll.getY() - CustOpts.VER_GAP * 2,
-				getWidth() - CustOpts.HOR_GAP * 2, CustOpts.BTN_WIDTH_NUM);
+				getWidth() - CustOpts.HOR_GAP * 2, tBtnHeight);
 
-		btnAddUser.setBounds(CustOpts.SIZE_EDGE, btnCancelAll.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
+		btnAddUser.setBounds(CustOpts.SIZE_EDGE, btnCancelAll.getY(), CustOpts.BTN_WIDTH, tBtnHeight);
 		btnReturn.setBounds(getWidth() - CustOpts.SIZE_EDGE*2 - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP*2, 
 				btnPrintAll.getY(),
-				CustOpts.BTN_WIDTH, CustOpts.BTN_WIDTH_NUM);
+				CustOpts.BTN_WIDTH, tBtnHeight);
 		
 		for (int i = 0; i < onScrBills.size(); i++) {
 			int x = col < 4 ? 	//there move than 4 bills. put from left to right
 					(getWidth()  - (TBN_WIDTH + CustOpts.HOR_GAP)* col) / 2 + ((TBN_WIDTH + CustOpts.HOR_GAP)) * i
-					:(CustOpts.HOR_GAP + CustOpts.BTN_WIDTH) * i + CustOpts.HOR_GAP + CustOpts.SIZE_EDGE;
+					: CustOpts.SIZE_EDGE + CustOpts.HOR_GAP + (CustOpts.HOR_GAP + TBN_WIDTH) * i;
 			
 			onScrBills.get(i).setBounds(x, CustOpts.VER_GAP,
 					TBN_WIDTH, separator.getY() - CustOpts.VER_GAP * 2);
-			onScrBills.get(i).resetColWidth(TBN_WIDTH - 40);
+			onScrBills.get(i).resetColWidth(TBN_WIDTH);
 		}
 		invalidate();
 		revalidate();
@@ -197,6 +182,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		}
 		
 		// update all the table content.
+		curDish = null;
 		initContent();
 	}
 	
@@ -231,6 +217,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				BillPanel panel = getCurBillPanel();
 				if(panel == null) {
 					JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.OnlyOneShouldBeSelected);
+					btnEqualBill.setSelected(false);
 					return;
 				}
 				BarFrame.numberPanelDlg.setBtnSource(btnEqualBill);
@@ -242,44 +229,76 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 						JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.InvalidInput);
 						return;
 					}
-					//TODO:splet into num bills. each dish's number and price will be devide by "num".
-					//update existing outputs
-					for(int i = 0; i < panel.selectdDishAry.size(); i++) {
-						Dish dish = panel.selectdDishAry.get(i);
-						Dish.split(dish, num);
+					//splet into num bills. each dish's number and price will be devide by "num".
+					Dish.split(panel.selectdDishAry, num, null);//update existing outputs
+					for (int i = 1; i < num; i++) {				//generate splited ones.
+						Dish.split(panel.selectdDishAry, num, BillListPanel.getANewBillNumber());
 					}
 				}
-			}else if(o == btnEqualItem) {
-				
+				initContent();
 			}else if(o == btnSplitItem) {
+				if(btnSplitItem.isSelected()) {//select
+					//Todo:check if there's one item selected.
+					if(curDish == null) {
+						JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.OnlyOneShouldBeSelected);
+						btnSplitItem.setSelected(false);
+					}
+				}else {
 				
-			}else if(o == btnMoveItem) {
-				
+					// unselect: if here reached, there must be curDish.
+					// remove the bill where the curDish is. @because sometimes that bill might be
+					// unselected.
+					List<BillPanel> panels = getSelectedBillPannels();
+					for (BillPanel billPanel : panels) { // remove the original panel from the list.
+						if (billPanel.billButton.getText().equals(curDish.getBillID())) {
+							panels.remove(billPanel);
+							break;
+						}
+					}
+					if(panels.size() == 0) {
+						JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.NoBillSeleted);
+						return;
+					}
+					Dish.split(curDish, panels.size() + 1, null); // update the num and totalprice of curDish
+					for (BillPanel billPanel : panels) { // insert new output with other billID
+						Dish.split(curDish, panels.size() + 1, billPanel.billButton.getText());
+					}
+
+					curDish = null;
+					initContent();
+				}
 			}
 		}else {
 			if(o == btnCancelAll) {
 				//select all output of each bill wich curtable and status is not completed, and set the status to be cancelled.
 				//set the table as unselected.
 			}else if(o == btnPrintAll) {
-			}else if(o == btnCombineAll) {
-				//set the table as unselected.
+			}else if(o == btnCombineAll) {//@note should consider the time, incase there'ss some bill not paid before, while was calculated into current client.
+		        String sql =
+		                "update output set contactID = 1 where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
+		                + "' and time > '" + BarFrame.instance.valStartTime.getText() + "' and DELETED != true";
+		        try {
+		        	PIMDBModel.getStatement().execute(sql);
+		        }catch(Exception exp) {
+		        	ErrorUtil.write(exp);
+		        }
+				
+		        initContent();
 			}else if( o == btnCompleteAll) {
-				//select all output of each bill wich curtable and status is not completed, and set the status to be cancelled.
-				//set the table as unselected.
 			}else if(o == btnAddUser){
 				BarFrame.instance.lblCurBill.setText("0");
 				BarFrame.instance.switchMode(2);
 			}else if(o == btnReturn) {
 				BarFrame.instance.lblCurBill.setText("0");
 				BarFrame.instance.switchMode(0);
-			}else {		//when table buttons are clicked.
-	    		BarFrame.instance.lblCurBill.setText(((JButton)o).getText());
-	            BarFrame.instance.switchMode(2);
 			}
+
+			//select all output of each bill wich curtable and status is not completed, and set the status to be cancelled.
+			//set the table as unselected.
 		}
 	}
 	
-    static String getANewBillNumber(){
+    public static String getANewBillNumber(){
     	int num = 0;
     	try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
@@ -295,8 +314,12 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
     }
 
 	BillPanel getCurBillPanel(){
-		List<BillPanel> panels = getSelectedBillPannels();
-		return panels.size() == 1 ? panels.get(0) : null;
+		if(billPanels.size() == 1)
+			return billPanels.get(0);
+		else {
+			List<BillPanel> panels = getSelectedBillPannels();
+			return panels.size() == 1 ? panels.get(0) : null;
+		}
 	}
     
 	List<BillPanel> getSelectedBillPannels(){
@@ -315,9 +338,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	JSeparator separator;
 	JButton btnPrintAll;
 	JToggleButton btnEqualBill;
-	JButton btnEqualItem;
-	JButton btnSplitItem;
-	JButton btnMoveItem;
+	JToggleButton btnSplitItem;
 	JButton btnCombineAll;
 	
 	JButton btnCompleteAll;

@@ -271,6 +271,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 		this.btnSource = btnSource;
 		confirmed = false;
 		curContent = "";
+		tfdQTY.setText("");
 	}
 
 	private BarFrame barFrame;
