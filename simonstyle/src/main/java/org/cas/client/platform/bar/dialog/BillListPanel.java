@@ -50,7 +50,6 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnCombineAll = new JButton(BarDlgConst.CombineAll);
 		
 		btnCompleteAll = new JButton(BarDlgConst.CompleteAll);
-		btnCancelAll = new JButton(BarDlgConst.CancelAll);
 		btnReturn = new JButton(BarDlgConst.RETURN);
 		
 		separator= new JSeparator();
@@ -61,7 +60,6 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnCombineAll.setMargin(btnAddUser.getMargin());
 		btnSplitItem.setMargin(btnAddUser.getMargin());
 		btnCompleteAll.setMargin(btnAddUser.getMargin());
-		btnCancelAll.setMargin(btnAddUser.getMargin());
 		btnReturn.setMargin(btnAddUser.getMargin());
 		
 		setLayout(null);
@@ -73,7 +71,6 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		add(btnCombineAll);
 		add(btnSplitItem);
 		add(btnCompleteAll);
-		add(btnCancelAll);
 		add(btnReturn);
 		
 		addComponentListener(this);
@@ -83,7 +80,6 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnCombineAll.addActionListener(this);
 		btnSplitItem.addActionListener(this);
 		btnCompleteAll.addActionListener(this);
-		btnCancelAll.addActionListener(this);
 		btnReturn.addActionListener(this);
 	}
 	
@@ -133,11 +129,8 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
         
 		int col = billPanels.size();	//calculate together with the new button.
 		col = col > 4 ? 4 : col;		//I think the screen is enought for only 4 column.
-		btnCancelAll.setBounds(getWidth() / 2 - (CustOpts.BTN_WIDTH + CustOpts.HOR_GAP) * 4 + 40 , 
+		btnPrintAll.setBounds(getWidth() / 2 - (CustOpts.BTN_WIDTH + CustOpts.HOR_GAP) * 4 + 40, 
 				panelHeight - tBtnHeight - CustOpts.VER_GAP,
-				CustOpts.BTN_WIDTH, tBtnHeight);
-		btnPrintAll.setBounds(btnCancelAll.getX() + btnCancelAll.getWidth() + CustOpts.HOR_GAP, 
-				btnCancelAll.getY(),
 				CustOpts.BTN_WIDTH, tBtnHeight);
 		
 		btnEqualBill.setBounds(btnPrintAll.getX() + btnPrintAll.getWidth() + CustOpts.HOR_GAP, 
@@ -153,10 +146,10 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				btnPrintAll.getY(),
 				CustOpts.BTN_WIDTH, tBtnHeight);
 		separator.setBounds(CustOpts.HOR_GAP, 
-				btnCancelAll.getY() - CustOpts.VER_GAP * 2,
+				btnCompleteAll.getY() - CustOpts.VER_GAP * 2,
 				getWidth() - CustOpts.HOR_GAP * 2, tBtnHeight);
 
-		btnAddUser.setBounds(CustOpts.SIZE_EDGE, btnCancelAll.getY(), CustOpts.BTN_WIDTH, tBtnHeight);
+		btnAddUser.setBounds(CustOpts.SIZE_EDGE, btnCompleteAll.getY(), CustOpts.BTN_WIDTH, tBtnHeight);
 		btnReturn.setBounds(getWidth() - CustOpts.SIZE_EDGE*2 - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP*2, 
 				btnPrintAll.getY(),
 				CustOpts.BTN_WIDTH, tBtnHeight);
@@ -275,10 +268,8 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				}
 			}
 		}else {
-			if(o == btnCancelAll) {
-				//select all output of each bill wich curtable and status is not completed, and set the status to be cancelled.
-				//set the table as unselected.
-			}else if(o == btnPrintAll) {
+			if(o == btnPrintAll) {
+				
 			}else if(o == btnCombineAll) {//@note should consider the time, incase there'ss some bill not paid before, while was calculated into current client.
 		        String sql =
 		                "update output set contactID = 1 where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
@@ -387,7 +378,6 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	JButton btnCombineAll;
 	
 	JButton btnCompleteAll;
-	JButton btnCancelAll;
 
 	JButton btnReturn;
 }

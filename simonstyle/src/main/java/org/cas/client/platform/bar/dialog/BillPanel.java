@@ -23,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -69,8 +70,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	        if(o == btnMore) {
 	        	int selectedRow =  tblSelectedDish.getSelectedRow();
 				if(selectdDishAry.get(selectedRow).getOutputID() >= 0) {	//already saved
+					BarFrame.setStatusMes(BarDlgConst.SendItemCanNotModify);
 					addContentToList(selectdDishAry.get(selectedRow));
-					tblSelectedDish.setSelectedRow(selectdDishAry.size() - 1);
 				}else {
 					int tQTY = selectdDishAry.get(selectedRow).getNum() + 1;
 					int row = tblSelectedDish.getSelectedRow();
@@ -284,6 +285,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         newDish.setNum(1);
         selectdDishAry.add(newDish);				//valueChanged process. not being cleared immediately-----while now dosn't matter
         updateTotleArea();								//because value change will not be used to remove the record.
+        SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+		        tblSelectedDish.setSelectedRow(selectdDishAry.size() - 1);
+			}
+		});
     }
 
     void updateTotleArea() {

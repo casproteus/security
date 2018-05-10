@@ -51,11 +51,12 @@ public interface BarDlgConst {
     String Operator = "USER";
     String Table = "Table";
     String Bill = "Bill";
-    
+    String UnSavedRecordFound = "Are you sure to split the bill withoud sending new added ones? the un send records will be cancelled";
     String COMFIRMDELETEACTION = "The dish might allready be prepared, are you sure to cancel?";
     String COMFIRMDELETEACTION2 = "Are you sure to remove it from list?";
     String COMFIRMLOSTACTION = "Are you sure not to send or save the new input content?";
     String SetCatogoryFirst = "Please Set Category First.";
+    String SendItemCanNotModify = "Item already send can not be modified. we added a new item into the list.";
     String LeftMoney = "From Last Session";
     String StartTime = "Start Time";
     String EndTime = "End Time";

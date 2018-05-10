@@ -81,6 +81,7 @@ import org.cas.client.platform.refund.dialog.RefundDlg;
 import org.cas.client.resource.international.DlgConst;
 import org.cas.client.resource.international.PaneConsts;
 import org.hsqldb.Table;
+import org.jfree.chart.demo.BarChartDemo1;
 
 //Identity表应该和Employ表合并。
 public class SalesPanel extends JPanel implements ComponentListener, ActionListener, FocusListener {
@@ -149,7 +150,16 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         Object o = e.getSource();
         //JButton------------------------------------------------------------------------------------------------
         if (o instanceof JButton) {
-        	if (o == btnLine_1_1) {
+        	if (o == btnLine_1_6) {
+        		//check if there unsaved dish, and give warning.
+            	List<Dish> newDishes = getNewDishes();
+            	if(newDishes.size() > 0) {
+            		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+            				BarDlgConst.UnSavedRecordFound, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+            			return;
+    	            }
+            	}
+        		BarFrame.instance.switchMode(1);
         		
             } else if (o == btnLine_1_9) {//send
             	List<Dish> newDishes = getNewDishes();
@@ -393,7 +403,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     }
 
     private void initComponent() {
-        
         btnLine_1_1 = new JButton(BarDlgConst.EXACT_AMOUNT);
         btnLine_1_2 = new JButton(BarDlgConst.CASH);
         btnLine_1_3 = new JButton(BarDlgConst.PAY);
@@ -465,10 +474,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_1_7.addActionListener(this);
         btnLine_1_8.addActionListener(this);
         btnLine_2_7.addActionListener(this);
-    }
-
-    private void enableBtns(
-            boolean pIsEnable) {
     }
 
     private JButton btnLine_1_1;
