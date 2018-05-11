@@ -35,7 +35,7 @@ import org.jfree.chart.labels.CustomXYToolTipGenerator;
 
 public class BillListPanel extends  JPanel  implements ActionListener, ComponentListener{
 	int TBN_WIDTH = 300;
-	Dish curDish;
+	static Dish curDish;
 	
 	public BillListPanel() {
 		

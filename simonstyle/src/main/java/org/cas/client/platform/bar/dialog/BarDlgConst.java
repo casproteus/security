@@ -66,7 +66,7 @@ public interface BarDlgConst {
     String ProdNumber = "Id";
     String ProdName = "Name";
     String Pinyin = "助记";
-    String Count = "Number";
+    String Count = "QTY";
     String Price = "Price";
     String Subtotal = "SubTotal";
     String Total = "Total";

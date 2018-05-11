@@ -150,7 +150,24 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         Object o = e.getSource();
         //JButton------------------------------------------------------------------------------------------------
         if (o instanceof JButton) {
-        	if (o == btnLine_1_6) {
+        	if (o == btnLine_1_4) {	//remove button.
+        		//check if there's an item selected.
+        		if(BillListPanel.curDish == null) {
+        			JOptionPane.showMessageDialog(this, BarDlgConst.OnlyOneShouldBeSelected);
+        			return;
+        		}
+        		//todo: check if it's send
+        		if(BillListPanel.curDish.getOutputID() >= 0) {
+        			if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+            				BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+            			return;
+    	            }
+        			//clean from screen and db.
+        			Dish.delete(BillListPanel.curDish);
+        		}
+    			//clean from screen.
+        		billPanel.removeAtSelection(billPanel.tblSelectedDish.getSelectedRow());
+        	}else if (o == btnLine_1_6) {		//split bill
         		//check if there unsaved dish, and give warning.
             	List<Dish> newDishes = getNewDishes();
             	if(newDishes.size() > 0) {
@@ -228,7 +245,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		Object[][] tValues = new Object[tValidRowCount][tColCount];
             		for (int r = 0; r < tValidRowCount; r++) {
             			for (int c = 0; c < tColCount; c++)
-            				tValues[r][c] = c == 0 ? r + 1: billPanel.tblSelectedDish.getValueAt(r, c);
+            				tValues[r][c] = billPanel.tblSelectedDish.getValueAt(r, c);
             		}
             		billPanel.tblSelectedDish.setDataVector(tValues, billPanel.header);
             		billPanel.resetColWidth(billPanel.getWidth());
@@ -242,6 +259,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		BarFrame.instance.switchMode(0);
             	}
             } else if (o == btnLine_2_5) { // void all includ saved ones
+        		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+        				BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+	                 return;	
+	            }
     	        //update db, delete relevant orders.
             	for (Dish dish : billPanel.selectdDishAry) {
             		Dish.delete(dish);
@@ -270,8 +291,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         }
         //JToggleButton-------------------------------------------------------------------------------------
         else if(o instanceof JToggleButton) {
-        	if(o == btnLine_1_4) {
-        	}else if (o == btnLine_1_5) {
+        	if (o == btnLine_1_5) {
         		
         	}else if (o == btnLine_1_7) {	//QTY
         		//pomp up a numberPanelDlg
@@ -406,7 +426,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_1_1 = new JButton(BarDlgConst.EXACT_AMOUNT);
         btnLine_1_2 = new JButton(BarDlgConst.CASH);
         btnLine_1_3 = new JButton(BarDlgConst.PAY);
-        btnLine_1_4 = new JToggleButton("");//BarDlgConst.REMOVE);
+        btnLine_1_4 = new JButton(BarDlgConst.REMOVE);
         btnLine_1_5 = new JToggleButton("");//BarDlgConst.VOID_ITEM);
         btnLine_1_6 = new JButton(BarDlgConst.SPLIT_BILL);
         btnLine_1_7 = new JToggleButton(BarDlgConst.QTY);
@@ -479,7 +499,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private JButton btnLine_1_1;
     private JButton btnLine_1_2;
     private JButton btnLine_1_3;
-    private JToggleButton btnLine_1_4;
+    private JButton btnLine_1_4;
     private JToggleButton btnLine_1_5;
     private JButton btnLine_1_6;
     JToggleButton btnLine_1_7;

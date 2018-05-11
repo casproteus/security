@@ -107,7 +107,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
 				updateTotleArea();
 	        }
-        }else if(o == billButton){		//when table buttons are clicked.
+        }else if(o == billButton){		//when bill button on top are clicked.
         	if(billListDlg != null && billListDlg.btnSplitItem.isSelected()) {
         		billButton.setSelected(!billButton.isSelected());
         		return;
@@ -153,33 +153,35 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     //table selection listener---------------------
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		DefaultListSelectionModel selectionModel = (DefaultListSelectionModel)e.getSource();
-		int selectedRow =  selectionModel.getMinSelectionIndex();
+		int selectedRow =  tblSelectedDish.getSelectedRow();
 		btnMore.setEnabled(selectedRow >= 0 && selectedRow <= selectdDishAry.size());
 		btnLess.setEnabled(selectedRow >= 0 && selectedRow <= selectdDishAry.size());
-		if(!btnMore.isEnabled()) {
-			ErrorUtil.write("Unexpected button status occured, found the 'more' button is unAbled!");
+		if(!btnMore.isEnabled()) {	//some time the selectedRow can be -1.
+			BillListPanel.curDish = null;
 			return;
 		}
-		
-		if(salesPanel != null && salesPanel.btnLine_1_7.isSelected()) {	//if qty button seleted.
-			Object obj = tblSelectedDish.getValueAt(selectedRow,3);
-			//update the qty in qtyDlg.
-			if(obj != null)
-				BarFrame.instance.numberPanelDlg.setContents(obj.toString());
+
+		Dish selectedDish = selectdDishAry.get(selectedRow);
+		if(salesPanel != null) {
+			BillListPanel.curDish = selectedDish;
+			if( salesPanel.btnLine_1_7.isSelected()) {	//if qty button seleted.
+				Object obj = tblSelectedDish.getValueAt(selectedRow,3);
+				//update the qty in qtyDlg.
+				if(obj != null)
+					BarFrame.numberPanelDlg.setContents(obj.toString());
+			}
 		}else if(billListDlg != null) {
 			if(billListDlg.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
 				billButton.setSelected(!billButton.isSelected());
 				return;
 			}
 			
-			Dish selectedDish = selectdDishAry.get(selectedRow);
- 			if(billListDlg.curDish != null && billListDlg.getCurBillPanel() != null && billListDlg.getCurBillPanel() != this) {
+ 			if(BillListPanel.curDish != null && billListDlg.getCurBillPanel() != null && billListDlg.getCurBillPanel() != this) {
 				billListDlg.moveDishToBill(this);
-				billListDlg.curDish = null;
+				BillListPanel.curDish = null;
 			}else {
 				billButton.setSelected(true);
-				billListDlg.curDish = selectedDish;
+				BillListPanel.curDish = selectedDish;
 			}
 		}
 	}
@@ -187,20 +189,20 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	//table row color----------------------------------------------------------
 	@Override
 	public Color getBackgroundAtRow(int row) {
-		if(selectdDishAry.size() > row) {
-			Dish dish = selectdDishAry.get(row);
-			if(dish.getOutputID() > -1) {
-				return new Color(222, 111, 34);
-			}else {
-				return new Color(150, 150, 150);
-			}
-		}else
-			return null;
+		return null;
 	}
 
 	@Override
 	public Color getForegroundAtRow(int row) {
-		return null;
+		if(row < selectdDishAry.size()) {
+			Dish dish = selectdDishAry.get(row);
+			if(dish.getOutputID() > -1) {
+				return Color.BLACK;
+			}else {
+				return Color.RED;
+			}
+		}else
+			return null;
 	}
 
 	@Override
@@ -273,17 +275,18 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         	tRowCount--;
         }
         
+        Dish newDish = dish.clone();		//@NOTE: incase the cloned dish contains outpurID properties.
+        newDish.setOutputID(-1);
+        newDish.setNum(1);
+        selectdDishAry.add(newDish);				//valueChanged process. not being cleared immediately-----while now dosn't matter
+        BillListPanel.curDish = newDish;
+
+        //update the interface.
         tblSelectedDish.setValueAt("X1", tValidRowCount, 0); // set the count.
         tblSelectedDish.setValueAt(dish.getLanguage(CustOpts.custOps.getUserLang()), tValidRowCount, 1);// set the Name.
         tblSelectedDish.setValueAt(dish.getSize() > 1 ? dish.getSize() : "", tValidRowCount, 2); // set the count.
         tblSelectedDish.setValueAt(dish.getPrice()/100f, tValidRowCount, 3); // set the price.
         
-        tblSelectedDish.setSelectedRow(tValidRowCount);	//@NOTE:must before adding into the array, so it can be ignored by 
-        
-        Dish newDish = dish.clone();		//@NOTE: incase the cloned dish contains outpurID properties.
-        newDish.setOutputID(-1);
-        newDish.setNum(1);
-        selectdDishAry.add(newDish);				//valueChanged process. not being cleared immediately-----while now dosn't matter
         updateTotleArea();								//because value change will not be used to remove the record.
         SwingUtilities.invokeLater(new Runnable() {
 			
@@ -442,7 +445,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         tblSelectedDish.invalidate();
     }
 
-    private void removeAtSelection(int selectedRow) {
+    void removeAtSelection(int selectedRow) {
+		int tValidRowCount = getUsedRowCount(); // get the used RowCount
+    	if(selectedRow < 0 || selectedRow > tValidRowCount - 1) {
+    		JOptionPane.showMessageDialog(this, BarDlgConst.OnlyOneShouldBeSelected);
+    		ErrorUtil.write("Unexpected row number when calling removeAtSelection : " + selectedRow);
+    		return;
+    	}
     	//update db first
     	Dish dish = selectdDishAry.get(selectedRow);
     	if(dish.getOutputID() > -1) {
@@ -452,7 +461,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		selectdDishAry.remove(selectedRow);
 		//update the table view
 		int tColCount = tblSelectedDish.getColumnCount();
-		int tValidRowCount = getUsedRowCount(); // get the used RowCount
 		Object[][] tValues = new Object[tValidRowCount - 1][tColCount];
 		for (int r = 0; r < tValidRowCount; r++) {
 			if(r == selectedRow) {
@@ -460,12 +468,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			}else {
 				int rowNum = r > selectedRow ? r : r + 1;
 			    for (int c = 0; c < tColCount; c++)
-			        tValues[rowNum-1][c] = c == 0 ? rowNum: tblSelectedDish.getValueAt(r, c);
+			        tValues[rowNum-1][c] = tblSelectedDish.getValueAt(r, c);
 			}
 		}
 		tblSelectedDish.setDataVector(tValues, header);
 		resetColWidth(srpContent.getWidth());
-		tblSelectedDish.setSelectedRow(tValues.length - 1);
+		tblSelectedDish.setSelectedRow(tValues.length - 1); //@Note this will trigger a value change event, to set the curDish.
 		updateTotleArea();
 	}
     
@@ -546,6 +554,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         
         // border----------
         tblSelectedDish.setBorder(null);
+        tblSelectedDish.setShowGrid(false);
         // forcus-------------
         tblSelectedDish.setFocusable(false);
 
@@ -587,7 +596,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     private ArrayButton btnMore;
     private ArrayButton btnLess;
     
-    String[] header = new String[] {BarDlgConst.Count, BarDlgConst.ProdName, BarDlgConst.Size, 
+    String[] header = new String[] {BarDlgConst.Count, BarDlgConst.ProdName, "", 
             BarDlgConst.Price};
 
 }
