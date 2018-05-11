@@ -162,12 +162,17 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             				BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
             			return;
     	            }
+        			//TODO: send a message to kitchen.
+        			
         			//clean from screen and db.
         			Dish.delete(BillListPanel.curDish);
         		}
     			//clean from screen.
         		billPanel.removeAtSelection(billPanel.tblSelectedDish.getSelectedRow());
-        	}else if (o == btnLine_1_6) {		//split bill
+        	}else if(o == btnLine_1_5) {		//Add client
+				BarFrame.instance.lblCurBill.setText("0");
+				BarFrame.instance.switchMode(2);
+        	} else if (o == btnLine_1_6) {		//split bill
         		//check if there unsaved dish, and give warning.
             	List<Dish> newDishes = getNewDishes();
             	if(newDishes.size() > 0) {
@@ -258,7 +263,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		}
             		BarFrame.instance.switchMode(0);
             	}
-            } else if (o == btnLine_2_5) { // void all includ saved ones
+            } else if (o == btnLine_2_5) { // void all include saved ones
         		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
         				BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
 	                 return;	
@@ -267,6 +272,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	for (Dish dish : billPanel.selectdDishAry) {
             		Dish.delete(dish);
 				}
+
+    			//TODO: send a message to kitchen.
+            	
             	//if the bill amount is 1, cancel the selected status of the table.
         		if(isLastBillOfCurTable()) {
         			resetCurTableDBStatus();
@@ -291,9 +299,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         }
         //JToggleButton-------------------------------------------------------------------------------------
         else if(o instanceof JToggleButton) {
-        	if (o == btnLine_1_5) {
-        		
-        	}else if (o == btnLine_1_7) {	//QTY
+        	if (o == btnLine_1_7) {	//QTY
         		//pomp up a numberPanelDlg
         		BarFrame.instance.numberPanelDlg.setBtnSource(btnLine_1_7);
         		//should no record selected, select the last one.
@@ -427,7 +433,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_1_2 = new JButton(BarDlgConst.CASH);
         btnLine_1_3 = new JButton(BarDlgConst.PAY);
         btnLine_1_4 = new JButton(BarDlgConst.REMOVE);
-        btnLine_1_5 = new JToggleButton("");//BarDlgConst.VOID_ITEM);
+        btnLine_1_5 = new JButton(BarDlgConst.AddUser);
         btnLine_1_6 = new JButton(BarDlgConst.SPLIT_BILL);
         btnLine_1_7 = new JToggleButton(BarDlgConst.QTY);
         btnLine_1_8 = new JButton(BarDlgConst.DISC_ITEM);
@@ -500,7 +506,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private JButton btnLine_1_2;
     private JButton btnLine_1_3;
     private JButton btnLine_1_4;
-    private JToggleButton btnLine_1_5;
+    private JButton btnLine_1_5;
     private JButton btnLine_1_6;
     JToggleButton btnLine_1_7;
     private JButton btnLine_1_8;

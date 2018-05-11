@@ -132,6 +132,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     }
 	
     public int switchMode(int i) {
+    	BillListPanel.curDish = null;
 		if (i == 3) {
 			if (!adminAuthentication()) 
 				return -1;

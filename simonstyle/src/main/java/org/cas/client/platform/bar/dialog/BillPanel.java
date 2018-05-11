@@ -88,23 +88,24 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		                    JOptionPane.YES_NO_OPTION) != 0) {
 						return;
 					}
-				}
-				
-				if(selectdDishAry.get(selectedRow).getNum() == 1) {
-					if (JOptionPane.showConfirmDialog(this, BarDlgConst.COMFIRMDELETEACTION2, DlgConst.DlgTitle,
-		                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
-						tblSelectedDish.setSelectedRow(-1);
-						return;
+					//TODO: send a message to kitchen.
+					
+				}else {
+					if(selectdDishAry.get(selectedRow).getNum() == 1) {
+						if (JOptionPane.showConfirmDialog(this, BarDlgConst.COMFIRMDELETEACTION2, DlgConst.DlgTitle,
+			                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
+							tblSelectedDish.setSelectedRow(-1);
+							return;
+						}
+						removeAtSelection(selectedRow);
+					} else {
+						int tQTY = selectdDishAry.get(selectedRow).getNum() - 1;
+						int row = tblSelectedDish.getSelectedRow();
+						selectdDishAry.get(row).setNum(tQTY);
+						tblSelectedDish.setValueAt("x" + tQTY, row, 0);		
+						tblSelectedDish.setValueAt((selectdDishAry.get(selectedRow).getPrice() - selectdDishAry.get(selectedRow).getDiscount()) * tQTY/100f, row, 3);
 					}
-					removeAtSelection(selectedRow);
-				} else {
-					int tQTY = selectdDishAry.get(selectedRow).getNum() - 1;
-					int row = tblSelectedDish.getSelectedRow();
-					selectdDishAry.get(row).setNum(tQTY);
-					tblSelectedDish.setValueAt("x" + tQTY, row, 0);		
-					tblSelectedDish.setValueAt((selectdDishAry.get(selectedRow).getPrice() - selectdDishAry.get(selectedRow).getDiscount()) * tQTY/100f, row, 3);
 				}
-
 				updateTotleArea();
 	        }
         }else if(o == billButton){		//when bill button on top are clicked.

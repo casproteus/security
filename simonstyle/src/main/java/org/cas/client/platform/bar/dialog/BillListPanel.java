@@ -124,35 +124,38 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 10) / 9;
+        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 8) / 7;
         int tBtnHeight = panelHeight / 10;
         
 		int col = billPanels.size();	//calculate together with the new button.
 		col = col > 4 ? 4 : col;		//I think the screen is enought for only 4 column.
-		btnPrintAll.setBounds(getWidth() / 2 - (CustOpts.BTN_WIDTH + CustOpts.HOR_GAP) * 4 + 40, 
+
+		btnAddUser.setBounds(CustOpts.SIZE_EDGE, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
+		
+		btnPrintAll.setBounds(btnAddUser.getX() + btnAddUser.getWidth() + CustOpts.HOR_GAP, 
 				panelHeight - tBtnHeight - CustOpts.VER_GAP,
-				CustOpts.BTN_WIDTH, tBtnHeight);
+				tBtnWidht, tBtnHeight);
 		
 		btnEqualBill.setBounds(btnPrintAll.getX() + btnPrintAll.getWidth() + CustOpts.HOR_GAP, 
 				btnPrintAll.getY(),
-				CustOpts.BTN_WIDTH, tBtnHeight);
+				tBtnWidht, tBtnHeight);
 		btnCombineAll.setBounds(btnEqualBill.getX() + btnEqualBill.getWidth() + CustOpts.HOR_GAP, 
 				btnPrintAll.getY(),
-				CustOpts.BTN_WIDTH, tBtnHeight);
+				tBtnWidht, tBtnHeight);
 		btnSplitItem.setBounds(btnCombineAll.getX() + btnCombineAll.getWidth() + CustOpts.HOR_GAP, 
 				btnPrintAll.getY(),
-				CustOpts.BTN_WIDTH, tBtnHeight);
+				tBtnWidht, tBtnHeight);
 		btnCompleteAll.setBounds(btnSplitItem.getX() + btnSplitItem.getWidth() + CustOpts.HOR_GAP, 
 				btnPrintAll.getY(),
-				CustOpts.BTN_WIDTH, tBtnHeight);
+				tBtnWidht, tBtnHeight);
+		btnReturn.setBounds(btnCompleteAll.getX() + btnCompleteAll.getWidth() + CustOpts.HOR_GAP, 
+				btnPrintAll.getY(),
+				tBtnWidht, tBtnHeight);
+		
 		separator.setBounds(CustOpts.HOR_GAP, 
 				btnCompleteAll.getY() - CustOpts.VER_GAP * 2,
 				getWidth() - CustOpts.HOR_GAP * 2, tBtnHeight);
 
-		btnAddUser.setBounds(CustOpts.SIZE_EDGE, btnCompleteAll.getY(), CustOpts.BTN_WIDTH, tBtnHeight);
-		btnReturn.setBounds(getWidth() - CustOpts.SIZE_EDGE*2 - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP*2, 
-				btnPrintAll.getY(),
-				CustOpts.BTN_WIDTH, tBtnHeight);
 		
 		for (int i = 0; i < onScrBills.size(); i++) {
 			int x = col < 4 ? 	//there move than 4 bills. put from left to right
@@ -191,22 +194,13 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	}
 
 	@Override
-	public void componentMoved(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void componentMoved(ComponentEvent e) {}
 
 	@Override
-	public void componentShown(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void componentShown(ComponentEvent e) {}
 
 	@Override
-	public void componentHidden(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void componentHidden(ComponentEvent e) {}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {	//@NOTE: the bill button could trigger two times of event.
@@ -268,8 +262,11 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				}
 			}
 		}else {
-			if(o == btnPrintAll) {
-				
+			if(o == btnAddUser){
+				BarFrame.instance.lblCurBill.setText("0");
+				BarFrame.instance.switchMode(2);
+			}else if(o == btnPrintAll) {
+				//TODO: add print receipt code.
 			}else if(o == btnCombineAll) {//@note should consider the time, incase there'ss some bill not paid before, while was calculated into current client.
 		        String sql =
 		                "update output set contactID = 1 where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
@@ -282,9 +279,22 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				
 		        initContent();
 			}else if( o == btnCompleteAll) {
-			}else if(o == btnAddUser){
+		        try {
+		        	Statement smt = PIMDBModel.getStatement();
+		        	String tableID = BarFrame.instance.valCurTable.getText();
+					String sql =
+			                "update output set deleted = 100 where SUBJECT = '" + tableID
+			                + "' and time > '" + BarFrame.instance.valStartTime.getText() + "' and DELETED != true";
+					smt.execute(sql);
+		        	//update the tabel status
+		        	smt.execute("update dining_Table set status = 0 WHERE name = '" + tableID + "'");
+		        }catch(Exception exp) {
+		        	ErrorUtil.write(exp);
+		        }
+		        
 				BarFrame.instance.lblCurBill.setText("0");
-				BarFrame.instance.switchMode(2);
+				BarFrame.instance.switchMode(0);
+				
 			}else if(o == btnReturn) {
 				BarFrame.instance.lblCurBill.setText("0");
 				BarFrame.instance.switchMode(0);

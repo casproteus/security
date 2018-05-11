@@ -5,6 +5,16 @@ import javax.swing.JButton;
 public interface BarDlgConst {
     int SCROLLBAR_WIDTH = 40;
     int SubTotal_HEIGHT = 50;
+    
+    String ChangeMode = "CHANGE MODE";
+    String AddTable = "ADD TABLE";
+    String OrderManage = "ORDER MANAGEMENT";
+    String OpenDrawer = "OPEN DRAWER";
+    String WaiterReport = "SERVER REPORT";
+    String Reservation = "RESERVATION";
+    String Report = "REPORT";
+    String SignOut = "SIGN OUT";
+    
     String Menu = "Menu";
     String Language1 = "Language1";
     String Language2 = "Language2";
@@ -101,15 +111,15 @@ public interface BarDlgConst {
     String Change = "找零";
     String Continue = "继续收银";
 
-    String AddUser = "Add Client";
-    String PrintAll = "Print All";
+    String AddUser = "ADD CLIENT";
+    String PrintAll = "PRINT ALL";
 
-    String EqualBill = "EqualBill";
-    String SplitItem = "SplitItem";
+    String EqualBill = "EQUAL BILL";
+    String SplitItem = "SPLIT ITEM";
     String MoveItem = "MoveItem";
-    String CombineAll = "CombineAll";
+    String CombineAll = "COMBINE ALL";
 	
-    String CompleteAll = "Complete";
+    String CompleteAll = "COMPLETE ALL";
     String CancelAll = "Cancel All";
     String UserName = "用户名";
     String Password = "密码";
