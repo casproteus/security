@@ -39,7 +39,31 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 	public static final int MaxQTY = 10000;
 
 	public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
+    
+    public static int getBillPageRow() {
+    	return CustOpts.custOps.getValue("BillPanel_Row") == null ? 
+    			1 : Integer.valueOf((String)CustOpts.custOps.getValue("BillPanel_Row"));
+    }
+    public static void setBillPageRow(String row) {
+    	CustOpts.custOps.setKeyAndValue("BillPanel_Row", row);
+    }
+    
+    public static int getBillPageCol() {
+    	return CustOpts.custOps.getValue("BillPanel_Col") == null ? 
+    			4 : Integer.valueOf((String)CustOpts.custOps.getValue("BillPanel_Col"));
+    }
+    public static void setBillPageCol(String col) {
+    	CustOpts.custOps.setKeyAndValue("BillPanel_Col", col);
+    }
+
+    public static boolean isSingleUser() {
+    	return "true".equals(CustOpts.custOps.getValue("SingleUserMode"));
+    }
+    public static void setSingleUser(String is) {
+    	CustOpts.custOps.setKeyAndValue("SingleUserMode", is);
+    }
+    
+    
     public BarOption(JFrame pFrame) {
         super(pFrame, false);
         initDialog();

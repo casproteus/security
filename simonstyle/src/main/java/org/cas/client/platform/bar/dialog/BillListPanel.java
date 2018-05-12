@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 
+import org.cas.client.platform.bar.beans.ArrayButton;
 import org.cas.client.platform.bar.beans.TableButton;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -33,15 +34,19 @@ import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.jfree.chart.labels.CustomXYToolTipGenerator;
 
+import jpos.profile.IntegerPropType;
+
 public class BillListPanel extends  JPanel  implements ActionListener, ComponentListener{
-	int TBN_WIDTH = 300;
 	static Dish curDish;
+	int curPageNum;
 	
 	public BillListPanel() {
 		
 		billPanels= new ArrayList<BillPanel>();
 		onScrBills= new ArrayList<BillPanel>();
-		
+
+	    btnLeft = new ArrayButton("<<");
+	    btnRight = new ArrayButton(">>");
 		btnAddUser = new JButton(BarDlgConst.AddUser);
 		btnPrintAll = new JButton(BarDlgConst.PrintAll);
 
@@ -53,7 +58,9 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnReturn = new JButton(BarDlgConst.RETURN);
 		
 		separator= new JSeparator();
-		
+
+		btnLeft.setMargin(new Insets(0, 0, 0, 0));
+		btnRight.setMargin(new Insets(0, 0, 0, 0));
 		btnAddUser.setMargin(new Insets(0, 0, 0, 0));
 		btnPrintAll.setMargin(btnAddUser.getMargin());
 		btnEqualBill.setMargin(btnAddUser.getMargin());
@@ -64,6 +71,8 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		
 		setLayout(null);
 		
+		add(btnLeft);
+		add(btnRight);
 		add(btnAddUser);
 		add(separator);
 		add(btnPrintAll);
@@ -74,6 +83,8 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		add(btnReturn);
 		
 		addComponentListener(this);
+		btnLeft.addActionListener(this);
+		btnRight.addActionListener(this);
 		btnAddUser.addActionListener(this);
 		btnPrintAll.addActionListener(this);
 		btnEqualBill.addActionListener(this);
@@ -81,11 +92,13 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnSplitItem.addActionListener(this);
 		btnCompleteAll.addActionListener(this);
 		btnReturn.addActionListener(this);
+		
+		btnLeft.setEnabled(curPageNum > 0);
 	}
 	
 	void initContent() {
-		for(int i = billPanels.size() - 1; i >= 0; i--) {
-			remove(billPanels.get(i));
+		for(int i = onScrBills.size() - 1; i >= 0; i--) {
+			remove(onScrBills.get(i));
 		}
 		billPanels.clear();
 		onScrBills.clear();
@@ -104,15 +117,27 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				
 				BillPanel billPanel = new BillPanel(this, billButton);
 				billPanels.add(billPanel);
-				add(billPanel);
 			}
 
 			//do it outside the above loop, because there's another qb query inside.
-			for(int i = 0; i < billPanels.size(); i++) {
-				billPanels.get(i).initComponent();
-				billPanels.get(i).initContent();
-				if(i < 4)
-					onScrBills.add(billPanels.get(i));
+			int col = BarOption.getBillPageCol();
+			int row = BarOption.getBillPageRow();
+			
+			int billNum = getANewBillNumber();
+			for(int i = 0; i < row * col; i++) {
+				if(row * col * curPageNum + i < billPanels.size()) {
+					billPanels.get(row * col * curPageNum + i).initComponent();
+					billPanels.get(row * col * curPageNum + i).initContent();
+					onScrBills.add(billPanels.get(row * col * curPageNum + i));
+					btnRight.setEnabled(true);
+				}else {
+					BillPanel panel = new BillPanel(this, new JToggleButton(String.valueOf(billNum)));	//have to give a number to construct valid sql.
+					panel.initComponent();
+					panel.initContent();
+					onScrBills.add(panel);
+					btnRight.setEnabled(false);
+					billNum++;
+				}
 			}
 		} catch (Exception e) {
  			ErrorUtil.write("Unexpected exception when init the tables from db." + e);
@@ -126,9 +151,6 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
         int panelHeight = getHeight();
         int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 8) / 7;
         int tBtnHeight = panelHeight / 10;
-        
-		int col = billPanels.size();	//calculate together with the new button.
-		col = col > 4 ? 4 : col;		//I think the screen is enought for only 4 column.
 
 		btnAddUser.setBounds(CustOpts.SIZE_EDGE, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
 		
@@ -155,16 +177,30 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		separator.setBounds(CustOpts.HOR_GAP, 
 				btnCompleteAll.getY() - CustOpts.VER_GAP * 2,
 				getWidth() - CustOpts.HOR_GAP * 2, tBtnHeight);
-
 		
-		for (int i = 0; i < onScrBills.size(); i++) {
-			int x = col < 4 ? 	//there move than 4 bills. put from left to right
-					(getWidth()  - (TBN_WIDTH + CustOpts.HOR_GAP)* col) / 2 + ((TBN_WIDTH + CustOpts.HOR_GAP)) * i
-					: CustOpts.SIZE_EDGE + CustOpts.HOR_GAP + (CustOpts.HOR_GAP + TBN_WIDTH) * i;
-			
-			onScrBills.get(i).setBounds(x, CustOpts.VER_GAP,
-					TBN_WIDTH, separator.getY() - CustOpts.VER_GAP * 2);
-			onScrBills.get(i).resetColWidth(TBN_WIDTH);
+		btnLeft.setBounds(CustOpts.SIZE_EDGE, 
+				separator.getY() - 40 - CustOpts.VER_GAP * 2,
+				40, 40);
+		btnRight.setBounds(getWidth() - 40 - CustOpts.SIZE_EDGE, 
+				btnLeft.getY(),
+				40, 40);
+
+		if(onScrBills.size() > 0) { //@NOTE: when barframe initialized, this will be called.
+			int col = CustOpts.custOps.getValue("BillPanel_Col") == null ? 4 : Integer.valueOf((String)CustOpts.custOps.getValue("BillPanel_Col"));
+			int row = CustOpts.custOps.getValue("BillPanel_Row") == null ? 1 : Integer.valueOf((String)CustOpts.custOps.getValue("BillPanel_Row"));
+			int table_H = (separator.getY() - CustOpts.VER_GAP * 2)/row;
+			int table_W = (getWidth() - btnLeft.getWidth() * 2 - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP * 2) / col - CustOpts.HOR_GAP;
+			for(int r = 0, i = 0; r < row; r++) {
+				for (int c = 0; c < col; c++) {
+					int x = btnLeft.getX() + btnLeft.getWidth() + CustOpts.HOR_GAP + (CustOpts.HOR_GAP + table_W) * c;
+					int y = (table_H + CustOpts.VER_GAP) * r + CustOpts.VER_GAP;
+					onScrBills.get(i).setBounds(x, y, table_W, table_H);
+					onScrBills.get(i).resetColWidth(table_W);
+					add(onScrBills.get(i));
+					
+					i++;
+				}
+			}
 		}
 		invalidate();
 		revalidate();
@@ -225,7 +261,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 					//splet into num bills. each dish's number and price will be devide by "num".
 					Dish.split(panel.selectdDishAry, num, null);//update existing outputs
 					for (int i = 1; i < num; i++) {				//generate splited ones.
-						Dish.split(panel.selectdDishAry, num, BillListPanel.getANewBillNumber());
+						Dish.split(panel.selectdDishAry, num, String.valueOf(BillListPanel.getANewBillNumber()));
 					}
 				}
 				initContent();
@@ -261,6 +297,14 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 					initContent();
 				}
 			}
+		}else if(o instanceof ArrayButton){
+			if(o == btnLeft) {
+				curPageNum--;
+			}else if(o == btnRight) {
+				curPageNum++;
+			}
+			btnLeft.setEnabled(curPageNum > 0);
+			initContent();
 		}else {
 			if(o == btnAddUser){
 				BarFrame.instance.lblCurBill.setText("0");
@@ -305,7 +349,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		}
 	}
 	
-    public static String getANewBillNumber(){
+    public static int getANewBillNumber(){
     	int num = 0;
     	try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
@@ -317,7 +361,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		} catch (Exception exp) {
 			System.out.println("lagest num is 0.");
 		}
-    	return String.valueOf(num + 1);
+    	return num + 1;
     }
 
 	BillPanel getCurBillPanel(){
@@ -379,7 +423,9 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
     
 	List<BillPanel> billPanels;
 	List<BillPanel> onScrBills;
-	
+
+    private ArrayButton btnLeft;
+    private ArrayButton btnRight;
 	JButton btnAddUser;
 	JSeparator separator;
 	JButton btnPrintAll;

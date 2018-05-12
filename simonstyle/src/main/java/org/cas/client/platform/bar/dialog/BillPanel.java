@@ -47,7 +47,7 @@ import org.cas.client.resource.international.PaneConsts;
 public class BillPanel extends JPanel implements ActionListener, ComponentListener, PIMTableRenderAgent, ListSelectionListener, MouseMotionListener, MouseListener{
 	
 	SalesPanel salesPanel;
-	BillListPanel billListDlg;
+	BillListPanel billListPanel;
 	JToggleButton billButton;
     private boolean isDragging;
     ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
@@ -58,7 +58,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	}
 
 	public BillPanel(BillListPanel billListDlg, JToggleButton billButton) {
-		this.billListDlg = billListDlg;
+		this.billListPanel = billListDlg;
 		this.billButton = billButton;
 	}
 	
@@ -109,7 +109,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				updateTotleArea();
 	        }
         }else if(o == billButton){		//when bill button on top are clicked.
-        	if(billListDlg != null && billListDlg.btnSplitItem.isSelected()) {
+        	if(billListPanel != null && billListPanel.btnSplitItem.isSelected()) {
         		billButton.setSelected(!billButton.isSelected());
         		return;
         	}
@@ -147,7 +147,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	selectdDishAry.clear();
         Object[][] tValues = new Object[0][tblSelectedDish.getColumnCount()];
         tblSelectedDish.setDataVector(tValues, header);
-        resetColWidth(srpContent.getWidth());
+        resetColWidth(scrContent.getWidth());
         updateTotleArea();
     }
     
@@ -171,14 +171,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				if(obj != null)
 					BarFrame.numberPanelDlg.setContents(obj.toString());
 			}
-		}else if(billListDlg != null) {
-			if(billListDlg.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
+		}else if(billListPanel != null) {
+			if(billListPanel.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
 				billButton.setSelected(!billButton.isSelected());
 				return;
 			}
 			
- 			if(BillListPanel.curDish != null && billListDlg.getCurBillPanel() != null && billListDlg.getCurBillPanel() != this) {
-				billListDlg.moveDishToBill(this);
+ 			if(BillListPanel.curDish != null && billListPanel.getCurBillPanel() != null && billListPanel.getCurBillPanel() != this) {
+				billListPanel.moveDishToBill(this);
 				BillListPanel.curDish = null;
 			}else {
 				billButton.setSelected(true);
@@ -236,16 +236,16 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	public void mouseEntered(MouseEvent e) {}
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(e.getSource() == srpContent.getViewport()) {
-			if(billListDlg != null) {
-				if(billListDlg.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
+		if(e.getSource() == scrContent.getViewport()) {
+			if(billListPanel != null) {
+				if(billListPanel.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
 					billButton.setSelected(!billButton.isSelected());
 					return;
 				}
 				
-	 			if(billListDlg.curDish != null && billListDlg.getCurBillPanel() != this) {
-					billListDlg.moveDishToBill(this);
-					billListDlg.curDish = null;
+	 			if(billListPanel.curDish != null && billListPanel.getCurBillPanel() != this) {
+					billListPanel.moveDishToBill(this);
+					billListPanel.curDish = null;
 				}else {
 					billButton.setSelected(!billButton.isSelected());
 				}
@@ -271,7 +271,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
                 for (int c = 0; c < tColCount; c++)
                     tValues[r][c] = tblSelectedDish.getValueAt(r, c);
             tblSelectedDish.setDataVector(tValues, header);
-            resetColWidth(srpContent.getWidth());
+            resetColWidth(scrContent.getWidth());
         }else {
         	tRowCount--;
         }
@@ -420,7 +420,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			ErrorUtil.write(e);
 		}
 
-		resetColWidth(srpContent.getWidth());
+		resetColWidth(scrContent.getWidth());
 		updateTotleArea();
 	}
     
@@ -437,7 +437,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         //at first, teh tableWidth is 0, then after, the tableWidth will be 260. 
         PIMTableColumn tmpCol2 = tblSelectedDish.getColumnModel().getColumn(1);
         int width = tableWidth - tmpCol1.getWidth() - tmpCol3.getWidth() - tmpCol4.getWidth() - 3;
-        width -= srpContent.getVerticalScrollBar().isVisible() ? srpContent.getVerticalScrollBar().getWidth() : 0;
+        width -= scrContent.getVerticalScrollBar().isVisible() ? scrContent.getVerticalScrollBar().getWidth() : 0;
         tmpCol2.setWidth(width);
         tmpCol2.setPreferredWidth(width);
         
@@ -473,7 +473,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			}
 		}
 		tblSelectedDish.setDataVector(tValues, header);
-		resetColWidth(srpContent.getWidth());
+		resetColWidth(scrContent.getWidth());
 		tblSelectedDish.setSelectedRow(tValues.length - 1); //@Note this will trigger a value change event, to set the curDish.
 		updateTotleArea();
 	}
@@ -498,10 +498,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         	billButton.setBounds(poxX, posY, getWidth(), CustOpts.BTN_HEIGHT + 16);
         	posY += billButton.getHeight();
         }
-        srpContent.setBounds(poxX, posY, getWidth(), getHeight() - BarDlgConst.SubTotal_HEIGHT);
+        scrContent.setBounds(poxX, posY, getWidth(), getHeight() - BarDlgConst.SubTotal_HEIGHT);
         
 		// sub total-------
-		lblGSQ.setBounds(srpContent.getX(), srpContent.getY() + srpContent.getHeight(), srpContent.getWidth() / 4,
+		lblGSQ.setBounds(scrContent.getX(), scrContent.getY() + scrContent.getHeight(), scrContent.getWidth() / 4,
 				BarDlgConst.SubTotal_HEIGHT * 1 / 3);
 		lblQSQ.setBounds(lblGSQ.getX() + lblGSQ.getWidth(), lblGSQ.getY(), lblGSQ.getWidth(), lblGSQ.getHeight());
 		lblSubTotle.setBounds(lblQSQ.getX() + lblQSQ.getWidth(), lblGSQ.getY(), lblQSQ.getWidth() * 2,
@@ -510,7 +510,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		lblTotlePrice.setBounds(lblSubTotle.getX(), getHeight() - CustOpts.BTN_HEIGHT, lblSubTotle.getWidth(), BarDlgConst.SubTotal_HEIGHT * 2 / 3);
 		
 		if(billButton == null){
-        	btnMore.setBounds(srpContent.getX() + srpContent.getWidth() - BarDlgConst.SCROLLBAR_WIDTH, lblGSQ.getY(), 
+        	btnMore.setBounds(scrContent.getX() + scrContent.getWidth() - BarDlgConst.SCROLLBAR_WIDTH, lblGSQ.getY(), 
             		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH);
             btnLess.setBounds(btnMore.getX() - CustOpts.HOR_GAP - BarDlgConst.SCROLLBAR_WIDTH, btnMore.getY(), 
             		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH);
@@ -520,7 +520,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     void initComponent() {
 
         tblSelectedDish = new PIMTable();// 显示字段的表格,设置模型
-        srpContent = new PIMScrollPane(tblSelectedDish);
+        scrContent = new PIMScrollPane(tblSelectedDish);
         lblSubTotle = new JLabel(BarDlgConst.Subtotal);
         lblGSQ = new JLabel(BarDlgConst.QST);
         lblQSQ = new JLabel(BarDlgConst.GST);
@@ -546,7 +546,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         JLabel tLbl = new JLabel();
         tLbl.setOpaque(true);
         tLbl.setBackground(Color.GRAY);
-        srpContent.setCorner(JScrollPane.LOWER_RIGHT_CORNER, tLbl);
+        scrContent.setCorner(JScrollPane.LOWER_RIGHT_CORNER, tLbl);
         Font tFont = PIMPool.pool.getFont((String) CustOpts.custOps.hash2.get(PaneConsts.DFT_FONT), Font.PLAIN, 40);
 
         // Margin-----------------
@@ -575,7 +575,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
             add(lblQSQ);
         }
         add(lblTotlePrice);
-        add(srpContent);
+        add(scrContent);
 
         addComponentListener(this);
         btnMore.addActionListener(this);
@@ -583,11 +583,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         tblSelectedDish.addMouseMotionListener(this);
         tblSelectedDish.addMouseListener(this);
         tblSelectedDish.getSelectionModel().addListSelectionListener(this);
-        srpContent.getViewport().addMouseListener(this);
+        scrContent.getViewport().addMouseListener(this);
     }
     
     PIMTable tblSelectedDish;
-    private PIMScrollPane srpContent;
+    private PIMScrollPane scrContent;
 
     private JLabel lblSubTotle;
     private JLabel lblGSQ;

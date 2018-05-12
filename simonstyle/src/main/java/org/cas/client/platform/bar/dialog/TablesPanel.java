@@ -9,15 +9,22 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 
+import javax.comm.CommPortIdentifier;
+import javax.comm.ParallelPort;
+import javax.comm.PortInUseException;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -106,7 +113,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             TableButton tableToggle = (TableButton) o;
         	BarFrame.instance.valCurTable.setText(tableToggle.getText());
         	
-			if(!BarFrame.isSingleUser()) {	//if it's multi user, then login every time open table.
+			if(!BarOption.isSingleUser()) {	//if it's multi user, then login every time open table.
 				new LoginDlg(null).setVisible(true);
 	            if (LoginDlg.PASSED == true) {
 	            	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
@@ -234,6 +241,41 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             }
         }
         return false;
+    }
+    
+    private void openMoneyBox() {
+        int[] ccs = new int[5];
+        ccs[0] = 27;
+        ccs[1] = 112;
+        ccs[2] = 0;
+        ccs[3] = 80;
+        ccs[4] = 250;
+
+        CommPortIdentifier tPortIdty;
+        try {
+            Enumeration tPorts = CommPortIdentifier.getPortIdentifiers();
+            if (tPorts == null)
+                JOptionPane.showMessageDialog(this, "no comm ports found!");
+            else
+                while (tPorts.hasMoreElements()) {
+                    tPortIdty = (CommPortIdentifier) tPorts.nextElement();
+                    if (tPortIdty.getName().equals("LPT1")) {
+                        if (!tPortIdty.isCurrentlyOwned()) {
+                            ParallelPort tParallelPort = (ParallelPort) tPortIdty.open("ParallelBlackBox", 2000);
+                            DataOutputStream tOutStream = new DataOutputStream(tParallelPort.getOutputStream());
+                            for (int i = 0; i < 5; i++)
+                                tOutStream.write(ccs[i]);
+                            tOutStream.flush();
+                            tOutStream.close();
+                            tParallelPort.close();
+                        }
+                    }
+                }
+        } catch (PortInUseException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initComponent() {

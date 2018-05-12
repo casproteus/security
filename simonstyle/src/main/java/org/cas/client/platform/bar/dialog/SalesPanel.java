@@ -188,7 +188,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	
             	//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
             	if(newDishes.size() == billPanel.selectdDishAry.size()) {
-                    BarFrame.instance.lblCurBill.setText(BillListPanel.getANewBillNumber());
+                    BarFrame.instance.lblCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
             	}
             	
             	//send to printer

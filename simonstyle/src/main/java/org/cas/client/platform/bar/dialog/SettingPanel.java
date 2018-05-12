@@ -44,6 +44,7 @@ import javax.comm.ParallelPort;
 import javax.comm.PortInUseException;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -132,7 +133,36 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     }
 
     @Override
-    public void focusLost(FocusEvent e) {}
+    public void focusLost(FocusEvent e) {
+        Object o = e.getSource();
+        if(o == tfdBillPageRow) {
+    		int num;
+    		try {
+    			num = Integer.valueOf(tfdBillPageRow.getText());
+    		}catch(Exception exp) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.InvalidInput);
+				return;
+    		}
+    		if(num < 1 || num > 2) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.InvalidInput);
+				return;
+    		}
+    		BarOption.setBillPageRow(tfdBillPageRow.getText());
+    	}else if(o == tfdBillPageCol) {
+    		int num;
+    		try {
+    			num = Integer.valueOf(tfdBillPageCol.getText());
+    		}catch(Exception exp) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.InvalidInput);
+				return;
+    		}
+    		if(num < 1 || num > 16) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.InvalidInput);
+				return;
+    		}
+    		BarOption.setBillPageCol(tfdBillPageCol.getText());
+    	}
+    }
 
     // ActionListner-------------------------------
     @Override
@@ -154,6 +184,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         	if(o == btnLine_1_4) {
         	}else if (o == btnLine_1_5) {
         	}else if (o == btnLine_1_7) {
+        	}else if(o == cbxIsSingleUser) {
+        		BarOption.setSingleUser(cbxIsSingleUser.isSelected() ? "true" : "false");
         	}
         }
     }
@@ -210,16 +242,24 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         // table area-------------
         Double tableWidth = (Double) CustOpts.custOps.hash2.get("TableWidth");
         tableWidth = (tableWidth == null || tableWidth < 0.2) ? 0.4 : tableWidth;
-        srpContent.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
-                (int) (getWidth() * tableWidth) - BarDlgConst.SCROLLBAR_WIDTH, topAreaHeight
-                - BarDlgConst.SubTotal_HEIGHT);
         
+        lblBillPageRow.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
+        		lblBillPageRow.getPreferredSize().width, lblBillPageRow.getPreferredSize().height);
+        tfdBillPageRow.setBounds(lblBillPageRow.getX() + lblBillPageRow.getWidth() + CustOpts.HOR_GAP, lblBillPageRow.getY(),
+        		20, CustOpts.BTN_HEIGHT);
+        lblBillPageCol.setBounds(tfdBillPageRow.getX() + tfdBillPageRow.getWidth() + CustOpts.HOR_GAP, lblBillPageRow.getY(),
+        		lblBillPageCol.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdBillPageCol.setBounds(lblBillPageCol.getX() + lblBillPageCol.getWidth() + CustOpts.HOR_GAP, lblBillPageRow.getY(),
+        		20, CustOpts.BTN_HEIGHT);
+        
+        cbxIsSingleUser.setBounds(CustOpts.HOR_GAP, lblBillPageRow.getY() + lblBillPageRow.getHeight() + CustOpts.VER_GAP,
+        		cbxIsSingleUser.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         //menu area----------
-        int xMenuArea = srpContent.getX() + srpContent.getWidth() + CustOpts.HOR_GAP + BarDlgConst.SCROLLBAR_WIDTH;
+        
+        int xMenuArea = CustOpts.HOR_GAP + (int) (getWidth() * tableWidth) - BarDlgConst.SCROLLBAR_WIDTH + CustOpts.HOR_GAP + BarDlgConst.SCROLLBAR_WIDTH;
         int widthMenuArea =
-                (panelWidth - srpContent.getWidth() - CustOpts.HOR_GAP * 2) - BarDlgConst.SCROLLBAR_WIDTH;
-
-        BarFrame.instance.menuPanel.setBounds(xMenuArea, srpContent.getY(), widthMenuArea, topAreaHeight);
+                (panelWidth - (int) (getWidth() * tableWidth) - BarDlgConst.SCROLLBAR_WIDTH - CustOpts.HOR_GAP * 2) - BarDlgConst.SCROLLBAR_WIDTH;
+        BarFrame.instance.menuPanel.setBounds(xMenuArea,  CustOpts.VER_GAP, widthMenuArea, topAreaHeight);
         BarFrame.instance.menuPanel.reLayout();
     }
 
@@ -270,8 +310,14 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
             e.printStackTrace();
         }
     }
-
+	
     private void initComponent() {
+        lblBillPageRow = new JLabel(BarDlgConst.BillPageRow);
+        tfdBillPageRow = new JTextField(String.valueOf(BarOption.getBillPageRow()));
+        lblBillPageCol = new JLabel(BarDlgConst.BillPageCol);
+        tfdBillPageCol = new JTextField(String.valueOf(BarOption.getBillPageCol()));
+        cbxIsSingleUser = new JCheckBox(BarDlgConst.IsSingleUser);
+        
         btnLine_1_1 = new JButton(BarDlgConst.Table);
         btnLine_1_2 = new JButton(BarDlgConst.Printer);
         btnLine_1_3 = new JButton("");
@@ -292,18 +338,22 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_2_9 = new JButton(BarDlgConst.RETURN);
         btnLine_2_8 = new JButton("");
 
-        srpContent = new PIMScrollPane();
-
         // properties
         setLayout(null);
         
         JLabel tLbl = new JLabel();
         tLbl.setOpaque(true);
         tLbl.setBackground(Color.GRAY);
-        srpContent.setCorner(JScrollPane.LOWER_RIGHT_CORNER, tLbl);
         Font tFont = PIMPool.pool.getFont((String) CustOpts.custOps.hash2.get(PaneConsts.DFT_FONT), Font.PLAIN, 40);
 
         // built
+
+        add(lblBillPageRow);
+        add(tfdBillPageRow);
+        add(lblBillPageCol);
+        add(tfdBillPageCol);
+        add(cbxIsSingleUser);
+        
         add(btnLine_2_1);
         add(btnLine_2_2);
         add(btnLine_2_3);
@@ -324,7 +374,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(btnLine_1_8);
         add(btnLine_1_9);
 
-        add(srpContent);
 
         // add listener
         addComponentListener(this);
@@ -350,8 +399,18 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_1_7.addActionListener(this);
         btnLine_1_8.addActionListener(this);
         btnLine_1_9.addActionListener(this);
+        
+        tfdBillPageRow.addFocusListener(this);
+        tfdBillPageCol.addFocusListener(this);
+        cbxIsSingleUser.addActionListener(this);
     }
 
+    JLabel lblBillPageRow;
+    JTextField tfdBillPageRow;
+    JLabel lblBillPageCol;
+    JTextField tfdBillPageCol;
+    JCheckBox cbxIsSingleUser;
+    
     private JButton btnLine_1_1;
     private JButton btnLine_1_2;
     private JButton btnLine_1_3;
@@ -371,10 +430,4 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     private JButton btnLine_1_9;
     private JButton btnLine_2_8;
     private JButton btnLine_2_9;
-
-    private PIMScrollPane srpContent;
-    private String[] header = new String[] { BarDlgConst.ProdNumber, BarDlgConst.ProdName, BarDlgConst.Size, BarDlgConst.Count,
-            BarDlgConst.Price};
-    
-    private DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 }

@@ -1,6 +1,9 @@
 package org.cas.client.platform.bar.dialog;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 public interface BarDlgConst {
     int SCROLLBAR_WIDTH = 40;
@@ -72,6 +75,11 @@ public interface BarDlgConst {
     String EndTime = "End Time";
     String Profit = "当班盈利";
 
+
+    String BillPageRow = "Rows of Bills:";
+    String BillPageCol = "Columns of Bills:";
+    String IsSingleUser = "Is single user mode";
+    
     String OtherCost = "其他开支";
     String ProdNumber = "Id";
     String ProdName = "Name";

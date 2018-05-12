@@ -40,7 +40,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         instance = new BarFrame();
         numberPanelDlg = new NumberPanelDlg(instance);
         
-        if(isSingleUser()) {
+        if(BarOption.isSingleUser()) {
 	        new LoginDlg(instance).setVisible(true);
 	        if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
 	            instance.setVisible(true);
@@ -50,10 +50,6 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         }else {
         	instance.setVisible(true);
         }
-    }
-
-    public static boolean isSingleUser() {
-    	return CustOpts.custOps.getValue("SingleUserMode") != null;
     }
     
     public BarFrame() {
@@ -158,7 +154,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 	}
     
 	private void resetStatus() {
-		if (isSingleUser()) {
+		if (BarOption.isSingleUser()) {
 			valOperator.setText(LoginDlg.USERNAME);
 		}else {
 			valOperator.setText("");
