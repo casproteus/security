@@ -31,7 +31,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 
     public static BarFrame instance;
     int curPanel;
-    JLabel lblCurBill;
+    JLabel valCurBill;
     static NumberPanelDlg numberPanelDlg; 
     
     public static void main(
@@ -74,8 +74,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valOperator = new JLabel();
         lblCurTable = new JLabel(BarDlgConst.Table.concat(BarDlgConst.Colon));
         valCurTable = new JLabel();
-        lblBill = new JLabel(BarDlgConst.Bill.concat(BarDlgConst.Colon));
-        lblCurBill = new JLabel();
+        lblCurBill = new JLabel(BarDlgConst.Bill.concat(BarDlgConst.Colon));
+        valCurBill = new JLabel();
         
         lblShoestring = new JLabel();
 
@@ -96,8 +96,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         add(valOperator);
         add(lblCurTable);
         add(valCurTable);
-        add(lblBill);
         add(lblCurBill);
+        add(valCurBill);
         add(lblShoestring);
         add(lblStartTime);
         add(valStartTime);
@@ -160,7 +160,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 			valOperator.setText("");
 		}
 		valCurTable.setText("");
-		lblCurBill.setText("");
+		valCurBill.setText("");
 
 		lblStartTime.setText(BarDlgConst.StartTime.concat(BarDlgConst.Colon));
 	}
@@ -189,10 +189,10 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         		lblCurTable.getPreferredSize().height);
         valCurTable.setBounds(lblCurTable.getX() + lblCurTable.getWidth(), CustOpts.VER_GAP, 180 - lblCurTable.getWidth(),
         		lblCurTable.getPreferredSize().height);
-        lblBill.setBounds(valCurTable.getX() + valCurTable.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, lblBill.getPreferredSize().width,
-        		lblBill.getPreferredSize().height);
-        lblCurBill.setBounds(lblBill.getX() + lblBill.getWidth(), CustOpts.VER_GAP, 180 - lblBill.getWidth(),
-        		lblBill.getPreferredSize().height);
+        lblCurBill.setBounds(valCurTable.getX() + valCurTable.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCurBill.getPreferredSize().width,
+        		lblCurBill.getPreferredSize().height);
+        valCurBill.setBounds(lblCurBill.getX() + lblCurBill.getWidth(), CustOpts.VER_GAP, 180 - lblCurBill.getWidth(),
+        		lblCurBill.getPreferredSize().height);
         
         lblStartTime.setBounds(getWidth() - lblStartTime.getPreferredSize().width - 200 - CustOpts.HOR_GAP*2 - CustOpts.SIZE_EDGE * 2,
         		 CustOpts.VER_GAP, lblStartTime.getPreferredSize().width, lblOperator.getPreferredSize().height);
@@ -204,9 +204,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
                 lblOperator.getPreferredSize().height);
         
         lblShoestring.setBounds(
-        		lblCurBill.getX()
-                        + lblCurBill.getWidth()
-                        + (lblOperator.getX() + lblCurBill.getX()) / 2 - lblCurBill.getWidth() - lblShoestring.getPreferredSize().width,  CustOpts.VER_GAP,
+        		valCurBill.getX()
+                        + valCurBill.getWidth()
+                        + (lblOperator.getX() + valCurBill.getX()) / 2 - valCurBill.getWidth() - lblShoestring.getPreferredSize().width,  CustOpts.VER_GAP,
                 lblShoestring.getPreferredSize().width, lblOperator.getHeight());
 
         // status---------
@@ -344,7 +344,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     JLabel valOperator;
     private JLabel lblCurTable;
     public JLabel valCurTable;
-    private JLabel lblBill;
+    private JLabel lblCurBill;
     private JLabel lblShoestring;
     private JLabel lblStartTime;
     JLabel valStartTime;

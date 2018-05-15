@@ -139,9 +139,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     }
 
     @Override
-    public void focusLost(
-            FocusEvent e) {
-    }
+    public void focusLost(FocusEvent e) {}
 
     // ActionListner-------------------------------
     @Override
@@ -156,7 +154,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         			JOptionPane.showMessageDialog(this, BarDlgConst.OnlyOneShouldBeSelected);
         			return;
         		}
-        		//todo: check if it's send
+        		//check if it's send
         		if(BillListPanel.curDish.getOutputID() >= 0) {
         			if(JOptionPane.showConfirmDialog(BarFrame.instance, 
             				BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
@@ -170,7 +168,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     			//clean from screen.
         		billPanel.removeAtSelection(billPanel.tblSelectedDish.getSelectedRow());
         	}else if(o == btnLine_1_5) {		//Add client
-				BarFrame.instance.lblCurBill.setText("0");
+				BarFrame.instance.valCurBill.setText("0");
 				BarFrame.instance.switchMode(2);
         	} else if (o == btnLine_1_6) {		//split bill
         		//check if there unsaved dish, and give warning.
@@ -188,15 +186,15 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	
             	//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
             	if(newDishes.size() == billPanel.selectdDishAry.size()) {
-                    BarFrame.instance.lblCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
+                    BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
             	}
             	
             	//send to printer
             	//prepare the printing String and do printing
-            	if(WifiPrintService.SUCCESS != WifiPrintService.exePrintCommand(
-            			newDishes, BarFrame.instance.menuPanel.printers, BarFrame.instance.valCurTable.getText())) {
-            		BarFrame.setStatusMes("WARNING!!!!!!!!!!!!! print error, please try again.");
-            		return;
+            	if(WifiPrintService.SUCCESS != 
+            			WifiPrintService.exePrintCommand(newDishes, BarFrame.instance.menuPanel.printers, BarFrame.instance.valCurTable.getText())) {
+            		BarFrame.setStatusMes(BarDlgConst.PrinterError);
+                	JOptionPane.showMessageDialog(this, BarDlgConst.PrinterError);
             	}
             	
             	//save to db output
@@ -205,7 +203,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 //                    	if(dish.getOutputID() > -1)	//if it's already saved into db, don't ignore.
 //                    		continue;
                     	
-                    	String curBillId = BarFrame.instance.lblCurBill.getText();
+                    	String curBillId = BarFrame.instance.valCurBill.getText();
                     	if("0".equals(curBillId))
                     		curBillId = "1";
                     	Dish.createOutput(dish, curBillId);	//at this moment, the num shoul have not been soplitted.
@@ -228,7 +226,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 //	                    
 //	                    rs.close();
                     }
-                    if("true".equalsIgnoreCase((String)CustOpts.custOps.getValue("isCounterMode"))) {
+                    if(BarOption.isFastFoodMode()) {
+                    	BarFrame.instance.valCurBill.setText("0");
                     	billPanel.resetTableArea();
                     }else {
                     	BarFrame.instance.switchMode(0);
@@ -420,7 +419,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         
         // menu area--------------
         int xMenuArea = billPanel.getX() + billPanel.getWidth() + CustOpts.HOR_GAP;
-        int widthMenuArea = getWidth() - billPanel.getWidth() - CustOpts.HOR_GAP * 2;
+        int widthMenuArea = getWidth() - billPanel.getWidth() - CustOpts.HOR_GAP * 2 - CustOpts.SIZE_EDGE;
 
         BarFrame.instance.menuPanel.setBounds(xMenuArea, billPanel.getY(), widthMenuArea, topAreaHeight);
         BarFrame.instance.menuPanel.reLayout();

@@ -63,6 +63,13 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     	CustOpts.custOps.setKeyAndValue("SingleUserMode", is);
     }
     
+    public static void setFastFoodMode(boolean isFastFoodMode) {
+    	CustOpts.custOps.setKeyAndValue("FastFoodMode", isFastFoodMode);
+    }
+    public static boolean isFastFoodMode() {
+    	return CustOpts.custOps.getValue("FastFoodMode") == null ? 
+    			false : Boolean.valueOf((String)CustOpts.custOps.getValue("FastFoodMode"));
+    }
     
     public BarOption(JFrame pFrame) {
         super(pFrame, false);

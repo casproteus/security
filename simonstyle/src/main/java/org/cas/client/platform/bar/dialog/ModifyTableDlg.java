@@ -56,6 +56,10 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
     public ModifyTableDlg(SettingTabbleDlg pFrame, TableButton button) {
     	super(pFrame);
     	settingTabbleDlg = pFrame;
+    	if(button == null) {
+    		button =  new TableButton();
+    		button.setId(-1);
+    	}
     	btnTable = button;
         initDialog();
         reLayout();
@@ -226,8 +230,8 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
         	
         	String sql = btnTable.getId() == -1 ?				//if has no index means it's new table/
         			"INSERT INTO DINING_TABLE (name, posX, posY, width, height, type) VALUES ('"
-					+ name + "', " + tfdLocations[0] + ", " + tfdLocations[1] + ", "
-					+ tfdLocations[2] + ", " + tfdLocations[3] + ", " + cmbCategory.getSelectedItem() + ")"
+					+ name + "', " + tfdLocations[0].getText() + ", " + tfdLocations[1].getText() + ", "
+					+ tfdLocations[2].getText() + ", " + tfdLocations[3].getText() + ", " + cmbCategory.getSelectedItem() + ")"
 					:
 					"Update DINING_TABLE set name = '" + name 
 					+ "', posX = " + tfdLocations[0].getText() + ", posY = " + tfdLocations[1].getText()
@@ -236,7 +240,10 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
         	try {
         		PIMDBModel.getStatement().execute(sql);
                 dispose();
-                settingTabbleDlg.initTableBtns();
+                if(settingTabbleDlg != null)
+                	settingTabbleDlg.initTableBtns();
+                else
+                	((TablesPanel)BarFrame.instance.panels[BarFrame.instance.curPanel]).initContent();
         	}catch(Exception exp) {
         		ErrorUtil.write(exp);
         	}
@@ -280,10 +287,17 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
         cancel = new JButton(DlgConst.CANCEL);
 
         // 属性设置－－－－－－－－－－－－－－
-        tfdLocations[0].setText(String.valueOf(btnTable.getX()));
-        tfdLocations[1].setText(String.valueOf(btnTable.getY()));
-        tfdLocations[2].setText(String.valueOf(btnTable.getWidth()));
-        tfdLocations[3].setText(String.valueOf(btnTable.getHeight()));
+        if(btnTable.getText().length() > 0) {
+	        tfdLocations[0].setText(String.valueOf(btnTable.getX()));
+	        tfdLocations[1].setText(String.valueOf(btnTable.getY()));
+	        tfdLocations[2].setText(String.valueOf(btnTable.getWidth()));
+	        tfdLocations[3].setText(String.valueOf(btnTable.getHeight()));
+        }else {
+	        tfdLocations[0].setText("200");
+	        tfdLocations[1].setText("400");
+	        tfdLocations[2].setText("120");
+	        tfdLocations[3].setText("60");
+        }
         String[] typeAry = new String[2];
 
         typeAry[0] = "0";

@@ -65,8 +65,10 @@ public class MenuPanel extends JPanel implements ActionListener {
         btnPageUpMenu.setMargin(btnPageUpCategory.getInsets());
         btnPageDownMenu.setMargin(btnPageUpCategory.getInsets());
         
-        btnPageUpCategory.setEnabled(false);
-        btnPageUpMenu.setEnabled(false);
+        btnPageUpCategory.setVisible(false);
+        btnPageDownCategory.setVisible(false);
+        btnPageUpMenu.setVisible(false);
+        btnPageDownMenu.setVisible(false);
 
         btnPageUpCategory.addActionListener(this);
         btnPageDownCategory.addActionListener(this);
@@ -192,22 +194,23 @@ public class MenuPanel extends JPanel implements ActionListener {
         curMenuPerPage = menuColumn * menuRow;
 
         // clean current catogory and menus from both screen and metrix if have---------------
-        for (int r = 0; r < categoryRow; r++) {
-            if (r < onSrcCategoryTgbMatrix.size()) {
-                for (int c = 0; c < categoryColumn; c++) {
-                    if (c < onSrcCategoryTgbMatrix.get(r).size())
-                        remove(onSrcCategoryTgbMatrix.get(r).get(c));
-                }
-            }
-        }
-        for (int r = 0; r < menuRow; r++) {
-            if (r < onSrcMenuBtnMatrix.size()) {
-                for (int c = 0; c < menuColumn; c++) {
-                    if (c < onSrcMenuBtnMatrix.get(r).size())
-                        remove(onSrcMenuBtnMatrix.get(r).get(c));
-                }
-            }
-        }
+        removeAll();
+//        for (int r = 0; r < categoryRow; r++) {
+//            if (r < onSrcCategoryTgbMatrix.size()) {
+//                for (int c = 0; c < categoryColumn; c++) {
+//                    if (c < onSrcCategoryTgbMatrix.get(r).size())
+//                        remove(onSrcCategoryTgbMatrix.get(r).get(c));
+//                }
+//            }
+//        }
+//        for (int r = 0; r < menuRow; r++) {
+//            if (r < onSrcMenuBtnMatrix.size()) {
+//                for (int c = 0; c < menuColumn; c++) {
+//                    if (c < onSrcMenuBtnMatrix.get(r).size())
+//                        remove(onSrcMenuBtnMatrix.get(r).get(c));
+//                }
+//            }
+//        }
         onSrcCategoryTgbMatrix.clear();
         onSrcMenuBtnMatrix.clear();
 
@@ -229,7 +232,7 @@ public class MenuPanel extends JPanel implements ActionListener {
                         btnCategory.setSelected(true);
                     }
                 } else {
-                    btnPageDownCategory.setEnabled(false);
+                    btnPageDownCategory.setVisible(false);
                 }
             }
             onSrcCategoryTgbMatrix.add(btnCategoryArry);
@@ -288,7 +291,7 @@ public class MenuPanel extends JPanel implements ActionListener {
                     btnMenu.setText(onScrDishNameMetrix[CustOpts.custOps.getUserLang()][dspIndex]);
                     btnMenu.setDish(onScrDishAry[dspIndex]);
                 } else {
-                    btnPageDownMenu.setEnabled(false);
+                    btnPageDownMenu.setVisible(false);
                 }
 
                 dspIndex++;
@@ -297,20 +300,15 @@ public class MenuPanel extends JPanel implements ActionListener {
         }
     }
 
-    public void setBounds(int x, int y, int width, int height) {
-    	if(y == 12) {
-    		System.out.println("stop!");
-    	}
-    	super.setBounds(x, y, width, height);
-    }
     void reLayout() {
         // category area--------------
-        int widthMenuArea = getWidth() - BarDlgConst.SCROLLBAR_WIDTH - CustOpts.HOR_GAP;
-        
         Double categoryHeight = (Double) CustOpts.custOps.hash2.get("categoryHeight");
         categoryHeight = (categoryHeight == null || categoryHeight < 0.2) ? 0.4 : categoryHeight;
 
-        int categeryBtnWidth = (widthMenuArea - CustOpts.HOR_GAP * (categoryColumn - 1)) / categoryColumn;
+        int categeryBtnWidth = (getWidth() - CustOpts.HOR_GAP * (categoryColumn - 1)) / categoryColumn;
+        if(btnPageDownCategory.isVisible() || btnPageUpCategory.isVisible()) {
+        	categeryBtnWidth = (getWidth() - CustOpts.HOR_GAP * categoryColumn - BarDlgConst.SCROLLBAR_WIDTH) / categoryColumn;
+        }
         int categeryBtnHeight =
                 (int) ((getHeight() * categoryHeight - CustOpts.VER_GAP * (categoryRow - 1)) / categoryRow);
 
@@ -321,7 +319,7 @@ public class MenuPanel extends JPanel implements ActionListener {
                         (categeryBtnHeight + CustOpts.VER_GAP) * r, categeryBtnWidth, categeryBtnHeight);
             }
         }
-        btnPageUpCategory.setBounds(widthMenuArea, 0, BarDlgConst.SCROLLBAR_WIDTH,
+        btnPageUpCategory.setBounds(getWidth(), 0, BarDlgConst.SCROLLBAR_WIDTH,
                 BarDlgConst.SCROLLBAR_WIDTH * 2);
         btnPageDownCategory.setBounds(btnPageUpCategory.getX(),
                 btnPageUpCategory.getY() + btnPageUpCategory.getHeight() + CustOpts.VER_GAP,
@@ -329,7 +327,10 @@ public class MenuPanel extends JPanel implements ActionListener {
 
         // menu area--------------
         int menuY = (categeryBtnHeight + CustOpts.VER_GAP) * categoryRow + CustOpts.VER_GAP;
-        int menuBtnWidth = (widthMenuArea - CustOpts.HOR_GAP * (menuColumn - 1)) / menuColumn;
+        int menuBtnWidth = (getWidth() - CustOpts.HOR_GAP * (menuColumn - 1)) / menuColumn;
+        if(btnPageUpMenu.isVisible() || btnPageDownMenu.isVisible()) {
+        	menuBtnWidth = (getWidth() - CustOpts.HOR_GAP * menuColumn - BarDlgConst.SCROLLBAR_WIDTH) / menuColumn;
+        }
         int menuBtnHeight = (int) ((getHeight() * (1 - categoryHeight) - CustOpts.VER_GAP * (menuRow + 1)) / menuRow);
         for (int r = 0; r < menuRow; r++) {
             for (int c = 0; c < menuColumn; c++) {
@@ -356,9 +357,9 @@ public class MenuPanel extends JPanel implements ActionListener {
 	        if(o == btnPageUpCategory) {
 	            curCategoryPage--;
 	            // adjust status
-	            btnPageDownCategory.setEnabled(true);
+	            btnPageDownCategory.setVisible(true);
 	            if (curCategoryPage == 0) {
-	                btnPageUpCategory.setEnabled(false);
+	                btnPageUpCategory.setVisible(false);
 	            }
 	
 	            reInitCategoryAndMenuBtns();
@@ -366,26 +367,26 @@ public class MenuPanel extends JPanel implements ActionListener {
 	        } else if (o == btnPageDownCategory) {
 	            curCategoryPage++;
 	            // adjust status
-	            btnPageUpCategory.setEnabled(true);
+	            btnPageUpCategory.setVisible(true);
 	            if (curCategoryPage * categoryNumPerPage > categoryNameMetrix.length) {
-	                btnPageDownCategory.setEnabled(false);
+	                btnPageDownCategory.setVisible(false);
 	            }
 	
 	            reInitCategoryAndMenuBtns();
 	            reLayout();
 	        } else if (o == btnPageUpMenu) {
 	            curMenuPageNum--;
-	            btnPageDownMenu.setEnabled(true);
+	            btnPageDownMenu.setVisible(true);
 	            if (curMenuPageNum == 0) {
-	                btnPageUpMenu.setEnabled(false);
+	                btnPageUpMenu.setVisible(false);
 	            }
 	            reInitCategoryAndMenuBtns();
 	            reLayout();
 	        } else if (o == btnPageDownMenu) {
 	            curMenuPageNum++;
-	            btnPageUpMenu.setEnabled(true);
+	            btnPageUpMenu.setVisible(true);
 	            if (curMenuPageNum * curMenuPerPage > dishNameMetrix.length) {
-	                btnPageDownMenu.setEnabled(false);
+	                btnPageDownMenu.setVisible(false);
 	            }
 	            reInitCategoryAndMenuBtns();
 	            reLayout();

@@ -307,7 +307,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			initContent();
 		}else {
 			if(o == btnAddUser){
-				BarFrame.instance.lblCurBill.setText("0");
+				BarFrame.instance.valCurBill.setText("0");
 				BarFrame.instance.switchMode(2);
 			}else if(o == btnPrintAll) {
 				//TODO: add print receipt code.
@@ -336,11 +336,11 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		        	ErrorUtil.write(exp);
 		        }
 		        
-				BarFrame.instance.lblCurBill.setText("0");
+				BarFrame.instance.valCurBill.setText("0");
 				BarFrame.instance.switchMode(0);
 				
 			}else if(o == btnReturn) {
-				BarFrame.instance.lblCurBill.setText("0");
+				BarFrame.instance.valCurBill.setText("0");
 				BarFrame.instance.switchMode(0);
 			}
 

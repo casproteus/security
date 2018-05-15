@@ -154,11 +154,11 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 				int num = rs.getRow();
 
 				if (num == 0) { // check if it's empty
-					BarFrame.instance.lblCurBill.setText("0");
+					BarFrame.instance.valCurBill.setText("0");
 					BarFrame.instance.switchMode(2);
 				} else { // if it's not empty, display a dialog to show all the bills.
 					if(num == 1 && CustOpts.custOps.getValue("FrobiddenQuickEnter") == null) {
-						BarFrame.instance.lblCurBill.setText(rs.getString("contactID"));
+						BarFrame.instance.valCurBill.setText(rs.getString("contactID"));
 						BarFrame.instance.switchMode(2);
 					}else {
 						BarFrame.instance.switchMode(1);
@@ -171,7 +171,22 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 		}
         //JButton------------------------------------------------------------------------------------------------
         else if (o instanceof JButton) {
-        	if (o == btnLine_2_4) {
+        	if(o == btnLine_2_2) {		//add table
+        		if(!BarOption.isSingleUser()) {
+        			new LoginDlg(null).setVisible(true);
+    	            if (LoginDlg.PASSED == true) {
+    	            	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
+    	            	//@note: lowdown a little the level, to enable the admin do sales work.
+    	            	if ("admin".equalsIgnoreCase(LoginDlg.USERNAME))
+    	            		 LoginDlg.USERTYPE = LoginDlg.USER_STATUS;
+    	            }else {
+    	            	return;
+    	            }
+        		}
+    			new ModifyTableDlg(null, null).setVisible(true);
+    			initContent();
+        	}else if (o == btnLine_2_4) {	//open drawer.
+        		openMoneyBox();
             } else if (o == btnLine_2_5) {
             } else if (o == btnLine_2_6) {
                 BarFrame.instance.switchMode(3);
@@ -179,6 +194,10 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             }else if (o == btnLine_2_8) {
             }else if (o == btnLine_2_9) {
             }
+        }else if(o instanceof JToggleButton) {
+        	if(o == btnLine_2_1) {
+        		BarOption.setFastFoodMode(btnLine_2_1.isSelected());
+        	}
         }
     }
 
@@ -208,25 +227,6 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
                 tBtnHeight);
         btnLine_2_9.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
                 tBtnHeight);
-        // line 1
-//        btnLine_1_1.setBounds(CustOpts.HOR_GAP, btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
-//                tBtnHeight);
-//        btnLine_1_2.setBounds(btnLine_1_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-//                tBtnHeight);
-//        btnLine_1_3.setBounds(btnLine_1_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-//                tBtnHeight);
-//        btnLine_1_4.setBounds(btnLine_1_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-//                tBtnHeight);
-//        btnLine_1_5.setBounds(btnLine_1_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-//                tBtnHeight);
-//        btnLine_1_6.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-//                tBtnHeight);
-//        btnLine_1_7.setBounds(btnLine_1_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-//                tBtnHeight);
-//        btnLine_1_8.setBounds(btnLine_1_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-//                tBtnHeight);
-//        btnLine_1_9.setBounds(btnLine_1_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-//                tBtnHeight);
     }
 
     private boolean adminAuthentication() {
@@ -279,17 +279,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     }
 
     private void initComponent() {
-//        btnLine_1_1 = new JButton("");
-//        btnLine_1_2 = new JButton("");
-//        btnLine_1_3 = new JButton("");
-//        btnLine_1_4 = new JToggleButton("");//BarDlgConst.REMOVE);
-//        btnLine_1_5 = new JToggleButton("");//BarDlgConst.VOID_ITEM);
-//        btnLine_1_6 = new JButton("");
-//        btnLine_1_7 = new JToggleButton("");
-//        btnLine_1_8 = new JButton("");
-//        btnLine_1_9 = new JButton("");
-        
-        btnLine_2_1 = new JButton(BarDlgConst.ChangeMode);
+        btnLine_2_1 = new JToggleButton(BarDlgConst.ChangeMode);
         btnLine_2_2 = new JButton(BarDlgConst.AddTable);
         btnLine_2_3 = new JButton(BarDlgConst.OrderManage);
         btnLine_2_4 = new JButton(BarDlgConst.OpenDrawer);
@@ -313,16 +303,6 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         add(btnLine_2_8);
         add(btnLine_2_9);
 
-//        add(btnLine_1_1);
-//        add(btnLine_1_2);
-//        add(btnLine_1_3);
-//        add(btnLine_1_4);
-//        add(btnLine_1_5);
-//        add(btnLine_1_6);
-//        add(btnLine_1_7);
-//        add(btnLine_1_8);
-//        add(btnLine_1_9);
-
         // add listener
         addComponentListener(this);
 
@@ -335,17 +315,8 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         btnLine_2_7.addActionListener(this);
         btnLine_2_8.addActionListener(this);
         btnLine_2_9.addActionListener(this);
-
-//        btnLine_1_1.addActionListener(this);
-//        btnLine_1_2.addActionListener(this);
-//        btnLine_1_3.addActionListener(this);
-//        btnLine_1_4.addActionListener(this);
-//        btnLine_1_5.addActionListener(this);
-//        btnLine_1_6.addActionListener(this);
-//        btnLine_1_7.addActionListener(this);
-//        btnLine_1_8.addActionListener(this);
-//        btnLine_1_9.addActionListener(this);
         
+        btnLine_2_1.setSelected(BarOption.isFastFoodMode());
     }
 
     // menu and category buttons must be init after initContent---------
@@ -388,6 +359,10 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 		}catch(Exception e) {
 			ErrorUtil.write("Unexpected exception when init the tables from db." + e);
 		}
+		invalidate();
+		revalidate();
+		validate();
+		repaint();
 	}
 
 //    private JButton btnLine_1_1;
@@ -400,7 +375,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 //    private JButton btnLine_1_8;
 //    private JButton btnLine_1_9;
     
-    private JButton btnLine_2_1;
+    private JToggleButton btnLine_2_1;
     private JButton btnLine_2_2;
     private JButton btnLine_2_3;
     private JButton btnLine_2_4;

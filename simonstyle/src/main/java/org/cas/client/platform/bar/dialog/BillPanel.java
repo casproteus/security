@@ -114,7 +114,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         		return;
         	}
         	
-    		BarFrame.instance.lblCurBill.setText(((JToggleButton)o).getText());
+    		BarFrame.instance.valCurBill.setText(((JToggleButton)o).getText());
             BarFrame.instance.switchMode(2);
 		}
 		
@@ -352,7 +352,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	//get outputs of current table and bill id.
 		try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
-			String billID = billButton == null ? BarFrame.instance.lblCurBill.getText() : billButton.getText();
+			String billID = billButton == null ? BarFrame.instance.valCurBill.getText() : billButton.getText();
 			String sql = "select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '" + BarFrame.instance.valCurTable.getText()
 					+ "' and CONTACTID = " + billID + " and deleted = false AND OUTPUT.PRODUCTID = PRODUCT.ID";
 			ResultSet rs = smt.executeQuery(sql);

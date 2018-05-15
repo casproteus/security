@@ -144,8 +144,10 @@ public class SettingTabbleDlg extends JDialog implements ICASDialog, ActionListe
         	if (o == btnLine_1_1) {
         		//add on into db
         		Statement smt = PIMDBModel.getStatement();
+        		boolean isAnyTableButtonSelected = false;
         		for (TableButton tableButton : btnTables) {
 					if (tableButton.getBackground().equals(bg)) {
+						isAnyTableButtonSelected = true;
 						String tableName = tableButton.getText() + "_copy";
 						String sql = "INSERT INTO DINING_TABLE (name, posX, posY, width, height, type) VALUES ('"
 								+ tableName + "', " + (tableButton.getX() + 10) + ", " + (tableButton.getY() + 10) + ", "
@@ -157,6 +159,10 @@ public class SettingTabbleDlg extends JDialog implements ICASDialog, ActionListe
 						}
 					}
 				}
+        		//if no table selected, then Add a new table();
+        		if(!isAnyTableButtonSelected) {
+        			new ModifyTableDlg(this, new TableButton()).setVisible(true);
+        		}
         		initTableBtns();
         	}else if(o == btnLine_1_2) {
         		Statement smt = PIMDBModel.getStatement();

@@ -255,11 +255,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsSingleUser.setBounds(CustOpts.HOR_GAP, lblBillPageRow.getY() + lblBillPageRow.getHeight() + CustOpts.VER_GAP,
         		cbxIsSingleUser.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         //menu area----------
-        
-        int xMenuArea = CustOpts.HOR_GAP + (int) (getWidth() * tableWidth) - BarDlgConst.SCROLLBAR_WIDTH + CustOpts.HOR_GAP + BarDlgConst.SCROLLBAR_WIDTH;
-        int widthMenuArea =
-                (panelWidth - (int) (getWidth() * tableWidth) - BarDlgConst.SCROLLBAR_WIDTH - CustOpts.HOR_GAP * 2) - BarDlgConst.SCROLLBAR_WIDTH;
-        BarFrame.instance.menuPanel.setBounds(xMenuArea,  CustOpts.VER_GAP, widthMenuArea, topAreaHeight);
         BarFrame.instance.menuPanel.reLayout();
     }
 
