@@ -159,10 +159,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		}
     			//clean from screen.
         		billPanel.removeAtSelection(billPanel.tblSelectedDish.getSelectedRow());
-        	}else if(o == btnLine_1_5) {		//Add client
+        	}else if(o == btnLine_2_13) {		//Add client
 				BarFrame.instance.valCurBill.setText("0");
 				BarFrame.instance.switchMode(2);
-        	} else if (o == btnLine_1_6) {		//split bill
+        	} else if (o == btnLine_1_5) {		//split bill
         		//check if there unsaved dish, and give warning.
             	List<Dish> newDishes = getNewDishes();
             	if(newDishes.size() > 0) {
@@ -173,7 +173,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	}
         		BarFrame.instance.switchMode(1);
         		
-            } else if (o == btnLine_1_9) {//send
+            } else if (o == btnLine_2_10) {//send
             	List<Dish> newDishes = getNewDishes();
             	
             	//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
@@ -271,13 +271,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         			resetCurTableDBStatus();
         		}
             	BarFrame.instance.switchMode(0);
-            } else if (o == btnLine_2_6) { // enter the setting mode.(admin interface)
+            } else if (o == btnLine_2_11) { // enter the setting mode.(admin interface)
                 BarFrame.instance.switchMode(3);
-            }  else if (o == btnLine_2_7) { // print bill
+            }  else if (o == btnLine_1_10) { // print bill
                 billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
-            } else if (o == btnLine_2_8) {//more
+            } else if (o == btnLine_2_9) {//more
             	new MoreButtonsDlg(this).show((JButton)o);
-            } else if (o == btnLine_2_9) { // return
+            } else if (o == btnLine_2_1) { // return
             	if(billPanel.selectdDishAry.size() > 0) {
 	            	Dish dish = billPanel.selectdDishAry.get(billPanel.selectdDishAry.size() - 1);
 	            	if(dish.getId() < 0) {	//has new record.
@@ -292,12 +292,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         }
         //JToggleButton-------------------------------------------------------------------------------------
         else if(o instanceof JToggleButton) {
-        	if (o == btnLine_1_7) {	//QTY
+        	if (o == btnLine_2_12) {	//QTY
         		//pomp up a numberPanelDlg
-        		BarFrame.instance.numberPanelDlg.setBtnSource(btnLine_1_7);
+        		BarFrame.instance.numberPanelDlg.setBtnSource(btnLine_2_12);
         		//should no record selected, select the last one.
-        		BarFrame.instance.numberPanelDlg.setVisible(btnLine_1_7.isSelected());	//@NOTE: it's not model mode.
-        		if(btnLine_1_7.isSelected()) {
+        		BarFrame.instance.numberPanelDlg.setVisible(btnLine_2_12.isSelected());	//@NOTE: it's not model mode.
+        		if(btnLine_2_12.isSelected()) {
         			try {
         				String curContent = BarFrame.instance.numberPanelDlg.curContent;
                 		int tQTY = Integer.valueOf(curContent);
@@ -365,46 +365,35 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
         // command buttons--------------
         // line 2
-        btnLine_2_1.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
-                tBtnHeight);
-        btnLine_2_2.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_3.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_4.setBounds(btnLine_2_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_5.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_8.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_9.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
+        btnLine_2_1.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
+        btnLine_2_2.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_2_3.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_2_4.setBounds(btnLine_2_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_2_5.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_2_8.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_2_9.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_2_10.setBounds(btnLine_2_9.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
         // line 1
-        btnLine_0_0.setBounds(CustOpts.HOR_GAP, btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
-                tBtnHeight);
-        btnLine_1_2.setBounds(btnLine_0_0.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_3.setBounds(btnLine_1_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_4.setBounds(btnLine_1_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_5.setBounds(btnLine_1_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_6.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_7.setBounds(btnLine_1_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_8.setBounds(btnLine_1_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_9.setBounds(btnLine_1_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
-                tBtnHeight);
+        btnLine_1_1.setBounds(btnLine_2_1.getX(),  btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
+        btnLine_1_2.setBounds(btnLine_2_2.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_3.setBounds(btnLine_2_3.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_4.setBounds(btnLine_2_4.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_5.setBounds(btnLine_2_5.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_6.setBounds(btnLine_2_6.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_7.setBounds(btnLine_2_7.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_8.setBounds(btnLine_2_8.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_9.setBounds(btnLine_2_9.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_10.setBounds(btnLine_2_10.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
+
+//        btnLine_2_11.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_2.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_2_12.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_14.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_2_13.setBounds(btnLine_1_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_14.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_2_14.setBounds(CustOpts.HOR_GAP,, tBtnWidht, tBtnHeight);
         
         // TOP part============================
-        int topAreaHeight = btnLine_0_0.getY() - 3 * CustOpts.VER_GAP;
+        int topAreaHeight = btnLine_1_1.getY() - 3 * CustOpts.VER_GAP;
 
         Double tableWidth = (Double) CustOpts.custOps.hash2.get("TableWidth");
         tableWidth = (tableWidth == null || tableWidth < 0.2) ? 0.4 : tableWidth;
@@ -423,42 +412,39 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     }
 
     private void initComponent() {
-        btnLine_0_0 = new JButton(BarDlgConst.EXACT_AMOUNT);
-        btnLine_1_2 = new JButton(BarDlgConst.CASH);
-        btnLine_1_3 = new JButton(BarDlgConst.PAY);
+        btnLine_1_1 = new JButton(BarDlgConst.CASH);
+        btnLine_1_2 = new JButton(BarDlgConst.DEBIT);
+        btnLine_1_3 = new JButton(BarDlgConst.VISA);
         btnLine_1_4 = new JButton(BarDlgConst.REMOVEITEM);
-        btnLine_1_5 = new JButton(BarDlgConst.AddUser);
-        btnLine_1_6 = new JButton(BarDlgConst.SPLIT_BILL);
-        btnLine_1_7 = new JToggleButton(BarDlgConst.QTY);
-        btnLine_1_8 = new JButton(BarDlgConst.DISC_ITEM);
-        btnLine_1_9 = new JButton(BarDlgConst.SEND);
-        
-        btnLine_2_1 = new JButton(BarDlgConst.DEBIT);
-        btnLine_2_2 = new JButton(BarDlgConst.VISA);
+        btnLine_1_5 = new JButton(BarDlgConst.SPLIT_BILL);
+        btnLine_1_6 = new JButton(BarDlgConst.Modify);
+        btnLine_1_7 = new JButton(BarDlgConst.DISC_ITEM);
+        btnLine_1_8 = new JButton(BarDlgConst.ChangePrice);
+        btnLine_1_9 = new JButton(BarDlgConst.TIP);
+        btnLine_1_10 = new JButton(BarDlgConst.PRINT_BILL);
+
+        btnLine_2_1 = new JButton(BarDlgConst.RETURN);
+        btnLine_2_2 = new JButton(BarDlgConst.PAY);
         btnLine_2_3 = new JButton(BarDlgConst.MASTER);
         btnLine_2_4 = new JButton(BarDlgConst.CANCEL_ALL);
         btnLine_2_5 = new JButton(BarDlgConst.VOID_ORDER);
-        btnLine_2_6 = new JButton(BarDlgConst.SETTINGS);
-        btnLine_2_7 = new JButton(BarDlgConst.PRINT_BILL);
-        btnLine_2_8 = new JButton(BarDlgConst.MORE);
-        btnLine_2_9 = new JButton(BarDlgConst.RETURN);
+        btnLine_2_6 = new JButton(BarDlgConst.OpenDrawer);
+        btnLine_2_7 = new JButton(BarDlgConst.VolumnDiscount);
+        btnLine_2_8 = new JButton(BarDlgConst.Refund);
+        btnLine_2_9 = new JButton(BarDlgConst.MORE);
+        btnLine_2_10 = new JButton(BarDlgConst.SEND);
+        
+        btnLine_2_11 = new JButton(BarDlgConst.SETTINGS);
+        btnLine_2_12 = new JToggleButton(BarDlgConst.QTY);
+        btnLine_2_13 = new JButton(BarDlgConst.AddUser);
+        btnLine_2_14 = new JButton(BarDlgConst.EXACT_AMOUNT);
 
         billPanel = new BillPanel(this);
         // properties
         setLayout(null);
         
         // built
-        add(btnLine_2_1);
-        add(btnLine_2_2);
-        add(btnLine_2_3);
-        add(btnLine_2_4);
-        add(btnLine_2_5);
-        add(btnLine_2_6);
-        add(btnLine_2_9);
-        add(btnLine_2_8);
-        add(btnLine_1_9);
-
-        add(btnLine_0_0);
+        add(btnLine_1_1);
         add(btnLine_1_2);
         add(btnLine_1_3);
         add(btnLine_1_4);
@@ -466,7 +452,24 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         add(btnLine_1_6);
         add(btnLine_1_7);
         add(btnLine_1_8);
+        add(btnLine_1_9);
+        add(btnLine_1_10);
+
+        add(btnLine_2_1);
+        add(btnLine_2_2);
+        add(btnLine_2_3);
+        add(btnLine_2_4);
+        add(btnLine_2_5);
+        add(btnLine_2_6);
         add(btnLine_2_7);
+        add(btnLine_2_8);
+        add(btnLine_2_9);
+        add(btnLine_2_10);
+        
+        add(btnLine_2_11);
+        add(btnLine_2_12);
+        add(btnLine_2_13);
+        add(btnLine_2_14);
 
         add(billPanel);
         // add listener
@@ -475,17 +478,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         // 因为考虑到条码经常由扫描仪输入，不一定是靠键盘，所以专门为他加了DocumentListener，通过监视内容变化来自动识别输入完成，光标跳转。
         // tfdProdNumber.getDocument().addDocumentListener(this); // 而其它组件如实收金额框不这样做为了节约（一个KeyListener接口全搞定）
 
-        btnLine_2_1.addActionListener(this);
-        btnLine_2_2.addActionListener(this);
-        btnLine_2_3.addActionListener(this);
-        btnLine_2_4.addActionListener(this);
-        btnLine_2_5.addActionListener(this);
-        btnLine_2_6.addActionListener(this);
-        btnLine_2_9.addActionListener(this);
-        btnLine_2_8.addActionListener(this);
-        btnLine_1_9.addActionListener(this);
-
-        btnLine_0_0.addActionListener(this);
+        btnLine_1_1.addActionListener(this);
         btnLine_1_2.addActionListener(this);
         btnLine_1_3.addActionListener(this);
         btnLine_1_4.addActionListener(this);
@@ -493,19 +486,37 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_1_6.addActionListener(this);
         btnLine_1_7.addActionListener(this);
         btnLine_1_8.addActionListener(this);
+        btnLine_1_9.addActionListener(this);
+        btnLine_1_10.addActionListener(this);
+
+        btnLine_2_1.addActionListener(this);
+        btnLine_2_2.addActionListener(this);
+        btnLine_2_3.addActionListener(this);
+        btnLine_2_4.addActionListener(this);
+        btnLine_2_5.addActionListener(this);
+        btnLine_2_6.addActionListener(this);
         btnLine_2_7.addActionListener(this);
+        btnLine_2_8.addActionListener(this);
+        btnLine_2_9.addActionListener(this);
+        btnLine_2_10.addActionListener(this);
+        
+        btnLine_2_11.addActionListener(this);
+        btnLine_2_12.addActionListener(this);
+        btnLine_2_13.addActionListener(this);
+        btnLine_2_14.addActionListener(this);
     }
 
-    private JButton btnLine_0_0;
+    private JButton btnLine_1_1;
     private JButton btnLine_1_2;
     private JButton btnLine_1_3;
     private JButton btnLine_1_4;
     private JButton btnLine_1_5;
     private JButton btnLine_1_6;
-    JToggleButton btnLine_1_7;
+    private JButton btnLine_1_7;
     private JButton btnLine_1_8;
     private JButton btnLine_1_9;
-    
+    private JButton btnLine_1_10;
+
     private JButton btnLine_2_1;
     private JButton btnLine_2_2;
     private JButton btnLine_2_3;
@@ -515,6 +526,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private JButton btnLine_2_7;
     private JButton btnLine_2_8;
     private JButton btnLine_2_9;
+    private JButton btnLine_2_10;
+    
+    private JButton btnLine_2_11;
+    JToggleButton btnLine_2_12;
+    private JButton btnLine_2_13;
+    private JButton btnLine_2_14;
     
     public BillPanel billPanel;
 }

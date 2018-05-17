@@ -20,6 +20,7 @@ public interface BarDlgConst {
     String AddTable = "ADD TABLE";
     String OrderManage = "CHECK ORDER";
     String OpenDrawer = "OPEN DRAWER";
+    String VolumnDiscount = "DISC BILL";
     String WaiterReport = "SERVER REPORT";
     String Reservation = "RESERVATION";
     String Report = "REPORT";
@@ -38,9 +39,12 @@ public interface BarDlgConst {
     String REMOVEITEM = "REMOVE ITEM";
     String VOID_ITEM = "VOID ITEM";
     String SPLIT_BILL = "SPLIT BILL";
+    String Modify = "MODIFY";
+    String ChangePrice = "CHANGE PRICE";
+    String TIP = "SERVICE FEE";
     String QTY = "QTY";
     String QTYNOTICE = "will be applied to selected dish!";
-    String DISC_ITEM = "DISC";
+    String DISC_ITEM = "DISC ITEM";
     String PRINT_BILL = "PRINT BILL";
 
     String DEBIT = "DEBIT";
@@ -116,7 +120,7 @@ public interface BarDlgConst {
     String Static = "统计查询";
     String Option = "系统设置";
     String Input = "进货填单";
-    String Refund = "退货服务";
+    String Refund = "REFUND";
     String Type = "类别";
     String Store = "库存";
 

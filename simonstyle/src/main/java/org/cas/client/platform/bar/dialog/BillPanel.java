@@ -224,7 +224,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		Dish selectedDish = selectdDishAry.get(selectedRow);
 		if(salesPanel != null) {
 			BillListPanel.curDish = selectedDish;
-			if( salesPanel.btnLine_1_7.isSelected()) {	//if qty button seleted.
+			if( salesPanel.btnLine_2_12.isSelected()) {	//if qty button seleted.
 				Object obj = tblSelectedDish.getValueAt(selectedRow,3);
 				//update the qty in qtyDlg.
 				if(obj != null)
@@ -274,7 +274,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			if(selectedRow < 0 || selectedRow >= selectdDishAry.size()) 
 				return;
 			
-			if(salesPanel != null && !salesPanel.btnLine_1_7.isSelected()) {	//if qty button not seleted.
+			if(salesPanel != null && !salesPanel.btnLine_2_12.isSelected()) {	//if qty button not seleted.
 				if(selectdDishAry.get(selectedRow).getOutputID() >= 0) {
 					if (JOptionPane.showConfirmDialog(BarFrame.instance, BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle,
 		                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
