@@ -43,7 +43,7 @@ import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.IPIMTableColumnModel;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
-import org.cas.client.platform.pos.dialog.PosDlgConst;
+import org.cas.client.platform.bar.dialog.BarDlgConst;
 import org.cas.client.resource.international.DlgConst;
 
 public class CheckInOutListDlg  extends JDialog
@@ -144,12 +144,12 @@ public class CheckInOutListDlg  extends JDialog
 				tfdMoneyCurrent.selectAll();
 				return;
 			}
-			CustOpts.custOps.setKeyAndValue(PosDlgConst.Shoestring, String.valueOf(CASUtility.getPriceByCent(tMoneyChange)));
+			CustOpts.custOps.setKeyAndValue(BarDlgConst.Shoestring, String.valueOf(CASUtility.getPriceByCent(tMoneyChange)));
 			dispose();
 		}else if(o == btnFocus){
 			int[] tRowAry = tblContent.getSelectedRows();
 			if(tRowAry.length < 2){
-				JOptionPane.showMessageDialog(this, PosDlgConst.ValidateFucusAction);//选中项目太少！请先用鼠标选中多条记录，然后点击聚焦选中按钮，重点对选中的记录进行观察。
+				JOptionPane.showMessageDialog(this, BarDlgConst.ValidateFucusAction);//选中项目太少！请先用鼠标选中多条记录，然后点击聚焦选中按钮，重点对选中的记录进行观察。
 				return;
 			}
 			Object[][] tValues = new Object[tRowAry.length][tblContent.getColumnCount()];
@@ -212,26 +212,26 @@ public class CheckInOutListDlg  extends JDialog
 	}
     
 	private void initDialog(){
-		setTitle(PosDlgConst.WorkRecs);
+		setTitle(BarDlgConst.WorkRecs);
 		
 		//初始化－－－－－－－－－－－－－－－－
 		tblContent = new PIMTable();//显示字段的表格,设置模型
 		srpContent = new PIMScrollPane(tblContent);
-		lblMoneyCurrent = new JLabel(PosDlgConst.MoneyInBox);
-		lblMoneyLeft = new JLabel(PosDlgConst.LeftMoney);
+		lblMoneyCurrent = new JLabel(BarDlgConst.MoneyInBox);
+		lblMoneyLeft = new JLabel(BarDlgConst.LeftMoney);
 		
 		int tShoestring = 0;
 		try{
-			tShoestring = Integer.parseInt((String)CustOpts.custOps.getValue(PosDlgConst.Shoestring));
+			tShoestring = Integer.parseInt((String)CustOpts.custOps.getValue(BarDlgConst.Shoestring));
 		}catch(Exception exp){
 		}
 		tfdMoneyCurrent = new JTextField(new DecimalFormat("#0.00").format(tShoestring/100.0));
 		tfdMoneyLeft = new JTextField();
-		lblUnit = new JLabel(PosDlgConst.Unit);
-		lblUnit2 = new JLabel(PosDlgConst.Unit);
+		lblUnit = new JLabel(BarDlgConst.Unit);
+		lblUnit2 = new JLabel(BarDlgConst.Unit);
 		btnClose = new JButton(DlgConst.FINISH_BUTTON);
-		btnFocus = new JButton(PosDlgConst.Focus);
-		btnUnFocus = new JButton(PosDlgConst.UnFocus);
+		btnFocus = new JButton(BarDlgConst.Focus);
+		btnUnFocus = new JButton(BarDlgConst.UnFocus);
 		
 		//properties
 		btnClose.setMnemonic('o');
@@ -329,7 +329,7 @@ public class CheckInOutListDlg  extends JDialog
 		if(tblContent.getRowCount() > 0){
 			int tShoestring = 0;	
 			try{
-				tShoestring = Integer.parseInt((String)CustOpts.custOps.getValue(PosDlgConst.Shoestring));
+				tShoestring = Integer.parseInt((String)CustOpts.custOps.getValue(BarDlgConst.Shoestring));
 			}catch(Exception exp){
 			}
 			Float tReceived = (Float)tblContent.getValueAt(tblContent.getRowCount() - 1, 4);
@@ -339,12 +339,12 @@ public class CheckInOutListDlg  extends JDialog
 	}
 	
 	private String[] header = new String[]{
-			PosDlgConst.Operator, 	//"操作员"
-			PosDlgConst.StartTime, 	//"开始时间"
-			PosDlgConst.EndTime, 	//"结束时间"
-			PosDlgConst.Calculate, 	//"结算"
-			PosDlgConst.Receive, 	//"收银"
-			PosDlgConst.Profit}; 	//"盈利"
+			BarDlgConst.Operator, 	//"操作员"
+			BarDlgConst.StartTime, 	//"开始时间"
+			BarDlgConst.EndTime, 	//"结束时间"
+			BarDlgConst.Calculate, 	//"结算"
+			BarDlgConst.Receive, 	//"收银"
+			BarDlgConst.Profit}; 	//"盈利"
 	
 	PIMTable tblContent;
 	PIMScrollPane srpContent;

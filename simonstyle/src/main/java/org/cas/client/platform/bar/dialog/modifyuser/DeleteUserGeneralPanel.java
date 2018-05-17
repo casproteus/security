@@ -18,7 +18,7 @@ import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlgConst;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
-import org.cas.client.platform.pos.dialog.PosDlgConst;
+import org.cas.client.platform.bar.dialog.BarDlgConst;
 
 public class DeleteUserGeneralPanel  extends JPanel implements ComponentListener, ActionListener{
 
@@ -100,7 +100,7 @@ public class DeleteUserGeneralPanel  extends JPanel implements ComponentListener
 
     	cmbUserName.setModel(new DefaultComboBoxModel(subjectAry));
     	cmbUserName.setSelectedIndex(0);
-    	cmbType.setModel(new DefaultComboBoxModel(PosDlgConst.USERTYPE));
+    	cmbType.setModel(new DefaultComboBoxModel(BarDlgConst.USERTYPE));
     	cmbUserName.setSelectedIndex(typeAry[0]);
 	}
 	/** 本方法用于设置View上各个组件的尺寸。 */

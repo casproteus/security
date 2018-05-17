@@ -35,7 +35,7 @@ import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.IPIMTableColumnModel;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
-import org.cas.client.platform.pos.dialog.PosDlgConst;
+import org.cas.client.platform.bar.dialog.BarDlgConst;
 import org.cas.client.resource.international.DlgConst;
 
 public class AddStoreListDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener {
@@ -173,7 +173,7 @@ public class AddStoreListDlg extends JDialog implements ICASDialog, ActionListen
         } else if (o == btnFocus) {
             int[] tRowAry = tblContent.getSelectedRows();
             if (tRowAry.length < 2) {
-                JOptionPane.showMessageDialog(this, PosDlgConst.ValidateFucusAction);// 选中项目太少！请先用鼠标选中多条记录，然后点击聚焦选中按钮，重点对选中的记录进行观察。
+                JOptionPane.showMessageDialog(this, BarDlgConst.ValidateFucusAction);// 选中项目太少！请先用鼠标选中多条记录，然后点击聚焦选中按钮，重点对选中的记录进行观察。
                 return;
             }
             Object[][] tValues = new Object[tRowAry.length][tblContent.getColumnCount()];
@@ -211,15 +211,15 @@ public class AddStoreListDlg extends JDialog implements ICASDialog, ActionListen
     }
 
     private void initDialog() {
-        setTitle(PosDlgConst.InputRecs);
+        setTitle(BarDlgConst.InputRecs);
 
         // 初始化－－－－－－－－－－－－－－－－
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
 
         btnClose = new JButton(DlgConst.FINISH_BUTTON);
-        btnFocus = new JButton(PosDlgConst.Focus);
-        btnUnFocus = new JButton(PosDlgConst.UnFocus);
+        btnFocus = new JButton(BarDlgConst.Focus);
+        btnUnFocus = new JButton(BarDlgConst.UnFocus);
 
         // properties
         btnClose.setMnemonic('o');
@@ -349,11 +349,11 @@ public class AddStoreListDlg extends JDialog implements ICASDialog, ActionListen
         }
     }
 
-    private String[] header = new String[] { PosDlgConst.Supplier, // "供货商"
-            PosDlgConst.TIME, // "时间"
-            PosDlgConst.Product, // "产品"
-            PosDlgConst.Count, // "数量"
-            PosDlgConst.Receive }; // "收银"
+    private String[] header = new String[] { BarDlgConst.Supplier, // "供货商"
+            BarDlgConst.TIME, // "时间"
+            BarDlgConst.Product, // "产品"
+            BarDlgConst.Count, // "数量"
+            BarDlgConst.Receive }; // "收银"
 
     int[] supplierIdAry;
     String[] supplierNameAry;

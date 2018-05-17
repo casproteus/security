@@ -18,7 +18,7 @@ import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlgConst;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
-import org.cas.client.platform.pos.dialog.PosDlgConst;
+import org.cas.client.platform.bar.dialog.BarDlgConst;
 
 public class AddUserGeneralPanel  extends JPanel implements ComponentListener{
 
@@ -96,7 +96,7 @@ public class AddUserGeneralPanel  extends JPanel implements ComponentListener{
     		ErrorUtil.write(e);
     	}
 
-    	cmbType.setModel(new DefaultComboBoxModel(PosDlgConst.USERTYPE));
+    	cmbType.setModel(new DefaultComboBoxModel(BarDlgConst.USERTYPE));
     	cmbType.setSelectedIndex(1);
 	}
 	/** 本方法用于设置View上各个组件的尺寸。 */

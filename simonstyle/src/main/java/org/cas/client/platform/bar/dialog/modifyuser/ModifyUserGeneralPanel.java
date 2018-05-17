@@ -24,7 +24,7 @@ import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlgConst;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
-import org.cas.client.platform.pos.dialog.PosDlgConst;
+import org.cas.client.platform.bar.dialog.BarDlgConst;
 
 public class ModifyUserGeneralPanel  extends JPanel implements ComponentListener, ActionListener{
 
@@ -142,7 +142,7 @@ public class ModifyUserGeneralPanel  extends JPanel implements ComponentListener
     	}
 
 
-    	cmbType.setModel(new DefaultComboBoxModel(PosDlgConst.USERTYPE));
+    	cmbType.setModel(new DefaultComboBoxModel(BarDlgConst.USERTYPE));
     	cmbUserName.setModel(new DefaultComboBoxModel(subjectAry));
     	cmbUserName.setSelectedIndex(0);
 	}

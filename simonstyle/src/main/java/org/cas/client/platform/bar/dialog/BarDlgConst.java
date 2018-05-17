@@ -14,6 +14,7 @@ public interface BarDlgConst {
     String Tip = "Tip";
     String CashBack = "Cash Back";
     String Status = "Status";
+    String APPLY = "APPLY";
     
     String ChangeMode = "CHANGE MODE";
     String AddTable = "ADD TABLE";
@@ -34,7 +35,7 @@ public interface BarDlgConst {
     String EXACT_AMOUNT = "EXACT AMOUNT";
     String CASH = "CASH";
     String PAY = "PAY";
-    String REMOVE = "REMOVE";
+    String REMOVEITEM = "REMOVE ITEM";
     String VOID_ITEM = "VOID ITEM";
     String SPLIT_BILL = "SPLIT BILL";
     String QTY = "QTY";
@@ -224,10 +225,12 @@ public interface BarDlgConst {
     String TIME = "Create Time";
     String Porfit = "利润";
 
-    String YEAR = "年";
-    String MONTH = "月";
-    String WEEK = "周";
-    String DAY = "天";
+    String FROM = "FROM";
+    String TO = "TO";
+    String YEAR = "YEAR";
+    String MONTH = "MONTH";
+    String WEEK = "WEEK";
+    String DAY = "DAY";
     String RefreshChart = "更新图表";
 
     String MONEYBOX = "钱箱";

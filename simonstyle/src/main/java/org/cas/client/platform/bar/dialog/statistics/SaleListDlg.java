@@ -25,13 +25,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.bar.dialog.BarDlgConst;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
+import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
+import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -46,7 +51,7 @@ import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.platform.pos.dialog.PosDlgConst;
 import org.cas.client.resource.international.DlgConst;
 
-public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener {
+public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener, ListSelectionListener {
     /**
      * Creates a new instance of ContactDialog
      * 
@@ -99,17 +104,41 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
         		getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP * 2, 
                 getHeight() - CustOpts.SIZE_TITLE - CustOpts.SIZE_EDGE - CustOpts.VER_GAP * 3
                 - CustOpts.BTN_WIDTH_NUM);
+        
+        int startX = (getWidth() - 360 - CustOpts.HOR_GAP * 8 - lblFrom.getPreferredSize().width - lblTo.getPreferredSize().width) / 2;
+        lblFrom.setBounds(startX, srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP * 2 + lblYearFrom.getPreferredSize().height,
+        		lblFrom.getPreferredSize().width, lblFrom.getPreferredSize().height);
+        lblYearFrom.setBounds(lblFrom.getX() + lblFrom.getWidth() + CustOpts.HOR_GAP, srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP,
+        		60, lblYearFrom.getPreferredSize().height);
+        tfdYearFrom.setBounds(lblYearFrom.getX(), lblYearFrom.getY() + lblYearFrom.getHeight() + CustOpts.VER_GAP, 
+        		lblYearFrom.getWidth(), 30);
+        
+        lblMonthFrom.setBounds(lblYearFrom.getX() + lblYearFrom.getWidth() + CustOpts.HOR_GAP, lblYearFrom.getY(), 
+        		40, lblMonthFrom.getPreferredSize().height);
+        tfdMonthFrom.setBounds(lblMonthFrom.getX(), tfdYearFrom.getY(), lblMonthFrom.getWidth(), tfdYearFrom.getHeight());
+        
+        lblDayFrom.setBounds(lblMonthFrom.getX() + lblMonthFrom.getWidth() + CustOpts.HOR_GAP, lblMonthFrom.getY(), 
+        		lblMonthFrom.getWidth(), lblDayFrom.getPreferredSize().height);
+        tfdDayFrom.setBounds(lblDayFrom.getX(), tfdYearFrom.getY(), lblDayFrom.getWidth(), tfdYearFrom.getHeight());
+        
+        lblTo.setBounds(tfdDayFrom.getX() + tfdDayFrom.getWidth() + CustOpts.HOR_GAP, lblFrom.getY(), lblTo.getPreferredSize().width, lblFrom.getHeight());
+        
+        lblYearTo.setBounds(lblTo.getX() + lblTo.getWidth() + CustOpts.HOR_GAP, lblMonthFrom.getY(), 
+        		lblYearFrom.getWidth(), lblYearFrom.getHeight());
+        tfdYearTo.setBounds(lblYearTo.getX(), tfdYearFrom.getY(), lblYearTo.getWidth(), tfdYearFrom.getHeight());
+        
+        lblMonthTo.setBounds(lblYearTo.getX() + lblYearTo.getWidth() + CustOpts.HOR_GAP, lblMonthFrom.getY(), 
+        		lblMonthFrom.getWidth(), lblMonthFrom.getHeight());
+        tfdMonthTo.setBounds(lblMonthTo.getX(), tfdYearFrom.getY(), lblMonthTo.getWidth(), tfdYearFrom.getHeight());
+        
+        lblDayTo.setBounds(lblMonthTo.getX() + lblMonthTo.getWidth() + CustOpts.HOR_GAP, lblMonthFrom.getY(), 
+        		lblDayFrom.getWidth(), lblDayFrom.getHeight());
+        tfdDayTo.setBounds(lblDayTo.getX(), tfdYearFrom.getY(), lblDayTo.getWidth(), tfdYearFrom.getHeight());
 
-        int btnWidth = (srpContent.getWidth() - CustOpts.HOR_GAP * 3)/4;
-        btnClose.setBounds(getWidth() - CustOpts.HOR_GAP * 2 - btnWidth,
-                srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP, btnWidth, CustOpts.BTN_WIDTH_NUM);// 关闭
-        btnPrintBill.setBounds(btnClose.getX() - CustOpts.HOR_GAP - btnWidth, btnClose.getY(),
-                btnWidth, CustOpts.BTN_WIDTH_NUM);
-        btnViewDetail.setBounds(btnPrintBill.getX() - CustOpts.HOR_GAP - btnWidth, btnClose.getY(),
-                btnWidth, CustOpts.BTN_WIDTH_NUM);
-        btnChangeDate.setBounds(btnViewDetail.getX() - CustOpts.HOR_GAP - btnWidth, btnViewDetail.getY(),
-                btnWidth, CustOpts.BTN_WIDTH_NUM);
-
+        int btnWidth = 80;
+        btnChangeDate.setBounds(tfdDayTo.getX() + tfdDayTo.getWidth() + CustOpts.HOR_GAP, lblDayTo.getY(),
+                btnWidth, tfdDayTo.getHeight() + lblDayTo.getHeight() + CustOpts.VER_GAP);
+        
         IPIMTableColumnModel tTCM = tblContent.getColumnModel();
         tTCM.getColumn(0).setPreferredWidth(130);	//BarDlgConst.TIME
         tTCM.getColumn(1).setPreferredWidth(40);	//BarDlgConst.Table,
@@ -149,10 +178,7 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
 
     @Override
     public void release() {
-        btnClose.removeActionListener(this);
         btnChangeDate.removeActionListener(this);
-        btnViewDetail.removeActionListener(this);
-        btnPrintBill.removeActionListener(this);
         dispose();// 对于对话盒，如果不加这句话，就很难释放掉。
         System.gc();// @TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
     }
@@ -176,20 +202,38 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
     public void actionPerformed(
             ActionEvent e) {
         Object o = e.getSource();
-        if (o == btnClose) {
-            dispose();
-        } else if (o == btnChangeDate) {
-            
-        } else if (o == btnViewDetail) {
-        	//check if a row is selected
-        	showInSalesPanel();
-        } else if(o == btnPrintBill) {
-        	showInSalesPanel();
-        	((SalesPanel)BarFrame.instance.panels[BarFrame.instance.curPanel]).billPanel
-        	.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
+        if (o == btnChangeDate) {
+        	StringBuilder startTime = new StringBuilder();
+        	startTime.append(tfdYearFrom.getText());
+        	startTime.append("-");
+        	startTime.append(tfdMonthFrom.getText());
+        	startTime.append("-");
+        	startTime.append(tfdDayFrom.getText());
+        	startTime.append(" 00:00:00");
+
+        	StringBuilder endTime = new StringBuilder();
+        	endTime.append(tfdYearTo.getText());
+        	endTime.append("-");
+        	endTime.append(tfdMonthTo.getText());
+        	endTime.append("-");
+        	endTime.append(tfdDayTo.getText());
+        	endTime.append(" 00:00:00");
+        	
+        	initTable(startTime.toString(), endTime.toString());
+        	reLayout();
         }
+//		else if(o == btnPrintBill) {
+//        	showInSalesPanel();
+//        	((SalesPanel)BarFrame.instance.panels[BarFrame.instance.curPanel]).billPanel
+//        	.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
+//        }
     }
     
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		showInSalesPanel();
+	}
+	
     private void showInSalesPanel() {
     	int selectedRow = tblContent.getSelectedRow();
     	int tValidRowCount = getUsedRowCount();
@@ -220,25 +264,40 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
     }
 
     private void initDialog() {
-        setTitle(PosDlgConst.SaleRecs);
+        setTitle(BarDlgConst.SaleRecs);
+        setModal(false);
 
         // 初始化－－－－－－－－－－－－－－－－
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
 
-        btnClose = new JButton(BarDlgConst.CLOSE);
-        btnChangeDate = new JButton(BarDlgConst.ChangeDate);
-        btnViewDetail = new JButton(BarDlgConst.ViewDetail);
-        btnPrintBill = new JButton(BarDlgConst.PRINT_BILL);
+        lblFrom = new JLabel(BarDlgConst.FROM);
+        lblTo = new JLabel(BarDlgConst.TO);
+        lblYearFrom = new JLabel("YYYY");
+        lblMonthFrom = new JLabel("MM");
+        lblDayFrom = new JLabel("DD");
+        lblYearTo = new JLabel("YYYY");
+        lblMonthTo = new JLabel("MM");
+        lblDayTo = new JLabel("DD");
+        tfdYearFrom = new JTextField();
+        tfdMonthFrom = new JTextField();
+        tfdDayFrom = new JTextField();
+        tfdYearTo = new JTextField();
+        tfdMonthTo = new JTextField();
+        tfdDayTo = new JTextField();
+        btnChangeDate = new JButton(BarDlgConst.APPLY);
         
         // properties
-        btnClose.setMnemonic('o');
-        btnClose.setMargin(new Insets(0, 0, 0, 0));
         btnChangeDate.setMnemonic('F');
-        btnChangeDate.setMargin(btnClose.getMargin());
-        btnViewDetail.setMnemonic('U');
-        btnPrintBill.setMargin(btnClose.getMargin());
-
+        btnChangeDate.setMargin(new Insets(0, 0, 0, 0));
+        lblTo.setHorizontalTextPosition(SwingConstants.CENTER);
+        lblYearFrom.setHorizontalTextPosition(SwingConstants.CENTER);
+        lblMonthFrom.setHorizontalTextPosition(SwingConstants.CENTER);
+        lblDayFrom.setHorizontalTextPosition(SwingConstants.CENTER);
+        lblYearTo.setHorizontalTextPosition(SwingConstants.CENTER);
+        lblMonthTo.setHorizontalTextPosition(SwingConstants.CENTER);
+        lblDayTo.setHorizontalTextPosition(SwingConstants.CENTER);
+        
         tblContent.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         tblContent.setAutoscrolls(true);
         tblContent.setRowHeight(30);
@@ -249,28 +308,33 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
         tLbl.setOpaque(true);
         tLbl.setBackground(Color.GRAY);
         srpContent.setCorner(JScrollPane.LOWER_RIGHT_CORNER, tLbl);
-        getRootPane().setDefaultButton(btnClose);
 
         // 布局---------------
-        setBounds((CustOpts.SCRWIDTH - 600) / 2, (CustOpts.SCRHEIGHT - 500) / 2, 600, 500); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 780) / 2, (CustOpts.SCRHEIGHT - 500) / 2, 780, 500); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
 
         // 搭建－－－－－－－－－－－－－
         getContentPane().add(srpContent);
-        getContentPane().add(btnClose);
+        getContentPane().add(lblFrom);
+        getContentPane().add(lblTo);
+        getContentPane().add(lblYearFrom);
+        getContentPane().add(lblMonthFrom);
+        getContentPane().add(lblDayFrom);
+        getContentPane().add(lblYearTo);
+        getContentPane().add(lblMonthTo);
+        getContentPane().add(lblDayTo);
+        getContentPane().add(tfdYearFrom);
+        getContentPane().add(tfdMonthFrom);
+        getContentPane().add(tfdDayFrom);
+        getContentPane().add(tfdYearTo);
+        getContentPane().add(tfdMonthTo);
+        getContentPane().add(tfdDayTo);
         getContentPane().add(btnChangeDate);
-        getContentPane().add(btnViewDetail);
-        getContentPane().add(btnPrintBill);
 
         // 加监听器－－－－－－－－
-        btnClose.addActionListener(this);
+        tblContent.getSelectionModel().addListSelectionListener(this);
         btnChangeDate.addActionListener(this);
-        btnViewDetail.addActionListener(this);
-        btnPrintBill.addActionListener(this);
-        btnClose.addKeyListener(this);
         btnChangeDate.addKeyListener(this);
-        btnViewDetail.addKeyListener(this);
-        btnPrintBill.addKeyListener(this);
         getContentPane().addComponentListener(this);
     }
 
@@ -311,6 +375,26 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
         tCellRender.setOpaque(true);
         tCellRender.setBackground(Color.LIGHT_GRAY);
         tblContent.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
+        
+        //fill the dataselection area
+        int p = startTime.indexOf(" ");
+        startTime = startTime.substring(0, p);
+        p = startTime.indexOf("-");
+        tfdYearFrom.setText(startTime.substring(0, p));
+        startTime = startTime.substring(p + 1);
+        p = startTime.indexOf("-");
+        tfdMonthFrom.setText(startTime.substring(0, p));
+        tfdDayFrom.setText(startTime.substring(p + 1));
+        
+        p = endTime.indexOf(" ");
+        endTime = endTime.substring(0, p);
+        p = endTime.indexOf("-");
+        tfdYearTo.setText(endTime.substring(0, p));
+        endTime = endTime.substring(p + 1);
+        p = endTime.indexOf("-");
+        tfdMonthTo.setText(endTime.substring(0, p));
+        tfdDayTo.setText(endTime.substring(p + 1));
+        
     }
     
 	/**this init is for displaying all bills of a day.
@@ -429,10 +513,23 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
     String[] employNameAry;
     int[] prodIdAry;
     String[] prodNameAry;
+    
     PIMTable tblContent;
     PIMScrollPane srpContent;
+    
+    JLabel lblFrom;
+    JLabel lblTo;
+    JLabel lblYearFrom;
+    JLabel lblMonthFrom;
+    JLabel lblDayFrom;
+    JLabel lblYearTo;
+    JLabel lblMonthTo;
+    JLabel lblDayTo;
+    JTextField tfdYearFrom;
+    JTextField tfdMonthFrom;
+    JTextField tfdDayFrom;
+    JTextField tfdYearTo;
+    JTextField tfdMonthTo;
+    JTextField tfdDayTo;
     private JButton btnChangeDate;
-    private JButton btnViewDetail;
-    private JButton btnPrintBill;
-    private JButton btnClose;
 }

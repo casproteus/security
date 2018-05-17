@@ -384,27 +384,27 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_2_9.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
                 tBtnHeight);
         // line 1
-        btnLine_1_1.setBounds(CustOpts.HOR_GAP, btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
+        btnLine_0_0.setBounds(CustOpts.HOR_GAP, btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
                 tBtnHeight);
-        btnLine_1_2.setBounds(btnLine_1_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+        btnLine_1_2.setBounds(btnLine_0_0.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_1_3.setBounds(btnLine_1_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+        btnLine_1_3.setBounds(btnLine_1_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_1_4.setBounds(btnLine_1_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+        btnLine_1_4.setBounds(btnLine_1_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_1_5.setBounds(btnLine_1_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+        btnLine_1_5.setBounds(btnLine_1_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_1_6.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+        btnLine_1_6.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_1_7.setBounds(btnLine_1_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+        btnLine_1_7.setBounds(btnLine_1_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_1_8.setBounds(btnLine_1_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+        btnLine_1_8.setBounds(btnLine_1_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_1_9.setBounds(btnLine_1_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
+        btnLine_1_9.setBounds(btnLine_1_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_0_0.getY(), tBtnWidht,
                 tBtnHeight);
         
         // TOP part============================
-        int topAreaHeight = btnLine_1_1.getY() - 3 * CustOpts.VER_GAP;
+        int topAreaHeight = btnLine_0_0.getY() - 3 * CustOpts.VER_GAP;
 
         Double tableWidth = (Double) CustOpts.custOps.hash2.get("TableWidth");
         tableWidth = (tableWidth == null || tableWidth < 0.2) ? 0.4 : tableWidth;
@@ -423,10 +423,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     }
 
     private void initComponent() {
-        btnLine_1_1 = new JButton(BarDlgConst.EXACT_AMOUNT);
+        btnLine_0_0 = new JButton(BarDlgConst.EXACT_AMOUNT);
         btnLine_1_2 = new JButton(BarDlgConst.CASH);
         btnLine_1_3 = new JButton(BarDlgConst.PAY);
-        btnLine_1_4 = new JButton(BarDlgConst.REMOVE);
+        btnLine_1_4 = new JButton(BarDlgConst.REMOVEITEM);
         btnLine_1_5 = new JButton(BarDlgConst.AddUser);
         btnLine_1_6 = new JButton(BarDlgConst.SPLIT_BILL);
         btnLine_1_7 = new JToggleButton(BarDlgConst.QTY);
@@ -458,7 +458,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         add(btnLine_2_8);
         add(btnLine_1_9);
 
-        add(btnLine_1_1);
+        add(btnLine_0_0);
         add(btnLine_1_2);
         add(btnLine_1_3);
         add(btnLine_1_4);
@@ -485,7 +485,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_2_8.addActionListener(this);
         btnLine_1_9.addActionListener(this);
 
-        btnLine_1_1.addActionListener(this);
+        btnLine_0_0.addActionListener(this);
         btnLine_1_2.addActionListener(this);
         btnLine_1_3.addActionListener(this);
         btnLine_1_4.addActionListener(this);
@@ -496,7 +496,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_2_7.addActionListener(this);
     }
 
-    private JButton btnLine_1_1;
+    private JButton btnLine_0_0;
     private JButton btnLine_1_2;
     private JButton btnLine_1_3;
     private JButton btnLine_1_4;

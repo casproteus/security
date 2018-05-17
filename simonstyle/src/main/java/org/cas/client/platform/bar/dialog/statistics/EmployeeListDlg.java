@@ -46,7 +46,7 @@ import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.IPIMTableColumnModel;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
-import org.cas.client.platform.pos.dialog.PosDlgConst;
+import org.cas.client.platform.bar.dialog.BarDlgConst;
 import org.cas.client.platform.pos.dialog.PosFrame;
 import org.cas.client.resource.international.DlgConst;
 
@@ -207,7 +207,7 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         } else if (o == btnFocus) {
             int[] tRowAry = tblContent.getSelectedRows();
             if (tRowAry.length < 2) {
-                JOptionPane.showMessageDialog(this, PosDlgConst.ValidateFucusAction);// 选中项目太少！请先用鼠标选中多条记录，然后点击聚焦选中按钮，重点对选中的记录进行观察。
+                JOptionPane.showMessageDialog(this, BarDlgConst.ValidateFucusAction);// 选中项目太少！请先用鼠标选中多条记录，然后点击聚焦选中按钮，重点对选中的记录进行观察。
                 return;
             }
             Object[][] tValues = new Object[tRowAry.length][tblContent.getColumnCount()];
@@ -328,15 +328,15 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
     }
 
     private void initDialog() {
-        setTitle(PosDlgConst.EmployeeInfo);
+        setTitle(BarDlgConst.EmployeeInfo);
 
         // 初始化－－－－－－－－－－－－－－－－
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
         btnClose = new JButton(DlgConst.FINISH_BUTTON);
-        btnFocus = new JButton(PosDlgConst.Focus);
-        btnUnFocus = new JButton(PosDlgConst.UnFocus);
-        btnAdd = new JButton(PosDlgConst.Add);
+        btnFocus = new JButton(BarDlgConst.Focus);
+        btnUnFocus = new JButton(BarDlgConst.UnFocus);
+        btnAdd = new JButton(BarDlgConst.Add);
         btnDelete = new JButton(DlgConst.DELETE);
 
         // properties
@@ -445,25 +445,25 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         tblContent.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
     }
 
-    private String[] header = new String[] { PosDlgConst.NickName, // "昵称"
-            PosDlgConst.Name, // "显示为"
-            PosDlgConst.Sex, // "性别";
-            PosDlgConst.JobTitle, // "职位"
-            PosDlgConst.Cellphone, // "手机"
-            PosDlgConst.PhoneNum, // "宅电"
-            PosDlgConst.HomeAddress,// "家庭住址";
-            PosDlgConst.QQ, // "即时通讯号码"
-            PosDlgConst.MailAddress,// "电子邮件地址"
-            PosDlgConst.MainPage,// "主页";
-            PosDlgConst.Type,// 类别
-            PosDlgConst.JoinTime,// "进单位时间";
-            PosDlgConst.Salary,// "工资";
-            PosDlgConst.INSURANCE,// "保险";
-            PosDlgConst.SSCNUMBER,// "社保号码";
-            PosDlgConst.IDCARD,// "身份证";
-            PosDlgConst.BIRTHDAY,// "生日";
-            PosDlgConst.BANKNUMBER,// "银行卡号";
-            PosDlgConst.Note, ContactDefaultViews.TEXTS[0] }; // "备注"
+    private String[] header = new String[] { BarDlgConst.NickName, // "昵称"
+            BarDlgConst.Name, // "显示为"
+            BarDlgConst.Sex, // "性别";
+            BarDlgConst.JobTitle, // "职位"
+            BarDlgConst.Cellphone, // "手机"
+            BarDlgConst.PhoneNum, // "宅电"
+            BarDlgConst.HomeAddress,// "家庭住址";
+            BarDlgConst.QQ, // "即时通讯号码"
+            BarDlgConst.MailAddress,// "电子邮件地址"
+            BarDlgConst.MainPage,// "主页";
+            BarDlgConst.Type,// 类别
+            BarDlgConst.JoinTime,// "进单位时间";
+            BarDlgConst.Salary,// "工资";
+            BarDlgConst.INSURANCE,// "保险";
+            BarDlgConst.SSCNUMBER,// "社保号码";
+            BarDlgConst.IDCARD,// "身份证";
+            BarDlgConst.BIRTHDAY,// "生日";
+            BarDlgConst.BANKNUMBER,// "银行卡号";
+            BarDlgConst.Note, ContactDefaultViews.TEXTS[0] }; // "备注"
 
     PIMTable tblContent;
     PIMScrollPane srpContent;
