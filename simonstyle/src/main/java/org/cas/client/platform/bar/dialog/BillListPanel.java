@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -107,7 +108,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
 			ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
-					+ "' and deleted = false order by contactID");
+					+ "' and deleted = false and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID");
 			rs.beforeFirst();
 
 			while (rs.next()) {
@@ -382,45 +383,6 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		return panels;
 	}
 	
-    private void openMoneyBox() {
-        int[] ccs = new int[5];
-        ccs[0] = 27;
-        ccs[1] = 112;
-        ccs[2] = 0;
-        ccs[3] = 80;
-        ccs[4] = 250;
-
-        CommPortIdentifier tPortIdty;
-        try {
-            Enumeration tPorts = CommPortIdentifier.getPortIdentifiers();
-            if (tPorts == null)
-                JOptionPane.showMessageDialog(this, "no comm ports found!");
-            else
-                while (tPorts.hasMoreElements()) {
-                    tPortIdty = (CommPortIdentifier) tPorts.nextElement();
-                    if (tPortIdty.getName().equals("LPT1")) {
-                        if (!tPortIdty.isCurrentlyOwned()) {
-                            ParallelPort tParallelPort = (ParallelPort) tPortIdty.open("ParallelBlackBox", 2000);
-                            DataOutputStream tOutStream = new DataOutputStream(tParallelPort.getOutputStream());
-                            for (int i = 0; i < 5; i++)
-                                tOutStream.write(ccs[i]);
-                            tOutStream.flush();
-                            tOutStream.close();
-                            tParallelPort.close();
-                        }
-                    }
-                }
-        } catch (PortInUseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void printInvoice(
-            String pDate) {
-    }
-    
 	List<BillPanel> billPanels;
 	List<BillPanel> onScrBills;
 

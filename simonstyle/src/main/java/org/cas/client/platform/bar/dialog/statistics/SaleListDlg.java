@@ -12,6 +12,8 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -22,8 +24,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
+import org.cas.client.platform.bar.dialog.BarDlgConst;
+import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.BarOption;
+import org.cas.client.platform.bar.dialog.BillPanel;
+import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -87,25 +95,34 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
      */
     @Override
     public void reLayout() {
-        srpContent.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP
-                * 2, getHeight() - CustOpts.SIZE_TITLE - CustOpts.SIZE_EDGE - CustOpts.VER_GAP * 3
-                - CustOpts.BTN_HEIGHT);
+        srpContent.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 
+        		getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP * 2, 
+                getHeight() - CustOpts.SIZE_TITLE - CustOpts.SIZE_EDGE - CustOpts.VER_GAP * 3
+                - CustOpts.BTN_WIDTH_NUM);
 
-        btnClose.setBounds(getWidth() - CustOpts.HOR_GAP * 2 - CustOpts.BTN_WIDTH,
-                srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP, CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);// 关闭
-        btnUnFocus.setBounds(btnClose.getX() - CustOpts.HOR_GAP - CustOpts.BTN_WIDTH, btnClose.getY(),
-                CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
-        btnFocus.setBounds(btnUnFocus.getX() - CustOpts.HOR_GAP - CustOpts.BTN_WIDTH, btnUnFocus.getY(),
-                CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+        int btnWidth = (srpContent.getWidth() - CustOpts.HOR_GAP * 3)/4;
+        btnClose.setBounds(getWidth() - CustOpts.HOR_GAP * 2 - btnWidth,
+                srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP, btnWidth, CustOpts.BTN_WIDTH_NUM);// 关闭
+        btnPrintBill.setBounds(btnClose.getX() - CustOpts.HOR_GAP - btnWidth, btnClose.getY(),
+                btnWidth, CustOpts.BTN_WIDTH_NUM);
+        btnViewDetail.setBounds(btnPrintBill.getX() - CustOpts.HOR_GAP - btnWidth, btnClose.getY(),
+                btnWidth, CustOpts.BTN_WIDTH_NUM);
+        btnChangeDate.setBounds(btnViewDetail.getX() - CustOpts.HOR_GAP - btnWidth, btnViewDetail.getY(),
+                btnWidth, CustOpts.BTN_WIDTH_NUM);
 
         IPIMTableColumnModel tTCM = tblContent.getColumnModel();
-        tTCM.getColumn(0).setPreferredWidth(70);
-        tTCM.getColumn(1).setPreferredWidth(130);
-        tTCM.getColumn(2).setPreferredWidth(130);
-        tTCM.getColumn(3).setPreferredWidth(60);
-        tTCM.getColumn(4).setPreferredWidth(60);
-        tTCM.getColumn(5).setPreferredWidth(srpContent.getWidth() - 450 - 4);
-
+        tTCM.getColumn(0).setPreferredWidth(130);	//BarDlgConst.TIME
+        tTCM.getColumn(1).setPreferredWidth(40);	//BarDlgConst.Table,
+        tTCM.getColumn(2).setPreferredWidth(40);	//BarDlgConst.Bill
+        tTCM.getColumn(3).setPreferredWidth(60);	//BarDlgConst.Total
+        tTCM.getColumn(4).setPreferredWidth(60);	//BarDlgConst.Discount
+        tTCM.getColumn(5).setPreferredWidth(60);	//BarDlgConst.Receive
+        tTCM.getColumn(6).setPreferredWidth(60);	//BarDlgConst.Tip
+        tTCM.getColumn(7).setPreferredWidth(60);	//BarDlgConst.CashBack
+        tTCM.getColumn(8).setPreferredWidth(60);	//BarDlgConst.Status
+        tTCM.getColumn(9).setPreferredWidth(60);	//BarDlgConst.Operator
+        tTCM.getColumn(10).setPreferredWidth(srpContent.getWidth() - 635);	//BarDlgConst.comment
+        tTCM.getColumn(11).setPreferredWidth(0);	//table open time, invisible.
         validate();
     }
 
@@ -115,20 +132,15 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
     }
 
     @Override
-    public boolean setContents(
-            PIMRecord prmRecord) {
+    public boolean setContents( PIMRecord prmRecord) {
         return true;
     }
 
     @Override
-    public void makeBestUseOfTime() {
-    }
+    public void makeBestUseOfTime() {}
 
     @Override
-    public void addAttach(
-            File[] file,
-            Vector actualAttachFiles) {
-    }
+    public void addAttach(File[] file, Vector actualAttachFiles) {}
 
     @Override
     public PIMTextPane getTextPane() {
@@ -138,8 +150,9 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
     @Override
     public void release() {
         btnClose.removeActionListener(this);
-        btnFocus.removeActionListener(this);
-        btnUnFocus.removeActionListener(this);
+        btnChangeDate.removeActionListener(this);
+        btnViewDetail.removeActionListener(this);
+        btnPrintBill.removeActionListener(this);
         dispose();// 对于对话盒，如果不加这句话，就很难释放掉。
         System.gc();// @TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
     }
@@ -151,19 +164,13 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
     };
 
     @Override
-    public void componentMoved(
-            ComponentEvent e) {
-    };
+    public void componentMoved(ComponentEvent e) {};
 
     @Override
-    public void componentShown(
-            ComponentEvent e) {
-    };
+    public void componentShown(ComponentEvent e) {};
 
     @Override
-    public void componentHidden(
-            ComponentEvent e) {
-    };
+    public void componentHidden(ComponentEvent e) {};
 
     @Override
     public void actionPerformed(
@@ -171,41 +178,42 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
         Object o = e.getSource();
         if (o == btnClose) {
             dispose();
-        } else if (o == btnFocus) {
-            int[] tRowAry = tblContent.getSelectedRows();
-            if (tRowAry.length < 2) {
-                JOptionPane.showMessageDialog(this, PosDlgConst.ValidateFucusAction);// 选中项目太少！请先用鼠标选中多条记录，然后点击聚焦选中按钮，重点对选中的记录进行观察。
-                return;
-            }
-            Object[][] tValues = new Object[tRowAry.length][tblContent.getColumnCount()];
-            for (int i = 0; i < tRowAry.length; i++)
-                for (int j = 0, len = tblContent.getColumnCount(); j < len; j++)
-                    tValues[i][j] = tblContent.getValueAt(tRowAry[i], j);
-            // 必须重新new一个Table，否则PIM会在绘制的时候报数组越界错误。原因不明。
-            getContentPane().remove(srpContent);
-            tblContent = new PIMTable();// 显示字段的表格,设置模型
-            srpContent = new PIMScrollPane(tblContent);
-
-            tblContent.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-            tblContent.setAutoscrolls(true);
-            tblContent.setRowHeight(20);
-            tblContent.setBorder(new JTextField().getBorder());
-            tblContent.setFocusable(false);
-
-            getContentPane().add(srpContent);
-
-            tblContent.setDataVector(tValues, header);
-            DefaultPIMTableCellRenderer tCellRender = new DefaultPIMTableCellRenderer();
-            tCellRender.setOpaque(true);
-            tCellRender.setBackground(Color.LIGHT_GRAY);
-            tblContent.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
-            reLayout();
-        } else if (o == btnUnFocus) {// 如果点击了Unfocus按钮，则取消Focus动作，返回到显示全部内容的状态。
-            initTable();
-            reLayout();
+        } else if (o == btnChangeDate) {
+            
+        } else if (o == btnViewDetail) {
+        	//check if a row is selected
+        	showInSalesPanel();
+        } else if(o == btnPrintBill) {
+        	showInSalesPanel();
+        	((SalesPanel)BarFrame.instance.panels[BarFrame.instance.curPanel]).billPanel
+        	.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
         }
     }
-
+    
+    private void showInSalesPanel() {
+    	int selectedRow = tblContent.getSelectedRow();
+    	int tValidRowCount = getUsedRowCount();
+    	if(selectedRow < 0 || selectedRow > tValidRowCount - 1) {
+    		JOptionPane.showMessageDialog(this, BarDlgConst.OnlyOneShouldBeSelected);
+    		ErrorUtil.write("Unexpected row number when calling removeAtSelection : " + selectedRow);
+    		return;
+    	}
+    	//swith to sales panel.
+    	
+    	BarFrame.instance.valCurTable.setText(String.valueOf(tblContent.getValueAt(selectedRow, 1)));
+    	BarFrame.instance.valCurBill.setText(String.valueOf(tblContent.getValueAt(selectedRow, 2)));
+    	BarFrame.instance.valOperator.setText(String.valueOf(tblContent.getValueAt(selectedRow, 9)));
+    	BarFrame.instance.valStartTime.setText(String.valueOf(tblContent.getValueAt(selectedRow, 11)));
+    	BarFrame.instance.switchMode(2);
+    }
+    
+    private int getUsedRowCount() {
+        for (int i = 0, len = tblContent.getRowCount(); i < len; i++)
+            if (tblContent.getValueAt(i, 0) == null)
+                return i; // 至此得到 the used RowCount。
+        return tblContent.getRowCount();
+    }
+    
     @Override
     public Container getContainer() {
         return getContentPane();
@@ -218,21 +226,22 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
 
-        btnClose = new JButton(DlgConst.FINISH_BUTTON);
-        btnFocus = new JButton(PosDlgConst.Focus);
-        btnUnFocus = new JButton(PosDlgConst.UnFocus);
-
+        btnClose = new JButton(BarDlgConst.CLOSE);
+        btnChangeDate = new JButton(BarDlgConst.ChangeDate);
+        btnViewDetail = new JButton(BarDlgConst.ViewDetail);
+        btnPrintBill = new JButton(BarDlgConst.PRINT_BILL);
+        
         // properties
         btnClose.setMnemonic('o');
         btnClose.setMargin(new Insets(0, 0, 0, 0));
-        btnFocus.setMnemonic('F');
-        btnFocus.setMargin(btnClose.getMargin());
-        btnUnFocus.setMnemonic('U');
-        btnUnFocus.setMargin(btnClose.getMargin());
+        btnChangeDate.setMnemonic('F');
+        btnChangeDate.setMargin(btnClose.getMargin());
+        btnViewDetail.setMnemonic('U');
+        btnPrintBill.setMargin(btnClose.getMargin());
 
         tblContent.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         tblContent.setAutoscrolls(true);
-        tblContent.setRowHeight(20);
+        tblContent.setRowHeight(30);
         tblContent.setBorder(new JTextField().getBorder());
         tblContent.setFocusable(false);
 
@@ -243,37 +252,31 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
         getRootPane().setDefaultButton(btnClose);
 
         // 布局---------------
-        setBounds((CustOpts.SCRWIDTH - 540) / 2, (CustOpts.SCRHEIGHT - 300) / 2, 540, 300); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 600) / 2, (CustOpts.SCRHEIGHT - 500) / 2, 600, 500); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
 
         // 搭建－－－－－－－－－－－－－
         getContentPane().add(srpContent);
         getContentPane().add(btnClose);
-        getContentPane().add(btnFocus);
-        getContentPane().add(btnUnFocus);
+        getContentPane().add(btnChangeDate);
+        getContentPane().add(btnViewDetail);
+        getContentPane().add(btnPrintBill);
 
         // 加监听器－－－－－－－－
         btnClose.addActionListener(this);
-        btnFocus.addActionListener(this);
-        btnUnFocus.addActionListener(this);
+        btnChangeDate.addActionListener(this);
+        btnViewDetail.addActionListener(this);
+        btnPrintBill.addActionListener(this);
         btnClose.addKeyListener(this);
-        btnFocus.addKeyListener(this);
-        btnUnFocus.addKeyListener(this);
+        btnChangeDate.addKeyListener(this);
+        btnViewDetail.addKeyListener(this);
+        btnPrintBill.addKeyListener(this);
         getContentPane().addComponentListener(this);
-        // initContents--------------
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                initPordAndEmploy();
-                initTable();
-            }
-        });
     }
 
-    private void initTable() {
+    public void initTable(String startTime, String endTime) {
         Object[][] tValues = null;
-        String sql =
-                "select EMPLOYEEID, TIME, PRODUCTID, AMOUNT, TOLTALPRICE, PROFIT from output where DELETED != true";
+        String sql = "select * from bill where createTime >= '" + startTime + "' and createTime < '" + endTime + "'";
 
         try {
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
@@ -284,14 +287,18 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
             rs.beforeFirst();
             tmpPos = 0;
             while (rs.next()) {
-                int tIdx = CASUtility.getIndexInAry(employIdAry, rs.getInt("EMPLOYEEID"));
-                tValues[tmpPos][0] = tIdx >= 0 ? employNameAry[tIdx] : CASUtility.EMPTYSTR;
-                tValues[tmpPos][1] = rs.getString("TIME");
-                tIdx = CASUtility.getIndexInAry(prodIdAry, rs.getInt("PRODUCTID"));
-                tValues[tmpPos][2] = tIdx > 0 ? prodNameAry[tIdx] : CASUtility.EMPTYSTR;
-                tValues[tmpPos][3] = Integer.valueOf(rs.getInt("AMOUNT"));
-                tValues[tmpPos][4] = Float.valueOf((float) (rs.getInt("TOLTALPRICE") / 100.0));
-                tValues[tmpPos][5] = Float.valueOf((float) (rs.getInt("PROFIT") / 100.0));
+                tValues[tmpPos][0] = rs.getString("createTime");;
+                tValues[tmpPos][1] = rs.getString("tableID");
+                tValues[tmpPos][2] = rs.getString("billIndex");
+                tValues[tmpPos][3] = Float.valueOf((float) (rs.getInt("total") / 100.0));
+                tValues[tmpPos][4] = Float.valueOf((float) (rs.getInt("discount") / 100.0));
+                tValues[tmpPos][5] = Float.valueOf((float) (rs.getInt("received") / 100.0));
+                tValues[tmpPos][6] = Float.valueOf((float) (rs.getInt("tip") / 100.0));
+                tValues[tmpPos][7] = Float.valueOf((float) (rs.getInt("cashback") / 100.0));
+                tValues[tmpPos][8] = rs.getInt("status");
+                tValues[tmpPos][9] = rs.getInt("employeeId");
+                tValues[tmpPos][10] = rs.getString("Comment");
+                tValues[tmpPos][11] = rs.getString("OpenTime");
                 tmpPos++;
             }
             rs.close();// 关闭
@@ -305,7 +312,58 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
         tCellRender.setBackground(Color.LIGHT_GRAY);
         tblContent.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
     }
+    
+	/**this init is for displaying all bills of a day.
+	void initContent(String startTime, String endTime) {
+		btnLeft.setEnabled(true);
+		btnRight.setEnabled(!BarOption.df.format(new Date()).startsWith(endTime.substring(0, 10)));
+		for(int i = onScrBills.size() - 1; i >= 0; i--) {
+			remove(onScrBills.get(i));
+		}
+		billPanels.clear();
+		onScrBills.clear();
+		
+		// load all the unclosed outputs under this table with ---------------------------
+		try {
+			Statement smt = PIMDBModel.getReadOnlyStatement();
+			ResultSet rs = smt.executeQuery("SELECT DISTINCT category from output where category > '" + startTime
+					+ "' and category < '" + endTime + "' order by category");
+			rs.beforeFirst();
+			String time = "";
+			while (rs.next()) {
+				JToggleButton billButton = new JToggleButton();
+				time = rs.getString("category");
+				billButton.setText(time);
+				billButton.setMargin(new Insets(0, 0, 0, 0));
+				
+				BillPanel billPanel = new BillPanel(this, billButton);
+				billPanels.add(billPanel);
+			}
 
+			//do it outside the above loop, because there's another qb query inside.
+			int col = BarOption.getBillPageCol();
+			int row = BarOption.getBillPageRow();
+
+			for(int i = 0; i < row * col; i++) {
+				if(row * col * curPageNum + i < billPanels.size()) {
+					billPanels.get(row * col * curPageNum + i).initComponent();
+					billPanels.get(row * col * curPageNum + i).initContent(time);
+					onScrBills.add(billPanels.get(row * col * curPageNum + i));
+					btnRight.setEnabled(true);
+				}else {
+					BillPanel panel = new BillPanel(this, new JToggleButton("0"));	//have to give a number to construct valid sql.
+					panel.initComponent();
+					panel.initContent();
+					onScrBills.add(panel);
+					btnRight.setEnabled(false);
+				}
+			}
+		} catch (Exception e) {
+ 			ErrorUtil.write("Unexpected exception when init the tables from db." + e);
+ 		}
+		reLayout();
+	}*/
+	
     private void initPordAndEmploy() {
         String sql = "select ID, UserName from UserIdentity";
         try {
@@ -353,12 +411,19 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
         }
     }
 
-    private String[] header = new String[] { PosDlgConst.Operator, // "操作员"
-            PosDlgConst.TIME, // "时间"
-            PosDlgConst.Product, // "产品"
-            PosDlgConst.Count, // "数量"
-            PosDlgConst.Receive, // "收银"
-            PosDlgConst.Porfit }; // "盈利"
+    private String[] header = new String[] {
+    		BarDlgConst.TIME, // "时间"
+    		BarDlgConst.Table,
+    		BarDlgConst.Bill,
+    		BarDlgConst.Total,
+    		BarDlgConst.Discount,
+    		BarDlgConst.Receive,
+    		BarDlgConst.Tip,
+    		BarDlgConst.CashBack,
+    		BarDlgConst.Status,
+    		BarDlgConst.Operator, // "操作员"
+    		BarDlgConst.comment,
+    		BarDlgConst.OpenTime};
 
     int[] employIdAry;
     String[] employNameAry;
@@ -366,7 +431,8 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
     String[] prodNameAry;
     PIMTable tblContent;
     PIMScrollPane srpContent;
-    private JButton btnFocus;
-    private JButton btnUnFocus;
+    private JButton btnChangeDate;
+    private JButton btnViewDetail;
+    private JButton btnPrintBill;
     private JButton btnClose;
 }

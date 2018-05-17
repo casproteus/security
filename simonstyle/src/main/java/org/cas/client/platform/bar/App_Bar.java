@@ -117,7 +117,7 @@ public class App_Bar extends AbstractApp {
             // 增建一个dining_Table表。select ID, Name, posX, posY, width, height, type from Tables order by DSP_INDEX"
             String sql =
                     "CREATE CACHED TABLE DINING_TABLE (ID INTEGER IDENTITY PRIMARY KEY, name VARCHAR(255),"
-                    .concat(" DSP_INDEX INTEGER, posX INTEGER, posY INTEGER, width INTEGER, height INTEGER, type INTEGER, opentime TIMESTAMP, status INTEGER);");
+                    .concat(" DSP_INDEX INTEGER, posX INTEGER, posY INTEGER, width INTEGER, height INTEGER, type INTEGER, opentime VARCHAR(255), status INTEGER);");
             stm.executeUpdate(sql);
             
             sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T1', '0', 10, 10, 120, 60, 0)";
@@ -159,6 +159,17 @@ public class App_Bar extends AbstractApp {
             stm.executeUpdate(sql);
             sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P6', 0, 0, '192.168.1.91', 0, 0)";
             stm.executeUpdate(sql);
+         
+            // 增建一个雇员绩效考评表。
+            sql = "CREATE CACHED TABLE evaluation (ID INTEGER IDENTITY PRIMARY KEY, startTime VARCHAR(255),"
+                            .concat(" endTime VARCHAR(255), SUBJECT VARCHAR(255), receive INTEGER, target INTEGER, profit INTEGER);");
+            stm.executeUpdate(sql);
+         
+            // 增建一个Bill表, for remember the discount and comments and the cash back...
+            sql = "CREATE CACHED TABLE Bill (ID INTEGER IDENTITY PRIMARY KEY, createtime VARCHAR(255),"
+                            .concat(" tableID VARCHAR(255), BillIndex VARCHAR(255), total INTEGER, discount INTEGER, received INTEGER, tip INTEGER, cashback INTEGER, status INTEGER, EMPLOYEEID INTEGER, Comment VARCHAR(255), opentime VARCHAR(255));");
+            stm.executeUpdate(sql);
+            	
             
             stm.close();
         } catch (Exception e) {

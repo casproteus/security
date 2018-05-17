@@ -90,7 +90,7 @@ public interface PosDlgConst {
     String InputRecs = "进货记录";
     String RefundRecs = "退货记录";
     String Statistic = "统计信息";
-    String WorkRecs = "工作记录";
+    String WorkRecs = "WORK LOG";
 
     String ProfitStatChange = "阶段盈利情况统计";
 

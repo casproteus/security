@@ -37,9 +37,17 @@ import com.jpos.POStest.POStestGUI;
 
 public class BarOption extends JDialog implements ICASDialog, ActionListener, ComponentListener {
 	public static final int MaxQTY = 10000;
-
+	
 	public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
+//	public static void setMaxRooBackWorkHour(int workhour) {
+//		CustOpts.custOps.setKeyAndValue("MaxRooBackWorkHour", workhour);
+//	}
+//	public static int getMaxRollBackWorkHour() {
+//		return CustOpts.custOps.getValue("MaxRooBackWorkHour") == null ? 
+//				17 * 60 * 60 * 1000 : Integer.valueOf((String)CustOpts.custOps.getValue("MaxRooBackWorkHour"));
+//	}
+	
     public static int getBillPageRow() {
     	return CustOpts.custOps.getValue("BillPanel_Row") == null ? 
     			1 : Integer.valueOf((String)CustOpts.custOps.getValue("BillPanel_Row"));
@@ -69,6 +77,14 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     public static boolean isFastFoodMode() {
     	return CustOpts.custOps.getValue("FastFoodMode") == null ? 
     			false : Boolean.valueOf((String)CustOpts.custOps.getValue("FastFoodMode"));
+    }
+    
+    public static void setStartTime(String startTimeOfDay) {
+    	CustOpts.custOps.setKeyAndValue("StartTimeOfDay", startTimeOfDay);
+    }
+    public static String getStartTime() {
+    	return CustOpts.custOps.getValue("StartTimeOfDay") == null ? 
+    			"00:00:00" : String.valueOf((String)CustOpts.custOps.getValue("StartTimeOfDay"));
     }
     
     public BarOption(JFrame pFrame) {

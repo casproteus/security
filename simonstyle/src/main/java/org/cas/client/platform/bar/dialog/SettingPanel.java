@@ -60,6 +60,7 @@ import javax.swing.event.ListSelectionListener;
 import org.cas.client.platform.bar.beans.ArrayButton;
 import org.cas.client.platform.bar.beans.CategoryToggleButton;
 import org.cas.client.platform.bar.beans.MenuButton;
+import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.model.Mark;
 import org.cas.client.platform.bar.model.Printer;
@@ -174,6 +175,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		new SettingTabbleDlg(BarFrame.instance).setVisible(true);
         	}else if(o == btnLine_1_2) {
         		new SettingPrinterDlg(BarFrame.instance).setVisible(true);
+        	}else if(o == btnLine_1_3) {
+        		new CheckInOutListDlg(BarFrame.instance).setVisible(true);
         	}else if(o == btnLine_2_9) {
         		LoginDlg.reset();
         		BarFrame.instance.switchMode(0);
@@ -315,7 +318,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         
         btnLine_1_1 = new JButton(BarDlgConst.Table);
         btnLine_1_2 = new JButton(BarDlgConst.Printer);
-        btnLine_1_3 = new JButton("");
+        btnLine_1_3 = new JButton(BarDlgConst.CheckInOut);
         btnLine_1_4 = new JToggleButton("");//BarDlgConst.REMOVE);
         btnLine_1_5 = new JToggleButton("");//BarDlgConst.VOID_ITEM);
         btnLine_1_6 = new JButton("");

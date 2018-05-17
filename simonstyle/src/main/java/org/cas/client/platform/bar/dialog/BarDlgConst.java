@@ -8,15 +8,21 @@ import javax.swing.JTextField;
 public interface BarDlgConst {
     int SCROLLBAR_WIDTH = 40;
     int SubTotal_HEIGHT = 50;
+    String ChangeDate = "CHANGE DATE";
+    String ViewDetail = "VIEW DETAIL";
+    String CLOSE = "CLOSE";
+    String Tip = "Tip";
+    String CashBack = "Cash Back";
+    String Status = "Status";
     
     String ChangeMode = "CHANGE MODE";
     String AddTable = "ADD TABLE";
-    String OrderManage = "ORDER MANAGEMENT";
+    String OrderManage = "CHECK ORDER";
     String OpenDrawer = "OPEN DRAWER";
     String WaiterReport = "SERVER REPORT";
     String Reservation = "RESERVATION";
     String Report = "REPORT";
-    String SignOut = "SIGN OUT";
+    String CheckInOut = "SING IN/OUT";
     
     String Menu = "Menu";
     String Language1 = "Language1";
@@ -115,7 +121,12 @@ public interface BarDlgConst {
 
     String Calculate = "结算";
     String Unit = "元";
-    String Receive = "收银";
+
+    String Discount = "Discount";
+    String Receive = "Received";
+    String comment = "Comment";
+    String OpenTime = "OpenTime";
+    
     String MoneyType = "币种";
     String Change = "找零";
     String Continue = "继续收银";
@@ -175,7 +186,7 @@ public interface BarDlgConst {
     String SupplierInfo = "供货商资料";
     String EmployeeInfo = "员工资料";
     String BasicRecs = "原始记录";
-    String SaleRecs = "销售记录";
+    String SaleRecs = "Bill Record";
     String InputRecs = "进货记录";
     String RefundRecs = "退货记录";
     String Statistic = "统计信息";
@@ -210,7 +221,7 @@ public interface BarDlgConst {
     String BIRTHDAY = "生日";
     String BANKNUMBER = "银行卡号";
 
-    String TIME = "时间";
+    String TIME = "Create Time";
     String Porfit = "利润";
 
     String YEAR = "年";

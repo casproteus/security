@@ -14,8 +14,10 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -28,8 +30,10 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
+import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -74,10 +78,7 @@ public class CheckInOutListDlg  extends JDialog
      	}
     }
     public void keyReleased(KeyEvent e){}
-	/* 对话盒的布局独立出来，为了在对话盒尺寸发生改变后，界面各元素能够重新布局，
-	 * 使整体保持美观。尤其在Linux系列的操作系统上，所有的对话盒都必须准备好应对用户的拖拉改变尺寸。
-	 * @NOTE:因为setBounds方法本身不会触发事件导致重新布局，所以本方法中设置Bounds之后调用了reLayout。
-	 */
+	
 	public void reLayout(){
 		srpContent.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
 				getWidth() - CustOpts.SIZE_EDGE*2 - CustOpts.HOR_GAP * 2,
@@ -180,6 +181,32 @@ public class CheckInOutListDlg  extends JDialog
 		}
 	}
 
+	public static void updateCheckInRecord(){
+		String time = BarOption.df.format(new Date());
+		int p = time.indexOf(" ");
+		time = time.substring(0, p + 1) + BarOption.getStartTime();
+		
+		String sql = "Select * from evaluation where EMPLOYEEID = " + LoginDlg.USERID + " and startTime > '" + time
+				+ "' and endTime is null";
+
+		Statement smt = PIMDBModel.getStatement();
+		try {
+			ResultSet rs =  smt.executeQuery(sql);
+            rs.next();
+			int id = rs.getInt("id");
+			sql = "update evaluation set endtime = '" + BarOption.df.format(new Date()) + "' where id = " + id;
+			smt.executeQuery(sql);
+		}catch(Exception exp) {
+			sql = "INSERT INTO evaluation(startTime, EMPLOYEEID) VALUES ('" + BarOption.df.format(new Date())
+					+ "', " + LoginDlg.USERID + ")";
+			try {
+				smt.executeQuery(sql);
+			}catch(Exception exp2) {
+				ErrorUtil.write(exp2);
+			}
+		}
+	}
+	
 	public Container getContainer(){
 		return getContentPane();
 	}
@@ -272,7 +299,7 @@ public class CheckInOutListDlg  extends JDialog
 			rs.beforeFirst();
 			tmpPos = 0;
 			while (rs.next()){
-				tValues[tmpPos][0] = rs.getString("SUBJECT");
+				tValues[tmpPos][0] = rs.getLong("EMPLOYEEID");
 				tValues[tmpPos][1] = rs.getString("startTime");
 				tValues[tmpPos][2] = rs.getString("endTime");
 				tValues[tmpPos][3] = Float.valueOf((float)(rs.getInt("target")/100.0));
@@ -283,6 +310,12 @@ public class CheckInOutListDlg  extends JDialog
 			rs.close();//关闭
     	}catch(SQLException e){
     		ErrorUtil.write(e);
+            sql = "CREATE CACHED TABLE evaluation (ID INTEGER IDENTITY PRIMARY KEY, startTime VARCHAR(255),"
+                    .concat(" endTime VARCHAR(255), EMPLOYEEID long, receive INTEGER, target INTEGER, profit INTEGER);");
+		    try {
+		    	PIMDBModel.getReadOnlyStatement().executeUpdate(sql);
+		    }catch(Exception exp) {
+		    }
     	}
     	
 		tblContent.setDataVector(tValues, header);

@@ -8,7 +8,7 @@ import javax.swing.JToggleButton;
 public class TableButton extends JButton {
     private int id;
     private int type;
-    private Timestamp openTime;
+    private String openTime;
 
     public TableButton() {
     }
@@ -29,11 +29,11 @@ public class TableButton extends JButton {
 		this.id = index;
 	}
 
-	public Timestamp getOpenTime() {
+	public String getOpenTime() {
 		return openTime;
 	}
 
-	public void setOpenTime(Timestamp openTime) {
+	public void setOpenTime(String openTime) {
 		this.openTime = openTime;
 	}
 

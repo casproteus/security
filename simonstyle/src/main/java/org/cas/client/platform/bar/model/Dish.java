@@ -82,7 +82,7 @@ public class Dish {
 		            .append(dish.getDiscount() * dish.getNum()).append(", '")	//discount
 		            .append(dish.getModification()).append("', ")				//content
 		            .append(LoginDlg.USERID).append(", '")		//emoployid
-		            .append(BarOption.df.format(new Date())).append("') ");
+		            .append(dish.getOpenTime()).append("') ");
 		        smt.executeUpdate(sql.toString());
 		
 		} catch (Exception exp) {
@@ -123,6 +123,7 @@ public class Dish {
 		dish.setPrompMofify(prompMofify);
 		dish.setPrompPrice(prompPrice);
 		dish.setBillID(billID);
+		dish.setOpenTime(openTime);
 		return dish;
 	}
     
@@ -274,6 +275,14 @@ public class Dish {
 		this.billID = billID;
 	}
 
+	public String getOpenTime() {
+		return openTime;
+	}
+
+	public void setOpenTime(String openTime) {
+		this.openTime = openTime;
+	}
+
 	private int id = -1;
     private int dspIndex = 0; // display position on screen.
     private String language[] = new String[3]; // CODE VARCHAR(255), MNEMONIC VARCHAR(255),SUBJECT VARCHAR(255)
@@ -292,5 +301,5 @@ public class Dish {
     private int outputID = -1;
     private String modification;
     private String billID;
-    
+    private String openTime;
 }

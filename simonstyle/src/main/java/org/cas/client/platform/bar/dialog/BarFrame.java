@@ -10,6 +10,7 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -25,13 +26,13 @@ import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
 
     public static BarFrame instance;
-    int curPanel;
-    JLabel valCurBill;
+    public int curPanel;
     static NumberPanelDlg numberPanelDlg; 
     
     public static void main(
@@ -41,17 +42,29 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         numberPanelDlg = new NumberPanelDlg(instance);
         
         if(BarOption.isSingleUser()) {
-	        new LoginDlg(instance).setVisible(true);
-	        if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-	            instance.setVisible(true);
-	        }else {	//the case that user clicked X button.
-	            System.exit(0);
-	        }
+	        singleUserLoginProcess();
         }else {
         	instance.setVisible(true);
         }
     }
     
+    public static void singleUserLoginProcess() {
+    	new LoginDlg(instance).setVisible(true);
+        if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+            instance.setVisible(true);
+            
+            //do sign in automatically
+            String sql = "INSERT INTO evaluation(startTime, EMPLOYEEID) VALUES ('" + BarOption.df.format(new Date())
+				+ "', " + LoginDlg.USERID + ")";
+			try {
+				PIMDBModel.getStatement().executeQuery(sql);
+			}catch(Exception exp) {
+				ErrorUtil.write(exp);
+			}
+        }else {	//the case that user clicked X button.
+            System.exit(0);
+        }
+    }
     public BarFrame() {
         setTitle(BarDlgConst.Title);
         setIconImage(CustOpts.custOps.getFrameLogoImage()); // 设置主窗体的LOGO。
@@ -340,18 +353,20 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 
     boolean hasClose; // 标志对话框是否已关闭
 
-    private JLabel lblOperator;
-    JLabel valOperator;
     private JLabel lblCurTable;
-    public JLabel valCurTable;
     private JLabel lblCurBill;
     private JLabel lblShoestring;
+    private JLabel lblOperator;
     private JLabel lblStartTime;
-    JLabel valStartTime;
+    
+    public JLabel valCurTable;
+    public JLabel valCurBill;
+    public JLabel valOperator;
+    public JLabel valStartTime;
 
     private DecimalFormat decimalFormat = new DecimalFormat("#0.00");
     
-    JPanel[] panels = new JPanel[4];
+    public JPanel[] panels = new JPanel[4];
     MenuPanel menuPanel;
     static JLabel lblStatus;
 }

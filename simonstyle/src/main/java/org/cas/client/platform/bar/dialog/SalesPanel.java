@@ -114,25 +114,18 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
     /** Invoked when the component's position changes. */
     @Override
-    public void componentMoved(
-            ComponentEvent e) {
-    }
+    public void componentMoved(ComponentEvent e) {}
 
     /** Invoked when the component has been made visible. */
     @Override
-    public void componentShown(
-            ComponentEvent e) {
-    }
+    public void componentShown(ComponentEvent e) {}
 
     /** Invoked when the component has been made invisible. */
     @Override
-    public void componentHidden(
-            ComponentEvent e) {
-    }
+    public void componentHidden(ComponentEvent e) {}
 
     @Override
-    public void focusGained(
-            FocusEvent e) {
+    public void focusGained(FocusEvent e) {
         Object o = e.getSource();
         if (o instanceof JTextField)
             ((JTextField) o).selectAll();
@@ -143,8 +136,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
     // ActionListner-------------------------------
     @Override
-    public void actionPerformed(
-            ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
         //JButton------------------------------------------------------------------------------------------------
         if (o instanceof JButton) {
@@ -227,7 +219,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 //	                    rs.close();
                     }
                     if(BarOption.isFastFoodMode()) {
-                    	BarFrame.instance.valCurBill.setText("0");
+                    	BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
                     	billPanel.resetTableArea();
                     }else {
                     	BarFrame.instance.switchMode(0);
@@ -281,6 +273,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	BarFrame.instance.switchMode(0);
             } else if (o == btnLine_2_6) { // enter the setting mode.(admin interface)
                 BarFrame.instance.switchMode(3);
+            }  else if (o == btnLine_2_7) { // print bill
+                billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
             } else if (o == btnLine_2_8) {//more
             	new MoreButtonsDlg(this).show((JButton)o);
             } else if (o == btnLine_2_9) { // return
@@ -331,7 +325,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
             ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
-                    + BarFrame.instance.valCurTable.getText() + "' and deleted = false order by contactID");
+                    + BarFrame.instance.valCurTable.getText() + "' and deleted = false and time = '"
+            		+ BarFrame.instance.valStartTime.getText() + "' order by contactID");
 			rs.afterLast();
 			rs.relative(-1);
 			num = rs.getRow();
@@ -509,7 +504,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private JButton btnLine_1_6;
     JToggleButton btnLine_1_7;
     private JButton btnLine_1_8;
-    private JButton btnLine_2_7;
+    private JButton btnLine_1_9;
     
     private JButton btnLine_2_1;
     private JButton btnLine_2_2;
@@ -517,9 +512,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private JButton btnLine_2_4;
     private JButton btnLine_2_5;
     private JButton btnLine_2_6;
-    private JButton btnLine_2_9;
+    private JButton btnLine_2_7;
     private JButton btnLine_2_8;
-    private JButton btnLine_1_9;
+    private JButton btnLine_2_9;
     
-    BillPanel billPanel;
+    public BillPanel billPanel;
 }
