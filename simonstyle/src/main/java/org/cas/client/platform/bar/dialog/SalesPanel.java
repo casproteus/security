@@ -171,8 +171,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		
          		try {
      				String curContent = BarFrame.numberPanelDlg.curContent;
-             		float discount = Float.valueOf(curContent);
-             		billPanel.tip = (int)(discount * 100);
+             		float serviceFee = Float.valueOf(curContent);
+             		billPanel.serviceFee = (int)(serviceFee * 100);
              		billPanel.updateTotleArea();
              	}catch(Exception exp) {
                  	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);

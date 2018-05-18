@@ -54,6 +54,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     public ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
     int discount;
     int tip;
+    int serviceFee;
     int received;
     int cashback;
     String comment = "";
@@ -422,7 +423,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	}
 
         lblDiscount.setText(discount > 0 ? BarDlgConst.Discount + " : $" + String.valueOf(((int)discount)/100f) : "");
-        lblTip.setText(tip > 0 ? BarDlgConst.Tip + " : $" + String.valueOf(((int)tip)/100f) : "");
+        lblServiceFee.setText(serviceFee > 0 ? BarDlgConst.ServiceFee + " : $" + String.valueOf(((int)serviceFee)/100f) : "");
     	lblSubTotle.setText(BarDlgConst.Subtotal + " : $" + String.valueOf(subTotal/100f));
         lblGSQ.setText(BarDlgConst.QST + " : $" + String.valueOf(((int)totalGst)/100f));
         lblQSQ.setText(BarDlgConst.GST + " : $" + String.valueOf(((int)totalQst)/100f));
@@ -670,15 +671,15 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
             		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH);
     		lblSubTotle.setBounds(btnLess.getX() - 100, 
     				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
-    				100, lblTip.getHeight());
+    				100, lblServiceFee.getHeight());
         }else {
         	lblSubTotle.setBounds(scrContent.getX() + scrContent.getWidth() - 100, 
     				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
-    				100, lblTip.getHeight());
+    				100, lblServiceFee.getHeight());
         }
         lblDiscount.setBounds(scrContent.getX(), scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP, 
         		scrContent.getWidth() / 4, BarDlgConst.SubTotal_HEIGHT * 1 / 3);
-        lblTip.setBounds(lblDiscount.getX() + lblDiscount.getWidth() + CustOpts.HOR_GAP, lblDiscount.getY(), 
+        lblServiceFee.setBounds(lblDiscount.getX() + lblDiscount.getWidth() + CustOpts.HOR_GAP, lblDiscount.getY(), 
         		scrContent.getWidth() / 4, lblDiscount.getHeight());
 
 		lblGSQ.setBounds(scrContent.getX(), getHeight() - CustOpts.BTN_HEIGHT, scrContent.getWidth() / 4,
@@ -694,7 +695,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         tblSelectedDish = new PIMTable();// 显示字段的表格,设置模型
         scrContent = new PIMScrollPane(tblSelectedDish);
         lblDiscount = new JLabel();
-        lblTip = new JLabel();
+        lblServiceFee = new JLabel();
         lblSubTotle = new JLabel(BarDlgConst.Subtotal);
         lblGSQ = new JLabel(BarDlgConst.QST);
         lblQSQ = new JLabel(BarDlgConst.GST);
@@ -746,7 +747,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
             add(btnMore);
             add(btnLess);
             add(lblDiscount);
-            add(lblTip);
+            add(lblServiceFee);
             add(lblSubTotle);
             add(lblGSQ);
             add(lblQSQ);
@@ -773,7 +774,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     private JLabel lblTotlePrice;
     private JLabel valTotlePrice;
     private JLabel lblDiscount;
-    private JLabel lblTip;
+    private JLabel lblServiceFee;
     
     private ArrayButton btnMore;
     private ArrayButton btnLess;

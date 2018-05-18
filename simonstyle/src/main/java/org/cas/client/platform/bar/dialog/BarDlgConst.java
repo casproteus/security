@@ -12,6 +12,7 @@ public interface BarDlgConst {
     String ViewDetail = "VIEW DETAIL";
     String CLOSE = "CLOSE";
     String Tip = "Tip";
+    String ServiceFee = "Service Fee";
     String CashBack = "Cash Back";
     String Status = "Status";
     String APPLY = "APPLY";
