@@ -33,7 +33,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 
     public static BarFrame instance;
     public int curPanel;
-    static NumberPanelDlg numberPanelDlg; 
+    public static NumberPanelDlg numberPanelDlg; 
     
     public static void main(
             String[] args) {

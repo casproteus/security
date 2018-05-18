@@ -55,6 +55,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.cas.client.platform.bar.action.UpdateItemDiscountAction;
+import org.cas.client.platform.bar.action.UpdateItemPriceAction;
 import org.cas.client.platform.bar.beans.ArrayButton;
 import org.cas.client.platform.bar.beans.CategoryToggleButton;
 import org.cas.client.platform.bar.beans.MenuButton;
@@ -140,39 +142,118 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         Object o = e.getSource();
         //JButton------------------------------------------------------------------------------------------------
         if (o instanceof JButton) {
-        	if (o == btnLine_1_4) {	//remove button.
-        		//check if there's an item selected.
-        		if(BillListPanel.curDish == null) {
+        	if (o == btnLine_1_4) {	//remove item.
+        		if(BillListPanel.curDish == null) {//check if there's an item selected.
         			JOptionPane.showMessageDialog(this, BarDlgConst.OnlyOneShouldBeSelected);
         			return;
         		}
-        		//check if it's send
-        		if(BillListPanel.curDish.getOutputID() >= 0) {
-        			if(JOptionPane.showConfirmDialog(BarFrame.instance, 
-            				BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+        		if(BillListPanel.curDish.getOutputID() >= 0) {//check if it's send
+        			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
             			return;
-    	            }
         			//TODO: send a message to kitchen.
         			
-        			//clean from screen and db.
-        			Dish.delete(BillListPanel.curDish);
+        			Dish.delete(BillListPanel.curDish);	//clean from screen and db.
         		}
-    			//clean from screen.
-        		billPanel.removeAtSelection(billPanel.tblSelectedDish.getSelectedRow());
-        	}else if(o == btnLine_2_13) {		//Add client
-				BarFrame.instance.valCurBill.setText("0");
-				BarFrame.instance.switchMode(2);
+        		billPanel.removeAtSelection(billPanel.tblSelectedDish.getSelectedRow());//clean from screen.
+        		
         	} else if (o == btnLine_1_5) {		//split bill
         		//check if there unsaved dish, and give warning.
-            	List<Dish> newDishes = getNewDishes();
-            	if(newDishes.size() > 0) {
-            		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
-            				BarDlgConst.UnSavedRecordFound, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+        		if(BillListPanel.curDish == null)
+            		if(JOptionPane.showConfirmDialog(BarFrame.instance, BarDlgConst.UnSavedRecordFound, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
             			return;
-    	            }
-            	}
         		BarFrame.instance.switchMode(1);
         		
+        	}else if(o == btnLine_1_9) {
+        		BarFrame.numberPanelDlg.setBtnSource(null);
+         		BarFrame.numberPanelDlg.setFloatSupport(true);
+         		BarFrame.numberPanelDlg.setModal(true);
+         		BarFrame.numberPanelDlg.setVisible(true);
+         		
+         		try {
+     				String curContent = BarFrame.numberPanelDlg.curContent;
+             		float discount = Float.valueOf(curContent);
+             		billPanel.tip = (int)(discount * 100);
+             		billPanel.updateTotleArea();
+             	}catch(Exception exp) {
+                 	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
+             		return;
+             	}
+        		
+        	}else if (o == btnLine_1_10) { // print bill
+                billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
+            
+            } else if (o == btnLine_2_1) { // return
+            	if(billPanel.selectdDishAry.size() > 0) {
+	            	Dish dish = billPanel.selectdDishAry.get(billPanel.selectdDishAry.size() - 1);
+	            	if(dish.getId() < 0) {	//has new record.
+	            		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+	            				BarDlgConst.COMFIRMLOSTACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
+	    	                 return;	
+	    	            }
+	            	}
+            	}
+            	BarFrame.instance.switchMode(0);
+            } else if (o == btnLine_2_4) { // cancel all
+            	if(billPanel.selectdDishAry.size() > 0) {
+            		int lastSavedRow = billPanel.selectdDishAry.size() - 1 - getNewDishes().size();
+            		//update array first.
+            		for(int i = billPanel.selectdDishAry.size() - 1; i > lastSavedRow; i--) {
+            			billPanel.selectdDishAry.remove(i);
+            		}
+            		//update the table view
+            		int tColCount = billPanel.tblSelectedDish.getColumnCount();
+            		int tValidRowCount = billPanel.selectdDishAry.size(); // get the used RowCount
+            		Object[][] tValues = new Object[tValidRowCount][tColCount];
+            		for (int r = 0; r < tValidRowCount; r++) {
+            			for (int c = 0; c < tColCount; c++)
+            				tValues[r][c] = billPanel.tblSelectedDish.getValueAt(r, c);
+            		}
+            		billPanel.tblSelectedDish.setDataVector(tValues, billPanel.header);
+            		billPanel.resetColWidth(billPanel.getWidth());
+            		billPanel.tblSelectedDish.setSelectedRow(tValues.length - 1);
+            		billPanel.updateTotleArea();
+            	}else {
+            		//update db.
+            		if(isLastBillOfCurTable()) {
+            			resetCurTableDBStatus();
+            		}
+            		BarFrame.instance.switchMode(0);
+            	}
+            } else if (o == btnLine_2_5) { // void all include saved ones
+        		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+        				BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+	                 return;	
+	            }
+    	        //update db, delete relevant orders.
+            	for (Dish dish : billPanel.selectdDishAry) {
+            		Dish.delete(dish);
+				}
+
+    			//TODO: send a message to kitchen.
+            	
+            	//if the bill amount is 1, cancel the selected status of the table.
+        		if(isLastBillOfCurTable()) {
+        			resetCurTableDBStatus();
+        		}
+            	BarFrame.instance.switchMode(0);
+            	
+            } else if (o == btnLine_2_7) {//disc bill
+         		BarFrame.numberPanelDlg.setBtnSource(null);
+         		BarFrame.numberPanelDlg.setFloatSupport(true);
+         		BarFrame.numberPanelDlg.setModal(true);
+         		BarFrame.numberPanelDlg.setVisible(true);
+         		
+         		try {
+     				String curContent = BarFrame.numberPanelDlg.curContent;
+             		float discount = Float.valueOf(curContent);
+             		billPanel.discount = (int)(discount * 100);
+             		billPanel.updateTotleArea();
+             	}catch(Exception exp) {
+                 	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
+             		return;
+             	}
+            } else if (o == btnLine_2_9) {//more
+            	new MoreButtonsDlg(this).show((JButton)o);
             } else if (o == btnLine_2_10) {//send
             	List<Dish> newDishes = getNewDishes();
             	
@@ -228,73 +309,42 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                 	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
                     exp.printStackTrace();
                 }
-            }else if (o == btnLine_2_4) { // cancel all
-            	if(billPanel.selectdDishAry.size() > 0) {
-            		int lastSavedRow = billPanel.selectdDishAry.size() - 1 - getNewDishes().size();
-            		//update array first.
-            		for(int i = billPanel.selectdDishAry.size() - 1; i > lastSavedRow; i--) {
-            			billPanel.selectdDishAry.remove(i);
-            		}
-            		//update the table view
-            		int tColCount = billPanel.tblSelectedDish.getColumnCount();
-            		int tValidRowCount = billPanel.selectdDishAry.size(); // get the used RowCount
-            		Object[][] tValues = new Object[tValidRowCount][tColCount];
-            		for (int r = 0; r < tValidRowCount; r++) {
-            			for (int c = 0; c < tColCount; c++)
-            				tValues[r][c] = billPanel.tblSelectedDish.getValueAt(r, c);
-            		}
-            		billPanel.tblSelectedDish.setDataVector(tValues, billPanel.header);
-            		billPanel.resetColWidth(billPanel.getWidth());
-            		billPanel.tblSelectedDish.setSelectedRow(tValues.length - 1);
-            		billPanel.updateTotleArea();
-            	}else {
-            		//update db.
-            		if(isLastBillOfCurTable()) {
-            			resetCurTableDBStatus();
-            		}
-            		BarFrame.instance.switchMode(0);
-            	}
-            } else if (o == btnLine_2_5) { // void all include saved ones
-        		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
-        				BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
-	                 return;	
-	            }
-    	        //update db, delete relevant orders.
-            	for (Dish dish : billPanel.selectdDishAry) {
-            		Dish.delete(dish);
-				}
-
-    			//TODO: send a message to kitchen.
-            	
-            	//if the bill amount is 1, cancel the selected status of the table.
-        		if(isLastBillOfCurTable()) {
-        			resetCurTableDBStatus();
-        		}
-            	BarFrame.instance.switchMode(0);
             } else if (o == btnLine_2_11) { // enter the setting mode.(admin interface)
                 BarFrame.instance.switchMode(3);
-            }  else if (o == btnLine_1_10) { // print bill
-                billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
-            } else if (o == btnLine_2_9) {//more
-            	new MoreButtonsDlg(this).show((JButton)o);
-            } else if (o == btnLine_2_1) { // return
-            	if(billPanel.selectdDishAry.size() > 0) {
-	            	Dish dish = billPanel.selectdDishAry.get(billPanel.selectdDishAry.size() - 1);
-	            	if(dish.getId() < 0) {	//has new record.
-	            		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
-	            				BarDlgConst.COMFIRMLOSTACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
-	    	                 return;	
-	    	            }
-	            	}
-            	}
-            	BarFrame.instance.switchMode(0);
-            }
+            } else if(o == btnLine_2_13) {		//Add client
+				BarFrame.instance.valCurBill.setText("0");
+				BarFrame.instance.switchMode(2);
+        	}
         }
         //JToggleButton-------------------------------------------------------------------------------------
         else if(o instanceof JToggleButton) {
-        	if (o == btnLine_2_12) {	//QTY
-        		//pomp up a numberPanelDlg
-        		BarFrame.instance.numberPanelDlg.setBtnSource(btnLine_2_12);
+        	 if (o == btnLine_1_7) {
+         		if(BillListPanel.curDish == null) {//check if there's an item selected.
+         			JOptionPane.showMessageDialog(this, BarDlgConst.OnlyOneShouldBeSelected);
+         			return;
+         		}
+         		BarFrame.numberPanelDlg.setBtnSource(btnLine_1_7);//pomp up a numberPanelDlg
+         		BarFrame.numberPanelDlg.setFloatSupport(true);
+         		BarFrame.numberPanelDlg.setModal(false);
+         		//should no record selected, select the last one.
+         		BarFrame.numberPanelDlg.setVisible(btnLine_1_7.isSelected());	//@NOTE: it's not model mode.
+         		BarFrame.numberPanelDlg.setAction(new UpdateItemDiscountAction(btnLine_1_7, billPanel));
+         		
+             }else if(o == btnLine_1_8) {
+            	if(BillListPanel.curDish == null) {//check if there's an item selected.
+          			JOptionPane.showMessageDialog(this, BarDlgConst.OnlyOneShouldBeSelected);
+          			return;
+          		}
+            	BarFrame.numberPanelDlg.setBtnSource(btnLine_1_8);//pomp up a numberPanelDlg
+         		BarFrame.numberPanelDlg.setFloatSupport(true);
+         		BarFrame.numberPanelDlg.setModal(false);
+         		//should no record selected, select the last one.
+         		BarFrame.numberPanelDlg.setVisible(btnLine_1_8.isSelected());	//@NOTE: it's not model mode.
+         		BarFrame.numberPanelDlg.setAction(new UpdateItemPriceAction(btnLine_1_8, billPanel));
+        		
+        	} else if (o == btnLine_2_12) {	//QTY
+        		
+        		BarFrame.instance.numberPanelDlg.setBtnSource(btnLine_2_12);//pomp up a numberPanelDlg
         		//should no record selected, select the last one.
         		BarFrame.instance.numberPanelDlg.setVisible(btnLine_2_12.isSelected());	//@NOTE: it's not model mode.
         		if(btnLine_2_12.isSelected()) {
@@ -360,7 +410,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     void reLayout() {
         int panelHeight = getHeight();
 
-        int tBtnWidht = (getWidth() - CustOpts.HOR_GAP * 10) / 9;
+        int tBtnWidht = (getWidth() - CustOpts.HOR_GAP * 10) / 10;
         int tBtnHeight = panelHeight / 10;
 
         // command buttons--------------
@@ -418,8 +468,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_1_4 = new JButton(BarDlgConst.REMOVEITEM);
         btnLine_1_5 = new JButton(BarDlgConst.SPLIT_BILL);
         btnLine_1_6 = new JButton(BarDlgConst.Modify);
-        btnLine_1_7 = new JButton(BarDlgConst.DISC_ITEM);
-        btnLine_1_8 = new JButton(BarDlgConst.ChangePrice);
+        btnLine_1_7 = new JToggleButton(BarDlgConst.DISC_ITEM);
+        btnLine_1_8 = new JToggleButton(BarDlgConst.ChangePrice);
         btnLine_1_9 = new JButton(BarDlgConst.TIP);
         btnLine_1_10 = new JButton(BarDlgConst.PRINT_BILL);
 
@@ -512,8 +562,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private JButton btnLine_1_4;
     private JButton btnLine_1_5;
     private JButton btnLine_1_6;
-    private JButton btnLine_1_7;
-    private JButton btnLine_1_8;
+    public JToggleButton btnLine_1_7;
+    private JToggleButton btnLine_1_8;
     private JButton btnLine_1_9;
     private JButton btnLine_1_10;
 

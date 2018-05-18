@@ -163,6 +163,7 @@ public class Dish {
         this.price = price;
     }
 
+    //should return 0 or 1....
     public int getGst() {
         return gst;
     }

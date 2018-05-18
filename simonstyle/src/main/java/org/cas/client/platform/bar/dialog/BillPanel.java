@@ -51,10 +51,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	BillListPanel billListPanel;
 	JToggleButton billButton;
     private boolean isDragging;
-    ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
+    public ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
     int discount;
-    int received;
     int tip;
+    int received;
     int cashback;
     String comment = "";
     
@@ -225,8 +225,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		if(salesPanel != null) {
 			BillListPanel.curDish = selectedDish;
 			if( salesPanel.btnLine_2_12.isSelected()) {	//if qty button seleted.
-				Object obj = tblSelectedDish.getValueAt(selectedRow,3);
+				Object obj = tblSelectedDish.getValueAt(selectedRow,0);
 				//update the qty in qtyDlg.
+				if(obj != null)
+					BarFrame.numberPanelDlg.setContents(obj.toString());
+			}
+			if( salesPanel.btnLine_1_7.isSelected()) {
+				Object obj = tblSelectedDish.getValueAt(selectedRow,2);
+				//update the discount in qtyDlg.
 				if(obj != null)
 					BarFrame.numberPanelDlg.setContents(obj.toString());
 			}
@@ -358,20 +364,19 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		});
     }
 
-    void updateTotleArea() {
+    public void updateTotleArea() {
     	Object g = CustOpts.custOps.getValue(BarDlgConst.GST);
     	Object q = CustOpts.custOps.getValue(BarDlgConst.QST);
     	float gstRate = g == null ? 5 : Float.valueOf((String)g);
     	float qstRate = q == null ? 9.975f : Float.valueOf((String)q);
     	float totalGst = 0;
     	float totalQst = 0;
+    	float itemDisc = 0;
     	int subTotal = 0;
     	
+    	
     	for(Dish dish: selectdDishAry) {
-    		int price = dish.getPrice();
-    		int gst = (int) (price * (dish.getGst() * gstRate / 100f));
-    		int qst = (int) (price * (dish.getQst() * qstRate / 100f));
-    		
+    		//get out the num.
     		int num = dish.getNum();
     		int pK = num /(BarOption.MaxQTY * 100);
     		if(num > BarOption.MaxQTY * 100) {
@@ -381,10 +386,20 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		if(num > BarOption.MaxQTY) {
     			num = num % BarOption.MaxQTY;
     		}
+    		
+    		int price = dish.getPrice();
+    		int gst = (int) (price * (dish.getGst() * gstRate / 100f));
+    		int qst = (int) (price * (dish.getQst() * qstRate / 100f));
+    		
     	
     		price *= num;
     		gst *= num;
     		qst *= num;
+    		if(BarOption.isDisCountBeforeTax()) {
+    			gst -= dish.getDiscount() * (dish.getGst() * gstRate / 100f);
+    			qst -= dish.getDiscount() * (dish.getQst() * gstRate / 100f);
+    		}
+    		
     		if(pS > 0) {
     			price /= pS;
     			gst /= pS;
@@ -395,16 +410,23 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     			gst /= pK;
     			qst /= pK;
     		}
-
+    		
     		subTotal += price;
+    		subTotal -= dish.getDiscount();
     		totalGst += gst;
     		totalQst += qst;
     	}
-    	
-    	lblSubTotle.setText(BarDlgConst.Subtotal + " : " + String.valueOf(subTotal/100f));
-        lblGSQ.setText(BarDlgConst.QST + " : " + String.valueOf(((int)totalGst)/100f));
-        lblQSQ.setText(BarDlgConst.GST + " : " + String.valueOf(((int)totalQst)/100f));
-        lblTotlePrice.setText(BarDlgConst.Total + " : ");
+    	subTotal -= discount;
+    	if(BarOption.isDisCountBeforeTax()) {
+    		//@TODO: I am not sure if it's correct to do like this, we don't know what tax rate is good for the bill discount.
+    	}
+
+        lblDiscount.setText(discount > 0 ? BarDlgConst.Discount + " : $" + String.valueOf(((int)discount)/100f) : "");
+        lblTip.setText(tip > 0 ? BarDlgConst.Tip + " : $" + String.valueOf(((int)tip)/100f) : "");
+    	lblSubTotle.setText(BarDlgConst.Subtotal + " : $" + String.valueOf(subTotal/100f));
+        lblGSQ.setText(BarDlgConst.QST + " : $" + String.valueOf(((int)totalGst)/100f));
+        lblQSQ.setText(BarDlgConst.GST + " : $" + String.valueOf(((int)totalQst)/100f));
+        lblTotlePrice.setText(BarDlgConst.Total + " : $");
         valTotlePrice.setText(String.valueOf(((int) (subTotal + totalGst + totalQst))/100f));
     }
     
@@ -640,27 +662,39 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         scrContent.setBounds(poxX, posY, getWidth(), getHeight() - BarDlgConst.SubTotal_HEIGHT);
         
 		// sub total-------
-		lblGSQ.setBounds(scrContent.getX(), scrContent.getY() + scrContent.getHeight(), scrContent.getWidth() / 4,
-				BarDlgConst.SubTotal_HEIGHT * 1 / 3);
-		lblQSQ.setBounds(lblGSQ.getX() + lblGSQ.getWidth(), lblGSQ.getY(), lblGSQ.getWidth(), lblGSQ.getHeight());
-		lblSubTotle.setBounds(lblQSQ.getX() + lblQSQ.getWidth(), lblGSQ.getY(), lblQSQ.getWidth() * 2,
-				lblGSQ.getHeight());
-
-		lblTotlePrice.setBounds(lblSubTotle.getX(), getHeight() - CustOpts.BTN_HEIGHT, lblSubTotle.getPreferredSize().width, BarDlgConst.SubTotal_HEIGHT * 2 / 3);
-		valTotlePrice.setBounds(lblTotlePrice.getX() + lblTotlePrice.getWidth(), lblTotlePrice.getY(),
-				lblSubTotle.getWidth() - lblTotlePrice.getWidth(), BarDlgConst.SubTotal_HEIGHT * 2 / 3);
 		if(billButton == null){
-        	btnMore.setBounds(scrContent.getX() + scrContent.getWidth() - BarDlgConst.SCROLLBAR_WIDTH, lblGSQ.getY(), 
+        	btnMore.setBounds(scrContent.getX() + scrContent.getWidth() - BarDlgConst.SCROLLBAR_WIDTH,
+        			scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP, 
             		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH);
             btnLess.setBounds(btnMore.getX() - CustOpts.HOR_GAP - BarDlgConst.SCROLLBAR_WIDTH, btnMore.getY(), 
             		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH);
+    		lblSubTotle.setBounds(btnLess.getX() - 100, 
+    				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
+    				100, lblTip.getHeight());
+        }else {
+        	lblSubTotle.setBounds(scrContent.getX() + scrContent.getWidth() - 100, 
+    				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
+    				100, lblTip.getHeight());
         }
+        lblDiscount.setBounds(scrContent.getX(), scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP, 
+        		scrContent.getWidth() / 4, BarDlgConst.SubTotal_HEIGHT * 1 / 3);
+        lblTip.setBounds(lblDiscount.getX() + lblDiscount.getWidth() + CustOpts.HOR_GAP, lblDiscount.getY(), 
+        		scrContent.getWidth() / 4, lblDiscount.getHeight());
+
+		lblGSQ.setBounds(scrContent.getX(), getHeight() - CustOpts.BTN_HEIGHT, scrContent.getWidth() / 4,
+				BarDlgConst.SubTotal_HEIGHT * 1 / 3);
+		lblQSQ.setBounds(lblGSQ.getX() + lblGSQ.getWidth() + CustOpts.HOR_GAP, lblGSQ.getY(), lblGSQ.getWidth(), lblGSQ.getHeight());
+		lblTotlePrice.setBounds(lblSubTotle.getX(), lblQSQ.getY(), lblTotlePrice.getPreferredSize().width, lblQSQ.getHeight());
+		valTotlePrice.setBounds(lblTotlePrice.getX() + lblTotlePrice.getWidth() + CustOpts.HOR_GAP, lblTotlePrice.getY(),
+				100 - lblTotlePrice.getWidth() - CustOpts.HOR_GAP, lblQSQ.getHeight());
     }
     
     void initComponent() {
 
         tblSelectedDish = new PIMTable();// 显示字段的表格,设置模型
         scrContent = new PIMScrollPane(tblSelectedDish);
+        lblDiscount = new JLabel();
+        lblTip = new JLabel();
         lblSubTotle = new JLabel(BarDlgConst.Subtotal);
         lblGSQ = new JLabel(BarDlgConst.QST);
         lblQSQ = new JLabel(BarDlgConst.GST);
@@ -711,6 +745,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         }else {
             add(btnMore);
             add(btnLess);
+            add(lblDiscount);
+            add(lblTip);
             add(lblSubTotle);
             add(lblGSQ);
             add(lblQSQ);
@@ -728,7 +764,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         scrContent.getViewport().addMouseListener(this);
     }
     
-    PIMTable tblSelectedDish;
+    public PIMTable tblSelectedDish;
     private PIMScrollPane scrContent;
 
     private JLabel lblSubTotle;
@@ -736,6 +772,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     private JLabel lblQSQ;
     private JLabel lblTotlePrice;
     private JLabel valTotlePrice;
+    private JLabel lblDiscount;
+    private JLabel lblTip;
     
     private ArrayButton btnMore;
     private ArrayButton btnLess;

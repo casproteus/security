@@ -90,6 +90,8 @@ public interface BarDlgConst {
     String BillPageRow = "Rows of Bills:";
     String BillPageCol = "Columns of Bills:";
     String IsSingleUser = "Is single user mode";
+    String IsDiscBeforeTax = "Is discount apply on price before tax";
+    String StartTimeOfDay = "Start time of a day";
     String PrinterError = "WARNING! Error occured when printing in back end, please check printer and try again.";
     
     String OtherCost = "其他开支";

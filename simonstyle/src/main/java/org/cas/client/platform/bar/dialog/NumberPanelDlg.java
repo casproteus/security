@@ -40,7 +40,7 @@ import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.resource.international.DlgConst;
 
 public class NumberPanelDlg extends JDialog implements ActionListener, ComponentListener{
-	static String curContent = "";
+	public static String curContent = "";
 	public static boolean confirmed;
 	private JToggleButton btnSource;
 	//flag
@@ -77,7 +77,11 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         num8.setBounds(num7.getX() + num7.getWidth() + CustOpts.HOR_GAP, num7.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         num9.setBounds(num8.getX() + num8.getWidth() + CustOpts.HOR_GAP, num8.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         num0.setBounds(num7.getX(), num7.getY() + num7.getHeight() + CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
-        back.setBounds(num0.getX() + num0.getWidth() + CustOpts.HOR_GAP, num0.getY(), CustOpts.BTN_WIDTH_NUM * 2 + CustOpts.HOR_GAP, CustOpts.BTN_WIDTH_NUM);
+        point.setBounds(num0.getX() + num0.getWidth() + CustOpts.HOR_GAP, num0.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        if(point.isVisible())
+        	back.setBounds(point.getX() + point.getWidth() + CustOpts.HOR_GAP, point.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        else
+        	back.setBounds(num0.getX() + num0.getWidth() + CustOpts.HOR_GAP, num0.getY(), CustOpts.BTN_WIDTH_NUM * 2 + CustOpts.HOR_GAP, CustOpts.BTN_WIDTH_NUM);
     	ok.setBounds(num3.getX() + num3.getWidth() + CustOpts.HOR_GAP, num3.getY(),
     			CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM * 4 + CustOpts.VER_GAP * 3);
 
@@ -107,6 +111,10 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         isAllContentSelected = true;
     }
 
+    public void setAction(ActionListener action) {
+    	this.ok.addActionListener(action);
+    }
+    
     /**
      * Invoked when an action occurs. NOTE:PIM的绝大多数用于新建和编辑的对话盒，对于确定事件的处理，采用如下规则：
      * 即：先出发监听器事件，监听器根据IPIMDialog接口的方法getContent（）取出对话盒中的 记录。监听器负责将记录存入Model，监听器最后负责将对话盒释放。
@@ -124,7 +132,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         if (o == ok) {
         	//check content
         	try {
-        		Integer.valueOf(curContent);
+        		Float.valueOf(curContent);
         	}catch(Exception exp) {
                 JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
         		return;
@@ -163,6 +171,8 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
             tfdQTY.setText(curContent.concat("9"));
         } else if (o == num0) {
             tfdQTY.setText(curContent.concat("0"));
+        } else if(o == point) {
+            tfdQTY.setText(curContent.concat("."));
         }
         
         isAllContentSelected = false;
@@ -204,6 +214,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         num8 = new JButton("8");
         num9 = new JButton("9");
         num0 = new JButton("0");
+        point = new JButton(".");
 
         // 属性设置－－－－－－－－－－－－－－
         // ok.setFont(CustOpts.custOps.getFontOfDefault());
@@ -219,6 +230,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         num8.setMargin(back.getMargin());
         num9.setMargin(back.getMargin());
         num0.setMargin(back.getMargin());
+        point.setMargin(back.getMargin());
         // 布局---------------
         int tHight = CustOpts.BTN_HEIGHT + CustOpts.BTN_WIDTH_NUM * 4 + 5 * CustOpts.VER_GAP
                         + CustOpts.SIZE_EDGE + CustOpts.SIZE_TITLE;
@@ -242,6 +254,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         getContentPane().add(num8);
         getContentPane().add(num9);
         getContentPane().add(num0);
+        getContentPane().add(point);
 
         // 加监听器－－－－－－－－
         ok.addActionListener(this);
@@ -256,6 +269,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         num8.addActionListener(this);
         num9.addActionListener(this);
         num0.addActionListener(this);
+        point.addActionListener(this);
         addComponentListener(this);
         
         // init Contents
@@ -274,6 +288,10 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 		tfdQTY.setText("");
 	}
 
+	public void setFloatSupport(boolean setFloatSupport) {
+		point.setVisible(setFloatSupport);
+	}
+	
 	private BarFrame barFrame;
     private JButton num1;
     private JButton num2;
@@ -285,10 +303,11 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
     private JButton num8;
     private JButton num9;
     private JButton num0;
+    private JButton point;
     private JButton back;
     private JButton ok;
 
-    private JTextField tfdQTY;
+    public JTextField tfdQTY;
     private JLabel lblQTY;
     
 }

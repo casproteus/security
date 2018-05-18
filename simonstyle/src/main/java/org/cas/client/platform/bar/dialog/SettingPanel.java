@@ -162,6 +162,31 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 				return;
     		}
     		BarOption.setBillPageCol(tfdBillPageCol.getText());
+    	}else if(o == tfdStartTimeOfDay) {
+    		String time = tfdStartTimeOfDay.getText();
+    		try {
+	    		int endIndex = time.indexOf(":");
+	    		int hh = Integer.valueOf(time.substring(0, endIndex));
+	    		if(hh > 23 || hh < 0) {
+	    			throw new Exception("invalidate format of hh");
+	    		}
+	    		
+	    		time = time.substring(endIndex + 1);
+	    		endIndex = time.indexOf(":");
+	    		int mm = Integer.valueOf(time.substring(0, endIndex));
+	    		if(mm > 59 || hh < 0) {
+	    			throw new Exception("invalidate format of mm");
+	    		}
+	    		
+	    		int ss = Integer.valueOf(time.substring(endIndex + 1));
+	    		if(ss > 59 || ss < 0) {
+	    			throw new Exception("invalidate format of ss");
+	    		}
+	    		BarOption.setStartTime(tfdStartTimeOfDay.getText());
+    		}catch(Exception exp) {
+    			JOptionPane.showMessageDialog(this, BarDlgConst.InvalidInput);
+    			tfdStartTimeOfDay.grabFocus();
+    		}
     	}
     }
 
@@ -189,6 +214,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         	}else if (o == btnLine_1_7) {
         	}else if(o == cbxIsSingleUser) {
         		BarOption.setSingleUser(cbxIsSingleUser.isSelected() ? "true" : "false");
+        	}else if(o == cbxIsDiscBeforeTax) {
+        		BarOption.setIsDisCountBeforeTax(cbxIsDiscBeforeTax.isSelected() ? true : false);
         	}
         }
     }
@@ -257,6 +284,13 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         
         cbxIsSingleUser.setBounds(CustOpts.HOR_GAP, lblBillPageRow.getY() + lblBillPageRow.getHeight() + CustOpts.VER_GAP,
         		cbxIsSingleUser.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxIsDiscBeforeTax.setBounds(CustOpts.HOR_GAP, cbxIsSingleUser.getY() + cbxIsSingleUser.getHeight() + CustOpts.VER_GAP,
+        		cbxIsDiscBeforeTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+
+        lblStartTimeOfDay.setBounds(CustOpts.HOR_GAP, cbxIsDiscBeforeTax.getY() + cbxIsDiscBeforeTax.getHeight() + CustOpts.VER_GAP,
+        		lblStartTimeOfDay.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdStartTimeOfDay.setBounds(lblStartTimeOfDay.getX() + lblStartTimeOfDay.getWidth() + CustOpts.HOR_GAP, lblStartTimeOfDay.getY(),
+        		500, CustOpts.BTN_HEIGHT);
         //menu area----------
         BarFrame.instance.menuPanel.reLayout();
     }
@@ -315,6 +349,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         lblBillPageCol = new JLabel(BarDlgConst.BillPageCol);
         tfdBillPageCol = new JTextField(String.valueOf(BarOption.getBillPageCol()));
         cbxIsSingleUser = new JCheckBox(BarDlgConst.IsSingleUser);
+        cbxIsDiscBeforeTax = new JCheckBox(BarDlgConst.IsDiscBeforeTax);
+        lblStartTimeOfDay = new JLabel(BarDlgConst.StartTimeOfDay);
+        tfdStartTimeOfDay = new JTextField(String.valueOf(BarOption.getStartTime()));
         
         btnLine_1_1 = new JButton(BarDlgConst.Table);
         btnLine_1_2 = new JButton(BarDlgConst.Printer);
@@ -343,7 +380,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tLbl.setOpaque(true);
         tLbl.setBackground(Color.GRAY);
         Font tFont = PIMPool.pool.getFont((String) CustOpts.custOps.hash2.get(PaneConsts.DFT_FONT), Font.PLAIN, 40);
-
+        
+        cbxIsSingleUser.setSelected(BarOption.isSingleUser());
+        cbxIsDiscBeforeTax.setSelected(BarOption.isDisCountBeforeTax());
         // built
 
         add(lblBillPageRow);
@@ -351,6 +390,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(lblBillPageCol);
         add(tfdBillPageCol);
         add(cbxIsSingleUser);
+        add(cbxIsDiscBeforeTax);
+        add(lblStartTimeOfDay);
+        add(tfdStartTimeOfDay);
         
         add(btnLine_2_1);
         add(btnLine_2_2);
@@ -401,13 +443,18 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tfdBillPageRow.addFocusListener(this);
         tfdBillPageCol.addFocusListener(this);
         cbxIsSingleUser.addActionListener(this);
+        cbxIsDiscBeforeTax.addActionListener(this);
+        tfdStartTimeOfDay.addFocusListener(this);
     }
 
     JLabel lblBillPageRow;
     JTextField tfdBillPageRow;
     JLabel lblBillPageCol;
     JTextField tfdBillPageCol;
+    JLabel lblStartTimeOfDay;
+    JTextField tfdStartTimeOfDay;
     JCheckBox cbxIsSingleUser;
+    JCheckBox cbxIsDiscBeforeTax;
     
     private JButton btnLine_1_1;
     private JButton btnLine_1_2;

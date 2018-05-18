@@ -47,7 +47,15 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 //		return CustOpts.custOps.getValue("MaxRooBackWorkHour") == null ? 
 //				17 * 60 * 60 * 1000 : Integer.valueOf((String)CustOpts.custOps.getValue("MaxRooBackWorkHour"));
 //	}
-	
+
+    public static boolean isDisCountBeforeTax() {
+    	return CustOpts.custOps.getValue("isDisCountBeforeTax") == null ? 
+    			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isDisCountBeforeTax"));
+    }
+    public static void setIsDisCountBeforeTax(Boolean isDisCountBeforeTax) {
+    	CustOpts.custOps.setKeyAndValue("isDisCountBeforeTax", isDisCountBeforeTax);
+    }
+    
     public static int getBillPageRow() {
     	return CustOpts.custOps.getValue("BillPanel_Row") == null ? 
     			1 : Integer.valueOf((String)CustOpts.custOps.getValue("BillPanel_Row"));
