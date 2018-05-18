@@ -55,6 +55,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.action.UpdateItemDiscountAction;
 import org.cas.client.platform.bar.action.UpdateItemPriceAction;
 import org.cas.client.platform.bar.beans.ArrayButton;
@@ -237,6 +238,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		}
             	BarFrame.instance.switchMode(0);
             	
+            } else if (o == btnLine_2_6) {
+            	BarUtil.openMoneyBox();
+            	
             } else if (o == btnLine_2_7) {//disc bill
          		BarFrame.numberPanelDlg.setBtnSource(null);
          		BarFrame.numberPanelDlg.setFloatSupport(true);
@@ -252,6 +256,47 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                  	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
              		return;
              	}
+            }else if(o == btnLine_2_8) {
+            	//check if it's already paid.
+            	if(billPanel.selectdDishAry.size() < 1 || billPanel.selectdDishAry.get(0).getBillID() == 0) {
+            		JOptionPane.showMessageDialog(this, BarDlgConst.NotPayYet);
+            		return;
+            	}
+            	
+            	BarFrame.numberPanelDlg.setBtnSource(null);
+         		BarFrame.numberPanelDlg.setFloatSupport(true);
+         		BarFrame.numberPanelDlg.setModal(true);
+         		BarFrame.numberPanelDlg.setVisible(true);
+         		
+         		try {
+     				String curContent = BarFrame.numberPanelDlg.curContent;
+             		float refund = Float.valueOf(curContent);
+             		
+             		// get out existing status.
+             		String sql = "select * from bill where id = " + billPanel.selectdDishAry.get(0).getBillID();
+                    ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
+                    rs.beforeFirst();
+                    rs.next();
+                    int status = rs.getInt("status");
+                    if(status < 0) {
+                    	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarDlgConst.AllreadyRefund + (0-status), DlgConst.DlgTitle,
+    		                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
+    						return;
+    					}else {
+    						status -= (int)(refund * 100);
+    					}
+                    }else {
+                    	status = 0 - (int)(refund * 100);
+                    }
+                    
+             		sql = "update bill set status = " + status + " where id = " + billPanel.selectdDishAry.get(0).getBillID();
+             		PIMDBModel.getStatement().execute(sql);
+             		BarUtil.openMoneyBox();
+             	}catch(Exception exp) {
+                 	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
+             		return;
+             	}
+            	
             } else if (o == btnLine_2_9) {//more
             	new MoreButtonsDlg(this).show((JButton)o);
             } else if (o == btnLine_2_10) {//send

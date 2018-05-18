@@ -219,7 +219,7 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
         	endTime.append(tfdDayTo.getText());
         	endTime.append(" 00:00:00");
         	
-        	initTable(startTime.toString(), endTime.toString());
+        	initContent(startTime.toString(), endTime.toString());
         	reLayout();
         }
 //		else if(o == btnPrintBill) {
@@ -338,7 +338,7 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
         getContentPane().addComponentListener(this);
     }
 
-    public void initTable(String startTime, String endTime) {
+    public void initContent(String startTime, String endTime) {
         Object[][] tValues = null;
         String sql = "select * from bill where createTime >= '" + startTime + "' and createTime < '" + endTime + "'";
 
@@ -397,57 +397,6 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
         
     }
     
-	/**this init is for displaying all bills of a day.
-	void initContent(String startTime, String endTime) {
-		btnLeft.setEnabled(true);
-		btnRight.setEnabled(!BarOption.df.format(new Date()).startsWith(endTime.substring(0, 10)));
-		for(int i = onScrBills.size() - 1; i >= 0; i--) {
-			remove(onScrBills.get(i));
-		}
-		billPanels.clear();
-		onScrBills.clear();
-		
-		// load all the unclosed outputs under this table with ---------------------------
-		try {
-			Statement smt = PIMDBModel.getReadOnlyStatement();
-			ResultSet rs = smt.executeQuery("SELECT DISTINCT category from output where category > '" + startTime
-					+ "' and category < '" + endTime + "' order by category");
-			rs.beforeFirst();
-			String time = "";
-			while (rs.next()) {
-				JToggleButton billButton = new JToggleButton();
-				time = rs.getString("category");
-				billButton.setText(time);
-				billButton.setMargin(new Insets(0, 0, 0, 0));
-				
-				BillPanel billPanel = new BillPanel(this, billButton);
-				billPanels.add(billPanel);
-			}
-
-			//do it outside the above loop, because there's another qb query inside.
-			int col = BarOption.getBillPageCol();
-			int row = BarOption.getBillPageRow();
-
-			for(int i = 0; i < row * col; i++) {
-				if(row * col * curPageNum + i < billPanels.size()) {
-					billPanels.get(row * col * curPageNum + i).initComponent();
-					billPanels.get(row * col * curPageNum + i).initContent(time);
-					onScrBills.add(billPanels.get(row * col * curPageNum + i));
-					btnRight.setEnabled(true);
-				}else {
-					BillPanel panel = new BillPanel(this, new JToggleButton("0"));	//have to give a number to construct valid sql.
-					panel.initComponent();
-					panel.initContent();
-					onScrBills.add(panel);
-					btnRight.setEnabled(false);
-				}
-			}
-		} catch (Exception e) {
- 			ErrorUtil.write("Unexpected exception when init the tables from db." + e);
- 		}
-		reLayout();
-	}*/
-	
     private void initPordAndEmploy() {
         String sql = "select ID, UserName from UserIdentity";
         try {
@@ -497,7 +446,7 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
 
     private String[] header = new String[] {
     		BarDlgConst.TIME, // "时间"
-    		BarDlgConst.Table,
+    		BarDlgConst.TABLE,
     		BarDlgConst.Bill,
     		BarDlgConst.Total,
     		BarDlgConst.Discount,

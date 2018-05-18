@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.beans.TableButton;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.dialog.statistics.SaleListDlg;
@@ -178,10 +179,10 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         		int p = endNow.indexOf(" ");
         		String startTime = endNow.substring(0, p + 1) + BarOption.getStartTime();
         		SaleListDlg dlg = new SaleListDlg(BarFrame.instance);
-        		dlg.initTable(startTime, endNow);
-        		dlg.setVisible(true);;
+        		dlg.initContent(startTime, endNow);
+        		dlg.setVisible(true);
         	} else if (o == btnLine_2_4) {	//open drawer.
-        		openMoneyBox();
+        		BarUtil.openMoneyBox();
             } else if (o == btnLine_2_5) {
             } else if (o == btnLine_2_6) {
                 BarFrame.instance.switchMode(3);
@@ -247,41 +248,6 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         return false;
     }
     
-    private void openMoneyBox() {
-        int[] ccs = new int[5];
-        ccs[0] = 27;
-        ccs[1] = 112;
-        ccs[2] = 0;
-        ccs[3] = 80;
-        ccs[4] = 250;
-
-        CommPortIdentifier tPortIdty;
-        try {
-            Enumeration tPorts = CommPortIdentifier.getPortIdentifiers();
-            if (tPorts == null)
-                JOptionPane.showMessageDialog(this, "no comm ports found!");
-            else
-                while (tPorts.hasMoreElements()) {
-                    tPortIdty = (CommPortIdentifier) tPorts.nextElement();
-                    if (tPortIdty.getName().equals("LPT1")) {
-                        if (!tPortIdty.isCurrentlyOwned()) {
-                            ParallelPort tParallelPort = (ParallelPort) tPortIdty.open("ParallelBlackBox", 2000);
-                            DataOutputStream tOutStream = new DataOutputStream(tParallelPort.getOutputStream());
-                            for (int i = 0; i < 5; i++)
-                                tOutStream.write(ccs[i]);
-                            tOutStream.flush();
-                            tOutStream.close();
-                            tParallelPort.close();
-                        }
-                    }
-                }
-        } catch (PortInUseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void initComponent() {
         btnLine_2_1 = new JToggleButton(BarDlgConst.ChangeMode);
         btnLine_2_2 = new JButton(BarDlgConst.AddTable);

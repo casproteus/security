@@ -162,7 +162,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				}else {
 					if(selectdDishAry.get(selectedRow).getNum() == 1) {
 						if (JOptionPane.showConfirmDialog(this, BarDlgConst.COMFIRMDELETEACTION2, DlgConst.DlgTitle,
-			                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
+			                    JOptionPane.YES_NO_OPTION) != 0) {
 							tblSelectedDish.setSelectedRow(-1);
 							return;
 						}
@@ -436,9 +436,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	//get outputs of current table and bill id.
 		try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
-			String billID = billButton == null ? BarFrame.instance.valCurBill.getText() : billButton.getText();
+			String billIndex = billButton == null ? BarFrame.instance.valCurBill.getText() : billButton.getText();
 			String sql = "select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '" + BarFrame.instance.valCurTable.getText()
-					+ "' and CONTACTID = " + billID + " and deleted = false AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '"
+					+ "' and CONTACTID = " + billIndex + " and deleted = false AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '"
 					+ BarFrame.instance.valStartTime.getText() + "'";
 			ResultSet rs = smt.executeQuery(sql);
 			rs.afterLast();
@@ -469,8 +469,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				dish.setPrompPrice(rs.getString("PRODUCT.CONTENT"));
 				dish.setQst(rs.getInt("PRODUCT.STORE"));
 				dish.setSize(rs.getInt("PRODUCT.COST"));
-				dish.setBillID(billID);
-				dish.setOpenTime(rs.getString("OUTPUT.TIME"));
+				dish.setBillIndex(billIndex);
+				dish.setOpenTime(rs.getString("OUTPUT.TIME"));	//output time is table's open time. no need to remember output created time.
+				dish.setBillID(rs.getInt("OUTPUT.Category"));
 				selectdDishAry.add(dish);
 
 				tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
@@ -546,7 +547,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				dish.setPrompPrice(rs.getString("PRODUCT.CONTENT"));
 				dish.setQst(rs.getInt("PRODUCT.STORE"));
 				dish.setSize(rs.getInt("PRODUCT.COST"));
-				dish.setBillID(String.valueOf(rs.getInt("OUTPUT.ContactID")));
+				dish.setBillIndex(String.valueOf(rs.getInt("OUTPUT.ContactID")));
 				selectdDishAry.add(dish);
 
 				tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
@@ -575,7 +576,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
 			tblSelectedDish.setDataVector(tValues, header);
 			StringBuilder sb = new StringBuilder(selectdDishAry.get(0).getCATEGORY()).append(" ")
-					.append(selectdDishAry.get(0).getBillID()).append(" ").append(category);
+					.append(selectdDishAry.get(0).getBillIndex()).append(" ").append(category);
 			billButton.setText(sb.toString());
 			rs.close();
 		} catch (Exception e) {
@@ -656,11 +657,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
      // table area-------------
         int poxX = 0;
         int posY = 0;
+        int scrContentHeight = getHeight() - BarDlgConst.SubTotal_HEIGHT;
         if(billButton != null) {
         	billButton.setBounds(poxX, posY, getWidth(), CustOpts.BTN_HEIGHT + 16);
         	posY += billButton.getHeight();
+        	scrContentHeight -= billButton.getHeight() - lblSubTotle.getPreferredSize().height;
         }
-        scrContent.setBounds(poxX, posY, getWidth(), getHeight() - BarDlgConst.SubTotal_HEIGHT);
+        scrContent.setBounds(poxX, posY, getWidth(), scrContentHeight);
         
 		// sub total-------
 		if(billButton == null){
@@ -671,19 +674,19 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
             		BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH);
     		lblSubTotle.setBounds(btnLess.getX() - 100, 
     				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
-    				100, lblServiceFee.getHeight());
+    				100, lblSubTotle.getPreferredSize().height);
         }else {
         	lblSubTotle.setBounds(scrContent.getX() + scrContent.getWidth() - 100, 
     				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
     				100, lblServiceFee.getHeight());
         }
         lblDiscount.setBounds(scrContent.getX(), scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP, 
-        		scrContent.getWidth() / 4, BarDlgConst.SubTotal_HEIGHT * 1 / 3);
+        		scrContent.getWidth() / 4, lblDiscount.getPreferredSize().height);
         lblServiceFee.setBounds(lblDiscount.getX() + lblDiscount.getWidth() + CustOpts.HOR_GAP, lblDiscount.getY(), 
         		scrContent.getWidth() / 4, lblDiscount.getHeight());
 
 		lblGSQ.setBounds(scrContent.getX(), getHeight() - CustOpts.BTN_HEIGHT, scrContent.getWidth() / 4,
-				BarDlgConst.SubTotal_HEIGHT * 1 / 3);
+				lblGSQ.getPreferredSize().height);
 		lblQSQ.setBounds(lblGSQ.getX() + lblGSQ.getWidth() + CustOpts.HOR_GAP, lblGSQ.getY(), lblGSQ.getWidth(), lblGSQ.getHeight());
 		lblTotlePrice.setBounds(lblSubTotle.getX(), lblQSQ.getY(), lblTotlePrice.getPreferredSize().width, lblQSQ.getHeight());
 		valTotlePrice.setBounds(lblTotlePrice.getX() + lblTotlePrice.getWidth() + CustOpts.HOR_GAP, lblTotlePrice.getY(),

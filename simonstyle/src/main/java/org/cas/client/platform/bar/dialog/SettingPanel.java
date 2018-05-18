@@ -196,23 +196,20 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
             ActionEvent e) {
         Object o = e.getSource();
         if (o instanceof JButton) {
-        	if(o == btnLine_1_1) {
-        		new SettingTabbleDlg(BarFrame.instance).setVisible(true);
-        	}else if(o == btnLine_1_2) {
-        		new SettingPrinterDlg(BarFrame.instance).setVisible(true);
-        	}else if(o == btnLine_1_3) {
-        		new CheckInOutListDlg(BarFrame.instance).setVisible(true);
-        	}else if(o == btnLine_2_9) {
+        	if(o == btnLine_2_1) {
         		LoginDlg.reset();
         		BarFrame.instance.switchMode(0);
-        	}
+        	}else if(o == btnLine_2_2) {
+        		new TabbleSettingDlg(BarFrame.instance).setVisible(true);
+        	}else if(o == btnLine_2_3) {
+        		new SettingPrinterDlg(BarFrame.instance).setVisible(true);
+        	}else if(o == btnLine_2_4) {
+        		new CheckInOutListDlg(BarFrame.instance).setVisible(true);
+        	} 
         }
         //JToggleButton-------------------------------------------------------------------------------------
         else if(o instanceof JToggleButton) {
-        	if(o == btnLine_1_4) {
-        	}else if (o == btnLine_1_5) {
-        	}else if (o == btnLine_1_7) {
-        	}else if(o == cbxIsSingleUser) {
+        	if(o == cbxIsSingleUser) {
         		BarOption.setSingleUser(cbxIsSingleUser.isSelected() ? "true" : "false");
         	}else if(o == cbxIsDiscBeforeTax) {
         		BarOption.setIsDisCountBeforeTax(cbxIsDiscBeforeTax.isSelected() ? true : false);
@@ -227,7 +224,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         int tBtnHeight = panelHeight / 10;
 
         // command buttons--------------
-        // line 2
         btnLine_2_1.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
                 tBtnHeight);
         btnLine_2_2.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
@@ -247,28 +243,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_2_9.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
                 tBtnHeight);
 
-        // line 1
-        btnLine_1_1.setBounds(CustOpts.HOR_GAP, btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
-                tBtnHeight);
-        btnLine_1_2.setBounds(btnLine_1_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_3.setBounds(btnLine_1_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_4.setBounds(btnLine_1_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_5.setBounds(btnLine_1_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_6.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_7.setBounds(btnLine_1_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_8.setBounds(btnLine_1_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_1_9.setBounds(btnLine_1_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_1.getY(), tBtnWidht,
-                tBtnHeight);
-       
         // TOP part============================
-        int topAreaHeight = btnLine_1_1.getY() - 3 * CustOpts.VER_GAP;
+        int topAreaHeight = btnLine_2_1.getY() - 3 * CustOpts.VER_GAP;
         // table area-------------
         Double tableWidth = (Double) CustOpts.custOps.hash2.get("TableWidth");
         tableWidth = (tableWidth == null || tableWidth < 0.2) ? 0.4 : tableWidth;
@@ -290,7 +266,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         lblStartTimeOfDay.setBounds(CustOpts.HOR_GAP, cbxIsDiscBeforeTax.getY() + cbxIsDiscBeforeTax.getHeight() + CustOpts.VER_GAP,
         		lblStartTimeOfDay.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdStartTimeOfDay.setBounds(lblStartTimeOfDay.getX() + lblStartTimeOfDay.getWidth() + CustOpts.HOR_GAP, lblStartTimeOfDay.getY(),
-        		500, CustOpts.BTN_HEIGHT);
+        		100, CustOpts.BTN_HEIGHT);
         //menu area----------
         BarFrame.instance.menuPanel.reLayout();
     }
@@ -353,25 +329,16 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         lblStartTimeOfDay = new JLabel(BarDlgConst.StartTimeOfDay);
         tfdStartTimeOfDay = new JTextField(String.valueOf(BarOption.getStartTime()));
         
-        btnLine_1_1 = new JButton(BarDlgConst.Table);
-        btnLine_1_2 = new JButton(BarDlgConst.Printer);
-        btnLine_1_3 = new JButton(BarDlgConst.CheckInOut);
-        btnLine_1_4 = new JToggleButton("");//BarDlgConst.REMOVE);
-        btnLine_1_5 = new JToggleButton("");//BarDlgConst.VOID_ITEM);
-        btnLine_1_6 = new JButton("");
-        btnLine_1_7 = new JToggleButton("");
-        btnLine_1_8 = new JButton("");
-        btnLine_1_9 = new JButton("");
-        
-        btnLine_2_1 = new JButton("");
-        btnLine_2_2 = new JButton("");
-        btnLine_2_3 = new JButton("");
-        btnLine_2_4 = new JButton("");
+        btnLine_2_1 = new JButton(BarDlgConst.RETURN);
+        btnLine_2_2 = new JButton(BarDlgConst.TABLE);
+        btnLine_2_3 = new JButton(BarDlgConst.PRINTER);
+        btnLine_2_4 = new JButton(BarDlgConst.CheckInOut);
+       
         btnLine_2_5 = new JButton("");
         btnLine_2_6 = new JButton("");
         btnLine_2_7 = new JButton("");
-        btnLine_2_9 = new JButton(BarDlgConst.RETURN);
         btnLine_2_8 = new JButton("");
+        btnLine_2_9 = new JButton("");
 
         // properties
         setLayout(null);
@@ -394,7 +361,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(lblStartTimeOfDay);
         add(tfdStartTimeOfDay);
         
-        add(btnLine_2_1);
+        add(btnLine_2_9);
         add(btnLine_2_2);
         add(btnLine_2_3);
         add(btnLine_2_4);
@@ -402,18 +369,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(btnLine_2_6);
         add(btnLine_2_7);
         add(btnLine_2_8);
-        add(btnLine_2_9);
-
-        add(btnLine_1_1);
-        add(btnLine_1_2);
-        add(btnLine_1_3);
-        add(btnLine_1_4);
-        add(btnLine_1_5);
-        add(btnLine_1_6);
-        add(btnLine_1_7);
-        add(btnLine_1_8);
-        add(btnLine_1_9);
-
+        add(btnLine_2_1);
 
         // add listener
         addComponentListener(this);
@@ -430,16 +386,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_2_8.addActionListener(this);
         btnLine_2_9.addActionListener(this);
 
-        btnLine_1_1.addActionListener(this);
-        btnLine_1_2.addActionListener(this);
-        btnLine_1_3.addActionListener(this);
-        btnLine_1_4.addActionListener(this);
-        btnLine_1_5.addActionListener(this);
-        btnLine_1_6.addActionListener(this);
-        btnLine_1_7.addActionListener(this);
-        btnLine_1_8.addActionListener(this);
-        btnLine_1_9.addActionListener(this);
-        
         tfdBillPageRow.addFocusListener(this);
         tfdBillPageCol.addFocusListener(this);
         cbxIsSingleUser.addActionListener(this);
@@ -456,15 +402,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     JCheckBox cbxIsSingleUser;
     JCheckBox cbxIsDiscBeforeTax;
     
-    private JButton btnLine_1_1;
-    private JButton btnLine_1_2;
-    private JButton btnLine_1_3;
-    private JToggleButton btnLine_1_4;
-    private JToggleButton btnLine_1_5;
-    private JButton btnLine_1_6;
-    private JToggleButton btnLine_1_7;
-    private JButton btnLine_1_8;
-    private JButton btnLine_2_7;
     
     private JButton btnLine_2_1;
     private JButton btnLine_2_2;
@@ -472,7 +409,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     private JButton btnLine_2_4;
     private JButton btnLine_2_5;
     private JButton btnLine_2_6;
-    private JButton btnLine_1_9;
+    private JButton btnLine_2_7;
     private JButton btnLine_2_8;
     private JButton btnLine_2_9;
 }

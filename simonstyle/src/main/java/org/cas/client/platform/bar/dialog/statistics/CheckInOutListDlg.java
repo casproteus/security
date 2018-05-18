@@ -340,7 +340,7 @@ public class CheckInOutListDlg  extends JDialog
 	
 	private String[] header = new String[]{
 			BarDlgConst.Operator, 	//"操作员"
-			BarDlgConst.StartTime, 	//"开始时间"
+			BarDlgConst.OPENTIME, 	//"开始时间"
 			BarDlgConst.EndTime, 	//"结束时间"
 			BarDlgConst.Calculate, 	//"结算"
 			BarDlgConst.Receive, 	//"收银"

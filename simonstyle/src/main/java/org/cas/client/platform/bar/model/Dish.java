@@ -122,7 +122,7 @@ public class Dish {
 		dish.setPrompMenu(prompMenu);
 		dish.setPrompMofify(prompMofify);
 		dish.setPrompPrice(prompPrice);
-		dish.setBillID(billID);
+		dish.setBillIndex(billIndex);
 		dish.setOpenTime(openTime);
 		return dish;
 	}
@@ -268,12 +268,12 @@ public class Dish {
 		this.modification = modification;
 	}
 
-	public String getBillID() {
-		return billID;
+	public String getBillIndex() {
+		return billIndex;
 	}
 
-	public void setBillID(String billID) {
-		this.billID = billID;
+	public void setBillIndex(String billIndex) {
+		this.billIndex = billIndex;
 	}
 
 	public String getOpenTime() {
@@ -282,6 +282,14 @@ public class Dish {
 
 	public void setOpenTime(String openTime) {
 		this.openTime = openTime;
+	}
+
+	public int getBillID() {
+		return billID;
+	}
+
+	public void setBillID(int billID) {
+		this.billID = billID;
 	}
 
 	private int id = -1;
@@ -301,6 +309,7 @@ public class Dish {
     private int discount;
     private int outputID = -1;
     private String modification;
-    private String billID;
+    private String billIndex;
     private String openTime;
+    private int billID;
 }

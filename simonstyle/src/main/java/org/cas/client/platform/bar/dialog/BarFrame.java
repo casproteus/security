@@ -85,7 +85,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         
         lblOperator = new JLabel(BarDlgConst.Operator.concat(BarDlgConst.Colon));
         valOperator = new JLabel();
-        lblCurTable = new JLabel(BarDlgConst.Table.concat(BarDlgConst.Colon));
+        lblCurTable = new JLabel(BarDlgConst.TABLE.concat(BarDlgConst.Colon));
         valCurTable = new JLabel();
         lblCurBill = new JLabel(BarDlgConst.Bill.concat(BarDlgConst.Colon));
         valCurBill = new JLabel();
@@ -175,7 +175,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 		valCurTable.setText("");
 		valCurBill.setText("");
 
-		lblStartTime.setText(BarDlgConst.StartTime.concat(BarDlgConst.Colon));
+		lblStartTime.setText(BarDlgConst.OPENTIME.concat(BarDlgConst.Colon));
 	}
     
     private boolean adminAuthentication() {

@@ -499,7 +499,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             getContentPane().add(rdbSizes[i]);
         }
         
-        sptPrinter = new PIMSeparator(BarDlgConst.PRINTER);
+        sptPrinter = new PIMSeparator(BarDlgConst.PrinterSupport);
         cbxPrinters = new JCheckBox[6];
         for(int i = 0; i < 6; i++) {
 	        cbxPrinters[i] = new JCheckBox(menuPanel.printers[i].getPname());

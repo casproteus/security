@@ -54,7 +54,7 @@ public interface BarDlgConst {
     String CANCEL_ALL = "CANCEL ALL";
     String VOID_ORDER = "VOID ORDER";
     String SETTINGS = "SETTINGS";
-    String RETURN = "RETURN";//
+    String RETURN = "RETURN";
     String MORE = "MORE";
     String SEND = "SEND";
 
@@ -64,7 +64,7 @@ public interface BarDlgConst {
     String MODIFY = "MODIFY";
     String DISC_VOLUMN = "DISC VOLUMN";
 
-    String Printer = "Printer";
+    String PRINTER = "PRINTER";
     String OnlyOneShouldBeSelected = "Please make sure one and only one item selected, then try again.";
     String InvalidInput = "The inputted content is invalid for this function.";
     String ADMIN_MODE = "System is in setting mode! Click logout button back to use mode.";
@@ -72,9 +72,11 @@ public interface BarDlgConst {
     String Title = "STGOBar - Copyright 2018 - http://www.ShareTheGoodOnes.com";
     String DuplicatedInput = "Dubplicated name found! please choose an other name.";
     String NoBillSeleted = "Found no bill to split the item to. Please select at least one other bill before release the button.";
+    String NotPayYet = "Refund only available for bills already paid.";
+    String AllreadyRefund = "This bill is allready refunded, are you sure to do one more refund?, already refunded: $";
     String Colon = "：";
     String Operator = "USER";
-    String Table = "Table";
+    String TABLE = "TABLE";
     String Bill = "Bill";
     String UnSavedRecordFound = "Are you sure to split the bill withoud sending new added ones? the un send records will be cancelled";
     String COMFIRMDELETEACTION = "The dish might allready be prepared, are you sure to cancel?";
@@ -83,7 +85,7 @@ public interface BarDlgConst {
     String SetCatogoryFirst = "Please Set Category First.";
     String SendItemCanNotModify = "Item already send can not be modified. we added a new item into the list.";
     String LeftMoney = "From Last Session";
-    String StartTime = "Start Time";
+    String OPENTIME = "OPEN TIME";
     String EndTime = "End Time";
     String Profit = "当班盈利";
 
@@ -244,7 +246,7 @@ public interface BarDlgConst {
     String UniCommand = "通用开钱箱命令";
     String SpecialCommand = "专用命令";
     String OneKeyOpen = "允许空格键开钱箱";
-    String PRINTER = "Printer Support";
+    String PrinterSupport = "Printer Support";
     String PrintDebugger = "打印样式设置";
     String PrintCommand = "命令";
     String parameters = "参数";

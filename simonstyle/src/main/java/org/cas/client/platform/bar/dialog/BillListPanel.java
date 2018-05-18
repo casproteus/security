@@ -153,7 +153,11 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
         int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 8) / 7;
         int tBtnHeight = panelHeight / 10;
 
-		btnAddUser.setBounds(CustOpts.SIZE_EDGE, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
+
+		btnReturn.setBounds(CustOpts.SIZE_EDGE, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
+		
+		btnAddUser.setBounds(btnReturn.getX() + btnReturn.getWidth() + CustOpts.HOR_GAP,
+				btnReturn.getY(), tBtnWidht, tBtnHeight);
 		
 		btnPrintAll.setBounds(btnAddUser.getX() + btnAddUser.getWidth() + CustOpts.HOR_GAP, 
 				panelHeight - tBtnHeight - CustOpts.VER_GAP,
@@ -169,9 +173,6 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				btnPrintAll.getY(),
 				tBtnWidht, tBtnHeight);
 		btnCompleteAll.setBounds(btnSplitItem.getX() + btnSplitItem.getWidth() + CustOpts.HOR_GAP, 
-				btnPrintAll.getY(),
-				tBtnWidht, tBtnHeight);
-		btnReturn.setBounds(btnCompleteAll.getX() + btnCompleteAll.getWidth() + CustOpts.HOR_GAP, 
 				btnPrintAll.getY(),
 				tBtnWidht, tBtnHeight);
 		
@@ -196,6 +197,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 					int x = btnLeft.getX() + btnLeft.getWidth() + CustOpts.HOR_GAP + (CustOpts.HOR_GAP + table_W) * c;
 					int y = (table_H + CustOpts.VER_GAP) * r + CustOpts.VER_GAP;
 					onScrBills.get(i).setBounds(x, y, table_W, table_H);
+					onScrBills.get(i).reLayout();
 					onScrBills.get(i).resetColWidth(table_W);
 					add(onScrBills.get(i));
 					
@@ -281,7 +283,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 					// unselected.
 					List<BillPanel> panels = getSelectedBillPannels();
 					for (BillPanel billPanel : panels) { // remove the original panel from the list.
-						if (billPanel.billButton.getText().equals(curDish.getBillID())) {
+						if (billPanel.billButton.getText().equals(curDish.getBillIndex())) {
 							panels.remove(billPanel);
 							break;
 						}

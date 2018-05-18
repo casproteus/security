@@ -58,7 +58,7 @@ import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.platform.pimview.pimtable.PIMTableColumn;
 import org.cas.client.resource.international.DlgConst;
 
-public class SettingTabbleDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, MouseListener{
+public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, MouseListener{
 	
 	Color bg = new Color(132,34, 22);
 
@@ -68,7 +68,7 @@ public class SettingTabbleDlg extends JDialog implements ICASDialog, ActionListe
     
     static ArrayList<TableButton> btnTables = new ArrayList<TableButton>();
     
-    public SettingTabbleDlg(JFrame pParent) {
+    public TabbleSettingDlg(JFrame pParent) {
         super(pParent, false);
         initDialog();
     }
@@ -141,7 +141,7 @@ public class SettingTabbleDlg extends JDialog implements ICASDialog, ActionListe
         		o.setBackground(null);
         	}
         }else {
-        	if (o == btnLine_1_1) {
+        	if (o == btnMore) {
         		//add on into db
         		Statement smt = PIMDBModel.getStatement();
         		boolean isAnyTableButtonSelected = false;
@@ -164,7 +164,7 @@ public class SettingTabbleDlg extends JDialog implements ICASDialog, ActionListe
         			new ModifyTableDlg(this, new TableButton()).setVisible(true);
         		}
         		initTableBtns();
-        	}else if(o == btnLine_1_2) {
+        	}else if(o == btnLess) {
         		Statement smt = PIMDBModel.getStatement();
         		for (TableButton tableButton : btnTables) {
 					if (tableButton.getBackground().equals(bg)) {
@@ -178,7 +178,7 @@ public class SettingTabbleDlg extends JDialog implements ICASDialog, ActionListe
 					}
 				}
         		initTableBtns();
-        	}else if (o ==btnLine_1_3) {
+        	}else if (o ==btnModify) {
         		for (TableButton tableButton : btnTables) {
 					if (tableButton.getBackground().equals(bg)) {
 						new ModifyTableDlg(this, tableButton).setVisible(true);
@@ -193,21 +193,19 @@ public class SettingTabbleDlg extends JDialog implements ICASDialog, ActionListe
     /** 本方法用于设置View上各个组件的尺寸。 */
     @Override
     public void reLayout() {
-        int panelWidth = getWidth();
         int panelHeight = getHeight() - CustOpts.SIZE_EDGE;
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 10) / 9;
-        int tBtnHeight = panelHeight / 10;
+        int tBtnWidht = 120;
+        int tBtnHeight = 50;
 
         // command buttons--------------
-        btnLine_1_3.setBounds(panelWidth - 100 - CustOpts.HOR_GAP,
-        		panelHeight - tBtnHeight - 38, 
-        		60, 60);
-        btnLine_1_2.setBounds(btnLine_1_3.getX(),
-        		btnLine_1_3.getY() - tBtnHeight - CustOpts.VER_GAP,
-        		60, 60);
-        btnLine_1_1.setBounds(btnLine_1_2.getX(),
-        		btnLine_1_2.getY() - tBtnHeight - CustOpts.VER_GAP,
-        		60, 60);
+        btnModify.setBounds(getWidth() - tBtnWidht - CustOpts.HOR_GAP - CustOpts.SIZE_EDGE - 50,
+        		panelHeight - tBtnHeight - CustOpts.VER_GAP - CustOpts.SIZE_EDGE - 50, 
+        		tBtnWidht, tBtnHeight);
+        btnLess.setBounds(btnModify.getX(),
+        		btnModify.getY() - tBtnHeight - CustOpts.VER_GAP,
+        		tBtnHeight, tBtnHeight);
+        btnMore.setBounds(btnLess.getX() + btnLess.getWidth() + 20, btnLess.getY(),
+        		tBtnHeight, tBtnHeight);
 
 		invalidate();
 		revalidate();
@@ -215,25 +213,25 @@ public class SettingTabbleDlg extends JDialog implements ICASDialog, ActionListe
     }
 
     private void initDialog() {
-        btnLine_1_1 = new JButton("+");
-        btnLine_1_2 = new JButton("-");
-        btnLine_1_3 = new JButton(BarDlgConst.MODIFY);
+        btnMore = new JButton("+");
+        btnLess = new JButton("-");
+        btnModify = new JButton(BarDlgConst.MODIFY);
 
         // border----------
         setBounds(BarFrame.instance.getX(), BarFrame.instance.getY(), BarFrame.instance.getWidth(), BarFrame.instance.getHeight());
         setLayout(null);
 
         // built
-        add(btnLine_1_1);
-        add(btnLine_1_2);
-        add(btnLine_1_3);
+        add(btnMore);
+        add(btnLess);
+        add(btnModify);
 
         // add listener
         addComponentListener(this);
         
-        btnLine_1_1.addActionListener(this);
-        btnLine_1_2.addActionListener(this);
-        btnLine_1_3.addActionListener(this);
+        btnMore.addActionListener(this);
+        btnLess.addActionListener(this);
+        btnModify.addActionListener(this);
         initTableBtns();
     }
 
@@ -285,9 +283,9 @@ public class SettingTabbleDlg extends JDialog implements ICASDialog, ActionListe
 		reLayout();
 	}
 	
-    private JButton btnLine_1_1;
-    private JButton btnLine_1_2;
-    private JButton btnLine_1_3;
+    private JButton btnMore;
+    private JButton btnLess;
+    private JButton btnModify;
 
 	@Override
 	public void mouseClicked(MouseEvent e) {

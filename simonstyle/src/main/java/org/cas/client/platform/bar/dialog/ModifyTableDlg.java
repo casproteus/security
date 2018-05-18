@@ -52,8 +52,8 @@ import org.hsqldb.lib.StringUtil;
 public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
 
 	TableButton btnTable;
-	SettingTabbleDlg settingTabbleDlg;
-    public ModifyTableDlg(SettingTabbleDlg pFrame, TableButton button) {
+	TabbleSettingDlg settingTabbleDlg;
+    public ModifyTableDlg(TabbleSettingDlg pFrame, TableButton button) {
     	super(pFrame);
     	settingTabbleDlg = pFrame;
     	if(button == null) {

@@ -341,7 +341,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
         cbxOneKeyOpenBox = new JCheckBox(BarDlgConst.OneKeyOpen);
         cbxUsePrinter = new JCheckBox(BarDlgConst.UsePrinter);
 
-        sptPrint = new PIMSeparator(BarDlgConst.PRINTER);
+        sptPrint = new PIMSeparator(BarDlgConst.PrinterSupport);
         lblTiltle = new JLabel(BarDlgConst.PrintTitle);
         tfdTitle = new JTextField();
         lblThankWord = new JLabel(BarDlgConst.Thankword);

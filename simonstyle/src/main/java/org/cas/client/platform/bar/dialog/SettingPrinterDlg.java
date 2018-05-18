@@ -152,7 +152,7 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
 
     private void initDialog() {
     	setModal(true);
-        setTitle(BarDlgConst.Printer);
+        setTitle(BarDlgConst.PRINTER);
         setResizable(false);
         // 初始化－－－－－－－－－－－－－－－－
         lblName = new JLabel(BarDlgConst.Name);
