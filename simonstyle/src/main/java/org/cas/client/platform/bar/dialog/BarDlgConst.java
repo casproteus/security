@@ -16,6 +16,11 @@ public interface BarDlgConst {
     String CashBack = "Cash Back";
     String Status = "Status";
     String APPLY = "APPLY";
+
+    String EnterCashPayment = "Enter Cash Payment";
+    String EnterDebitPayment = "Enter Debit Payment";
+    String EnterVisaPayment = "Enter Visa Payment";
+    String EnterMasterPayment = "Enter Master Payment";
     
     String ChangeMode = "CHANGE MODE";
     String AddTable = "ADD TABLE";
@@ -74,6 +79,7 @@ public interface BarDlgConst {
     String NoBillSeleted = "Found no bill to split the item to. Please select at least one other bill before release the button.";
     String NotPayYet = "Refund only available for bills already paid.";
     String AllreadyRefund = "This bill is allready refunded, are you sure to do one more refund?, already refunded: $";
+    String UnSendRecordFound = "Unsend records found! please make sure all dish have send to kitch before printing bill.";
     String Colon = "：";
     String Operator = "USER";
     String TABLE = "TABLE";
@@ -85,15 +91,18 @@ public interface BarDlgConst {
     String SetCatogoryFirst = "Please Set Category First.";
     String SendItemCanNotModify = "Item already send can not be modified. we added a new item into the list.";
     String LeftMoney = "From Last Session";
+    String Left = "Left";
     String OPENTIME = "OPEN TIME";
     String EndTime = "End Time";
     String Profit = "当班盈利";
 
+    String EXACT = "EXACT";
 
     String BillPageRow = "Rows of Bills:";
     String BillPageCol = "Columns of Bills:";
     String IsSingleUser = "Is single user mode";
     String IsDiscBeforeTax = "Is discount apply on price before tax";
+    String IsPrintBillWhenPay = "automatic print bill when pay";
     String StartTimeOfDay = "Start time of a day";
     String PrinterError = "WARNING! Error occured when printing in back end, please check printer and try again.";
     

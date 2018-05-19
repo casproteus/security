@@ -143,7 +143,30 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         Object o = e.getSource();
         //JButton------------------------------------------------------------------------------------------------
         if (o instanceof JButton) {
-        	if (o == btnLine_1_4) {	//remove item.
+        	if(o == btnLine_1_1 || o == btnLine_1_2 || o == btnLine_1_3 || o == btnLine_2_3) {
+        		billPanel.sendNewDishesToKitchen();
+        		if(BarOption.isPrintBillWhenPay()) {
+        			billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
+        		}
+         		BarFrame.payCashDlg.setFloatSupport(true);
+         		if(o == btnLine_1_1) {
+         			BarFrame.payCashDlg.setTitle(BarDlgConst.EnterCashPayment);
+         		}else if(o == btnLine_1_2) {
+         			BarFrame.payCashDlg.setTitle(BarDlgConst.EnterDebitPayment);
+         		}else if(o == btnLine_1_3) {
+         			BarFrame.payCashDlg.setTitle(BarDlgConst.EnterVisaPayment);
+         		}else if(o == btnLine_2_3) {
+         			BarFrame.payCashDlg.setTitle(BarDlgConst.EnterMasterPayment);
+         		}
+         		BarFrame.payCashDlg.setModal(false);
+         		BarFrame.payCashDlg.setVisible(true);
+         		BarFrame.payCashDlg.valTotal.setText(billPanel.valTotlePrice.getText());
+         		BarFrame.payCashDlg.invalidate();
+         		BarFrame.payCashDlg.validate();
+         		BarFrame.payCashDlg.revalidate();
+         		BarFrame.payCashDlg.repaint();
+        		
+        	} else if (o == btnLine_1_4) {	//remove item.
         		if(BillListPanel.curDish == null) {//check if there's an item selected.
         			JOptionPane.showMessageDialog(this, BarDlgConst.OnlyOneShouldBeSelected);
         			return;
@@ -181,6 +204,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              	}
         		
         	}else if (o == btnLine_1_10) { // print bill
+        		billPanel.sendNewDishesToKitchen();
                 billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
             
             } else if (o == btnLine_2_1) { // return
@@ -196,7 +220,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	BarFrame.instance.switchMode(0);
             } else if (o == btnLine_2_4) { // cancel all
             	if(billPanel.selectdDishAry.size() > 0) {
-            		int lastSavedRow = billPanel.selectdDishAry.size() - 1 - getNewDishes().size();
+            		int lastSavedRow = billPanel.selectdDishAry.size() - 1 - billPanel.getNewDishes().size();
             		//update array first.
             		for(int i = billPanel.selectdDishAry.size() - 1; i > lastSavedRow; i--) {
             			billPanel.selectdDishAry.remove(i);
@@ -238,7 +262,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		}
             	BarFrame.instance.switchMode(0);
             	
-            } else if (o == btnLine_2_6) {
+            } else if (o == btnLine_2_6) {		//open drawer
             	BarUtil.openMoneyBox();
             	
             } else if (o == btnLine_2_7) {//disc bill
@@ -300,60 +324,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             } else if (o == btnLine_2_9) {//more
             	new MoreButtonsDlg(this).show((JButton)o);
             } else if (o == btnLine_2_10) {//send
-            	List<Dish> newDishes = getNewDishes();
-            	
-            	//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
-            	if(newDishes.size() == billPanel.selectdDishAry.size()) {
-                    BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
-            	}
-            	
-            	//send to printer
-            	//prepare the printing String and do printing
-            	if(WifiPrintService.SUCCESS != 
-            			WifiPrintService.exePrintCommand(newDishes, BarFrame.instance.menuPanel.printers, BarFrame.instance.valCurTable.getText())) {
-            		BarFrame.setStatusMes(BarDlgConst.PrinterError);
-                	JOptionPane.showMessageDialog(this, BarDlgConst.PrinterError);
-            	}
-            	
-            	//save to db output
-                try {
-                    for (Dish dish : newDishes) {
-//                    	if(dish.getOutputID() > -1)	//if it's already saved into db, don't ignore.
-//                    		continue;
-                    	
-                    	String curBillId = BarFrame.instance.valCurBill.getText();
-                    	if("0".equals(curBillId))
-                    		curBillId = "1";
-                    	Dish.createOutput(dish, curBillId);	//at this moment, the num shoul have not been soplitted.
-
-	                    //in case some store need to stay in the interface after clicking the send button. 
-//	                    sql = new StringBuilder("Select id from output where SUBJECT = '")
-//	                        .append(BarFrame.btnCurTable.getText()).append("' and CONTACTID = ")
-//	                        .append(BarFrame.instance.lblCurBill.getText()).append(" and PRODUCTID = ")
-//	                        .append(dish.getId()).append(" and AMOUNT = ")
-//	                        .append(dish.getNum()).append(" and TOLTALPRICE = ")
-//	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = ")
-//	                        .append(dish.getDiscount() * dish.getNum()).append(" and EMPLOYEEID = ")
-//	                        .append(LoginDlg.USERID).append(" and TIME = '")
-//	                        .append(time).append("'");
-//	                    ResultSet rs = smt.executeQuery(sql.toString());
-//	                    rs.beforeFirst();
-//                        while (rs.next()) {
-//                        	dish.setOutputID(rs.getInt("id"));
-//                        }
-//	                    
-//	                    rs.close();
-                    }
-                    if(BarOption.isFastFoodMode()) {
-                    	BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
-                    	billPanel.resetTableArea();
-                    }else {
-                    	BarFrame.instance.switchMode(0);
-                    }
-                }catch(Exception exp) {
-                	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
-                    exp.printStackTrace();
-                }
+            	billPanel.sendNewDishesToKitchen();
+            	if(BarOption.isFastFoodMode()) {
+    		    	BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
+    		    	billPanel.resetTableArea();
+    		    }else {
+    		    	BarFrame.instance.switchMode(0);
+    		    }
             } else if (o == btnLine_2_11) { // enter the setting mode.(admin interface)
                 BarFrame.instance.switchMode(3);
             } else if(o == btnLine_2_13) {		//Add client
@@ -414,7 +391,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         	}
         }
     }
-    
+
     private boolean isLastBillOfCurTable(){
     	int num = 0;
     	try {
@@ -439,18 +416,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     		ErrorUtil.write(exp);
     	}
     }
-    
-	private List<Dish> getNewDishes() {
-		List<Dish> newDishes = new ArrayList<Dish>();
-		for (Dish dish : billPanel.selectdDishAry) {
-			if(dish.getOutputID() > -1)	//if it's already saved into db, ignore.
-				continue;
-			else {
-				newDishes.add(dish);
-			}
-		}
-		return newDishes;
-	}
     
     void reLayout() {
         int panelHeight = getHeight();

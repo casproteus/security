@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
@@ -32,6 +33,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.bar.beans.ArrayButton;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.print.WifiPrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -70,20 +72,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	}
 	
 	public void printBill(String tableID, String billIndex, String opentime) {
-		//check if all dish saved and send to kitch?
-		boolean hasUnsavedRecord = false;
-		for (Dish dish : selectdDishAry) {
-			if(dish.getOutputID() < 0) {
-				hasUnsavedRecord = true;
-				break;
-			}
-		}
-		if(hasUnsavedRecord) {
-			if(JOptionPane.showConfirmDialog(BarFrame.instance, 
-    				BarDlgConst.UnSavedRecordFound, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
-    			return;
-            }
-		}
+		//check if it's alreay printed
 		//todo: send to printer
 		
 		//update category field with billID
@@ -129,6 +118,69 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			   ErrorUtil.write(exp);
 		   }
 	   }
+	}
+	
+	void sendNewDishesToKitchen() {
+		List<Dish> newDishes = getNewDishes();
+		
+		//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
+		if(newDishes.size() == selectdDishAry.size()) {
+		    BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
+		}
+		
+		//send to printer
+		//prepare the printing String and do printing
+		if(WifiPrintService.SUCCESS != 
+				WifiPrintService.exePrintCommand(newDishes, BarFrame.instance.menuPanel.printers, BarFrame.instance.valCurTable.getText())) {
+			BarFrame.setStatusMes(BarDlgConst.PrinterError);
+			JOptionPane.showMessageDialog(this, BarDlgConst.PrinterError);
+		}
+		
+		//save to db output
+		try {
+		    for (Dish dish : newDishes) {
+//                    	if(dish.getOutputID() > -1)	//if it's already saved into db, don't ignore.
+//                    		continue;
+		    	
+		    	String curBillId = BarFrame.instance.valCurBill.getText();
+		    	if("0".equals(curBillId))
+		    		curBillId = "1";
+		    	Dish.createOutput(dish, curBillId);	//at this moment, the num shoul have not been soplitted.
+
+		        //in case some store need to stay in the interface after clicking the send button. 
+//	                    sql = new StringBuilder("Select id from output where SUBJECT = '")
+//	                        .append(BarFrame.btnCurTable.getText()).append("' and CONTACTID = ")
+//	                        .append(BarFrame.instance.lblCurBill.getText()).append(" and PRODUCTID = ")
+//	                        .append(dish.getId()).append(" and AMOUNT = ")
+//	                        .append(dish.getNum()).append(" and TOLTALPRICE = ")
+//	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = ")
+//	                        .append(dish.getDiscount() * dish.getNum()).append(" and EMPLOYEEID = ")
+//	                        .append(LoginDlg.USERID).append(" and TIME = '")
+//	                        .append(time).append("'");
+//	                    ResultSet rs = smt.executeQuery(sql.toString());
+//	                    rs.beforeFirst();
+//                        while (rs.next()) {
+//                        	dish.setOutputID(rs.getInt("id"));
+//                        }
+//	                    
+//	                    rs.close();
+		    }
+		}catch(Exception exp) {
+			JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
+		    exp.printStackTrace();
+		}
+	}
+	
+	List<Dish> getNewDishes() {
+		List<Dish> newDishes = new ArrayList<Dish>();
+		for (Dish dish : selectdDishAry) {
+			if(dish.getOutputID() > -1)	//if it's already saved into db, ignore.
+				continue;
+			else {
+				newDishes.add(dish);
+			}
+		}
+		return newDishes;
 	}
 	
     @Override
@@ -427,7 +479,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	lblSubTotle.setText(BarDlgConst.Subtotal + " : $" + String.valueOf(subTotal/100f));
         lblGSQ.setText(BarDlgConst.QST + " : $" + String.valueOf(((int)totalGst)/100f));
         lblQSQ.setText(BarDlgConst.GST + " : $" + String.valueOf(((int)totalQst)/100f));
-        lblTotlePrice.setText(BarDlgConst.Total + " : $");
         valTotlePrice.setText(String.valueOf(((int) (subTotal + totalGst + totalQst))/100f));
     }
     
@@ -689,7 +740,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				lblGSQ.getPreferredSize().height);
 		lblQSQ.setBounds(lblGSQ.getX() + lblGSQ.getWidth() + CustOpts.HOR_GAP, lblGSQ.getY(), lblGSQ.getWidth(), lblGSQ.getHeight());
 		lblTotlePrice.setBounds(lblSubTotle.getX(), lblQSQ.getY(), lblTotlePrice.getPreferredSize().width, lblQSQ.getHeight());
-		valTotlePrice.setBounds(lblTotlePrice.getX() + lblTotlePrice.getWidth() + CustOpts.HOR_GAP, lblTotlePrice.getY(),
+		valTotlePrice.setBounds(lblTotlePrice.getX() + lblTotlePrice.getWidth(), lblTotlePrice.getY(),
 				100 - lblTotlePrice.getWidth() - CustOpts.HOR_GAP, lblQSQ.getHeight());
     }
     
@@ -702,7 +753,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         lblSubTotle = new JLabel(BarDlgConst.Subtotal);
         lblGSQ = new JLabel(BarDlgConst.QST);
         lblQSQ = new JLabel(BarDlgConst.GST);
-        lblTotlePrice = new JLabel(BarDlgConst.Total);
+        lblTotlePrice = new JLabel(BarDlgConst.Total + " : $");
         valTotlePrice = new JLabel();
         btnMore = new ArrayButton("+");
         btnLess = new ArrayButton("-");
@@ -775,7 +826,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     private JLabel lblGSQ;
     private JLabel lblQSQ;
     private JLabel lblTotlePrice;
-    private JLabel valTotlePrice;
+    JLabel valTotlePrice;
     private JLabel lblDiscount;
     private JLabel lblServiceFee;
     

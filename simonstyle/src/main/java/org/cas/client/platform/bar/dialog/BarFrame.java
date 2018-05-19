@@ -34,12 +34,14 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     public static BarFrame instance;
     public int curPanel;
     public static NumberPanelDlg numberPanelDlg; 
+    public static PayCashDlg payCashDlg;
     
     public static void main(
             String[] args) {
         CASControl.ctrl.initModel();
         instance = new BarFrame();
         numberPanelDlg = new NumberPanelDlg(instance);
+        payCashDlg = new PayCashDlg(instance);
         
         if(BarOption.isSingleUser()) {
 	        singleUserLoginProcess();
@@ -96,6 +98,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
+        lblVersion = new JLabel("V0.1-20180518");
         menuPanel = new MenuPanel();
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();
@@ -114,8 +117,10 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         add(lblShoestring);
         add(lblStartTime);
         add(valStartTime);
-        
+
         getContentPane().add(lblStatus);
+        getContentPane().add(lblVersion);
+        
         getContentPane().add(panels[0]);
         getContentPane().add(panels[1]);
         getContentPane().add(panels[2]);
@@ -209,11 +214,11 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         
         lblStartTime.setBounds(getWidth() - lblStartTime.getPreferredSize().width - 200 - CustOpts.HOR_GAP*2 - CustOpts.SIZE_EDGE * 2,
         		 CustOpts.VER_GAP, lblStartTime.getPreferredSize().width, lblOperator.getPreferredSize().height);
-        valStartTime.setBounds(lblStartTime.getX() + lblStartTime.getWidth() + CustOpts.HOR_GAP, lblStartTime.getY(),
+        valStartTime.setBounds(lblStartTime.getX() + lblStartTime.getWidth(), lblStartTime.getY(),
         		200 - lblStartTime.getWidth(), lblStartTime.getHeight());
         lblOperator.setBounds(lblStartTime.getX() - 180 - CustOpts.HOR_GAP, CustOpts.VER_GAP, lblOperator.getPreferredSize().width,
                 lblOperator.getPreferredSize().height);
-        valOperator.setBounds(lblOperator.getX() + lblOperator.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 180 - lblOperator.getWidth(),
+        valOperator.setBounds(lblOperator.getX() + lblOperator.getWidth(), CustOpts.VER_GAP, 180 - lblOperator.getWidth(),
                 lblOperator.getPreferredSize().height);
         
         lblShoestring.setBounds(
@@ -224,7 +229,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 
         // status---------
         lblStatus.setBounds(CustOpts.HOR_GAP, getContainer().getHeight() - CustOpts.LBL_HEIGHT - CustOpts.VER_GAP, 
-        		getContainer().getWidth() - CustOpts.HOR_GAP * 2, CustOpts.LBL_HEIGHT);
+        		getContainer().getWidth() - CustOpts.HOR_GAP * 2 - 100 -  - CustOpts.HOR_GAP, CustOpts.LBL_HEIGHT);
+        lblVersion.setBounds(lblStatus.getX() + lblStatus.getWidth() + CustOpts.VER_GAP, lblStatus.getY(), 100, lblStatus.getHeight());
         for (JPanel panel : panels) {
         	panel.setBounds(0, lblOperator.getY() + lblOperator.getHeight(), 
         			getContainer().getWidth(), lblStatus.getY() - lblOperator.getY() - lblOperator.getHeight());
@@ -369,4 +375,5 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     public JPanel[] panels = new JPanel[4];
     MenuPanel menuPanel;
     static JLabel lblStatus;
+    private JLabel lblVersion;
 }
