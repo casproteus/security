@@ -311,7 +311,7 @@ public class CheckInOutListDlg  extends JDialog
     	}catch(SQLException e){
     		ErrorUtil.write(e);
             sql = "CREATE CACHED TABLE evaluation (ID INTEGER IDENTITY PRIMARY KEY, startTime VARCHAR(255),"
-                    .concat(" endTime VARCHAR(255), EMPLOYEEID long, receive INTEGER, target INTEGER, profit INTEGER);");
+                    .concat(" endTime VARCHAR(255), EMPLOYEEID INTEGER, SUBJECT VARCHAR(255), receive INTEGER, target INTEGER, profit INTEGER);");
 		    try {
 		    	PIMDBModel.getReadOnlyStatement().executeUpdate(sql);
 		    }catch(Exception exp) {

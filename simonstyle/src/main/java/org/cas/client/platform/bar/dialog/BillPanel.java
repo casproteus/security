@@ -60,6 +60,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     int received;
     int cashback;
     String comment = "";
+    int status = 0;
     
 	public BillPanel(SalesPanel salesPanel) {
 		this.salesPanel = salesPanel;
@@ -71,7 +72,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		this.billButton = billButton;
 	}
 	
-	public void printBill(String tableID, String billIndex, String opentime) {
+	public int printBill(String tableID, String billIndex, String opentime) {
 		//check if it's alreay printed
 		//todo: send to printer
 		
@@ -79,13 +80,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		Statement stm = PIMDBModel.getStatement();
 		String createtime = BarOption.df.format(new Date());
 		StringBuilder sql = new StringBuilder(
-	            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, received, tip, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
+	            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
 				.append(createtime).append("', '")
 	            .append(tableID).append("', '")	//table
 	            .append(billIndex).append("', ")			//bill
 	            .append((int)(Float.valueOf(valTotlePrice.getText()) * 100)).append(", ")	//total
 	            .append(discount).append(", ")
-	            .append(received).append(", ")
 	            .append((tip)).append(", ")
 	            .append(cashback).append(", ")	//discount
 	            .append(LoginDlg.USERID).append(", '")		//emoployid
@@ -109,15 +109,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					}
 				}
 			}
+			return newBillID;
 	   }catch(Exception e) {
-		   try {
-			   stm.executeUpdate("CREATE CACHED TABLE Bill (ID INTEGER IDENTITY PRIMARY KEY, createtime VARCHAR(255),"
-		        .concat(" tableID VARCHAR(255), BillIndex VARCHAR(255), total INTEGER, discount INTEGER, received INTEGER, tip INTEGER, cashback INTEGER, status INTEGER, EMPLOYEEID INTEGER, Comment VARCHAR(255), opentime VARCHAR(255));"));
-			   printBill(tableID, billIndex, opentime);
-		   }catch(Exception exp) {
-			   ErrorUtil.write(exp);
-		   }
+			ErrorUtil.write(e);
 	   }
+		return -1;
 	}
 	
 	void sendNewDishesToKitchen() {
@@ -561,82 +557,82 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		resetColWidth(scrContent.getWidth());
 		updateTotleArea();
 	}
-    
-    void initContent(String category) {
-    	selectdDishAry.clear();
-    	//get outputs of current table and bill id.
-		try {
-			Statement smt = PIMDBModel.getReadOnlyStatement();
-			String sql = "select * from OUTPUT, PRODUCT where OUTPUT.category = '" + category
-					+ "' AND OUTPUT.PRODUCTID = PRODUCT.ID";
-			ResultSet rs = smt.executeQuery(sql);
-			rs.afterLast();
-			rs.relative(-1);
-			int tmpPos = rs.getRow();
-
-			int tColCount = tblSelectedDish.getColumnCount();
-			Object[][] tValues = new Object[tmpPos][tColCount];
-			rs.beforeFirst();
-			tmpPos = 0;
-			while (rs.next()) {
-				Dish dish = new Dish();
-				dish.setCATEGORY(rs.getString("PRODUCT.CATEGORY"));
-				dish.setDiscount(rs.getInt("OUTPUT.discount"));//
-				dish.setDspIndex(rs.getInt("PRODUCT.INDEX"));
-				dish.setGst(rs.getInt("PRODUCT.FOLDERID"));
-				dish.setId(rs.getInt("PRODUCT.ID"));
-				dish.setLanguage(0, rs.getString("PRODUCT.CODE"));
-				dish.setLanguage(1, rs.getString("PRODUCT.MNEMONIC"));
-				dish.setLanguage(2, rs.getString("PRODUCT.SUBJECT"));
-				dish.setModification(rs.getString("OUTPUT.CONTENT"));//
-				dish.setNum(rs.getInt("OUTPUT.AMOUNT"));//
-				dish.setOutputID(rs.getInt("OUTPUT.ID"));//
-				dish.setPrice(rs.getInt("PRODUCT.PRICE"));
-				dish.setPrinter(rs.getString("PRODUCT.BRAND"));
-				dish.setPrompMenu(rs.getString("PRODUCT.UNIT"));
-				dish.setPrompMofify(rs.getString("PRODUCT.PRODUCAREA"));
-				dish.setPrompPrice(rs.getString("PRODUCT.CONTENT"));
-				dish.setQst(rs.getInt("PRODUCT.STORE"));
-				dish.setSize(rs.getInt("PRODUCT.COST"));
-				dish.setBillIndex(String.valueOf(rs.getInt("OUTPUT.ContactID")));
-				selectdDishAry.add(dish);
-
-				tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
-				
-				int num = dish.getNum();
-				//first pick out the number on 100,0000 and 10000 position
-	    		int pK = num /(BarOption.MaxQTY * 100);
-	    		if(num > BarOption.MaxQTY * 100) {
-	    			num = num %(BarOption.MaxQTY * 100);
-	    		}
-	    		int pS = (int)num /BarOption.MaxQTY;
-	    		if(num > BarOption.MaxQTY) {
-	    			num = num % BarOption.MaxQTY;
-	    		}
-				StringBuilder strNum = new StringBuilder("X");
-				strNum.append(num);
-				if(pS > 0)
-					strNum.append("/").append(pS);
-				if(pK > 0)
-					strNum.append("/").append(pK);
-				tValues[tmpPos][0] = strNum.toString();
-				
-				tValues[tmpPos][3] = "$" + rs.getInt("TOLTALPRICE") / 100f;
-				tmpPos++;
-			}
-
-			tblSelectedDish.setDataVector(tValues, header);
-			StringBuilder sb = new StringBuilder(selectdDishAry.get(0).getCATEGORY()).append(" ")
-					.append(selectdDishAry.get(0).getBillIndex()).append(" ").append(category);
-			billButton.setText(sb.toString());
-			rs.close();
-		} catch (Exception e) {
-			ErrorUtil.write(e);
-		}
-
-		resetColWidth(scrContent.getWidth());
-		updateTotleArea();
-	}
+//    
+//    void initContent(String category) {
+//    	selectdDishAry.clear();
+//    	//get outputs of current table and bill id.
+//		try {
+//			Statement smt = PIMDBModel.getReadOnlyStatement();
+//			String sql = "select * from OUTPUT, PRODUCT where OUTPUT.category = '" + category
+//					+ "' AND OUTPUT.PRODUCTID = PRODUCT.ID";
+//			ResultSet rs = smt.executeQuery(sql);
+//			rs.afterLast();
+//			rs.relative(-1);
+//			int tmpPos = rs.getRow();
+//
+//			int tColCount = tblSelectedDish.getColumnCount();
+//			Object[][] tValues = new Object[tmpPos][tColCount];
+//			rs.beforeFirst();
+//			tmpPos = 0;
+//			while (rs.next()) {
+//				Dish dish = new Dish();
+//				dish.setCATEGORY(rs.getString("PRODUCT.CATEGORY"));
+//				dish.setDiscount(rs.getInt("OUTPUT.discount"));//
+//				dish.setDspIndex(rs.getInt("PRODUCT.INDEX"));
+//				dish.setGst(rs.getInt("PRODUCT.FOLDERID"));
+//				dish.setId(rs.getInt("PRODUCT.ID"));
+//				dish.setLanguage(0, rs.getString("PRODUCT.CODE"));
+//				dish.setLanguage(1, rs.getString("PRODUCT.MNEMONIC"));
+//				dish.setLanguage(2, rs.getString("PRODUCT.SUBJECT"));
+//				dish.setModification(rs.getString("OUTPUT.CONTENT"));//
+//				dish.setNum(rs.getInt("OUTPUT.AMOUNT"));//
+//				dish.setOutputID(rs.getInt("OUTPUT.ID"));//
+//				dish.setPrice(rs.getInt("PRODUCT.PRICE"));
+//				dish.setPrinter(rs.getString("PRODUCT.BRAND"));
+//				dish.setPrompMenu(rs.getString("PRODUCT.UNIT"));
+//				dish.setPrompMofify(rs.getString("PRODUCT.PRODUCAREA"));
+//				dish.setPrompPrice(rs.getString("PRODUCT.CONTENT"));
+//				dish.setQst(rs.getInt("PRODUCT.STORE"));
+//				dish.setSize(rs.getInt("PRODUCT.COST"));
+//				dish.setBillIndex(String.valueOf(rs.getInt("OUTPUT.ContactID")));
+//				selectdDishAry.add(dish);
+//
+//				tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
+//				
+//				int num = dish.getNum();
+//				//first pick out the number on 100,0000 and 10000 position
+//	    		int pK = num /(BarOption.MaxQTY * 100);
+//	    		if(num > BarOption.MaxQTY * 100) {
+//	    			num = num %(BarOption.MaxQTY * 100);
+//	    		}
+//	    		int pS = (int)num /BarOption.MaxQTY;
+//	    		if(num > BarOption.MaxQTY) {
+//	    			num = num % BarOption.MaxQTY;
+//	    		}
+//				StringBuilder strNum = new StringBuilder("X");
+//				strNum.append(num);
+//				if(pS > 0)
+//					strNum.append("/").append(pS);
+//				if(pK > 0)
+//					strNum.append("/").append(pK);
+//				tValues[tmpPos][0] = strNum.toString();
+//				
+//				tValues[tmpPos][3] = "$" + rs.getInt("TOLTALPRICE") / 100f;
+//				tmpPos++;
+//			}
+//
+//			tblSelectedDish.setDataVector(tValues, header);
+//			StringBuilder sb = new StringBuilder(selectdDishAry.get(0).getCATEGORY()).append(" ")
+//					.append(selectdDishAry.get(0).getBillIndex()).append(" ").append(category);
+//			billButton.setText(sb.toString());
+//			rs.close();
+//		} catch (Exception e) {
+//			ErrorUtil.write(e);
+//		}
+//
+//		resetColWidth(scrContent.getWidth());
+//		updateTotleArea();
+//	}
     
     void resetColWidth(int tableWidth) {
         PIMTableColumn tmpCol1 = tblSelectedDish.getColumnModel().getColumn(0);
@@ -697,6 +693,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
             if (tblSelectedDish.getValueAt(i, 0) == null)
                 return i; // 至此得到 the used RowCount。
         return tblSelectedDish.getRowCount();
+    }
+
+    public int getBillId(){
+    	if(selectdDishAry.size() > 0) {
+    		return selectdDishAry.get(0).getBillID();
+    	}
+    	return 0;
     }
     
     void reLayout() {

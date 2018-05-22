@@ -88,9 +88,12 @@ public interface BarDlgConst {
     String COMFIRMDELETEACTION = "The dish might allready be prepared, are you sure to cancel?";
     String COMFIRMDELETEACTION2 = "Are you sure to remove it from list?";
     String COMFIRMLOSTACTION = "Are you sure not to send or save the new input content?";
+    String ConfirmPayAgain = "This bill has already been paid! Are you sure you will receive money for it again?";
     String SetCatogoryFirst = "Please Set Category First.";
     String SendItemCanNotModify = "Item already send can not be modified. we added a new item into the list.";
+    String reCeivedMoneyNotEnough = "Haven't received enough money, are you sure to close the bill?";
     String LeftMoney = "From Last Session";
+    String UnSavedContentWillBeLost = "The un saved content will be lost.";
     String Left = "Left";
     String OPENTIME = "OPEN TIME";
     String EndTime = "End Time";
@@ -106,7 +109,7 @@ public interface BarDlgConst {
     String StartTimeOfDay = "Start time of a day";
     String PrinterError = "WARNING! Error occured when printing in back end, please check printer and try again.";
     
-    String OtherCost = "其他开支";
+    String Other = "OTHER";
     String ProdNumber = "Id";
     String ProdName = "Name";
     String Pinyin = "助记";
@@ -147,7 +150,7 @@ public interface BarDlgConst {
     String OpenTime = "OpenTime";
     
     String MoneyType = "币种";
-    String Change = "找零";
+    String Change = "Change ：$";
     String Continue = "继续收银";
 
     String AddUser = "ADD CLIENT";

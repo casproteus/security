@@ -1,5 +1,6 @@
 package org.cas.client.platform.bar.dialog;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -10,6 +11,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -32,6 +35,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.metal.MetalComboBoxEditor;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlgConst;
@@ -42,40 +46,134 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.resource.international.DlgConst;
 
-public class PayCashDlg extends JDialog implements ActionListener, ComponentListener{
-	public static String curContent = "";
-	public static boolean confirmed;
+public class PayCashDlg extends JDialog implements ActionListener, ComponentListener, WindowListener{
 	private JToggleButton btnSource;
 	//flag
 	boolean isAllContentSelected;
 	
-    /**
-     * Creates a new instance of ContactDialog
-     * 
-     * @called by PasteAction 为Copy邮件到联系人应用。
-     */
+	float originalReceived;
+	
     public PayCashDlg(BarFrame pParent) {
         super(pParent, true);
-        barFrame = pParent;
-        
         initDialog();
     }
-
+    
+    public void updateBill(int billId, boolean isExactcash) {
+    	StringBuilder sb = new StringBuilder();
+    	if(isExactcash) {
+    		sb.append("update bill set cashReceived = total, valDebitReceived = 0, valVisaReceived = 0, valMasterReceived = 0, valOtherReceived = 0 where id = ").append(billId);
+    	}else {
+    		String curTitle = getTitle();
+    		//calculate the received of diffent kind
+			switch (curTitle) {
+			case BarDlgConst.EnterCashPayment:
+				String cashReceived = String.valueOf(
+						(int)(Float.valueOf(valCashReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
+				sb.append("update bill set cashReceived = ").append(cashReceived).append(" where id = ").append(billId);
+				break;
+			case BarDlgConst.EnterDebitPayment:
+				String debitReceived = String.valueOf(
+						(int)(Float.valueOf(valDebitReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
+				sb.append("update bill set debitReceived = ").append(debitReceived).append(" where id = ").append(billId);
+				break;
+			case BarDlgConst.EnterVisaPayment:
+				String visaReceived = String.valueOf(
+						(int)(Float.valueOf(valVisaReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
+				sb.append("update bill set visaReceived = ").append(visaReceived).append(" where id = ").append(billId);
+				break;
+			case BarDlgConst.EnterMasterPayment:
+				String masterReceived = String.valueOf(
+						(int)(Float.valueOf(valMasterReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
+				sb.append("update bill set masterReceived = ").append(masterReceived).append(" where id = ").append(billId);
+				break;
+			default:
+				String otherReceived = String.valueOf(
+						(int)(Float.valueOf(valOtherReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
+				sb.append("update bill set otherReceived = ").append(otherReceived).append(" where id = ").append(billId);
+			}
+    	}
+		try {
+			PIMDBModel.getStatement().execute(sb.toString());
+		}catch(Exception e) {
+			ErrorUtil.write(e);
+		}
+    }
+    
+    public void initContent(BillPanel billPanel) {
+    	StringBuilder sb = new StringBuilder("select * from bill where id = " + billPanel.getBillId());
+    	try {
+    		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sb.toString());
+            rs.next();
+            Float total = Float.valueOf((float) (rs.getInt("total") / 100.0));
+        	valTotal.setText(total.toString());
+        	Float cashReceived = Float.valueOf((float) (rs.getInt("cashReceived") / 100.0));
+            valCashReceived.setText(cashReceived.toString());
+        	Float debitReceived = Float.valueOf((float) (rs.getInt("debitReceived") / 100.0));
+            valDebitReceived.setText(debitReceived.toString());
+            Float visaReceived = Float.valueOf((float) (rs.getInt("visaReceived") / 100.0));
+            valVisaReceived.setText(visaReceived.toString());
+            Float masterReceived = Float.valueOf((float) (rs.getInt("masterReceived") / 100.0));
+            valMasterReceived.setText(masterReceived.toString());
+            Float otherReceived = Float.valueOf((float) (rs.getInt("otherReceived") / 100.0));
+            valOtherReceived.setText(otherReceived.toString());
+            
+            float left = ((int)((total * 100 - cashReceived * 100 - debitReceived * 100 - visaReceived * 100 - masterReceived * 100 - otherReceived * 100))) / 100f;
+            valLeft.setText(String.valueOf(left));
+            
+//            if(BarDlgConst.EnterCashPayment.equals(getTitle())) {
+//                newReceived.setText(valCashReceived.getText());
+//                valCashReceived.setVisible(false);
+//            }else if(BarDlgConst.EnterDebitPayment.equals(getTitle())) {
+//                newReceived.setText(valDebitReceived.getText());
+//                valDebitReceived.setVisible(false);
+//            }else if(BarDlgConst.EnterVisaPayment.equals(getTitle())) {
+//                newReceived.setText(valVisaReceived.getText());
+//                valVisaReceived.setVisible(false);
+//            }else if(BarDlgConst.EnterMasterPayment.equals(getTitle())) {
+//                newReceived.setText(valMasterReceived.getText());
+//                valMasterReceived.setVisible(false);
+//            }
+    	}catch(Exception e) {
+    		ErrorUtil.write(e);
+    	}
+    }
+    
     /*
      * 对话盒的布局独立出来，为了在对话盒尺寸发生改变后，界面各元素能够重新布局， 使整体保持美观。尤其在Linux系列的操作系统上，所有的对话盒都必须准备好应对用户的拖拉改变尺寸。
      * @NOTE:因为setBounds方法本身不会触发事件导致重新布局，所以本方法中设置Bounds之后调用了reLayout。
      */
     public void reLayout() {
 
-        lblTotal.setBounds(CustOpts.HOR_GAP, 20, lblTotal.getPreferredSize().width, lblTotal.getPreferredSize().height);
-        valTotal.setBounds(lblTotal.getX() + lblTotal.getWidth(), lblTotal.getY(), 40, lblTotal.getHeight());
-        lblReceived.setBounds(valTotal.getX() + valTotal.getWidth() + CustOpts.HOR_GAP, lblTotal.getY(), lblReceived.getPreferredSize().width, lblReceived.getPreferredSize().height);
-        tfdReceived.setBounds(lblReceived.getX() + lblReceived.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 160, 40);
-        lblLeft.setBounds(tfdReceived.getX() + tfdReceived.getWidth() + CustOpts.HOR_GAP, lblTotal.getY(), 
-        		lblLeft.getPreferredSize().width, lblLeft.getPreferredSize().height);
-        valLeft.setBounds(lblLeft.getX() + lblLeft.getWidth(), lblLeft.getY(), 60, lblLeft.getHeight());
+    	lblCashReceived.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 
+    			lblCashReceived.getPreferredSize().width, lblTotal.getPreferredSize().height);
+        valCashReceived.setBounds(lblCashReceived.getX() + lblCashReceived.getWidth(), lblCashReceived.getY(),
+        		80 - lblCashReceived.getWidth(), lblCashReceived.getHeight());
+
+    	lblDebitReceived.setBounds(CustOpts.HOR_GAP, lblCashReceived.getY() + lblCashReceived.getHeight() + CustOpts.VER_GAP, 
+    			lblDebitReceived.getPreferredSize().width, lblDebitReceived.getPreferredSize().height);
+        valDebitReceived.setBounds(lblDebitReceived.getX() + lblDebitReceived.getWidth(), lblDebitReceived.getY(),
+        		80 - lblDebitReceived.getWidth(), lblDebitReceived.getHeight());
+
+    	lblVisaReceived.setBounds(lblCashReceived.getX() + 80 + CustOpts.HOR_GAP, CustOpts.VER_GAP, 
+    			lblVisaReceived.getPreferredSize().width, lblVisaReceived.getPreferredSize().height);
+        valVisaReceived.setBounds(lblVisaReceived.getX() + lblVisaReceived.getWidth(), lblVisaReceived.getY(),
+        		80 - lblVisaReceived.getWidth(), lblVisaReceived.getHeight());
+
+    	lblMasterReceived.setBounds(lblVisaReceived.getX(), lblDebitReceived.getY(), 
+    			lblMasterReceived.getPreferredSize().width, lblMasterReceived.getPreferredSize().height);
+        valMasterReceived.setBounds(lblMasterReceived.getX() + lblMasterReceived.getWidth(), lblMasterReceived.getY(),
+        		100 - lblMasterReceived.getWidth(), lblMasterReceived.getHeight());
         
-        btn10.setBounds(CustOpts.HOR_GAP,  tfdReceived.getY() + tfdReceived.getHeight() + CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        tfdNewReceived.setBounds(lblMasterReceived.getX() + 100 + CustOpts.HOR_GAP, CustOpts.VER_GAP, 160, 40);
+        
+    	lblTotal.setBounds(tfdNewReceived.getX() + tfdNewReceived.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP,
+    			lblTotal.getPreferredSize().width, lblTotal.getPreferredSize().height);
+        valTotal.setBounds(lblTotal.getX() + lblTotal.getWidth(), lblTotal.getY(), 100 - lblTotal.getWidth(), lblTotal.getHeight());
+        lblLeft.setBounds(lblTotal.getX(), lblMasterReceived.getY(), 
+        		lblLeft.getPreferredSize().width, lblLeft.getPreferredSize().height);
+        valLeft.setBounds(lblLeft.getX() + lblLeft.getWidth(), lblLeft.getY(), 100 - lblLeft.getWidth(), lblLeft.getHeight());
+        
+        btn10.setBounds(CustOpts.HOR_GAP,  tfdNewReceived.getY() + tfdNewReceived.getHeight() + CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         btn20.setBounds(btn10.getX() + btn10.getWidth() + CustOpts.HOR_GAP, btn10.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         btn30.setBounds(btn10.getX(), btn10.getY() + btn10.getHeight() + CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         btn40.setBounds(btn20.getX(), btn30.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
@@ -83,7 +181,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         btn100.setBounds(btn40.getX(), btn50.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         btnExact.setBounds(btn50.getX(), btn50.getY() + btn50.getHeight() + CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM * 2 + CustOpts.HOR_GAP, CustOpts.BTN_WIDTH_NUM);
         
-        num1.setBounds(btn20.getX() + btn20.getWidth() + CustOpts.HOR_GAP * 2,  tfdReceived.getY() + tfdReceived.getHeight() + CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        num1.setBounds(btn20.getX() + btn20.getWidth() + CustOpts.HOR_GAP * 2,  tfdNewReceived.getY() + tfdNewReceived.getHeight() + CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         num2.setBounds(num1.getX() + num1.getWidth() + CustOpts.HOR_GAP, num1.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         num3.setBounds(num2.getX() + num2.getWidth() + CustOpts.HOR_GAP, num1.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         num4.setBounds(num1.getX(), num1.getY() + num1.getHeight() + CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
@@ -104,33 +202,6 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         validate();
     }
 
-    public void setContents(String qty) {
-    	
-    	if(qty!= null) { //remove the "x" in the string.
-    		if(qty.startsWith("x")) {
-    			qty = qty.substring(1).trim();
-    			try {
-    				Integer.valueOf(qty);
-    			}catch(Exception e) {
-    				ErrorUtil.write("non integer string found! when setontents() called in NumberPanelDlg class.");
-    			}
-    		}else {
-        		ErrorUtil.write("String not start with 'x'! when setontents() called in NumberPanelDlg class.");
-    		}
-    	}else {
-    		ErrorUtil.write("unexpected null String when setontents() called in NumberPanelDlg class.");
-    	}
-    	
-        tfdReceived.setText(qty);
-        tfdReceived.requestFocus();
-        tfdReceived.selectAll();
-        isAllContentSelected = true;
-    }
-
-    public void setAction(ActionListener action) {
-    	this.ok.addActionListener(action);
-    }
-    
     /**
      * Invoked when an action occurs. NOTE:PIM的绝大多数用于新建和编辑的对话盒，对于确定事件的处理，采用如下规则：
      * 即：先出发监听器事件，监听器根据IPIMDialog接口的方法getContent（）取出对话盒中的 记录。监听器负责将记录存入Model，监听器最后负责将对话盒释放。
@@ -140,13 +211,12 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
      *            动作事件
      */
     @Override
-    public void actionPerformed(
-            ActionEvent e) {
-        curContent = tfdReceived.getText();
+    public void actionPerformed(ActionEvent e) {
+        String curContent = tfdNewReceived.getText();
         
         Object o = e.getSource();
         if (o == ok) {
-        	//check content
+        	//check content format
         	try {
         		Float.valueOf(curContent);
         	}catch(Exception exp) {
@@ -154,72 +224,94 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         		return;
         	}
         	
-        	confirmed = true;
-        	this.setVisible(false);
-            return;
-        } 
-        
-        if(isAllContentSelected) {
-        	curContent = "";
-        }
-        
-        if (o == back) {
-            if (curContent != null && curContent.length() > 0) {
-                tfdReceived.setText(curContent.substring(0, curContent.length() - 1));
-                updateLeft();
-            }
-        } else if(o == btnExact) {
+        	//check if left moeny is 0. 
+        	int left = (int)(Float.valueOf(valLeft.getText()) * 100);
+        	if( left > 0) {
+	        	if(JOptionPane.showConfirmDialog(this, BarDlgConst.reCeivedMoneyNotEnough, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
+	    			return;
+        	}else if(left < 0) {
+            	this.setVisible(false);
+        		JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.Change + (0 - left)/100f);
+        	}
         	
-        } else if(o == btn10) {
-        	tfdReceived.setText(curContent.concat("1"));
-            updateLeft();
-        } else if(o == btn20) {
-            updateLeft();
-        } else if(o == btn30) {
-            updateLeft();
-        } else if(o == btn40) {
-            updateLeft();
-        } else if(o == btn50) {
-            updateLeft();
-        } else if(o == btn100) {
-            updateLeft();
-        } else if (o == num1) {
-            tfdReceived.setText(curContent.concat("1"));
-            updateLeft();
-        } else if (o == num2) {
-            tfdReceived.setText(curContent.concat("2"));
-            updateLeft();
-        } else if (o == num3) {
-            tfdReceived.setText(curContent.concat("3"));
-            updateLeft();
-        } else if (o == num4) {
-            tfdReceived.setText(curContent.concat("4"));
-            updateLeft();
-        } else if (o == num5) {
-            tfdReceived.setText(curContent.concat("5"));
-            updateLeft();
-        } else if (o == num6) {
-            tfdReceived.setText(curContent.concat("6"));
-            updateLeft();
-        } else if (o == num7) {
-            tfdReceived.setText(curContent.concat("7"));
-            updateLeft();
-        } else if (o == num8) {
-            tfdReceived.setText(curContent.concat("8"));
-            updateLeft();
-        } else if (o == num9) {
-            tfdReceived.setText(curContent.concat("9"));
-            updateLeft();
-        } else if (o == num0) {
-            tfdReceived.setText(curContent.concat("0"));
-            updateLeft();
-        } else if(o == point) {
-            tfdReceived.setText(curContent.concat("."));
+        	updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId(), false);
+        	resetContent();
+        	this.setVisible(false);
+        	
+        	BarUtil.openMoneyBox();
+        } else if(o == btnExact) {//update bill and display change 0.00;
+        	updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId(), true);
+        	resetContent();
+        	this.setVisible(false);
+        	BarUtil.openMoneyBox();
+        } else {
+	        if(isAllContentSelected)
+	        	curContent = "";
+	        
+	        if (o == back) {
+	            if (curContent != null && curContent.length() > 0) {
+	                tfdNewReceived.setText(curContent.substring(0, curContent.length() - 1));
+	                updateLeft();
+	            }
+	        } else if(o == btn10) {
+	        	increaseReceived(10);
+	        } else if(o == btn20) {
+	        	increaseReceived(20);
+	        } else if(o == btn30) {
+	        	increaseReceived(30);
+	        } else if(o == btn40) {
+	        	increaseReceived(40);
+	        } else if(o == btn50) {
+	        	increaseReceived(50);
+	        } else if(o == btn100) {
+	        	increaseReceived(100);
+	        } else if (o == num1) {
+	        	concatReceived("1");
+	        } else if (o == num2) {
+	        	concatReceived("2");
+	        } else if (o == num3) {
+	        	concatReceived("3");
+	        } else if (o == num4) {
+	        	concatReceived("4");
+	        } else if (o == num5) {
+	        	concatReceived("5");
+	        } else if (o == num6) {
+	            tfdNewReceived.setText(curContent.concat("6"));
+	            updateLeft();
+	        } else if (o == num7) {
+	            tfdNewReceived.setText(curContent.concat("7"));
+	            updateLeft();
+	        } else if (o == num8) {
+	            tfdNewReceived.setText(curContent.concat("8"));
+	            updateLeft();
+	        } else if (o == num9) {
+	            tfdNewReceived.setText(curContent.concat("9"));
+	            updateLeft();
+	        } else if (o == num0) {
+	            tfdNewReceived.setText(curContent.concat("0"));
+	            updateLeft();
+	        } else if(o == point) {
+	            tfdNewReceived.setText(curContent.concat("."));
+	        }
         }
-        
         isAllContentSelected = false;
     }
-
+    
+    private void increaseReceived(int amount) {
+    	Float received = 0.0f;
+    	try{
+    		received = Float.valueOf(tfdNewReceived.getText());
+    	}catch(Exception e) {}
+    	received += amount;
+    	tfdNewReceived.setText(String.valueOf(received));
+        updateLeft();
+    }
+    
+    private void concatReceived(String num){
+        tfdNewReceived.setText(tfdNewReceived.getText().concat(num));
+        updateLeft();
+    }
+    
 	@Override
 	public void componentResized(ComponentEvent e) {}
 
@@ -235,20 +327,45 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 			btnSource.setSelected(false);
 	}
 
+	public void updateLeft() {
+		Float total = Float.valueOf(valTotal.getText());
+		Float received = 0f;
+		
+		try{ 
+			received += Float.valueOf(valCashReceived.getText()) + Float.valueOf(valDebitReceived.getText());
+			received += Float.valueOf(valVisaReceived.getText()) + Float.valueOf(valMasterReceived.getText());
+			received += Float.valueOf(valOtherReceived.getText());
+			received += Float.valueOf(tfdNewReceived.getText());
+		}catch(Exception e) {}
+		
+		valLeft.setText(String.valueOf((int)(total * 100 - received * 100)/100f));
+	}
+	
     private void initDialog() {
-        setTitle(BarDlgConst.QTY);
         setResizable(false);
         setModal(false);
         setAlwaysOnTop(true);
 
         // 初始化－－－－－－－－－－－－－－－－
 
+        lblCashReceived = new JLabel(BarDlgConst.CASH + " : $");
+        valCashReceived = new JLabel("");
+        lblDebitReceived = new JLabel(BarDlgConst.DEBIT + " : $");
+        valDebitReceived = new JLabel("");
+        lblVisaReceived = new JLabel(BarDlgConst.VISA + " : $");
+        valVisaReceived = new JLabel("");
+        lblMasterReceived = new JLabel(BarDlgConst.MASTER + " : $");
+        valMasterReceived = new JLabel("");
+        lblOtherReceived = new JLabel(BarDlgConst.Other + " : $");
+        valOtherReceived = new JLabel("");
+        
+        tfdNewReceived = new JTextField();
+        
         lblTotal = new JLabel(BarDlgConst.Total + " : $");
         valTotal = new JLabel("");
-        lblReceived = new JLabel(BarDlgConst.Receive + " : $");
         lblLeft = new JLabel(BarDlgConst.Left + " : $");
         valLeft = new JLabel("");
-        tfdReceived = new JTextField();
+        
         ok = new JButton("✔");
         back = new JButton("←");
         
@@ -296,9 +413,9 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         num0.setMargin(back.getMargin());
         point.setMargin(back.getMargin());
         
-        tfdReceived.setFont(new Font("Arial", Font.PLAIN, 48));
-        tfdReceived.setBackground(null);
-        tfdReceived.setBorder(null);
+        tfdNewReceived.setFont(new Font("Arial", Font.PLAIN, 48));
+        tfdNewReceived.setBackground(Color.WHITE);
+        
         
         // 布局---------------
         int tHight = CustOpts.BTN_HEIGHT + CustOpts.BTN_WIDTH_NUM * 4 + 5 * CustOpts.VER_GAP
@@ -309,10 +426,21 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         reLayout();
         
         // 搭建－－－－－－－－－－－－－
+        getContentPane().add(lblCashReceived);
+        getContentPane().add(valCashReceived);
+        getContentPane().add(lblDebitReceived);
+        getContentPane().add(valDebitReceived);
+        getContentPane().add(lblVisaReceived);
+        getContentPane().add(valVisaReceived);
+        getContentPane().add(lblMasterReceived);
+        getContentPane().add(valMasterReceived);
+        getContentPane().add(lblOtherReceived);
+        getContentPane().add(valOtherReceived);
+        
+        getContentPane().add(tfdNewReceived);
+        
         getContentPane().add(lblTotal);
         getContentPane().add(valTotal);
-        getContentPane().add(lblReceived);
-        getContentPane().add(tfdReceived);
         getContentPane().add(lblLeft);
         getContentPane().add(valLeft);
         
@@ -353,30 +481,31 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         num9.addActionListener(this);
         num0.addActionListener(this);
         point.addActionListener(this);
+
+        btn10.addActionListener(this);
+        btn20.addActionListener(this);
+        btn30.addActionListener(this);
+        btn40.addActionListener(this);
+        btn50.addActionListener(this);
+        btn100.addActionListener(this);
+        btnExact.addActionListener(this);
         addComponentListener(this);
+        addWindowListener(this);
         
         // init Contents
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                tfdReceived.grabFocus();
+                tfdNewReceived.grabFocus();
             }
         });
     }
-
-	public void setBtnSource(JToggleButton btnSource) {
-		this.btnSource = btnSource;
-		confirmed = false;
-		curContent = "";
-		tfdReceived.setText("");
-	}
 
 	public void setFloatSupport(boolean setFloatSupport) {
 		point.setVisible(setFloatSupport);
 	}
 	
-	private BarFrame barFrame;
-    private JButton num1;
+	private JButton num1;
     private JButton num2;
     private JButton num3;
     private JButton num4;
@@ -398,17 +527,61 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
     private JButton btn100;
     private JButton btnExact;
 
+    
+    private JLabel lblCashReceived;
+    public JLabel valCashReceived;
+    private JLabel lblDebitReceived;
+    public JLabel valDebitReceived;
+    private JLabel lblVisaReceived;
+    public JLabel valVisaReceived;
+    private JLabel lblMasterReceived;
+    public JLabel valMasterReceived;
+    private JLabel lblOtherReceived;
+    public JLabel valOtherReceived;
+
+    public JTextField tfdNewReceived;
+
     private JLabel lblTotal;
     public JLabel valTotal;
-    private JLabel lblReceived;
-    public JTextField tfdReceived;
     private JLabel lblLeft;
-    private JLabel valLeft;
+    public JLabel valLeft;
 
-	public void updateLeft() {
-		// TODO Auto-generated method stub
-		Float total = Float.valueOf(valTotal.getText());
-		Float received = Float.valueOf(tfdReceived.getText());
-		valLeft.setText(String.valueOf(total - received));
+	@Override
+	public void windowOpened(WindowEvent e) {}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if(tfdNewReceived.getText().length() > 0)
+			JOptionPane.showMessageDialog(this, BarDlgConst.UnSavedContentWillBeLost);
+		
+		resetContent();
 	}
+
+	private void resetContent() {
+		valCashReceived.setText("0.0");
+		valDebitReceived.setText("0.0");
+		valVisaReceived.setText("0.0");
+		valMasterReceived.setText("0.0");
+		valOtherReceived.setText("0.0");
+		
+		valTotal.setText("0.0");
+		valLeft.setText("0.0");
+		
+		tfdNewReceived.setText("");
+	}
+	
+	@Override
+	public void windowClosed(WindowEvent e) {}
+
+	@Override
+	public void windowIconified(WindowEvent e) {}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {}
+
+	@Override
+	public void windowActivated(WindowEvent e) {}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {}
 }

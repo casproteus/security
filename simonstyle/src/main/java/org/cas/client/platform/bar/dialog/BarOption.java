@@ -48,13 +48,13 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 //				17 * 60 * 60 * 1000 : Integer.valueOf((String)CustOpts.custOps.getValue("MaxRooBackWorkHour"));
 //	}
 	
-	public static boolean isPrintBillWhenPay() {
-    	return CustOpts.custOps.getValue("isPrintBillWhenPay") == null ? 
-    			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isPrintBillWhenPay"));
-    }
-    public static void setIsPrintBillWhenPay(Boolean isPrintBillWhenPay) {
-    	CustOpts.custOps.setKeyAndValue("isPrintBillWhenPay", isPrintBillWhenPay);
-    }
+//	public static boolean isPrintBillWhenPay() {
+//    	return CustOpts.custOps.getValue("isPrintBillWhenPay") == null ? 
+//    			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isPrintBillWhenPay"));
+//    }
+//    public static void setIsPrintBillWhenPay(Boolean isPrintBillWhenPay) {
+//    	CustOpts.custOps.setKeyAndValue("isPrintBillWhenPay", isPrintBillWhenPay);
+//    }
     
     public static boolean isDisCountBeforeTax() {
     	return CustOpts.custOps.getValue("isDisCountBeforeTax") == null ? 

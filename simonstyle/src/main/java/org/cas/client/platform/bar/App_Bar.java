@@ -15,6 +15,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
+import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.cascontrol.AbstractApp;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -162,14 +163,21 @@ public class App_Bar extends AbstractApp {
          
             // 增建一个雇员绩效考评表。
             sql = "CREATE CACHED TABLE evaluation (ID INTEGER IDENTITY PRIMARY KEY, startTime VARCHAR(255),"
-                            .concat(" endTime VARCHAR(255), SUBJECT VARCHAR(255), receive INTEGER, target INTEGER, profit INTEGER);");
+                    .concat(" endTime VARCHAR(255), EMPLOYEEID INTEGER, SUBJECT VARCHAR(255), receive INTEGER, target INTEGER, profit INTEGER);");
             stm.executeUpdate(sql);
          
             // 增建一个Bill表, for remember the discount and comments and the cash back...
             sql = "CREATE CACHED TABLE Bill (ID INTEGER IDENTITY PRIMARY KEY, createtime VARCHAR(255),"
-                            .concat(" tableID VARCHAR(255), BillIndex VARCHAR(255), total INTEGER, discount INTEGER, received INTEGER, tip INTEGER, cashback INTEGER, status INTEGER, EMPLOYEEID INTEGER, Comment VARCHAR(255), opentime VARCHAR(255));");
+            		.concat(" tableID VARCHAR(255), BillIndex VARCHAR(255), total INTEGER, discount INTEGER,")
+            		.concat(" cashReceived INTEGER, debitReceived INTEGER, visaReceived INTEGER, masterReceived INTEGER, otherReceived INTEGER,")
+            		.concat(" tip INTEGER, cashback INTEGER, status INTEGER, EMPLOYEEID INTEGER, Comment VARCHAR(255), opentime VARCHAR(255));");
             stm.executeUpdate(sql);
-            	
+            
+            //To occupy the record id of "0".
+            sql = "INSERT INTO Bill (total) VALUES (0)";	//just to ocupy the bill record which id is 0, so we can always ignore the bill if the id is 0. 
+            stm.executeUpdate(sql);
+            sql = "INSERT INTO output(SUBJECT) VALUES ('T1')";	//just to ocupy the output record which id is 0, so we can always ignore the bill if the id is 0. 
+            stm.executeUpdate(sql);
             
             stm.close();
         } catch (Exception e) {

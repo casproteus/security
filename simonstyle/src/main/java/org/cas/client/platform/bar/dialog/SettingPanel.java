@@ -213,8 +213,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		BarOption.setSingleUser(cbxIsSingleUser.isSelected() ? "true" : "false");
         	}else if(o == cbxIsDiscBeforeTax) {
         		BarOption.setIsDisCountBeforeTax(cbxIsDiscBeforeTax.isSelected() ? true : false);
-        	}else if(o == cbxIsPrintBillWhenPay) {
-        		BarOption.setIsPrintBillWhenPay(cbxIsPrintBillWhenPay.isSelected() ? true : false);
+//        	}else if(o == cbxIsPrintBillWhenPay) {
+//        		BarOption.setIsPrintBillWhenPay(cbxIsPrintBillWhenPay.isSelected() ? true : false);
         	}
         }
     }
@@ -264,10 +264,10 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		cbxIsSingleUser.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsDiscBeforeTax.setBounds(CustOpts.HOR_GAP, cbxIsSingleUser.getY() + cbxIsSingleUser.getHeight() + CustOpts.VER_GAP,
         		cbxIsDiscBeforeTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        cbxIsPrintBillWhenPay.setBounds(CustOpts.HOR_GAP, cbxIsDiscBeforeTax.getY() + cbxIsDiscBeforeTax.getHeight() + CustOpts.VER_GAP,
-        		cbxIsPrintBillWhenPay.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+//        cbxIsPrintBillWhenPay.setBounds(CustOpts.HOR_GAP, cbxIsDiscBeforeTax.getY() + cbxIsDiscBeforeTax.getHeight() + CustOpts.VER_GAP,
+//        		cbxIsPrintBillWhenPay.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         
-        lblStartTimeOfDay.setBounds(CustOpts.HOR_GAP, cbxIsPrintBillWhenPay.getY() + cbxIsPrintBillWhenPay.getHeight() + CustOpts.VER_GAP,
+        lblStartTimeOfDay.setBounds(CustOpts.HOR_GAP, cbxIsDiscBeforeTax.getY() + cbxIsDiscBeforeTax.getHeight() + CustOpts.VER_GAP,
         		lblStartTimeOfDay.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdStartTimeOfDay.setBounds(lblStartTimeOfDay.getX() + lblStartTimeOfDay.getWidth() + CustOpts.HOR_GAP, lblStartTimeOfDay.getY(),
         		100, CustOpts.BTN_HEIGHT);
@@ -330,7 +330,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tfdBillPageCol = new JTextField(String.valueOf(BarOption.getBillPageCol()));
         cbxIsSingleUser = new JCheckBox(BarDlgConst.IsSingleUser);
         cbxIsDiscBeforeTax = new JCheckBox(BarDlgConst.IsDiscBeforeTax);
-        cbxIsPrintBillWhenPay = new JCheckBox(BarDlgConst.IsPrintBillWhenPay);
+//        cbxIsPrintBillWhenPay = new JCheckBox(BarDlgConst.IsPrintBillWhenPay);
         lblStartTimeOfDay = new JLabel(BarDlgConst.StartTimeOfDay);
         tfdStartTimeOfDay = new JTextField(String.valueOf(BarOption.getStartTime()));
         
@@ -355,7 +355,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         
         cbxIsSingleUser.setSelected(BarOption.isSingleUser());
         cbxIsDiscBeforeTax.setSelected(BarOption.isDisCountBeforeTax());
-        cbxIsPrintBillWhenPay.setSelected(BarOption.isPrintBillWhenPay());
+//        cbxIsPrintBillWhenPay.setSelected(BarOption.isPrintBillWhenPay());
         // built
 
         add(lblBillPageRow);
@@ -364,7 +364,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(tfdBillPageCol);
         add(cbxIsSingleUser);
         add(cbxIsDiscBeforeTax);
-        add(cbxIsPrintBillWhenPay);
+//        add(cbxIsPrintBillWhenPay);
         add(lblStartTimeOfDay);
         add(tfdStartTimeOfDay);
         
@@ -397,7 +397,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tfdBillPageCol.addFocusListener(this);
         cbxIsSingleUser.addActionListener(this);
         cbxIsDiscBeforeTax.addActionListener(this);
-        cbxIsPrintBillWhenPay.addActionListener(this);
+//        cbxIsPrintBillWhenPay.addActionListener(this);
         tfdStartTimeOfDay.addFocusListener(this);
     }
 
@@ -409,7 +409,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     JTextField tfdStartTimeOfDay;
     JCheckBox cbxIsSingleUser;
     JCheckBox cbxIsDiscBeforeTax;
-    JCheckBox cbxIsPrintBillWhenPay;
+//    JCheckBox cbxIsPrintBillWhenPay;
     
     
     private JButton btnLine_2_1;

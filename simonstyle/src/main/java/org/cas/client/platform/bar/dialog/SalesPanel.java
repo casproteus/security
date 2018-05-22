@@ -144,10 +144,25 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         //JButton------------------------------------------------------------------------------------------------
         if (o instanceof JButton) {
         	if(o == btnLine_1_1 || o == btnLine_1_2 || o == btnLine_1_3 || o == btnLine_2_3) {
+        		//if there's any new bill, send it to kitchen.
         		billPanel.sendNewDishesToKitchen();
-        		if(BarOption.isPrintBillWhenPay()) {
+        		
+        		//if the bill has not been printted, print it.
+        		if(billPanel.getBillId() == 0) {
         			billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
+        			billPanel.initContent();
         		}
+        		
+        		//if it's already paid, show comfirmDialog.
+        		if(billPanel.status >= 100)
+        			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarDlgConst.ConfirmPayAgain, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
+            			return;
+        		
+        		//check the pay dialog is already visible, if yes, then update bill received values.
+        		if(BarFrame.payCashDlg.isVisible()) {
+        			BarFrame.payCashDlg.updateBill(billPanel.getBillId(), false);
+        		}
+        		//show dialog-------------------------------------
          		BarFrame.payCashDlg.setFloatSupport(true);
          		if(o == btnLine_1_1) {
          			BarFrame.payCashDlg.setTitle(BarDlgConst.EnterCashPayment);
@@ -158,13 +173,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		}else if(o == btnLine_2_3) {
          			BarFrame.payCashDlg.setTitle(BarDlgConst.EnterMasterPayment);
          		}
-         		BarFrame.payCashDlg.setModal(false);
          		BarFrame.payCashDlg.setVisible(true);
-         		BarFrame.payCashDlg.valTotal.setText(billPanel.valTotlePrice.getText());
-         		BarFrame.payCashDlg.invalidate();
-         		BarFrame.payCashDlg.validate();
-         		BarFrame.payCashDlg.revalidate();
-         		BarFrame.payCashDlg.repaint();
+         		
+         		//init payDialog content base on bill.
+         		BarFrame.payCashDlg.initContent(billPanel);
         		
         	} else if (o == btnLine_1_4) {	//remove item.
         		if(BillListPanel.curDish == null) {//check if there's an item selected.
@@ -205,8 +217,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		
         	}else if (o == btnLine_1_10) { // print bill
         		billPanel.sendNewDishesToKitchen();
-                billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
-            
+        		billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
+        		billPanel.initContent();
             } else if (o == btnLine_2_1) { // return
             	if(billPanel.selectdDishAry.size() > 0) {
 	            	Dish dish = billPanel.selectdDishAry.get(billPanel.selectdDishAry.size() - 1);
@@ -408,6 +420,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	return num <= 1;
     }
     
+    
     private void resetCurTableDBStatus(){
     	try {
         	Statement smt =  PIMDBModel.getStatement();
@@ -416,6 +429,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     		ErrorUtil.write(exp);
     	}
     }
+    
     
     void reLayout() {
         int panelHeight = getHeight();
