@@ -2,6 +2,7 @@ package org.cas.client.platform.bar.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,6 +38,8 @@ import com.jpos.POStest.POStestGUI;
 
 public class BarOption extends JDialog implements ICASDialog, ActionListener, ComponentListener {
 	public static final int MaxQTY = 10000;
+	public static String MoneySign = "$";
+	public static Font bigFont = new Font("Arial", Font.PLAIN, 48);
 	
 	public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     

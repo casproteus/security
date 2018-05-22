@@ -150,7 +150,7 @@ public interface BarDlgConst {
     String OpenTime = "OpenTime";
     
     String MoneyType = "币种";
-    String Change = "Change ：$";
+    String Change = "Change";
     String Continue = "继续收银";
 
     String AddUser = "ADD CLIENT";

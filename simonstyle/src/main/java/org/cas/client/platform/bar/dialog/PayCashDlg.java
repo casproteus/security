@@ -47,6 +47,7 @@ import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.resource.international.DlgConst;
 
 public class PayCashDlg extends JDialog implements ActionListener, ComponentListener, WindowListener{
+	
 	private JToggleButton btnSource;
 	//flag
 	boolean isAllContentSelected;
@@ -231,7 +232,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 	    			return;
         	}else if(left < 0) {
             	this.setVisible(false);
-        		JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.Change + (0 - left)/100f);
+        		new ChangeDlg(BarFrame.instance, BarOption.MoneySign + (0 - left)/100f).setVisible(true);
         	}
         	
         	updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId(), false);
@@ -413,7 +414,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         num0.setMargin(back.getMargin());
         point.setMargin(back.getMargin());
         
-        tfdNewReceived.setFont(new Font("Arial", Font.PLAIN, 48));
+        tfdNewReceived.setFont(BarOption.bigFont);
         tfdNewReceived.setBackground(Color.WHITE);
         
         
