@@ -1,90 +1,31 @@
 package org.cas.client.platform.bar.dialog;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.Socket;
-import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.EventListener;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.comm.CommPortIdentifier;
-import javax.comm.ParallelPort;
-import javax.comm.PortInUseException;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.action.UpdateItemDiscountAction;
 import org.cas.client.platform.bar.action.UpdateItemPriceAction;
-import org.cas.client.platform.bar.beans.ArrayButton;
 import org.cas.client.platform.bar.beans.CategoryToggleButton;
 import org.cas.client.platform.bar.beans.MenuButton;
 import org.cas.client.platform.bar.model.Dish;
-import org.cas.client.platform.bar.model.Mark;
-import org.cas.client.platform.bar.model.Printer;
-import org.cas.client.platform.bar.model.User;
-import org.cas.client.platform.bar.model.Category;
-import org.cas.client.platform.bar.print.Command;
-import org.cas.client.platform.bar.print.WifiPrintService;
-import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
-import org.cas.client.platform.casutil.PIMPool;
-import org.cas.client.platform.contact.dialog.selectcontacts.SelectedNewMemberDlg;
 import org.cas.client.platform.pimmodel.PIMDBModel;
-import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
-import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
-import org.cas.client.platform.pimview.pimtable.PIMTable;
-import org.cas.client.platform.pimview.pimtable.PIMTableColumn;
-import org.cas.client.platform.pimview.pimtable.PIMTableRenderAgent;
-import org.cas.client.platform.pos.dialog.statistics.Statistic;
-import org.cas.client.platform.refund.dialog.RefundDlg;
 import org.cas.client.resource.international.DlgConst;
-import org.cas.client.resource.international.PaneConsts;
-import org.hsqldb.Table;
-import org.jfree.chart.demo.BarChartDemo1;
 
 //Identity表应该和Employ表合并。
 public class SalesPanel extends JPanel implements ComponentListener, ActionListener, FocusListener {
@@ -155,7 +96,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		
         		//if it's already paid, show comfirmDialog.
         		if(billPanel.status >= 100)
-        			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarDlgConst.ConfirmPayAgain, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
+        			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.ConfirmPayAgain, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
             			return;
         		
         		//check the pay dialog is already visible, if yes, then update bill received values.
@@ -165,13 +106,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		//show dialog-------------------------------------
          		BarFrame.payCashDlg.setFloatSupport(true);
          		if(o == btnLine_1_1) {
-         			BarFrame.payCashDlg.setTitle(BarDlgConst.EnterCashPayment);
+         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterCashPayment);
          		}else if(o == btnLine_1_2) {
-         			BarFrame.payCashDlg.setTitle(BarDlgConst.EnterDebitPayment);
+         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterDebitPayment);
          		}else if(o == btnLine_1_3) {
-         			BarFrame.payCashDlg.setTitle(BarDlgConst.EnterVisaPayment);
+         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterVisaPayment);
          		}else if(o == btnLine_2_3) {
-         			BarFrame.payCashDlg.setTitle(BarDlgConst.EnterMasterPayment);
+         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterMasterPayment);
          		}
          		BarFrame.payCashDlg.setVisible(true);
          		
@@ -180,11 +121,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		
         	} else if (o == btnLine_1_4) {	//remove item.
         		if(BillListPanel.curDish == null) {//check if there's an item selected.
-        			JOptionPane.showMessageDialog(this, BarDlgConst.OnlyOneShouldBeSelected);
+        			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected);
         			return;
         		}
         		if(BillListPanel.curDish.getOutputID() >= 0) {//check if it's send
-        			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
+        			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
             			return;
         			//TODO: send a message to kitchen.
         			
@@ -195,7 +136,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         	} else if (o == btnLine_1_5) {		//split bill
         		//check if there unsaved dish, and give warning.
         		if(BillListPanel.curDish == null)
-            		if(JOptionPane.showConfirmDialog(BarFrame.instance, BarDlgConst.UnSavedRecordFound, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
+            		if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.UnSavedRecordFound, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
             			return;
         		BarFrame.instance.switchMode(1);
         		
@@ -224,13 +165,18 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	            	Dish dish = billPanel.selectdDishAry.get(billPanel.selectdDishAry.size() - 1);
 	            	if(dish.getId() < 0) {	//has new record.
 	            		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
-	            				BarDlgConst.COMFIRMLOSTACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
+	            				BarFrame.consts.COMFIRMLOSTACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
 	    	                 return;	
 	    	            }
 	            	}
             	}
             	BarFrame.instance.switchMode(0);
-            } else if (o == btnLine_2_4) { // cancel all
+            	
+            } else if(o == btnLine_2_2) {		//Add client
+				BarFrame.instance.valCurBill.setText("0");
+				BarFrame.instance.switchMode(2);
+				
+        	} else if (o == btnLine_2_4) { // cancel all
             	if(billPanel.selectdDishAry.size() > 0) {
             		int lastSavedRow = billPanel.selectdDishAry.size() - 1 - billPanel.getNewDishes().size();
             		//update array first.
@@ -258,7 +204,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	}
             } else if (o == btnLine_2_5) { // void all include saved ones
         		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
-        				BarDlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+        				BarFrame.consts.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
 	                 return;	
 	            }
     	        //update db, delete relevant orders.
@@ -295,7 +241,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             }else if(o == btnLine_2_8) {
             	//check if it's already paid.
             	if(billPanel.selectdDishAry.size() < 1 || billPanel.selectdDishAry.get(0).getBillID() == 0) {
-            		JOptionPane.showMessageDialog(this, BarDlgConst.NotPayYet);
+            		JOptionPane.showMessageDialog(this, BarFrame.consts.NotPayYet);
             		return;
             	}
             	
@@ -315,7 +261,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     rs.next();
                     int status = rs.getInt("status");
                     if(status < 0) {
-                    	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarDlgConst.AllreadyRefund + (0-status), DlgConst.DlgTitle,
+                    	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.AllreadyRefund + (0-status), DlgConst.DlgTitle,
     		                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
     						return;
     					}else {
@@ -345,16 +291,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     		    }
             } else if (o == btnLine_2_11) { // enter the setting mode.(admin interface)
                 BarFrame.instance.switchMode(3);
-            } else if(o == btnLine_2_13) {		//Add client
-				BarFrame.instance.valCurBill.setText("0");
-				BarFrame.instance.switchMode(2);
-        	}
+            }
         }
         //JToggleButton-------------------------------------------------------------------------------------
         else if(o instanceof JToggleButton) {
         	 if (o == btnLine_1_7) {
          		if(BillListPanel.curDish == null) {//check if there's an item selected.
-         			JOptionPane.showMessageDialog(this, BarDlgConst.OnlyOneShouldBeSelected);
+         			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected);
          			return;
          		}
          		BarFrame.numberPanelDlg.setBtnSource(btnLine_1_7);//pomp up a numberPanelDlg
@@ -366,7 +309,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		
              }else if(o == btnLine_1_8) {
             	if(BillListPanel.curDish == null) {//check if there's an item selected.
-          			JOptionPane.showMessageDialog(this, BarDlgConst.OnlyOneShouldBeSelected);
+          			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected);
           			return;
           		}
             	BarFrame.numberPanelDlg.setBtnSource(btnLine_1_8);//pomp up a numberPanelDlg
@@ -404,7 +347,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         }
     }
 
-    private boolean isLastBillOfCurTable(){
+    public static boolean isLastBillOfCurTable(){
     	int num = 0;
     	try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
@@ -421,7 +364,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     }
     
     
-    private void resetCurTableDBStatus(){
+    public static void resetCurTableDBStatus(){
     	try {
         	Statement smt =  PIMDBModel.getStatement();
             smt.executeQuery("update dining_Table set status = 0 WHERE name = '" + BarFrame.instance.valCurTable.getText() + "'");
@@ -486,32 +429,31 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     }
 
     private void initComponent() {
-        btnLine_1_1 = new JButton(BarDlgConst.CASH);
-        btnLine_1_2 = new JButton(BarDlgConst.DEBIT);
-        btnLine_1_3 = new JButton(BarDlgConst.VISA);
-        btnLine_1_4 = new JButton(BarDlgConst.REMOVEITEM);
-        btnLine_1_5 = new JButton(BarDlgConst.SPLIT_BILL);
-        btnLine_1_6 = new JButton(BarDlgConst.Modify);
-        btnLine_1_7 = new JToggleButton(BarDlgConst.DISC_ITEM);
-        btnLine_1_8 = new JToggleButton(BarDlgConst.ChangePrice);
-        btnLine_1_9 = new JButton(BarDlgConst.TIP);
-        btnLine_1_10 = new JButton(BarDlgConst.PRINT_BILL);
+        btnLine_1_1 = new JButton(BarFrame.consts.CASH);
+        btnLine_1_2 = new JButton(BarFrame.consts.DEBIT);
+        btnLine_1_3 = new JButton(BarFrame.consts.VISA);
+        btnLine_1_4 = new JButton(BarFrame.consts.REMOVEITEM);
+        btnLine_1_5 = new JButton(BarFrame.consts.SPLIT_BILL);
+        btnLine_1_6 = new JButton(BarFrame.consts.Modify);
+        btnLine_1_7 = new JToggleButton(BarFrame.consts.DISC_ITEM);
+        btnLine_1_8 = new JToggleButton(BarFrame.consts.ChangePrice);
+        btnLine_1_9 = new JButton(BarFrame.consts.TIP);
+        btnLine_1_10 = new JButton(BarFrame.consts.PRINT_BILL);
 
-        btnLine_2_1 = new JButton(BarDlgConst.RETURN);
-        btnLine_2_2 = new JButton(BarDlgConst.PAY);
-        btnLine_2_3 = new JButton(BarDlgConst.MASTER);
-        btnLine_2_4 = new JButton(BarDlgConst.CANCEL_ALL);
-        btnLine_2_5 = new JButton(BarDlgConst.VOID_ORDER);
-        btnLine_2_6 = new JButton(BarDlgConst.OpenDrawer);
-        btnLine_2_7 = new JButton(BarDlgConst.VolumnDiscount);
-        btnLine_2_8 = new JButton(BarDlgConst.Refund);
-        btnLine_2_9 = new JButton(BarDlgConst.MORE);
-        btnLine_2_10 = new JButton(BarDlgConst.SEND);
+        btnLine_2_1 = new JButton(BarFrame.consts.RETURN);
+        btnLine_2_2 = new JButton(BarFrame.consts.AddUser);
+        btnLine_2_3 = new JButton(BarFrame.consts.MASTER);
+        btnLine_2_4 = new JButton(BarFrame.consts.CANCEL_ALL);
+        btnLine_2_5 = new JButton(BarFrame.consts.VOID_ORDER);
+        btnLine_2_6 = new JButton(BarFrame.consts.OpenDrawer);
+        btnLine_2_7 = new JButton(BarFrame.consts.VolumnDiscount);
+        btnLine_2_8 = new JButton(BarFrame.consts.Refund);
+        btnLine_2_9 = new JButton(BarFrame.consts.MORE);
+        btnLine_2_10 = new JButton(BarFrame.consts.SEND);
         
-        btnLine_2_11 = new JButton(BarDlgConst.SETTINGS);
-        btnLine_2_12 = new JToggleButton(BarDlgConst.QTY);
-        btnLine_2_13 = new JButton(BarDlgConst.AddUser);
-        btnLine_2_14 = new JButton(BarDlgConst.EXACT_AMOUNT);
+        btnLine_2_11 = new JButton(BarFrame.consts.SETTINGS);
+        btnLine_2_12 = new JToggleButton(BarFrame.consts.QTY);
+        btnLine_2_14 = new JButton(BarFrame.consts.EXACT_AMOUNT);
 
         billPanel = new BillPanel(this);
         // properties
@@ -542,7 +484,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         
         add(btnLine_2_11);
         add(btnLine_2_12);
-        add(btnLine_2_13);
         add(btnLine_2_14);
 
         add(billPanel);
@@ -576,7 +517,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         
         btnLine_2_11.addActionListener(this);
         btnLine_2_12.addActionListener(this);
-        btnLine_2_13.addActionListener(this);
         btnLine_2_14.addActionListener(this);
     }
 
@@ -604,7 +544,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     
     private JButton btnLine_2_11;
     JToggleButton btnLine_2_12;
-    private JButton btnLine_2_13;
     private JButton btnLine_2_14;
     
     public BillPanel billPanel;

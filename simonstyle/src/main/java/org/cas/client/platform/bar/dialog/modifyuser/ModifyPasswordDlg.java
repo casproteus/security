@@ -9,7 +9,6 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
@@ -21,13 +20,13 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlgConst;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
-import org.cas.client.platform.bar.dialog.BarDlgConst;
 import org.cas.client.resource.international.DlgConst;
 
 public class ModifyPasswordDlg  extends JDialog implements ICASDialog, ActionListener, WindowListener, ComponentListener{
@@ -102,10 +101,10 @@ public class ModifyPasswordDlg  extends JDialog implements ICASDialog, ActionLis
 			String tPassword1 = general.pfdPassword.getText();
 			String tPassword2 = general.pfdMakeSure.getText();
 			if(tPassword1.length() > 0 && tPassword2.length() == 0){//如果第一个有内容，第二个没有内容。
-				JOptionPane.showMessageDialog(this, BarDlgConst.PasswordMakeSure);	//提示在第二个里面填内容。
+				JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordMakeSure);	//提示在第二个里面填内容。
 				general.pfdMakeSure.grabFocus();
 			}else if(!tPassword1.equals(tPassword2)){				//两个内容不符，提示重新填。
-				JOptionPane.showMessageDialog(this, BarDlgConst.PasswordNotEqual);
+				JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordNotEqual);
 				general.pfdMakeSure.setText("");
 				general.pfdPassword.setText("");
 				general.pfdPassword.grabFocus();

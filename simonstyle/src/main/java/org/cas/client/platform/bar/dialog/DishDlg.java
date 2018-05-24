@@ -7,9 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
-import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -20,14 +18,12 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.cas.client.platform.bar.beans.CategoryToggleButton;
-import org.cas.client.platform.bar.beans.MenuButton;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.casbeans.PIMSeparator;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
@@ -297,7 +293,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             if (isMenuNameModified(0)) {
                 for (int i = 0; i < menuPanel.dishNameMetrix[0].length; i++) {
                     if (i != dspIndex && tfdLanguages[0].getText().equalsIgnoreCase(menuPanel.dishNameMetrix[0][i])) {
-                        JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
+                        JOptionPane.showMessageDialog(this, BarFrame.consts.DuplicatedInput);
                         tfdLanguages[0].selectAll();
                         return;
                     }
@@ -309,7 +305,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                 if (text != null && !"".equals(text))//language2 is allowed to be empty.
                     for (int i = 0; i < menuPanel.dishNameMetrix[1].length; i++) {
                         if (i != dspIndex && text.equalsIgnoreCase(menuPanel.dishNameMetrix[1][i])) {
-                            JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
+                            JOptionPane.showMessageDialog(this, BarFrame.consts.DuplicatedInput);
                             tfdLanguages[1].selectAll();
                             return;
                         }
@@ -321,7 +317,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                 if (text != null && !"".equals(text))//language3 is allowed to be empty.
                     for (int i = 0; i < menuPanel.dishNameMetrix[2].length; i++) {
                         if (i != dspIndex && text.equalsIgnoreCase(menuPanel.dishNameMetrix[2][i])) {
-                            JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
+                            JOptionPane.showMessageDialog(this, BarFrame.consts.DuplicatedInput);
                             tfdLanguages[2].selectAll();
                             return;
                         }
@@ -471,35 +467,35 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 
     private void initDialog() {
     	setModal(true);
-        setTitle(BarDlgConst.Menu);
+        setTitle(BarFrame.consts.Menu);
         setResizable(false);
         // 初始化－－－－－－－－－－－－－－－－
-        sptName = new PIMSeparator(BarDlgConst.Name);
+        sptName = new PIMSeparator(BarFrame.consts.Name);
         lblLanguages = new JLabel[3];
         tfdLanguages = new JTextField[3];
-        lblLanguages[0] = new JLabel(BarDlgConst.Language1);
+        lblLanguages[0] = new JLabel(BarFrame.consts.Language1);
         tfdLanguages[0] = new JTextField();
-        lblLanguages[1] = new JLabel(BarDlgConst.Language2);
+        lblLanguages[1] = new JLabel(BarFrame.consts.Language2);
         tfdLanguages[1] = new JTextField();
-        lblLanguages[2] = new JLabel(BarDlgConst.Language3);
+        lblLanguages[2] = new JLabel(BarFrame.consts.Language3);
         tfdLanguages[2] = new JTextField();
 
-        sptPrice = new PIMSeparator(BarDlgConst.PRICE);
-        lblPrice = new JLabel(BarDlgConst.PRICE);
+        sptPrice = new PIMSeparator(BarFrame.consts.PRICE);
+        lblPrice = new JLabel(BarFrame.consts.PRICE);
         tfdPrice = new JTextField();
-        cbxGST = new JCheckBox(BarDlgConst.GST);
-        cbxQST = new JCheckBox(BarDlgConst.QST);
+        cbxGST = new JCheckBox(BarFrame.consts.GST);
+        cbxQST = new JCheckBox(BarFrame.consts.QST);
 
-        sptSize = new PIMSeparator(BarDlgConst.Size);
+        sptSize = new PIMSeparator(BarFrame.consts.Size);
         rdbSizes = new JRadioButton[6];
         ButtonGroup group = new ButtonGroup();
         for(int i = 0; i < 6; i++) {
-            rdbSizes[i] = new JRadioButton(BarDlgConst.Sizes[i]);
+            rdbSizes[i] = new JRadioButton(BarFrame.consts.Sizes[i]);
             group.add(rdbSizes[i]);
             getContentPane().add(rdbSizes[i]);
         }
         
-        sptPrinter = new PIMSeparator(BarDlgConst.PrinterSupport);
+        sptPrinter = new PIMSeparator(BarFrame.consts.PrinterSupport);
         cbxPrinters = new JCheckBox[6];
         for(int i = 0; i < 6; i++) {
 	        cbxPrinters[i] = new JCheckBox(menuPanel.printers[i].getPname());
@@ -507,12 +503,12 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         }
 
         sptOther = new PIMSeparator(OptionDlgConst.OPTION_OTHER);
-        cbxPricePomp = new JCheckBox(BarDlgConst.PricePomp);
-        cbxMenuPomp = new JCheckBox(BarDlgConst.MenuPomp);
-        cbxModifyPomp = new JCheckBox(BarDlgConst.ModifyPomp);
-        lblCategory = new JLabel(BarDlgConst.Categary);
+        cbxPricePomp = new JCheckBox(BarFrame.consts.PricePomp);
+        cbxMenuPomp = new JCheckBox(BarFrame.consts.MenuPomp);
+        cbxModifyPomp = new JCheckBox(BarFrame.consts.ModifyPomp);
+        lblCategory = new JLabel(BarFrame.consts.Categary);
         cmbCategory = new JComboBox<String>();
-        lblDspIndex = new JLabel(BarDlgConst.DSPINDEX);
+        lblDspIndex = new JLabel(BarFrame.consts.DSPINDEX);
         tfdDspIndex = new JTextField();
 
         ok = new JButton(DlgConst.OK);

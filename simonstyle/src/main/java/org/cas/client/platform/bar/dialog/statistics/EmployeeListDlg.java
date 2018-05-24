@@ -12,7 +12,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -29,6 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -46,7 +46,6 @@ import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.IPIMTableColumnModel;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
-import org.cas.client.platform.bar.dialog.BarDlgConst;
 import org.cas.client.platform.pos.dialog.PosFrame;
 import org.cas.client.resource.international.DlgConst;
 
@@ -207,7 +206,7 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         } else if (o == btnFocus) {
             int[] tRowAry = tblContent.getSelectedRows();
             if (tRowAry.length < 2) {
-                JOptionPane.showMessageDialog(this, BarDlgConst.ValidateFucusAction);// 选中项目太少！请先用鼠标选中多条记录，然后点击聚焦选中按钮，重点对选中的记录进行观察。
+                JOptionPane.showMessageDialog(this, BarFrame.consts.ValidateFucusAction);// 选中项目太少！请先用鼠标选中多条记录，然后点击聚焦选中按钮，重点对选中的记录进行观察。
                 return;
             }
             Object[][] tValues = new Object[tRowAry.length][tblContent.getColumnCount()];
@@ -328,15 +327,15 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
     }
 
     private void initDialog() {
-        setTitle(BarDlgConst.EmployeeInfo);
+        setTitle(BarFrame.consts.EmployeeInfo);
 
         // 初始化－－－－－－－－－－－－－－－－
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
         btnClose = new JButton(DlgConst.FINISH_BUTTON);
-        btnFocus = new JButton(BarDlgConst.Focus);
-        btnUnFocus = new JButton(BarDlgConst.UnFocus);
-        btnAdd = new JButton(BarDlgConst.Add);
+        btnFocus = new JButton(BarFrame.consts.Focus);
+        btnUnFocus = new JButton(BarFrame.consts.UnFocus);
+        btnAdd = new JButton(BarFrame.consts.Add);
         btnDelete = new JButton(DlgConst.DELETE);
 
         // properties
@@ -445,25 +444,25 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         tblContent.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
     }
 
-    private String[] header = new String[] { BarDlgConst.NickName, // "昵称"
-            BarDlgConst.Name, // "显示为"
-            BarDlgConst.Sex, // "性别";
-            BarDlgConst.JobTitle, // "职位"
-            BarDlgConst.Cellphone, // "手机"
-            BarDlgConst.PhoneNum, // "宅电"
-            BarDlgConst.HomeAddress,// "家庭住址";
-            BarDlgConst.QQ, // "即时通讯号码"
-            BarDlgConst.MailAddress,// "电子邮件地址"
-            BarDlgConst.MainPage,// "主页";
-            BarDlgConst.Type,// 类别
-            BarDlgConst.JoinTime,// "进单位时间";
-            BarDlgConst.Salary,// "工资";
-            BarDlgConst.INSURANCE,// "保险";
-            BarDlgConst.SSCNUMBER,// "社保号码";
-            BarDlgConst.IDCARD,// "身份证";
-            BarDlgConst.BIRTHDAY,// "生日";
-            BarDlgConst.BANKNUMBER,// "银行卡号";
-            BarDlgConst.Note, ContactDefaultViews.TEXTS[0] }; // "备注"
+    private String[] header = new String[] { BarFrame.consts.NickName, // "昵称"
+            BarFrame.consts.Name, // "显示为"
+            BarFrame.consts.Sex, // "性别";
+            BarFrame.consts.JobTitle, // "职位"
+            BarFrame.consts.Cellphone, // "手机"
+            BarFrame.consts.PhoneNum, // "宅电"
+            BarFrame.consts.HomeAddress,// "家庭住址";
+            BarFrame.consts.QQ, // "即时通讯号码"
+            BarFrame.consts.MailAddress,// "电子邮件地址"
+            BarFrame.consts.MainPage,// "主页";
+            BarFrame.consts.Type,// 类别
+            BarFrame.consts.JoinTime,// "进单位时间";
+            BarFrame.consts.Salary,// "工资";
+            BarFrame.consts.INSURANCE,// "保险";
+            BarFrame.consts.SSCNUMBER,// "社保号码";
+            BarFrame.consts.IDCARD,// "身份证";
+            BarFrame.consts.BIRTHDAY,// "生日";
+            BarFrame.consts.BANKNUMBER,// "银行卡号";
+            BarFrame.consts.Note, ContactDefaultViews.TEXTS[0] }; // "备注"
 
     PIMTable tblContent;
     PIMScrollPane srpContent;

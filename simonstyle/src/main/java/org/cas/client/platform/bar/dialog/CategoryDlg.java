@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -17,7 +16,6 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -158,7 +156,7 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
             if (isCategoryNameModified(0)) {
                 for (int i = 0; i < menuPanel.dishNameMetrix[0].length; i++) {
                     if (i != dspIndex - 1 && text.equalsIgnoreCase(menuPanel.dishNameMetrix[0][i])) {
-                        JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
+                        JOptionPane.showMessageDialog(this, BarFrame.consts.DuplicatedInput);
                         general.tfdCategoryNames[0].grabFocus();
                         return;
                     }
@@ -170,7 +168,7 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
                 if (text != null && !"".equals(text))//language2 is allowed to be empty.
                     for (int i = 0; i < menuPanel.dishNameMetrix[1].length; i++) {
                         if (i != dspIndex - 1 && text.equalsIgnoreCase(menuPanel.dishNameMetrix[1][i])) {
-                            JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
+                            JOptionPane.showMessageDialog(this, BarFrame.consts.DuplicatedInput);
                             general.tfdCategoryNames[1].grabFocus();
                             return;
                         }
@@ -182,7 +180,7 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
                 if (text != null && !"".equals(text))//language3 is allowed to be empty.
                     for (int i = 0; i < menuPanel.dishNameMetrix[2].length; i++) {
                         if (i != dspIndex - 1 && text.equalsIgnoreCase(menuPanel.dishNameMetrix[2][i])) {
-                            JOptionPane.showMessageDialog(this, BarDlgConst.DuplicatedInput);
+                            JOptionPane.showMessageDialog(this, BarFrame.consts.DuplicatedInput);
                             general.tfdCategoryNames[2].grabFocus();
                             return;
                         }
@@ -338,10 +336,10 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
 
         private void initConponent() {
         	lblCategoryNames =  new JLabel[3];
-            lblCategoryNames[0] = new JLabel(BarDlgConst.Language1);
-            lblCategoryNames[1] = new JLabel(BarDlgConst.Language2);
-            lblCategoryNames[2] = new JLabel(BarDlgConst.Language3);
-            lblPosition = new JLabel(BarDlgConst.DSPINDEX);
+            lblCategoryNames[0] = new JLabel(BarFrame.consts.Language1);
+            lblCategoryNames[1] = new JLabel(BarFrame.consts.Language2);
+            lblCategoryNames[2] = new JLabel(BarFrame.consts.Language3);
+            lblPosition = new JLabel(BarFrame.consts.DSPINDEX);
 
             tfdCategoryNames = new JTextField[3];
             tfdCategoryNames[0] = new JTextField();

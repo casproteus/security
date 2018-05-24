@@ -1,87 +1,32 @@
 package org.cas.client.platform.bar.dialog;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.Socket;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.Enumeration;
-import java.util.EventListener;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.comm.CommPortIdentifier;
 import javax.comm.ParallelPort;
 import javax.comm.PortInUseException;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
-import org.cas.client.platform.bar.beans.ArrayButton;
-import org.cas.client.platform.bar.beans.CategoryToggleButton;
-import org.cas.client.platform.bar.beans.MenuButton;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
-import org.cas.client.platform.bar.model.Dish;
-import org.cas.client.platform.bar.model.Mark;
-import org.cas.client.platform.bar.model.Printer;
-import org.cas.client.platform.bar.model.User;
-import org.cas.client.platform.bar.model.Category;
-import org.cas.client.platform.bar.print.Command;
-import org.cas.client.platform.bar.print.WifiPrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
-import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.PIMPool;
-import org.cas.client.platform.contact.dialog.selectcontacts.SelectedNewMemberDlg;
-import org.cas.client.platform.pimmodel.PIMDBModel;
-import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
-import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
-import org.cas.client.platform.pimview.pimtable.PIMTable;
-import org.cas.client.platform.pimview.pimtable.PIMTableColumn;
-import org.cas.client.platform.pimview.pimtable.PIMTableRenderAgent;
-import org.cas.client.platform.pos.dialog.statistics.Statistic;
-import org.cas.client.platform.refund.dialog.RefundDlg;
-import org.cas.client.resource.international.DlgConst;
 import org.cas.client.resource.international.PaneConsts;
 
 //Identity表应该和Employ表合并。
@@ -141,11 +86,11 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     		try {
     			num = Integer.valueOf(tfdBillPageRow.getText());
     		}catch(Exception exp) {
-    			JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.InvalidInput);
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput);
 				return;
     		}
     		if(num < 1 || num > 2) {
-    			JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.InvalidInput);
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput);
 				return;
     		}
     		BarOption.setBillPageRow(tfdBillPageRow.getText());
@@ -154,11 +99,11 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     		try {
     			num = Integer.valueOf(tfdBillPageCol.getText());
     		}catch(Exception exp) {
-    			JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.InvalidInput);
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput);
 				return;
     		}
     		if(num < 1 || num > 16) {
-    			JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.InvalidInput);
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput);
 				return;
     		}
     		BarOption.setBillPageCol(tfdBillPageCol.getText());
@@ -184,7 +129,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 	    		}
 	    		BarOption.setStartTime(tfdStartTimeOfDay.getText());
     		}catch(Exception exp) {
-    			JOptionPane.showMessageDialog(this, BarDlgConst.InvalidInput);
+    			JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput);
     			tfdStartTimeOfDay.grabFocus();
     		}
     	}
@@ -279,7 +224,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         new LoginDlg(null).setVisible(true);
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
             if ("System".equalsIgnoreCase(LoginDlg.USERNAME)) {
-                BarFrame.setStatusMes(BarDlgConst.ADMIN_MODE);
+                BarFrame.setStatusMes(BarFrame.consts.ADMIN_MODE);
                 // @TODO: might need to do some modification on the interface.
                 revalidate();
                 return true;
@@ -324,20 +269,20 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     }
 	
     private void initComponent() {
-        lblBillPageRow = new JLabel(BarDlgConst.BillPageRow);
+        lblBillPageRow = new JLabel(BarFrame.consts.BillPageRow);
         tfdBillPageRow = new JTextField(String.valueOf(BarOption.getBillPageRow()));
-        lblBillPageCol = new JLabel(BarDlgConst.BillPageCol);
+        lblBillPageCol = new JLabel(BarFrame.consts.BillPageCol);
         tfdBillPageCol = new JTextField(String.valueOf(BarOption.getBillPageCol()));
-        cbxIsSingleUser = new JCheckBox(BarDlgConst.IsSingleUser);
-        cbxIsDiscBeforeTax = new JCheckBox(BarDlgConst.IsDiscBeforeTax);
-//        cbxIsPrintBillWhenPay = new JCheckBox(BarDlgConst.IsPrintBillWhenPay);
-        lblStartTimeOfDay = new JLabel(BarDlgConst.StartTimeOfDay);
+        cbxIsSingleUser = new JCheckBox(BarFrame.consts.IsSingleUser);
+        cbxIsDiscBeforeTax = new JCheckBox(BarFrame.consts.IsDiscBeforeTax);
+//        cbxIsPrintBillWhenPay = new JCheckBox(BarFrame.consts.IsPrintBillWhenPay);
+        lblStartTimeOfDay = new JLabel(BarFrame.consts.StartTimeOfDay);
         tfdStartTimeOfDay = new JTextField(String.valueOf(BarOption.getStartTime()));
         
-        btnLine_2_1 = new JButton(BarDlgConst.RETURN);
-        btnLine_2_2 = new JButton(BarDlgConst.TABLE);
-        btnLine_2_3 = new JButton(BarDlgConst.PRINTER);
-        btnLine_2_4 = new JButton(BarDlgConst.CheckInOut);
+        btnLine_2_1 = new JButton(BarFrame.consts.RETURN);
+        btnLine_2_2 = new JButton(BarFrame.consts.TABLE);
+        btnLine_2_3 = new JButton(BarFrame.consts.PRINTER);
+        btnLine_2_4 = new JButton(BarFrame.consts.CheckInOut);
        
         btnLine_2_5 = new JButton("");
         btnLine_2_6 = new JButton("");

@@ -21,7 +21,6 @@ import javax.swing.SwingUtilities;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
-import org.cas.client.platform.cascustomize.CustOptsConsts;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.resource.international.DlgConst;
 
@@ -303,14 +302,14 @@ public class ChangeRateDlg extends JDialog implements ICASDialog, ActionListener
             ActionEvent e) {
         Object o = e.getSource();
         if (o == ok) {// 更新新的汇率进入ini文件。
-            CustOpts.custOps.setKeyAndValue(BarDlgConst.MoneyUnit[1], tfdLeft0.getText());
-            CustOpts.custOps.setKeyAndValue(BarDlgConst.MoneyUnit[2], tfdLeft1.getText());
-            CustOpts.custOps.setKeyAndValue(BarDlgConst.MoneyUnit[3], tfdLeft2.getText());
-            CustOpts.custOps.setKeyAndValue(BarDlgConst.MoneyUnit[4], tfdLeft3.getText());
-            CustOpts.custOps.setKeyAndValue(BarDlgConst.MoneyUnit[5], tfdLeft4.getText());
-            CustOpts.custOps.setKeyAndValue(BarDlgConst.MoneyUnit[6], tfdLeft5.getText());
-            CustOpts.custOps.setKeyAndValue(BarDlgConst.MoneyUnit[7], tfdLeft6.getText());
-            CustOpts.custOps.setKeyAndValue(BarDlgConst.MoneyUnit[8], tfdLeft7.getText());
+            CustOpts.custOps.setKeyAndValue(BarFrame.consts.MoneyUnit[1], tfdLeft0.getText());
+            CustOpts.custOps.setKeyAndValue(BarFrame.consts.MoneyUnit[2], tfdLeft1.getText());
+            CustOpts.custOps.setKeyAndValue(BarFrame.consts.MoneyUnit[3], tfdLeft2.getText());
+            CustOpts.custOps.setKeyAndValue(BarFrame.consts.MoneyUnit[4], tfdLeft3.getText());
+            CustOpts.custOps.setKeyAndValue(BarFrame.consts.MoneyUnit[5], tfdLeft4.getText());
+            CustOpts.custOps.setKeyAndValue(BarFrame.consts.MoneyUnit[6], tfdLeft5.getText());
+            CustOpts.custOps.setKeyAndValue(BarFrame.consts.MoneyUnit[7], tfdLeft6.getText());
+            CustOpts.custOps.setKeyAndValue(BarFrame.consts.MoneyUnit[8], tfdLeft7.getText());
             dispose();
             setVisible(false);
         } else if (o == cancel) {
@@ -324,55 +323,55 @@ public class ChangeRateDlg extends JDialog implements ICASDialog, ActionListener
     }
 
     private void initDialog() {
-        setTitle(BarDlgConst.MRate);
+        setTitle(BarFrame.consts.MRate);
         setResizable(false);
         setBounds((CustOpts.SCRWIDTH - 380) / 2, (CustOpts.SCRHEIGHT - 300) / 2, 380, 300); // 对话框的默认尺寸。
 
         // 初始化－－－－－－－－－－－－－－－－
-        lblLeftUnit0 = new JLabel("1".concat(BarDlgConst.Unit).concat(" = "));
-        lblLeftUnit1 = new JLabel("1".concat(BarDlgConst.Unit).concat(" = "));
-        lblLeftUnit2 = new JLabel("1".concat(BarDlgConst.Unit).concat(" = "));
-        lblLeftUnit3 = new JLabel("1".concat(BarDlgConst.Unit).concat(" = "));
-        lblLeftUnit4 = new JLabel("1".concat(BarDlgConst.Unit).concat(" = "));
-        lblLeftUnit5 = new JLabel("1".concat(BarDlgConst.Unit).concat(" = "));
-        lblLeftUnit6 = new JLabel("1".concat(BarDlgConst.Unit).concat(" = "));
-        lblLeftUnit7 = new JLabel("1".concat(BarDlgConst.Unit).concat(" = "));
+        lblLeftUnit0 = new JLabel("1".concat(BarFrame.consts.Unit).concat(" = "));
+        lblLeftUnit1 = new JLabel("1".concat(BarFrame.consts.Unit).concat(" = "));
+        lblLeftUnit2 = new JLabel("1".concat(BarFrame.consts.Unit).concat(" = "));
+        lblLeftUnit3 = new JLabel("1".concat(BarFrame.consts.Unit).concat(" = "));
+        lblLeftUnit4 = new JLabel("1".concat(BarFrame.consts.Unit).concat(" = "));
+        lblLeftUnit5 = new JLabel("1".concat(BarFrame.consts.Unit).concat(" = "));
+        lblLeftUnit6 = new JLabel("1".concat(BarFrame.consts.Unit).concat(" = "));
+        lblLeftUnit7 = new JLabel("1".concat(BarFrame.consts.Unit).concat(" = "));
 
-        lblRightUnit0 = new JLabel(BarDlgConst.Unit);
-        lblRightUnit1 = new JLabel(BarDlgConst.Unit);
-        lblRightUnit2 = new JLabel(BarDlgConst.Unit);
-        lblRightUnit3 = new JLabel(BarDlgConst.Unit);
-        lblRightUnit4 = new JLabel(BarDlgConst.Unit);
-        lblRightUnit5 = new JLabel(BarDlgConst.Unit);
-        lblRightUnit6 = new JLabel(BarDlgConst.Unit);
-        lblRightUnit7 = new JLabel(BarDlgConst.Unit);
+        lblRightUnit0 = new JLabel(BarFrame.consts.Unit);
+        lblRightUnit1 = new JLabel(BarFrame.consts.Unit);
+        lblRightUnit2 = new JLabel(BarFrame.consts.Unit);
+        lblRightUnit3 = new JLabel(BarFrame.consts.Unit);
+        lblRightUnit4 = new JLabel(BarFrame.consts.Unit);
+        lblRightUnit5 = new JLabel(BarFrame.consts.Unit);
+        lblRightUnit6 = new JLabel(BarFrame.consts.Unit);
+        lblRightUnit7 = new JLabel(BarFrame.consts.Unit);
 
-        lblForeignLeft0 = new JLabel(BarDlgConst.MoneyUnit[1]);
-        lblForeignLeft1 = new JLabel(BarDlgConst.MoneyUnit[2]);
-        lblForeignLeft2 = new JLabel(BarDlgConst.MoneyUnit[3]);
-        lblForeignLeft3 = new JLabel(BarDlgConst.MoneyUnit[4]);
-        lblForeignLeft4 = new JLabel(BarDlgConst.MoneyUnit[5]);
-        lblForeignLeft5 = new JLabel(BarDlgConst.MoneyUnit[6]);
-        lblForeignLeft6 = new JLabel(BarDlgConst.MoneyUnit[7]);
-        lblForeignLeft7 = new JLabel(BarDlgConst.MoneyUnit[8]);
+        lblForeignLeft0 = new JLabel(BarFrame.consts.MoneyUnit[1]);
+        lblForeignLeft1 = new JLabel(BarFrame.consts.MoneyUnit[2]);
+        lblForeignLeft2 = new JLabel(BarFrame.consts.MoneyUnit[3]);
+        lblForeignLeft3 = new JLabel(BarFrame.consts.MoneyUnit[4]);
+        lblForeignLeft4 = new JLabel(BarFrame.consts.MoneyUnit[5]);
+        lblForeignLeft5 = new JLabel(BarFrame.consts.MoneyUnit[6]);
+        lblForeignLeft6 = new JLabel(BarFrame.consts.MoneyUnit[7]);
+        lblForeignLeft7 = new JLabel(BarFrame.consts.MoneyUnit[8]);
 
-        lblForeignRight0 = new JLabel("1".concat(BarDlgConst.MoneyUnit[1]).concat(" = "));
-        lblForeignRight1 = new JLabel("1".concat(BarDlgConst.MoneyUnit[2]).concat(" = "));
-        lblForeignRight2 = new JLabel("1".concat(BarDlgConst.MoneyUnit[3]).concat(" = "));
-        lblForeignRight3 = new JLabel("1".concat(BarDlgConst.MoneyUnit[4]).concat(" = "));
-        lblForeignRight4 = new JLabel("1".concat(BarDlgConst.MoneyUnit[5]).concat(" = "));
-        lblForeignRight5 = new JLabel("1".concat(BarDlgConst.MoneyUnit[6]).concat(" = "));
-        lblForeignRight6 = new JLabel("1".concat(BarDlgConst.MoneyUnit[7]).concat(" = "));
-        lblForeignRight7 = new JLabel("1".concat(BarDlgConst.MoneyUnit[8]).concat(" = "));
+        lblForeignRight0 = new JLabel("1".concat(BarFrame.consts.MoneyUnit[1]).concat(" = "));
+        lblForeignRight1 = new JLabel("1".concat(BarFrame.consts.MoneyUnit[2]).concat(" = "));
+        lblForeignRight2 = new JLabel("1".concat(BarFrame.consts.MoneyUnit[3]).concat(" = "));
+        lblForeignRight3 = new JLabel("1".concat(BarFrame.consts.MoneyUnit[4]).concat(" = "));
+        lblForeignRight4 = new JLabel("1".concat(BarFrame.consts.MoneyUnit[5]).concat(" = "));
+        lblForeignRight5 = new JLabel("1".concat(BarFrame.consts.MoneyUnit[6]).concat(" = "));
+        lblForeignRight6 = new JLabel("1".concat(BarFrame.consts.MoneyUnit[7]).concat(" = "));
+        lblForeignRight7 = new JLabel("1".concat(BarFrame.consts.MoneyUnit[8]).concat(" = "));
 
-        tfdLeft0 = new JTextField((String) CustOpts.custOps.getValue(BarDlgConst.MoneyUnit[1]));
-        tfdLeft1 = new JTextField((String) CustOpts.custOps.getValue(BarDlgConst.MoneyUnit[2]));
-        tfdLeft2 = new JTextField((String) CustOpts.custOps.getValue(BarDlgConst.MoneyUnit[3]));
-        tfdLeft3 = new JTextField((String) CustOpts.custOps.getValue(BarDlgConst.MoneyUnit[4]));
-        tfdLeft4 = new JTextField((String) CustOpts.custOps.getValue(BarDlgConst.MoneyUnit[5]));
-        tfdLeft5 = new JTextField((String) CustOpts.custOps.getValue(BarDlgConst.MoneyUnit[6]));
-        tfdLeft6 = new JTextField((String) CustOpts.custOps.getValue(BarDlgConst.MoneyUnit[7]));
-        tfdLeft7 = new JTextField((String) CustOpts.custOps.getValue(BarDlgConst.MoneyUnit[8]));
+        tfdLeft0 = new JTextField((String) CustOpts.custOps.getValue(BarFrame.consts.MoneyUnit[1]));
+        tfdLeft1 = new JTextField((String) CustOpts.custOps.getValue(BarFrame.consts.MoneyUnit[2]));
+        tfdLeft2 = new JTextField((String) CustOpts.custOps.getValue(BarFrame.consts.MoneyUnit[3]));
+        tfdLeft3 = new JTextField((String) CustOpts.custOps.getValue(BarFrame.consts.MoneyUnit[4]));
+        tfdLeft4 = new JTextField((String) CustOpts.custOps.getValue(BarFrame.consts.MoneyUnit[5]));
+        tfdLeft5 = new JTextField((String) CustOpts.custOps.getValue(BarFrame.consts.MoneyUnit[6]));
+        tfdLeft6 = new JTextField((String) CustOpts.custOps.getValue(BarFrame.consts.MoneyUnit[7]));
+        tfdLeft7 = new JTextField((String) CustOpts.custOps.getValue(BarFrame.consts.MoneyUnit[8]));
 
         tfdRight0 = new JTextField(String.valueOf(1 / Float.parseFloat(tfdLeft0.getText())));
         tfdRight1 = new JTextField(String.valueOf(1 / Float.parseFloat(tfdLeft1.getText())));

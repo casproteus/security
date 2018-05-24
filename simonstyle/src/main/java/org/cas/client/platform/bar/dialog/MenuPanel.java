@@ -3,9 +3,6 @@ package org.cas.client.platform.bar.dialog;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -307,7 +304,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 
         int categeryBtnWidth = (getWidth() - CustOpts.HOR_GAP * (categoryColumn - 1)) / categoryColumn;
         if(btnPageDownCategory.isVisible() || btnPageUpCategory.isVisible()) {
-        	categeryBtnWidth = (getWidth() - CustOpts.HOR_GAP * categoryColumn - BarDlgConst.SCROLLBAR_WIDTH) / categoryColumn;
+        	categeryBtnWidth = (getWidth() - CustOpts.HOR_GAP * categoryColumn - BarFrame.consts.SCROLLBAR_WIDTH) / categoryColumn;
         }
         int categeryBtnHeight =
                 (int) ((getHeight() * categoryHeight - CustOpts.VER_GAP * (categoryRow - 1)) / categoryRow);
@@ -319,17 +316,17 @@ public class MenuPanel extends JPanel implements ActionListener {
                         (categeryBtnHeight + CustOpts.VER_GAP) * r, categeryBtnWidth, categeryBtnHeight);
             }
         }
-        btnPageUpCategory.setBounds(getWidth(), 0, BarDlgConst.SCROLLBAR_WIDTH,
-                BarDlgConst.SCROLLBAR_WIDTH * 2);
+        btnPageUpCategory.setBounds(getWidth(), 0, BarFrame.consts.SCROLLBAR_WIDTH,
+                BarFrame.consts.SCROLLBAR_WIDTH * 2);
         btnPageDownCategory.setBounds(btnPageUpCategory.getX(),
                 btnPageUpCategory.getY() + btnPageUpCategory.getHeight() + CustOpts.VER_GAP,
-                BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
+                BarFrame.consts.SCROLLBAR_WIDTH, BarFrame.consts.SCROLLBAR_WIDTH * 2);
 
         // menu area--------------
         int menuY = (categeryBtnHeight + CustOpts.VER_GAP) * categoryRow + CustOpts.VER_GAP;
         int menuBtnWidth = (getWidth() - CustOpts.HOR_GAP * (menuColumn - 1)) / menuColumn;
         if(btnPageUpMenu.isVisible() || btnPageDownMenu.isVisible()) {
-        	menuBtnWidth = (getWidth() - CustOpts.HOR_GAP * menuColumn - BarDlgConst.SCROLLBAR_WIDTH) / menuColumn;
+        	menuBtnWidth = (getWidth() - CustOpts.HOR_GAP * menuColumn - BarFrame.consts.SCROLLBAR_WIDTH) / menuColumn;
         }
         int menuBtnHeight = (int) ((getHeight() * (1 - categoryHeight) - CustOpts.VER_GAP * (menuRow + 1)) / menuRow);
         for (int r = 0; r < menuRow; r++) {
@@ -342,11 +339,11 @@ public class MenuPanel extends JPanel implements ActionListener {
             }
         }
         btnPageUpMenu.setBounds(btnPageUpCategory.getX(),
-        		getHeight() - BarDlgConst.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP,
-                BarDlgConst.SCROLLBAR_WIDTH,
-                BarDlgConst.SCROLLBAR_WIDTH * 2);
+        		getHeight() - BarFrame.consts.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP,
+                BarFrame.consts.SCROLLBAR_WIDTH,
+                BarFrame.consts.SCROLLBAR_WIDTH * 2);
         btnPageDownMenu.setBounds(btnPageUpMenu.getX(), btnPageUpMenu.getY() + btnPageUpMenu.getHeight()
-                + CustOpts.VER_GAP, BarDlgConst.SCROLLBAR_WIDTH, BarDlgConst.SCROLLBAR_WIDTH * 2);
+                + CustOpts.VER_GAP, BarFrame.consts.SCROLLBAR_WIDTH, BarFrame.consts.SCROLLBAR_WIDTH * 2);
 
     }
     
@@ -427,7 +424,7 @@ public class MenuPanel extends JPanel implements ActionListener {
             if (text == null || text.length() == 0) { // check if it's empty
                 if (LoginDlg.USERTYPE == LoginDlg.ADMIN_STATUS) { // and it's admin mode, add a Category.
                 	if(tgbActiveCategory == null || tgbActiveCategory.getText() == null || tgbActiveCategory.getText().length() < 1) {
-    					JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.SetCatogoryFirst);
+    					JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.SetCatogoryFirst);
     					return;
                 	}
                     new DishDlg(BarFrame.instance, menuButton.getDspIndex()).setVisible(true);

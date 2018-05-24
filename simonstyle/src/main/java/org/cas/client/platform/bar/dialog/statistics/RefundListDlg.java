@@ -12,7 +12,6 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.swing.JButton;

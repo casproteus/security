@@ -13,12 +13,11 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
-import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.pimmodel.PIMRecord;
-import org.cas.client.platform.bar.dialog.BarDlgConst;
 import org.cas.client.resource.international.DlgConst;
 
 public class MUserSwichDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener{
@@ -100,13 +99,13 @@ public class MUserSwichDlg extends JDialog implements ICASDialog, ActionListener
 	}
     
 	private void initDialog(){
-        setTitle(BarDlgConst.MUser);
+        setTitle(BarFrame.consts.MUser);
 		setResizable(false);
 		
 		//初始化－－－－－－－－－－－－－－－－
-		btnAddNewUser = new JButton(BarDlgConst.AddNewUser);
-		btnModiFyUser = new JButton(BarDlgConst.ModiFyUser);
-		btnDeleteUser = new JButton(BarDlgConst.DeleteUser);
+		btnAddNewUser = new JButton(BarFrame.consts.AddNewUser);
+		btnModiFyUser = new JButton(BarFrame.consts.ModiFyUser);
+		btnDeleteUser = new JButton(BarFrame.consts.DeleteUser);
 		cancel = new JButton(DlgConst.CANCEL);
 
 		//属性设置－－－－－－－－－－－－－－

@@ -14,7 +14,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -212,7 +211,7 @@ public class CheckStoreDlg extends JDialog implements ICASDialog, ActionListener
         } else if (o == btnFocus) {
             int[] tRowAry = tblContent.getSelectedRows();
             if (tRowAry.length < 2) {
-                JOptionPane.showMessageDialog(this, BarDlgConst.ValidateFucusAction);// 选中项目太少！请先用鼠标选中多条记录，然后点击聚焦选中按钮，重点对选中的记录进行观察。
+                JOptionPane.showMessageDialog(this, BarFrame.consts.ValidateFucusAction);// 选中项目太少！请先用鼠标选中多条记录，然后点击聚焦选中按钮，重点对选中的记录进行观察。
                 return;
             }
             Object[][] tValues = new Object[tRowAry.length][tblContent.getColumnCount()];
@@ -366,16 +365,16 @@ public class CheckStoreDlg extends JDialog implements ICASDialog, ActionListener
     }
 
     private void initDialog() {
-        setTitle(BarDlgConst.Check);
+        setTitle(BarFrame.consts.Check);
 
         // 初始化－－－－－－－－－－－－－－－－
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
         btnClose = new JButton(DlgConst.FINISH_BUTTON);
         btnDelete = new JButton(DlgConst.DELETE);
-        btnFocus = new JButton(BarDlgConst.Focus);
-        btnUnFocus = new JButton(BarDlgConst.UnFocus);
-        lblProdCode = new JLabel(BarDlgConst.ProdNumber);
+        btnFocus = new JButton(BarFrame.consts.Focus);
+        btnUnFocus = new JButton(BarFrame.consts.UnFocus);
+        lblProdCode = new JLabel(BarFrame.consts.ProdNumber);
         tfdProdCode = new JTextField();
         // properties
         btnClose.setMnemonic('O');

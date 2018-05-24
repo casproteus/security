@@ -1,49 +1,27 @@
 package org.cas.client.platform.bar.dialog;
 
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.File;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.Vector;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.plaf.metal.MetalComboBoxEditor;
 
 import org.cas.client.platform.bar.BarUtil;
-import org.cas.client.platform.casbeans.textpane.PIMTextPane;
-import org.cas.client.platform.cascontrol.dialog.ICASDialog;
-import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlgConst;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
-import org.cas.client.platform.pimmodel.PIMRecord;
-import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.resource.international.DlgConst;
 
 public class PayCashDlg extends JDialog implements ActionListener, ComponentListener, WindowListener{
@@ -66,28 +44,23 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
     	}else {
     		String curTitle = getTitle();
     		//calculate the received of diffent kind
-			switch (curTitle) {
-			case BarDlgConst.EnterCashPayment:
+			if(curTitle.equals(BarFrame.consts.EnterCashPayment)){
 				String cashReceived = String.valueOf(
 						(int)(Float.valueOf(valCashReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
 				sb.append("update bill set cashReceived = ").append(cashReceived).append(" where id = ").append(billId);
-				break;
-			case BarDlgConst.EnterDebitPayment:
+			} else if(curTitle.equals(BarFrame.consts.EnterDebitPayment)) {
 				String debitReceived = String.valueOf(
 						(int)(Float.valueOf(valDebitReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
 				sb.append("update bill set debitReceived = ").append(debitReceived).append(" where id = ").append(billId);
-				break;
-			case BarDlgConst.EnterVisaPayment:
+			} else if(curTitle.equals(BarFrame.consts.EnterVisaPayment)) {
 				String visaReceived = String.valueOf(
 						(int)(Float.valueOf(valVisaReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
 				sb.append("update bill set visaReceived = ").append(visaReceived).append(" where id = ").append(billId);
-				break;
-			case BarDlgConst.EnterMasterPayment:
+    		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment)) {
 				String masterReceived = String.valueOf(
 						(int)(Float.valueOf(valMasterReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
 				sb.append("update bill set masterReceived = ").append(masterReceived).append(" where id = ").append(billId);
-				break;
-			default:
+    		} else {
 				String otherReceived = String.valueOf(
 						(int)(Float.valueOf(valOtherReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
 				sb.append("update bill set otherReceived = ").append(otherReceived).append(" where id = ").append(billId);
@@ -121,16 +94,16 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
             float left = ((int)((total * 100 - cashReceived * 100 - debitReceived * 100 - visaReceived * 100 - masterReceived * 100 - otherReceived * 100))) / 100f;
             valLeft.setText(String.valueOf(left));
             
-//            if(BarDlgConst.EnterCashPayment.equals(getTitle())) {
+//            if(BarFrame.consts.EnterCashPayment.equals(getTitle())) {
 //                newReceived.setText(valCashReceived.getText());
 //                valCashReceived.setVisible(false);
-//            }else if(BarDlgConst.EnterDebitPayment.equals(getTitle())) {
+//            }else if(BarFrame.consts.EnterDebitPayment.equals(getTitle())) {
 //                newReceived.setText(valDebitReceived.getText());
 //                valDebitReceived.setVisible(false);
-//            }else if(BarDlgConst.EnterVisaPayment.equals(getTitle())) {
+//            }else if(BarFrame.consts.EnterVisaPayment.equals(getTitle())) {
 //                newReceived.setText(valVisaReceived.getText());
 //                valVisaReceived.setVisible(false);
-//            }else if(BarDlgConst.EnterMasterPayment.equals(getTitle())) {
+//            }else if(BarFrame.consts.EnterMasterPayment.equals(getTitle())) {
 //                newReceived.setText(valMasterReceived.getText());
 //                valMasterReceived.setVisible(false);
 //            }
@@ -228,23 +201,30 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         	//check if left moeny is 0. 
         	int left = (int)(Float.valueOf(valLeft.getText()) * 100);
         	if( left > 0) {
-	        	if(JOptionPane.showConfirmDialog(this, BarDlgConst.reCeivedMoneyNotEnough, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
+	        	if(JOptionPane.showConfirmDialog(this, BarFrame.consts.reCeivedMoneyNotEnough, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
 	    			return;
         	}else if(left < 0) {
             	this.setVisible(false);
         		new ChangeDlg(BarFrame.instance, BarOption.MoneySign + (0 - left)/100f).setVisible(true);
+            	updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId(), false);
         	}
         	
-        	updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId(), false);
         	resetContent();
         	this.setVisible(false);
         	
         	BarUtil.openMoneyBox();
+        	//let's qa decide if we should go back to table interface.
+        	if(left == 0) {
+        		BarFrame.instance.switchMode(0);
+        	}
+        	
         } else if(o == btnExact) {//update bill and display change 0.00;
         	updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId(), true);
         	resetContent();
         	this.setVisible(false);
         	BarUtil.openMoneyBox();
+        	BarFrame.instance.switchMode(0);
+        	
         } else {
 	        if(isAllContentSelected)
 	        	curContent = "";
@@ -349,22 +329,22 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 
         // 初始化－－－－－－－－－－－－－－－－
 
-        lblCashReceived = new JLabel(BarDlgConst.CASH + " : $");
+        lblCashReceived = new JLabel(BarFrame.consts.CASH + " : $");
         valCashReceived = new JLabel("");
-        lblDebitReceived = new JLabel(BarDlgConst.DEBIT + " : $");
+        lblDebitReceived = new JLabel(BarFrame.consts.DEBIT + " : $");
         valDebitReceived = new JLabel("");
-        lblVisaReceived = new JLabel(BarDlgConst.VISA + " : $");
+        lblVisaReceived = new JLabel(BarFrame.consts.VISA + " : $");
         valVisaReceived = new JLabel("");
-        lblMasterReceived = new JLabel(BarDlgConst.MASTER + " : $");
+        lblMasterReceived = new JLabel(BarFrame.consts.MASTER + " : $");
         valMasterReceived = new JLabel("");
-        lblOtherReceived = new JLabel(BarDlgConst.Other + " : $");
+        lblOtherReceived = new JLabel(BarFrame.consts.Other + " : $");
         valOtherReceived = new JLabel("");
         
         tfdNewReceived = new JTextField();
         
-        lblTotal = new JLabel(BarDlgConst.Total + " : $");
+        lblTotal = new JLabel(BarFrame.consts.Total + " : $");
         valTotal = new JLabel("");
-        lblLeft = new JLabel(BarDlgConst.Left + " : $");
+        lblLeft = new JLabel(BarFrame.consts.Left + " : $");
         valLeft = new JLabel("");
         
         ok = new JButton("✔");
@@ -376,7 +356,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         btn40 = new JButton("$40");
         btn50 = new JButton("$50");
         btn100 = new JButton("$100");
-        btnExact = new JButton(BarDlgConst.EXACT);
+        btnExact = new JButton(BarFrame.consts.EXACT);
         
         num1 = new JButton("1");
         num2 = new JButton("2");
@@ -553,7 +533,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 	@Override
 	public void windowClosing(WindowEvent e) {
 		if(tfdNewReceived.getText().length() > 0)
-			JOptionPane.showMessageDialog(this, BarDlgConst.UnSavedContentWillBeLost);
+			JOptionPane.showMessageDialog(this, BarFrame.consts.UnSavedContentWillBeLost);
 		
 		resetContent();
 	}

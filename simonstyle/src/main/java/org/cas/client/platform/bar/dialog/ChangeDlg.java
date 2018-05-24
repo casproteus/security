@@ -16,7 +16,7 @@ public class ChangeDlg extends JDialog implements ComponentListener, ActionListe
 	
 	public ChangeDlg(BarFrame parent, String change) {
 		super(parent);
-		setTitle(BarDlgConst.Change);
+		setTitle(BarFrame.consts.Change);
 		
 		sep = new JSeparator();
 		valChange = new JLabel(change);
@@ -45,6 +45,12 @@ public class ChangeDlg extends JDialog implements ComponentListener, ActionListe
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		this.dispose();
+		
+    	//if the bill amount is 1, cancel the selected status of the table.
+		if(SalesPanel.isLastBillOfCurTable()) {
+			SalesPanel.resetCurTableDBStatus();
+		}
+    	BarFrame.instance.switchMode(0);
 	}
 	
 	@Override

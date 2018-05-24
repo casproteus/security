@@ -1,7 +1,6 @@
 package org.cas.client.platform.bar.dialog;
 
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,22 +8,13 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Enumeration;
 
-import javax.comm.CommPortIdentifier;
-import javax.comm.ParallelPort;
-import javax.comm.PortInUseException;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -239,7 +229,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
             if ("System".equalsIgnoreCase(LoginDlg.USERNAME)) {
                 curSecurityStatus++;
-                BarFrame.setStatusMes(BarDlgConst.ADMIN_MODE);
+                BarFrame.setStatusMes(BarFrame.consts.ADMIN_MODE);
                 // @TODO: might need to do some modification on the interface.
                 revalidate();
                 return true;
@@ -249,14 +239,14 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     }
     
     private void initComponent() {
-        btnLine_2_1 = new JToggleButton(BarDlgConst.ChangeMode);
-        btnLine_2_2 = new JButton(BarDlgConst.AddTable);
-        btnLine_2_3 = new JButton(BarDlgConst.OrderManage);
-        btnLine_2_4 = new JButton(BarDlgConst.OpenDrawer);
-        btnLine_2_5 = new JButton(BarDlgConst.WaiterReport);
-        btnLine_2_6 = new JButton(BarDlgConst.SETTINGS);
-        btnLine_2_8 = new JButton(BarDlgConst.Report);
-        btnCheckInOut = new JButton(BarDlgConst.CheckInOut);
+        btnLine_2_1 = new JToggleButton(BarFrame.consts.ChangeMode);
+        btnLine_2_2 = new JButton(BarFrame.consts.AddTable);
+        btnLine_2_3 = new JButton(BarFrame.consts.OrderManage);
+        btnLine_2_4 = new JButton(BarFrame.consts.OpenDrawer);
+        btnLine_2_5 = new JButton(BarFrame.consts.WaiterReport);
+        btnLine_2_6 = new JButton(BarFrame.consts.SETTINGS);
+        btnLine_2_8 = new JButton(BarFrame.consts.Report);
+        btnCheckInOut = new JButton(BarFrame.consts.CheckInOut);
 
         // border----------
         setLayout(null);

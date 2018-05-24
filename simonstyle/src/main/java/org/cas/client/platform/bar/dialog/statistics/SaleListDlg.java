@@ -12,8 +12,6 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -24,23 +22,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.cas.client.platform.bar.dialog.BarDlgConst;
 import org.cas.client.platform.bar.dialog.BarFrame;
-import org.cas.client.platform.bar.dialog.BarOption;
-import org.cas.client.platform.bar.dialog.BillListPanel;
-import org.cas.client.platform.bar.dialog.BillPanel;
-import org.cas.client.platform.bar.dialog.SalesPanel;
-import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
-import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
@@ -48,8 +37,6 @@ import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.IPIMTableColumnModel;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
-import org.cas.client.platform.pos.dialog.PosDlgConst;
-import org.cas.client.resource.international.DlgConst;
 
 public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener, ListSelectionListener {
     /**
@@ -140,17 +127,17 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
                 btnWidth, tfdDayTo.getHeight() + lblDayTo.getHeight() + CustOpts.VER_GAP);
         
         IPIMTableColumnModel tTCM = tblContent.getColumnModel();
-        tTCM.getColumn(0).setPreferredWidth(130);	//BarDlgConst.TIME
-        tTCM.getColumn(1).setPreferredWidth(40);	//BarDlgConst.Table,
-        tTCM.getColumn(2).setPreferredWidth(40);	//BarDlgConst.Bill
-        tTCM.getColumn(3).setPreferredWidth(60);	//BarDlgConst.Total
-        tTCM.getColumn(4).setPreferredWidth(60);	//BarDlgConst.Discount
-        tTCM.getColumn(5).setPreferredWidth(60);	//BarDlgConst.Receive
-        tTCM.getColumn(6).setPreferredWidth(60);	//BarDlgConst.Tip
-        tTCM.getColumn(7).setPreferredWidth(60);	//BarDlgConst.CashBack
-        tTCM.getColumn(8).setPreferredWidth(60);	//BarDlgConst.Status
-        tTCM.getColumn(9).setPreferredWidth(60);	//BarDlgConst.Operator
-        tTCM.getColumn(10).setPreferredWidth(srpContent.getWidth() - 635);	//BarDlgConst.comment
+        tTCM.getColumn(0).setPreferredWidth(130);	//BarFrame.consts.TIME
+        tTCM.getColumn(1).setPreferredWidth(40);	//BarFrame.consts.Table,
+        tTCM.getColumn(2).setPreferredWidth(40);	//BarFrame.consts.Bill
+        tTCM.getColumn(3).setPreferredWidth(60);	//BarFrame.consts.Total
+        tTCM.getColumn(4).setPreferredWidth(60);	//BarFrame.consts.Discount
+        tTCM.getColumn(5).setPreferredWidth(60);	//BarFrame.consts.Receive
+        tTCM.getColumn(6).setPreferredWidth(60);	//BarFrame.consts.Tip
+        tTCM.getColumn(7).setPreferredWidth(60);	//BarFrame.consts.CashBack
+        tTCM.getColumn(8).setPreferredWidth(60);	//BarFrame.consts.Status
+        tTCM.getColumn(9).setPreferredWidth(60);	//BarFrame.consts.Operator
+        tTCM.getColumn(10).setPreferredWidth(srpContent.getWidth() - 635);	//BarFrame.consts.comment
         tTCM.getColumn(11).setPreferredWidth(0);	//table open time, invisible.
         validate();
     }
@@ -238,7 +225,7 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
     	int selectedRow = tblContent.getSelectedRow();
     	int tValidRowCount = getUsedRowCount();
     	if(selectedRow < 0 || selectedRow > tValidRowCount - 1) {
-    		JOptionPane.showMessageDialog(this, BarDlgConst.OnlyOneShouldBeSelected);
+    		JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected);
     		ErrorUtil.write("Unexpected row number when calling removeAtSelection : " + selectedRow);
     		return;
     	}
@@ -264,15 +251,15 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
     }
 
     private void initDialog() {
-        setTitle(BarDlgConst.SaleRecs);
+        setTitle(BarFrame.consts.SaleRecs);
         setModal(false);
 
         // 初始化－－－－－－－－－－－－－－－－
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
 
-        lblFrom = new JLabel(BarDlgConst.FROM);
-        lblTo = new JLabel(BarDlgConst.TO);
+        lblFrom = new JLabel(BarFrame.consts.FROM);
+        lblTo = new JLabel(BarFrame.consts.TO);
         lblYearFrom = new JLabel("YYYY");
         lblMonthFrom = new JLabel("MM");
         lblDayFrom = new JLabel("DD");
@@ -285,7 +272,7 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
         tfdYearTo = new JTextField();
         tfdMonthTo = new JTextField();
         tfdDayTo = new JTextField();
-        btnChangeDate = new JButton(BarDlgConst.APPLY);
+        btnChangeDate = new JButton(BarFrame.consts.APPLY);
         
         // properties
         btnChangeDate.setMnemonic('F');
@@ -450,18 +437,18 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
     }
 
     private String[] header = new String[] {
-    		BarDlgConst.TIME, // "时间"
-    		BarDlgConst.TABLE,
-    		BarDlgConst.Bill,
-    		BarDlgConst.Total,
-    		BarDlgConst.Discount,
-    		BarDlgConst.Receive,
-    		BarDlgConst.Tip,
-    		BarDlgConst.CashBack,
-    		BarDlgConst.Status,
-    		BarDlgConst.Operator, // "操作员"
-    		BarDlgConst.comment,
-    		BarDlgConst.OpenTime};
+    		BarFrame.consts.TIME, // "时间"
+    		BarFrame.consts.TABLE,
+    		BarFrame.consts.Bill,
+    		BarFrame.consts.Total,
+    		BarFrame.consts.Discount,
+    		BarFrame.consts.Receive,
+    		BarFrame.consts.Tip,
+    		BarFrame.consts.CashBack,
+    		BarFrame.consts.Status,
+    		BarFrame.consts.Operator, // "操作员"
+    		BarFrame.consts.comment,
+    		BarFrame.consts.OpenTime};
 
     int[] employIdAry;
     String[] employNameAry;

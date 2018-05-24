@@ -1,42 +1,21 @@
 package org.cas.client.platform.bar.dialog;
 
-import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.File;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.Vector;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
-import javax.swing.plaf.metal.MetalComboBoxEditor;
 
-import org.cas.client.platform.casbeans.textpane.PIMTextPane;
-import org.cas.client.platform.cascontrol.dialog.ICASDialog;
-import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlgConst;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
-import org.cas.client.platform.pimmodel.PIMDBModel;
-import org.cas.client.platform.pimmodel.PIMRecord;
-import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.resource.international.DlgConst;
 
 public class NumberPanelDlg extends JDialog implements ActionListener, ComponentListener{
@@ -194,14 +173,14 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 	}
 
     private void initDialog() {
-        setTitle(BarDlgConst.QTY);
+        setTitle(BarFrame.consts.QTY);
         setResizable(false);
         setModal(false);
         setAlwaysOnTop(true);
 
         // 初始化－－－－－－－－－－－－－－－－
         tfdQTY = new JTextField();
-        lblQTY = new JLabel(BarDlgConst.QTYNOTICE);
+        lblQTY = new JLabel(BarFrame.consts.QTYNOTICE);
         ok = new JButton("✔");
         back = new JButton("←");
         num1 = new JButton("1");

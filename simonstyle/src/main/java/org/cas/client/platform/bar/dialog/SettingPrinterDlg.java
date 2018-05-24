@@ -7,40 +7,23 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
-import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import org.cas.client.platform.bar.beans.CategoryToggleButton;
-import org.cas.client.platform.bar.beans.MenuButton;
-import org.cas.client.platform.bar.beans.TableButton;
-import org.cas.client.platform.bar.model.Dish;
-import org.cas.client.platform.casbeans.PIMSeparator;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
-import org.cas.client.platform.pimmodel.event.PIMModelEvent;
 import org.cas.client.resource.international.DlgConst;
-import org.cas.client.resource.international.OptionDlgConst;
-import org.hsqldb.lib.StringUtil;
 
 /**
  */
@@ -152,12 +135,12 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
 
     private void initDialog() {
     	setModal(true);
-        setTitle(BarDlgConst.PRINTER);
+        setTitle(BarFrame.consts.PRINTER);
         setResizable(false);
         // 初始化－－－－－－－－－－－－－－－－
-        lblName = new JLabel(BarDlgConst.Name);
-        lblIP = new JLabel(BarDlgConst.IPAddress);
-        lblCategory = new JLabel(BarDlgConst.Categary);
+        lblName = new JLabel(BarFrame.consts.Name);
+        lblIP = new JLabel(BarFrame.consts.IPAddress);
+        lblCategory = new JLabel(BarFrame.consts.Categary);
         tfdName = new JTextField[6];
         tfdIP = new JTextField[6];
         cmbCategory = new JComboBox[6];

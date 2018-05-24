@@ -9,7 +9,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.text.DecimalFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
@@ -19,8 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
-import org.cas.client.platform.bar.beans.TableButton;
-import org.cas.client.platform.bar.model.User;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -32,6 +29,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
 
     public static BarFrame instance;
+    public static BarDlgConst consts = new BarDlgConst();
     public int curPanel;
     public static NumberPanelDlg numberPanelDlg; 
     public static PayCashDlg payCashDlg;
@@ -67,8 +65,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
             System.exit(0);
         }
     }
+    
     public BarFrame() {
-        setTitle(BarDlgConst.Title);
+        setTitle(BarFrame.consts.Title);
         setIconImage(CustOpts.custOps.getFrameLogoImage()); // 设置主窗体的LOGO。
 
         setBounds(0, 0, CustOpts.SCRWIDTH, CustOpts.SCRHEIGHT - 30); // 对话框的默认尺寸。
@@ -78,18 +77,18 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         // 初始化－－－－－－－－－－－－－－－－
         int tShoestring = 0;
         try {
-            tShoestring = Integer.parseInt((String) CustOpts.custOps.getValue(BarDlgConst.Shoestring));
+            tShoestring = Integer.parseInt((String) CustOpts.custOps.getValue(BarFrame.consts.Shoestring));
         } catch (Exception exp) {
         }
         lblShoestring =
-                new JLabel(BarDlgConst.LeftMoney.concat(BarDlgConst.Colon)
-                        .concat(decimalFormat.format(tShoestring / 100.0)).concat(BarDlgConst.Unit));
+                new JLabel(BarFrame.consts.LeftMoney.concat(BarFrame.consts.Colon)
+                        .concat(decimalFormat.format(tShoestring / 100.0)).concat(BarFrame.consts.Unit));
         
-        lblOperator = new JLabel(BarDlgConst.Operator.concat(BarDlgConst.Colon));
+        lblOperator = new JLabel(BarFrame.consts.Operator.concat(BarFrame.consts.Colon));
         valOperator = new JLabel();
-        lblCurTable = new JLabel(BarDlgConst.TABLE.concat(BarDlgConst.Colon));
+        lblCurTable = new JLabel(BarFrame.consts.TABLE.concat(BarFrame.consts.Colon));
         valCurTable = new JLabel();
-        lblCurBill = new JLabel(BarDlgConst.Bill.concat(BarDlgConst.Colon));
+        lblCurBill = new JLabel(BarFrame.consts.Bill.concat(BarFrame.consts.Colon));
         valCurBill = new JLabel();
         
         lblShoestring = new JLabel();
@@ -180,7 +179,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 		valCurTable.setText("");
 		valCurBill.setText("");
 
-		lblStartTime.setText(BarDlgConst.OPENTIME.concat(BarDlgConst.Colon));
+		lblStartTime.setText(BarFrame.consts.OPENTIME.concat(BarFrame.consts.Colon));
 	}
     
     private boolean adminAuthentication() {
@@ -188,7 +187,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
             if ("admin".equalsIgnoreCase(LoginDlg.USERNAME)) {
             	valOperator.setText(LoginDlg.USERNAME);
-                BarFrame.setStatusMes(BarDlgConst.ADMIN_MODE);
+                BarFrame.setStatusMes(BarFrame.consts.ADMIN_MODE);
                 // @TODO: might need to do some modification on the interface.
                 revalidate();
                 return true;

@@ -7,29 +7,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import org.cas.client.platform.bar.beans.CategoryToggleButton;
-import org.cas.client.platform.bar.beans.MenuButton;
 import org.cas.client.platform.bar.beans.TableButton;
-import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.casbeans.PIMSeparator;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
@@ -37,10 +25,8 @@ import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
-import org.cas.client.platform.pimmodel.event.PIMModelEvent;
 import org.cas.client.resource.international.DlgConst;
 import org.cas.client.resource.international.OptionDlgConst;
-import org.hsqldb.lib.StringUtil;
 
 /**
  * 微软的TextField的长度限制是228（约）， 本类的限制因为没有规格约束，暂定为912（约） // ID I NTEGER IDENTITY PRIMARY KEY // DELETED BIT DEFAULT false //
@@ -263,11 +249,11 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
         setTitle(btnTable.getText());
         setResizable(false);
         // 初始化－－－－－－－－－－－－－－－－
-        sptName = new PIMSeparator(BarDlgConst.Name);
-        lblName = new JLabel(BarDlgConst.Name);
+        sptName = new PIMSeparator(BarFrame.consts.Name);
+        lblName = new JLabel(BarFrame.consts.Name);
         tfdName = new JTextField(btnTable.getText());
 
-        sptBounds = new PIMSeparator(BarDlgConst.Size);
+        sptBounds = new PIMSeparator(BarFrame.consts.Size);
         lblLocations = new JLabel[4];
         tfdLocations = new JTextField[4];
         lblLocations[0] = new JLabel("X");
@@ -280,7 +266,7 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
         tfdLocations[3] = new JTextField();
 
         sptType = new PIMSeparator(OptionDlgConst.OPTION_OTHER);
-        lblCategory = new JLabel(BarDlgConst.Categary);
+        lblCategory = new JLabel(BarFrame.consts.Categary);
         cmbCategory = new JComboBox<String>();
 
         ok = new JButton(DlgConst.OK);

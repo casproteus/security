@@ -5,37 +5,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 
-import javax.comm.CommPortIdentifier;
-import javax.comm.ParallelPort;
-import javax.comm.PortInUseException;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.beans.ArrayButton;
-import org.cas.client.platform.bar.beans.TableButton;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
-import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
-import org.cas.client.platform.pimview.pimtable.PIMTable;
-import org.jfree.chart.labels.CustomXYToolTipGenerator;
-
-import jpos.profile.IntegerPropType;
 
 public class BillListPanel extends  JPanel  implements ActionListener, ComponentListener{
 	static Dish curDish;
@@ -48,15 +33,15 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 
 	    btnLeft = new ArrayButton("<<");
 	    btnRight = new ArrayButton(">>");
-		btnAddUser = new JButton(BarDlgConst.AddUser);
-		btnPrintAll = new JButton(BarDlgConst.PrintAll);
+		btnAddUser = new JButton(BarFrame.consts.AddUser);
+		btnPrintAll = new JButton(BarFrame.consts.PrintAll);
 
-		btnEqualBill = new JToggleButton(BarDlgConst.EqualBill);
-		btnSplitItem = new JToggleButton(BarDlgConst.SplitItem);
-		btnCombineAll = new JButton(BarDlgConst.CombineAll);
+		btnEqualBill = new JToggleButton(BarFrame.consts.EqualBill);
+		btnSplitItem = new JToggleButton(BarFrame.consts.SplitItem);
+		btnCombineAll = new JButton(BarFrame.consts.CombineAll);
 		
-		btnCompleteAll = new JButton(BarDlgConst.CompleteAll);
-		btnReturn = new JButton(BarDlgConst.RETURN);
+		btnCompleteAll = new JButton(BarFrame.consts.CompleteAll);
+		btnReturn = new JButton(BarFrame.consts.RETURN);
 		
 		separator= new JSeparator();
 
@@ -248,7 +233,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			if(o == btnEqualBill) {
 				BillPanel panel = getCurBillPanel();
 				if(panel == null) {
-					JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.OnlyOneShouldBeSelected);
+					JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected);
 					btnEqualBill.setSelected(false);
 					return;
 				}
@@ -259,7 +244,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				if(NumberPanelDlg.confirmed) {
 					int num = Integer.valueOf(NumberPanelDlg.curContent);
 					if(num < 2) {
-						JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.InvalidInput);
+						JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput);
 						return;
 					}
 					//splet into num bills. each dish's number and price will be devide by "num".
@@ -273,7 +258,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				if(btnSplitItem.isSelected()) {//select
 					//Todo:check if there's one item selected.
 					if(curDish == null) {
-						JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.OnlyOneShouldBeSelected);
+						JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected);
 						btnSplitItem.setSelected(false);
 					}
 				}else {
@@ -289,7 +274,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 						}
 					}
 					if(panels.size() == 0) {
-						JOptionPane.showMessageDialog(BarFrame.instance, BarDlgConst.NoBillSeleted);
+						JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.NoBillSeleted);
 						return;
 					}
 					Dish.split(curDish, panels.size() + 1, null); // update the num and totalprice of curDish

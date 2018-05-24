@@ -1,9 +1,6 @@
 package org.cas.client.platform.bar.beans;
 
-import java.sql.Timestamp;
-
 import javax.swing.JButton;
-import javax.swing.JToggleButton;
 
 public class TableButton extends JButton {
     private int id;

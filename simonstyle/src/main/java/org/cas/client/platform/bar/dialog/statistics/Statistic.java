@@ -12,7 +12,6 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JSeparator;
 
 import org.cas.client.platform.casbeans.PIMSeparator;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
@@ -20,10 +19,7 @@ import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.platform.pos.dialog.CheckStoreDlg;
-import org.cas.client.platform.pos.dialog.MerchandiseDlg;
 import org.cas.client.platform.pos.dialog.PosDlgConst;
-import org.cas.client.platform.pos.dialog.modifyuser.DeleteUserDlg;
-import org.cas.client.platform.pos.dialog.modifyuser.ModifyUserDlg;
 import org.cas.client.resource.international.DlgConst;
 
 public class Statistic  extends JDialog implements ICASDialog, ActionListener, ComponentListener{

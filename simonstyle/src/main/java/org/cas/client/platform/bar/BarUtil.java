@@ -11,7 +11,6 @@ import javax.comm.ParallelPort;
 import javax.comm.PortInUseException;
 import javax.swing.JOptionPane;
 
-import org.cas.client.platform.bar.dialog.BarDlgConst;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.MerchandiseDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -110,7 +109,7 @@ public class BarUtil {
 
     // 返回Option中设置的，条码的位数。
     public static int getProdCodeLen() {
-        String tValue = (String) CustOpts.custOps.getValue(BarDlgConst.ProdCodeLength);
+        String tValue = (String) CustOpts.custOps.getValue(BarFrame.consts.ProdCodeLength);
         int tProdCodeLen = 100;
         try {
             tProdCodeLen = Integer.parseInt(tValue);

@@ -1,18 +1,13 @@
 package org.cas.client.platform.bar.dialog;
 
-import java.awt.Color;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import org.cas.client.platform.cascustomize.CustOpts;
 
@@ -21,7 +16,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 
     public MoreButtonsDlg(SalesPanel general) {
     	super();
-    	setTitle(BarDlgConst.MORE);
+    	setTitle(BarFrame.consts.MORE);
         barGeneralPanel = general;
         initPanel();
     }
@@ -89,15 +84,15 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 	
 	private void initPanel() {
 		// 初始化－－－－－－－－－－－－－－－－
-		btnLine_3_1 = new JButton(BarDlgConst.SEND);
-		btnLine_3_2 = new JButton(BarDlgConst.PAY);
-		btnLine_3_3 = new JButton(BarDlgConst.PRINT_BILL);
-		btnLine_3_4 = new JButton(BarDlgConst.QUICK_OPEN);
-		btnLine_3_5 = new JButton(BarDlgConst.VOID_ORDER);
-		btnLine_3_6 = new JButton(BarDlgConst.MODIFY);
-		//btnLine_3_7 = new JButton(BarDlgConst.DISC_VOLUMN);
-		//btnLine_3_8 = new JButton(BarDlgConst.LOGOUT);
-		//btnLine_3_9 = new JButton(BarDlgConst.MORE);
+		btnLine_3_1 = new JButton(BarFrame.consts.SEND);
+		btnLine_3_2 = new JButton(BarFrame.consts.PAY);
+		btnLine_3_3 = new JButton(BarFrame.consts.PRINT_BILL);
+		btnLine_3_4 = new JButton(BarFrame.consts.QUICK_OPEN);
+		btnLine_3_5 = new JButton(BarFrame.consts.VOID_ORDER);
+		btnLine_3_6 = new JButton(BarFrame.consts.MODIFY);
+		//btnLine_3_7 = new JButton(BarFrame.consts.DISC_VOLUMN);
+		//btnLine_3_8 = new JButton(BarFrame.consts.LOGOUT);
+		//btnLine_3_9 = new JButton(BarFrame.consts.MORE);
 
 		// 属性设置－－－－－－－－－－－－－－
 		btnLine_3_1.setMargin(new Insets(0, 0, 0, 0));

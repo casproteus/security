@@ -2,61 +2,31 @@ package org.cas.client.platform.bar.dialog;
 
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
-import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Vector;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import org.cas.client.platform.bar.beans.TableButton;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
-import org.cas.client.platform.cascontrol.menuaction.SaveContentsAction;
 import org.cas.client.platform.cascustomize.CustOpts;
-import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
-import org.cas.client.platform.casutil.PIMPool;
-import org.cas.client.platform.contact.ContactDefaultViews;
-import org.cas.client.platform.contact.dialog.ContactDlg;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
-import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
-import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
-import org.cas.client.platform.pimview.pimtable.PIMTable;
-import org.cas.client.platform.pimview.pimtable.PIMTableColumn;
-import org.cas.client.resource.international.DlgConst;
 
 public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, MouseListener{
 	
@@ -215,7 +185,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
     private void initDialog() {
         btnMore = new JButton("+");
         btnLess = new JButton("-");
-        btnModify = new JButton(BarDlgConst.MODIFY);
+        btnModify = new JButton(BarFrame.consts.MODIFY);
 
         // border----------
         setBounds(BarFrame.instance.getX(), BarFrame.instance.getY(), BarFrame.instance.getWidth(), BarFrame.instance.getHeight());

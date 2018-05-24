@@ -1,7 +1,6 @@
 package org.cas.client.platform.bar.dialog;
 
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +11,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -23,14 +21,11 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
-import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlgConst;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -50,7 +45,7 @@ public class MerchandiseDlg extends JDialog implements ICASDialog, ActionListene
      */
     public MerchandiseDlg(JFrame pParent, String pProdNumber) {
         super(pParent, true);
-        setTitle(BarDlgConst.AddProd);
+        setTitle(BarFrame.consts.AddProd);
         initDialog(pProdNumber);
 
         SwingUtilities.invokeLater(new Runnable() {
@@ -63,7 +58,7 @@ public class MerchandiseDlg extends JDialog implements ICASDialog, ActionListene
     public MerchandiseDlg(JFrame pParent, int pID, String pCode, int pPrice, String pMnemonic, String pSubject,
             int pStore, String pUnit, String pCategory, int pCost, String pContent) {
         super(pParent, true);
-        setTitle(BarDlgConst.ModifyMerchanInfo);
+        setTitle(BarFrame.consts.ModifyMerchanInfo);
         initDialog(pCode);
         prodID = pID;
         tfdPrice.setText(String.valueOf(pPrice / 100.00));
@@ -374,17 +369,17 @@ public class MerchandiseDlg extends JDialog implements ICASDialog, ActionListene
         ok = new JButton(DlgConst.OK);
         cancel = new JButton(DlgConst.CANCEL);
 
-        lblProdCode = new JLabel(BarDlgConst.ProdNumber);
-        lblPrice = new JLabel(BarDlgConst.Price);
-        lblUnit = new JLabel(BarDlgConst.Unit);
-        lblPinyin = new JLabel(BarDlgConst.Pinyin);
-        lblProdName = new JLabel(BarDlgConst.ProdName);
-        lblStorCount = new JLabel(BarDlgConst.Store);
-        lblPackage = new JLabel(BarDlgConst.Package);
-        lblType = new JLabel(BarDlgConst.Type);
-        lblCost = new JLabel(BarDlgConst.Cost);
-        lblUnit2 = new JLabel(BarDlgConst.Unit);
-        lblRemark = new JLabel(BarDlgConst.Note);
+        lblProdCode = new JLabel(BarFrame.consts.ProdNumber);
+        lblPrice = new JLabel(BarFrame.consts.Price);
+        lblUnit = new JLabel(BarFrame.consts.Unit);
+        lblPinyin = new JLabel(BarFrame.consts.Pinyin);
+        lblProdName = new JLabel(BarFrame.consts.ProdName);
+        lblStorCount = new JLabel(BarFrame.consts.Store);
+        lblPackage = new JLabel(BarFrame.consts.Package);
+        lblType = new JLabel(BarFrame.consts.Type);
+        lblCost = new JLabel(BarFrame.consts.Cost);
+        lblUnit2 = new JLabel(BarFrame.consts.Unit);
+        lblRemark = new JLabel(BarFrame.consts.Note);
 
         tfdProdCode = new JTextField((pProdNumber.equals("****") || pProdNumber.equals("××××")) ? "" : pProdNumber);
         tfdPrice = new JTextField();
