@@ -17,6 +17,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.plaf.metal.MetalComboBoxEditor;
 
+import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -68,6 +69,7 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
 
         // initContent@NOTE:本类中故意将内容初始化提前，因为需要将当前用户信息的对应的级别拿出来，并据此判断是否增加”级别“组件。
         initContent();
+        initContent2();
         reLayout();
         // built
         // add(lblUserName);
@@ -112,6 +114,59 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
         addComponentListener(this);
     }
 
+    private void initContent2() {
+    	String sql = "select ID, CATEGORY, SUBJECT, PASSWORD, CTOOL from Employee where DELETED = 0";
+        try {
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
+
+            rs.afterLast();
+            rs.relative(-1);
+            int tmpPos = rs.getRow();
+            int newLength = tmpPos + userIDAry.length;
+            int[] tUserIDAry = new int[newLength];
+            int[] tTypeAry = new int[newLength];
+            String[] tSubjectAry = new String[newLength];
+            String[] tPasswordAry = new String[newLength];
+            int[] tLangAry = new int[newLength];
+            
+            System.arraycopy(userIDAry, 0, tUserIDAry, 0, userIDAry.length);
+            System.arraycopy(typeAry, 0, tTypeAry, 0, userIDAry.length);
+            System.arraycopy(subjectAry, 0, tSubjectAry, 0, userIDAry.length);
+            System.arraycopy(passwordAry, 0, tPasswordAry, 0, userIDAry.length);
+            System.arraycopy(langAry, 0, tLangAry, 0, userIDAry.length);
+            
+            rs.beforeFirst();
+            tmpPos = userIDAry.length;
+            while (rs.next()) {
+            	tUserIDAry[tmpPos] = rs.getInt("id");
+            	tTypeAry[tmpPos] = "Manager".equalsIgnoreCase(rs.getString("CATEGORY")) ? 2 : 1;
+            	tSubjectAry[tmpPos] = rs.getString("SUBJECT");
+            	tPasswordAry[tmpPos] = rs.getString("PASSWORD");
+            	String lang = rs.getString("SUBJECT");
+            	if(BarFrame.consts.langs[0].equalsIgnoreCase(lang)) {
+            		tLangAry[tmpPos] = 0;
+            	}else if(BarFrame.consts.langs[1].equalsIgnoreCase(lang)) {
+            		tLangAry[tmpPos] = 1;
+            	}else if(BarFrame.consts.langs[2].equalsIgnoreCase(lang)) {
+            		tLangAry[tmpPos] = 2;
+            	}else if(BarFrame.consts.langs[3].equalsIgnoreCase(lang)) {
+            		tLangAry[tmpPos] = 3;
+            	}
+                tmpPos++;
+            }
+            
+            userIDAry = tUserIDAry;
+            typeAry = tTypeAry;
+            subjectAry = tSubjectAry;
+            passwordAry = tPasswordAry;
+            langAry = tLangAry;
+            
+            rs.close();// 关闭
+        } catch (SQLException e) {
+            ErrorUtil.write(e);
+        }
+    }
+    
     private void initContent() {
         String sql = "select ID, Type, UserName, PASSWORD, LANG from useridentity where ID > 5";
         try {

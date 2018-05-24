@@ -5,10 +5,10 @@ public class BarDlgConst {
     public final int SubTotal_HEIGHT = 50;
 
     public final String OK = "OK";
-    public final String CANCEL = "CANCEL";
+    public final String Cancel = "Cancel";
     public final String ChangeDate = "CHANGE DATE";
     public final String ViewDetail = "VIEW DETAIL";
-    public final String CLOSE = "CLOSE";
+    public final String Close = "Close";
     public final String Tip = "Tip";
     public final String ServiceFee = "Service Fee";
     public final String CashBack = "Cash Back";
@@ -156,7 +156,7 @@ public class BarDlgConst {
     public final String PHOTO = "Add Photo...";
     public final String LASTNAME = "Last Name";
     public final String FIRSTNAME = "First Name";
-    public final String DISPLAYAS = "Display as";
+    public final String DISPLAYAS = "language";
     public final String NICKNAME = "Nick Name";
     public final String JOB = "Title";// job
     public final String RELATION = "Relationship...";
@@ -169,22 +169,22 @@ public class BarDlgConst {
     public final String PHONE = "Home Phone";
     public final String MOBILE = "Cell";
     public final String EMAIL = "Email ";
-    public final String QQ1 = "IMS";
-    public final String QQ2 = "We Chat";
-    public final String QQ3 = "Whatsup";
-    public final String QQ4 = "GTalk ";
+    public final String lang1 = "EN";
+    public final String lang2 = "FR";
+    public final String lang3 = "CN";
+    public final String lang4 = "IT";
     public final String SSCN = "SSN";
     public final String SALARY = "Salary";
     public final String WEBPAGE = "Web Page";
-    public final String[] QQTYPE = new String[] { QQ1, QQ2, QQ3, QQ4 };
+    public final String[] langs = new String[] { lang1, lang2, lang3, lang4 };
     public final String[] ANNIVERSARYTYPE = new String[] { ANNIVERSARY1, ANNIVERSARY2 };
     
     public final String GENERAL = "EMPLOYEE CARD";
     public final String EmployeeInfo = "EMPLOYEES";
     public final String JobTitle = "Title";
     public final String NickName = "Nich Name";
-    public final String Cellphone = "Cell";
-    public final String PhoneNum = "Home";
+    public final String Cellphone = "Cell Phone";
+    public final String PhoneNum = "Home Phone";
     public final String HomeAddress = "Address";
     public final String MailAddress = "Email";
     public final String Account = "Account";

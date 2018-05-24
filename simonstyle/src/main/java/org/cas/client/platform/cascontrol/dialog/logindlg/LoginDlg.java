@@ -175,8 +175,6 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
             String sql = "select type from useridentity where ID < 6";
             try {
                 ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
-                ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
-
                 rs.afterLast();
                 rs.relative(-1);
                 int tmpPos = rs.getRow();
@@ -200,6 +198,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
             } catch (SQLException exp) {
                 ErrorUtil.write(exp);
             }
+            
             // 以下为密码不是超级密码的情况：
             for (int i = 0, len = general.subjectAry.length; i < len; i++) { // 遍历所有的用户名，
                 // if (general.subjectAry[i].equals(tUserName)) { // 找到用户名的匹配项，

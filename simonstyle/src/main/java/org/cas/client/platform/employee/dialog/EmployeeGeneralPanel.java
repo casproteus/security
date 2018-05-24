@@ -68,12 +68,12 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
     public void focusGained(
             FocusEvent e) {
         Object source = e.getSource();
-        if (source == cmbDisplayAs) {
+        if (source == cmbLanguage) {
             Vector tmpVec = new Vector();
             prepareCurrentFileAsVec(tmpVec);
             tmpVec.add(dlg.getValue(PIMPool.pool.getKey(3)));
             fileAsModel = new DefaultComboBoxModel(tmpVec);
-            cmbDisplayAs.setModel(fileAsModel);
+            cmbLanguage.setModel(fileAsModel);
         }
     }
 
@@ -172,10 +172,10 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
                 break;
             case 2:
                 swingInvoker = 0;
-                if (fileAsVec.size() > 0) {
-                    int tmpRealIndex = showedFileAsMap[CustOpts.custOps.getDisplayAsOrder()];
-                    cmbDisplayAs.setSelectedIndex(tmpRealIndex == -1 ? 0 : tmpRealIndex);
-                }
+//                if (fileAsVec.size() > 0) {
+//                    int tmpRealIndex = showedFileAsMap[CustOpts.custOps.getDisplayAsOrder()];
+//                    cmbLanguage.setSelectedIndex(tmpRealIndex == -1 ? 0 : tmpRealIndex);
+//                }
                 break;
             case 3:
                 swingInvoker = 0;
@@ -202,8 +202,8 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
             fldFirstName.removeFocusListener(this);
         if (fldNickName != null)
             fldNickName.removeFocusListener(this);
-        if (cmbDisplayAs != null)
-            cmbDisplayAs.removeFocusListener(this);
+        if (cmbLanguage != null)
+            cmbLanguage.removeFocusListener(this);
         if (cbxIsmFemale != null)
             cbxIsmFemale.removeActionListener(this);
         if (btnRelation != null)
@@ -227,7 +227,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         if ((!tmpValue1.equals(tmpValue2)) && !(tmpValue1.equals(CASUtility.EMPTYSTR) && tmpValue2 == null))
             return true;
         // filsAs--------------------------
-        tmpValue1 = ((JTextField) ((MetalComboBoxEditor) cmbDisplayAs.getEditor()).getEditorComponent()).getText();
+        tmpValue1 = ((JTextField) ((MetalComboBoxEditor) cmbLanguage.getEditor()).getEditorComponent()).getText();
         tmpValue2 = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.SUBJECT));
         if ((!tmpValue1.equals(tmpValue2)) && !(tmpValue1.equals(CASUtility.EMPTYSTR) && tmpValue2 == null))
             return true;
@@ -245,16 +245,6 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         tmpValue1 = fldEmail.getText();
         tmpValue2 = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.EMAIL));
         if ((!tmpValue1.equals(tmpValue2)) && !(tmpValue1.equals(CASUtility.EMPTYSTR) && tmpValue2 == null))
-            return true;
-        // QQ号码.----------------------------------
-        tmpValue1 = fldQQ.getText();
-        tmpValue2 = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.CNUMBER));
-        if ((!tmpValue1.equals(tmpValue2)) && !(tmpValue1.equals(CASUtility.EMPTYSTR) && tmpValue2 == null))
-            return true;
-        // QQ类型
-        tmpValue1 = lblQQ.getText();
-        tmpValue2 = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.CTYPE));
-        if (!tmpValue1.equals(tmpValue2) && tmpValue2 != null)
             return true;
         // web信息。---------------------------------
         tmpValue1 = fldWebPage.getText();
@@ -306,11 +296,6 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         // 保存移动电话信息-----------------------------------------
         tmpValue1 = fldMobile.getText();
         tmpValue2 = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.CPHONE));
-        if ((!tmpValue1.equals(tmpValue2)) && !(tmpValue1.equals(CASUtility.EMPTYSTR) && tmpValue2 == null))
-            return true;
-        // 保存身份证信息------------------------------------------
-        tmpValue1 = fldIDCard.getText();
-        tmpValue2 = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.IDCARD));
         if ((!tmpValue1.equals(tmpValue2)) && !(tmpValue1.equals(CASUtility.EMPTYSTR) && tmpValue2 == null))
             return true;
         // 保存银行帐号信息-----------------------------------------
@@ -373,16 +358,13 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         lblFirstName = new JLabel(BarFrame.consts.FIRSTNAME);
         fldFirstName = new JTextField();
         lblDisplayAs = new JLabel(BarFrame.consts.DISPLAYAS);
-        cmbDisplayAs = new JComboBox(); // @NOTE:初始化显示model中存的值，它在每次被点开时会用model中的值加上所有的可能组合作为ComboBox的Model。
+        cmbLanguage = new JComboBox(); // @NOTE:初始化显示model中存的值，它在每次被点开时会用model中的值加上所有的可能组合作为ComboBox的Model。
         lblNickname = new JLabel(BarFrame.consts.NICKNAME);
         fldNickName = new JTextField();
         lblTitle = new JLabel(BarFrame.consts.JOB);
         fldTitle = new JTextField();
         lblEmail = new JLabel(BarFrame.consts.EMAIL);
         fldEmail = new JTextField();
-        lblQQ = new JLabel(BarFrame.consts.QQ1);
-        arbQQType = new EmployeeArrowButton(this);
-        fldQQ = new JTextField();
         lblWebPage = new JLabel(BarFrame.consts.WEBPAGE);
         fldWebPage = new JTextField();
         areComment = new JTextArea();
@@ -405,8 +387,6 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         fldPhone = new JTextField();
         lblMobile = new JLabel(BarFrame.consts.MOBILE);
         fldMobile = new JTextField();
-        lblIDCard = new JLabel(BarFrame.consts.IDCARD);
-        fldIDCard = new JTextField();
         lblBankNumber = new JLabel(BarFrame.consts.BANKNUMBER);
         fldBankNumber = new JTextField();
         lblSSCNumber = new JLabel(BarFrame.consts.SSCN);
@@ -441,9 +421,9 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         lblFirstName.setLabelFor(fldFirstName);
         lblDisplayAs.setFont(CustOpts.custOps.getFontOfDefault());
         lblDisplayAs.setDisplayedMnemonic('f');
-        lblDisplayAs.setLabelFor(cmbDisplayAs);
-        cmbDisplayAs.setFont(CustOpts.custOps.getFontOfDefault());
-        cmbDisplayAs.setEditable(true);
+        lblDisplayAs.setLabelFor(cmbLanguage);
+        cmbLanguage.setFont(CustOpts.custOps.getFontOfDefault());
+        cmbLanguage.setEditable(true);
         lblNickname.setFont(CustOpts.custOps.getFontOfDefault());
         lblNickname.setDisplayedMnemonic('i');
         lblNickname.setLabelFor(fldNickName);
@@ -451,9 +431,6 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         lblTitle.setDisplayedMnemonic('j');
         lblTitle.setLabelFor(fldTitle);
         lblEmail.setFont(CustOpts.custOps.getFontOfDefault());
-        lblQQ.setFont(CustOpts.custOps.getFontOfDefault());
-        arbQQType.setItems(BarFrame.consts.QQTYPE);
-        arbQQType.setArrowButtonLabel(lblQQ);
         lblWebPage.setFont(CustOpts.custOps.getFontOfDefault());
         lblWebPage.setDisplayedMnemonic('a');
         lblWebPage.setLabelFor(fldWebPage);
@@ -487,7 +464,6 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         lblPhone.setLabelFor(fldPhone);
         fldPhone.setFont(CustOpts.custOps.getFontOfDefault());
         lblMobile.setFont(CustOpts.custOps.getFontOfDefault());
-        lblIDCard.setFont(CustOpts.custOps.getFontOfDefault());
         lblBankNumber.setFont(CustOpts.custOps.getFontOfDefault());
         lblPasswrod.setFont(CustOpts.custOps.getFontOfDefault());
         btnRelation.setFont(CustOpts.custOps.getFontOfDefault());
@@ -503,8 +479,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         fldFirstName.setNextFocusableComponent(fldNickName);
         fldNickName.setNextFocusableComponent(fldTitle);
         fldTitle.setNextFocusableComponent(fldEmail);
-        fldEmail.setNextFocusableComponent(fldQQ);
-        fldQQ.setNextFocusableComponent(fldWebPage);
+        fldEmail.setNextFocusableComponent(fldWebPage);
 
         fldWebPage.setNextFocusableComponent(areComment);
         areComment.setNextFocusableComponent(btnCategories);
@@ -516,8 +491,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         areAddress.setNextFocusableComponent(fldPhone);
 
         fldPhone.setNextFocusableComponent(fldMobile);
-        fldMobile.setNextFocusableComponent(fldIDCard);
-        fldIDCard.setNextFocusableComponent(fldBankNumber);
+        fldMobile.setNextFocusableComponent(fldBankNumber);
         fldBankNumber.setNextFocusableComponent(fldSSCNumber);
         fldSSCNumber.setNextFocusableComponent(fldSalary);
         fldSalary.setNextFocusableComponent(fldInsurance);
@@ -539,16 +513,13 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         panel.add(lblFirstName);
         panel.add(fldFirstName);
         panel.add(lblDisplayAs);
-        panel.add(cmbDisplayAs);
+        panel.add(cmbLanguage);
         panel.add(lblNickname);
         panel.add(fldNickName);
         panel.add(lblTitle);
         panel.add(fldTitle);
         panel.add(lblEmail);
         panel.add(fldEmail);
-        panel.add(arbQQType);
-        panel.add(lblQQ);
-        panel.add(fldQQ);
         panel.add(lblWebPage);
         panel.add(fldWebPage);
         panel.add(scrComment);
@@ -568,8 +539,6 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         panel.add(fldPhone);
         panel.add(lblMobile);
         panel.add(fldMobile);
-        panel.add(lblIDCard);
-        panel.add(fldIDCard);
         panel.add(lblBankNumber);
         panel.add(fldBankNumber);
         panel.add(lblSSCNumber);
@@ -590,7 +559,6 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         // 添加监听器======================================================================
         cbxIsmFemale.addActionListener(this);
         photo.addActionListener(this);
-        arbQQType.addMouseListener(this);
         btnCategories.addActionListener(this);
         arbAnniversary.addMouseListener(this);
         btnRelation.addActionListener(this);
@@ -600,7 +568,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         fldNickName.addFocusListener(this);
         fldTitle.addFocusListener(this);
         if (!dlg.newFlag)
-            cmbDisplayAs.addFocusListener(this);
+            cmbLanguage.addFocusListener(this);
         addMouseListener(this);
     }
 
@@ -634,18 +602,16 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         fldLastName.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.FNAME))); // personal field
         fldFirstName.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.NAME)));
         // FileAs
-        fileAsVec = new Vector();
-        fileAsVec.add(dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.SUBJECT)));
-        fileAsModel = new DefaultComboBoxModel(fileAsVec); // 给fileAsBox赋值
-        cmbDisplayAs.setModel(fileAsModel);
-        cmbDisplayAs.setSelectedIndex(0);// 设定缺省选中项。
+//        fileAsVec = new Vector();
+//        fileAsVec.add();
+        fileAsModel = new DefaultComboBoxModel(BarFrame.consts.langs); // 给fileAsBox赋值
+        cmbLanguage.setModel(fileAsModel);
+        ((JTextField) ((MetalComboBoxEditor) cmbLanguage.getEditor()).getEditorComponent()).setText((String)dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.SUBJECT)));
 
         fldNickName.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.NNAME)));
         fldTitle.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.TITLE)));
         fldEmail.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.EMAIL)));
         tObj = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.CTYPE));
-        lblQQ.setText(tObj == null ? BarFrame.consts.QQ1 : (String) tObj);
-        fldQQ.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.CNUMBER)));
         fldWebPage.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.WEBPAGE)));
         areComment.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.CONTENT)));
         fldCategories.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.CATEGORY)));
@@ -677,7 +643,6 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         areAddress.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.ADDRESS)));
         fldPhone.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.PHONE)));
         fldMobile.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.CPHONE)));
-        fldIDCard.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.IDCARD)));
         fldBankNumber.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.BANKNUMBER)));
         fldSSCNumber.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.SSCNUMBER)));
         tObj = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.SALARY));
@@ -707,10 +672,10 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
                         lblAddress, lblPhone })
                         + CustOpts.HOR_GAP;
         // 第一区域的TextField等组件的宽度。先假设空间够左右布局，发现不够的话设定布局模式为上下布局。
-        int temFieldWidthLeft = getWidth() / 2 - temLableWidthLeft - 2 * CustOpts.HOR_GAP;// 减去Label宽和两头的缩进。
+        int temFieldWidthLeft = getWidth() / 2 - temLableWidthLeft - 4 * CustOpts.HOR_GAP;// 减去Label宽和两头的缩进。
         boolean tmpIsVerLayout = temFieldWidthLeft < 150;
         if (tmpIsVerLayout)
-            temFieldWidthLeft = getWidth() - temLableWidthLeft - 4 * CustOpts.HOR_GAP;// 减去Label宽和两头的缩进。
+            temFieldWidthLeft = getWidth() - temLableWidthLeft - 6 * CustOpts.HOR_GAP;// 减去Label宽和两头的缩进。
 
         final int tmpXPosOfArea1 = CustOpts.HOR_GAP;
         final int tmpYPosOfArea1 = CustOpts.VER_GAP;
@@ -730,9 +695,8 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
                                 lblNickname, lblTitle });
         // 照片右边的TextField的宽度。
         final int tmpFldWidthBesidPhoto =
-                !tmpIsVerLayout ? getWidth() / 2 - tmpLblWidthUnderPhoto - tmpLblWidthBesidPhoto - CustOpts.HOR_GAP
-                        - CustOpts.VER_GAP : getWidth() - CustOpts.HOR_GAP - tmpLblWidthUnderPhoto
-                        - tmpLblWidthBesidPhoto - 2 * CustOpts.HOR_GAP;
+                !tmpIsVerLayout ? getWidth() / 2 - tmpLblWidthUnderPhoto - tmpLblWidthBesidPhoto - 4 *CustOpts.HOR_GAP 
+                        : getWidth() - CustOpts.HOR_GAP - tmpLblWidthUnderPhoto - tmpLblWidthBesidPhoto - 4 * CustOpts.HOR_GAP;
 
         // 员工号
         lblEmployID.setBounds(tmpXPosOfArea1, CustOpts.HOR_GAP, lblEmployID.getPreferredSize().width,
@@ -757,7 +721,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         // 表示为
         lblDisplayAs.setBounds(lblFirstName.getX(), lblFirstName.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
                 tmpLblWidthBesidPhoto, CustOpts.BTN_HEIGHT);
-        cmbDisplayAs.setBounds(lblDisplayAs.getX() + tmpLblWidthBesidPhoto, lblDisplayAs.getY(), tmpFldWidthBesidPhoto,
+        cmbLanguage.setBounds(lblDisplayAs.getX() + tmpLblWidthBesidPhoto, lblDisplayAs.getY(), tmpFldWidthBesidPhoto,
                 CustOpts.BTN_HEIGHT);
         // 规格变动:要求可写
         // 昵称
@@ -774,22 +738,17 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         lblEmail.setBounds(photo.getX(), fldTitle.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP, lblEmail
                 .getPreferredSize().width > lblWebPage.getPreferredSize().width ? lblEmail.getPreferredSize().width
                 : lblWebPage.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        fldEmail.setBounds(lblEmail.getX() + lblEmail.getWidth() + CustOpts.HOR_GAP, lblEmail.getY(), fldTitle.getX()
-                + fldTitle.getWidth() - lblEmail.getX() - lblEmail.getWidth() - CustOpts.HOR_GAP, CustOpts.BTN_HEIGHT);
-        // QQ
-        lblQQ.setBounds(lblEmail.getX(), lblEmail.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP, lblEmail.getWidth(),
-                CustOpts.LBL_HEIGHT);
-        fldQQ.setBounds(fldEmail.getX(), fldEmail.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP, fldEmail.getWidth(),
-                CustOpts.BTN_HEIGHT);
-        arbQQType.setBounds(fldQQ.getX() - CustOpts.VER_GAP - CustOpts.BTN_HEIGHT, fldQQ.getY(), CustOpts.BTN_HEIGHT,
-                CustOpts.BTN_HEIGHT);
+        fldEmail.setBounds(lblEmail.getX() + lblEmail.getWidth() + CustOpts.HOR_GAP,
+        		lblEmail.getY(), 
+        		fldTitle.getX() + fldTitle.getWidth() - lblEmail.getX() - lblEmail.getWidth() - CustOpts.HOR_GAP,
+        		CustOpts.BTN_HEIGHT);
         // Web页地址
-        lblWebPage.setBounds(lblEmail.getX(), fldQQ.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
+        lblWebPage.setBounds(lblEmail.getX(), lblEmail.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
                 lblEmail.getWidth(), CustOpts.BTN_HEIGHT);
         fldWebPage.setBounds(fldEmail.getX(), lblWebPage.getY(), fldEmail.getWidth(), CustOpts.BTN_HEIGHT);
 
         // 备注－－－－－－－－－－－－
-        int tmpNotePaneHeight = 3 * +CustOpts.BTN_HEIGHT + 2 * CustOpts.VER_GAP;
+        int tmpNotePaneHeight = 2 * +CustOpts.BTN_HEIGHT + CustOpts.VER_GAP;
         if (!tmpIsVerLayout)// 如果纵向的话街道高度固定为上值,否则进行下面的计算。
         { // @NOTE：故意少减了20，可能因为ScrollPane下面留有滚动条的高度？
             int tmpNotePaneHeight2 =
@@ -830,7 +789,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         if (!tmpIsVerLayout)// 如果纵向的话街道高度固定为上值,否则进行下面的计算。
         { // 少减了20，可能因为ScrollPane下面留有滚动条的高度？
             tmpPaneHeight = CustOpts.BTN_HEIGHT;
-            int tmpPaneHeight2 = getHeight() - lblAddress.getY() - 9 * CustOpts.BTN_HEIGHT - 10 * CustOpts.VER_GAP + 20;
+            int tmpPaneHeight2 = getHeight() - lblAddress.getY() - 8 * CustOpts.BTN_HEIGHT - 9 * CustOpts.VER_GAP + 20;
             if (tmpPaneHeight2 > tmpPaneHeight)// 如果为横向则高度从下面算起，确保组件占满屏幕。
                 tmpPaneHeight = tmpPaneHeight2;
         }
@@ -847,15 +806,10 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
                 lblPhone.getWidth(), CustOpts.BTN_HEIGHT);
         fldMobile.setBounds(lblMobile.getX() + temLableWidthLeft, lblMobile.getY(), fldPhone.getWidth(),
                 CustOpts.BTN_HEIGHT);
-        // 身份证
-        lblIDCard.setBounds(lblMobile.getX(), lblMobile.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
-                lblMobile.getWidth(), CustOpts.BTN_HEIGHT);
-        fldIDCard.setBounds(lblIDCard.getX() + temLableWidthLeft, lblIDCard.getY(), fldMobile.getWidth(),
-                CustOpts.BTN_HEIGHT);
         // 银行卡号
-        lblBankNumber.setBounds(lblIDCard.getX(), lblIDCard.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
-                lblIDCard.getWidth(), CustOpts.BTN_HEIGHT);
-        fldBankNumber.setBounds(lblBankNumber.getX() + temLableWidthLeft, lblBankNumber.getY(), fldIDCard.getWidth(),
+        lblBankNumber.setBounds(lblMobile.getX(), lblMobile.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
+                lblMobile.getWidth(), CustOpts.BTN_HEIGHT);
+        fldBankNumber.setBounds(lblBankNumber.getX() + temLableWidthLeft, lblBankNumber.getY(), fldMobile.getWidth(),
                 CustOpts.BTN_HEIGHT);
         // 社保号
         lblSSCNumber.setBounds(lblBankNumber.getX(), lblBankNumber.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
@@ -880,7 +834,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
                 - tWidth, CustOpts.BTN_HEIGHT);
         // 登录密码
         lblPasswrod.setBounds(lblInsurance.getX(), lblInsurance.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
-                lblIDCard.getWidth(), CustOpts.BTN_HEIGHT);
+        		lblInsurance.getWidth(), CustOpts.BTN_HEIGHT);
         fldPassword.setBounds(lblPasswrod.getX() + temLableWidthLeft, lblPasswrod.getY(), fldInsurance.getWidth()
                 + lblPriceUnit2.getWidth(), CustOpts.BTN_HEIGHT);
         // 关系
@@ -900,8 +854,8 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
      */
     void reprepairFileAsVec() {
         // clear all
-        fileAsVec.removeAllElements();
-        prepareCurrentFileAsVec(fileAsVec);
+//        fileAsVec.removeAllElements();
+//        prepareCurrentFileAsVec(fileAsVec);
         swingInvoker = 2;
         // ===================更新内容的显示======================
         SwingUtilities.invokeLater(this);
@@ -930,7 +884,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         if (tmpTextInField != null)
             dlg.putValue(PIMPool.pool.getKey(EmployeeDefaultViews.NAME), tmpTextInField);
         // filsAs信息。--------------------------
-        tmpTextInField = ((JTextField) ((MetalComboBoxEditor) cmbDisplayAs.getEditor()).getEditorComponent()).getText();
+        tmpTextInField = ((JTextField) ((MetalComboBoxEditor) cmbLanguage.getEditor()).getEditorComponent()).getText();
         if (tmpTextInField != null)
             dlg.putValue(PIMPool.pool.getKey(EmployeeDefaultViews.SUBJECT), tmpTextInField);
         // 昵称信息。------------------------------
@@ -945,14 +899,6 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         tmpTextInField = fldEmail.getText();
         if (tmpTextInField != null)
             dlg.putValue(PIMPool.pool.getKey(EmployeeDefaultViews.EMAIL), tmpTextInField);
-        // QQ号码.----------------------------------
-        tmpTextInField = fldQQ.getText();
-        if (tmpTextInField != null)
-            dlg.putValue(PIMPool.pool.getKey(EmployeeDefaultViews.CNUMBER), tmpTextInField);
-        // QQ类型
-        tmpTextInField = lblQQ.getText();
-        if (tmpTextInField != null)
-            dlg.putValue(PIMPool.pool.getKey(EmployeeDefaultViews.CTYPE), tmpTextInField);
         // web信息。---------------------------------
         tmpTextInField = fldWebPage.getText();
         if (tmpTextInField != null)
@@ -995,10 +941,6 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         tmpTextInField = fldMobile.getText();
         if (tmpTextInField != null)
             dlg.putValue(PIMPool.pool.getKey(EmployeeDefaultViews.CPHONE), tmpTextInField);
-        // 保存身份证信息------------------------------------------
-        tmpTextInField = fldIDCard.getText();
-        if (tmpTextInField != null)
-            dlg.putValue(PIMPool.pool.getKey(EmployeeDefaultViews.IDCARD), tmpTextInField);
         // 保存银行帐号信息-----------------------------------------
         tmpTextInField = fldBankNumber.getText();
         if (tmpTextInField != null)
@@ -1155,7 +1097,6 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
     EmployeeDlg dlg;// @called by: self; ArrowButton;
 
     // 第一区域-------------------------------------------------------
-    private EmployeeArrowButton arbQQType;
     private JLabel lblEmployID;
     JTextField fldEmployID;
     private JCheckBox cbxIsmFemale;
@@ -1165,7 +1106,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
     private JLabel lblFirstName;
     private JTextField fldFirstName;
     private JLabel lblDisplayAs;
-    JComboBox cmbDisplayAs;
+    JComboBox cmbLanguage;
     private JLabel lblNickname;
     private JTextField fldNickName;
     private JLabel lblTitle;
@@ -1173,8 +1114,6 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
 
     private JLabel lblEmail;
     private JTextField fldEmail;
-    private JLabel lblQQ;
-    private JTextField fldQQ;
     private JLabel lblWebPage;
     private JTextField fldWebPage;
     private JTextArea areComment;
@@ -1197,8 +1136,6 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
     private JTextField fldPhone;
     private JLabel lblMobile;
     private JTextField fldMobile;
-    private JLabel lblIDCard;
-    private JTextField fldIDCard;
     private JLabel lblBankNumber;
     private JTextField fldBankNumber;
     private JLabel lblSSCNumber;
@@ -1220,7 +1157,6 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
     private int QQType;
     private int anniversaryType;
 
-    private Vector fileAsVec; // 用于保存FileAs组件内容。
     private DefaultComboBoxModel fileAsModel; // FileAs组件的Model。
     private int swingInvoker;
     // 由于在表示fileAs的组合框的model中只存放有合法的匹配,而且是不按顺序的.用该数组存与Option中设置的映射关系.

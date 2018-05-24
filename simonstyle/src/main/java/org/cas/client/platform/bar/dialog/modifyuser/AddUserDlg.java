@@ -152,7 +152,7 @@ public class AddUserDlg  extends JDialog implements ICASDialog, ActionListener, 
 		//初始化－－－－－－－－－－－－－－－－
 		general = new AddUserGeneralPanel();
 		ok = new JButton(BarFrame.consts.OK);
-		cancel = new JButton(BarFrame.consts.CANCEL);
+		cancel = new JButton(BarFrame.consts.Cancel);
 
 		//属性设置－－－－－－－－－－－－－－
 		ok.setFocusable(false);

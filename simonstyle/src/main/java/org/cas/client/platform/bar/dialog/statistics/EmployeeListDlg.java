@@ -100,37 +100,40 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
      */
     @Override
     public void reLayout() {
-        srpContent.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP
-                * 2, getHeight() - CustOpts.SIZE_TITLE - CustOpts.SIZE_EDGE - CustOpts.VER_GAP * 3
-                - CustOpts.BTN_HEIGHT);
+        srpContent.setBounds(CustOpts.HOR_GAP, 
+        		CustOpts.VER_GAP, 
+        		getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP  * 3, 
+                getHeight() - CustOpts.SIZE_TITLE - CustOpts.SIZE_EDGE - CustOpts.VER_GAP * 4  - CustOpts.BTN_HEIGHT);
 
-        btnClose.setBounds(getWidth() - CustOpts.HOR_GAP * 2 - CustOpts.BTN_WIDTH,
-                srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP, CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);// 关闭
+        btnClose.setBounds(getWidth() - CustOpts.HOR_GAP * 3 - CustOpts.BTN_WIDTH,
+                srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP, 
+                CustOpts.BTN_WIDTH, 
+                CustOpts.BTN_HEIGHT);// 关闭
         btnAdd.setBounds(srpContent.getX(), btnClose.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
         btnDelete.setBounds(btnAdd.getX() + btnAdd.getWidth() + CustOpts.HOR_GAP, btnAdd.getY(), CustOpts.BTN_WIDTH,
                 CustOpts.BTN_HEIGHT);
 
         IPIMTableColumnModel tTCM = tblContent.getColumnModel();
-        tTCM.getColumn(0).setPreferredWidth(80);
-        tTCM.getColumn(1).setPreferredWidth(120);
-        tTCM.getColumn(2).setPreferredWidth(40);
-        tTCM.getColumn(3).setPreferredWidth(50);
-        tTCM.getColumn(4).setPreferredWidth(90);
-        tTCM.getColumn(5).setPreferredWidth(60);
-        tTCM.getColumn(6).setPreferredWidth(160);
-        tTCM.getColumn(7).setPreferredWidth(80);
-        tTCM.getColumn(8).setPreferredWidth(120);
+        tTCM.getColumn(0).setPreferredWidth(40);
+        tTCM.getColumn(1).setPreferredWidth(80);
+        tTCM.getColumn(2).setPreferredWidth(120);
+        tTCM.getColumn(3).setPreferredWidth(40);
+        tTCM.getColumn(4).setPreferredWidth(50);
+        tTCM.getColumn(5).setPreferredWidth(90);
+        tTCM.getColumn(6).setPreferredWidth(60);
+        tTCM.getColumn(7).setPreferredWidth(160);
+        tTCM.getColumn(8).setPreferredWidth(80);
         tTCM.getColumn(9).setPreferredWidth(120);
-        tTCM.getColumn(10).setPreferredWidth(60);
-        tTCM.getColumn(11).setPreferredWidth(70);
-        tTCM.getColumn(12).setPreferredWidth(50);
-        tTCM.getColumn(13).setPreferredWidth(100);
-        tTCM.getColumn(14).setPreferredWidth(100);
-        tTCM.getColumn(15).setPreferredWidth(140);
-        tTCM.getColumn(16).setPreferredWidth(100);
-        tTCM.getColumn(17).setPreferredWidth(100);
-        tTCM.getColumn(18).setPreferredWidth(180);
-        tTCM.getColumn(19).setPreferredWidth(40);
+        tTCM.getColumn(10).setPreferredWidth(120);
+        tTCM.getColumn(11).setPreferredWidth(60);
+//        tTCM.getColumn(12).setPreferredWidth(70);
+//        tTCM.getColumn(13).setPreferredWidth(50);
+//        tTCM.getColumn(14).setPreferredWidth(100);
+//        tTCM.getColumn(15).setPreferredWidth(100);
+//        tTCM.getColumn(16).setPreferredWidth(140);
+//        tTCM.getColumn(17).setPreferredWidth(100);
+//        tTCM.getColumn(18).setPreferredWidth(100);
+//        tTCM.getColumn(19).setPreferredWidth(180);
 
         validate();
     }
@@ -240,7 +243,7 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
                         PIMRecord tRec =
                                 CASControl.ctrl.getModel().selectRecord(
                                         CustOpts.custOps.APPNameVec.indexOf("Employee"),
-                                        ((Integer) tblContent.getValueAt(tRow, IDCOLUM)).intValue(), 5002); // to select
+                                        ((Integer) tblContent.getValueAt(tRow, 0)).intValue(), 5002); // to select
                                                                                                             // a record
                                                                                                             // from DB.
                         // 不合适重用OpenAction。因为OpenAction的结果是调用View系统的更新机制。而这里需要的是更新list对话盒。
@@ -294,7 +297,7 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         // 初始化－－－－－－－－－－－－－－－－
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
-        btnClose = new JButton(BarFrame.consts.CLOSE);
+        btnClose = new JButton(BarFrame.consts.Close);
         btnAdd = new JButton(BarFrame.consts.AddNewUser);
         btnDelete = new JButton(BarFrame.consts.DeleteUser);
 
@@ -319,7 +322,7 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         getRootPane().setDefaultButton(btnClose);
 
         // 布局---------------
-        setBounds((CustOpts.SCRWIDTH - 540) / 2, (CustOpts.SCRHEIGHT - 300) / 2, 540, 300); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 540) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 540, 320); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
 
         // 搭建－－－－－－－－－－－－－
@@ -356,30 +359,30 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
-            tValues = new Object[tmpPos][header.length];
+            tValues = new Object[tmpPos][20];
             rs.beforeFirst();
             tmpPos = 0;
             while (rs.next()) {
-                tValues[tmpPos][0] = rs.getString("NNAME");
-                tValues[tmpPos][1] = rs.getString("SUBJECT");
-                tValues[tmpPos][2] = rs.getString("SEX");
-                tValues[tmpPos][3] = rs.getString("TITLE");
-                tValues[tmpPos][4] = rs.getString("CPHONE");
-                tValues[tmpPos][5] = rs.getString("PHONE");
-                tValues[tmpPos][6] = rs.getString("ADDRESS");
-                tValues[tmpPos][7] = rs.getString("CNUMBER");
-                tValues[tmpPos][8] = rs.getString("EMAIL");
-                tValues[tmpPos][9] = rs.getString("WEBPAGE");
-                tValues[tmpPos][10] = rs.getString("CATEGORY");
-                tValues[tmpPos][11] = rs.getDate("JOINTIME");
-                tValues[tmpPos][12] = Integer.valueOf(rs.getInt("SALARY"));
-                tValues[tmpPos][13] = rs.getString("INSURANCE");
-                tValues[tmpPos][14] = rs.getString("SSCNUMBER");
-                tValues[tmpPos][15] = rs.getString("IDCARD");
-                tValues[tmpPos][16] = rs.getDate("BIRTHDAY");
-                tValues[tmpPos][17] = rs.getString("BANKNUMBER");
-                tValues[tmpPos][18] = rs.getString("CONTENT");
-                tValues[tmpPos][IDCOLUM] = rs.getInt("ID");
+                tValues[tmpPos][0] = rs.getInt("ID");
+                tValues[tmpPos][1] = rs.getString("NNAME");
+                tValues[tmpPos][2] = rs.getString("SUBJECT");
+                tValues[tmpPos][3] = rs.getString("SEX");
+                tValues[tmpPos][4] = rs.getString("TITLE");
+                tValues[tmpPos][5] = rs.getString("CPHONE");
+                tValues[tmpPos][6] = rs.getString("PHONE");
+                tValues[tmpPos][7] = rs.getString("ADDRESS");
+                tValues[tmpPos][8] = rs.getString("CNUMBER");
+                tValues[tmpPos][9] = rs.getString("EMAIL");
+                tValues[tmpPos][10] = rs.getString("WEBPAGE");
+                tValues[tmpPos][11] = rs.getString("CATEGORY");
+                tValues[tmpPos][12] = rs.getDate("JOINTIME");
+                tValues[tmpPos][13] = Integer.valueOf(rs.getInt("SALARY"));
+                tValues[tmpPos][14] = rs.getString("INSURANCE");
+                tValues[tmpPos][15] = rs.getString("SSCNUMBER");
+                tValues[tmpPos][16] = rs.getString("IDCARD");
+                tValues[tmpPos][17] = rs.getDate("BIRTHDAY");
+                tValues[tmpPos][18] = rs.getString("BANKNUMBER");
+                tValues[tmpPos][19] = rs.getString("CONTENT");
                 tmpPos++;
             }
             rs.close();// 关闭
@@ -394,8 +397,10 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         tblContent.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
     }
 
-    private String[] header = new String[] { BarFrame.consts.NickName, // "昵称"
-            BarFrame.consts.Name, // "显示为"
+    private String[] header = new String[] { 
+    		ContactDefaultViews.TEXTS[0],
+    		BarFrame.consts.NickName, // "昵称"
+            BarFrame.consts.DISPLAYAS, // "language"
             BarFrame.consts.Sex, // "性别";
             BarFrame.consts.JobTitle, // "职位"
             BarFrame.consts.Cellphone, // "手机"
@@ -405,14 +410,15 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
             BarFrame.consts.MailAddress,// "电子邮件地址"
             BarFrame.consts.MainPage,// "主页";
             BarFrame.consts.Type,// 类别
-            BarFrame.consts.JoinTime,// "进单位时间";
-            BarFrame.consts.Salary,// "工资";
-            BarFrame.consts.INSURANCE,// "保险";
-            BarFrame.consts.SSCNUMBER,// "社保号码";
-            BarFrame.consts.IDCARD,// "身份证";
-            BarFrame.consts.BIRTHDAY,// "生日";
-            BarFrame.consts.BANKNUMBER,// "银行卡号";
-            BarFrame.consts.Note, ContactDefaultViews.TEXTS[0] }; // "备注"
+//            BarFrame.consts.JoinTime,// "进单位时间";
+//            BarFrame.consts.Salary,// "工资";
+//            BarFrame.consts.INSURANCE,// "保险";
+//            BarFrame.consts.SSCNUMBER,// "社保号码";
+//            BarFrame.consts.IDCARD,// "身份证";
+//            BarFrame.consts.BIRTHDAY,// "生日";
+//            BarFrame.consts.BANKNUMBER,// "银行卡号";
+//            BarFrame.consts.Note
+            }; // "备注"
 
     PIMTable tblContent;
     PIMScrollPane srpContent;

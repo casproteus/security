@@ -222,7 +222,7 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
         if (e.getSource() == ok) {
             // 按照规格，fileAsBox中必然时刻有值。否则不能存盘：
             String tmpTextInField =
-                    ((JTextField) ((MetalComboBoxEditor) general.cmbDisplayAs.getEditor()).getEditorComponent())
+                    ((JTextField) ((MetalComboBoxEditor) general.cmbLanguage.getEditor()).getEditorComponent())
                             .getText();
             if (tmpTextInField == null || tmpTextInField.length() <= 0) {
                 SOptionPane.showErrorDialog(MessageCons.W10619);// “显示为”是一条联系人记录的关键字段，不能为空。请为该联系人记录的“显示为”字段输入内容。
@@ -452,7 +452,7 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
         // Title,bounds－－－－－－
         setTitle(BarFrame.consts.Operator);
 
-        setBounds((CustOpts.SCRWIDTH - 560) / 2, (CustOpts.SCRHEIGHT - 474) / 2, 560, 474); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 580) / 2, (CustOpts.SCRHEIGHT - 460) / 2, 580, 460); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
         setResizable(true);
 
