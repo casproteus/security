@@ -29,6 +29,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.plaf.metal.MetalComboBoxEditor;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.casbeans.PIMImage;
 import org.cas.client.platform.casbeans.calendar.CalendarCombo;
 import org.cas.client.platform.cascontrol.dialog.CASDialogKit;
@@ -360,28 +362,28 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
 
         panel = new JPanel();
         // 第一区域----------------------------------------------------------
-        lblEmployID = new JLabel(EmployeeDlgConst.EMPLOYEEID);
+        lblEmployID = new JLabel(BarFrame.consts.EMPLOYEEID);
         fldEmployID = new JTextField();
-        cbxIsmFemale = new JCheckBox(EmployeeDlgConst.IS_LADY, false);
+        cbxIsmFemale = new JCheckBox(BarFrame.consts.IS_LADY, false);
 
         // 上部信息块-----------------------
-        photo = new PIMImage(EmployeeDlgConst.PHOTO);
-        lblLastName = new JLabel(EmployeeDlgConst.LASTNAME);
+        photo = new PIMImage(BarFrame.consts.PHOTO);
+        lblLastName = new JLabel(BarFrame.consts.LASTNAME);
         fldLastName = new JTextField();
-        lblFirstName = new JLabel(EmployeeDlgConst.FIRSTNAME);
+        lblFirstName = new JLabel(BarFrame.consts.FIRSTNAME);
         fldFirstName = new JTextField();
-        lblDisplayAs = new JLabel(EmployeeDlgConst.DISPLAYAS);
+        lblDisplayAs = new JLabel(BarFrame.consts.DISPLAYAS);
         cmbDisplayAs = new JComboBox(); // @NOTE:初始化显示model中存的值，它在每次被点开时会用model中的值加上所有的可能组合作为ComboBox的Model。
-        lblNickname = new JLabel(EmployeeDlgConst.NICKNAME);
+        lblNickname = new JLabel(BarFrame.consts.NICKNAME);
         fldNickName = new JTextField();
-        lblTitle = new JLabel(EmployeeDlgConst.JOB);
+        lblTitle = new JLabel(BarFrame.consts.JOB);
         fldTitle = new JTextField();
-        lblEmail = new JLabel(EmployeeDlgConst.EMAIL);
+        lblEmail = new JLabel(BarFrame.consts.EMAIL);
         fldEmail = new JTextField();
-        lblQQ = new JLabel(EmployeeDlgConst.QQ1);
+        lblQQ = new JLabel(BarFrame.consts.QQ1);
         arbQQType = new EmployeeArrowButton(this);
         fldQQ = new JTextField();
-        lblWebPage = new JLabel(EmployeeDlgConst.WEBPAGE);
+        lblWebPage = new JLabel(BarFrame.consts.WEBPAGE);
         fldWebPage = new JTextField();
         areComment = new JTextArea();
         scrComment = new JScrollPane(areComment);
@@ -389,35 +391,35 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         fldCategories = new JTextField();
 
         // 第二区域----------------------------------------------------------------------
-        lblBirthday = new JLabel(EmployeeDlgConst.BIRTHDAY);
+        lblBirthday = new JLabel(BarFrame.consts.BIRTHDAY);
         clbBirthday = new CalendarCombo();
-        lblAnniversary = new JLabel(EmployeeDlgConst.ANNIVERSARY2);
+        lblAnniversary = new JLabel(BarFrame.consts.ANNIVERSARY2);
         clbAnniversary = new CalendarCombo();
         arbAnniversary = new EmployeeArrowButton(this);
-        lblJointime = new JLabel(EmployeeDlgConst.JOIN_TIME);
+        lblJointime = new JLabel(BarFrame.consts.JOIN_TIME);
         clbJointime = new CalendarCombo();
-        lblAddress = new JLabel(EmployeeDlgConst.ADDRESS);
+        lblAddress = new JLabel(BarFrame.consts.ADDRESS);
         areAddress = new JTextArea();
         scrAddress = new JScrollPane(areAddress);
-        lblPhone = new JLabel(EmployeeDlgConst.PHONE);
+        lblPhone = new JLabel(BarFrame.consts.PHONE);
         fldPhone = new JTextField();
-        lblMobile = new JLabel(EmployeeDlgConst.MOBILE);
+        lblMobile = new JLabel(BarFrame.consts.MOBILE);
         fldMobile = new JTextField();
-        lblIDCard = new JLabel(EmployeeDlgConst.IDCARD);
+        lblIDCard = new JLabel(BarFrame.consts.IDCARD);
         fldIDCard = new JTextField();
-        lblBankNumber = new JLabel(EmployeeDlgConst.BANKNUMBER);
+        lblBankNumber = new JLabel(BarFrame.consts.BANKNUMBER);
         fldBankNumber = new JTextField();
-        lblSSCNumber = new JLabel(EmployeeDlgConst.SSCN);
+        lblSSCNumber = new JLabel(BarFrame.consts.SSCN);
         fldSSCNumber = new JTextField();
-        lblSalary = new JLabel(EmployeeDlgConst.SALARY);
+        lblSalary = new JLabel(BarFrame.consts.SALARY);
         fldSalary = new JTextField();
-        lblPriceUnit1 = new JLabel(EmployeeDlgConst.PRICEUNIT);
-        lblInsurance = new JLabel(EmployeeDlgConst.INSURANCE);
+        lblPriceUnit1 = new JLabel(BarOption.MoneySign);
+        lblInsurance = new JLabel(BarFrame.consts.INSURANCE);
         fldInsurance = new JTextField();
-        lblPriceUnit2 = new JLabel(EmployeeDlgConst.PRICEUNIT);
-        lblPasswrod = new JLabel(EmployeeDlgConst.PASSWORD);
+        lblPriceUnit2 = new JLabel(BarOption.MoneySign);
+        lblPasswrod = new JLabel(BarFrame.consts.PASSWORD);
         fldPassword = new JPasswordField();
-        btnRelation = new JButton(EmployeeDlgConst.RELATION);
+        btnRelation = new JButton(BarFrame.consts.RELATION);
         fldRelation = new JTextField();
 
         // 属性设置＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -450,7 +452,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         lblTitle.setLabelFor(fldTitle);
         lblEmail.setFont(CustOpts.custOps.getFontOfDefault());
         lblQQ.setFont(CustOpts.custOps.getFontOfDefault());
-        arbQQType.setItems(EmployeeDlgConst.QQTYPE);
+        arbQQType.setItems(BarFrame.consts.QQTYPE);
         arbQQType.setArrowButtonLabel(lblQQ);
         lblWebPage.setFont(CustOpts.custOps.getFontOfDefault());
         lblWebPage.setDisplayedMnemonic('a');
@@ -468,7 +470,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         lblAnniversary.setDisplayedMnemonic('d');
         lblAnniversary.setLabelFor(clbAnniversary);
         clbAnniversary.setBorder(clbBirthday.getBorder());
-        arbAnniversary.setItems(EmployeeDlgConst.ANNIVERSARYTYPE);
+        arbAnniversary.setItems(BarFrame.consts.ANNIVERSARYTYPE);
         arbAnniversary.setArrowButtonLabel(lblAnniversary);
         lblJointime.setFont(CustOpts.custOps.getFontOfDefault());
         lblJointime.setDisplayedMnemonic('q');
@@ -619,7 +621,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         tObj = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.PHOTO));
         if (tObj == null) {
             photo.setPicture(null);
-            photo.setText(EmployeeDlgConst.PHOTO);
+            photo.setText(BarFrame.consts.PHOTO);
         } else {
             String fileName =
                     PIMDBUtil.decodeByteArrayToImage((byte[]) tObj,
@@ -642,7 +644,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         fldTitle.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.TITLE)));
         fldEmail.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.EMAIL)));
         tObj = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.CTYPE));
-        lblQQ.setText(tObj == null ? EmployeeDlgConst.QQ1 : (String) tObj);
+        lblQQ.setText(tObj == null ? BarFrame.consts.QQ1 : (String) tObj);
         fldQQ.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.CNUMBER)));
         fldWebPage.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.WEBPAGE)));
         areComment.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.CONTENT)));
@@ -664,7 +666,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
             clbAnniversary.setTimeText("");
         }
         tObj = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.ANNIVERSARYTYPE));
-        lblAnniversary.setText(tObj == null ? EmployeeDlgConst.ANNIVERSARY1 : (String) tObj);
+        lblAnniversary.setText(tObj == null ? BarFrame.consts.ANNIVERSARY1 : (String) tObj);
         tObj = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.JOINTIME));
         if (tObj != null)
             clbJointime.setSelectedItem(tObj);

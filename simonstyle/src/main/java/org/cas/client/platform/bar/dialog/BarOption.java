@@ -269,7 +269,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
             frame.setSize(700, 500);
             frame.setVisible(true);
         } else if (o == btnDspPrintTool) {
-            new PrintDebuggerDlg(BarFrame.instance).setVisible(true);
+//            new PrintDebuggerDlg(BarFrame.instance).setVisible(true);
         } else if (o == ok) {
             int tSize = 12;
             try {
@@ -280,16 +280,16 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
                 tfdFontSize.selectAll();
                 return;
             }
-            CustOpts.custOps.setKeyAndValue(BarFrame.consts.EncodeStyle, tfdEncodeStyle.getText());
-
-            CustOpts.custOps.setKeyAndValue(BarFrame.consts.UniCommand,
-                    checbox.isSelected() ? "true" : tfdOpenCmd.getText());
-            CustOpts.custOps.setKeyAndValue(BarFrame.consts.UseMoenyBox, cbxUseMoneyBox.isSelected() ? "true" : "false");
-            CustOpts.custOps.setKeyAndValue(BarFrame.consts.OneKeyOpen, cbxOneKeyOpenBox.isSelected() ? "true" : "false");
-
-            CustOpts.custOps.setKeyAndValue(BarFrame.consts.UsePrinter, cbxUsePrinter.isSelected() ? "true" : "false");
-            CustOpts.custOps.setKeyAndValue(BarFrame.consts.PrintTitle, tfdTitle.getText());
-            CustOpts.custOps.setKeyAndValue(BarFrame.consts.Thankword, tfdThankWord.getText());
+//            CustOpts.custOps.setKeyAndValue(BarFrame.consts.EncodeStyle, tfdEncodeStyle.getText());
+//
+//            CustOpts.custOps.setKeyAndValue(BarFrame.consts.UniCommand,
+//                    checbox.isSelected() ? "true" : tfdOpenCmd.getText());
+//            CustOpts.custOps.setKeyAndValue(BarFrame.consts.UseMoenyBox, cbxUseMoneyBox.isSelected() ? "true" : "false");
+//            CustOpts.custOps.setKeyAndValue(BarFrame.consts.OneKeyOpen, cbxOneKeyOpenBox.isSelected() ? "true" : "false");
+//
+//            CustOpts.custOps.setKeyAndValue(BarFrame.consts.UsePrinter, cbxUsePrinter.isSelected() ? "true" : "false");
+//            CustOpts.custOps.setKeyAndValue(BarFrame.consts.PrintTitle, tfdTitle.getText());
+//            CustOpts.custOps.setKeyAndValue(BarFrame.consts.Thankword, tfdThankWord.getText());
 
             CustOpts.custOps.setFontSize(tSize);
             dispose();
@@ -312,7 +312,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
                 tfdOpenCmd.setText(tCmdFile.getAbsolutePath());
             }
         } else if (o == btnMRate) {
-            new ChangeRateDlg(BarFrame.instance).setVisible(true);
+//            new ChangeRateDlg(BarFrame.instance).setVisible(true);
         } else if (o == btnMUser) {
             int tType = Integer.parseInt(CustOpts.custOps.getUserType());
             if (tType > 0) {// 如果当前登陆用户是个普通员工，则显示普通登陆对话盒。等待再次登陆
@@ -336,35 +336,35 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     }
 
     private void initDialog() {
-        setTitle(BarFrame.consts.Option);
-        setResizable(false);
-        // 初始化－－－－－－－－－－－－－－－－
-        lblProdCodeLength = new JLabel(BarFrame.consts.EncodeStyle);
-        tfdEncodeStyle = new JTextField((String) CustOpts.custOps.getValue(BarFrame.consts.EncodeStyle));
-        lblFontSize = new JLabel(BarFrame.consts.Size);
-        tfdFontSize = new JTextField(String.valueOf(CustOpts.custOps.getFontSize()));
-        checbox = new JCheckBox(BarFrame.consts.UniCommand);
-        btnOpenCmd = new JButton(BarFrame.consts.SpecialCommand);
-        tfdOpenCmd = new JTextField();
-
-        sptMoneyBox = new PIMSeparator(BarFrame.consts.MONEYBOX);
-        cbxUseMoneyBox = new JCheckBox(BarFrame.consts.UseMoenyBox);
-        cbxOneKeyOpenBox = new JCheckBox(BarFrame.consts.OneKeyOpen);
-        cbxUsePrinter = new JCheckBox(BarFrame.consts.UsePrinter);
-
-        sptPrint = new PIMSeparator(BarFrame.consts.PrinterSupport);
-        lblTiltle = new JLabel(BarFrame.consts.PrintTitle);
-        tfdTitle = new JTextField();
-        lblThankWord = new JLabel(BarFrame.consts.Thankword);
-        tfdThankWord = new JTextField();
-
-        sptOther = new PIMSeparator(OptionDlgConst.OPTION_OTHER);
-        btnDspServer = new JButton(BarFrame.consts.DspServer);
-        btnDspSuperTool = new JButton(BarFrame.consts.DspSuperTool);
-        btnDspPrintTool = new JButton(BarFrame.consts.DspPrintTool);
-
-        btnMUser = new JButton(BarFrame.consts.MUser);
-        btnMRate = new JButton(BarFrame.consts.MRate);
+//        setTitle(BarFrame.consts.Option);
+//        setResizable(false);
+//        // 初始化－－－－－－－－－－－－－－－－
+//        lblProdCodeLength = new JLabel(BarFrame.consts.EncodeStyle);
+//        tfdEncodeStyle = new JTextField((String) CustOpts.custOps.getValue(BarFrame.consts.EncodeStyle));
+//        lblFontSize = new JLabel(BarFrame.consts.Size);
+//        tfdFontSize = new JTextField(String.valueOf(CustOpts.custOps.getFontSize()));
+//        checbox = new JCheckBox(BarFrame.consts.UniCommand);
+//        btnOpenCmd = new JButton(BarFrame.consts.SpecialCommand);
+//        tfdOpenCmd = new JTextField();
+//
+//        sptMoneyBox = new PIMSeparator(BarFrame.consts.MONEYBOX);
+//        cbxUseMoneyBox = new JCheckBox(BarFrame.consts.UseMoenyBox);
+//        cbxOneKeyOpenBox = new JCheckBox(BarFrame.consts.OneKeyOpen);
+//        cbxUsePrinter = new JCheckBox(BarFrame.consts.UsePrinter);
+//
+//        sptPrint = new PIMSeparator(BarFrame.consts.PrinterSupport);
+//        lblTiltle = new JLabel(BarFrame.consts.PrintTitle);
+//        tfdTitle = new JTextField();
+//        lblThankWord = new JLabel(BarFrame.consts.Thankword);
+//        tfdThankWord = new JTextField();
+//
+//        sptOther = new PIMSeparator(OptionDlgConst.OPTION_OTHER);
+//        btnDspServer = new JButton(BarFrame.consts.DspServer);
+//        btnDspSuperTool = new JButton(BarFrame.consts.DspSuperTool);
+//        btnDspPrintTool = new JButton(BarFrame.consts.DspPrintTool);
+//
+//        btnMUser = new JButton(BarFrame.consts.MUser);
+//        btnMRate = new JButton(BarFrame.consts.MRate);
 
         ok = new JButton(DlgConst.OK);
 
@@ -424,23 +424,23 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
         getContentPane().addComponentListener(this);
 
         // Content
-        Object tIsUniOpenCmd = CustOpts.custOps.getValue(BarFrame.consts.UniCommand);
-        checbox.setSelected(tIsUniOpenCmd == null || tIsUniOpenCmd.equals("true"));
-        if (!checbox.isSelected())
-            tfdOpenCmd.setText(tIsUniOpenCmd.toString());
-        else {
-            btnOpenCmd.setEnabled(false);
-            tfdOpenCmd.setEnabled(false);
-        }
-        Object tUseMoneyBox = CustOpts.custOps.getValue(BarFrame.consts.UseMoenyBox);
-        cbxUseMoneyBox.setSelected(tUseMoneyBox == null || tUseMoneyBox.equals("true"));
-        Object tOneKeyOpenBox = CustOpts.custOps.getValue(BarFrame.consts.OneKeyOpen);
-        cbxOneKeyOpenBox.setSelected(tOneKeyOpenBox == null || tOneKeyOpenBox.equals("true"));
-        Object tUsePrinter = CustOpts.custOps.getValue(BarFrame.consts.UsePrinter);
-        cbxUsePrinter.setSelected(tUsePrinter == null || tUsePrinter.equals("true"));
-
-        tfdTitle.setText((String) CustOpts.custOps.getValue(BarFrame.consts.PrintTitle));
-        tfdThankWord.setText((String) CustOpts.custOps.getValue(BarFrame.consts.Thankword));
+//        Object tIsUniOpenCmd = CustOpts.custOps.getValue(BarFrame.consts.UniCommand);
+//        checbox.setSelected(tIsUniOpenCmd == null || tIsUniOpenCmd.equals("true"));
+//        if (!checbox.isSelected())
+//            tfdOpenCmd.setText(tIsUniOpenCmd.toString());
+//        else {
+//            btnOpenCmd.setEnabled(false);
+//            tfdOpenCmd.setEnabled(false);
+//        }
+//        Object tUseMoneyBox = CustOpts.custOps.getValue(BarFrame.consts.UseMoenyBox);
+//        cbxUseMoneyBox.setSelected(tUseMoneyBox == null || tUseMoneyBox.equals("true"));
+//        Object tOneKeyOpenBox = CustOpts.custOps.getValue(BarFrame.consts.OneKeyOpen);
+//        cbxOneKeyOpenBox.setSelected(tOneKeyOpenBox == null || tOneKeyOpenBox.equals("true"));
+//        Object tUsePrinter = CustOpts.custOps.getValue(BarFrame.consts.UsePrinter);
+//        cbxUsePrinter.setSelected(tUsePrinter == null || tUsePrinter.equals("true"));
+//
+//        tfdTitle.setText((String) CustOpts.custOps.getValue(BarFrame.consts.PrintTitle));
+//        tfdThankWord.setText((String) CustOpts.custOps.getValue(BarFrame.consts.Thankword));
     }
 
     private PIMSeparator sptMoneyBox;

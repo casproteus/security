@@ -106,10 +106,6 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
 
         btnClose.setBounds(getWidth() - CustOpts.HOR_GAP * 2 - CustOpts.BTN_WIDTH,
                 srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP, CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);// 关闭
-        btnUnFocus.setBounds(btnClose.getX() - CustOpts.HOR_GAP - CustOpts.BTN_WIDTH, btnClose.getY(),
-                CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
-        btnFocus.setBounds(btnUnFocus.getX() - CustOpts.HOR_GAP - CustOpts.BTN_WIDTH, btnUnFocus.getY(),
-                CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
         btnAdd.setBounds(srpContent.getX(), btnClose.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
         btnDelete.setBounds(btnAdd.getX() + btnAdd.getWidth() + CustOpts.HOR_GAP, btnAdd.getY(), CustOpts.BTN_WIDTH,
                 CustOpts.BTN_HEIGHT);
@@ -168,8 +164,6 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
     @Override
     public void release() {
         btnClose.removeActionListener(this);
-        btnFocus.removeActionListener(this);
-        btnFocus.removeActionListener(this);
         btnAdd.removeActionListener(this);
         btnDelete.removeActionListener(this);
         dispose();// 对于对话盒，如果不加这句话，就很难释放掉。
@@ -203,38 +197,6 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         Object o = e.getSource();
         if (o == btnClose) {
             dispose();
-        } else if (o == btnFocus) {
-            int[] tRowAry = tblContent.getSelectedRows();
-            if (tRowAry.length < 2) {
-                JOptionPane.showMessageDialog(this, BarFrame.consts.ValidateFucusAction);// 选中项目太少！请先用鼠标选中多条记录，然后点击聚焦选中按钮，重点对选中的记录进行观察。
-                return;
-            }
-            Object[][] tValues = new Object[tRowAry.length][tblContent.getColumnCount()];
-            for (int i = 0; i < tRowAry.length; i++)
-                for (int j = 0, len = tblContent.getColumnCount(); j < len; j++)
-                    tValues[i][j] = tblContent.getValueAt(tRowAry[i], j);
-            // 必须重新new一个Table，否则PIM会在绘制的时候报数组越界错误。原因不明。
-            getContentPane().remove(srpContent);
-            tblContent = new PIMTable();// 显示字段的表格,设置模型
-            srpContent = new PIMScrollPane(tblContent);
-
-            tblContent.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-            tblContent.setAutoscrolls(true);
-            tblContent.setRowHeight(20);
-            tblContent.setBorder(new JTextField().getBorder());
-            tblContent.setFocusable(false);
-
-            getContentPane().add(srpContent);
-
-            tblContent.setDataVector(tValues, header);
-            DefaultPIMTableCellRenderer tCellRender = new DefaultPIMTableCellRenderer();
-            tCellRender.setOpaque(true);
-            tCellRender.setBackground(Color.LIGHT_GRAY);
-            tblContent.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
-            reLayout();
-        } else if (o == btnUnFocus) {// 如果点击了Unfocus按钮，则取消Focus动作，返回到显示全部内容的状态。
-            initTable();
-            reLayout();
         } else if (o == btnAdd) {
             // 创建一个空记录，赋予正确的path值，然后再传给对话盒显示。以确保saveContentAction保存后，记录能显示到正确的地方。
             PIMRecord tRec = new PIMRecord();
@@ -245,7 +207,7 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
             initTable();
             reLayout();
         } else if (o == btnDelete) {
-            if (JOptionPane.showConfirmDialog(this, DlgConst.COMFIRMDELETEACTION, DlgConst.DlgTitle,
+            if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION, BarFrame.consts.Operator,
                     JOptionPane.YES_NO_OPTION) != 0)// 确定删除吗？
                 return;
             int tSeleRow = tblContent.getSelectedRow();
@@ -270,7 +232,7 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
     public void mouseClicked(
             MouseEvent e) {
         if (e.getClickCount() > 1) {
-            if (Integer.parseInt(CustOpts.custOps.getUserType()) > 0) {// 如果当前登陆用户是个普通员工，则显示普通登陆对话盒。等待再次登陆
+            if (LoginDlg.USERTYPE > 0) {// 如果当前登陆用户是个普通员工，则显示普通登陆对话盒。等待再次登陆
                 new LoginDlg(PosFrame.instance).setVisible(true);// 结果不会被保存到ini
                 if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
                     if (LoginDlg.USERTYPE >= 2) {// 进一步判断，如果新登陆是经理，弹出对话盒
@@ -332,19 +294,13 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         // 初始化－－－－－－－－－－－－－－－－
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
-        btnClose = new JButton(DlgConst.FINISH_BUTTON);
-        btnFocus = new JButton(BarFrame.consts.Focus);
-        btnUnFocus = new JButton(BarFrame.consts.UnFocus);
-        btnAdd = new JButton(BarFrame.consts.Add);
-        btnDelete = new JButton(DlgConst.DELETE);
+        btnClose = new JButton(BarFrame.consts.CLOSE);
+        btnAdd = new JButton(BarFrame.consts.AddNewUser);
+        btnDelete = new JButton(BarFrame.consts.DeleteUser);
 
         // properties
         btnClose.setMnemonic('o');
         btnClose.setMargin(new Insets(0, 0, 0, 0));
-        btnFocus.setMnemonic('F');
-        btnFocus.setMargin(btnClose.getMargin());
-        btnUnFocus.setMnemonic('U');
-        btnUnFocus.setMargin(btnClose.getMargin());
         btnAdd.setMnemonic('A');
         btnAdd.setMargin(btnClose.getMargin());
         btnDelete.setMnemonic('D');
@@ -369,20 +325,14 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         // 搭建－－－－－－－－－－－－－
         getContentPane().add(srpContent);
         getContentPane().add(btnClose);
-        getContentPane().add(btnFocus);
-        getContentPane().add(btnUnFocus);
         getContentPane().add(btnAdd);
         getContentPane().add(btnDelete);
 
         // 加监听器－－－－－－－－
         btnClose.addActionListener(this);
-        btnFocus.addActionListener(this);
-        btnFocus.addActionListener(this);
         btnAdd.addActionListener(this);
         btnDelete.addActionListener(this);
         btnClose.addKeyListener(this);
-        btnFocus.addKeyListener(this);
-        btnUnFocus.addKeyListener(this);
         btnAdd.addKeyListener(this);
         btnDelete.addKeyListener(this);
         tblContent.addMouseListener(this);
@@ -468,7 +418,5 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
     PIMScrollPane srpContent;
     private JButton btnAdd;
     private JButton btnDelete;
-    private JButton btnFocus;
-    private JButton btnUnFocus;
     private JButton btnClose;
 }

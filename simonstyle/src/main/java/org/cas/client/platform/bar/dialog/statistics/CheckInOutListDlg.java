@@ -97,8 +97,6 @@ public class CheckInOutListDlg  extends JDialog
 		
 		btnClose.setBounds(getWidth() - CustOpts.HOR_GAP * 2 - CustOpts.BTN_WIDTH,
 				lblMoneyCurrent.getY(),CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);//关闭
-		btnUnFocus.setBounds(btnClose.getX() - CustOpts.HOR_GAP - CustOpts.BTN_WIDTH, btnClose.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
-		btnFocus.setBounds(btnUnFocus.getX() - CustOpts.HOR_GAP - CustOpts.BTN_WIDTH, btnUnFocus.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
 		
 		IPIMTableColumnModel tTCM = tblContent.getColumnModel();
 		tTCM.getColumn(0).setPreferredWidth(70);
@@ -118,7 +116,6 @@ public class CheckInOutListDlg  extends JDialog
 	
 	public void release(){
 		btnClose.removeActionListener(this);
-		btnFocus.removeActionListener(this);
 		dispose();//对于对话盒，如果不加这句话，就很难释放掉。
 		System.gc();//@TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
 	}
@@ -143,38 +140,6 @@ public class CheckInOutListDlg  extends JDialog
 			}
 			CustOpts.custOps.setKeyAndValue(BarFrame.consts.Shoestring, String.valueOf(CASUtility.getPriceByCent(tMoneyChange)));
 			dispose();
-		}else if(o == btnFocus){
-			int[] tRowAry = tblContent.getSelectedRows();
-			if(tRowAry.length < 2){
-				JOptionPane.showMessageDialog(this, BarFrame.consts.ValidateFucusAction);//选中项目太少！请先用鼠标选中多条记录，然后点击聚焦选中按钮，重点对选中的记录进行观察。
-				return;
-			}
-			Object[][] tValues = new Object[tRowAry.length][tblContent.getColumnCount()];
-			for(int i = 0; i < tRowAry.length; i++)
-				for(int j = 0, len = tblContent.getColumnCount(); j < len; j++)
-					tValues[i][j] = tblContent.getValueAt(tRowAry[i], j);
-			//必须重新new一个Table，否则PIM会在绘制的时候报数组越界错误。原因不明。
-			getContentPane().remove(srpContent);
-			tblContent = new PIMTable();//显示字段的表格,设置模型
-			srpContent = new PIMScrollPane(tblContent);
-			
-			tblContent.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			tblContent.setAutoscrolls(true);
-			tblContent.setRowHeight(20);
-			tblContent.setBorder(new JTextField().getBorder());
-			tblContent.setFocusable(false);
-
-			getContentPane().add(srpContent);
-			
-			tblContent.setDataVector(tValues, header);
-			DefaultPIMTableCellRenderer tCellRender = new DefaultPIMTableCellRenderer();
-			tCellRender.setOpaque(true);
-			tCellRender.setBackground(Color.LIGHT_GRAY);
-			tblContent.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
-			reLayout();
-		}else if(o == btnUnFocus){//如果点击了Unfocus按钮，则取消Focus动作，返回到显示全部内容的状态。
-			initTable();
-			reLayout();
 		}
 	}
 
@@ -224,19 +189,13 @@ public class CheckInOutListDlg  extends JDialog
 		}
 		tfdMoneyCurrent = new JTextField(new DecimalFormat("#0.00").format(tShoestring/100.0));
 		tfdMoneyLeft = new JTextField();
-		lblUnit = new JLabel(BarFrame.consts.Unit);
-		lblUnit2 = new JLabel(BarFrame.consts.Unit);
+		lblUnit = new JLabel(BarOption.MoneySign);
+		lblUnit2 = new JLabel(BarOption.MoneySign);
 		btnClose = new JButton(DlgConst.FINISH_BUTTON);
-		btnFocus = new JButton(BarFrame.consts.Focus);
-		btnUnFocus = new JButton(BarFrame.consts.UnFocus);
 		
 		//properties
 		btnClose.setMnemonic('o');
 		btnClose.setMargin(new Insets(0,0,0,0));
-		btnFocus.setMnemonic('F');
-		btnFocus.setMargin(btnClose.getMargin());
-		btnUnFocus.setMnemonic('U');
-		btnUnFocus.setMargin(btnClose.getMargin());
 		
 		tblContent.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tblContent.setAutoscrolls(true);
@@ -264,13 +223,9 @@ public class CheckInOutListDlg  extends JDialog
 		getContainer().add(tfdMoneyLeft);
 		getContainer().add(lblUnit2);
 		getContentPane().add(btnClose);
-		getContentPane().add(btnFocus);
-		getContentPane().add(btnUnFocus);
 		
 		//加监听器－－－－－－－－
 		btnClose.addActionListener(this);
-		btnFocus.addActionListener(this);
-		btnUnFocus.addActionListener(this);
 		tfdMoneyCurrent.addKeyListener(this);
 		getContentPane().addComponentListener(this);
 		//initContents--------------
@@ -351,7 +306,5 @@ public class CheckInOutListDlg  extends JDialog
 	private JLabel lblMoneyLeft;
 	private JTextField tfdMoneyLeft;
 	private JLabel lblUnit2;
-	private JButton btnFocus;
-	private JButton btnUnFocus;
 	private JButton btnClose;
 }

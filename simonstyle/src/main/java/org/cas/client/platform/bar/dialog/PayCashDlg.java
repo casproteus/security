@@ -37,36 +37,42 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         initDialog();
     }
     
-    public void updateBill(int billId, boolean isExactcash) {
+    public void updateBill(int billId) {
     	StringBuilder sb = new StringBuilder();
-    	if(isExactcash) {
-    		sb.append("update bill set cashReceived = total, valDebitReceived = 0, valVisaReceived = 0, valMasterReceived = 0, valOtherReceived = 0 where id = ").append(billId);
-    	}else {
-    		String curTitle = getTitle();
-    		//calculate the received of diffent kind
-			if(curTitle.equals(BarFrame.consts.EnterCashPayment)){
-				String cashReceived = String.valueOf(
-						(int)(Float.valueOf(valCashReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
-				sb.append("update bill set cashReceived = ").append(cashReceived).append(" where id = ").append(billId);
-			} else if(curTitle.equals(BarFrame.consts.EnterDebitPayment)) {
-				String debitReceived = String.valueOf(
-						(int)(Float.valueOf(valDebitReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
-				sb.append("update bill set debitReceived = ").append(debitReceived).append(" where id = ").append(billId);
-			} else if(curTitle.equals(BarFrame.consts.EnterVisaPayment)) {
-				String visaReceived = String.valueOf(
-						(int)(Float.valueOf(valVisaReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
-				sb.append("update bill set visaReceived = ").append(visaReceived).append(" where id = ").append(billId);
-    		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment)) {
-				String masterReceived = String.valueOf(
-						(int)(Float.valueOf(valMasterReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
-				sb.append("update bill set masterReceived = ").append(masterReceived).append(" where id = ").append(billId);
-    		} else {
-				String otherReceived = String.valueOf(
-						(int)(Float.valueOf(valOtherReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
-				sb.append("update bill set otherReceived = ").append(otherReceived).append(" where id = ").append(billId);
-			}
-    	}
+    	
+		String curTitle = getTitle();
+		//calculate the received of diffent kind
+		if(curTitle.equals(BarFrame.consts.EnterCashPayment)){
+			String cashReceived = String.valueOf(
+					(int)(Float.valueOf(valCashReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
+			sb.append("update bill set cashReceived = ").append(cashReceived).append(" where id = ").append(billId);
+		} else if(curTitle.equals(BarFrame.consts.EnterDebitPayment)) {
+			String debitReceived = String.valueOf(
+					(int)(Float.valueOf(valDebitReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
+			sb.append("update bill set debitReceived = ").append(debitReceived).append(" where id = ").append(billId);
+		} else if(curTitle.equals(BarFrame.consts.EnterVisaPayment)) {
+			String visaReceived = String.valueOf(
+					(int)(Float.valueOf(valVisaReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
+			sb.append("update bill set visaReceived = ").append(visaReceived).append(" where id = ").append(billId);
+		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment)) {
+			String masterReceived = String.valueOf(
+					(int)(Float.valueOf(valMasterReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
+			sb.append("update bill set masterReceived = ").append(masterReceived).append(" where id = ").append(billId);
+		} else {
+			String otherReceived = String.valueOf(
+					(int)(Float.valueOf(valOtherReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
+			sb.append("update bill set otherReceived = ").append(otherReceived).append(" where id = ").append(billId);
+		}
 		try {
+			PIMDBModel.getStatement().execute(sb.toString());
+		}catch(Exception e) {
+			ErrorUtil.write(e);
+		}
+    }
+    
+    public static void exactCash(int billId) {
+    	StringBuilder sb = new StringBuilder("update bill set cashReceived = total, valDebitReceived = 0, valVisaReceived = 0, valMasterReceived = 0, valOtherReceived = 0 where id = ").append(billId);
+   		try {
 			PIMDBModel.getStatement().execute(sb.toString());
 		}catch(Exception e) {
 			ErrorUtil.write(e);
@@ -206,7 +212,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         	}else if(left < 0) {
             	this.setVisible(false);
         		new ChangeDlg(BarFrame.instance, BarOption.MoneySign + (0 - left)/100f).setVisible(true);
-            	updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId(), false);
+            	updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId());
         	}
         	
         	resetContent();
@@ -219,7 +225,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         	}
         	
         } else if(o == btnExact) {//update bill and display change 0.00;
-        	updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId(), true);
+        	exactCash(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId());
         	resetContent();
         	this.setVisible(false);
         	BarUtil.openMoneyBox();

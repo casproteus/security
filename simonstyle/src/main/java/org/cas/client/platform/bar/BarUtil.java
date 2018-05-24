@@ -1,5 +1,6 @@
 package org.cas.client.platform.bar;
 
+import java.awt.MenuItem;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -12,7 +13,6 @@ import javax.comm.PortInUseException;
 import javax.swing.JOptionPane;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
-import org.cas.client.platform.bar.dialog.MerchandiseDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -89,12 +89,12 @@ public class BarUtil {
                     tContentAry[tIdx] = rs.getString("Content");
                     tIdx++;
                 }
-                for (int i = 0; i < tRowCount; i++) {
-                    new MerchandiseDlg(BarFrame.instance, tIDAry[i], tCodeAry[i], tPriceAry[i], tMnemonicAry[i],
-                            tSubjectAry[i], tStoreAry[i], tUnitAry[i], tCategoryAry[i], tCostAry[i], tContentAry[i])
-                            .setVisible(true);
-
-                }
+//                for (int i = 0; i < tRowCount; i++) {
+//                    new MenuItem(BarFrame.instance, tIDAry[i], tCodeAry[i], tPriceAry[i], tMnemonicAry[i],
+//                            tSubjectAry[i], tStoreAry[i], tUnitAry[i], tCategoryAry[i], tCostAry[i], tContentAry[i])
+//                            .setVisible(true);
+//
+//                }
             }
             rs.close();// 关闭
         } catch (SQLException exp) {// 如果没有匹配是否会到该代码块？

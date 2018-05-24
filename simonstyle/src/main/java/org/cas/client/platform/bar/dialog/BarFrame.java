@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -80,9 +81,6 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
             tShoestring = Integer.parseInt((String) CustOpts.custOps.getValue(BarFrame.consts.Shoestring));
         } catch (Exception exp) {
         }
-        lblShoestring =
-                new JLabel(BarFrame.consts.LeftMoney.concat(BarFrame.consts.Colon)
-                        .concat(decimalFormat.format(tShoestring / 100.0)).concat(BarFrame.consts.Unit));
         
         lblOperator = new JLabel(BarFrame.consts.Operator.concat(BarFrame.consts.Colon));
         valOperator = new JLabel();
@@ -91,8 +89,6 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         lblCurBill = new JLabel(BarFrame.consts.Bill.concat(BarFrame.consts.Colon));
         valCurBill = new JLabel();
         
-        lblShoestring = new JLabel();
-
         lblStartTime = new JLabel();
         valStartTime = new JLabel();
         
@@ -113,7 +109,6 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         add(valCurTable);
         add(lblCurBill);
         add(valCurBill);
-        add(lblShoestring);
         add(lblStartTime);
         add(valStartTime);
 
@@ -220,12 +215,6 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valOperator.setBounds(lblOperator.getX() + lblOperator.getWidth(), CustOpts.VER_GAP, 180 - lblOperator.getWidth(),
                 lblOperator.getPreferredSize().height);
         
-        lblShoestring.setBounds(
-        		valCurBill.getX()
-                        + valCurBill.getWidth()
-                        + (lblOperator.getX() + valCurBill.getX()) / 2 - valCurBill.getWidth() - lblShoestring.getPreferredSize().width,  CustOpts.VER_GAP,
-                lblShoestring.getPreferredSize().width, lblOperator.getHeight());
-
         // status---------
         lblStatus.setBounds(CustOpts.HOR_GAP, getContainer().getHeight() - CustOpts.LBL_HEIGHT - CustOpts.VER_GAP, 
         		getContainer().getWidth() - CustOpts.HOR_GAP * 2 - 100 -  - CustOpts.HOR_GAP, CustOpts.LBL_HEIGHT);
@@ -360,7 +349,6 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 
     private JLabel lblCurTable;
     private JLabel lblCurBill;
-    private JLabel lblShoestring;
     private JLabel lblOperator;
     private JLabel lblStartTime;
     

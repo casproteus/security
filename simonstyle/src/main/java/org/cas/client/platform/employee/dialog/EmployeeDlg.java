@@ -24,6 +24,7 @@ import javax.swing.plaf.metal.MetalComboBoxEditor;
 import javax.swing.tree.TreePath;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.navigation.CASNode;
@@ -449,9 +450,7 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
     private void initDialog() {
         newFlag = record == null || record.getFieldValue(EmployeeDefaultViews.ID) == null;
         // Title,bounds－－－－－－
-        setTitle(EmployeeDlgConst.EMPLOYEE);
-        if (newFlag)
-            treePath = CASControl.ctrl.getFolderTree().getSelectedPath();
+        setTitle(BarFrame.consts.Operator);
 
         setBounds((CustOpts.SCRWIDTH - 560) / 2, (CustOpts.SCRHEIGHT - 474) / 2, 560, 474); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
@@ -481,7 +480,7 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
         getRootPane().setDefaultButton(ok);
 
         // 搭建－－－－－－－－－－－－－
-        tabPane.addTab(EmployeeDlgConst.GENERAL, general);
+        tabPane.addTab(BarFrame.consts.GENERAL, general);
         getContentPane().add(tabPane);
         getContentPane().add(cancel);
         getContentPane().add(ok);

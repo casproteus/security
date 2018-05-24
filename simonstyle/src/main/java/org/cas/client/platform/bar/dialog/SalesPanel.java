@@ -101,7 +101,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		
         		//check the pay dialog is already visible, if yes, then update bill received values.
         		if(BarFrame.payCashDlg.isVisible()) {
-        			BarFrame.payCashDlg.updateBill(billPanel.getBillId(), false);
+        			BarFrame.payCashDlg.updateBill(billPanel.getBillId());
         		}
         		//show dialog-------------------------------------
          		BarFrame.payCashDlg.setFloatSupport(true);
@@ -289,8 +289,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     		    }else {
     		    	BarFrame.instance.switchMode(0);
     		    }
-            } else if (o == btnLine_2_11) { // enter the setting mode.(admin interface)
-                BarFrame.instance.switchMode(3);
             }
         }
         //JToggleButton-------------------------------------------------------------------------------------
@@ -319,30 +317,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		BarFrame.numberPanelDlg.setVisible(btnLine_1_8.isSelected());	//@NOTE: it's not model mode.
          		BarFrame.numberPanelDlg.setAction(new UpdateItemPriceAction(btnLine_1_8, billPanel));
         		
-        	} else if (o == btnLine_2_12) {	//QTY
-        		
-        		BarFrame.instance.numberPanelDlg.setBtnSource(btnLine_2_12);//pomp up a numberPanelDlg
-        		//should no record selected, select the last one.
-        		BarFrame.instance.numberPanelDlg.setVisible(btnLine_2_12.isSelected());	//@NOTE: it's not model mode.
-        		if(btnLine_2_12.isSelected()) {
-        			try {
-        				String curContent = BarFrame.instance.numberPanelDlg.curContent;
-                		int tQTY = Integer.valueOf(curContent);
-                    	int row = billPanel.tblSelectedDish.getSelectedRow();
-                    	billPanel.tblSelectedDish.setValueAt("x" + curContent, row, 3);
-                    	billPanel.selectdDishAry.get(row).setNum(tQTY);
-                    	billPanel.updateTotleArea();
-                	}catch(Exception exp) {
-                    	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
-                		return;
-                	}
-        		}
-        		if(billPanel.tblSelectedDish.getSelectedRow() < 0) {
-        			billPanel.tblSelectedDish.setSelectedRow(billPanel.tblSelectedDish.getRowCount()-1);
-        		}
-        		//present the value in number dialog.
-        		Object obj = billPanel.tblSelectedDish.getValueAt(billPanel.tblSelectedDish.getSelectedRow(), 3);
-        		BarFrame.instance.numberPanelDlg.setContents(obj.toString());
         	}
         }
     }
@@ -428,7 +402,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         billPanel.resetColWidth(billPanel.getWidth());
     }
 
-    private void initComponent() {
+    public void initComponent() {
         btnLine_1_1 = new JButton(BarFrame.consts.CASH);
         btnLine_1_2 = new JButton(BarFrame.consts.DEBIT);
         btnLine_1_3 = new JButton(BarFrame.consts.VISA);
@@ -451,10 +425,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_2_9 = new JButton(BarFrame.consts.MORE);
         btnLine_2_10 = new JButton(BarFrame.consts.SEND);
         
-        btnLine_2_11 = new JButton(BarFrame.consts.SETTINGS);
-        btnLine_2_12 = new JToggleButton(BarFrame.consts.QTY);
-        btnLine_2_14 = new JButton(BarFrame.consts.EXACT_AMOUNT);
-
         billPanel = new BillPanel(this);
         // properties
         setLayout(null);
@@ -482,10 +452,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         add(btnLine_2_9);
         add(btnLine_2_10);
         
-        add(btnLine_2_11);
-        add(btnLine_2_12);
-        add(btnLine_2_14);
-
         add(billPanel);
         // add listener
         addComponentListener(this);
@@ -514,10 +480,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_2_8.addActionListener(this);
         btnLine_2_9.addActionListener(this);
         btnLine_2_10.addActionListener(this);
-        
-        btnLine_2_11.addActionListener(this);
-        btnLine_2_12.addActionListener(this);
-        btnLine_2_14.addActionListener(this);
     }
 
     private JButton btnLine_1_1;
@@ -541,10 +503,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private JButton btnLine_2_8;
     private JButton btnLine_2_9;
     private JButton btnLine_2_10;
-    
-    private JButton btnLine_2_11;
-    JToggleButton btnLine_2_12;
-    private JButton btnLine_2_14;
     
     public BillPanel billPanel;
 }

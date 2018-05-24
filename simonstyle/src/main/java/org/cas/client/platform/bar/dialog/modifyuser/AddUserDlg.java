@@ -93,14 +93,14 @@ public class AddUserDlg  extends JDialog implements ICASDialog, ActionListener, 
 		if(o == ok){
 			String tUserName = general.tfdUserName.getText();
 			if(tUserName.length() < 1){										//非空判断
-				JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
+				JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput);
 				general.tfdUserName.grabFocus();
 				return;
 			}		
 			
 			for(int i = 0; i < general.userNameAry.length; i++){			//无重复判断
 				if(tUserName.equals(general.userNameAry[i])){
-					JOptionPane.showMessageDialog(this, DlgConst.UserNameInUsed);
+					JOptionPane.showMessageDialog(this, BarFrame.consts.UserNameInUsed);
 					general.tfdUserName.setText("");
 					general.tfdUserName.grabFocus();
 					return;
@@ -146,13 +146,13 @@ public class AddUserDlg  extends JDialog implements ICASDialog, ActionListener, 
 	}
     
 	private void initDialog(){
-		setTitle(LoginDlgConst.AddNewUserTitle);
+		setTitle(BarFrame.consts.AddNewUser);
 		setResizable(false);
 		
 		//初始化－－－－－－－－－－－－－－－－
 		general = new AddUserGeneralPanel();
-		ok = new JButton(DlgConst.OK);
-		cancel = new JButton(DlgConst.CANCEL);
+		ok = new JButton(BarFrame.consts.OK);
+		cancel = new JButton(BarFrame.consts.CANCEL);
 
 		//属性设置－－－－－－－－－－－－－－
 		ok.setFocusable(false);

@@ -23,8 +23,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
+import org.cas.client.platform.CASControl;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
+import org.cas.client.platform.bar.dialog.statistics.EmployeeListDlg;
+import org.cas.client.platform.cascontrol.dialog.adduserdlg.AddUserDlg;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
+import org.cas.client.platform.cascontrol.frame.CASMainFrame;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.resource.international.PaneConsts;
@@ -150,7 +154,10 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		new SettingPrinterDlg(BarFrame.instance).setVisible(true);
         	}else if(o == btnLine_2_4) {
         		new CheckInOutListDlg(BarFrame.instance).setVisible(true);
-        	} 
+        	}else if(o == btnLine_2_5) {
+                CASControl.ctrl.setMainFrame(new CASMainFrame());
+        		new EmployeeListDlg(BarFrame.instance).setVisible(true);
+        	}
         }
         //JToggleButton-------------------------------------------------------------------------------------
         else if(o instanceof JToggleButton) {
@@ -284,7 +291,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_2_3 = new JButton(BarFrame.consts.PRINTER);
         btnLine_2_4 = new JButton(BarFrame.consts.CheckInOut);
        
-        btnLine_2_5 = new JButton("");
+        btnLine_2_5 = new JButton(BarFrame.consts.Operator);
         btnLine_2_6 = new JButton("");
         btnLine_2_7 = new JButton("");
         btnLine_2_8 = new JButton("");

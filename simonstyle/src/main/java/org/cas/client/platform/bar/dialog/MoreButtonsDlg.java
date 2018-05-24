@@ -8,8 +8,15 @@ import java.awt.event.WindowFocusListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JToggleButton;
 
+import org.cas.client.platform.bar.BarUtil;
+import org.cas.client.platform.bar.i18n.BarDlgConst;
+import org.cas.client.platform.bar.i18n.BarDlgConst2;
+import org.cas.client.platform.bar.i18n.BarDlgConst3;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.resource.international.DlgConst;
 
 public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocusListener{
 	SalesPanel barGeneralPanel;
@@ -33,17 +40,49 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
     public void actionPerformed(
             ActionEvent e) {
         Object o = e.getSource();
-        if (o == btnLine_3_1) {
-
-        } else if (o == btnLine_3_2) {
+        if (o == btnLine_3_1) { // enter the setting mode.(admin interface)
+        	this.setVisible(false);
+        	BarFrame.instance.switchMode(3);
         	
-        } else if (o == btnLine_3_3) {
+        }  else if (o == btnLine_3_2) {	//QTY
+        	this.setVisible(false);
+    		BarFrame.instance.numberPanelDlg.setBtnSource(btnLine_3_2);//pomp up a numberPanelDlg
+    		//should no record selected, select the last one.
+    		BarFrame.instance.numberPanelDlg.setVisible(btnLine_3_2.isSelected());	//@NOTE: it's not model mode.
+    		if(btnLine_3_2.isSelected()) {
+    			try {
+    				String curContent = BarFrame.instance.numberPanelDlg.curContent;
+            		int tQTY = Integer.valueOf(curContent);
+                	int row = barGeneralPanel.billPanel.tblSelectedDish.getSelectedRow();
+                	barGeneralPanel.billPanel.tblSelectedDish.setValueAt("x" + curContent, row, 3);
+                	barGeneralPanel.billPanel.selectdDishAry.get(row).setNum(tQTY);
+                	barGeneralPanel.billPanel.updateTotleArea();
+            	}catch(Exception exp) {
+                	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
+            		return;
+            	}
+    		}
+    		if(barGeneralPanel.billPanel.tblSelectedDish.getSelectedRow() < 0) {
+    			barGeneralPanel.billPanel.tblSelectedDish.setSelectedRow(barGeneralPanel.billPanel.tblSelectedDish.getRowCount()-1);
+    		}
+    		//present the value in number dialog.
+    		Object obj = barGeneralPanel.billPanel.tblSelectedDish.getValueAt(barGeneralPanel.billPanel.tblSelectedDish.getSelectedRow(), 3);
+    		BarFrame.instance.numberPanelDlg.setContents(obj.toString());
+
+    	} else if (o == btnLine_3_3) {
+    		PayCashDlg.exactCash(barGeneralPanel.billPanel.getBillId());
+        	this.setVisible(false);
+        	BarUtil.openMoneyBox();
+        	BarFrame.instance.switchMode(0);
         	
         } else if (o == btnLine_3_4) {
+        	//TODO: update current user's language property, then log out.
         	
         } else if (o == btnLine_3_5) {
+        	//TODO: update current user's language property, then log out.
         	
         } else if (o == btnLine_3_6) {
+        	//TODO: update current user's language property, then log out.
         	
         }
 //        else if (o == btnLine_3_7) {
@@ -84,12 +123,12 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 	
 	private void initPanel() {
 		// 初始化－－－－－－－－－－－－－－－－
-		btnLine_3_1 = new JButton(BarFrame.consts.SEND);
-		btnLine_3_2 = new JButton(BarFrame.consts.PAY);
-		btnLine_3_3 = new JButton(BarFrame.consts.PRINT_BILL);
-		btnLine_3_4 = new JButton(BarFrame.consts.QUICK_OPEN);
-		btnLine_3_5 = new JButton(BarFrame.consts.VOID_ORDER);
-		btnLine_3_6 = new JButton(BarFrame.consts.MODIFY);
+		btnLine_3_1 = new JButton(BarFrame.consts.SETTINGS);
+        btnLine_3_2 = new JToggleButton(BarFrame.consts.QTY);
+        btnLine_3_3 = new JButton(BarFrame.consts.EXACT_AMOUNT);
+		btnLine_3_4 = new JButton("EN");
+		btnLine_3_5 = new JButton("CN");
+		btnLine_3_6 = new JButton("FR");
 		//btnLine_3_7 = new JButton(BarFrame.consts.DISC_VOLUMN);
 		//btnLine_3_8 = new JButton(BarFrame.consts.LOGOUT);
 		//btnLine_3_9 = new JButton(BarFrame.consts.MORE);
@@ -132,9 +171,8 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		
 		this.addWindowFocusListener(this);
 	}
-	
 	private JButton btnLine_3_1;
-	private JButton btnLine_3_2;
+	private JToggleButton btnLine_3_2;
 	private JButton btnLine_3_3;
 	private JButton btnLine_3_4;
 	private JButton btnLine_3_5;
