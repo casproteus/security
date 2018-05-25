@@ -115,7 +115,7 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
     }
 
     private void initContent2() {
-    	String sql = "select ID, CATEGORY, SUBJECT, PASSWORD, CTOOL from Employee where DELETED = 0";
+    	String sql = "select ID, NNAME, SUBJECT, PASSWORD, CATEGORY from Employee where DELETED = 0";
         try {
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
 
@@ -140,16 +140,16 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
             while (rs.next()) {
             	tUserIDAry[tmpPos] = rs.getInt("id");
             	tTypeAry[tmpPos] = "Manager".equalsIgnoreCase(rs.getString("CATEGORY")) ? 2 : 1;
-            	tSubjectAry[tmpPos] = rs.getString("SUBJECT");
+            	tSubjectAry[tmpPos] = rs.getString("NNAME");
             	tPasswordAry[tmpPos] = rs.getString("PASSWORD");
             	String lang = rs.getString("SUBJECT");
-            	if(BarFrame.consts.langs[0].equalsIgnoreCase(lang)) {
+            	if(BarFrame.consts.langs()[0].equalsIgnoreCase(lang)) {
             		tLangAry[tmpPos] = 0;
-            	}else if(BarFrame.consts.langs[1].equalsIgnoreCase(lang)) {
+            	}else if(BarFrame.consts.langs()[1].equalsIgnoreCase(lang)) {
             		tLangAry[tmpPos] = 1;
-            	}else if(BarFrame.consts.langs[2].equalsIgnoreCase(lang)) {
+            	}else if(BarFrame.consts.langs()[2].equalsIgnoreCase(lang)) {
             		tLangAry[tmpPos] = 2;
-            	}else if(BarFrame.consts.langs[3].equalsIgnoreCase(lang)) {
+            	}else if(BarFrame.consts.langs()[3].equalsIgnoreCase(lang)) {
             		tLangAry[tmpPos] = 3;
             	}
                 tmpPos++;

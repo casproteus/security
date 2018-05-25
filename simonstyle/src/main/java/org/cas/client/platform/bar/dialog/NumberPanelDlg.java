@@ -173,14 +173,14 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 	}
 
     private void initDialog() {
-        setTitle(BarFrame.consts.QTY);
+        setTitle(BarFrame.consts.QTY());
         setResizable(false);
         setModal(false);
         setAlwaysOnTop(true);
 
         // 初始化－－－－－－－－－－－－－－－－
         tfdQTY = new JTextField();
-        lblQTY = new JLabel(BarFrame.consts.QTYNOTICE);
+        lblQTY = new JLabel(BarFrame.consts.QTYNOTICE());
         ok = new JButton("✔");
         back = new JButton("←");
         num1 = new JButton("1");

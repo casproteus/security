@@ -16,7 +16,7 @@ public class ChangeDlg extends JDialog implements ComponentListener, ActionListe
 	
 	public ChangeDlg(BarFrame parent, String change) {
 		super(parent);
-		setTitle(BarFrame.consts.Change);
+		setTitle(BarFrame.consts.Change());
 		
 		sep = new JSeparator();
 		valChange = new JLabel(change);

@@ -100,7 +100,7 @@ public class DeleteUserGeneralPanel  extends JPanel implements ComponentListener
 
     	cmbUserName.setModel(new DefaultComboBoxModel(subjectAry));
     	cmbUserName.setSelectedIndex(0);
-    	cmbType.setModel(new DefaultComboBoxModel(BarFrame.consts.USERTYPE));
+    	cmbType.setModel(new DefaultComboBoxModel(BarFrame.consts.USERTYPE()));
     	cmbUserName.setSelectedIndex(typeAry[0]);
 	}
 	/** 本方法用于设置View上各个组件的尺寸。 */

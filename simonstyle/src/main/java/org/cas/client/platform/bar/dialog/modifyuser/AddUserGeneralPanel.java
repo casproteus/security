@@ -96,7 +96,7 @@ public class AddUserGeneralPanel  extends JPanel implements ComponentListener{
     		ErrorUtil.write(e);
     	}
 
-    	cmbType.setModel(new DefaultComboBoxModel<String>(BarFrame.consts.USERTYPE));
+    	cmbType.setModel(new DefaultComboBoxModel<String>(BarFrame.consts.USERTYPE()));
     	cmbType.setSelectedIndex(1);
 	}
 	/** 本方法用于设置View上各个组件的尺寸。 */

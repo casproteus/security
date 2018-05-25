@@ -135,12 +135,12 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
 
     private void initDialog() {
     	setModal(true);
-        setTitle(BarFrame.consts.PRINTER);
+        setTitle(BarFrame.consts.PRINTER());
         setResizable(false);
         // 初始化－－－－－－－－－－－－－－－－
-        lblName = new JLabel(BarFrame.consts.Name);
-        lblIP = new JLabel(BarFrame.consts.IPAddress);
-        lblCategory = new JLabel(BarFrame.consts.Categary);
+        lblName = new JLabel(BarFrame.consts.Name());
+        lblIP = new JLabel(BarFrame.consts.IPAddress());
+        lblCategory = new JLabel(BarFrame.consts.Categary());
         tfdName = new JTextField[6];
         tfdIP = new JTextField[6];
         cmbCategory = new JComboBox[6];

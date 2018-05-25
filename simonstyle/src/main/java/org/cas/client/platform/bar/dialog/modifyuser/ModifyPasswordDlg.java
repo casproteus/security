@@ -101,10 +101,10 @@ public class ModifyPasswordDlg  extends JDialog implements ICASDialog, ActionLis
 			String tPassword1 = general.pfdPassword.getText();
 			String tPassword2 = general.pfdMakeSure.getText();
 			if(tPassword1.length() > 0 && tPassword2.length() == 0){//如果第一个有内容，第二个没有内容。
-				JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordMakeSure);	//提示在第二个里面填内容。
+				JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordMakeSure());	//提示在第二个里面填内容。
 				general.pfdMakeSure.grabFocus();
 			}else if(!tPassword1.equals(tPassword2)){				//两个内容不符，提示重新填。
-				JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordNotEqual);
+				JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordNotEqual());
 				general.pfdMakeSure.setText("");
 				general.pfdPassword.setText("");
 				general.pfdPassword.grabFocus();

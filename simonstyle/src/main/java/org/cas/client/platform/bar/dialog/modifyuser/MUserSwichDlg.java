@@ -99,13 +99,13 @@ public class MUserSwichDlg extends JDialog implements ICASDialog, ActionListener
 	}
     
 	private void initDialog(){
-        setTitle(BarFrame.consts.MUser);
+        setTitle(BarFrame.consts.MUser());
 		setResizable(false);
 		
 		//初始化－－－－－－－－－－－－－－－－
-		btnAddNewUser = new JButton(BarFrame.consts.AddNewUser);
-		btnModiFyUser = new JButton(BarFrame.consts.ModiFyUser);
-		btnDeleteUser = new JButton(BarFrame.consts.DeleteUser);
+		btnAddNewUser = new JButton(BarFrame.consts.AddNewUser());
+		btnModiFyUser = new JButton(BarFrame.consts.ModiFyUser());
+		btnDeleteUser = new JButton(BarFrame.consts.DeleteUser());
 		cancel = new JButton(DlgConst.CANCEL);
 
 		//属性设置－－－－－－－－－－－－－－

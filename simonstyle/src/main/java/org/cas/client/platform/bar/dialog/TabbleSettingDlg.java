@@ -185,7 +185,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
     private void initDialog() {
         btnMore = new JButton("+");
         btnLess = new JButton("-");
-        btnModify = new JButton(BarFrame.consts.MODIFY);
+        btnModify = new JButton(BarFrame.consts.MODIFY());
 
         // border----------
         setBounds(BarFrame.instance.getX(), BarFrame.instance.getY(), BarFrame.instance.getWidth(), BarFrame.instance.getHeight());

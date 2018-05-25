@@ -450,7 +450,7 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
     private void initDialog() {
         newFlag = record == null || record.getFieldValue(EmployeeDefaultViews.ID) == null;
         // Title,bounds－－－－－－
-        setTitle(BarFrame.consts.Operator);
+        setTitle(BarFrame.consts.Operator());
 
         setBounds((CustOpts.SCRWIDTH - 580) / 2, (CustOpts.SCRHEIGHT - 460) / 2, 580, 460); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
@@ -480,7 +480,7 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
         getRootPane().setDefaultButton(ok);
 
         // 搭建－－－－－－－－－－－－－
-        tabPane.addTab(BarFrame.consts.GENERAL, general);
+        tabPane.addTab(BarFrame.consts.GENERAL(), general);
         getContentPane().add(tabPane);
         getContentPane().add(cancel);
         getContentPane().add(ok);

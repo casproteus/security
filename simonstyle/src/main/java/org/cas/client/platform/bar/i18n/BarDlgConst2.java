@@ -1,199 +1,230 @@
 package org.cas.client.platform.bar.i18n;
 
-public class BarDlgConst2 extends BarDlgConst{
-    public final int SCROLLBAR_WIDTH = 40;
-    public final int SubTotal_HEIGHT = 50;
-    public final String ChangeDate = "CHANGE DATE";
-    public final String ViewDetail = "VIEW DETAIL";
-    public final String CLOSE = "CLOSE";
-    public final String Tip = "Tip";
-    public final String ServiceFee = "Service Fee";
-    public final String CashBack = "Cash Back";
-    public final String Status = "Status";
-    public final String APPLY = "APPLY";
+public class BarDlgConst2 implements BarDlgConst{
 
-    public final String EnterCashPayment = "Enter Cash Payment";
-    public final String EnterDebitPayment = "Enter Debit Payment";
-    public final String EnterVisaPayment = "Enter Visa Payment";
-    public final String EnterMasterPayment = "Enter Master Payment";
+    public String OK() {return "确定";}
+    public String Cancel() {return "取消";}
+    public String ChangeDate() {return "改变日期";}
+    public String ViewDetail() {return "详细信息";}
+    public String Close() {return "关闭";}
+    public String Tip() {return "消费";}
+    public String ServiceFee() {return "服务费";}
+    public String CashBack() {return "返款";}
+    public String Status() {return "状态";}
+    public String APPLY() {return "应用";}
+
+    public String EnterCashPayment() {return "输入现金金额";}
+    public String EnterDebitPayment() {return "输入Debit金额";}
+    public String EnterVisaPayment() {return "输入Visa金额";}
+    public String EnterMasterPayment() {return "输入 Master金额";}
     
-    public final String ChangeMode = "CHANGE MODE";
-    public final String AddTable = "ADD TABLE";
-    public final String OrderManage = "CHECK ORDER";
-    public final String OpenDrawer = "OPEN DRAWER";
-    public final String VolumnDiscount = "DISC BILL";
-    public final String WaiterReport = "SERVER REPORT";
-    public final String Reservation = "RESERVATION";
-    public final String Report = "REPORT";
-    public final String CheckInOut = "SING IN/OUT";
+    public String ChangeMode() {return "改变模式";}
+    public String AddTable() {return "添加桌子";}
+    public String OrderManage() {return "查看订单";}
+    public String OpenDrawer() {return "打开钱箱";}
+    public String VolumnDiscount() {return "整单打折";}
+    public String WaiterReport() {return "当日报告";}
+    public String Reservation() {return "订桌";}
+    public String Report() {return "报告";}
+    public String CheckInOut() {return "登入/登出";}
     
-    public final String Menu = "Menu";
-    public final String Language1 = "Language1";
-    public final String Language2 = "Language2";
-    public final String Language3 = "Language3";
-    public final String DSPINDEX = "Idx";
-    public final String PRICE = "Price";
+    public String Menu() {return "菜单";}
+    public String Language1() {return "Language1";}
+    public String Language2() {return "Language2";}
+    public String Language3() {return "Language3";}
+    public String DSPINDEX() {return "序号";}
+    public String PRICE() {return "价格";}
 
-    public final String EXACT_AMOUNT = "正好^.^";
-    public final String CASH = "现金";
-    public final String PAY = "支付";
-    public final String REMOVEITEM = "单项取消";
-    public final String VOID_ITEM = "单品撤销";
-    public final String SPLIT_BILL = "分单";
-    public final String Modify = "加备注";
-    public final String ChangePrice = "特价";
-    public final String TIP = "服务费";
-    public final String QTY = "数量";
-    public final String QTYNOTICE = "will be applied to selected dish!";
-    public final String DISC_ITEM = "单项打折";
-    public final String PRINT_BILL = "打印账单";
+    public String EXACT_AMOUNT() {return "正好^.^";}
+    public String CASH() {return "现金";}
+    public String PAY() {return "支付";}
+    public String REMOVEITEM() {return "单项取消";}
+    public String VOID_ITEM() {return "单品撤销";}
+    public String SPLIT_BILL() {return "分单";}
+    public String Modify() {return "加备注";}
+    public String ChangePrice() {return "特价";}
+    public String TIP() {return "服务费";}
+    public String QTY() {return "数量";}
+    public String QTYNOTICE() {return "将被应用到所选的菜!";}
+    public String DISC_ITEM() {return "单项打折";}
+    public String PRINT_BILL() {return "打印账单";}
 
-    public final String DEBIT = "借记";
-    public final String VISA = "VISA";
-    public final String MASTER = "MASTER";
-    public final String CANCEL_ALL = "取消新输入";
-    public final String VOID_ORDER = "整单撤销";
-    public final String SETTINGS = "设置";
-    public final String RETURN = "返回";
-    public final String MORE = "MORE";
-    public final String SEND = "SEND";
+    public String DEBIT() {return "借记";}
+    public String VISA() {return "VISA";}
+    public String MASTER() {return "MASTER";}
+    public String CANCEL_ALL() {return "取消新输入";}
+    public String VOID_ORDER() {return "整单撤销";}
+    public String SETTINGS() {return "设置";}
+    public String RETURN() {return "返回";}
+    public String MORE() {return "更多...";}
+    public String SEND() {return "发送";}
 
-    public final String EQUL_BILL = "EQUL BILL";
-    public final String FAST_DISCOUNT = "FAST DISCOUNT";
-    public final String QUICK_OPEN = "QUICK OPEN";
-    public final String MODIFY = "MODIFY";
-    public final String DISC_VOLUMN = "DISC VOLUMN";
+    public String EQUL_BILL() {return "分单";}
+    public String FAST_DISCOUNT() {return "快捷折扣";}
+    public String QUICK_OPEN() {return "打开钱箱";}
+    public String MODIFY() {return "修改";}
+    public String DISC_VOLUMN() {return "批量打折";}
 
-    public final String PRINTER = "PRINTER";
-    public final String OnlyOneShouldBeSelected = "Please make sure one and only one item selected, then try again.";
-    public final String InvalidInput = "The inputted content is invalid for this function.";
-    public final String ADMIN_MODE = "System is in setting mode! Click logout button back to use mode.";
-    public final String USE_MODE = "System is in operating mode!";
-    public final String Title = "STGOBar - Copyright 2018 - http://www.ShareTheGoodOnes.com";
-    public final String DuplicatedInput = "Dubplicated name found! please choose an other name.";
-    public final String NoBillSeleted = "Found no bill to split the item to. Please select at least one other bill before release the button.";
-    public final String NotPayYet = "Refund only available for bills already paid.";
-    public final String AllreadyRefund = "This bill is allready refunded, are you sure to do one more refund?, already refunded: $";
-    public final String UnSendRecordFound = "Unsend records found! please make sure all dish have send to kitch before printing bill.";
-    public final String Colon = "：";
-    public final String Operator = "USER";
-    public final String TABLE = "TABLE";
-    public final String Bill = "Bill";
-    public final String UnSavedRecordFound = "Are you sure to split the bill withoud sending new added ones? the un send records will be cancelled";
-    public final String COMFIRMDELETEACTION = "The dish might allready be prepared, are you sure to cancel?";
-    public final String COMFIRMDELETEACTION2 = "Are you sure to remove it from list?";
-    public final String COMFIRMLOSTACTION = "Are you sure not to send or save the new input content?";
-    public final String ConfirmPayAgain = "This bill has already been paid! Are you sure you will receive money for it again?";
-    public final String SetCatogoryFirst = "Please Set Category First.";
-    public final String SendItemCanNotModify = "Item already send can not be modified. we added a new item into the list.";
-    public final String reCeivedMoneyNotEnough = "Haven't received enough money, are you sure to close the bill?";
-    public final String LeftMoney = "From Last Session";
-    public final String UnSavedContentWillBeLost = "The un saved content will be lost.";
-    public final String Left = "Left";
-    public final String OPENTIME = "OPEN TIME";
-    public final String EndTime = "End Time";
+    public String PRINTER() {return "打印机";}
+    public String OnlyOneShouldBeSelected() {return "请确保有且只有一条记录处于选中状态，并再次尝试。";}
+    public String InvalidInput() {return "所输入的内容对于本功能无效。";}
+    public String ADMIN_MODE() {return "系统已经进入后台模式。 点击返回退出后台模式。";}
+    public String USE_MODE() {return "系统处于销售模式!";}
+    public String Title() {return "STGOBar - Copyright 2018 - http://www.ShareTheGoodOnes.com";}
+    public String DuplicatedInput() {return "该名称已经有人用了!请重新选择一个名字。";}
+    public String NoBillSeleted() {return "松开按钮之前，必须要选中另外一个单子，否则无法知道想要把选中的菜分到哪个单子上。";}
+    public String NotPayYet() {return "退款功能只对已经付过钱的单据有效。";}
+    public String AllreadyRefund() {return "这个单据已经退过款了，您真的确定要再退一次款吗？已经退还的金额为： ";}
+    public String UnSendRecordFound() {return "发现有尚未发送的记录! 请先确保所有的菜均已发送至厨房，然后再打印账单.";}
+    public String Colon() {return "：";}
+    public String Operator() {return "员工";}
+    public String TABLE() {return "桌子";}
+    public String Bill() {return "单子";}
+    public String UnSavedRecordFound() {return "您确定要在新加的菜尚未发送厨房的情况下进行分单操作吗？如果继续的话，尚未发送厨房的菜将被取消。";}
+    public String COMFIRMDELETEACTION() {return "这道菜有可能已经做了，您确定要取消吗？";}
+    public String COMFIRMDELETEACTION2() {return "您确定要把这个菜完全从列表中取消吗？";}
+    public String COMFIRMLOSTACTION() {return "您确定不要把新点的菜发送到厨房或者保存到系统中吗？";}
+    public String ConfirmPayAgain() {return "本账单已经支付过了！您确定要再次收钱吗？";}
+    public String SetCatogoryFirst() {return "请先进行类别设置，然后再添加菜单。";}
+    public String SendItemCanNotModify() {return "已经发送后厨的菜不能再修改。系统已经在末尾增加一条记录。";}
+    public String reCeivedMoneyNotEnough() {return "金额尚未付足，您确定要关闭本条账单吗？";}
+    public String LeftMoney() {return "上一班结余";}
+    public String UnSavedContentWillBeLost() {return "所有尚未保存的记录将丢失。";}
+    public String Left() {return "还欠";}
+    public String OPENTIME() {return "开台时间";}
+    public String EndTime() {return "结束时间";}
 
-    public final String EXACT = "EXACT";
+    public String EXACT() {return "刚好";}
 
-    public final String BillPageRow = "Rows of Bills:";
-    public final String BillPageCol = "Columns of Bills:";
-    public final String IsSingleUser = "Is single user mode";
-    public final String IsDiscBeforeTax = "Is discount apply on price before tax";
-    public final String IsPrintBillWhenPay = "automatic print bill when pay";
-    public final String StartTimeOfDay = "Start time of a day";
-    public final String PrinterError = "WARNING! Error occured when printing in back end, please check printer and try again.";
+    public String BillPageRow() {return "账单分布行数:";}
+    public String BillPageCol() {return "账单分布列数:";}
+    public String IsSingleUser() {return "单人操作模式";}
+    public String IsDiscBeforeTax() {return "打折时税款也进行打折";}
+    public String IsPrintBillWhenPay() {return "付款同时自动打印账单";}
+    public String StartTimeOfDay() {return "每天开始营业的时间";}
+    public String PrinterError() {return "警告！后台打印时发生错误，请检查相关打印机然后再试！";}
     
-    public final String Other = "OTHER";
-    public final String ProdNumber = "Id";
-    public final String ProdName = "Name";
-    public final String Count = "QTY";
-    public final String Price = "Price";
-    public final String Subtotal = "SubTotal";
-    public final String Total = "Total";
-    public final String QST = "QST";
-    public final String GST = "GST";
-    public final String PricePomp = "PricePomp";
-    public final String MenuPomp = "MenuPomp";
-    public final String ModifyPomp = "ModifyPomp";
+    public String Other() {return "其他";}
+    public String ProdNumber() {return "Id";}
+    public String ProdName() {return "名字";}
+    public String Count() {return "数量";}
+    public String Price() {return "价格";}
+    public String Subtotal() {return "小计";}
+    public String Total() {return "总计";}
+    public String QST() {return "省税";}
+    public String GST() {return "国税";}
+    public String PricePomp() {return "价格提醒";}
+    public String MenuPomp() {return "菜单提醒";}
+    public String ModifyPomp() {return "备注提醒";}
 
 
-    public final String Discount = "Discount";
-    public final String Receive = "Received";
-    public final String comment = "Comment";
-    public final String OpenTime = "OpenTime";
+    public String Discount() {return "折扣";}
+    public String Receive() {return "收款";}
+    public String comment() {return "备注";}
+    public String OpenTime() {return "开台时间";}
     
-    public final String Change = "Change";
+    public String Change() {return "找零";}
 
-    public final String AddUser = "ADD CLIENT";
-    public final String PrintAll = "PRINT ALL";
+    public String AddUser() {return "添加客人";}
+    public String PrintAll() {return "全部打印";}
 
-    public final String EqualBill = "EQUAL BILL";
-    public final String SplitItem = "SPLIT ITEM";
-    public final String MoveItem = "MoveItem";
-    public final String CombineAll = "COMBINE ALL";
-    public final String Refund = "REFUND";
-    public final String CompleteAll = "COMPLETE ALL";
-    public final String CancelAll = "Cancel All";
-    public final String ProdCodeLength = "ProdCodeLength";
-    public final String Shoestring = "shoeString";
-    public final String Size = "Size";
-    public final String[] Sizes = {"Size1","Size2","Size3","Size4","Size5","Size6"};
-    public final String Name = "Name";
-    public final String IPAddress = "IPAddress";
-    public final String Categary = "Category";
-    public final String TIME = "Create Time";
+    public String EqualBill() {return "整单平分";}
+    public String SplitItem() {return "单菜分单";}
+    public String MoveItem() {return "移动项目";}
+    public String CombineAll() {return "全部合并";}
+    public String Refund() {return "退款";}
+    public String CompleteAll() {return "全部完成";}
+    public String CancelAll() {return "全部取消";}
+    public String ProdCodeLength() {return "ProdCodeLength";}
+    public String Shoestring() {return "shoeString";}
+    public String Size() {return "尺寸";}
+    public String[] Sizes() {return new String[]{"Size1","Size2","Size3","Size4","Size5","Size6"};}
+    public String Name() {return "名字";}
+    public String IPAddress() {return "IP地址";}
+    public String Categary() {return "类别";}
+    public String TIME() {return "建立时间";}
     
-    public final String PrinterSupport = "Printer Support";
+    public String PrinterSupport() {return "打印支持";}
     
-    public final String SaleRecs = "Bill Record";
-    public final String FROM = "FROM";
-    public final String TO = "TO";
+    public String SaleRecs() {return "单据记录";}
+    public String FROM() {return "从";}
+    public String TO() {return "到";}
     
-    public final String EmployeeInfo = "员工资料";
-    public final String JobTitle = "职位";
-    public final String NickName = "昵称";
-    public final String Cellphone = "手机";
-    public final String PhoneNum = "宅电";
-    public final String HomeAddress = "家庭住址";
-    public final String MailAddress = "电子邮件地址";
-    public final String Account = "帐务";
+    public String EMPLOYEEID() {return "ID:";}
+    public String PHOTO() {return "添加照片...";}
+    public String LASTNAME() {return "姓";}
+    public String FIRSTNAME() {return "名";}
+    public String DISPLAYAS() {return "语言";}
+    public String NICKNAME() {return "显示名";}
+    public String JOB() {return "职位";}// job
+    public String RELATION() {return "关系...";}
+    public String IS_LADY() {return "女士";}
+    public String PASSWORD() {return "密码";}
+    public String ANNIVERSARY1() {return "结婚纪念日";}
+    public String ANNIVERSARY2() {return "其他纪念日";}
+    public String JOIN_TIME() {return "加入时间";}
+    public String ADDRESS() {return "住址";}
+    public String PHONE() {return "宅电";}
+    public String MOBILE() {return "手机";}
+    public String EMAIL() {return "电子邮件 ";}
+    public String lang1() {return "EN";}
+    public String lang2() {return "FR";}
+    public String lang3() {return "CN";}
+    public String lang4() {return "IT";}
+    public String SSCN() {return "社保号";}
+    public String SALARY() {return "薪水";}
+    public String WEBPAGE() {return "网页";}
+    public String[] langs() {return new String[] { lang1(), lang2(), lang3(), lang4() };}
+    public String[] ANNIVERSARYTYPE() {return new String[] { ANNIVERSARY1(), ANNIVERSARY2() };}
 
-    public final String CompName = "单位名称";
-    public final String CompAddress = "单位地址";
-    public final String CompTel = "单位电话";
-    public final String CompFax = "单位传真";
+    public String GENERAL() {return "员工卡";}
+    public String EmployeeInfo() {return "员工资料";}
+    public String JobTitle() {return "职位";}
+    public String NickName() {return "昵称";}
+    public String Cellphone() {return "手机";}
+    public String PhoneNum() {return "宅电";}
+    public String HomeAddress() {return "家庭住址";}
+    public String MailAddress() {return "电子邮件地址";}
+    public String Account() {return "帐务";}
 
-    public final String QQ = "即时通讯号码";
-    public final String MainPage = "主页";
-    public final String Sex = "性别";
-    public final String JoinTime = "进单位时间";
-    public final String Salary = "工资";
-    public final String INSURANCE = "保险";
-    public final String SSCNUMBER = "社保号码";
-    public final String IDCARD = "身份证";
-    public final String BIRTHDAY = "生日";
-    public final String BANKNUMBER = "银行卡号";
-    public final String Type = "类别";
-    public final String Note = "说明";
-    
-    public final String Add = "添加(A)";
+    public String CompName() {return "单位名称";}
+    public String CompAddress() {return "单位地址";}
+    public String CompTel() {return "单位电话";}
+    public String CompFax() {return "单位传真";}
 
-    public final String WorkRecs = "工作记录";   
-    public final String MoneyInBox = "钱箱目前金额";
-    public final String Calculate = "结算";
-    public final String Profit = "当班盈利";
+    public String QQ() {return "即时通讯号码";}
+    public String MainPage() {return "主页";}
+    public String Sex() {return "性别";}
+    public String JoinTime() {return "进单位时间";}
+    public String Salary() {return "工资";}
+    public String INSURANCE() {return "保险";}
+    public String SSCNUMBER() {return "社保号码";}
+    public String IDCARD() {return "身份证";}
+    public String BIRTHDAY() {return "生日";}
+    public String BANKNUMBER() {return "银行卡号";}
+    public String Type() {return "类别";}
+    public String Note() {return "说明";}
     
-    public final String Product = "商品";
-    public final String InputRecs = "进货记录";
-    public final String Supplier = "供货商";
-    
-    public final String PasswordMakeSure = "请您将密码在确认框内再输入一遍，系统将比较确认框中的密码和密码框中的密码，确认匹配无勿后，密码方会生效。";
-    public final String PasswordNotEqual = "两次输入的密码不完全一致，请重新输入。";
-    
-    public final String MUser = "修改用户";
-    public final String[] USERTYPE = { "经理", "职员" };
+    public String Add() {return "添加(A)";}
 
-    public final String AddNewUser = "添加新用户(A)";
-    public final String ModiFyUser = "修改用户信息(M)";
-    public final String DeleteUser = "删除用户(D)";
+    public String WorkRecs() {return "工作记录";}   
+    public String MoneyInBox() {return "钱箱目前金额";}
+    public String Calculate() {return "结算";}
+    public String Profit() {return "当班盈利";}
+    
+    public String Product() {return "商品";}
+    public String InputRecs() {return "进货记录";}
+    public String Supplier() {return "供货商";}
+    
+    public String PasswordMakeSure() {return "请您将密码在确认框内再输入一遍，系统将比较确认框中的密码和密码框中的密码，确认匹配无勿后，密码方会生效。";}
+    public String PasswordNotEqual() {return "两次输入的密码不完全一致，请重新输入。";}
+    
+    public String MUser() {return "修改用户";}
+    public String[] USERTYPE() {return new String[]{ "经理", "职员" };}
+
+    public String AddNewUser() {return "添加新用户(A)";}
+    public String ModiFyUser() {return "修改用户信息(M)";}
+    public String DeleteUser() {return "删除用户(D)";}
+
+    public String UserNameInUsed() {return "这个名字不可用，请重新选择。";}
 }

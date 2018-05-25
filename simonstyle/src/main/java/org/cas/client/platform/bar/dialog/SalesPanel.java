@@ -96,7 +96,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		
         		//if it's already paid, show comfirmDialog.
         		if(billPanel.status >= 100)
-        			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.ConfirmPayAgain, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
+        			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.ConfirmPayAgain(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
             			return;
         		
         		//check the pay dialog is already visible, if yes, then update bill received values.
@@ -106,13 +106,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		//show dialog-------------------------------------
          		BarFrame.payCashDlg.setFloatSupport(true);
          		if(o == btnLine_1_1) {
-         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterCashPayment);
+         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterCashPayment());
          		}else if(o == btnLine_1_2) {
-         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterDebitPayment);
+         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterDebitPayment());
          		}else if(o == btnLine_1_3) {
-         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterVisaPayment);
+         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterVisaPayment());
          		}else if(o == btnLine_2_3) {
-         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterMasterPayment);
+         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterMasterPayment());
          		}
          		BarFrame.payCashDlg.setVisible(true);
          		
@@ -121,11 +121,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		
         	} else if (o == btnLine_1_4) {	//remove item.
         		if(BillListPanel.curDish == null) {//check if there's an item selected.
-        			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected);
+        			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
         			return;
         		}
         		if(BillListPanel.curDish.getOutputID() >= 0) {//check if it's send
-        			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
+        			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.COMFIRMDELETEACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
             			return;
         			//TODO: send a message to kitchen.
         			
@@ -136,7 +136,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         	} else if (o == btnLine_1_5) {		//split bill
         		//check if there unsaved dish, and give warning.
         		if(BillListPanel.curDish == null)
-            		if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.UnSavedRecordFound, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
+            		if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.UnSavedRecordFound(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
             			return;
         		BarFrame.instance.switchMode(1);
         		
@@ -165,7 +165,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	            	Dish dish = billPanel.selectdDishAry.get(billPanel.selectdDishAry.size() - 1);
 	            	if(dish.getId() < 0) {	//has new record.
 	            		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
-	            				BarFrame.consts.COMFIRMLOSTACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
+	            				BarFrame.consts.COMFIRMLOSTACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
 	    	                 return;	
 	    	            }
 	            	}
@@ -204,7 +204,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	}
             } else if (o == btnLine_2_5) { // void all include saved ones
         		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
-        				BarFrame.consts.COMFIRMDELETEACTION, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+        				BarFrame.consts.COMFIRMDELETEACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
 	                 return;	
 	            }
     	        //update db, delete relevant orders.
@@ -241,7 +241,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             }else if(o == btnLine_2_8) {
             	//check if it's already paid.
             	if(billPanel.selectdDishAry.size() < 1 || billPanel.selectdDishAry.get(0).getBillID() == 0) {
-            		JOptionPane.showMessageDialog(this, BarFrame.consts.NotPayYet);
+            		JOptionPane.showMessageDialog(this, BarFrame.consts.NotPayYet());
             		return;
             	}
             	
@@ -261,7 +261,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     rs.next();
                     int status = rs.getInt("status");
                     if(status < 0) {
-                    	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.AllreadyRefund + (0-status), DlgConst.DlgTitle,
+                    	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.AllreadyRefund() + BarOption.MoneySign + (0-status), DlgConst.DlgTitle,
     		                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
     						return;
     					}else {
@@ -295,7 +295,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         else if(o instanceof JToggleButton) {
         	 if (o == btnLine_1_7) {
          		if(BillListPanel.curDish == null) {//check if there's an item selected.
-         			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected);
+         			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
          			return;
          		}
          		BarFrame.numberPanelDlg.setBtnSource(btnLine_1_7);//pomp up a numberPanelDlg
@@ -307,7 +307,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		
              }else if(o == btnLine_1_8) {
             	if(BillListPanel.curDish == null) {//check if there's an item selected.
-          			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected);
+          			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
           			return;
           		}
             	BarFrame.numberPanelDlg.setBtnSource(btnLine_1_8);//pomp up a numberPanelDlg
@@ -403,27 +403,27 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     }
 
     public void initComponent() {
-        btnLine_1_1 = new JButton(BarFrame.consts.CASH);
-        btnLine_1_2 = new JButton(BarFrame.consts.DEBIT);
-        btnLine_1_3 = new JButton(BarFrame.consts.VISA);
-        btnLine_1_4 = new JButton(BarFrame.consts.REMOVEITEM);
-        btnLine_1_5 = new JButton(BarFrame.consts.SPLIT_BILL);
-        btnLine_1_6 = new JButton(BarFrame.consts.Modify);
-        btnLine_1_7 = new JToggleButton(BarFrame.consts.DISC_ITEM);
-        btnLine_1_8 = new JToggleButton(BarFrame.consts.ChangePrice);
-        btnLine_1_9 = new JButton(BarFrame.consts.TIP);
-        btnLine_1_10 = new JButton(BarFrame.consts.PRINT_BILL);
+        btnLine_1_1 = new JButton(BarFrame.consts.CASH());
+        btnLine_1_2 = new JButton(BarFrame.consts.DEBIT());
+        btnLine_1_3 = new JButton(BarFrame.consts.VISA());
+        btnLine_1_4 = new JButton(BarFrame.consts.REMOVEITEM());
+        btnLine_1_5 = new JButton(BarFrame.consts.SPLIT_BILL());
+        btnLine_1_6 = new JButton(BarFrame.consts.Modify());
+        btnLine_1_7 = new JToggleButton(BarFrame.consts.DISC_ITEM());
+        btnLine_1_8 = new JToggleButton(BarFrame.consts.ChangePrice());
+        btnLine_1_9 = new JButton(BarFrame.consts.TIP());
+        btnLine_1_10 = new JButton(BarFrame.consts.PRINT_BILL());
 
-        btnLine_2_1 = new JButton(BarFrame.consts.RETURN);
-        btnLine_2_2 = new JButton(BarFrame.consts.AddUser);
-        btnLine_2_3 = new JButton(BarFrame.consts.MASTER);
-        btnLine_2_4 = new JButton(BarFrame.consts.CANCEL_ALL);
-        btnLine_2_5 = new JButton(BarFrame.consts.VOID_ORDER);
-        btnLine_2_6 = new JButton(BarFrame.consts.OpenDrawer);
-        btnLine_2_7 = new JButton(BarFrame.consts.VolumnDiscount);
-        btnLine_2_8 = new JButton(BarFrame.consts.Refund);
-        btnLine_2_9 = new JButton(BarFrame.consts.MORE);
-        btnLine_2_10 = new JButton(BarFrame.consts.SEND);
+        btnLine_2_1 = new JButton(BarFrame.consts.RETURN());
+        btnLine_2_2 = new JButton(BarFrame.consts.AddUser());
+        btnLine_2_3 = new JButton(BarFrame.consts.MASTER());
+        btnLine_2_4 = new JButton(BarFrame.consts.CANCEL_ALL());
+        btnLine_2_5 = new JButton(BarFrame.consts.VOID_ORDER());
+        btnLine_2_6 = new JButton(BarFrame.consts.OpenDrawer());
+        btnLine_2_7 = new JButton(BarFrame.consts.VolumnDiscount());
+        btnLine_2_8 = new JButton(BarFrame.consts.Refund());
+        btnLine_2_9 = new JButton(BarFrame.consts.MORE());
+        btnLine_2_10 = new JButton(BarFrame.consts.SEND());
         
         billPanel = new BillPanel(this);
         // properties

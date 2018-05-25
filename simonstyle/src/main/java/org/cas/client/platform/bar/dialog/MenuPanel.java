@@ -424,7 +424,7 @@ public class MenuPanel extends JPanel implements ActionListener {
             if (text == null || text.length() == 0) { // check if it's empty
                 if (LoginDlg.USERTYPE == LoginDlg.ADMIN_STATUS) { // and it's admin mode, add a Category.
                 	if(tgbActiveCategory == null || tgbActiveCategory.getText() == null || tgbActiveCategory.getText().length() < 1) {
-    					JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.SetCatogoryFirst);
+    					JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.SetCatogoryFirst());
     					return;
                 	}
                     new DishDlg(BarFrame.instance, menuButton.getDspIndex()).setVisible(true);

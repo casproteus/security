@@ -18,6 +18,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.i18n.BarDlgConst0;
+import org.cas.client.platform.bar.i18n.BarDlgConst1;
+import org.cas.client.platform.bar.i18n.BarDlgConst2;
+import org.cas.client.platform.bar.i18n.BarDlgConst3;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -208,7 +213,23 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                     USERTYPE = general.typeAry[i]; // 并标记下用户的级别
                     USERNAME = general.subjectAry[i];
                     USERLANG = general.langAry[i];
-                    
+                    switch (USERLANG) {
+					case 0:
+                    	BarFrame.consts = new BarDlgConst0();
+						break;
+					case 1:
+                    	BarFrame.consts = new BarDlgConst1();
+						break;
+					case 2:
+                    	BarFrame.consts = new BarDlgConst2();
+						break;
+					case 3:
+                    	BarFrame.consts = new BarDlgConst3();
+						break;
+					default:
+						break;
+					}
+                    BarFrame.instance.initComponent();
                     setVisible(false);
                     return;
                 }

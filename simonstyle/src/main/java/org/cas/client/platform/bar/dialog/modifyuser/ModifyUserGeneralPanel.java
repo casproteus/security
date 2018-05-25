@@ -141,7 +141,7 @@ public class ModifyUserGeneralPanel  extends JPanel implements ComponentListener
     	}
 
 
-    	cmbType.setModel(new DefaultComboBoxModel(BarFrame.consts.USERTYPE));
+    	cmbType.setModel(new DefaultComboBoxModel(BarFrame.consts.USERTYPE()));
     	cmbUserName.setModel(new DefaultComboBoxModel(subjectAry));
     	cmbUserName.setSelectedIndex(0);
 	}

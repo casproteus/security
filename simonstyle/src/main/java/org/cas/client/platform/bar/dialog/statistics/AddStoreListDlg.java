@@ -173,7 +173,7 @@ public class AddStoreListDlg extends JDialog implements ICASDialog, ActionListen
     }
 
     private void initDialog() {
-        setTitle(BarFrame.consts.InputRecs);
+        setTitle(BarFrame.consts.InputRecs());
 
         // 初始化－－－－－－－－－－－－－－－－
         tblContent = new PIMTable();// 显示字段的表格,设置模型
@@ -299,11 +299,11 @@ public class AddStoreListDlg extends JDialog implements ICASDialog, ActionListen
         }
     }
 
-    private String[] header = new String[] { BarFrame.consts.Supplier, // "供货商"
-            BarFrame.consts.TIME, // "时间"
-            BarFrame.consts.Product, // "产品"
-            BarFrame.consts.Count, // "数量"
-            BarFrame.consts.Receive }; // "收银"
+    private String[] header = new String[] { BarFrame.consts.Supplier(), // "供货商"
+            BarFrame.consts.TIME(), // "时间"
+            BarFrame.consts.Product(), // "产品"
+            BarFrame.consts.Count(), // "数量"
+            BarFrame.consts.Receive() }; // "收银"
 
     int[] supplierIdAry;
     String[] supplierNameAry;

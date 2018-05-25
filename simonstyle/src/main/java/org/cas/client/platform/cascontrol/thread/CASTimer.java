@@ -18,8 +18,8 @@ class CASTimer {
         if (!instance.thread.isAlive()) { // 若当前线程已停止，
             instance.thread.setPriority(Thread.MIN_PRIORITY); // 重新开始
             instance.thread.newTasksMayBeScheduled = true;
-            instance.thread.start();
             // TODO:此处需要增加安全保证,防止返回了实例后,实例的方法执行中发现线程没有启动而导致错误.
+            instance.thread.start();
         }
         return instance;
     }

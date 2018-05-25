@@ -109,7 +109,7 @@ public class BarUtil {
 
     // 返回Option中设置的，条码的位数。
     public static int getProdCodeLen() {
-        String tValue = (String) CustOpts.custOps.getValue(BarFrame.consts.ProdCodeLength);
+        String tValue = (String) CustOpts.custOps.getValue(BarFrame.consts.ProdCodeLength());
         int tProdCodeLen = 100;
         try {
             tProdCodeLen = Integer.parseInt(tValue);

@@ -347,25 +347,25 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
 
         panel = new JPanel();
         // 第一区域----------------------------------------------------------
-        lblEmployID = new JLabel(BarFrame.consts.EMPLOYEEID);
+        lblEmployID = new JLabel(BarFrame.consts.EMPLOYEEID());
         fldEmployID = new JTextField();
-        cbxIsmFemale = new JCheckBox(BarFrame.consts.IS_LADY, false);
+        cbxIsmFemale = new JCheckBox(BarFrame.consts.IS_LADY(), false);
 
         // 上部信息块-----------------------
-        photo = new PIMImage(BarFrame.consts.PHOTO);
-        lblLastName = new JLabel(BarFrame.consts.LASTNAME);
+        photo = new PIMImage(BarFrame.consts.PHOTO());
+        lblLastName = new JLabel(BarFrame.consts.LASTNAME());
         fldLastName = new JTextField();
-        lblFirstName = new JLabel(BarFrame.consts.FIRSTNAME);
+        lblFirstName = new JLabel(BarFrame.consts.FIRSTNAME());
         fldFirstName = new JTextField();
-        lblDisplayAs = new JLabel(BarFrame.consts.DISPLAYAS);
+        lblDisplayAs = new JLabel(BarFrame.consts.DISPLAYAS());
         cmbLanguage = new JComboBox(); // @NOTE:初始化显示model中存的值，它在每次被点开时会用model中的值加上所有的可能组合作为ComboBox的Model。
-        lblNickname = new JLabel(BarFrame.consts.NICKNAME);
+        lblNickname = new JLabel(BarFrame.consts.NICKNAME());
         fldNickName = new JTextField();
-        lblTitle = new JLabel(BarFrame.consts.JOB);
+        lblTitle = new JLabel(BarFrame.consts.JOB());
         fldTitle = new JTextField();
-        lblEmail = new JLabel(BarFrame.consts.EMAIL);
+        lblEmail = new JLabel(BarFrame.consts.EMAIL());
         fldEmail = new JTextField();
-        lblWebPage = new JLabel(BarFrame.consts.WEBPAGE);
+        lblWebPage = new JLabel(BarFrame.consts.WEBPAGE());
         fldWebPage = new JTextField();
         areComment = new JTextArea();
         scrComment = new JScrollPane(areComment);
@@ -373,33 +373,33 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         fldCategories = new JTextField();
 
         // 第二区域----------------------------------------------------------------------
-        lblBirthday = new JLabel(BarFrame.consts.BIRTHDAY);
+        lblBirthday = new JLabel(BarFrame.consts.BIRTHDAY());
         clbBirthday = new CalendarCombo();
-        lblAnniversary = new JLabel(BarFrame.consts.ANNIVERSARY2);
+        lblAnniversary = new JLabel(BarFrame.consts.ANNIVERSARY2());
         clbAnniversary = new CalendarCombo();
         arbAnniversary = new EmployeeArrowButton(this);
-        lblJointime = new JLabel(BarFrame.consts.JOIN_TIME);
+        lblJointime = new JLabel(BarFrame.consts.JOIN_TIME());
         clbJointime = new CalendarCombo();
-        lblAddress = new JLabel(BarFrame.consts.ADDRESS);
+        lblAddress = new JLabel(BarFrame.consts.ADDRESS());
         areAddress = new JTextArea();
         scrAddress = new JScrollPane(areAddress);
-        lblPhone = new JLabel(BarFrame.consts.PHONE);
+        lblPhone = new JLabel(BarFrame.consts.PHONE());
         fldPhone = new JTextField();
-        lblMobile = new JLabel(BarFrame.consts.MOBILE);
+        lblMobile = new JLabel(BarFrame.consts.MOBILE());
         fldMobile = new JTextField();
-        lblBankNumber = new JLabel(BarFrame.consts.BANKNUMBER);
+        lblBankNumber = new JLabel(BarFrame.consts.BANKNUMBER());
         fldBankNumber = new JTextField();
-        lblSSCNumber = new JLabel(BarFrame.consts.SSCN);
+        lblSSCNumber = new JLabel(BarFrame.consts.SSCN());
         fldSSCNumber = new JTextField();
-        lblSalary = new JLabel(BarFrame.consts.SALARY);
+        lblSalary = new JLabel(BarFrame.consts.SALARY());
         fldSalary = new JTextField();
         lblPriceUnit1 = new JLabel(BarOption.MoneySign);
-        lblInsurance = new JLabel(BarFrame.consts.INSURANCE);
+        lblInsurance = new JLabel(BarFrame.consts.INSURANCE());
         fldInsurance = new JTextField();
         lblPriceUnit2 = new JLabel(BarOption.MoneySign);
-        lblPasswrod = new JLabel(BarFrame.consts.PASSWORD);
+        lblPasswrod = new JLabel(BarFrame.consts.PASSWORD());
         fldPassword = new JPasswordField();
-        btnRelation = new JButton(BarFrame.consts.RELATION);
+        btnRelation = new JButton(BarFrame.consts.RELATION());
         fldRelation = new JTextField();
 
         // 属性设置＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -447,7 +447,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         lblAnniversary.setDisplayedMnemonic('d');
         lblAnniversary.setLabelFor(clbAnniversary);
         clbAnniversary.setBorder(clbBirthday.getBorder());
-        arbAnniversary.setItems(BarFrame.consts.ANNIVERSARYTYPE);
+        arbAnniversary.setItems(BarFrame.consts.ANNIVERSARYTYPE());
         arbAnniversary.setArrowButtonLabel(lblAnniversary);
         lblJointime.setFont(CustOpts.custOps.getFontOfDefault());
         lblJointime.setDisplayedMnemonic('q');
@@ -589,7 +589,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         tObj = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.PHOTO));
         if (tObj == null) {
             photo.setPicture(null);
-            photo.setText(BarFrame.consts.PHOTO);
+            photo.setText(BarFrame.consts.PHOTO());
         } else {
             String fileName =
                     PIMDBUtil.decodeByteArrayToImage((byte[]) tObj,
@@ -604,7 +604,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         // FileAs
 //        fileAsVec = new Vector();
 //        fileAsVec.add();
-        fileAsModel = new DefaultComboBoxModel(BarFrame.consts.langs); // 给fileAsBox赋值
+        fileAsModel = new DefaultComboBoxModel(BarFrame.consts.langs()); // 给fileAsBox赋值
         cmbLanguage.setModel(fileAsModel);
         ((JTextField) ((MetalComboBoxEditor) cmbLanguage.getEditor()).getEditorComponent()).setText((String)dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.SUBJECT)));
 
@@ -632,7 +632,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
             clbAnniversary.setTimeText("");
         }
         tObj = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.ANNIVERSARYTYPE));
-        lblAnniversary.setText(tObj == null ? BarFrame.consts.ANNIVERSARY1 : (String) tObj);
+        lblAnniversary.setText(tObj == null ? BarFrame.consts.ANNIVERSARY1() : (String) tObj);
         tObj = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.JOINTIME));
         if (tObj != null)
             clbJointime.setSelectedItem(tObj);

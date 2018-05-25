@@ -156,7 +156,7 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
             if (isCategoryNameModified(0)) {
                 for (int i = 0; i < menuPanel.dishNameMetrix[0].length; i++) {
                     if (i != dspIndex - 1 && text.equalsIgnoreCase(menuPanel.dishNameMetrix[0][i])) {
-                        JOptionPane.showMessageDialog(this, BarFrame.consts.DuplicatedInput);
+                        JOptionPane.showMessageDialog(this, BarFrame.consts.DuplicatedInput());
                         general.tfdCategoryNames[0].grabFocus();
                         return;
                     }
@@ -168,7 +168,7 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
                 if (text != null && !"".equals(text))//language2 is allowed to be empty.
                     for (int i = 0; i < menuPanel.dishNameMetrix[1].length; i++) {
                         if (i != dspIndex - 1 && text.equalsIgnoreCase(menuPanel.dishNameMetrix[1][i])) {
-                            JOptionPane.showMessageDialog(this, BarFrame.consts.DuplicatedInput);
+                            JOptionPane.showMessageDialog(this, BarFrame.consts.DuplicatedInput());
                             general.tfdCategoryNames[1].grabFocus();
                             return;
                         }
@@ -180,7 +180,7 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
                 if (text != null && !"".equals(text))//language3 is allowed to be empty.
                     for (int i = 0; i < menuPanel.dishNameMetrix[2].length; i++) {
                         if (i != dspIndex - 1 && text.equalsIgnoreCase(menuPanel.dishNameMetrix[2][i])) {
-                            JOptionPane.showMessageDialog(this, BarFrame.consts.DuplicatedInput);
+                            JOptionPane.showMessageDialog(this, BarFrame.consts.DuplicatedInput());
                             general.tfdCategoryNames[2].grabFocus();
                             return;
                         }
@@ -336,10 +336,10 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
 
         private void initConponent() {
         	lblCategoryNames =  new JLabel[3];
-            lblCategoryNames[0] = new JLabel(BarFrame.consts.Language1);
-            lblCategoryNames[1] = new JLabel(BarFrame.consts.Language2);
-            lblCategoryNames[2] = new JLabel(BarFrame.consts.Language3);
-            lblPosition = new JLabel(BarFrame.consts.DSPINDEX);
+            lblCategoryNames[0] = new JLabel(BarFrame.consts.Language1());
+            lblCategoryNames[1] = new JLabel(BarFrame.consts.Language2());
+            lblCategoryNames[2] = new JLabel(BarFrame.consts.Language3());
+            lblPosition = new JLabel(BarFrame.consts.DSPINDEX());
 
             tfdCategoryNames = new JTextField[3];
             tfdCategoryNames[0] = new JTextField();

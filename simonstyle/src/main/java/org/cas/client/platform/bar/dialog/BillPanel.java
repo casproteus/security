@@ -124,8 +124,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		//prepare the printing String and do printing
 		if(WifiPrintService.SUCCESS != 
 				WifiPrintService.exePrintCommand(newDishes, BarFrame.instance.menuPanel.printers, BarFrame.instance.valCurTable.getText())) {
-			BarFrame.setStatusMes(BarFrame.consts.PrinterError);
-			JOptionPane.showMessageDialog(this, BarFrame.consts.PrinterError);
+			BarFrame.setStatusMes(BarFrame.consts.PrinterError());
+			JOptionPane.showMessageDialog(this, BarFrame.consts.PrinterError());
 		}
 		
 		//save to db output
@@ -183,7 +183,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	        if(o == btnMore) {
 	        	int selectedRow =  tblSelectedDish.getSelectedRow();
 				if(selectdDishAry.get(selectedRow).getOutputID() >= 0) {	//already saved
-					BarFrame.setStatusMes(BarFrame.consts.SendItemCanNotModify);
+					BarFrame.setStatusMes(BarFrame.consts.SendItemCanNotModify());
 					addContentToList(selectdDishAry.get(selectedRow));
 				}else {
 					int tQTY = selectdDishAry.get(selectedRow).getNum() + 1;
@@ -197,7 +197,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	        } else if (o == btnLess) {
 	    		int selectedRow =  tblSelectedDish.getSelectedRow();
 				if(selectdDishAry.get(selectedRow).getOutputID() >= 0) {
-					if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION, DlgConst.DlgTitle,
+					if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION(), DlgConst.DlgTitle,
 		                    JOptionPane.YES_NO_OPTION) != 0) {
 						return;
 					}
@@ -205,7 +205,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					
 				}else {
 					if(selectdDishAry.get(selectedRow).getNum() == 1) {
-						if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION2, DlgConst.DlgTitle,
+						if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION2(), DlgConst.DlgTitle,
 			                    JOptionPane.YES_NO_OPTION) != 0) {
 							tblSelectedDish.setSelectedRow(-1);
 							return;
@@ -327,7 +327,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			
 			if(salesPanel != null && !BarFrame.numberPanelDlg.isVisible()) {	//if qty button not seleted.
 				if(selectdDishAry.get(selectedRow).getOutputID() >= 0) {
-					if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.COMFIRMDELETEACTION, DlgConst.DlgTitle,
+					if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.COMFIRMDELETEACTION(), DlgConst.DlgTitle,
 		                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
 						tblSelectedDish.setSelectedRow(-1);
 						return;
@@ -410,8 +410,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     }
 
     public void updateTotleArea() {
-    	Object g = CustOpts.custOps.getValue(BarFrame.consts.GST);
-    	Object q = CustOpts.custOps.getValue(BarFrame.consts.QST);
+    	Object g = CustOpts.custOps.getValue(BarFrame.consts.GST());
+    	Object q = CustOpts.custOps.getValue(BarFrame.consts.QST());
     	float gstRate = g == null ? 5 : Float.valueOf((String)g);
     	float qstRate = q == null ? 9.975f : Float.valueOf((String)q);
     	float totalGst = 0;
@@ -466,11 +466,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		//@TODO: I am not sure if it's correct to do like this, we don't know what tax rate is good for the bill discount.
     	}
 
-        lblDiscount.setText(discount > 0 ? BarFrame.consts.Discount + " : $" + String.valueOf(((int)discount)/100f) : "");
-        lblServiceFee.setText(serviceFee > 0 ? BarFrame.consts.ServiceFee + " : $" + String.valueOf(((int)serviceFee)/100f) : "");
-    	lblSubTotle.setText(BarFrame.consts.Subtotal + " : $" + String.valueOf(subTotal/100f));
-        lblGSQ.setText(BarFrame.consts.QST + " : $" + String.valueOf(((int)totalGst)/100f));
-        lblQSQ.setText(BarFrame.consts.GST + " : $" + String.valueOf(((int)totalQst)/100f));
+        lblDiscount.setText(discount > 0 ? BarFrame.consts.Discount() + " : $" + String.valueOf(((int)discount)/100f) : "");
+        lblServiceFee.setText(serviceFee > 0 ? BarFrame.consts.ServiceFee() + " : $" + String.valueOf(((int)serviceFee)/100f) : "");
+    	lblSubTotle.setText(BarFrame.consts.Subtotal() + " : $" + String.valueOf(subTotal/100f));
+        lblGSQ.setText(BarFrame.consts.QST() + " : $" + String.valueOf(((int)totalGst)/100f));
+        lblQSQ.setText(BarFrame.consts.GST() + " : $" + String.valueOf(((int)totalQst)/100f));
         valTotlePrice.setText(String.valueOf(((int) (subTotal + totalGst + totalQst))/100f));
     }
     
@@ -655,7 +655,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     void removeAtSelection(int selectedRow) {
 		int tValidRowCount = getUsedRowCount(); // get the used RowCount
     	if(selectedRow < 0 || selectedRow > tValidRowCount - 1) {
-    		JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected);
+    		JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
     		ErrorUtil.write("Unexpected row number when calling removeAtSelection : " + selectedRow);
     		return;
     	}
@@ -749,10 +749,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         scrContent = new PIMScrollPane(tblSelectedDish);
         lblDiscount = new JLabel();
         lblServiceFee = new JLabel();
-        lblSubTotle = new JLabel(BarFrame.consts.Subtotal);
-        lblGSQ = new JLabel(BarFrame.consts.QST);
-        lblQSQ = new JLabel(BarFrame.consts.GST);
-        lblTotlePrice = new JLabel(BarFrame.consts.Total + " : $");
+        lblSubTotle = new JLabel(BarFrame.consts.Subtotal());
+        lblGSQ = new JLabel(BarFrame.consts.QST());
+        lblQSQ = new JLabel(BarFrame.consts.GST());
+        lblTotlePrice = new JLabel(BarFrame.consts.Total() + " : $");
         valTotlePrice = new JLabel();
         btnMore = new ArrayButton("+");
         btnLess = new ArrayButton("-");
@@ -832,6 +832,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     private ArrayButton btnMore;
     private ArrayButton btnLess;
     
-    String[] header = new String[] {BarFrame.consts.Count, BarFrame.consts.ProdName, "", BarFrame.consts.Price};
+    String[] header = new String[] {BarFrame.consts.Count(), BarFrame.consts.ProdName(), "", BarFrame.consts.Price()};
 
 }

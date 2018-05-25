@@ -99,12 +99,12 @@ public class ModifyUserDlg extends JDialog implements ICASDialog, ActionListener
 			String tPassword1 = general.pfdPassword.getText();
 			String tPassword2 = general.pfdMakeSure.getText();
 			if(tPassword1.length() > 0 && tPassword2.length() == 0){		//确认项是否已经填写  检查。
-				JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordMakeSure);				//提示在第二个里面填内容。
+				JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordMakeSure());				//提示在第二个里面填内容。
 				general.pfdMakeSure.grabFocus();
 				return;
 			}
 			if(!tPassword1.equals(tPassword2)){								//两个内容的符合性检查，提示重新填。
-				JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordNotEqual);
+				JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordNotEqual());
 				general.pfdMakeSure.setText("");
 				general.pfdPassword.setText("");
 				general.pfdPassword.grabFocus();

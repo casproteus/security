@@ -93,14 +93,14 @@ public class AddUserDlg  extends JDialog implements ICASDialog, ActionListener, 
 		if(o == ok){
 			String tUserName = general.tfdUserName.getText();
 			if(tUserName.length() < 1){										//非空判断
-				JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput);
+				JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
 				general.tfdUserName.grabFocus();
 				return;
 			}		
 			
 			for(int i = 0; i < general.userNameAry.length; i++){			//无重复判断
 				if(tUserName.equals(general.userNameAry[i])){
-					JOptionPane.showMessageDialog(this, BarFrame.consts.UserNameInUsed);
+					JOptionPane.showMessageDialog(this, BarFrame.consts.UserNameInUsed());
 					general.tfdUserName.setText("");
 					general.tfdUserName.grabFocus();
 					return;
@@ -110,12 +110,12 @@ public class AddUserDlg  extends JDialog implements ICASDialog, ActionListener, 
 			String tPassword1 = general.pfdPassword.getText();
 			String tPassword2 = general.pfdMakeSure.getText();
 			if(tPassword1.length() > 0 && tPassword2.length() == 0){		//确认项是否已经填写  检查。
-				JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordMakeSure);				//提示在第二个里面填内容。
+				JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordMakeSure());				//提示在第二个里面填内容。
 				general.pfdMakeSure.grabFocus();
 				return;
 			}
 			if(!tPassword1.equals(tPassword2)){								//两个内容的符合性检查，提示重新填。
-				JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordNotEqual);
+				JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordNotEqual());
 				general.pfdMakeSure.setText("");
 				general.pfdPassword.setText("");
 				general.pfdPassword.grabFocus();
@@ -146,13 +146,13 @@ public class AddUserDlg  extends JDialog implements ICASDialog, ActionListener, 
 	}
     
 	private void initDialog(){
-		setTitle(BarFrame.consts.AddNewUser);
+		setTitle(BarFrame.consts.AddNewUser());
 		setResizable(false);
 		
 		//初始化－－－－－－－－－－－－－－－－
 		general = new AddUserGeneralPanel();
-		ok = new JButton(BarFrame.consts.OK);
-		cancel = new JButton(BarFrame.consts.Cancel);
+		ok = new JButton(BarFrame.consts.OK());
+		cancel = new JButton(BarFrame.consts.Cancel());
 
 		//属性设置－－－－－－－－－－－－－－
 		ok.setFocusable(false);

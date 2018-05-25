@@ -249,11 +249,11 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
         setTitle(btnTable.getText());
         setResizable(false);
         // 初始化－－－－－－－－－－－－－－－－
-        sptName = new PIMSeparator(BarFrame.consts.Name);
-        lblName = new JLabel(BarFrame.consts.Name);
+        sptName = new PIMSeparator(BarFrame.consts.Name());
+        lblName = new JLabel(BarFrame.consts.Name());
         tfdName = new JTextField(btnTable.getText());
 
-        sptBounds = new PIMSeparator(BarFrame.consts.Size);
+        sptBounds = new PIMSeparator(BarFrame.consts.Size());
         lblLocations = new JLabel[4];
         tfdLocations = new JTextField[4];
         lblLocations[0] = new JLabel("X");
@@ -266,7 +266,7 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
         tfdLocations[3] = new JTextField();
 
         sptType = new PIMSeparator(OptionDlgConst.OPTION_OTHER);
-        lblCategory = new JLabel(BarFrame.consts.Categary);
+        lblCategory = new JLabel(BarFrame.consts.Categary());
         cmbCategory = new JComboBox<String>();
 
         ok = new JButton(DlgConst.OK);

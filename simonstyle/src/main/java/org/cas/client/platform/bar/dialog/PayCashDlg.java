@@ -42,19 +42,19 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
     	
 		String curTitle = getTitle();
 		//calculate the received of diffent kind
-		if(curTitle.equals(BarFrame.consts.EnterCashPayment)){
+		if(curTitle.equals(BarFrame.consts.EnterCashPayment())){
 			String cashReceived = String.valueOf(
 					(int)(Float.valueOf(valCashReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
 			sb.append("update bill set cashReceived = ").append(cashReceived).append(" where id = ").append(billId);
-		} else if(curTitle.equals(BarFrame.consts.EnterDebitPayment)) {
+		} else if(curTitle.equals(BarFrame.consts.EnterDebitPayment())) {
 			String debitReceived = String.valueOf(
 					(int)(Float.valueOf(valDebitReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
 			sb.append("update bill set debitReceived = ").append(debitReceived).append(" where id = ").append(billId);
-		} else if(curTitle.equals(BarFrame.consts.EnterVisaPayment)) {
+		} else if(curTitle.equals(BarFrame.consts.EnterVisaPayment())) {
 			String visaReceived = String.valueOf(
 					(int)(Float.valueOf(valVisaReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
 			sb.append("update bill set visaReceived = ").append(visaReceived).append(" where id = ").append(billId);
-		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment)) {
+		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment())) {
 			String masterReceived = String.valueOf(
 					(int)(Float.valueOf(valMasterReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
 			sb.append("update bill set masterReceived = ").append(masterReceived).append(" where id = ").append(billId);
@@ -207,7 +207,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         	//check if left moeny is 0. 
         	int left = (int)(Float.valueOf(valLeft.getText()) * 100);
         	if( left > 0) {
-	        	if(JOptionPane.showConfirmDialog(this, BarFrame.consts.reCeivedMoneyNotEnough, DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
+	        	if(JOptionPane.showConfirmDialog(this, BarFrame.consts.reCeivedMoneyNotEnough(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
 	    			return;
         	}else if(left < 0) {
             	this.setVisible(false);
@@ -335,22 +335,22 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 
         // 初始化－－－－－－－－－－－－－－－－
 
-        lblCashReceived = new JLabel(BarFrame.consts.CASH + " : $");
+        lblCashReceived = new JLabel(BarFrame.consts.CASH() + " : $");
         valCashReceived = new JLabel("");
-        lblDebitReceived = new JLabel(BarFrame.consts.DEBIT + " : $");
+        lblDebitReceived = new JLabel(BarFrame.consts.DEBIT() + " : $");
         valDebitReceived = new JLabel("");
-        lblVisaReceived = new JLabel(BarFrame.consts.VISA + " : $");
+        lblVisaReceived = new JLabel(BarFrame.consts.VISA() + " : $");
         valVisaReceived = new JLabel("");
-        lblMasterReceived = new JLabel(BarFrame.consts.MASTER + " : $");
+        lblMasterReceived = new JLabel(BarFrame.consts.MASTER() + " : $");
         valMasterReceived = new JLabel("");
-        lblOtherReceived = new JLabel(BarFrame.consts.Other + " : $");
+        lblOtherReceived = new JLabel(BarFrame.consts.Other() + " : $");
         valOtherReceived = new JLabel("");
         
         tfdNewReceived = new JTextField();
         
-        lblTotal = new JLabel(BarFrame.consts.Total + " : $");
+        lblTotal = new JLabel(BarFrame.consts.Total() + " : $");
         valTotal = new JLabel("");
-        lblLeft = new JLabel(BarFrame.consts.Left + " : $");
+        lblLeft = new JLabel(BarFrame.consts.Left() + " : $");
         valLeft = new JLabel("");
         
         ok = new JButton("✔");
@@ -362,7 +362,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         btn40 = new JButton("$40");
         btn50 = new JButton("$50");
         btn100 = new JButton("$100");
-        btnExact = new JButton(BarFrame.consts.EXACT);
+        btnExact = new JButton(BarFrame.consts.EXACT());
         
         num1 = new JButton("1");
         num2 = new JButton("2");
@@ -539,7 +539,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 	@Override
 	public void windowClosing(WindowEvent e) {
 		if(tfdNewReceived.getText().length() > 0)
-			JOptionPane.showMessageDialog(this, BarFrame.consts.UnSavedContentWillBeLost);
+			JOptionPane.showMessageDialog(this, BarFrame.consts.UnSavedContentWillBeLost());
 		
 		resetContent();
 	}

@@ -138,7 +138,7 @@ public class CheckInOutListDlg  extends JDialog
 				tfdMoneyCurrent.selectAll();
 				return;
 			}
-			CustOpts.custOps.setKeyAndValue(BarFrame.consts.Shoestring, String.valueOf(CASUtility.getPriceByCent(tMoneyChange)));
+			CustOpts.custOps.setKeyAndValue(BarFrame.consts.Shoestring(), String.valueOf(CASUtility.getPriceByCent(tMoneyChange)));
 			dispose();
 		}
 	}
@@ -174,17 +174,17 @@ public class CheckInOutListDlg  extends JDialog
 	}
     
 	private void initDialog(){
-		setTitle(BarFrame.consts.WorkRecs);
+		setTitle(BarFrame.consts.WorkRecs());
 		
 		//初始化－－－－－－－－－－－－－－－－
 		tblContent = new PIMTable();//显示字段的表格,设置模型
 		srpContent = new PIMScrollPane(tblContent);
-		lblMoneyCurrent = new JLabel(BarFrame.consts.MoneyInBox);
-		lblMoneyLeft = new JLabel(BarFrame.consts.LeftMoney);
+		lblMoneyCurrent = new JLabel(BarFrame.consts.MoneyInBox());
+		lblMoneyLeft = new JLabel(BarFrame.consts.LeftMoney());
 		
 		int tShoestring = 0;
 		try{
-			tShoestring = Integer.parseInt((String)CustOpts.custOps.getValue(BarFrame.consts.Shoestring));
+			tShoestring = Integer.parseInt((String)CustOpts.custOps.getValue(BarFrame.consts.Shoestring()));
 		}catch(Exception exp){
 		}
 		tfdMoneyCurrent = new JTextField(new DecimalFormat("#0.00").format(tShoestring/100.0));
@@ -281,7 +281,7 @@ public class CheckInOutListDlg  extends JDialog
 		if(tblContent.getRowCount() > 0){
 			int tShoestring = 0;	
 			try{
-				tShoestring = Integer.parseInt((String)CustOpts.custOps.getValue(BarFrame.consts.Shoestring));
+				tShoestring = Integer.parseInt((String)CustOpts.custOps.getValue(BarFrame.consts.Shoestring()));
 			}catch(Exception exp){
 			}
 			Float tReceived = (Float)tblContent.getValueAt(tblContent.getRowCount() - 1, 4);
@@ -291,12 +291,12 @@ public class CheckInOutListDlg  extends JDialog
 	}
 	
 	private String[] header = new String[]{
-			BarFrame.consts.Operator, 	//"操作员"
-			BarFrame.consts.OPENTIME, 	//"开始时间"
-			BarFrame.consts.EndTime, 	//"结束时间"
-			BarFrame.consts.Calculate, 	//"结算"
-			BarFrame.consts.Receive, 	//"收银"
-			BarFrame.consts.Profit}; 	//"盈利"
+			BarFrame.consts.Operator(), 	//"操作员"
+			BarFrame.consts.OPENTIME(), 	//"开始时间"
+			BarFrame.consts.EndTime(), 	//"结束时间"
+			BarFrame.consts.Calculate(), 	//"结算"
+			BarFrame.consts.Receive(), 	//"收银"
+			BarFrame.consts.Profit()}; 	//"盈利"
 	
 	PIMTable tblContent;
 	PIMScrollPane srpContent;

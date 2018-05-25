@@ -1,6 +1,6 @@
 package org.cas.client.platform.bar.i18n;
 
-public class BarDlgConst3 implements BarDlgConst{
+public class BarDlgConst0 implements BarDlgConst{
 
     public String OK() {return "OK";}
     public String Cancel() {return "Cancel";}

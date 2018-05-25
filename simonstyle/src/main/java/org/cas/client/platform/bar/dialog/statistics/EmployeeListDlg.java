@@ -210,7 +210,7 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
             initTable();
             reLayout();
         } else if (o == btnDelete) {
-            if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION, BarFrame.consts.Operator,
+            if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION(), BarFrame.consts.Operator(),
                     JOptionPane.YES_NO_OPTION) != 0)// 确定删除吗？
                 return;
             int tSeleRow = tblContent.getSelectedRow();
@@ -292,14 +292,14 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
     }
 
     private void initDialog() {
-        setTitle(BarFrame.consts.EmployeeInfo);
+        setTitle(BarFrame.consts.EmployeeInfo());
 
         // 初始化－－－－－－－－－－－－－－－－
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
-        btnClose = new JButton(BarFrame.consts.Close);
-        btnAdd = new JButton(BarFrame.consts.AddNewUser);
-        btnDelete = new JButton(BarFrame.consts.DeleteUser);
+        btnClose = new JButton(BarFrame.consts.Close());
+        btnAdd = new JButton(BarFrame.consts.AddNewUser());
+        btnDelete = new JButton(BarFrame.consts.DeleteUser());
 
         // properties
         btnClose.setMnemonic('o');
@@ -399,17 +399,17 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
 
     private String[] header = new String[] { 
     		ContactDefaultViews.TEXTS[0],
-    		BarFrame.consts.NickName, // "昵称"
-            BarFrame.consts.DISPLAYAS, // "language"
-            BarFrame.consts.Sex, // "性别";
-            BarFrame.consts.JobTitle, // "职位"
-            BarFrame.consts.Cellphone, // "手机"
-            BarFrame.consts.PhoneNum, // "宅电"
-            BarFrame.consts.HomeAddress,// "家庭住址";
-            BarFrame.consts.QQ, // "即时通讯号码"
-            BarFrame.consts.MailAddress,// "电子邮件地址"
-            BarFrame.consts.MainPage,// "主页";
-            BarFrame.consts.Type,// 类别
+    		BarFrame.consts.NickName(), // "昵称"
+            BarFrame.consts.DISPLAYAS(), // "language"
+            BarFrame.consts.Sex(), // "性别";
+            BarFrame.consts.JobTitle(), // "职位"
+            BarFrame.consts.Cellphone(), // "手机"
+            BarFrame.consts.PhoneNum(), // "宅电"
+            BarFrame.consts.HomeAddress(),// "家庭住址";
+            BarFrame.consts.QQ(), // "即时通讯号码"
+            BarFrame.consts.MailAddress(),// "电子邮件地址"
+            BarFrame.consts.MainPage(),// "主页";
+            BarFrame.consts.Type(),// 类别
 //            BarFrame.consts.JoinTime,// "进单位时间";
 //            BarFrame.consts.Salary,// "工资";
 //            BarFrame.consts.INSURANCE,// "保险";

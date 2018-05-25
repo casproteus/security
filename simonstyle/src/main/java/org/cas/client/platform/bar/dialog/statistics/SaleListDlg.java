@@ -225,7 +225,7 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
     	int selectedRow = tblContent.getSelectedRow();
     	int tValidRowCount = getUsedRowCount();
     	if(selectedRow < 0 || selectedRow > tValidRowCount - 1) {
-    		JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected);
+    		JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
     		ErrorUtil.write("Unexpected row number when calling removeAtSelection : " + selectedRow);
     		return;
     	}
@@ -251,15 +251,15 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
     }
 
     private void initDialog() {
-        setTitle(BarFrame.consts.SaleRecs);
+        setTitle(BarFrame.consts.SaleRecs());
         setModal(false);
 
         // 初始化－－－－－－－－－－－－－－－－
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
 
-        lblFrom = new JLabel(BarFrame.consts.FROM);
-        lblTo = new JLabel(BarFrame.consts.TO);
+        lblFrom = new JLabel(BarFrame.consts.FROM());
+        lblTo = new JLabel(BarFrame.consts.TO());
         lblYearFrom = new JLabel("YYYY");
         lblMonthFrom = new JLabel("MM");
         lblDayFrom = new JLabel("DD");
@@ -272,7 +272,7 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
         tfdYearTo = new JTextField();
         tfdMonthTo = new JTextField();
         tfdDayTo = new JTextField();
-        btnChangeDate = new JButton(BarFrame.consts.APPLY);
+        btnChangeDate = new JButton(BarFrame.consts.APPLY());
         
         // properties
         btnChangeDate.setMnemonic('F');
@@ -437,18 +437,18 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
     }
 
     private String[] header = new String[] {
-    		BarFrame.consts.TIME, // "时间"
-    		BarFrame.consts.TABLE,
-    		BarFrame.consts.Bill,
-    		BarFrame.consts.Total,
-    		BarFrame.consts.Discount,
-    		BarFrame.consts.Receive,
-    		BarFrame.consts.Tip,
-    		BarFrame.consts.CashBack,
-    		BarFrame.consts.Status,
-    		BarFrame.consts.Operator, // "操作员"
-    		BarFrame.consts.comment,
-    		BarFrame.consts.OpenTime};
+    		BarFrame.consts.TIME(), // "时间"
+    		BarFrame.consts.TABLE(),
+    		BarFrame.consts.Bill(),
+    		BarFrame.consts.Total(),
+    		BarFrame.consts.Discount(),
+    		BarFrame.consts.Receive(),
+    		BarFrame.consts.Tip(),
+    		BarFrame.consts.CashBack(),
+    		BarFrame.consts.Status(),
+    		BarFrame.consts.Operator(), // "操作员"
+    		BarFrame.consts.comment(),
+    		BarFrame.consts.OpenTime()};
 
     int[] employIdAry;
     String[] employNameAry;

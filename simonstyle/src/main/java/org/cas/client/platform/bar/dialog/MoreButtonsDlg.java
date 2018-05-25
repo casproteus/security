@@ -12,10 +12,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.BarUtil;
-import org.cas.client.platform.bar.i18n.BarDlgConst;
+import org.cas.client.platform.bar.i18n.BarDlgConst0;
+import org.cas.client.platform.bar.i18n.BarDlgConst1;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
 import org.cas.client.platform.bar.i18n.BarDlgConst3;
+import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
 public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocusListener{
@@ -23,7 +27,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 
     public MoreButtonsDlg(SalesPanel general) {
     	super();
-    	setTitle(BarFrame.consts.MORE);
+    	setTitle(BarFrame.consts.MORE());
         barGeneralPanel = general;
         initPanel();
     }
@@ -76,14 +80,14 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
         	BarFrame.instance.switchMode(0);
         	
         } else if (o == btnLine_3_4) {
-        	//TODO: update current user's language property, then log out.
-        	
+    		BarFrame.consts = new BarDlgConst0();
+        	updateInterface("update employee set subject = 'EN' where id = " + LoginDlg.USERID);
         } else if (o == btnLine_3_5) {
-        	//TODO: update current user's language property, then log out.
-        	
+    		BarFrame.consts = new BarDlgConst1();
+    		updateInterface("update employee set subject = 'FR' where id = " + LoginDlg.USERID);
         } else if (o == btnLine_3_6) {
-        	//TODO: update current user's language property, then log out.
-        	
+    		BarFrame.consts = new BarDlgConst2();
+        	updateInterface("update employee set subject = 'CN' where id = " + LoginDlg.USERID);
         }
 //        else if (o == btnLine_3_7) {
 //        	
@@ -94,6 +98,15 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 //        }
     }
     
+    private void updateInterface(String sb) {
+    	try {
+    		PIMDBModel.getStatement().execute(sb);
+    		this.setVisible(false);
+    		BarFrame.instance.initComponent();
+    	}catch(Exception exp) {
+    		ErrorUtil.write(exp);
+    	}
+    }
 	public void show(JButton btnMore) {
 		reLayout(btnMore);
 		this.setVisible(true);
@@ -123,12 +136,12 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 	
 	private void initPanel() {
 		// 初始化－－－－－－－－－－－－－－－－
-		btnLine_3_1 = new JButton(BarFrame.consts.SETTINGS);
-        btnLine_3_2 = new JToggleButton(BarFrame.consts.QTY);
-        btnLine_3_3 = new JButton(BarFrame.consts.EXACT_AMOUNT);
+		btnLine_3_1 = new JButton(BarFrame.consts.SETTINGS());
+        btnLine_3_2 = new JToggleButton(BarFrame.consts.QTY());
+        btnLine_3_3 = new JButton(BarFrame.consts.EXACT_AMOUNT());
 		btnLine_3_4 = new JButton("EN");
-		btnLine_3_5 = new JButton("CN");
-		btnLine_3_6 = new JButton("FR");
+		btnLine_3_5 = new JButton("FR");
+		btnLine_3_6 = new JButton("CN");
 		//btnLine_3_7 = new JButton(BarFrame.consts.DISC_VOLUMN);
 		//btnLine_3_8 = new JButton(BarFrame.consts.LOGOUT);
 		//btnLine_3_9 = new JButton(BarFrame.consts.MORE);

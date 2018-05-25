@@ -229,7 +229,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
             if ("System".equalsIgnoreCase(LoginDlg.USERNAME)) {
                 curSecurityStatus++;
-                BarFrame.setStatusMes(BarFrame.consts.ADMIN_MODE);
+                BarFrame.setStatusMes(BarFrame.consts.ADMIN_MODE());
                 // @TODO: might need to do some modification on the interface.
                 revalidate();
                 return true;
@@ -239,14 +239,14 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     }
     
     private void initComponent() {
-        btnLine_2_1 = new JToggleButton(BarFrame.consts.ChangeMode);
-        btnLine_2_2 = new JButton(BarFrame.consts.AddTable);
-        btnLine_2_3 = new JButton(BarFrame.consts.OrderManage);
-        btnLine_2_4 = new JButton(BarFrame.consts.OpenDrawer);
-        btnLine_2_5 = new JButton(BarFrame.consts.WaiterReport);
-        btnLine_2_6 = new JButton(BarFrame.consts.SETTINGS);
-        btnLine_2_8 = new JButton(BarFrame.consts.Report);
-        btnCheckInOut = new JButton(BarFrame.consts.CheckInOut);
+        btnLine_2_1 = new JToggleButton(BarFrame.consts.ChangeMode());
+        btnLine_2_2 = new JButton(BarFrame.consts.AddTable());
+        btnLine_2_3 = new JButton(BarFrame.consts.OrderManage());
+        btnLine_2_4 = new JButton(BarFrame.consts.OpenDrawer());
+        btnLine_2_5 = new JButton(BarFrame.consts.WaiterReport());
+        btnLine_2_6 = new JButton(BarFrame.consts.SETTINGS());
+        btnLine_2_8 = new JButton(BarFrame.consts.Report());
+        btnCheckInOut = new JButton(BarFrame.consts.CheckInOut());
 
         // border----------
         setLayout(null);

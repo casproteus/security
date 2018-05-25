@@ -19,6 +19,7 @@ import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
+import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -30,7 +31,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
 
     public static BarFrame instance;
-    public static BarDlgConst consts = new BarDlgConst();
+    public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
     public static NumberPanelDlg numberPanelDlg; 
     public static PayCashDlg payCashDlg;
@@ -68,7 +69,13 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     }
     
     public BarFrame() {
-        setTitle(BarFrame.consts.Title);
+    	initComponent();
+        //hide sales and setting pannel.
+    }
+    
+    public void initComponent(){
+    	getContentPane().removeAll();
+    	setTitle(BarFrame.consts.Title());
         setIconImage(CustOpts.custOps.getFrameLogoImage()); // 设置主窗体的LOGO。
 
         setBounds(0, 0, CustOpts.SCRWIDTH, CustOpts.SCRHEIGHT - 30); // 对话框的默认尺寸。
@@ -78,22 +85,22 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         // 初始化－－－－－－－－－－－－－－－－
         int tShoestring = 0;
         try {
-            tShoestring = Integer.parseInt((String) CustOpts.custOps.getValue(BarFrame.consts.Shoestring));
+            tShoestring = Integer.parseInt((String) CustOpts.custOps.getValue(BarFrame.consts.Shoestring()));
         } catch (Exception exp) {
         }
         
-        lblOperator = new JLabel(BarFrame.consts.Operator.concat(BarFrame.consts.Colon));
+        lblOperator = new JLabel(BarFrame.consts.Operator().concat(BarFrame.consts.Colon()));
         valOperator = new JLabel();
-        lblCurTable = new JLabel(BarFrame.consts.TABLE.concat(BarFrame.consts.Colon));
+        lblCurTable = new JLabel(BarFrame.consts.TABLE().concat(BarFrame.consts.Colon()));
         valCurTable = new JLabel();
-        lblCurBill = new JLabel(BarFrame.consts.Bill.concat(BarFrame.consts.Colon));
+        lblCurBill = new JLabel(BarFrame.consts.Bill().concat(BarFrame.consts.Colon()));
         valCurBill = new JLabel();
         
         lblStartTime = new JLabel();
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
-        lblVersion = new JLabel("V0.1-20180518");
+        lblVersion = new JLabel("V0.2-20180524");
         menuPanel = new MenuPanel();
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();
@@ -129,9 +136,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
                 // general.tfdProdNumber.grabFocus();
             }
         });
-        
-        //hide sales and setting pannel.
+
         switchMode(0);
+        reLayout();
     }
     
 	public static void setStatusMes(
@@ -174,7 +181,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 		valCurTable.setText("");
 		valCurBill.setText("");
 
-		lblStartTime.setText(BarFrame.consts.OPENTIME.concat(BarFrame.consts.Colon));
+		lblStartTime.setText(BarFrame.consts.OPENTIME().concat(BarFrame.consts.Colon()));
 	}
     
     private boolean adminAuthentication() {
@@ -182,7 +189,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
             if ("admin".equalsIgnoreCase(LoginDlg.USERNAME)) {
             	valOperator.setText(LoginDlg.USERNAME);
-                BarFrame.setStatusMes(BarFrame.consts.ADMIN_MODE);
+                BarFrame.setStatusMes(BarFrame.consts.ADMIN_MODE());
                 // @TODO: might need to do some modification on the interface.
                 revalidate();
                 return true;

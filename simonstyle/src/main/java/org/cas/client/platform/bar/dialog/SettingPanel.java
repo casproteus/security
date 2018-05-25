@@ -90,11 +90,11 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     		try {
     			num = Integer.valueOf(tfdBillPageRow.getText());
     		}catch(Exception exp) {
-    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput);
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
 				return;
     		}
     		if(num < 1 || num > 2) {
-    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput);
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
 				return;
     		}
     		BarOption.setBillPageRow(tfdBillPageRow.getText());
@@ -103,11 +103,11 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     		try {
     			num = Integer.valueOf(tfdBillPageCol.getText());
     		}catch(Exception exp) {
-    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput);
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
 				return;
     		}
     		if(num < 1 || num > 16) {
-    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput);
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
 				return;
     		}
     		BarOption.setBillPageCol(tfdBillPageCol.getText());
@@ -133,7 +133,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 	    		}
 	    		BarOption.setStartTime(tfdStartTimeOfDay.getText());
     		}catch(Exception exp) {
-    			JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput);
+    			JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
     			tfdStartTimeOfDay.grabFocus();
     		}
     	}
@@ -231,7 +231,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         new LoginDlg(null).setVisible(true);
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
             if ("System".equalsIgnoreCase(LoginDlg.USERNAME)) {
-                BarFrame.setStatusMes(BarFrame.consts.ADMIN_MODE);
+                BarFrame.setStatusMes(BarFrame.consts.ADMIN_MODE());
                 // @TODO: might need to do some modification on the interface.
                 revalidate();
                 return true;
@@ -276,22 +276,22 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     }
 	
     private void initComponent() {
-        lblBillPageRow = new JLabel(BarFrame.consts.BillPageRow);
+        lblBillPageRow = new JLabel(BarFrame.consts.BillPageRow());
         tfdBillPageRow = new JTextField(String.valueOf(BarOption.getBillPageRow()));
-        lblBillPageCol = new JLabel(BarFrame.consts.BillPageCol);
+        lblBillPageCol = new JLabel(BarFrame.consts.BillPageCol());
         tfdBillPageCol = new JTextField(String.valueOf(BarOption.getBillPageCol()));
-        cbxIsSingleUser = new JCheckBox(BarFrame.consts.IsSingleUser);
-        cbxIsDiscBeforeTax = new JCheckBox(BarFrame.consts.IsDiscBeforeTax);
+        cbxIsSingleUser = new JCheckBox(BarFrame.consts.IsSingleUser());
+        cbxIsDiscBeforeTax = new JCheckBox(BarFrame.consts.IsDiscBeforeTax());
 //        cbxIsPrintBillWhenPay = new JCheckBox(BarFrame.consts.IsPrintBillWhenPay);
-        lblStartTimeOfDay = new JLabel(BarFrame.consts.StartTimeOfDay);
+        lblStartTimeOfDay = new JLabel(BarFrame.consts.StartTimeOfDay());
         tfdStartTimeOfDay = new JTextField(String.valueOf(BarOption.getStartTime()));
         
-        btnLine_2_1 = new JButton(BarFrame.consts.RETURN);
-        btnLine_2_2 = new JButton(BarFrame.consts.TABLE);
-        btnLine_2_3 = new JButton(BarFrame.consts.PRINTER);
-        btnLine_2_4 = new JButton(BarFrame.consts.CheckInOut);
+        btnLine_2_1 = new JButton(BarFrame.consts.RETURN());
+        btnLine_2_2 = new JButton(BarFrame.consts.TABLE());
+        btnLine_2_3 = new JButton(BarFrame.consts.PRINTER());
+        btnLine_2_4 = new JButton(BarFrame.consts.CheckInOut());
        
-        btnLine_2_5 = new JButton(BarFrame.consts.Operator);
+        btnLine_2_5 = new JButton(BarFrame.consts.Operator());
         btnLine_2_6 = new JButton("");
         btnLine_2_7 = new JButton("");
         btnLine_2_8 = new JButton("");
