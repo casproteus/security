@@ -228,5 +228,5 @@ public interface DlgConst
     String COMFIRMDELETEACTION = "该动作将导致选定的记录被删除，您确定吗？\n请选择[是]确定删除，或选择[否]取消删除。";
     
 
-    String CategoryNameInUse = "The category name inputted is alreay used, please choose an other.";
+    String CategoryNameInUse = "The category name input is alreay used, please choose an other.";
 }

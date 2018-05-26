@@ -3127,7 +3127,7 @@ public final class PIMDBModel extends AbstractModel {
             PIMViewInfo viewInfo) {
         String tmpTableName = getTableName(viewInfo.getAppIndex()); // 得到数据库表的名字,MODIFY:原来根据TYPE得到数据库表名,现根据INFOLDER字段得到数据库表的名字
         if (tmpTableName == null) {
-            ErrorUtil.write("Sorry, model found no table name match the path inputted");
+            ErrorUtil.write("Sorry, model found no table name match the path input");
             return null;
         }// 对数据表名的有效性判断结束----------------------------------------
 

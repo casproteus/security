@@ -71,7 +71,7 @@ public class BarDlgConst3 implements BarDlgConst{
 
     public String PRINTER() {return "PRINTER";}
     public String OnlyOneShouldBeSelected() {return "Please make sure one and only one item selected, then try again.";}
-    public String InvalidInput() {return "The inputted content is invalid for this function.";}
+    public String InvalidInput() {return "The input content is invalid for this function.";}
     public String ADMIN_MODE() {return "System is in setting mode! Click logout button back to use mode.";}
     public String USE_MODE() {return "System is in operating mode!";}
     public String Title() {return "STGOBar - Copyright 2018 - http://www.ShareTheGoodOnes.com";}
@@ -222,7 +222,7 @@ public class BarDlgConst3 implements BarDlgConst{
     public String Supplier() {return "Supplier";}
     
     public String PasswordMakeSure() {return "Please input password again.";}
-    public String PasswordNotEqual() {return "The password inputted are not totally matched with previouse one, please input again.";}
+    public String PasswordNotEqual() {return "The password input are not totally matched with previouse one, please input again.";}
     
     public String MUser() {return "Modify User";}
     public String[] USERTYPE() {return new String[]{"Manager", "Employee" };}
