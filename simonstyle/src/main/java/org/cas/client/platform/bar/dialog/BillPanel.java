@@ -394,7 +394,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         BillListPanel.curDish = newDish;
 
         //update the interface.
-        tblSelectedDish.setValueAt("X1", tValidRowCount, 0); // set the count.
+        tblSelectedDish.setValueAt("x1", tValidRowCount, 0); // set the count.
         tblSelectedDish.setValueAt(dish.getLanguage(CustOpts.custOps.getUserLang()), tValidRowCount, 1);// set the Name.
         tblSelectedDish.setValueAt(dish.getSize() > 1 ? dish.getSize() : "", tValidRowCount, 2); // set the count.
         tblSelectedDish.setValueAt(dish.getPrice()/100f, tValidRowCount, 3); // set the price.
@@ -529,7 +529,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	    		if(num > BarOption.MaxQTY) {
 	    			num = num % BarOption.MaxQTY;
 	    		}
-				StringBuilder strNum = new StringBuilder("X");
+				StringBuilder strNum = new StringBuilder("x");
 				strNum.append(num);
 				if(pS > 0)
 					strNum.append("/").append(pS);

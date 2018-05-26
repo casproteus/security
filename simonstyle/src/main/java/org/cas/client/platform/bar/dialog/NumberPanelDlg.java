@@ -269,6 +269,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 
 	public void setFloatSupport(boolean setFloatSupport) {
 		point.setVisible(setFloatSupport);
+		reLayout();
 	}
 	
 	public void setNotice(String notice) {

@@ -9,7 +9,7 @@ public class BarDlgConst0 implements BarDlgConst{
     public String Close() {return "Close";}
     public String Tip() {return "Tip";}
     public String ServiceFee() {return "Service Fee";}
-    public String ServiceFeeNotice() {return "Please input price of service fee.";}
+    public String ServiceFeeNotice() {return "Please input price of service fee";}
     public String CashBack() {return "Cash Back";}
     public String Status() {return "Status";}
     public String APPLY() {return "APPLY";}
@@ -24,7 +24,7 @@ public class BarDlgConst0 implements BarDlgConst{
     public String OrderManage() {return "CHECK ORDER";}
     public String OpenDrawer() {return "OPEN DRAWER";}
     public String VolumnDiscount() {return "DISC BILL";}
-    public String VolumnDiscountNotice() {return "Please input how much to discount.";}
+    public String VolumnDiscountNotice() {return "Please input how much to discount";}
     
     public String WaiterReport() {return "SERVER REPORT";}
     public String Reservation() {return "RESERVATION";}
@@ -46,11 +46,11 @@ public class BarDlgConst0 implements BarDlgConst{
     public String SPLIT_BILL() {return "SPLIT BILL";}
     public String Modify() {return "MODIFY";}
     public String ChangePrice() {return "CHANGE PRICE";}
-    public String ChangePriceNotice() {return "Please input a different price for selected item.";}
+    public String ChangePriceNotice() {return "Please input a different price for selected item";}
     public String QTY() {return "QTY";}
-    public String QTYNOTICE() {return "will be applied to selected dish!";}
+    public String QTYNOTICE() {return "Please input a number, it will be applied to selected dish";}
     public String DISC_ITEM() {return "DISC ITEM";}
-    public String DISC_ITEMNotice() {return "Please input how much to discount for selected item.";}
+    public String DISC_ITEMNotice() {return "Please input how much to discount for selected item";}
     public String PRINT_BILL() {return "PRINT BILL";}
 
     public String DEBIT() {return "DEBIT";}
@@ -70,16 +70,16 @@ public class BarDlgConst0 implements BarDlgConst{
     public String DISC_VOLUMN() {return "DISC VOLUMN";}
 
     public String PRINTER() {return "PRINTER";}
-    public String OnlyOneShouldBeSelected() {return "Please make sure one and only one item selected, then try again.";}
-    public String InvalidInput() {return "The input content is invalid for this function.";}
-    public String ADMIN_MODE() {return "System is in setting mode! Click logout button back to use mode.";}
+    public String OnlyOneShouldBeSelected() {return "Please make sure one and only one item selected, then try again";}
+    public String InvalidInput() {return "The input content is invalid for this function";}
+    public String ADMIN_MODE() {return "System is in setting mode! Click logout button back to use mode";}
     public String USE_MODE() {return "System is in operating mode!";}
     public String Title() {return "STGOBar - Copyright 2018 - http://www.ShareTheGoodOnes.com";}
-    public String DuplicatedInput() {return "Dubplicated name found! please choose an other name.";}
-    public String NoBillSeleted() {return "Found no bill to split the item to. Please select at least one other bill before release the button.";}
-    public String NotPayYet() {return "Refund only available for bills already paid.";}
+    public String DuplicatedInput() {return "Dubplicated name found! please choose an other name";}
+    public String NoBillSeleted() {return "Found no bill to split the item to. Please select at least one other bill before release the button";}
+    public String NotPayYet() {return "Refund only available for bills already paid";}
     public String AllreadyRefund() {return "This bill is allready refunded, are you sure to do one more refund?, already refunded: ";}
-    public String UnSendRecordFound() {return "Unsend records found! please make sure all dish have send to kitch before printing bill.";}
+    public String UnSendRecordFound() {return "Unsend records found! please make sure all dish have send to kitch before printing bill";}
     public String Colon() {return "：";}
     public String Operator() {return "EMPLOYEE";}
     public String TABLE() {return "TABLE";}
@@ -89,11 +89,11 @@ public class BarDlgConst0 implements BarDlgConst{
     public String COMFIRMDELETEACTION2() {return "Are you sure to remove it from list?";}
     public String COMFIRMLOSTACTION() {return "Are you sure not to send or save the new input content?";}
     public String ConfirmPayAgain() {return "This bill has already been paid! Are you sure you will receive money for it again?";}
-    public String SetCatogoryFirst() {return "Please Set Category First.";}
-    public String SendItemCanNotModify() {return "Item already send can not be modified. we added a new item into the list.";}
+    public String SetCatogoryFirst() {return "Please Set Category First";}
+    public String SendItemCanNotModify() {return "Item already send can not be modified. we added a new item into the list";}
     public String reCeivedMoneyNotEnough() {return "Haven't received enough money, are you sure to close the bill?";}
     public String LeftMoney() {return "From Last Session";}
-    public String UnSavedContentWillBeLost() {return "The un saved content will be lost.";}
+    public String UnSavedContentWillBeLost() {return "The un saved content will be lost";}
     public String Left() {return "Left";}
     public String OPENTIME() {return "OPEN TIME";}
     public String EndTime() {return "End Time";}
@@ -106,7 +106,7 @@ public class BarDlgConst0 implements BarDlgConst{
     public String IsDiscBeforeTax() {return "Is discount apply on price before tax";}
     public String IsPrintBillWhenPay() {return "automatic print bill when pay";}
     public String StartTimeOfDay() {return "Start time of a day";}
-    public String PrinterError() {return "WARNING! Error occured when printing in back end, please check printer and try again.";}
+    public String PrinterError() {return "WARNING! Error occured when printing in back end, please check printer and try again";}
     
     public String Other() {return "OTHER";}
     public String ProdNumber() {return "Id";}
@@ -137,7 +137,7 @@ public class BarDlgConst0 implements BarDlgConst{
     public String MoveItem() {return "MoveItem";}
     public String CombineAll() {return "COMBINE ALL";}
     public String Refund() {return "REFUND";}
-    public String RefundNotice() {return "Please input how much to refund.";}
+    public String RefundNotice() {return "Please input how much to refund";}
     public String CompleteAll() {return "COMPLETE ALL";}
     public String CancelAll() {return "Cancel All";}
     public String ProdCodeLength() {return "ProdCodeLength";}
@@ -221,8 +221,8 @@ public class BarDlgConst0 implements BarDlgConst{
     public String InputRecs() {return "Input Records";}
     public String Supplier() {return "Supplier";}
     
-    public String PasswordMakeSure() {return "Please input password again.";}
-    public String PasswordNotEqual() {return "The password input are not totally matched with previouse one, please input again.";}
+    public String PasswordMakeSure() {return "Please input password again";}
+    public String PasswordNotEqual() {return "The password input are not totally matched with previouse one, please input again";}
     
     public String MUser() {return "Modify User";}
     public String[] USERTYPE() {return new String[]{"Manager", "Employee" };}
@@ -231,6 +231,6 @@ public class BarDlgConst0 implements BarDlgConst{
     public String ModiFyUser() {return "Modify User";}
     public String DeleteUser() {return "Delete User";}
     
-    public String UserNameInUsed() {return "This user name is not available, please choose another one.";}
-    public String FORMATERROR() {return "The content input are in wrong format, please try again.";}
+    public String UserNameInUsed() {return "This user name is not available, please choose another one";}
+    public String FORMATERROR() {return "The content input are in wrong format, please try again";}
 }
