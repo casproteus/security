@@ -66,7 +66,7 @@ public class WifiPrintService{
     	return ip;
     }
     
-    public static int exePrintCommand(List<Dish> selectdDishAry, Printer[] printers, String curTable){
+    public static int exePrintCommand(List<Dish> selectdDishAry, Printer[] printers, String curTable, String curBill){
         //ErrorUtil.(TAG,"start to translate selection into ipContent for printing.");
         if(!isIpContentMapEmpty()){
         	return printContents();
@@ -132,12 +132,12 @@ public class WifiPrintService{
                     ErrorUtil.write("the dishList are different from ipSelectionsMap.get(printerIP)!");
                 }
                 if(ipPrinterMap.get(printerIP).getFirstPrint() == 1){  //全单封装
-                    ipContentMap.get(printerIP).add(formatContentForPrint(dishList, printerIP, curTable) + "\n\n\n\n\n");
+                    ipContentMap.get(printerIP).add(formatContentForPrint(dishList, printerIP, curTable, curBill) + "\n\n\n\n\n");
                 }else{                                          //分单封装
                     for(Dish dish : dishList){
                         List<Dish> tlist = new ArrayList<Dish>();
                         tlist.add(dish);
-                        ipContentMap.get(printerIP).add(formatContentForPrint(tlist, printerIP, curTable) + "\n\n");
+                        ipContentMap.get(printerIP).add(formatContentForPrint(tlist, printerIP, curTable, curBill) + "\n\n");
                     }
                 }
             }
@@ -219,7 +219,7 @@ public class WifiPrintService{
 		}
     }
     
-    private static String formatContentForPrint(List<Dish> list, String curPrintIp, String curTable){
+    private static String formatContentForPrint(List<Dish> list, String curPrintIp, String curTable, String curBill){
         //L.d(TAG,"formatContentForPrint");
         String font = (String)CustOpts.custOps.getValue(curPrintIp + "font");
         if(font ==  null || font.length() < 1) {
@@ -239,13 +239,13 @@ public class WifiPrintService{
         StringBuilder content = new StringBuilder("\n\n");
         DateFormat df = new SimpleDateFormat("HH:mm");
         String dateStr = df.format(new Date());
-        String spaceStr = generateString(width - (2 + curTable.length() + dateStr.length()), " ");
+        String spaceStr = generateString(width - (3 + curTable.length() + curBill.length() + dateStr.length()), " ");
 
         if(width < 20){
             content.append("\n\n");
         }
 
-        content.append("(").append(curTable).append(")").append(spaceStr).append(dateStr).append("\n");
+        content.append("(").append(curTable).append(")-").append(curBill).append(spaceStr).append(dateStr).append("\n");
 
         String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
         if(sep_str1 == null || sep_str1.length() == 0){

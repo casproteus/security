@@ -123,7 +123,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		//send to printer
 		//prepare the printing String and do printing
 		if(WifiPrintService.SUCCESS != 
-				WifiPrintService.exePrintCommand(newDishes, BarFrame.instance.menuPanel.printers, BarFrame.instance.valCurTable.getText())) {
+				WifiPrintService.exePrintCommand(newDishes, BarFrame.instance.menuPanel.printers, 
+						BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText())) {
 			BarFrame.setStatusMes(BarFrame.consts.PrinterError());
 			JOptionPane.showMessageDialog(this, BarFrame.consts.PrinterError());
 		}
@@ -397,7 +398,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         tblSelectedDish.setValueAt("x1", tValidRowCount, 0); // set the count.
         tblSelectedDish.setValueAt(dish.getLanguage(CustOpts.custOps.getUserLang()), tValidRowCount, 1);// set the Name.
         tblSelectedDish.setValueAt(dish.getSize() > 1 ? dish.getSize() : "", tValidRowCount, 2); // set the count.
-        tblSelectedDish.setValueAt(dish.getPrice()/100f, tValidRowCount, 3); // set the price.
+        tblSelectedDish.setValueAt(BarOption.getMoneySign() + dish.getPrice()/100f, tValidRowCount, 3); // set the price.
         
         updateTotleArea();								//because value change will not be used to remove the record.
         SwingUtilities.invokeLater(new Runnable() {
@@ -632,14 +633,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     
     void resetColWidth(int tableWidth) {
         PIMTableColumn tmpCol1 = tblSelectedDish.getColumnModel().getColumn(0);
-        tmpCol1.setWidth(40);
-        tmpCol1.setPreferredWidth(40);
+        tmpCol1.setWidth(60);
+        tmpCol1.setPreferredWidth(60);
         PIMTableColumn tmpCol3 = tblSelectedDish.getColumnModel().getColumn(2);
-        tmpCol3.setWidth(40);
-        tmpCol3.setPreferredWidth(40);
+        tmpCol3.setWidth(60);
+        tmpCol3.setPreferredWidth(60);
         PIMTableColumn tmpCol4 = tblSelectedDish.getColumnModel().getColumn(3);
-        tmpCol4.setWidth(40);
-        tmpCol4.setPreferredWidth(40);
+        tmpCol4.setWidth(60);
+        tmpCol4.setPreferredWidth(60);
         //at first, teh tableWidth is 0, then after, the tableWidth will be 260. 
         PIMTableColumn tmpCol2 = tblSelectedDish.getColumnModel().getColumn(1);
         int width = tableWidth - tmpCol1.getWidth() - tmpCol3.getWidth() - tmpCol4.getWidth() - 3;
