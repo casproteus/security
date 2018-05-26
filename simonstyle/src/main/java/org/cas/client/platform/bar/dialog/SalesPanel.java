@@ -141,6 +141,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		BarFrame.instance.switchMode(1);
         		
         	}else if(o == btnLine_1_9) {
+         		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.ServiceFee());
+         		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.ServiceFeeNotice());
         		BarFrame.numberPanelDlg.setBtnSource(null);
          		BarFrame.numberPanelDlg.setFloatSupport(true);
          		BarFrame.numberPanelDlg.setModal(true);
@@ -148,6 +150,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		
          		try {
      				String curContent = BarFrame.numberPanelDlg.curContent;
+     				if(curContent != null || curContent.length() == 0)
+     					return;
              		float serviceFee = Float.valueOf(curContent);
              		billPanel.serviceFee = (int)(serviceFee * 100);
              		billPanel.updateTotleArea();
@@ -224,6 +228,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	BarUtil.openMoneyBox();
             	
             } else if (o == btnLine_2_7) {//disc bill
+         		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.VolumnDiscount());
+         		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.VolumnDiscountNotice());
          		BarFrame.numberPanelDlg.setBtnSource(null);
          		BarFrame.numberPanelDlg.setFloatSupport(true);
          		BarFrame.numberPanelDlg.setModal(true);

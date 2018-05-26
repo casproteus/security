@@ -10,6 +10,7 @@ public class BarDlgConst3 implements BarDlgConst{
     public String Tip() {return "Tip";}
     public String ServiceFee() {return "Service Fee";}
     public String CashBack() {return "Cash Back";}
+    public String ServiceFeeNotice() {return "Please input price of service fee.";}
     public String Status() {return "Status";}
     public String APPLY() {return "APPLY";}
 
@@ -24,6 +25,7 @@ public class BarDlgConst3 implements BarDlgConst{
     public String OpenDrawer() {return "OPEN DRAWER";}
     public String VolumnDiscount() {return "DISC BILL";}
     public String WaiterReport() {return "SERVER REPORT";}
+    public String VolumnDiscountNotice() {return "Please input how much to discount.";}
     public String Reservation() {return "RESERVATION";}
     public String Report() {return "REPORT";}
     public String CheckInOut() {return "SING IN/OUT";}
@@ -227,5 +229,5 @@ public class BarDlgConst3 implements BarDlgConst{
     public String DeleteUser() {return "Delete User";}
     
     public String UserNameInUsed() {return "This user name is not available, please choose another one.";}
-
+    public String FORMATERROR() {return "The content input are in wrong format, please try again.";}
 }

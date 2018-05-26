@@ -11,6 +11,7 @@ public interface BarDlgConst {
     String Close();
     String Tip();
     String ServiceFee();
+    String ServiceFeeNotice();
     String CashBack();
     String Status();
     String APPLY();
@@ -25,6 +26,7 @@ public interface BarDlgConst {
     String OrderManage();
     String OpenDrawer();
     String VolumnDiscount();
+    String VolumnDiscountNotice();
     String WaiterReport();
     String Reservation();
     String Report();
@@ -229,4 +231,6 @@ public interface BarDlgConst {
     String DeleteUser();
     
     String UserNameInUsed();
+    
+    String FORMATERROR();
 }

@@ -9,6 +9,7 @@ public class BarDlgConst2 implements BarDlgConst{
     public String Close() {return "关闭";}
     public String Tip() {return "消费";}
     public String ServiceFee() {return "服务费";}
+    public String ServiceFeeNotice() {return "请输入服务费.";}
     public String CashBack() {return "返款";}
     public String Status() {return "状态";}
     public String APPLY() {return "应用";}
@@ -23,6 +24,7 @@ public class BarDlgConst2 implements BarDlgConst{
     public String OrderManage() {return "查看订单";}
     public String OpenDrawer() {return "打开钱箱";}
     public String VolumnDiscount() {return "整单打折";}
+    public String VolumnDiscountNotice() {return "请输入整单打折的金额.";}
     public String WaiterReport() {return "当日报告";}
     public String Reservation() {return "订桌";}
     public String Report() {return "报告";}
@@ -227,4 +229,5 @@ public class BarDlgConst2 implements BarDlgConst{
     public String DeleteUser() {return "删除用户(D)";}
 
     public String UserNameInUsed() {return "这个名字不可用，请重新选择。";}
+    public String FORMATERROR() {return "所输入的内容存在格式错误，请重新输入。";}
 }

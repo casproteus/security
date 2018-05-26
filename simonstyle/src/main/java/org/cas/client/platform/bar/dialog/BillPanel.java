@@ -728,12 +728,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         }else {
         	lblSubTotle.setBounds(scrContent.getX() + scrContent.getWidth() - 100, 
     				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
-    				100, lblServiceFee.getHeight());
+    				100, lblSubTotle.getHeight());
         }
         lblDiscount.setBounds(scrContent.getX(), scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP, 
-        		scrContent.getWidth() / 4, lblDiscount.getPreferredSize().height);
+        		scrContent.getWidth() / 4, lblSubTotle.getHeight());
         lblServiceFee.setBounds(lblDiscount.getX() + lblDiscount.getWidth() + CustOpts.HOR_GAP, lblDiscount.getY(), 
-        		scrContent.getWidth() / 4, lblDiscount.getHeight());
+        		scrContent.getWidth() / 4, lblSubTotle.getHeight());
 
 		lblGSQ.setBounds(scrContent.getX(), getHeight() - CustOpts.BTN_HEIGHT, scrContent.getWidth() / 4,
 				lblGSQ.getPreferredSize().height);

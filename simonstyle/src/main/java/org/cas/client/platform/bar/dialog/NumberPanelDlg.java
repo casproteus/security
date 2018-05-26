@@ -113,7 +113,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         	try {
         		Float.valueOf(curContent);
         	}catch(Exception exp) {
-                JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
+                JOptionPane.showMessageDialog(this, BarFrame.consts.FORMATERROR());
         		return;
         	}
         	
@@ -269,6 +269,10 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 
 	public void setFloatSupport(boolean setFloatSupport) {
 		point.setVisible(setFloatSupport);
+	}
+	
+	public void setNotice(String notice) {
+		lblQTY.setText(notice);
 	}
 	
 	private BarFrame barFrame;
