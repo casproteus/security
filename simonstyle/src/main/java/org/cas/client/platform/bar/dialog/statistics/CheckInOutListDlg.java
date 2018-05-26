@@ -189,8 +189,8 @@ public class CheckInOutListDlg  extends JDialog
 		}
 		tfdMoneyCurrent = new JTextField(new DecimalFormat("#0.00").format(tShoestring/100.0));
 		tfdMoneyLeft = new JTextField();
-		lblUnit = new JLabel(BarOption.MoneySign);
-		lblUnit2 = new JLabel(BarOption.MoneySign);
+		lblUnit = new JLabel(BarOption.getMoneySign());
+		lblUnit2 = new JLabel(BarOption.getMoneySign());
 		btnClose = new JButton(DlgConst.FINISH_BUTTON);
 		
 		//properties

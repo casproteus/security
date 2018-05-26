@@ -7,7 +7,7 @@ public class BarDlgConst2 implements BarDlgConst{
     public String ChangeDate() {return "改变日期";}
     public String ViewDetail() {return "详细信息";}
     public String Close() {return "关闭";}
-    public String Tip() {return "消费";}
+    public String Tip() {return "小费";}
     public String ServiceFee() {return "服务费";}
     public String ServiceFeeNotice() {return "请输入服务费.";}
     public String CashBack() {return "返款";}
@@ -25,6 +25,7 @@ public class BarDlgConst2 implements BarDlgConst{
     public String OpenDrawer() {return "打开钱箱";}
     public String VolumnDiscount() {return "整单打折";}
     public String VolumnDiscountNotice() {return "请输入整单打折的金额.";}
+    
     public String WaiterReport() {return "当日报告";}
     public String Reservation() {return "订桌";}
     public String Report() {return "报告";}
@@ -45,10 +46,11 @@ public class BarDlgConst2 implements BarDlgConst{
     public String SPLIT_BILL() {return "分单";}
     public String Modify() {return "加备注";}
     public String ChangePrice() {return "特价";}
-    public String TIP() {return "服务费";}
+    public String ChangePriceNotice() {return "请输入服务费金额.";}
     public String QTY() {return "数量";}
     public String QTYNOTICE() {return "将被应用到所选的菜!";}
     public String DISC_ITEM() {return "单项打折";}
+    public String DISC_ITEMNotice() {return "请输入选中项的打折金额";}
     public String PRINT_BILL() {return "打印账单";}
 
     public String DEBIT() {return "借记";}
@@ -135,6 +137,7 @@ public class BarDlgConst2 implements BarDlgConst{
     public String MoveItem() {return "移动项目";}
     public String CombineAll() {return "全部合并";}
     public String Refund() {return "退款";}
+    public String RefundNotice() {return "请输入退款金额";}
     public String CompleteAll() {return "全部完成";}
     public String CancelAll() {return "全部取消";}
     public String ProdCodeLength() {return "ProdCodeLength";}

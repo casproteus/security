@@ -9,8 +9,8 @@ public class BarDlgConst3 implements BarDlgConst{
     public String Close() {return "Close";}
     public String Tip() {return "Tip";}
     public String ServiceFee() {return "Service Fee";}
-    public String CashBack() {return "Cash Back";}
     public String ServiceFeeNotice() {return "Please input price of service fee.";}
+    public String CashBack() {return "Cash Back";}
     public String Status() {return "Status";}
     public String APPLY() {return "APPLY";}
 
@@ -24,8 +24,9 @@ public class BarDlgConst3 implements BarDlgConst{
     public String OrderManage() {return "CHECK ORDER";}
     public String OpenDrawer() {return "OPEN DRAWER";}
     public String VolumnDiscount() {return "DISC BILL";}
-    public String WaiterReport() {return "SERVER REPORT";}
     public String VolumnDiscountNotice() {return "Please input how much to discount.";}
+    
+    public String WaiterReport() {return "SERVER REPORT";}
     public String Reservation() {return "RESERVATION";}
     public String Report() {return "REPORT";}
     public String CheckInOut() {return "SING IN/OUT";}
@@ -45,10 +46,11 @@ public class BarDlgConst3 implements BarDlgConst{
     public String SPLIT_BILL() {return "SPLIT BILL";}
     public String Modify() {return "MODIFY";}
     public String ChangePrice() {return "CHANGE PRICE";}
-    public String TIP() {return "SERVICE FEE";}
+    public String ChangePriceNotice() {return "Please input a different price for selected item.";}
     public String QTY() {return "QTY";}
     public String QTYNOTICE() {return "will be applied to selected dish!";}
     public String DISC_ITEM() {return "DISC ITEM";}
+    public String DISC_ITEMNotice() {return "Please input how much to discount for selected item.";}
     public String PRINT_BILL() {return "PRINT BILL";}
 
     public String DEBIT() {return "DEBIT";}
@@ -135,6 +137,7 @@ public class BarDlgConst3 implements BarDlgConst{
     public String MoveItem() {return "MoveItem";}
     public String CombineAll() {return "COMBINE ALL";}
     public String Refund() {return "REFUND";}
+    public String RefundNotice() {return "Please input how much to refund.";}
     public String CompleteAll() {return "COMPLETE ALL";}
     public String CancelAll() {return "Cancel All";}
     public String ProdCodeLength() {return "ProdCodeLength";}

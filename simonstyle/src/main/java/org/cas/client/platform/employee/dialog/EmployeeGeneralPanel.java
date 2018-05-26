@@ -393,10 +393,10 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         fldSSCNumber = new JTextField();
         lblSalary = new JLabel(BarFrame.consts.SALARY());
         fldSalary = new JTextField();
-        lblPriceUnit1 = new JLabel(BarOption.MoneySign);
+        lblPriceUnit1 = new JLabel(BarOption.getMoneySign());
         lblInsurance = new JLabel(BarFrame.consts.INSURANCE());
         fldInsurance = new JTextField();
-        lblPriceUnit2 = new JLabel(BarOption.MoneySign);
+        lblPriceUnit2 = new JLabel(BarOption.getMoneySign());
         lblPasswrod = new JLabel(BarFrame.consts.PASSWORD());
         fldPassword = new JPasswordField();
         btnRelation = new JButton(BarFrame.consts.RELATION());

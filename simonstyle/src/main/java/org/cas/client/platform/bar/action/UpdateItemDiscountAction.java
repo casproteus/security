@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -30,7 +31,7 @@ public class UpdateItemDiscountAction implements ActionListener{
  				String curContent = BarFrame.numberPanelDlg.tfdQTY.getText();
          		float discount = Float.valueOf(curContent);
              	int row = billPanel.tblSelectedDish.getSelectedRow();
-             	billPanel.tblSelectedDish.setValueAt("-" + curContent, row, 2);
+             	billPanel.tblSelectedDish.setValueAt("-"+ BarOption.getMoneySign() + curContent, row, 2);
              	billPanel.selectdDishAry.get(row).setDiscount((int)(discount * 100));
              	billPanel.updateTotleArea();
              	int outputID = billPanel.selectdDishAry.get(row).getOutputID();

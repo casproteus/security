@@ -47,10 +47,11 @@ public interface BarDlgConst {
     String SPLIT_BILL();
     String Modify();
     String ChangePrice();
-    String TIP();
+    String ChangePriceNotice();
     String QTY();
     String QTYNOTICE();
     String DISC_ITEM();
+    String DISC_ITEMNotice();
     String PRINT_BILL();
 
     String DEBIT();
@@ -137,6 +138,7 @@ public interface BarDlgConst {
     String MoveItem();
     String CombineAll();
     String Refund();
+    String RefundNotice();
     String CompleteAll();
     String CancelAll();
     String ProdCodeLength();

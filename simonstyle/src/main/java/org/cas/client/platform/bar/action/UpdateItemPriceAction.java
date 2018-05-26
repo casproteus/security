@@ -53,7 +53,7 @@ public class UpdateItemPriceAction implements ActionListener{
  	    		if(pK > 0)
  	    			priceDSP /= pK;
  	    		
-             	billPanel.tblSelectedDish.setValueAt("$" + priceDSP/100f, row, 3);
+             	billPanel.tblSelectedDish.setValueAt(BarOption.getMoneySign() + priceDSP/100f, row, 3);
              	billPanel.updateTotleArea();
              	int outputID = billPanel.selectdDishAry.get(row).getOutputID();
              	if(outputID >= 0) {

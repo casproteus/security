@@ -38,7 +38,6 @@ import com.jpos.POStest.POStestGUI;
 
 public class BarOption extends JDialog implements ICASDialog, ActionListener, ComponentListener {
 	public static final int MaxQTY = 10000;
-	public static String MoneySign = "$";
 	public static Font bigFont = new Font("Arial", Font.PLAIN, 48);
 	
 	public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -58,7 +57,15 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 //    public static void setIsPrintBillWhenPay(Boolean isPrintBillWhenPay) {
 //    	CustOpts.custOps.setKeyAndValue("isPrintBillWhenPay", isPrintBillWhenPay);
 //    }
-    
+	
+    public static String getMoneySign() {
+    	return CustOpts.custOps.getValue("moneySign") == null ? 
+    			"$" : String.valueOf(CustOpts.custOps.getValue("moneySign"));
+    }
+    public static void setMoneySign(String moneySign) {
+    	CustOpts.custOps.setKeyAndValue("moneySign", moneySign);
+    }
+	    
     public static boolean isDisCountBeforeTax() {
     	return CustOpts.custOps.getValue("isDisCountBeforeTax") == null ? 
     			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isDisCountBeforeTax"));

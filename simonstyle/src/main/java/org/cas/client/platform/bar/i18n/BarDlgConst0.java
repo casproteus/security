@@ -46,10 +46,11 @@ public class BarDlgConst0 implements BarDlgConst{
     public String SPLIT_BILL() {return "SPLIT BILL";}
     public String Modify() {return "MODIFY";}
     public String ChangePrice() {return "CHANGE PRICE";}
-    public String TIP() {return "SERVICE FEE";}
+    public String ChangePriceNotice() {return "Please input a different price for selected item.";}
     public String QTY() {return "QTY";}
     public String QTYNOTICE() {return "will be applied to selected dish!";}
     public String DISC_ITEM() {return "DISC ITEM";}
+    public String DISC_ITEMNotice() {return "Please input how much to discount for selected item.";}
     public String PRINT_BILL() {return "PRINT BILL";}
 
     public String DEBIT() {return "DEBIT";}
@@ -136,6 +137,7 @@ public class BarDlgConst0 implements BarDlgConst{
     public String MoveItem() {return "MoveItem";}
     public String CombineAll() {return "COMBINE ALL";}
     public String Refund() {return "REFUND";}
+    public String RefundNotice() {return "Please input how much to refund.";}
     public String CompleteAll() {return "COMPLETE ALL";}
     public String CancelAll() {return "Cancel All";}
     public String ProdCodeLength() {return "ProdCodeLength";}

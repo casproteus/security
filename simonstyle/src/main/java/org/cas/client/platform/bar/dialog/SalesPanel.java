@@ -140,7 +140,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             			return;
         		BarFrame.instance.switchMode(1);
         		
-        	}else if(o == btnLine_1_9) {
+        	}else if(o == btnLine_1_9) {	//service fee
          		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.ServiceFee());
          		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.ServiceFeeNotice());
         		BarFrame.numberPanelDlg.setBtnSource(null);
@@ -150,7 +150,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		
          		try {
      				String curContent = BarFrame.numberPanelDlg.curContent;
-     				if(curContent != null || curContent.length() == 0)
+     				if(curContent == null || curContent.length() == 0)
      					return;
              		float serviceFee = Float.valueOf(curContent);
              		billPanel.serviceFee = (int)(serviceFee * 100);
@@ -237,6 +237,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		
          		try {
      				String curContent = BarFrame.numberPanelDlg.curContent;
+     				if(curContent == null || curContent.length() == 0)
+     					return;
              		float discount = Float.valueOf(curContent);
              		billPanel.discount = (int)(discount * 100);
              		billPanel.updateTotleArea();
@@ -244,13 +246,15 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                  	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
              		return;
              	}
-            }else if(o == btnLine_2_8) {
+            }else if(o == btnLine_2_8) {	//refund
             	//check if it's already paid.
             	if(billPanel.selectdDishAry.size() < 1 || billPanel.selectdDishAry.get(0).getBillID() == 0) {
             		JOptionPane.showMessageDialog(this, BarFrame.consts.NotPayYet());
             		return;
             	}
-            	
+
+         		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.Refund());
+         		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.RefundNotice());
             	BarFrame.numberPanelDlg.setBtnSource(null);
          		BarFrame.numberPanelDlg.setFloatSupport(true);
          		BarFrame.numberPanelDlg.setModal(true);
@@ -258,6 +262,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		
          		try {
      				String curContent = BarFrame.numberPanelDlg.curContent;
+     				if(curContent == null || curContent.length() == 0)
+     					return;
              		float refund = Float.valueOf(curContent);
              		
              		// get out existing status.
@@ -267,7 +273,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     rs.next();
                     int status = rs.getInt("status");
                     if(status < 0) {
-                    	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.AllreadyRefund() + BarOption.MoneySign + (0-status), DlgConst.DlgTitle,
+                    	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.AllreadyRefund() + BarOption.getMoneySign() + (0-status), DlgConst.DlgTitle,
     		                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
     						return;
     					}else {
@@ -298,12 +304,15 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             }
         }
         //JToggleButton-------------------------------------------------------------------------------------
-        else if(o instanceof JToggleButton) {
+        else if(o instanceof JToggleButton) {	//
         	 if (o == btnLine_1_7) {
          		if(BillListPanel.curDish == null) {//check if there's an item selected.
          			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
          			return;
          		}
+
+         		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.DISC_ITEM());
+         		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.DISC_ITEMNotice());
          		BarFrame.numberPanelDlg.setBtnSource(btnLine_1_7);//pomp up a numberPanelDlg
          		BarFrame.numberPanelDlg.setFloatSupport(true);
          		BarFrame.numberPanelDlg.setModal(false);
@@ -316,6 +325,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
           			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
           			return;
           		}
+         		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.ChangePrice());
+         		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.ChangePriceNotice());
             	BarFrame.numberPanelDlg.setBtnSource(btnLine_1_8);//pomp up a numberPanelDlg
          		BarFrame.numberPanelDlg.setFloatSupport(true);
          		BarFrame.numberPanelDlg.setModal(false);
@@ -417,7 +428,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_1_6 = new JButton(BarFrame.consts.Modify());
         btnLine_1_7 = new JToggleButton(BarFrame.consts.DISC_ITEM());
         btnLine_1_8 = new JToggleButton(BarFrame.consts.ChangePrice());
-        btnLine_1_9 = new JButton(BarFrame.consts.TIP());
+        btnLine_1_9 = new JButton(BarFrame.consts.ServiceFee());
         btnLine_1_10 = new JButton(BarFrame.consts.PRINT_BILL());
 
         btnLine_2_1 = new JButton(BarFrame.consts.RETURN());

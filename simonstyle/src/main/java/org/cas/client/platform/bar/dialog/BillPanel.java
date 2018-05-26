@@ -466,11 +466,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		//@TODO: I am not sure if it's correct to do like this, we don't know what tax rate is good for the bill discount.
     	}
 
-        lblDiscount.setText(discount > 0 ? BarFrame.consts.Discount() + " : $" + String.valueOf(((int)discount)/100f) : "");
-        lblServiceFee.setText(serviceFee > 0 ? BarFrame.consts.ServiceFee() + " : $" + String.valueOf(((int)serviceFee)/100f) : "");
-    	lblSubTotle.setText(BarFrame.consts.Subtotal() + " : $" + String.valueOf(subTotal/100f));
-        lblGSQ.setText(BarFrame.consts.QST() + " : $" + String.valueOf(((int)totalGst)/100f));
-        lblQSQ.setText(BarFrame.consts.GST() + " : $" + String.valueOf(((int)totalQst)/100f));
+        lblDiscount.setText(discount > 0 ? BarFrame.consts.Discount() + " : -" + BarOption.getMoneySign() + String.valueOf(((int)discount)/100f) : "");
+        lblServiceFee.setText(serviceFee > 0 ? BarFrame.consts.ServiceFee() + " : " + BarOption.getMoneySign() + String.valueOf(((int)serviceFee)/100f) : "");
+    	lblSubTotle.setText(BarFrame.consts.Subtotal() + " : " + BarOption.getMoneySign() + String.valueOf(subTotal/100f));
+        lblGSQ.setText(BarFrame.consts.QST() + " : " + BarOption.getMoneySign() + String.valueOf(((int)totalGst)/100f));
+        lblQSQ.setText(BarFrame.consts.GST() + " : " + BarOption.getMoneySign() + String.valueOf(((int)totalQst)/100f));
         valTotlePrice.setText(String.valueOf(((int) (subTotal + totalGst + totalQst))/100f));
     }
     
@@ -537,7 +537,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					strNum.append("/").append(pK);
 				tValues[tmpPos][0] = strNum.toString();
 				
-				tValues[tmpPos][3] = "$" + rs.getInt("TOLTALPRICE") / 100f;
+				tValues[tmpPos][3] =  BarOption.getMoneySign() + rs.getInt("TOLTALPRICE") / 100f;
 				tmpPos++;
 			}
 
@@ -613,7 +613,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 //					strNum.append("/").append(pK);
 //				tValues[tmpPos][0] = strNum.toString();
 //				
-//				tValues[tmpPos][3] = "$" + rs.getInt("TOLTALPRICE") / 100f;
+//				tValues[tmpPos][3] =  BarOption.MoneySign + rs.getInt("TOLTALPRICE") / 100f;
 //				tmpPos++;
 //			}
 //
@@ -752,7 +752,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         lblSubTotle = new JLabel(BarFrame.consts.Subtotal());
         lblGSQ = new JLabel(BarFrame.consts.QST());
         lblQSQ = new JLabel(BarFrame.consts.GST());
-        lblTotlePrice = new JLabel(BarFrame.consts.Total() + " : $");
+        lblTotlePrice = new JLabel(BarFrame.consts.Total() + " : " + BarOption.getMoneySign());
         valTotlePrice = new JLabel();
         btnMore = new ArrayButton("+");
         btnLess = new ArrayButton("-");

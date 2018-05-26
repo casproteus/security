@@ -211,7 +211,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 	    			return;
         	}else if(left < 0) {
             	this.setVisible(false);
-        		new ChangeDlg(BarFrame.instance, BarOption.MoneySign + (0 - left)/100f).setVisible(true);
+        		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign() + (0 - left)/100f).setVisible(true);
             	updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId());
         	}
         	
@@ -335,33 +335,33 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 
         // 初始化－－－－－－－－－－－－－－－－
 
-        lblCashReceived = new JLabel(BarFrame.consts.CASH() + " : $");
+        lblCashReceived = new JLabel(BarFrame.consts.CASH() + " : " + BarOption.getMoneySign());
         valCashReceived = new JLabel("");
-        lblDebitReceived = new JLabel(BarFrame.consts.DEBIT() + " : $");
+        lblDebitReceived = new JLabel(BarFrame.consts.DEBIT() + " : " + BarOption.getMoneySign());
         valDebitReceived = new JLabel("");
-        lblVisaReceived = new JLabel(BarFrame.consts.VISA() + " : $");
+        lblVisaReceived = new JLabel(BarFrame.consts.VISA() + " : " + BarOption.getMoneySign());
         valVisaReceived = new JLabel("");
-        lblMasterReceived = new JLabel(BarFrame.consts.MASTER() + " : $");
+        lblMasterReceived = new JLabel(BarFrame.consts.MASTER() + " : " + BarOption.getMoneySign());
         valMasterReceived = new JLabel("");
-        lblOtherReceived = new JLabel(BarFrame.consts.Other() + " : $");
+        lblOtherReceived = new JLabel(BarFrame.consts.Other() + " : " + BarOption.getMoneySign());
         valOtherReceived = new JLabel("");
         
         tfdNewReceived = new JTextField();
         
-        lblTotal = new JLabel(BarFrame.consts.Total() + " : $");
+        lblTotal = new JLabel(BarFrame.consts.Total() + " : " + BarOption.getMoneySign());
         valTotal = new JLabel("");
-        lblLeft = new JLabel(BarFrame.consts.Left() + " : $");
+        lblLeft = new JLabel(BarFrame.consts.Left() + " : " + BarOption.getMoneySign());
         valLeft = new JLabel("");
         
         ok = new JButton("✔");
         back = new JButton("←");
         
-        btn10 = new JButton("$10");
-        btn20 = new JButton("$20");
-        btn30 = new JButton("$30");
-        btn40 = new JButton("$40");
-        btn50 = new JButton("$50");
-        btn100 = new JButton("$100");
+        btn10 = new JButton(BarOption.getMoneySign() + "10");
+        btn20 = new JButton(BarOption.getMoneySign() + "20");
+        btn30 = new JButton(BarOption.getMoneySign() + "30");
+        btn40 = new JButton(BarOption.getMoneySign() + "40");
+        btn50 = new JButton(BarOption.getMoneySign() + "50");
+        btn100 = new JButton(BarOption.getMoneySign() + "100");
         btnExact = new JButton(BarFrame.consts.EXACT());
         
         num1 = new JButton("1");
