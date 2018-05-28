@@ -111,8 +111,16 @@ public class App_Bar extends AbstractApp {
     public void initInfoInDB() {
         Statement stm = PIMDBModel.getStatement();
         try {
-            // 增建一个dining_Table表。select ID, Name, posX, posY, width, height, type from Tables order by DSP_INDEX"
-            String sql =
+        	//add a customziatoin table. 
+        	String sql = "CREATE CACHED TABLE customizations (id INTEGER IDENTITY PRIMARY KEY, key VARCHAR(255),  value VARCHAR(255), type INTEGER, status INTEGER)";
+        	stm.executeUpdate(sql);
+        	
+        	//add a modification table. 
+        	sql = "CREATE CACHED TABLE modification (id INTEGER IDENTITY PRIMARY KEY, lang1 VARCHAR(255), lang2 VARCHAR(255), lang3 VARCHAR(255),lang4 VARCHAR(255),lang5 VARCHAR(255),lang6 VARCHAR(255), type INTEGER, status INTEGER)";
+        	stm.executeUpdate(sql);
+        	
+        	// 增建一个dining_Table表。select ID, Name, posX, posY, width, height, type from Tables order by DSP_INDEX"
+            sql =
                     "CREATE CACHED TABLE DINING_TABLE (ID INTEGER IDENTITY PRIMARY KEY, name VARCHAR(255),"
                     .concat(" DSP_INDEX INTEGER, posX INTEGER, posY INTEGER, width INTEGER, height INTEGER, type INTEGER, opentime VARCHAR(255), status INTEGER);");
             stm.executeUpdate(sql);

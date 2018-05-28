@@ -21,6 +21,7 @@ import org.cas.client.platform.bar.action.UpdateItemDiscountAction;
 import org.cas.client.platform.bar.action.UpdateItemPriceAction;
 import org.cas.client.platform.bar.beans.CategoryToggleButton;
 import org.cas.client.platform.bar.beans.MenuButton;
+import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -139,7 +140,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.UnSavedRecordFound(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
             			return;
         		BarFrame.instance.switchMode(1);
-        		
+        	} else if(o == btnLine_1_6) {
+        		new AddModificationDialog(BarFrame.instance, "").setVisible(true);
         	}else if(o == btnLine_1_9) {	//service fee
          		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.ServiceFee());
          		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.ServiceFeeNotice());

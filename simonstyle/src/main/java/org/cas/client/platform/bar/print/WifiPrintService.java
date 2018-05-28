@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.model.Category;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.model.Printer;
@@ -66,7 +67,7 @@ public class WifiPrintService{
     	return ip;
     }
     
-    public static int exePrintCommand(List<Dish> selectdDishAry, Printer[] printers, String curTable, String curBill){
+    public static int exePrintCommand(List<Dish> selectdDishAry, Printer[] printers, String curTable, String curBill, String waiterName){
         //ErrorUtil.(TAG,"start to translate selection into ipContent for printing.");
         if(!isIpContentMapEmpty()){
         	return printContents();
@@ -132,12 +133,12 @@ public class WifiPrintService{
                     ErrorUtil.write("the dishList are different from ipSelectionsMap.get(printerIP)!");
                 }
                 if(ipPrinterMap.get(printerIP).getFirstPrint() == 1){  //全单封装
-                    ipContentMap.get(printerIP).add(formatContentForPrint(dishList, printerIP, curTable, curBill) + "\n\n\n\n\n");
+                    ipContentMap.get(printerIP).add(formatContentForPrint(dishList, printerIP, curTable, curBill, waiterName) + "\n\n\n\n\n");
                 }else{                                          //分单封装
                     for(Dish dish : dishList){
                         List<Dish> tlist = new ArrayList<Dish>();
                         tlist.add(dish);
-                        ipContentMap.get(printerIP).add(formatContentForPrint(tlist, printerIP, curTable, curBill) + "\n\n");
+                        ipContentMap.get(printerIP).add(formatContentForPrint(tlist, printerIP, curTable, curBill, waiterName) + "\n\n");
                     }
                 }
             }
@@ -219,7 +220,7 @@ public class WifiPrintService{
 		}
     }
     
-    private static String formatContentForPrint(List<Dish> list, String curPrintIp, String curTable, String curBill){
+    private static String formatContentForPrint(List<Dish> list, String curPrintIp, String curTable, String curBill, String waiterName){
         //L.d(TAG,"formatContentForPrint");
         String font = (String)CustOpts.custOps.getValue(curPrintIp + "font");
         if(font ==  null || font.length() < 1) {
@@ -237,15 +238,29 @@ public class WifiPrintService{
             }
         }
         StringBuilder content = new StringBuilder("\n\n");
-        DateFormat df = new SimpleDateFormat("HH:mm");
-        String dateStr = df.format(new Date());
-        String spaceStr = generateString(width - (3 + curTable.length() + curBill.length() + dateStr.length()), " ");
-
-        if(width < 20){
+        if(width < 20)
             content.append("\n\n");
+        content.append("(").append(curTable).append(")");
+
+        int lengthOfStrToDisplay = 3 + curTable.length();
+        if(BarOption.isDisplayBillInKitchen()) {
+        	content.append(curBill);
+        	lengthOfStrToDisplay += curBill.length();
+        }
+        
+        if(BarOption.isDoNotDisplayWaiterInKitchen()) {	//the first 3 spaces of the spaceStr is consumed first.
+        	content.append("   ").append(waiterName);
+        	lengthOfStrToDisplay += waiterName.length();
+        }else {
+        	content.append("   ");
         }
 
-        content.append("(").append(curTable).append(")-").append(curBill).append(spaceStr).append(dateStr).append("\n");
+        DateFormat df = new SimpleDateFormat("HH:mm");
+        String dateStr = df.format(new Date());
+        lengthOfStrToDisplay += dateStr.length();
+        String spaceStr = generateString(width - lengthOfStrToDisplay - 3, " ");
+        
+        content.append(spaceStr).append(dateStr).append("\n");
 
         String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
         if(sep_str1 == null || sep_str1.length() == 0){
@@ -260,14 +275,16 @@ public class WifiPrintService{
 
         for(Dish dd:list){
             StringBuilder sb = new StringBuilder();
-            sb.append(dd.getId());
-            sb.append(generateString(5 - String.valueOf(dd.getId()).length(), " "));
+            if(BarOption.isDisDishIDInKitchen()) {
+                sb.append(dd.getId());
+                sb.append(generateString(5 - String.valueOf(dd.getId()).length(), " "));
+            }
             sb.append(dd.getLanguage(ipPrinterMap.get(curPrintIp).getType()));
             if(dd.getNum() > 1){
                 String space = " ";
                 int occupiedLength = getLengthOfString(sb.toString());
                 sb.append(generateString(width - occupiedLength - (dd.getNum() < 10 ? 2 : 3), " "));
-                sb.append("X").append(Integer.toString(dd.getNum()));
+                sb.append("x").append(Integer.toString(dd.getNum()));
             }
             content.append(sb);
             content.append("\n");

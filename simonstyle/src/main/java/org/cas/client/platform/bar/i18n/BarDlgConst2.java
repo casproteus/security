@@ -233,4 +233,9 @@ public class BarDlgConst2 implements BarDlgConst{
 
     public String UserNameInUsed() {return "这个名字不可用，请重新选择";}
     public String FORMATERROR() {return "所输入的内容存在格式错误，请重新输入";}
+    public String AvailableModification() {return "可用修改选项";}
+    public String AddNewModificationItem() {return "新建(如果有多语言版本，请用'" + BarDlgConst.semicolon + "'分割 en;fr;cn)";}
+    public String ADD_TO_LIST() {return "加入到列表";}
+    public String DELETE() {return "删除";}
+    public String RESET() {return "复位";}
 }

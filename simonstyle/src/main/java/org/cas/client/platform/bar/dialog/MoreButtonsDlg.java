@@ -13,9 +13,7 @@ import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
-import org.cas.client.platform.bar.i18n.BarDlgConst1;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
-import org.cas.client.platform.bar.i18n.BarDlgConst3;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -88,7 +86,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
     		BarFrame.consts = new BarDlgConst0();
         	updateInterface("update employee set subject = 'EN' where id = " + LoginDlg.USERID);
         } else if (o == btnLine_3_5) {
-    		BarFrame.consts = new BarDlgConst1();
+    		BarFrame.consts = new BarDlgConst0();
     		updateInterface("update employee set subject = 'FR' where id = " + LoginDlg.USERID);
         } else if (o == btnLine_3_6) {
     		BarFrame.consts = new BarDlgConst2();

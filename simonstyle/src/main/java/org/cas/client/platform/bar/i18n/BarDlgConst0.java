@@ -233,4 +233,10 @@ public class BarDlgConst0 implements BarDlgConst{
     
     public String UserNameInUsed() {return "This user name is not available, please choose another one";}
     public String FORMATERROR() {return "The content input are in wrong format, please try again";}
+    public String AvailableModification() {return "Available Modifications";}
+    public String AddNewModificationItem() {return "New Item (use '" + BarDlgConst.semicolon + "' to seperate multi language version)";}
+    public String ADD_TO_LIST() {return "Add To List";}
+    public String DELETE() {return "DELETE";}
+    public String RESET() {return "RESET";}
+    
 }

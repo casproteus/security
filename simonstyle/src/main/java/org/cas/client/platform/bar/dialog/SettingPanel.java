@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.dialog.statistics.EmployeeListDlg;
 import org.cas.client.platform.cascontrol.dialog.adduserdlg.AddUserDlg;
@@ -155,8 +156,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         	}else if(o == btnLine_2_4) {
         		new CheckInOutListDlg(BarFrame.instance).setVisible(true);
         	}else if(o == btnLine_2_5) {
-                CASControl.ctrl.setMainFrame(new CASMainFrame());
         		new EmployeeListDlg(BarFrame.instance).setVisible(true);
+        	}else if(o == btnLine_2_6) {
+        		new AddModificationDialog(BarFrame.instance, "").setVisible(true);
         	}
         }
         //JToggleButton-------------------------------------------------------------------------------------
@@ -292,7 +294,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_2_4 = new JButton(BarFrame.consts.CheckInOut());
        
         btnLine_2_5 = new JButton(BarFrame.consts.Operator());
-        btnLine_2_6 = new JButton("");
+        btnLine_2_6 = new JButton(BarFrame.consts.Modify());
         btnLine_2_7 = new JButton("");
         btnLine_2_8 = new JButton("");
         btnLine_2_9 = new JButton("");

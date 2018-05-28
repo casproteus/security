@@ -4,6 +4,9 @@ public interface BarDlgConst {
     int SCROLLBAR_WIDTH = 40;
     int SubTotal_HEIGHT = 50;
 
+    String semicolon = ";"; // 分隔符
+    String delimiter = ","; // 分隔符
+    
     String OK();
     String Cancel();
     String ChangeDate();
@@ -233,6 +236,11 @@ public interface BarDlgConst {
     String DeleteUser();
     
     String UserNameInUsed();
-    
+
     String FORMATERROR();
+    String AvailableModification();
+    String AddNewModificationItem();
+    String ADD_TO_LIST();
+    String DELETE();
+    String RESET();
 }

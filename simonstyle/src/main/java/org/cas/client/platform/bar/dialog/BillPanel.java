@@ -124,7 +124,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		//prepare the printing String and do printing
 		if(WifiPrintService.SUCCESS != 
 				WifiPrintService.exePrintCommand(newDishes, BarFrame.instance.menuPanel.printers, 
-						BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText())) {
+						BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valOperator.getText())) {
 			BarFrame.setStatusMes(BarFrame.consts.PrinterError());
 			JOptionPane.showMessageDialog(this, BarFrame.consts.PrinterError());
 		}
@@ -191,7 +191,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					int row = tblSelectedDish.getSelectedRow();
 					selectdDishAry.get(row).setNum(tQTY);
 					tblSelectedDish.setValueAt("x" + tQTY % BarOption.MaxQTY, row, 0);
-					tblSelectedDish.setValueAt((selectdDishAry.get(selectedRow).getPrice() - selectdDishAry.get(selectedRow).getDiscount()) * tQTY/100f, row, 3);
+					tblSelectedDish.setValueAt(BarOption.getMoneySign() + (selectdDishAry.get(selectedRow).getPrice() - selectdDishAry.get(selectedRow).getDiscount()) * tQTY/100f, row, 3);
 				}
 				updateTotleArea();
 				tblSelectedDish.setSelectedRow(selectedRow);
@@ -217,7 +217,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 						int row = tblSelectedDish.getSelectedRow();
 						selectdDishAry.get(row).setNum(tQTY);
 						tblSelectedDish.setValueAt("x" + tQTY, row, 0);		
-						tblSelectedDish.setValueAt((selectdDishAry.get(selectedRow).getPrice() - selectdDishAry.get(selectedRow).getDiscount()) * tQTY/100f, row, 3);
+						tblSelectedDish.setValueAt(BarOption.getMoneySign() + (selectdDishAry.get(selectedRow).getPrice() - selectdDishAry.get(selectedRow).getDiscount()) * tQTY/100f, row, 3);
 					}
 				}
 				updateTotleArea();

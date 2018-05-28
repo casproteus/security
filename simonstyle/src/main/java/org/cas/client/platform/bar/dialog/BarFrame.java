@@ -23,6 +23,7 @@ import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
+import org.cas.client.platform.cascontrol.frame.CASMainFrame;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -39,6 +40,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     public static void main(
             String[] args) {
         CASControl.ctrl.initModel();
+        CASControl.ctrl.setMainFrame(new CASMainFrame());
         instance = new BarFrame();
         numberPanelDlg = new NumberPanelDlg(instance);
         payCashDlg = new PayCashDlg(instance);
@@ -100,7 +102,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
-        lblVersion = new JLabel("V0.3-20180525");
+        lblVersion = new JLabel("V0.5-20180528");
         menuPanel = new MenuPanel();
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();
