@@ -159,7 +159,7 @@ public class BarDlgConst0 implements BarDlgConst{
     public String PHOTO() {return "Add Photo...";}
     public String LASTNAME() {return "Last Name";}
     public String FIRSTNAME() {return "First Name";}
-    public String DISPLAYAS() {return "language";}
+    public String DISPLAYAS() {return "Language";}
     public String NICKNAME() {return "Nick Name";}
     public String JOB() {return "Title";}// job
     public String RELATION() {return "Relationship...";}
