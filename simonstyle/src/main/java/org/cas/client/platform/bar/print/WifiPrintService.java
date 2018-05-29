@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
+import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.Category;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.model.Printer;
@@ -272,14 +273,14 @@ public class WifiPrintService{
         }
 
         content.append(generateString(width, sep_str1)).append("\n\n");
-
+        int langIndex = ipPrinterMap.get(curPrintIp).getType();
         for(Dish dd:list){
             StringBuilder sb = new StringBuilder();
             if(BarOption.isDisDishIDInKitchen()) {
                 sb.append(dd.getId());
                 sb.append(generateString(5 - String.valueOf(dd.getId()).length(), " "));
             }
-            sb.append(dd.getLanguage(ipPrinterMap.get(curPrintIp).getType()));
+            sb.append(dd.getLanguage(langIndex));
             if(dd.getNum() > 1){
                 String space = " ";
                 int occupiedLength = getLengthOfString(sb.toString());
@@ -290,9 +291,13 @@ public class WifiPrintService{
             content.append("\n");
             if(dd.getModification() != null) {
             	String modifyStr = dd.getModification();
-            	String[] notes = modifyStr.split(","); 
+            	String[] notes = modifyStr.split(BarDlgConst.delimiter); 
                 for (String str : notes) {
-                    content.append(generateString(5, " ")).append("* ").append(str).append(" *\n");
+                	String[] langs = str.split(BarDlgConst.semicolon);
+                	String lang = langs.length > langIndex ? langs[langIndex] : langs[0];
+                	if(lang.length() == 0)
+                		lang = langs[0];
+                    content.append(generateString(5, " ")).append("* ").append(lang).append(" *\n");
                 }
             }
             content.append(generateString(width, sep_str2)).append("\n");

@@ -140,8 +140,14 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.UnSavedRecordFound(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
             			return;
         		BarFrame.instance.switchMode(1);
-        	} else if(o == btnLine_1_6) {
-        		new AddModificationDialog(BarFrame.instance, "").setVisible(true);
+        	} else if(o == btnLine_1_6) {	//Modify
+        		//if there's a curDish?
+        		if(BillListPanel.curDish == null) {//check if there's an item selected.
+        			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
+        			return;
+        		}
+        		new AddModificationDialog(BarFrame.instance, BillListPanel.curDish.getModification()).setVisible(true);
+        		
         	}else if(o == btnLine_1_9) {	//service fee
          		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.ServiceFee());
          		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.ServiceFeeNotice());

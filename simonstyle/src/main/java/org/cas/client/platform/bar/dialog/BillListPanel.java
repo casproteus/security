@@ -23,7 +23,7 @@ import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
 public class BillListPanel extends  JPanel  implements ActionListener, ComponentListener{
-	static Dish curDish;
+	public static Dish curDish;
 	int curPageNum;
 	
 	public BillListPanel() {

@@ -1,5 +1,6 @@
 package org.cas.client.platform.bar.dialog.modifyDish;
 
+import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -25,33 +26,39 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.CASControl;
 import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.BarOption;
+import org.cas.client.platform.bar.dialog.BillListPanel;
+import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
+import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.ModelDBCons;
 import org.cas.client.platform.pimmodel.PIMDBModel;
+import org.cas.client.platform.pimview.pimtable.PIMTable;
 
 public class AddModificationDialog extends JDialog implements ActionListener, ListSelectionListener, KeyListener,
         MouseListener, Runnable, ComponentListener {
-    /**
-     * 创建一个 Category 的实例
-     * 
-     * @param prmParent
-     *            父窗体
-     * @param prmCategoryInfo
-     *            逗号分隔的字符串
-     */
-    public AddModificationDialog(JDialog prmParent, String prmCategoryInfo) {
-        super(prmParent, true);
-        curContent = prmCategoryInfo;
-        initComponent(); // 组件初始化并布局
-    }
+//    /**
+//     * 创建一个 Category 的实例
+//     * 
+//     * @param prmParent
+//     *            父窗体
+//     * @param prmCategoryInfo
+//     *            逗号分隔的字符串
+//     */
+//    public AddModificationDialog(JDialog prmParent, String prmCategoryInfo) {
+//        super(prmParent, true);
+//        initComponent(); // 组件初始化并布局
+//        initContent(prmCategoryInfo); // 初始化文本区和列表框数据
+//    }
 
     /**
      * 创建一个 Category 的实例
@@ -63,8 +70,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      */
     public AddModificationDialog(Frame prmParent, String prmCategoryInfo) {
         super(prmParent, true);
-        curContent = prmCategoryInfo;
         initComponent(); // 组件初始化并布局
+        initContent(prmCategoryInfo); // 初始化文本区和列表框数据
     }
 
     /** Invoked when the component's size changes. */
@@ -96,18 +103,20 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         btnApply = new JButton(BarFrame.consts.APPLY()); // 加至列表按钮
         btnDelete = new JButton(BarFrame.consts.DELETE()); // 删除按钮
         resetBTN = new JButton(BarFrame.consts.RESET()); // 重置按钮
-        btnClose = new JButton(BarFrame.consts.Close()); // 设置Cancel按钮
+        btnOK = new JButton(BarFrame.consts.OK()); // 设置Cancel按钮
 
         // properties-------------------------
         midLabel.setLabelFor(modificationList);
         topLabel.setLabelFor(txaCurContent);
         modificationList.setCellRenderer(new ModificationListRenderer());
+        modificationList.setBackground(null);
+        modificationList.setBorder(new LineBorder(Color.GRAY));
+        txaCurContent.setBorder(new LineBorder(Color.GRAY));
         midLabel.setDisplayedMnemonic('V');
         topLabel.setDisplayedMnemonic('I');
         btnApply.setMnemonic('A');
         btnDelete.setMnemonic('D');
         resetBTN.setMnemonic('R');
-        txaCurContent.setText(curContent);
         btnApply.setMargin(new Insets(0, 0, 0, 0));
         btnDelete.setMargin(new Insets(0, 0, 0, 0));
         resetBTN.setMargin(new Insets(0, 0, 0, 0));
@@ -125,95 +134,99 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         getContentPane().add(resetBTN);
         getContentPane().add(txaCurContent);
         getContentPane().add(topLabel);
-        getContentPane().add(btnClose);
+        getContentPane().add(btnOK);
 
         // listeners------------------------
         btnApply.addActionListener(this);
         btnDelete.addActionListener(this);
         resetBTN.addActionListener(this);
-        btnClose.addActionListener(this);
+        btnOK.addActionListener(this);
         modificationList.addListSelectionListener(this);
         modificationList.addMouseListener(this);
         txaCurContent.addKeyListener(this);
         modificationList.addKeyListener(this);
         getContentPane().addComponentListener(this);
-
-        // cotents--------------------------
-        initData(); // 初始化文本区和列表框数据
-        modificationList.setModel(listModel);
     }
 
     private void reLayout() {
-        btnClose.setBounds(getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.BTN_WIDTH - 2 * CustOpts.HOR_GAP, 
+        btnOK.setBounds(getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.BTN_WIDTH - 2 * CustOpts.HOR_GAP, 
         		getHeight() - CustOpts.BTN_HEIGHT - CustOpts.SIZE_EDGE - CustOpts.SIZE_TITLE - 2 * CustOpts.VER_GAP,
                 CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
-//        ok2.setBounds(ok.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, ok.getY(), CustOpts.BTN_WIDTH,
-//                CustOpts.BTN_HEIGHT);
 
-        topLabel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
-        		btnClose.getX() + btnClose.getWidth(), CustOpts.LBL_HEIGHT);
-        txaCurContent.setBounds(topLabel.getX(), topLabel.getY() + CustOpts.LBL_HEIGHT, 
-        		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP,
-                CustOpts.LBL_HEIGHT * 3);
-
-        midLabel.setBounds( topLabel.getX(),
-        		txaCurContent.getY() + txaCurContent.getHeight() + CustOpts.VER_GAP,
-                txaCurContent.getWidth(), CustOpts.LBL_HEIGHT);
-        btnApply.setBounds(btnClose.getX(), midLabel.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+        if(BillListPanel.curDish == null) {
+            topLabel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
+            		btnOK.getX() + btnOK.getWidth(), CustOpts.LBL_HEIGHT);
+            txaCurContent.setBounds(topLabel.getX(), topLabel.getY() + CustOpts.LBL_HEIGHT, 
+            		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP,
+                    CustOpts.LBL_HEIGHT * 3);
+            btnApply.setBounds(btnOK.getX(), txaCurContent.getY() + txaCurContent.getHeight() + CustOpts.VER_GAP,
+            		CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+            midLabel.setBounds( topLabel.getX(),
+            		txaCurContent.getY() + txaCurContent.getHeight() + CustOpts.VER_GAP,
+            		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP, CustOpts.BTN_HEIGHT);
+        }else {
+        	topLabel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 0, 0);
+        	txaCurContent.setBounds(0, 0, 0, 0);
+            btnApply.setBounds(0,0,0,0);
+            midLabel.setBounds(topLabel.getX(),0,0,0);
+        }
         
-        modificationList.setBounds(midLabel.getX(), btnApply.getY() + btnApply.getHeight() + CustOpts.VER_GAP, // "可用类别"列表框
-                midLabel.getWidth(), 
-                btnClose.getY() - 2 * CustOpts.VER_GAP - btnApply.getY() - btnApply.getHeight());
-        btnDelete.setBounds(btnClose.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, btnClose.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+        
+        modificationList.setBounds(midLabel.getX(), midLabel.getY() + midLabel.getHeight() + CustOpts.VER_GAP, // "可用类别"列表框
+        		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP, 
+                btnOK.getY() - 2 * CustOpts.VER_GAP - midLabel.getY() - midLabel.getHeight());
+        if(BillListPanel.curDish == null) {
+        	btnDelete.setBounds(btnOK.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, btnOK.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+        }else {
+        	btnDelete.setBounds(btnOK.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, btnOK.getY(), 0, 0);
+        }
         resetBTN.setBounds(btnDelete.getX(), btnDelete.getY() + btnDelete.getHeight() + CustOpts.VER_GAP,
                 CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
     }
 
     /** 初始化时使用 */
-    private void initData() {
-        listModel = new DefaultListModel();
+    private void initContent( String prmCategoryInfo) {
+        txaCurContent.setText("null".equalsIgnoreCase(prmCategoryInfo) ? "" : prmCategoryInfo);
+        listModel = new DefaultListModel<CheckItem>();
 
         // 把文本框中字段还原为字符串数组
-        String[] usedFields = stringToArray(curContent);
-        ArrayList usedArr = new ArrayList();
-
-        // 放入一个 ArrayList 中以备用
-        if (usedFields != null && usedFields.length > 0) {
-            usedArr = new ArrayList(usedFields.length);
-            for (int i = 0; i < usedFields.length; i++) {
-                usedArr.add(usedFields[i]);
-            }
-        }
-
-        ArrayList<String> categoryFields = getAllModification();
+        ArrayList<String> inputModification = getInputModification();
+        ArrayList<String> allModification = getAllModification();
 
         // 加入列表框模型
-        for (int i = 0, count = categoryFields.size(); i < count; i++) {
-            boolean checked = false;
+        for (int i = 0, count = allModification.size(); i < count; i++) {
+        	String[] langs = allModification.get(i).split(BarDlgConst.semicolon);
+        	int langIdx = LoginDlg.USERLANG;
+        	String lang_Modify = langs.length > langIdx ? langs[langIdx] : langs[0];
+        	if(lang_Modify.length() == 0)
+        		lang_Modify = langs[0];
+        	
             // 置检查标志
-            if (usedArr.contains(categoryFields.get(i))) {
-                checked = true;
-            }
-            listModel.addElement(new CheckItem(categoryFields.get(i), checked));
+            listModel.addElement(new CheckItem(BillListPanel.curDish == null ? allModification.get(i) : lang_Modify, inputModification.contains(allModification.get(i))));
         }
+        
         // 反向操作,如果用户的输入导致新的字段的产生,在列表框模型中要加入,并存盘
-
-        if (usedFields != null && usedFields.length > 0) {
-            ArrayList tmpModelArr = new ArrayList(categoryFields.size());
-            for (int i = 0; i < categoryFields.size(); i++) {
-                tmpModelArr.add(categoryFields.get(i));
-            }
-
-            for (int i = 0; i < usedFields.length; i++) {
-                if (!tmpModelArr.contains(usedFields[i])) {
+        if (inputModification != null && inputModification.size() > 0) {
+            for (int i = 0; i < inputModification.size(); i++) {
+            	boolean notContained = true;
+            	for (String string : allModification) {
+					if(string.indexOf(inputModification.get(i)) > -1) {
+						notContained = false;
+						break;
+					}
+				}
+                if (notContained) {
                     // 加一个标志为真的
-                    listModel.addElement(new CheckItem(usedFields[i], true));
+                    listModel.addElement(new CheckItem(inputModification.get(i), true));
                     // 保存到数据库中
-                    insertModification(usedFields[i]);
+                    insertModification(inputModification.get(i));
                 }
             }
         }
+        
+        modificationList.setModel(listModel);
     }
+    
     private ArrayList<String> getAllModification() {
         String sql = "SELECT * FROM modification where status = 0";
         ArrayList<String> nameVec = new ArrayList<String>();
@@ -255,8 +268,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     /**
      * 解析一个逗号分隔符处理的字符串 getTextAreaData
      */
-    private String[] stringToArray(
-            String string) {
+    private String[] stringToArray( String string) {
         if (string != null) {
             // 构建字符串分隔器
             StringTokenizer token = new StringTokenizer(string, BarDlgConst.delimiter);
@@ -289,9 +301,35 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             deleteClicked();
         else if (e.getSource() == resetBTN)
             resetClicked();
-        else if (e.getSource() == btnClose)
-            //TODO:if curDish is not null, then update into the cur dish.
+        else if (e.getSource() == btnOK) {
+            if(BillListPanel.curDish != null) {
+            	String[] notes = this.txaCurContent.getText().split(BarDlgConst.delimiter);
+            	ArrayList<String> allModification = getAllModification();
+            	StringBuilder fullModifyString = new StringBuilder();
+            	StringBuilder onSrcString = new StringBuilder();
+            	for(int i = 0; i < notes.length; i++) {
+					for (String fullString : allModification) {
+						if(fullString.indexOf(notes[i].trim()) > -1) {
+							notes[i] = fullString;
+							break;
+						}
+					}
+            		fullModifyString.append(notes[i]).append(BarDlgConst.delimiter);
+            		
+            		String[] langs = notes[i].split(BarDlgConst.semicolon);
+        			String lang_Modify = langs.length > LoginDlg.USERLANG ? langs[LoginDlg.USERLANG] : langs[0];
+                	if(lang_Modify.length() == 0)
+                		lang_Modify = langs[0];
+            		onSrcString.append(lang_Modify).append(BarDlgConst.delimiter);
+				}
+            	
+            	BillListPanel.curDish.setModification(fullModifyString.toString());
+            	PIMTable table = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.tblSelectedDish;
+            	int row = table.getSelectedRow();
+            	table.setValueAt(onSrcString.toString(), row, 2);
+            }
             dispose();
+        }
     }
 
     private boolean insertModification( String modification) {
@@ -367,8 +405,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     
     private ArrayList<String> getInputModification() {
         // 把文本框中字段还原为字符串数组
-        curContent = txaCurContent.getText();
-        String[] usedFields = stringToArray(curContent);
+        String[] usedFields = stringToArray(txaCurContent.getText());
         ArrayList<String> lstModificationSelected = new ArrayList<String> ();
         // 文本框中字段放入一个 ArrayList 中以备用
         // 去掉过滤信息
@@ -425,8 +462,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         setTextOfTextArea();
 
         // 确定按钮置有效
-        if (!btnClose.isEnabled()) {
-            btnClose.setEnabled(true);
+        if (!btnOK.isEnabled()) {
+            btnOK.setEnabled(true);
         }
     }
 
@@ -448,12 +485,11 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         // 设置默认选项
         modificationList.setSelectedIndex(0);
         // TODO: 从数据库中读取信息并装配文本区和列表框
-        curContent = CASUtility.EMPTYSTR;
-        txaCurContent.setText(curContent);
+        txaCurContent.setText(CASUtility.EMPTYSTR);
 
         // 确定按钮置有效
-        if (!btnClose.isEnabled()) {
-            btnClose.setEnabled(true);
+        if (!btnOK.isEnabled()) {
+            btnOK.setEnabled(true);
         }
         // 删除按钮置有效
         if (!btnDelete.isEnabled()) {
@@ -526,8 +562,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         setTextOfTextArea();
 
         // 确定按钮置有效
-        if (!btnClose.isEnabled()) {
-            btnClose.setEnabled(true);
+        if (!btnOK.isEnabled()) {
+            btnOK.setEnabled(true);
         }
 
         // 本按钮置无效
@@ -550,33 +586,27 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             // 要造型的
             tmpItem = (CheckItem) listModel.get(i);
             if (tmpItem.isSelected()) {
-                sb = sb.append(tmpItem.getName()).append(BarDlgConst.delimiter);
+                sb = sb.append(tmpItem.getName()).append(BarDlgConst.delimiter).append(" ");
             }
         }
-        curContent = sb.toString();
         // 要不为空,就要去掉逗号尾巴
-        if (curContent.length() != 0) {
-            curContent = curContent.substring(0, curContent.length() - BarDlgConst.delimiter.length());
-        }
-        txaCurContent.setText(curContent);
+        txaCurContent.setText(sb.length() == 0 ? sb.toString() : sb.substring(0, sb.length() - 2));
     }
 
     /**
      * 重载,以后要去掉
      * 
-     * @param PrmCategories
+     * @param modification
      *            逗号分隔的字符串
      */
-    public void show(
-            String PrmCategories) {
-        curContent = PrmCategories;
-        txaCurContent.setText(curContent);
+    public void show(String modification) {
+        txaCurContent.setText(modification);
         // 一开始这项为禁止
-        btnClose.setEnabled(false);
+        btnOK.setEnabled(false);
 
         // 初始化列表框数据
         // 把文本框中字段还原为字符串数组
-        String[] usedFields = stringToArray(curContent);
+        String[] usedFields = stringToArray(modification);
         ArrayList<String> inputModification = getInputModification();
         ArrayList<String> allModification = getAllModification();
         
@@ -615,7 +645,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      * @return 逗号分隔的字符串
      */
     public String getCategories() {
-        return curContent;
+        return txaCurContent.getText();
     }
 
     /**
@@ -665,8 +695,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             // 以列表框的模型来设置文本区中的显示
             setTextOfTextArea();
             // 确定按钮置有效
-            if (!btnClose.isEnabled()) {
-                btnClose.setEnabled(true);
+            if (!btnOK.isEnabled()) {
+                btnOK.setEnabled(true);
             }
         }
     }
@@ -764,13 +794,13 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      * @see java.lang.Thread#run()
      */
     public void run() {
-        curContent = txaCurContent.getText(); // 要检查文本区中是否有新字段产生,如果有便要使'添至列表'按钮激活 把文本框中字段还原为字符串数组
+        String curContent = txaCurContent.getText(); // 要检查文本区中是否有新字段产生,如果有便要使'添至列表'按钮激活 把文本框中字段还原为字符串数组
         ArrayList<String> listInListComponent = getListInListComponent();
         if (curContent == null || curContent.length() == 0) {
             for (int size = listInListComponent.size(), i = 0; i < size; i++)
                 listModel.setElementAt(new CheckItem(listInListComponent.get(i).toString(), false), i);
             btnApply.setEnabled(false);
-            btnClose.setEnabled(false);
+            btnOK.setEnabled(false);
             return;
         }
 
@@ -785,8 +815,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 
         if (hasNewField && !btnApply.isEnabled()) { // 添加到列表按钮置有效
             btnApply.setEnabled(true);
-            if (!btnClose.isEnabled()) // 确定按钮置有效
-                btnClose.setEnabled(true);
+            if (!btnOK.isEnabled()) // 确定按钮置有效
+                btnOK.setEnabled(true);
         }
     }
 
@@ -795,15 +825,14 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     private JButton btnDelete;
     private JButton resetBTN;
 //    private JButton ok2; // 确定和取消按钮
-    private JButton btnClose;
-    private JList modificationList; // 列表框及其模型
-    private DefaultListModel listModel;
+    private JButton btnOK;
+    private JList<CheckItem> modificationList; // 列表框及其模型
+    private DefaultListModel<CheckItem> listModel;
 
     private JLabel midLabel; // "可用类别"标签
     private JLabel topLabel; // "项目属于这些类别"标签
 
     private JTextArea txaCurContent; // 文本区及其模型
-    private String curContent;
     private boolean modified; // 保存修改标志,以便父对话盒作相应措施
     public static final int OFFSET = -1;// 构建列表框和文本区用的一个常量 以后要去除
     private boolean itemChanged; // 字段增减标志,用于存盘

@@ -28,6 +28,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.bar.beans.ArrayButton;
+import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.WifiPrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -518,8 +519,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				dish.setBillID(rs.getInt("OUTPUT.Category"));
 				selectdDishAry.add(dish);
 
-				tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
-				
 				int num = dish.getNum();
 				//first pick out the number on 100,0000 and 10000 position
 	    		int pK = num /(BarOption.MaxQTY * 100);
@@ -537,6 +536,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				if(pK > 0)
 					strNum.append("/").append(pK);
 				tValues[tmpPos][0] = strNum.toString();
+				
+				tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
+
+				String[] langs = dish.getModification().split(BarDlgConst.semicolon);
+				String lang = langs.length > LoginDlg.USERLANG ? langs[LoginDlg.USERLANG] : langs[0];
+				if(lang.length() == 0 || "null".equalsIgnoreCase(lang))
+					lang = langs[0].length() == 0 || "null".equalsIgnoreCase(lang) ? "" : langs[0];
+				tValues[tmpPos][2] = lang;
 				
 				tValues[tmpPos][3] =  BarOption.getMoneySign() + rs.getInt("TOLTALPRICE") / 100f;
 				tmpPos++;
@@ -636,8 +643,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         tmpCol1.setWidth(60);
         tmpCol1.setPreferredWidth(60);
         PIMTableColumn tmpCol3 = tblSelectedDish.getColumnModel().getColumn(2);
-        tmpCol3.setWidth(60);
-        tmpCol3.setPreferredWidth(60);
+        tmpCol3.setWidth(160);
+        tmpCol3.setPreferredWidth(160);
         PIMTableColumn tmpCol4 = tblSelectedDish.getColumnModel().getColumn(3);
         tmpCol4.setWidth(60);
         tmpCol4.setPreferredWidth(60);
