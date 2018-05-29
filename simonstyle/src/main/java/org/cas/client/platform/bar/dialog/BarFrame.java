@@ -369,7 +369,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     private DecimalFormat decimalFormat = new DecimalFormat("#0.00");
     
     public JPanel[] panels = new JPanel[4];
-    MenuPanel menuPanel;
+    public MenuPanel menuPanel;
     static JLabel lblStatus;
     private JLabel lblVersion;
 }

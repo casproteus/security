@@ -68,8 +68,14 @@ public class WifiPrintService{
     	return ip;
     }
     
-    public static int exePrintCommand(List<Dish> selectdDishAry, Printer[] printers, String curTable, String curBill, String waiterName){
-        //ErrorUtil.(TAG,"start to translate selection into ipContent for printing.");
+    public static int exePrintCommand(List<Dish> selectdDishAry){
+
+		Printer[] printers = BarFrame.instance.menuPanel.printers;
+		String curTable = BarFrame.instance.valCurTable.getText();
+		String curBill = BarFrame.instance.valCurBill.getText();
+		String waiterName = BarFrame.instance.valOperator.getText();
+
+		//ErrorUtil.(TAG,"start to translate selection into ipContent for printing.");
         if(!isIpContentMapEmpty()){
         	return printContents();
         }
@@ -152,7 +158,7 @@ public class WifiPrintService{
     }
     
     private static int printContents() {
-    	BarFrame.instance.setStatusMes("PRINTED...");
+    	BarFrame.setStatusMes("PRINTED...");
         for(Entry<String,List<String>> entry : ipContentMap.entrySet()) {
         	List<String> contents = entry.getValue();
         	for(int i = contents.size() - 1; i >= 0 ; i--) {
@@ -166,6 +172,21 @@ public class WifiPrintService{
         }
     	ipContentMap.clear();
         return SUCCESS;
+    }
+    
+    public static boolean openDrawer(String ip){
+    	try{
+			Socket socket = new Socket(ip != null ? ip : BarFrame.instance.menuPanel.printers[0].getIp(), 9100);
+			OutputStream outputStream = socket.getOutputStream();
+			outputStream.write(Command.DLE_DC4);
+	
+			outputStream.flush();
+			socket.close();
+			return true;
+		} catch (Exception exp) {
+			ErrorUtil.write(exp);
+			return false;
+		}
     }
     
     private static boolean doZiJiangPrint(String ip, String font, String sndMsg){
@@ -221,7 +242,8 @@ public class WifiPrintService{
 		}
     }
     
-    private static String formatContentForPrint(List<Dish> list, String curPrintIp, String curTable, String curBill, String waiterName){
+    private static String formatContentForPrint(List<Dish> list, String curPrintIp,
+    		String curTable, String curBill, String waiterName){
         //L.d(TAG,"formatContentForPrint");
         String font = (String)CustOpts.custOps.getValue(curPrintIp + "font");
         if(font ==  null || font.length() < 1) {
@@ -274,30 +296,30 @@ public class WifiPrintService{
 
         content.append(generateString(width, sep_str1)).append("\n\n");
         int langIndex = ipPrinterMap.get(curPrintIp).getType();
-        for(Dish dd:list){
+        for(Dish d:list){
             StringBuilder sb = new StringBuilder();
             if(BarOption.isDisDishIDInKitchen()) {
-                sb.append(dd.getId());
-                sb.append(generateString(5 - String.valueOf(dd.getId()).length(), " "));
+                sb.append(d.getId());
+                sb.append(generateString(5 - String.valueOf(d.getId()).length(), d.isCanceled() ? "x" : " "));
             }
-            sb.append(dd.getLanguage(langIndex));
-            if(dd.getNum() > 1){
+            sb.append(d.getLanguage(langIndex));
+            if(d.getNum() > 1){
                 String space = " ";
                 int occupiedLength = getLengthOfString(sb.toString());
-                sb.append(generateString(width - occupiedLength - (dd.getNum() < 10 ? 2 : 3), " "));
-                sb.append("x").append(Integer.toString(dd.getNum()));
+                sb.append(generateString(width - occupiedLength - (d.getNum() < 10 ? 2 : 3), d.isCanceled() ? "x" : " "));
+                sb.append("x").append(Integer.toString(d.getNum()));
             }
             content.append(sb);
             content.append("\n");
-            if(dd.getModification() != null) {
-            	String modifyStr = dd.getModification();
+            if(d.getModification() != null) {
+            	String modifyStr = d.getModification();
             	String[] notes = modifyStr.split(BarDlgConst.delimiter); 
                 for (String str : notes) {
                 	String[] langs = str.split(BarDlgConst.semicolon);
                 	String lang = langs.length > langIndex ? langs[langIndex] : langs[0];
                 	if(lang.length() == 0)
                 		lang = langs[0];
-                    content.append(generateString(5, " ")).append("* ").append(lang).append(" *\n");
+                    content.append(generateString(5, d.isCanceled() ? "x" : " ")).append("* ").append(lang).append(" *\n");
                 }
             }
             content.append(generateString(width, sep_str2)).append("\n");

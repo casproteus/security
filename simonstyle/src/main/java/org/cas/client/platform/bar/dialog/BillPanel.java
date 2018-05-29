@@ -113,51 +113,41 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		return -1;
 	}
 	
-	void sendNewDishesToKitchen() {
-		List<Dish> newDishes = getNewDishes();
-		
-		//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
-		if(newDishes.size() == selectdDishAry.size()) {
-		    BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
-		}
-		
+	void sendDishesToKitchen(List<Dish> dishes) {
 		//send to printer
 		//prepare the printing String and do printing
-		if(WifiPrintService.SUCCESS != 
-				WifiPrintService.exePrintCommand(newDishes, BarFrame.instance.menuPanel.printers, 
-						BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valOperator.getText())) {
+		if(WifiPrintService.SUCCESS != WifiPrintService.exePrintCommand(dishes)) {
 			BarFrame.setStatusMes(BarFrame.consts.PrinterError());
 			JOptionPane.showMessageDialog(this, BarFrame.consts.PrinterError());
 		}
-		
-		//save to db output
+	}
+	
+	//save to db output
+	void saveDishesToDB(List<Dish> dishes) {
 		try {
-		    for (Dish dish : newDishes) {
-//                    	if(dish.getOutputID() > -1)	//if it's already saved into db, don't ignore.
-//                    		continue;
-		    	
+		    for (Dish dish : dishes) {
 		    	String curBillId = BarFrame.instance.valCurBill.getText();
 		    	if("0".equals(curBillId))
 		    		curBillId = "1";
 		    	Dish.createOutput(dish, curBillId);	//at this moment, the num shoul have not been soplitted.
 
 		        //in case some store need to stay in the interface after clicking the send button. 
-//	                    sql = new StringBuilder("Select id from output where SUBJECT = '")
-//	                        .append(BarFrame.btnCurTable.getText()).append("' and CONTACTID = ")
-//	                        .append(BarFrame.instance.lblCurBill.getText()).append(" and PRODUCTID = ")
-//	                        .append(dish.getId()).append(" and AMOUNT = ")
-//	                        .append(dish.getNum()).append(" and TOLTALPRICE = ")
-//	                        .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = ")
-//	                        .append(dish.getDiscount() * dish.getNum()).append(" and EMPLOYEEID = ")
-//	                        .append(LoginDlg.USERID).append(" and TIME = '")
-//	                        .append(time).append("'");
-//	                    ResultSet rs = smt.executeQuery(sql.toString());
-//	                    rs.beforeFirst();
-//                        while (rs.next()) {
-//                        	dish.setOutputID(rs.getInt("id"));
-//                        }
-//	                    
-//	                    rs.close();
+                StringBuilder sql = new StringBuilder("Select id from output where SUBJECT = '")
+                    .append(BarFrame.instance.valCurTable).append("' and CONTACTID = ")
+                    .append(BarFrame.instance.valCurBill.getText()).append(" and PRODUCTID = ")
+                    .append(dish.getId()).append(" and AMOUNT = ")
+                    .append(dish.getNum()).append(" and TOLTALPRICE = ")
+                    .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = ")
+                    .append(dish.getDiscount() * dish.getNum()).append(" and EMPLOYEEID = ")
+                    .append(LoginDlg.USERID).append(" and TIME = '")
+                    .append(dish.getOpenTime()).append("'");
+                ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+                rs.beforeFirst();
+                while (rs.next()) {
+                	dish.setOutputID(rs.getInt("id"));
+                }
+                
+                rs.close();
 		    }
 		}catch(Exception exp) {
 			JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);

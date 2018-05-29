@@ -46,7 +46,7 @@ public class MenuPanel extends JPanel implements ActionListener {
     String[][] onScrDishNameMetrix;// it's sub set of all menuNameMetrix
     private ArrayList<ArrayList<MenuButton>> onSrcMenuBtnMatrix = new ArrayList<ArrayList<MenuButton>>();
 
-    Printer[] printers;
+    public Printer[] printers;
     private Dish[] dishAry;
     private Dish[] onScrDishAry;
     ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
