@@ -34,7 +34,7 @@ public class UpdateItemPriceAction implements ActionListener{
          		float price = Float.valueOf(curContent);
          		
              	int row = billPanel.tblSelectedDish.getSelectedRow();
-         		Dish dish = billPanel.selectdDishAry.get(row);
+         		Dish dish = billPanel.orderedDishAry.get(row);
              	dish.setPrice((int)(price * 100));
 
  				int num = dish.getNum();
@@ -55,7 +55,7 @@ public class UpdateItemPriceAction implements ActionListener{
  	    		
              	billPanel.tblSelectedDish.setValueAt(BarOption.getMoneySign() + priceDSP/100f, row, 3);
              	billPanel.updateTotleArea();
-             	int outputID = billPanel.selectdDishAry.get(row).getOutputID();
+             	int outputID = billPanel.orderedDishAry.get(row).getOutputID();
              	if(outputID >= 0) {
              		String sql = "update output set TOLTALPRICE = "
              				+ (dish.getPrice() - dish.getDiscount()) + " where id = " + outputID;

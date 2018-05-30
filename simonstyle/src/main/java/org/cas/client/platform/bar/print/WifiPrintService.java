@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
+import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.Category;
 import org.cas.client.platform.bar.model.Dish;
@@ -67,8 +68,25 @@ public class WifiPrintService{
 		}
     	return ip;
     }
+  
+    //The start time and end time are long format, need to be translate for print.
+    public static void exePrintReport(BillPanel billPanel, List<Dish> saleRecords){
+        String printerIP = BarFrame.instance.menuPanel.printers[0].getIp();
+        if(!isIpContentMapEmpty()){
+        	printContents();
+        	ErrorUtil.write("found non-empty ipContentMap when printing report.");
+        }
+
+        reInitPrintRelatedMaps();
+        
+        if(ipContentMap.get(printerIP) == null)
+        	ipContentMap.put(printerIP,new ArrayList<String>());
+        ipContentMap.get(printerIP).add(
+        		formatContentForReport(saleRecords, printerIP, billPanel, false) + "\n\n\n\n\n");
+        printContents();
+    }
     
-    public static int exePrintCommand(List<Dish> selectdDishAry){
+    public static int exePrintDishes(List<Dish> selectdDishAry, boolean isCancelled){
 
 		Printer[] printers = BarFrame.instance.menuPanel.printers;
 		String curTable = BarFrame.instance.valCurTable.getText();
@@ -140,12 +158,12 @@ public class WifiPrintService{
                     ErrorUtil.write("the dishList are different from ipSelectionsMap.get(printerIP)!");
                 }
                 if(ipPrinterMap.get(printerIP).getFirstPrint() == 1){  //全单封装
-                    ipContentMap.get(printerIP).add(formatContentForPrint(dishList, printerIP, curTable, curBill, waiterName) + "\n\n\n\n\n");
+                    ipContentMap.get(printerIP).add(formatContentForPrint(dishList, printerIP, curTable, curBill, waiterName, isCancelled) + "\n\n\n\n\n");
                 }else{                                          //分单封装
                     for(Dish dish : dishList){
                         List<Dish> tlist = new ArrayList<Dish>();
                         tlist.add(dish);
-                        ipContentMap.get(printerIP).add(formatContentForPrint(tlist, printerIP, curTable, curBill, waiterName) + "\n\n");
+                        ipContentMap.get(printerIP).add(formatContentForPrint(tlist, printerIP, curTable, curBill, waiterName, isCancelled) + "\n\n");
                     }
                 }
             }
@@ -242,8 +260,7 @@ public class WifiPrintService{
 		}
     }
     
-    private static String formatContentForPrint(List<Dish> list, String curPrintIp,
-    		String curTable, String curBill, String waiterName){
+    private static String formatContentForReport(List<Dish> list, String curPrintIp, BillPanel billPanel, boolean isCancelled){
         //L.d(TAG,"formatContentForPrint");
         String font = (String)CustOpts.custOps.getValue(curPrintIp + "font");
         if(font ==  null || font.length() < 1) {
@@ -260,6 +277,93 @@ public class WifiPrintService{
 
             }
         }
+        
+        StringBuilder content = new StringBuilder(BarOption.getOwnerInfo());
+        if(width < 20)
+            content.append("\n\n");
+        content.append("(").append(BarFrame.instance.valCurTable.getText()).append(")");
+        //bill
+        int lengthOfStrToDisplay = 3 + BarFrame.instance.valCurTable.getText().length();
+        content.append(billPanel.billButton == null ? BarFrame.instance.valCurBill.getText() : billPanel.billButton.getText());
+        lengthOfStrToDisplay += BarFrame.instance.valCurBill.getText().length();
+        //waiter
+        content.append("   ").append(BarFrame.instance.valOperator.getText());
+        lengthOfStrToDisplay += BarFrame.instance.valOperator.getText().length();
+        //time
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String dateStr = df.format(new Date());
+        lengthOfStrToDisplay += dateStr.length();
+        String spaceStr = generateString(width - lengthOfStrToDisplay - 3, " ");
+        content.append(spaceStr).append(dateStr).append("\n");
+
+        String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
+        if(sep_str1 == null || sep_str1.length() == 0){
+            sep_str1 = SEP_STR1;
+        }
+        String sep_str2 = (String)CustOpts.custOps.getValue("sep_str2");
+        if(sep_str2 == null || sep_str2.length() == 0){
+            sep_str2 = SEP_STR2;
+        }
+
+        content.append(generateString(width, sep_str1)).append("\n\n");
+        int langIndex = ipPrinterMap.get(curPrintIp).getType();
+        for(Dish d:list){
+            StringBuilder sb = new StringBuilder();
+            //if(BarOption.isDisDishIDInKitchen()) {
+                sb.append(d.getId());
+                sb.append(generateString(5 - String.valueOf(d.getId()).length(), " "));
+            //}
+            sb.append(d.getLanguage(langIndex));
+            if(d.getNum() > 1){
+            	sb.append(" x").append(Integer.toString(d.getNum()));
+            }
+            String price = BarOption.getMoneySign() + d.getPrice()/100f;
+            int occupiedLength = getLengthOfString(sb.toString());
+            sb.append(generateString(width - occupiedLength - (price.length()), " "));
+            sb.append(price);
+            content.append(sb);
+
+            content.append("\n");
+        }
+        content.append(generateString(width, sep_str2)).append("\n");
+        //totals
+        String[] strs = billPanel.lblSubTotle.getText().split(":");
+        content.append("subtotal : ").append(strs[1]).append("\n");
+        strs = billPanel.lblTPS.getText().split(":");
+        content.append("TPS : ").append(strs[1]).append("\n");
+        strs = billPanel.lblTVQ.getText().split(":");
+        content.append("TVQ : ").append(strs[1]).append("\n");
+        if(billPanel.lblServiceFee.getText().length() > 0) {
+            strs = billPanel.lblServiceFee.getText().split(":");
+            content.append("Service Fee : ").append(strs[1]).append("\n");
+        }
+        if(billPanel.lblDiscount.getText().length() > 0) {
+            strs = billPanel.lblDiscount.getText().split(":");
+            content.append("Discount : ").append(strs[1]).append("\n");
+        }
+        content.append("TOTAL : $").append(billPanel.valTotlePrice.getText()).append("\n");
+        return content.toString();
+    }
+    
+    private static String formatContentForPrint(List<Dish> list, String curPrintIp,
+    		String curTable, String curBill, String waiterName, boolean isCancelled){
+        //L.d(TAG,"formatContentForPrint");
+        String font = (String)CustOpts.custOps.getValue(curPrintIp + "font");
+        if(font ==  null || font.length() < 1) {
+            font = (String)CustOpts.custOps.getValue("font");
+        }
+        if(font != null && font.length() > 0){
+            String w = (String)CustOpts.custOps.getValue(curPrintIp + "width");
+            if( w== null || w.length() < 1) {
+                w = (String)CustOpts.custOps.getValue("width");
+            }
+            try {
+                width = Integer.valueOf(w);
+            }catch(Exception e){
+
+            }
+        }
+        
         StringBuilder content = new StringBuilder("\n\n");
         if(width < 20)
             content.append("\n\n");
@@ -285,11 +389,11 @@ public class WifiPrintService{
         
         content.append(spaceStr).append(dateStr).append("\n");
 
-        String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
+        String sep_str1 = isCancelled ? "!" : (String)CustOpts.custOps.getValue("sep_str1");
         if(sep_str1 == null || sep_str1.length() == 0){
             sep_str1 = SEP_STR1;
         }
-        String sep_str2 = (String)CustOpts.custOps.getValue("sep_str2");
+        String sep_str2 = isCancelled ? "X" : (String)CustOpts.custOps.getValue("sep_str2");
         if(sep_str2 == null || sep_str2.length() == 0){
             sep_str2 = SEP_STR2;
         }
@@ -300,18 +404,19 @@ public class WifiPrintService{
             StringBuilder sb = new StringBuilder();
             if(BarOption.isDisDishIDInKitchen()) {
                 sb.append(d.getId());
-                sb.append(generateString(5 - String.valueOf(d.getId()).length(), d.isCanceled() ? "x" : " "));
+                sb.append(generateString(5 - String.valueOf(d.getId()).length(), " "));
             }
             sb.append(d.getLanguage(langIndex));
             if(d.getNum() > 1){
                 String space = " ";
                 int occupiedLength = getLengthOfString(sb.toString());
-                sb.append(generateString(width - occupiedLength - (d.getNum() < 10 ? 2 : 3), d.isCanceled() ? "x" : " "));
+                sb.append(generateString(width - occupiedLength - (d.getNum() < 10 ? 2 : 3), " "));
                 sb.append("x").append(Integer.toString(d.getNum()));
             }
             content.append(sb);
             content.append("\n");
-            if(d.getModification() != null) {
+            String modification = d.getModification();
+            if(modification != null && !"null".equalsIgnoreCase(modification)) {
             	String modifyStr = d.getModification();
             	String[] notes = modifyStr.split(BarDlgConst.delimiter); 
                 for (String str : notes) {
@@ -319,7 +424,7 @@ public class WifiPrintService{
                 	String lang = langs.length > langIndex ? langs[langIndex] : langs[0];
                 	if(lang.length() == 0)
                 		lang = langs[0];
-                    content.append(generateString(5, d.isCanceled() ? "x" : " ")).append("* ").append(lang).append(" *\n");
+                    content.append(generateString(5, " ")).append("* ").append(lang).append(" *\n");
                 }
             }
             content.append(generateString(width, sep_str2)).append("\n");

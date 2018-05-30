@@ -248,9 +248,9 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 						return;
 					}
 					//splet into num bills. each dish's number and price will be devide by "num".
-					Dish.split(panel.selectdDishAry, num, null);//update existing outputs
+					Dish.split(panel.orderedDishAry, num, null);//update existing outputs
 					for (int i = 1; i < num; i++) {				//generate splited ones.
-						Dish.split(panel.selectdDishAry, num, String.valueOf(BillListPanel.getANewBillNumber()));
+						Dish.split(panel.orderedDishAry, num, String.valueOf(BillListPanel.getANewBillNumber()));
 					}
 				}
 				initContent();
@@ -299,7 +299,10 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				BarFrame.instance.valCurBill.setText("0");
 				BarFrame.instance.switchMode(2);
 			}else if(o == btnPrintAll) {
-				//TODO: add print receipt code.
+				for (BillPanel billPanel : billPanels) {
+					billPanel.printBill(BarFrame.instance.valCurTable.getText(), billPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
+				}
+				
 			}else if(o == btnCombineAll) {//@note should consider the time, incase there'ss some bill not paid before, while was calculated into current client.
 		        String sql =
 		                "update output set contactID = 1 where SUBJECT = '" + BarFrame.instance.valCurTable.getText()

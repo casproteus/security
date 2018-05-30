@@ -32,9 +32,9 @@ public class UpdateItemDiscountAction implements ActionListener{
          		float discount = Float.valueOf(curContent);
              	int row = billPanel.tblSelectedDish.getSelectedRow();
              	billPanel.tblSelectedDish.setValueAt("-"+ BarOption.getMoneySign() + curContent, row, 2);
-             	billPanel.selectdDishAry.get(row).setDiscount((int)(discount * 100));
+             	billPanel.orderedDishAry.get(row).setDiscount((int)(discount * 100));
              	billPanel.updateTotleArea();
-             	int outputID = billPanel.selectdDishAry.get(row).getOutputID();
+             	int outputID = billPanel.orderedDishAry.get(row).getOutputID();
              	if(outputID >= 0) {
              		String sql = "update output set discount = " + (int)(discount * 100) + " where id = " + outputID;
              		PIMDBModel.getStatement().execute(sql);

@@ -62,7 +62,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
             		int tQTY = Integer.valueOf(curContent);
                 	int row = barGeneralPanel.billPanel.tblSelectedDish.getSelectedRow();
                 	barGeneralPanel.billPanel.tblSelectedDish.setValueAt("x" + curContent, row, 3);
-                	barGeneralPanel.billPanel.selectdDishAry.get(row).setNum(tQTY);
+                	barGeneralPanel.billPanel.orderedDishAry.get(row).setNum(tQTY);
                 	barGeneralPanel.billPanel.updateTotleArea();
             	}catch(Exception exp) {
                 	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);

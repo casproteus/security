@@ -115,8 +115,8 @@ public class BarDlgConst0 implements BarDlgConst{
     public String Price() {return "Price";}
     public String Subtotal() {return "SubTotal";}
     public String Total() {return "Total";}
-    public String QST() {return "QST";}
-    public String GST() {return "GST";}
+    public String TPS() {return "TPS";}
+    public String TVQ() {return "TVQ";}
     public String PricePomp() {return "PricePomp";}
     public String MenuPomp() {return "MenuPomp";}
     public String ModifyPomp() {return "ModifyPomp";}

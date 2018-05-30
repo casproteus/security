@@ -41,7 +41,45 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 	public static Font bigFont = new Font("Arial", Font.PLAIN, 48);
 	
 	public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    
+    public static String getOwnerInfo() {
+    	StringBuilder sb = new StringBuilder(BarOption.getStoreName()).append("\n");
+    	sb.append(BarOption.getAddress()).append("\n");
+    	sb.append(BarOption.getCityAndProvince()).append("\n");
+    	sb.append(BarOption.getPostCode()).append("\n");
+    	sb.append(BarOption.getTel()).append("\n");
+    	sb.append(BarOption.getWebSite()).append("\n");
+    	return sb.toString();
+    }
+
+    private static Object getWebSite() {
+		// TODO Auto-generated method stub
+		return "www.sharethegoodones.com/nudo";
+	}
+
+	private static Object getTel() {
+		// TODO Auto-generated method stub
+		return "514 552 5771";
+	}
+
+	private static Object getPostCode() {
+		// TODO Auto-generated method stub
+		return "H4L 3E8";
+	}
+
+	private static Object getCityAndProvince() {
+		// TODO Auto-generated method stub
+		return "Montreal, Quebec";
+	}
+
+	private static Object getAddress() {
+		// TODO Auto-generated method stub
+		return "75 cardinal";
+	}
+
+	private static String getStoreName() {
+		// TODO Auto-generated method stub
+		return "NUDO";
+	}
 //	public static void setMaxRooBackWorkHour(int workhour) {
 //		CustOpts.custOps.setKeyAndValue("MaxRooBackWorkHour", workhour);
 //	}

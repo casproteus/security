@@ -143,6 +143,9 @@ public class Dish {
     }
 
     public String getLanguage(int i) {
+    	if("null".equalsIgnoreCase(language[i]) || language[i] == null || language[i].length() == 0) {
+    		return language[0];
+    	}
         return language[i];
     }
 

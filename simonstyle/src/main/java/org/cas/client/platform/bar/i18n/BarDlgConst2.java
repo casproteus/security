@@ -115,8 +115,8 @@ public class BarDlgConst2 implements BarDlgConst{
     public String Price() {return "价格";}
     public String Subtotal() {return "小计";}
     public String Total() {return "总计";}
-    public String QST() {return "省税";}
-    public String GST() {return "国税";}
+    public String TPS() {return "国税";}
+    public String TVQ() {return "省税";}
     public String PricePomp() {return "价格提醒";}
     public String MenuPomp() {return "菜单提醒";}
     public String ModifyPomp() {return "备注提醒";}
@@ -138,7 +138,7 @@ public class BarDlgConst2 implements BarDlgConst{
     public String CombineAll() {return "全部合并";}
     public String Refund() {return "退款";}
     public String RefundNotice() {return "请输入退款金额";}
-    public String CompleteAll() {return "全部完成";}
+    public String CompleteAll() {return "翻台";}
     public String CancelAll() {return "全部取消";}
     public String ProdCodeLength() {return "ProdCodeLength";}
     public String Shoestring() {return "shoeString";}

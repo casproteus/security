@@ -483,8 +483,8 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         sptPrice = new PIMSeparator(BarFrame.consts.PRICE());
         lblPrice = new JLabel(BarFrame.consts.PRICE());
         tfdPrice = new JTextField();
-        cbxGST = new JCheckBox(BarFrame.consts.GST());
-        cbxQST = new JCheckBox(BarFrame.consts.QST());
+        cbxGST = new JCheckBox(BarFrame.consts.TVQ());
+        cbxQST = new JCheckBox(BarFrame.consts.TPS());
 
         sptSize = new PIMSeparator(BarFrame.consts.Size());
         rdbSizes = new JRadioButton[6];

@@ -87,7 +87,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         //JButton------------------------------------------------------------------------------------------------
         if (o instanceof JButton) {
         	if(o == btnLine_1_1 || o == btnLine_1_2 || o == btnLine_1_3 || o == btnLine_2_3) { //pay
-        		sendNewDishesToKitchen();
+        		billPanel.sendNewDishesToKitchen();
         		//if the bill has not been printted, print the bill also.
         		if(billPanel.getBillId() == 0) {
         			billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
@@ -119,7 +119,14 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		//init payDialog content base on bill.
          		BarFrame.payCashDlg.initContent(billPanel);
         		
-        	} else if (o == btnLine_1_4) {	//void item.
+        	} else if (o == btnLine_1_4) {		//split bill
+        		//check if there unsaved dish, and give warning.
+        		if(BillListPanel.curDish == null)
+            		if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.UnSavedRecordFound(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
+            			return;
+        		BarFrame.instance.switchMode(1);
+        		
+        	} else if (o == btnLine_1_5) {	//void item.
         		if(BillListPanel.curDish == null) {//check if there's an item selected.
         			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
         			return;
@@ -133,16 +140,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         			List<Dish> dishes = new ArrayList<Dish>();
         			BillListPanel.curDish.setCanceled(true);
         			dishes.add(BillListPanel.curDish);
-        			billPanel.sendDishesToKitchen(dishes);
+        			billPanel.sendDishesToKitchen(dishes, true);
         		}
         		billPanel.removeAtSelection(billPanel.tblSelectedDish.getSelectedRow());//clean from screen.
-        		
-        	} else if (o == btnLine_1_5) {		//split bill
-        		//check if there unsaved dish, and give warning.
-        		if(BillListPanel.curDish == null)
-            		if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.UnSavedRecordFound(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
-            			return;
-        		BarFrame.instance.switchMode(1);
         		
         	} else if(o == btnLine_1_6) {	//Modify
         		//if there's a curDish?
@@ -173,13 +173,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              	}
         		
         	}else if (o == btnLine_1_10) { // print bill
-        		sendNewDishesToKitchen();
+        		billPanel.sendNewDishesToKitchen();
         		billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
         		billPanel.initContent();
         		
             } else if (o == btnLine_2_1) { // return
-            	if(billPanel.selectdDishAry.size() > 0) {
-	            	Dish dish = billPanel.selectdDishAry.get(billPanel.selectdDishAry.size() - 1);
+            	if(billPanel.orderedDishAry.size() > 0) {
+	            	Dish dish = billPanel.orderedDishAry.get(billPanel.orderedDishAry.size() - 1);
 	            	if(dish.getId() < 0) {	//has new record.
 	            		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
 	            				BarFrame.consts.COMFIRMLOSTACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
@@ -194,15 +194,15 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 				BarFrame.instance.switchMode(2);
 				
         	} else if (o == btnLine_2_4) { // cancel all
-            	if(billPanel.selectdDishAry.size() > 0) {
-            		int lastSavedRow = billPanel.selectdDishAry.size() - 1 - billPanel.getNewDishes().size();
+            	if(billPanel.orderedDishAry.size() > 0) {
+            		int lastSavedRow = billPanel.orderedDishAry.size() - 1 - billPanel.getNewDishes().size();
             		//update array first.
-            		for(int i = billPanel.selectdDishAry.size() - 1; i > lastSavedRow; i--) {
-            			billPanel.selectdDishAry.remove(i);
+            		for(int i = billPanel.orderedDishAry.size() - 1; i > lastSavedRow; i--) {
+            			billPanel.orderedDishAry.remove(i);
             		}
             		//update the table view
             		int tColCount = billPanel.tblSelectedDish.getColumnCount();
-            		int tValidRowCount = billPanel.selectdDishAry.size(); // get the used RowCount
+            		int tValidRowCount = billPanel.orderedDishAry.size(); // get the used RowCount
             		Object[][] tValues = new Object[tValidRowCount][tColCount];
             		for (int r = 0; r < tValidRowCount; r++) {
             			for (int c = 0; c < tColCount; c++)
@@ -226,12 +226,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	                 return;	
 	            }
     	        //update db, delete relevant orders.
-            	for (Dish dish : billPanel.selectdDishAry) {
+            	for (Dish dish : billPanel.orderedDishAry) {
             		dish.setCanceled(true);
             		Dish.delete(dish);
 				}
 
-    			billPanel.sendDishesToKitchen(billPanel.selectdDishAry);
+    			billPanel.sendDishesToKitchen(billPanel.orderedDishAry, true);
             	
             	//if the bill amount is 1, cancel the selected status of the table.
         		if(isLastBillOfCurTable()) {
@@ -263,7 +263,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              	}
             }else if(o == btnLine_2_8) {	//refund
             	//check if it's already paid.
-            	if(billPanel.selectdDishAry.size() < 1 || billPanel.selectdDishAry.get(0).getBillID() == 0) {
+            	if(billPanel.orderedDishAry.size() < 1 || billPanel.orderedDishAry.get(0).getBillID() == 0) {
             		JOptionPane.showMessageDialog(this, BarFrame.consts.NotPayYet());
             		return;
             	}
@@ -282,7 +282,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		float refund = Float.valueOf(curContent);
              		
              		// get out existing status.
-             		String sql = "select * from bill where id = " + billPanel.selectdDishAry.get(0).getBillID();
+             		String sql = "select * from bill where id = " + billPanel.orderedDishAry.get(0).getBillID();
                     ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                     rs.beforeFirst();
                     rs.next();
@@ -298,7 +298,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     	status = 0 - (int)(refund * 100);
                     }
                     
-             		sql = "update bill set status = " + status + " where id = " + billPanel.selectdDishAry.get(0).getBillID();
+             		sql = "update bill set status = " + status + " where id = " + billPanel.orderedDishAry.get(0).getBillID();
              		PIMDBModel.getStatement().execute(sql);
              		BarUtil.openMoneyBox();
              	}catch(Exception exp) {
@@ -310,7 +310,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	new MoreButtonsDlg(this).show((JButton)o);
             	
             } else if (o == btnLine_2_10) {//send
-        		sendNewDishesToKitchen();
+            	billPanel.sendNewDishesToKitchen();
         		
             	if(BarOption.isFastFoodMode()) {
     		    	BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
@@ -354,17 +354,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         	}
         }
     }
-
-	private void sendNewDishesToKitchen() {
-		//if there's any new bill, send it to kitchen.
-		List<Dish> dishes = billPanel.getNewDishes();
-		//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
-		if(dishes.size() == billPanel.selectdDishAry.size()) {
-		    BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
-		}
-		billPanel.sendDishesToKitchen(dishes);
-		billPanel.saveDishesToDB(dishes);
-	}
 
     public static boolean isLastBillOfCurTable(){
     	int num = 0;
@@ -451,8 +440,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_1_1 = new JButton(BarFrame.consts.CASH());
         btnLine_1_2 = new JButton(BarFrame.consts.DEBIT());
         btnLine_1_3 = new JButton(BarFrame.consts.VISA());
-        btnLine_1_4 = new JButton(BarFrame.consts.REMOVEITEM());
-        btnLine_1_5 = new JButton(BarFrame.consts.SPLIT_BILL());
+        btnLine_1_4 = new JButton(BarFrame.consts.SPLIT_BILL());
+        btnLine_1_5 = new JButton(BarFrame.consts.REMOVEITEM());
         btnLine_1_6 = new JButton(BarFrame.consts.Modify());
         btnLine_1_7 = new JToggleButton(BarFrame.consts.DISC_ITEM());
         btnLine_1_8 = new JToggleButton(BarFrame.consts.ChangePrice());
