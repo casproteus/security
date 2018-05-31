@@ -15,7 +15,6 @@ import java.util.Enumeration;
 import javax.comm.CommPortIdentifier;
 import javax.comm.ParallelPort;
 import javax.comm.PortInUseException;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -23,13 +22,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
-import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.beans.ColorChooserButton;
+import org.cas.client.platform.bar.beans.ColorChooserButton.ColorChangedListener;
+import org.cas.client.platform.bar.beans.FunctionButton;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.dialog.statistics.EmployeeListDlg;
-import org.cas.client.platform.cascontrol.dialog.adduserdlg.AddUserDlg;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
-import org.cas.client.platform.cascontrol.frame.CASMainFrame;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.resource.international.PaneConsts;
@@ -145,9 +144,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     public void actionPerformed(
             ActionEvent e) {
         Object o = e.getSource();
-        if (o instanceof JButton) {
+        if (o instanceof FunctionButton) {
         	if(o == btnLine_2_1) {
-        		LoginDlg.reset();
+        		LoginDlg.USERTYPE = -1;
         		BarFrame.instance.switchMode(0);
         	}else if(o == btnLine_2_2) {
         		new TabbleSettingDlg(BarFrame.instance).setVisible(true);
@@ -225,6 +224,57 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		lblStartTimeOfDay.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdStartTimeOfDay.setBounds(lblStartTimeOfDay.getX() + lblStartTimeOfDay.getWidth() + CustOpts.HOR_GAP, lblStartTimeOfDay.getY(),
         		100, CustOpts.BTN_HEIGHT);
+        
+        lblGeneralBackGround.setBounds(CustOpts.HOR_GAP, lblStartTimeOfDay.getY() + lblStartTimeOfDay.getHeight() + CustOpts.VER_GAP,
+        		lblGeneralBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        ccbGeneral.setBounds(lblGeneralBackGround.getX() + lblGeneralBackGround.getWidth() + CustOpts.HOR_GAP, lblGeneralBackGround.getY(),
+        		100, CustOpts.BTN_HEIGHT);
+        lblLoginBackGround.setBounds(CustOpts.HOR_GAP, lblGeneralBackGround.getY() + lblGeneralBackGround.getHeight() + CustOpts.VER_GAP,
+        		lblLoginBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        ccbLogin.setBounds(lblLoginBackGround.getX() + lblLoginBackGround.getWidth() + CustOpts.HOR_GAP, lblLoginBackGround.getY(),
+        		100, CustOpts.BTN_HEIGHT);
+        lblBillBackGround.setBounds(CustOpts.HOR_GAP, lblLoginBackGround.getY() + lblLoginBackGround.getHeight() + CustOpts.VER_GAP,
+        		lblBillBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        ccbBill.setBounds(lblBillBackGround.getX() + lblBillBackGround.getWidth() + CustOpts.HOR_GAP, lblBillBackGround.getY(),
+        		100, CustOpts.BTN_HEIGHT);
+        lblSalesBackGround.setBounds(CustOpts.HOR_GAP, lblBillBackGround.getY() + lblBillBackGround.getHeight() + CustOpts.VER_GAP,
+        		lblSalesBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        ccbSales.setBounds(lblSalesBackGround.getX() + lblSalesBackGround.getWidth() + CustOpts.HOR_GAP, lblSalesBackGround.getY(),
+        		100, CustOpts.BTN_HEIGHT);
+        lblSettingsBackGround.setBounds(CustOpts.HOR_GAP, lblSalesBackGround.getY() + lblSalesBackGround.getHeight() + CustOpts.VER_GAP,
+        		lblSettingsBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        ccbSetting.setBounds(lblSettingsBackGround.getX() + lblSettingsBackGround.getWidth() + CustOpts.HOR_GAP, lblSettingsBackGround.getY(),
+        		100, CustOpts.BTN_HEIGHT);
+        lblCategoryBackGround.setBounds(CustOpts.HOR_GAP, lblSettingsBackGround.getY() + lblSettingsBackGround.getHeight() + CustOpts.VER_GAP,
+        		lblCategoryBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        ccbCategory.setBounds(lblCategoryBackGround.getX() + lblCategoryBackGround.getWidth() + CustOpts.HOR_GAP, lblCategoryBackGround.getY(),
+        		100, CustOpts.BTN_HEIGHT);
+        lblDishBackGround.setBounds(CustOpts.HOR_GAP, lblCategoryBackGround.getY() + lblCategoryBackGround.getHeight() + CustOpts.VER_GAP,
+        		lblDishBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        ccbDish.setBounds(lblDishBackGround.getX() + lblDishBackGround.getWidth() + CustOpts.HOR_GAP, lblDishBackGround.getY(),
+        		100, CustOpts.BTN_HEIGHT);
+        lblFunctionBackGround.setBounds(CustOpts.HOR_GAP, lblDishBackGround.getY() + lblDishBackGround.getHeight() + CustOpts.VER_GAP,
+        		lblFunctionBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        ccbFunctionBtn.setBounds(lblFunctionBackGround.getX() + lblFunctionBackGround.getWidth() + CustOpts.HOR_GAP, lblFunctionBackGround.getY(),
+        		100, CustOpts.BTN_HEIGHT);
+        lblTableBackGround.setBounds(CustOpts.HOR_GAP, lblFunctionBackGround.getY() + lblFunctionBackGround.getHeight() + CustOpts.VER_GAP,
+        		lblTableBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        ccbTable.setBounds(lblTableBackGround.getX() + lblTableBackGround.getWidth() + CustOpts.HOR_GAP, lblTableBackGround.getY(),
+        		100, CustOpts.BTN_HEIGHT);
+        lblSelectedTableBackGround.setBounds(CustOpts.HOR_GAP, lblTableBackGround.getY() + lblTableBackGround.getHeight() + CustOpts.VER_GAP,
+        		lblSelectedTableBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        ccbTableSelected.setBounds(lblSelectedTableBackGround.getX() + lblSelectedTableBackGround.getWidth() + CustOpts.HOR_GAP, lblSelectedTableBackGround.getY(),
+        		100, CustOpts.BTN_HEIGHT);
+        lblNumBtnBackGround.setBounds(CustOpts.HOR_GAP, lblSelectedTableBackGround.getY() + lblSelectedTableBackGround.getHeight() + CustOpts.VER_GAP,
+        		lblNumBtnBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        ccbNumBtn.setBounds(lblNumBtnBackGround.getX() + lblNumBtnBackGround.getWidth() + CustOpts.HOR_GAP, lblNumBtnBackGround.getY(),
+        		100, CustOpts.BTN_HEIGHT);
+		lblArrowBtnBackGround.setBounds(CustOpts.HOR_GAP,
+				lblNumBtnBackGround.getY() + lblNumBtnBackGround.getHeight() + CustOpts.VER_GAP,
+				lblArrowBtnBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+		ccbArrowBtn.setBounds(lblArrowBtnBackGround.getX() + lblArrowBtnBackGround.getWidth() + CustOpts.HOR_GAP,
+				lblArrowBtnBackGround.getY(), 100, CustOpts.BTN_HEIGHT);
+
         //menu area----------
         BarFrame.instance.menuPanel.reLayout();
     }
@@ -288,18 +338,44 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         lblStartTimeOfDay = new JLabel(BarFrame.consts.StartTimeOfDay());
         tfdStartTimeOfDay = new JTextField(String.valueOf(BarOption.getStartTime()));
         
-        btnLine_2_1 = new JButton(BarFrame.consts.RETURN());
-        btnLine_2_2 = new JButton(BarFrame.consts.TABLE());
-        btnLine_2_3 = new JButton(BarFrame.consts.PRINTER());
-        btnLine_2_4 = new JButton(BarFrame.consts.CheckInOut());
+        lblGeneralBackGround = new JLabel(BarFrame.consts.GeneralBK());
+        ccbGeneral = new ColorChooserButton(BarOption.getBK("General"));
+        lblLoginBackGround = new JLabel(BarFrame.consts.LoginBK());
+        ccbLogin = new ColorChooserButton(BarOption.getBK("Login"));
+        lblBillBackGround = new JLabel(BarFrame.consts.BillPanelBK());
+        ccbBill = new ColorChooserButton(BarOption.getBK("Bill"));
+        lblSalesBackGround = new JLabel(BarFrame.consts.SalesPanelBK());
+        ccbSales = new ColorChooserButton(BarOption.getBK("Sales"));
+        lblSettingsBackGround = new JLabel(BarFrame.consts.SettingsPanelBK());
+        ccbSetting = new ColorChooserButton(BarOption.getBK("Setting"));
+        lblCategoryBackGround = new JLabel(BarFrame.consts.CategoryBtnBK());
+        ccbCategory = new ColorChooserButton(BarOption.getBK("Category"));
+        lblDishBackGround = new JLabel(BarFrame.consts.DishBtnBK());
+        ccbDish = new ColorChooserButton(BarOption.getBK("Dish"));
+        lblFunctionBackGround = new JLabel(BarFrame.consts.FunctionBtnBK());
+        ccbFunctionBtn = new ColorChooserButton(BarOption.getBK("Function"));
+        lblTableBackGround = new JLabel(BarFrame.consts.TableBtnBK());
+        ccbTable = new ColorChooserButton(BarOption.getBK("Table"));
+        lblSelectedTableBackGround = new JLabel(BarFrame.consts.SelectedTableBtnBK());
+        ccbTableSelected = new ColorChooserButton(BarOption.getBK("TableSelected"));
+        lblNumBtnBackGround = new JLabel(BarFrame.consts.NumberBtnBk());
+        ccbNumBtn = new ColorChooserButton(BarOption.getBK("NumBtn"));
+		lblArrowBtnBackGround = new JLabel(BarFrame.consts.ArrowBtnBk());
+		ccbArrowBtn = new ColorChooserButton(BarOption.getBK("Arrow"));
+
+        btnLine_2_1 = new FunctionButton(BarFrame.consts.RETURN());
+        btnLine_2_2 = new FunctionButton(BarFrame.consts.TABLE());
+        btnLine_2_3 = new FunctionButton(BarFrame.consts.PRINTER());
+        btnLine_2_4 = new FunctionButton(BarFrame.consts.CheckInOut());
        
-        btnLine_2_5 = new JButton(BarFrame.consts.Operator());
-        btnLine_2_6 = new JButton(BarFrame.consts.Modify());
-        btnLine_2_7 = new JButton("");
-        btnLine_2_8 = new JButton("");
-        btnLine_2_9 = new JButton("");
+        btnLine_2_5 = new FunctionButton(BarFrame.consts.Operator());
+        btnLine_2_6 = new FunctionButton(BarFrame.consts.Modify());
+        btnLine_2_7 = new FunctionButton("");//BarFrame.consts.Color());
+        btnLine_2_8 = new FunctionButton("");
+        btnLine_2_9 = new FunctionButton("");
 
         // properties
+        setBackground(BarOption.getBK("Setting"));
         setLayout(null);
         
         JLabel tLbl = new JLabel();
@@ -321,6 +397,32 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 //        add(cbxIsPrintBillWhenPay);
         add(lblStartTimeOfDay);
         add(tfdStartTimeOfDay);
+        add(lblLoginBackGround);
+        add(ccbLogin);
+        add(lblGeneralBackGround);
+        add(ccbGeneral);
+        add(lblLoginBackGround);
+        add(ccbLogin);
+        add(lblBillBackGround);
+        add(ccbBill);
+        add(lblSalesBackGround);
+        add(ccbSales);
+        add(lblSettingsBackGround);
+        add(ccbSetting);
+        add(lblCategoryBackGround);
+        add(ccbCategory);
+        add(lblDishBackGround);
+        add(ccbDish);
+        add(lblFunctionBackGround);
+        add(ccbFunctionBtn);
+        add(lblTableBackGround);
+        add(ccbTable);
+        add(lblSelectedTableBackGround);
+        add(ccbTableSelected);
+        add(lblNumBtnBackGround);
+        add(ccbNumBtn);
+		add(lblArrowBtnBackGround);
+		add(ccbArrowBtn);
         
         add(btnLine_2_9);
         add(btnLine_2_2);
@@ -353,6 +455,78 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsDiscBeforeTax.addActionListener(this);
 //        cbxIsPrintBillWhenPay.addActionListener(this);
         tfdStartTimeOfDay.addFocusListener(this);
+        ccbGeneral.addColorChangedListener(new ColorChangedListener() {
+            @Override
+            public void colorChanged(Color newColor) {
+                 BarOption.setBK(newColor,"General");
+            }
+        });
+        ccbLogin.addColorChangedListener(new ColorChangedListener() {
+            @Override
+            public void colorChanged(Color newColor) {
+                 BarOption.setBK(newColor,"Login");
+            }
+        });
+        ccbBill.addColorChangedListener(new ColorChangedListener() {
+            @Override
+            public void colorChanged(Color newColor) {
+                 BarOption.setBK(newColor,"Bill");
+            }
+        });
+        ccbSales.addColorChangedListener(new ColorChangedListener() {
+            @Override
+            public void colorChanged(Color newColor) {
+                 BarOption.setBK(newColor,"Sales");
+            }
+        });
+        ccbSetting.addColorChangedListener(new ColorChangedListener() {
+            @Override
+            public void colorChanged(Color newColor) {
+                 BarOption.setBK(newColor,"Setting");
+            }
+        });
+        ccbCategory.addColorChangedListener(new ColorChangedListener() {
+            @Override
+            public void colorChanged(Color newColor) {
+                 BarOption.setBK(newColor,"Category");
+            }
+        });
+        ccbDish.addColorChangedListener(new ColorChangedListener() {
+            @Override
+            public void colorChanged(Color newColor) {
+                 BarOption.setBK(newColor,"Dish");
+            }
+        });
+        ccbFunctionBtn.addColorChangedListener(new ColorChangedListener() {
+            @Override
+            public void colorChanged(Color newColor) {
+                 BarOption.setBK(newColor,"Function");
+            }
+        });
+        ccbTable.addColorChangedListener(new ColorChangedListener() {
+            @Override
+            public void colorChanged(Color newColor) {
+                 BarOption.setBK(newColor,"Table");
+            }
+        });
+        ccbTableSelected.addColorChangedListener(new ColorChangedListener() {
+            @Override
+            public void colorChanged(Color newColor) {
+                 BarOption.setBK(newColor,"TableSelected");
+            }
+        });
+        ccbNumBtn.addColorChangedListener(new ColorChangedListener() {
+            @Override
+            public void colorChanged(Color newColor) {
+                 BarOption.setBK(newColor,"NumBtn");
+            }
+        });
+		ccbArrowBtn.addColorChangedListener(new ColorChangedListener() {
+			@Override
+			public void colorChanged(Color newColor) {
+				BarOption.setBK(newColor, "Arrow");
+			}
+		});
     }
 
     JLabel lblBillPageRow;
@@ -364,15 +538,38 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     JCheckBox cbxIsSingleUser;
     JCheckBox cbxIsDiscBeforeTax;
 //    JCheckBox cbxIsPrintBillWhenPay;
+    JLabel lblGeneralBackGround;
+    ColorChooserButton ccbGeneral;
+    JLabel lblLoginBackGround;
+    ColorChooserButton ccbLogin;
+    JLabel lblBillBackGround;
+    ColorChooserButton ccbBill;
+    JLabel lblSalesBackGround;
+    ColorChooserButton ccbSales;
+    JLabel lblSettingsBackGround;
+    ColorChooserButton ccbSetting;
+    JLabel lblCategoryBackGround;
+    ColorChooserButton ccbCategory;
+    JLabel lblDishBackGround;
+    ColorChooserButton ccbDish;
+    JLabel lblFunctionBackGround;
+    ColorChooserButton ccbFunctionBtn;
+    JLabel lblTableBackGround;
+    ColorChooserButton ccbTable;
+    JLabel lblSelectedTableBackGround;
+    ColorChooserButton ccbTableSelected;
+    JLabel lblNumBtnBackGround;
+    ColorChooserButton ccbNumBtn;
+	JLabel lblArrowBtnBackGround;
+	ColorChooserButton ccbArrowBtn;
     
-    
-    private JButton btnLine_2_1;
-    private JButton btnLine_2_2;
-    private JButton btnLine_2_3;
-    private JButton btnLine_2_4;
-    private JButton btnLine_2_5;
-    private JButton btnLine_2_6;
-    private JButton btnLine_2_7;
-    private JButton btnLine_2_8;
-    private JButton btnLine_2_9;
+    private FunctionButton btnLine_2_1;
+    private FunctionButton btnLine_2_2;
+    private FunctionButton btnLine_2_3;
+    private FunctionButton btnLine_2_4;
+    private FunctionButton btnLine_2_5;
+    private FunctionButton btnLine_2_6;
+    private FunctionButton btnLine_2_7;
+    private FunctionButton btnLine_2_8;
+    private FunctionButton btnLine_2_9;
 }

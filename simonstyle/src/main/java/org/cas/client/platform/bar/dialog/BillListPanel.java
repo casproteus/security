@@ -16,7 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 
-import org.cas.client.platform.bar.beans.ArrayButton;
+import org.cas.client.platform.bar.beans.ArrowButton;
+import org.cas.client.platform.bar.beans.FunctionButton;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -31,17 +32,17 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		billPanels= new ArrayList<BillPanel>();
 		onScrBills= new ArrayList<BillPanel>();
 
-	    btnLeft = new ArrayButton("<<");
-	    btnRight = new ArrayButton(">>");
-		btnAddUser = new JButton(BarFrame.consts.AddUser());
-		btnPrintAll = new JButton(BarFrame.consts.PrintAll());
+	    btnLeft = new ArrowButton("<<");
+	    btnRight = new ArrowButton(">>");
+		btnAddUser = new FunctionButton(BarFrame.consts.AddUser());
+		btnPrintAll = new FunctionButton(BarFrame.consts.PrintAll());
 
 		btnEqualBill = new JToggleButton(BarFrame.consts.EqualBill());
 		btnSplitItem = new JToggleButton(BarFrame.consts.SplitItem());
-		btnCombineAll = new JButton(BarFrame.consts.CombineAll());
+		btnCombineAll = new FunctionButton(BarFrame.consts.CombineAll());
 		
-		btnCompleteAll = new JButton(BarFrame.consts.CompleteAll());
-		btnReturn = new JButton(BarFrame.consts.RETURN());
+		btnCompleteAll = new FunctionButton(BarFrame.consts.CompleteAll());
+		btnReturn = new FunctionButton(BarFrame.consts.RETURN());
 		
 		separator= new JSeparator();
 
@@ -286,7 +287,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 					initContent();
 				}
 			}
-		}else if(o instanceof ArrayButton){
+		}else if(o instanceof ArrowButton){
 			if(o == btnLeft) {
 				curPageNum--;
 			}else if(o == btnRight) {
@@ -377,16 +378,16 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	List<BillPanel> billPanels;
 	List<BillPanel> onScrBills;
 
-    private ArrayButton btnLeft;
-    private ArrayButton btnRight;
-	JButton btnAddUser;
+    private ArrowButton btnLeft;
+    private ArrowButton btnRight;
+	FunctionButton btnAddUser;
 	JSeparator separator;
-	JButton btnPrintAll;
+	FunctionButton btnPrintAll;
 	JToggleButton btnEqualBill;
 	JToggleButton btnSplitItem;
-	JButton btnCombineAll;
+	FunctionButton btnCombineAll;
 	
-	JButton btnCompleteAll;
+	FunctionButton btnCompleteAll;
 
-	JButton btnReturn;
+	FunctionButton btnReturn;
 }

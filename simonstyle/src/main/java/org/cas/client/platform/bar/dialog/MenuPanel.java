@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
-import org.cas.client.platform.bar.beans.ArrayButton;
+import org.cas.client.platform.bar.beans.ArrowButton;
 import org.cas.client.platform.bar.beans.CategoryToggleButton;
 import org.cas.client.platform.bar.beans.MenuButton;
 import org.cas.client.platform.bar.model.Category;
@@ -52,10 +52,10 @@ public class MenuPanel extends JPanel implements ActionListener {
     ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
 	public MenuPanel() {
 		
-		btnPageUpCategory = new ArrayButton("↑");
-        btnPageDownCategory = new ArrayButton("↓");
-        btnPageUpMenu = new ArrayButton("↑");
-        btnPageDownMenu = new ArrayButton("↓");
+		btnPageUpCategory = new ArrowButton("↑");
+        btnPageDownCategory = new ArrowButton("↓");
+        btnPageUpMenu = new ArrowButton("↑");
+        btnPageDownMenu = new ArrowButton("↓");
         
         btnPageUpCategory.setMargin(new Insets(0,0,0,0));
         btnPageDownCategory.setMargin(btnPageUpCategory.getInsets());
@@ -350,7 +350,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
-		if(o instanceof ArrayButton) {
+		if(o instanceof ArrowButton) {
 	        if(o == btnPageUpCategory) {
 	            curCategoryPage--;
 	            // adjust status
@@ -442,8 +442,8 @@ public class MenuPanel extends JPanel implements ActionListener {
         } 
 	}
 
-    private ArrayButton btnPageUpCategory;
-    private ArrayButton btnPageDownCategory;
-    private ArrayButton btnPageUpMenu;
-    private ArrayButton btnPageDownMenu;
+    private ArrowButton btnPageUpCategory;
+    private ArrowButton btnPageDownCategory;
+    private ArrowButton btnPageUpMenu;
+    private ArrowButton btnPageDownMenu;
 }

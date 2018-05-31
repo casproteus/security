@@ -2,12 +2,15 @@ package org.cas.client.platform.bar.beans;
 
 import javax.swing.JButton;
 
+import org.cas.client.platform.bar.dialog.BarOption;
+
 public class TableButton extends JButton {
     private int id;
     private int type;
     private String openTime;
 
     public TableButton() {
+    	setBackground(BarOption.getBK("Table"));
     }
 
     public int getId() {

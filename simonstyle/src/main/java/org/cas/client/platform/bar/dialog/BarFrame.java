@@ -95,14 +95,14 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valOperator = new JLabel();
         lblCurTable = new JLabel(BarFrame.consts.TABLE().concat(BarFrame.consts.Colon()));
         valCurTable = new JLabel();
-        lblCurBill = new JLabel(BarFrame.consts.Bill().concat(BarFrame.consts.Colon()));
+        lblCurBill = new JLabel(BarFrame.consts.BILL().concat(BarFrame.consts.Colon()));
         valCurBill = new JLabel();
         
         lblStartTime = new JLabel();
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
-        lblVersion = new JLabel("V0.7-20180530");
+		lblVersion = new JLabel("V0.9-20180531");
         menuPanel = new MenuPanel();
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();
@@ -320,9 +320,15 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
             WindowEvent e) {
     }
 
+	static boolean ISCLOSING = false;
     @Override
     public void windowClosing(
             WindowEvent e) {
+		if (ISCLOSING) {
+			return;
+		}
+		ISCLOSING = true; // ignore the second windowClosing event.
+
         if (CASControl.ctrl.getMainFrame() != null)
             CASControl.ctrl.getMainFrame().dispose();
         dispose();

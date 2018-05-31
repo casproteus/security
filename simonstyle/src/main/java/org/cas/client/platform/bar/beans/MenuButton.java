@@ -2,6 +2,7 @@ package org.cas.client.platform.bar.beans;
 
 import javax.swing.JButton;
 
+import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.model.Dish;
 
 public class MenuButton extends JButton {
@@ -9,6 +10,7 @@ public class MenuButton extends JButton {
     private Dish dish;
 
     public MenuButton(int dspIndex) {
+    	setBackground(BarOption.getBK("Dish"));
         this.dspIndex = dspIndex;
     }
 

@@ -1,6 +1,7 @@
 package org.cas.client.platform.bar.dialog;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.Insets;
@@ -22,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.beans.ColorChooserButton;
 import org.cas.client.platform.casbeans.PIMSeparator;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
@@ -41,6 +43,26 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 	public static Font bigFont = new Font("Arial", Font.PLAIN, 48);
 	
 	public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
+	public static void setBK(Color color, String key) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(color.getRed()).append(",").append(color.getGreen()).append(",").append(color.getBlue());
+		CustOpts.custOps.setKeyAndValue(key, sb.toString());
+	}
+	
+	public static Color getBK(String key) {
+		String colorStr = (String)CustOpts.custOps.getValue(key);
+		if(colorStr != null) {
+			try {
+				String[] colors = colorStr.split(",");
+				return new Color(Integer.valueOf(colors[0]), Integer.valueOf(colors[1]), Integer.valueOf(colors[2]));
+			}catch(Exception e) {
+				return null;
+			}
+		}
+		return null;
+	}
+
     public static String getOwnerInfo() {
     	StringBuilder sb = new StringBuilder(BarOption.getStoreName()).append("\n");
     	sb.append(BarOption.getAddress()).append("\n");

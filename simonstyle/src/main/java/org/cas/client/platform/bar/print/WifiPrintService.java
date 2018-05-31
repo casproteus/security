@@ -317,7 +317,7 @@ public class WifiPrintService{
             if(d.getNum() > 1){
             	sb.append(" x").append(Integer.toString(d.getNum()));
             }
-            String price = BarOption.getMoneySign() + d.getPrice()/100f;
+            String price = BarOption.getMoneySign() + d.getTotalPrice()/100f;
             int occupiedLength = getLengthOfString(sb.toString());
             sb.append(generateString(width - occupiedLength - (price.length()), " "));
             sb.append(price);

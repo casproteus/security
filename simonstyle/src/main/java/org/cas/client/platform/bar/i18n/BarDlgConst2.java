@@ -83,6 +83,7 @@ public class BarDlgConst2 implements BarDlgConst{
     public String Colon() {return "：";}
     public String Operator() {return "员工";}
     public String TABLE() {return "桌子";}
+    public String BILL() {return "单号";}
     public String Bill() {return "单号";}
     public String UnSavedRecordFound() {return "您确定要在新加的菜尚未发送厨房的情况下进行分单操作吗？如果继续的话，尚未发送厨房的菜将被取消";}
     public String COMFIRMDELETEACTION() {return "这道菜有可能已经做了，您确定要取消吗？";}
@@ -238,4 +239,17 @@ public class BarDlgConst2 implements BarDlgConst{
     public String ADD_TO_LIST() {return "加入到列表";}
     public String DELETE() {return "删除";}
     public String RESET() {return "复位";}
+
+    public String GeneralBK(){return "通用背景色";}
+    public String LoginBK(){return "登录对话盒背景色";};
+    public String BillPanelBK(){return "单据面板背景色";}
+    public String SalesPanelBK(){return "销售面板背景色";}
+    public String SettingsPanelBK(){return "设置面板背景色";}
+    public String CategoryBtnBK(){return "类别按钮背景色";}
+    public String DishBtnBK(){return "菜单按钮背景色";}
+    public String FunctionBtnBK(){return "功能按钮背景色";}
+    public String TableBtnBK(){return "餐桌按钮背景色";}
+    public String SelectedTableBtnBK(){return "选中餐桌背景色";}
+    public String NumberBtnBk(){return "数字按钮背景色";}
+    public String Color() {return "背景色";}
 }

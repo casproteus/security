@@ -18,7 +18,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import org.cas.client.platform.bar.beans.NumButton;
 import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
@@ -270,20 +272,22 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
         // 初始化－－－－－－－－－－－－－－－－
         general = new LoginGeneralPanel();
 
-        ok = new JButton("✔");
-        back = new JButton("←");
-        num1 = new JButton("1");
-        num2 = new JButton("2");
-        num3 = new JButton("3");
-        num4 = new JButton("4");
-        num5 = new JButton("5");
-        num6 = new JButton("6");
-        num7 = new JButton("7");
-        num8 = new JButton("8");
-        num9 = new JButton("9");
-        num0 = new JButton("0");
+        ok = new NumButton("✔");
+        back = new NumButton("←");
+        num1 = new NumButton("1");
+        num2 = new NumButton("2");
+        num3 = new NumButton("3");
+        num4 = new NumButton("4");
+        num5 = new NumButton("5");
+        num6 = new NumButton("6");
+        num7 = new NumButton("7");
+        num8 = new NumButton("8");
+        num9 = new NumButton("9");
+        num0 = new NumButton("0");
 
         // 属性设置－－－－－－－－－－－－－－
+        getContentPane().setBackground(BarOption.getBK("Login"));
+        general.setBackground(null);
         // ok.setFont(CustOpts.custOps.getFontOfDefault());
         ok.setFocusable(false);
         back.setFocusable(false);
@@ -350,17 +354,17 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
     }
 
     private JFrame parent;
-    private JButton num1;
-    private JButton num2;
-    private JButton num3;
-    private JButton num4;
-    private JButton num5;
-    private JButton num6;
-    private JButton num7;
-    private JButton num8;
-    private JButton num9;
-    private JButton num0;
-    private JButton ok;
-    private JButton back;
+    private NumButton num1;
+    private NumButton num2;
+    private NumButton num3;
+    private NumButton num4;
+    private NumButton num5;
+    private NumButton num6;
+    private NumButton num7;
+    private NumButton num8;
+    private NumButton num9;
+    private NumButton num0;
+    private NumButton ok;
+    private NumButton back;
     private LoginGeneralPanel general;
 }

@@ -13,13 +13,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.BarUtil;
+import org.cas.client.platform.bar.beans.FunctionButton;
 import org.cas.client.platform.bar.beans.TableButton;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.dialog.statistics.SaleListDlg;
@@ -148,8 +148,8 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 				ErrorUtil.write(exp);
 			}
 		}
-        //JButton------------------------------------------------------------------------------------------------
-        else if (o instanceof JButton) {
+		// FunctionButton------------------------------------------------------------------------------------------------
+		else if (o instanceof FunctionButton) {
         	if(o == btnLine_2_2) {		//add table
         		if(!BarOption.isSingleUser()) {
         			new LoginDlg(null).setVisible(true);
@@ -240,15 +240,16 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     
     private void initComponent() {
         btnLine_2_1 = new JToggleButton(BarFrame.consts.ChangeMode());
-        btnLine_2_2 = new JButton(BarFrame.consts.AddTable());
-        btnLine_2_3 = new JButton(BarFrame.consts.OrderManage());
-        btnLine_2_4 = new JButton(BarFrame.consts.OpenDrawer());
-        btnLine_2_5 = new JButton(BarFrame.consts.WaiterReport());
-        btnLine_2_6 = new JButton(BarFrame.consts.SETTINGS());
-        btnLine_2_8 = new JButton(BarFrame.consts.Report());
-        btnCheckInOut = new JButton(BarFrame.consts.CheckInOut());
+		btnLine_2_2 = new FunctionButton(BarFrame.consts.AddTable());
+		btnLine_2_3 = new FunctionButton(BarFrame.consts.OrderManage());
+		btnLine_2_4 = new FunctionButton(BarFrame.consts.OpenDrawer());
+		btnLine_2_5 = new FunctionButton(BarFrame.consts.WaiterReport());
+		btnLine_2_6 = new FunctionButton(BarFrame.consts.SETTINGS());
+		btnLine_2_8 = new FunctionButton(BarFrame.consts.Report());
+		btnCheckInOut = new FunctionButton(BarFrame.consts.CheckInOut());
 
         // border----------
+        setBackground(BarOption.getBK("General"));
         setLayout(null);
 
         // built
@@ -322,11 +323,11 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 	}
 
     private JToggleButton btnLine_2_1;
-    private JButton btnLine_2_2;
-    private JButton btnLine_2_3;
-    private JButton btnLine_2_4;
-    private JButton btnLine_2_5;
-    private JButton btnLine_2_6;
-    private JButton btnLine_2_8;
-    private JButton btnCheckInOut;
+	private FunctionButton btnLine_2_2;
+	private FunctionButton btnLine_2_3;
+	private FunctionButton btnLine_2_4;
+	private FunctionButton btnLine_2_5;
+	private FunctionButton btnLine_2_6;
+	private FunctionButton btnLine_2_8;
+	private FunctionButton btnCheckInOut;
 }

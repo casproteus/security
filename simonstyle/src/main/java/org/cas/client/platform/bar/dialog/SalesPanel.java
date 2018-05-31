@@ -21,6 +21,7 @@ import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.action.UpdateItemDiscountAction;
 import org.cas.client.platform.bar.action.UpdateItemPriceAction;
 import org.cas.client.platform.bar.beans.CategoryToggleButton;
+import org.cas.client.platform.bar.beans.FunctionButton;
 import org.cas.client.platform.bar.beans.MenuButton;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.Dish;
@@ -84,8 +85,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     @Override
     public void actionPerformed(ActionEvent e) {
         Object o = e.getSource();
-        //JButton------------------------------------------------------------------------------------------------
-        if (o instanceof JButton) {
+        //FunctionButton------------------------------------------------------------------------------------------------
+        if (o instanceof FunctionButton) {
         	if(o == btnLine_1_1 || o == btnLine_1_2 || o == btnLine_1_3 || o == btnLine_2_3) { //pay
         		billPanel.sendNewDishesToKitchen();
         		//if the bill has not been printted, print the bill also.
@@ -307,7 +308,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              	}
             	
             } else if (o == btnLine_2_9) {//more
-            	new MoreButtonsDlg(this).show((JButton)o);
+            	new MoreButtonsDlg(this).show((FunctionButton)o);
             	
             } else if (o == btnLine_2_10) {//send
             	billPanel.sendNewDishesToKitchen();
@@ -437,30 +438,31 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     }
 
     public void initComponent() {
-        btnLine_1_1 = new JButton(BarFrame.consts.CASH());
-        btnLine_1_2 = new JButton(BarFrame.consts.DEBIT());
-        btnLine_1_3 = new JButton(BarFrame.consts.VISA());
-        btnLine_1_4 = new JButton(BarFrame.consts.SPLIT_BILL());
-        btnLine_1_5 = new JButton(BarFrame.consts.REMOVEITEM());
-        btnLine_1_6 = new JButton(BarFrame.consts.Modify());
+        btnLine_1_1 = new FunctionButton(BarFrame.consts.CASH());
+        btnLine_1_2 = new FunctionButton(BarFrame.consts.DEBIT());
+        btnLine_1_3 = new FunctionButton(BarFrame.consts.VISA());
+        btnLine_1_4 = new FunctionButton(BarFrame.consts.SPLIT_BILL());
+        btnLine_1_5 = new FunctionButton(BarFrame.consts.REMOVEITEM());
+        btnLine_1_6 = new FunctionButton(BarFrame.consts.Modify());
         btnLine_1_7 = new JToggleButton(BarFrame.consts.DISC_ITEM());
         btnLine_1_8 = new JToggleButton(BarFrame.consts.ChangePrice());
-        btnLine_1_9 = new JButton(BarFrame.consts.ServiceFee());
-        btnLine_1_10 = new JButton(BarFrame.consts.PRINT_BILL());
+        btnLine_1_9 = new FunctionButton(BarFrame.consts.ServiceFee());
+        btnLine_1_10 = new FunctionButton(BarFrame.consts.PRINT_BILL());
 
-        btnLine_2_1 = new JButton(BarFrame.consts.RETURN());
-        btnLine_2_2 = new JButton(BarFrame.consts.AddUser());
-        btnLine_2_3 = new JButton(BarFrame.consts.MASTER());
-        btnLine_2_4 = new JButton(BarFrame.consts.CANCEL_ALL());
-        btnLine_2_5 = new JButton(BarFrame.consts.VOID_ORDER());
-        btnLine_2_6 = new JButton(BarFrame.consts.OpenDrawer());
-        btnLine_2_7 = new JButton(BarFrame.consts.VolumnDiscount());
-        btnLine_2_8 = new JButton(BarFrame.consts.Refund());
-        btnLine_2_9 = new JButton(BarFrame.consts.MORE());
-        btnLine_2_10 = new JButton(BarFrame.consts.SEND());
+        btnLine_2_1 = new FunctionButton(BarFrame.consts.RETURN());
+        btnLine_2_2 = new FunctionButton(BarFrame.consts.AddUser());
+        btnLine_2_3 = new FunctionButton(BarFrame.consts.MASTER());
+        btnLine_2_4 = new FunctionButton(BarFrame.consts.CANCEL_ALL());
+        btnLine_2_5 = new FunctionButton(BarFrame.consts.VOID_ORDER());
+        btnLine_2_6 = new FunctionButton(BarFrame.consts.OpenDrawer());
+        btnLine_2_7 = new FunctionButton(BarFrame.consts.VolumnDiscount());
+        btnLine_2_8 = new FunctionButton(BarFrame.consts.Refund());
+        btnLine_2_9 = new FunctionButton(BarFrame.consts.MORE());
+        btnLine_2_10 = new FunctionButton(BarFrame.consts.SEND());
         
         billPanel = new BillPanel(this);
         // properties
+        setBackground(BarOption.getBK("Sales"));
         setLayout(null);
         
         // built
@@ -516,27 +518,27 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_2_10.addActionListener(this);
     }
 
-    private JButton btnLine_1_1;
-    private JButton btnLine_1_2;
-    private JButton btnLine_1_3;
-    private JButton btnLine_1_4;
-    private JButton btnLine_1_5;
-    private JButton btnLine_1_6;
+    private FunctionButton btnLine_1_1;
+    private FunctionButton btnLine_1_2;
+    private FunctionButton btnLine_1_3;
+    private FunctionButton btnLine_1_4;
+    private FunctionButton btnLine_1_5;
+    private FunctionButton btnLine_1_6;
     public JToggleButton btnLine_1_7;
     private JToggleButton btnLine_1_8;
-    private JButton btnLine_1_9;
-    private JButton btnLine_1_10;
+    private FunctionButton btnLine_1_9;
+    private FunctionButton btnLine_1_10;
 
-    private JButton btnLine_2_1;
-    private JButton btnLine_2_2;
-    private JButton btnLine_2_3;
-    private JButton btnLine_2_4;
-    private JButton btnLine_2_5;
-    private JButton btnLine_2_6;
-    private JButton btnLine_2_7;
-    private JButton btnLine_2_8;
-    private JButton btnLine_2_9;
-    private JButton btnLine_2_10;
+    private FunctionButton btnLine_2_1;
+    private FunctionButton btnLine_2_2;
+    private FunctionButton btnLine_2_3;
+    private FunctionButton btnLine_2_4;
+    private FunctionButton btnLine_2_5;
+    private FunctionButton btnLine_2_6;
+    private FunctionButton btnLine_2_7;
+    private FunctionButton btnLine_2_8;
+    private FunctionButton btnLine_2_9;
+    private FunctionButton btnLine_2_10;
     
     public BillPanel billPanel;
 }

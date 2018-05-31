@@ -27,7 +27,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.cas.client.platform.bar.beans.ArrayButton;
+import org.cas.client.platform.bar.beans.ArrowButton;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.WifiPrintService;
@@ -176,7 +176,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	public void actionPerformed(ActionEvent e) {
 
         Object o = e.getSource();
-		if(o instanceof ArrayButton) {
+		if(o instanceof ArrowButton) {
 	        if(o == btnMore) {
 	        	int selectedRow =  tblSelectedDish.getSelectedRow();
 				if(orderedDishAry.get(selectedRow).getOutputID() >= 0) {	//already saved
@@ -415,6 +415,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		}
 		sendDishesToKitchen(dishes, false);
 		saveDishesToDB(dishes);
+		initContent();
 	}
 
     public void updateTotleArea() {
@@ -523,6 +524,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				dish.setBillIndex(billIndex);
 				dish.setOpenTime(rs.getString("OUTPUT.TIME"));	//output time is table's open time. no need to remember output created time.
 				dish.setBillID(rs.getInt("OUTPUT.Category"));
+				dish.setTotalPrice(rs.getInt("OUTPUT.TOLTALPRICE"));
 				orderedDishAry.add(dish);
 
 				int num = dish.getNum();
@@ -551,7 +553,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					lang = langs[0].length() == 0 || "null".equalsIgnoreCase(lang) ? "" : langs[0];
 				tValues[tmpPos][2] = lang;
 				
-				tValues[tmpPos][3] =  BarOption.getMoneySign() + rs.getInt("TOLTALPRICE") / 100f;
+				tValues[tmpPos][3] =  BarOption.getMoneySign() + dish.getTotalPrice() / 100f;
 				tmpPos++;
 			}
 
@@ -691,9 +693,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         lblTVQ = new JLabel(BarFrame.consts.TVQ());
         lblTotlePrice = new JLabel(BarFrame.consts.Total() + " : " + BarOption.getMoneySign());
         valTotlePrice = new JLabel();
-        btnMore = new ArrayButton("+");
-        btnLess = new ArrayButton("-");
-        
+        btnMore = new ArrowButton("+");
+        btnLess = new ArrowButton("-");
+
+        setBackground(BarOption.getBK("Bill"));
         setLayout(null);
         tblSelectedDish.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         tblSelectedDish.setAutoscrolls(true);
@@ -766,8 +769,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     public JLabel lblServiceFee;
     public JLabel valTotlePrice;
     
-    private ArrayButton btnMore;
-    private ArrayButton btnLess;
+    private ArrowButton btnMore;
+    private ArrowButton btnLess;
     
     String[] header = new String[] {BarFrame.consts.Count(), BarFrame.consts.ProdName(), "", BarFrame.consts.Price()};
 

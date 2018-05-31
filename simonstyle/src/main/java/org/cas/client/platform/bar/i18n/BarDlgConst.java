@@ -87,6 +87,7 @@ public interface BarDlgConst {
     String Colon();
     String Operator();
     String TABLE();
+    String BILL();
     String Bill();
     String UnSavedRecordFound();
     String COMFIRMDELETEACTION();
@@ -243,4 +244,18 @@ public interface BarDlgConst {
     String ADD_TO_LIST();
     String DELETE();
     String RESET();
+
+    String GeneralBK();
+    String LoginBK();
+    String BillPanelBK();
+    String SalesPanelBK();
+    String SettingsPanelBK();
+    String CategoryBtnBK();
+    String DishBtnBK();
+    String FunctionBtnBK();
+    String TableBtnBK();
+    String SelectedTableBtnBK();
+    String NumberBtnBk();
+	String ArrowBtnBk();
+    String Color();
 }

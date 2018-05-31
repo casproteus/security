@@ -300,6 +300,14 @@ public class Dish {
 		this.isCanceled = isCanceled;
 	}
 
+	public int getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(int totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+
 	private int id = -1;
     private int dspIndex = 0; // display position on screen.
     private String language[] = new String[3]; // CODE VARCHAR(255), MNEMONIC VARCHAR(255),SUBJECT VARCHAR(255)
@@ -321,4 +329,5 @@ public class Dish {
     private String openTime;
     private int billID;
     private boolean isCanceled;
+    private int totalPrice;
 }
