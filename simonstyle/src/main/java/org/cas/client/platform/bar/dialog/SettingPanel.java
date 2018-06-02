@@ -98,6 +98,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 				return;
     		}
     		BarOption.setBillPageRow(tfdBillPageRow.getText());
+            ((BillListPanel)BarFrame.instance.panels[1]).initComponent();
+            
     	}else if(o == tfdBillPageCol) {
     		int num;
     		try {
@@ -111,6 +113,68 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 				return;
     		}
     		BarOption.setBillPageCol(tfdBillPageCol.getText());
+            ((BillListPanel)BarFrame.instance.panels[1]).initComponent();
+            
+    	}else if(o == tfdCategoryRow) {
+    		int num;
+    		try {
+    			num = Integer.valueOf(tfdCategoryRow.getText());
+    		}catch(Exception exp) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+				return;
+    		}
+    		if(num < 1 || num > 6) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+				return;
+    		}
+    		BarOption.setCategoryRow(tfdCategoryRow.getText());
+    		BarFrame.menuPanel.initComponent();
+    		
+    	}else if(o == tfdCategoryCol) {
+    		int num;
+    		try {
+    			num = Integer.valueOf(tfdCategoryCol.getText());
+    		}catch(Exception exp) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+				return;
+    		}
+    		if(num < 1 || num > 16) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+				return;
+    		}
+    		BarOption.setCategoryCol(tfdCategoryCol.getText());
+    		BarFrame.menuPanel.initComponent();
+    		
+    	}else if(o == tfdDishRow) {
+    		int num;
+    		try {
+    			num = Integer.valueOf(tfdDishRow.getText());
+    		}catch(Exception exp) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+				return;
+    		}
+    		if(num < 1 || num > 7) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+				return;
+    		}
+    		BarOption.setDishRow(tfdDishRow.getText());
+    		BarFrame.menuPanel.initComponent();
+    		
+    	}else if(o == tfdDishCol) {
+    		int num;
+    		try {
+    			num = Integer.valueOf(tfdDishCol.getText());
+    		}catch(Exception exp) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+				return;
+    		}
+    		if(num < 1 || num > 16) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+				return;
+    		}
+    		BarOption.setDishCol(tfdDishCol.getText());
+    		BarFrame.menuPanel.initComponent();
+    		
     	}else if(o == tfdStartTimeOfDay) {
     		String time = tfdStartTimeOfDay.getText();
     		try {
@@ -203,7 +267,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         // table area-------------
         Double tableWidth = (Double) CustOpts.custOps.hash2.get("TableWidth");
         tableWidth = (tableWidth == null || tableWidth < 0.2) ? 0.4 : tableWidth;
-        
+
         lblBillPageRow.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
         		lblBillPageRow.getPreferredSize().width, lblBillPageRow.getPreferredSize().height);
         tfdBillPageRow.setBounds(lblBillPageRow.getX() + lblBillPageRow.getWidth() + CustOpts.HOR_GAP, lblBillPageRow.getY(),
@@ -212,8 +276,24 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		lblBillPageCol.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdBillPageCol.setBounds(lblBillPageCol.getX() + lblBillPageCol.getWidth() + CustOpts.HOR_GAP, lblBillPageRow.getY(),
         		20, CustOpts.BTN_HEIGHT);
+        lblCategoryRow.setBounds(CustOpts.HOR_GAP, lblBillPageRow.getY() + lblBillPageRow.getHeight() + CustOpts.HOR_GAP,
+        		lblCategoryRow.getPreferredSize().width, lblCategoryRow.getPreferredSize().height);
+        tfdCategoryRow.setBounds(lblCategoryRow.getX() + lblCategoryRow.getWidth() + CustOpts.HOR_GAP, lblCategoryRow.getY(),
+        		20, CustOpts.BTN_HEIGHT);
+        lblCategoryCol.setBounds(tfdCategoryRow.getX() + tfdCategoryRow.getWidth() + CustOpts.HOR_GAP, lblCategoryRow.getY(),
+        		lblCategoryCol.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdCategoryCol.setBounds(lblCategoryCol.getX() + lblCategoryCol.getWidth() + CustOpts.HOR_GAP, lblCategoryRow.getY(),
+        		20, CustOpts.BTN_HEIGHT);
+        lblDishRow.setBounds(CustOpts.HOR_GAP, lblCategoryRow.getY() + lblCategoryRow.getHeight() + CustOpts.HOR_GAP,
+        		lblDishRow.getPreferredSize().width, lblDishRow.getPreferredSize().height);
+        tfdDishRow.setBounds(lblDishRow.getX() + lblDishRow.getWidth() + CustOpts.HOR_GAP, lblDishRow.getY(),
+        		20, CustOpts.BTN_HEIGHT);
+        lblDishCol.setBounds(tfdDishRow.getX() + tfdDishRow.getWidth() + CustOpts.HOR_GAP, lblDishRow.getY(),
+        		lblDishCol.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdDishCol.setBounds(lblDishCol.getX() + lblDishCol.getWidth() + CustOpts.HOR_GAP, lblDishRow.getY(),
+        		20, CustOpts.BTN_HEIGHT);
         
-        cbxIsSingleUser.setBounds(CustOpts.HOR_GAP, lblBillPageRow.getY() + lblBillPageRow.getHeight() + CustOpts.VER_GAP,
+        cbxIsSingleUser.setBounds(CustOpts.HOR_GAP, lblDishRow.getY() + lblDishRow.getHeight() + CustOpts.VER_GAP,
         		cbxIsSingleUser.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsDiscBeforeTax.setBounds(CustOpts.HOR_GAP, cbxIsSingleUser.getY() + cbxIsSingleUser.getHeight() + CustOpts.VER_GAP,
         		cbxIsDiscBeforeTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
@@ -224,16 +304,16 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		lblStartTimeOfDay.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdStartTimeOfDay.setBounds(lblStartTimeOfDay.getX() + lblStartTimeOfDay.getWidth() + CustOpts.HOR_GAP, lblStartTimeOfDay.getY(),
         		100, CustOpts.BTN_HEIGHT);
-        
-        lblGeneralBackGround.setBounds(CustOpts.HOR_GAP, lblStartTimeOfDay.getY() + lblStartTimeOfDay.getHeight() + CustOpts.VER_GAP,
-        		lblGeneralBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        ccbGeneral.setBounds(lblGeneralBackGround.getX() + lblGeneralBackGround.getWidth() + CustOpts.HOR_GAP, lblGeneralBackGround.getY(),
-        		100, CustOpts.BTN_HEIGHT);
-        lblLoginBackGround.setBounds(CustOpts.HOR_GAP, lblGeneralBackGround.getY() + lblGeneralBackGround.getHeight() + CustOpts.VER_GAP,
+        lblLoginBackGround.setBounds(CustOpts.HOR_GAP, tfdStartTimeOfDay.getY() + tfdStartTimeOfDay.getHeight() + CustOpts.VER_GAP,
         		lblLoginBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         ccbLogin.setBounds(lblLoginBackGround.getX() + lblLoginBackGround.getWidth() + CustOpts.HOR_GAP, lblLoginBackGround.getY(),
         		100, CustOpts.BTN_HEIGHT);
-        lblBillBackGround.setBounds(CustOpts.HOR_GAP, lblLoginBackGround.getY() + lblLoginBackGround.getHeight() + CustOpts.VER_GAP,
+        
+        lblTablePanelBackGround.setBounds(CustOpts.HOR_GAP, lblLoginBackGround.getY() + lblLoginBackGround.getHeight() + CustOpts.VER_GAP,
+        		lblTablePanelBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        ccbTablePanel.setBounds(lblTablePanelBackGround.getX() + lblTablePanelBackGround.getWidth() + CustOpts.HOR_GAP, lblTablePanelBackGround.getY(),
+        		100, CustOpts.BTN_HEIGHT);
+        lblBillBackGround.setBounds(CustOpts.HOR_GAP, lblTablePanelBackGround.getY() + lblTablePanelBackGround.getHeight() + CustOpts.VER_GAP,
         		lblBillBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         ccbBill.setBounds(lblBillBackGround.getX() + lblBillBackGround.getWidth() + CustOpts.HOR_GAP, lblBillBackGround.getY(),
         		100, CustOpts.BTN_HEIGHT);
@@ -276,7 +356,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 				lblArrowBtnBackGround.getY(), 100, CustOpts.BTN_HEIGHT);
 
         //menu area----------
-        BarFrame.instance.menuPanel.reLayout();
+		if(BarFrame.instance != null && BarFrame.instance.menuPanel != null) {
+			BarFrame.instance.menuPanel.reLayout();
+		}
     }
 
     private boolean adminAuthentication() {
@@ -328,20 +410,30 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     }
 	
     private void initComponent() {
+    	removeAll();
         lblBillPageRow = new JLabel(BarFrame.consts.BillPageRow());
         tfdBillPageRow = new JTextField(String.valueOf(BarOption.getBillPageRow()));
         lblBillPageCol = new JLabel(BarFrame.consts.BillPageCol());
         tfdBillPageCol = new JTextField(String.valueOf(BarOption.getBillPageCol()));
+        lblCategoryRow = new JLabel(BarFrame.consts.CategoryRow());
+        tfdCategoryRow = new JTextField(String.valueOf(BarOption.getCategoryRow()));
+        lblCategoryCol = new JLabel(BarFrame.consts.CategoryCol());
+        tfdCategoryCol = new JTextField(String.valueOf(BarOption.getCategoryCol()));
+        lblDishRow = new JLabel(BarFrame.consts.DishRow());
+        tfdDishRow = new JTextField(String.valueOf(BarOption.getDishRow()));
+        lblDishCol = new JLabel(BarFrame.consts.DishCol());
+        tfdDishCol = new JTextField(String.valueOf(BarOption.getDishCol()));
+        
         cbxIsSingleUser = new JCheckBox(BarFrame.consts.IsSingleUser());
         cbxIsDiscBeforeTax = new JCheckBox(BarFrame.consts.IsDiscBeforeTax());
 //        cbxIsPrintBillWhenPay = new JCheckBox(BarFrame.consts.IsPrintBillWhenPay);
         lblStartTimeOfDay = new JLabel(BarFrame.consts.StartTimeOfDay());
         tfdStartTimeOfDay = new JTextField(String.valueOf(BarOption.getStartTime()));
         
-        lblGeneralBackGround = new JLabel(BarFrame.consts.GeneralBK());
-        ccbGeneral = new ColorChooserButton(BarOption.getBK("General"));
         lblLoginBackGround = new JLabel(BarFrame.consts.LoginBK());
         ccbLogin = new ColorChooserButton(BarOption.getBK("Login"));
+        lblTablePanelBackGround = new JLabel(BarFrame.consts.TablePanelBK());
+        ccbTablePanel = new ColorChooserButton(BarOption.getBK("TablePanel"));
         lblBillBackGround = new JLabel(BarFrame.consts.BillPanelBK());
         ccbBill = new ColorChooserButton(BarOption.getBK("Bill"));
         lblSalesBackGround = new JLabel(BarFrame.consts.SalesPanelBK());
@@ -383,6 +475,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tLbl.setBackground(Color.GRAY);
         Font tFont = PIMPool.pool.getFont((String) CustOpts.custOps.hash2.get(PaneConsts.DFT_FONT), Font.PLAIN, 40);
         
+        cbxIsSingleUser.setBackground(null);
+        cbxIsDiscBeforeTax.setBackground(null);
         cbxIsSingleUser.setSelected(BarOption.isSingleUser());
         cbxIsDiscBeforeTax.setSelected(BarOption.isDisCountBeforeTax());
 //        cbxIsPrintBillWhenPay.setSelected(BarOption.isPrintBillWhenPay());
@@ -392,6 +486,15 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(tfdBillPageRow);
         add(lblBillPageCol);
         add(tfdBillPageCol);
+        add(lblCategoryRow);
+        add(tfdCategoryRow);
+        add(lblCategoryCol);
+        add(tfdCategoryCol);
+        add(lblDishRow);
+        add(tfdDishRow);
+        add(lblDishCol);
+        add(tfdDishCol);
+        
         add(cbxIsSingleUser);
         add(cbxIsDiscBeforeTax);
 //        add(cbxIsPrintBillWhenPay);
@@ -399,10 +502,10 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(tfdStartTimeOfDay);
         add(lblLoginBackGround);
         add(ccbLogin);
-        add(lblGeneralBackGround);
-        add(ccbGeneral);
         add(lblLoginBackGround);
         add(ccbLogin);
+        add(lblTablePanelBackGround);
+        add(ccbTablePanel);
         add(lblBillBackGround);
         add(ccbBill);
         add(lblSalesBackGround);
@@ -451,74 +554,95 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 
         tfdBillPageRow.addFocusListener(this);
         tfdBillPageCol.addFocusListener(this);
+        tfdCategoryRow.addFocusListener(this);
+        tfdCategoryCol.addFocusListener(this);
+        tfdDishRow.addFocusListener(this);
+        tfdDishCol.addFocusListener(this);
         cbxIsSingleUser.addActionListener(this);
         cbxIsDiscBeforeTax.addActionListener(this);
 //        cbxIsPrintBillWhenPay.addActionListener(this);
         tfdStartTimeOfDay.addFocusListener(this);
-        ccbGeneral.addColorChangedListener(new ColorChangedListener() {
-            @Override
-            public void colorChanged(Color newColor) {
-                 BarOption.setBK(newColor,"General");
-            }
-        });
+        
         ccbLogin.addColorChangedListener(new ColorChangedListener() {
             @Override
             public void colorChanged(Color newColor) {
                  BarOption.setBK(newColor,"Login");
             }
         });
+        ccbTablePanel.addColorChangedListener(new ColorChangedListener() {
+            @Override
+            public void colorChanged(Color newColor) {
+                 BarOption.setBK(newColor,"TablePanel");
+                 ((TablesPanel)BarFrame.instance.panels[0]).initComponent();
+            }
+        });
         ccbBill.addColorChangedListener(new ColorChangedListener() {
             @Override
             public void colorChanged(Color newColor) {
                  BarOption.setBK(newColor,"Bill");
+                 ((BillListPanel)BarFrame.instance.panels[1]).initComponent();
             }
         });
         ccbSales.addColorChangedListener(new ColorChangedListener() {
             @Override
             public void colorChanged(Color newColor) {
                  BarOption.setBK(newColor,"Sales");
+                 ((SalesPanel)BarFrame.instance.panels[2]).initComponent();
             }
         });
         ccbSetting.addColorChangedListener(new ColorChangedListener() {
             @Override
             public void colorChanged(Color newColor) {
                  BarOption.setBK(newColor,"Setting");
+                 initComponent();
+                 add(BarFrame.menuPanel);
             }
         });
         ccbCategory.addColorChangedListener(new ColorChangedListener() {
             @Override
             public void colorChanged(Color newColor) {
                  BarOption.setBK(newColor,"Category");
+                 BarFrame.menuPanel.initComponent();
             }
         });
         ccbDish.addColorChangedListener(new ColorChangedListener() {
             @Override
             public void colorChanged(Color newColor) {
                  BarOption.setBK(newColor,"Dish");
+                 BarFrame.menuPanel.initComponent();
             }
         });
         ccbFunctionBtn.addColorChangedListener(new ColorChangedListener() {
             @Override
             public void colorChanged(Color newColor) {
                  BarOption.setBK(newColor,"Function");
+                 ((TablesPanel)BarFrame.instance.panels[0]).initComponent();
+                 ((BillListPanel)BarFrame.instance.panels[1]).initComponent();
+                 ((SalesPanel)BarFrame.instance.panels[2]).initComponent();
+                 initComponent();
+                 add(BarFrame.menuPanel);
             }
         });
         ccbTable.addColorChangedListener(new ColorChangedListener() {
             @Override
             public void colorChanged(Color newColor) {
                  BarOption.setBK(newColor,"Table");
+                 ((TablesPanel)BarFrame.instance.panels[0]).initComponent();
             }
         });
         ccbTableSelected.addColorChangedListener(new ColorChangedListener() {
             @Override
             public void colorChanged(Color newColor) {
                  BarOption.setBK(newColor,"TableSelected");
+                 ((TablesPanel)BarFrame.instance.panels[0]).initComponent();
             }
         });
         ccbNumBtn.addColorChangedListener(new ColorChangedListener() {
             @Override
             public void colorChanged(Color newColor) {
                  BarOption.setBK(newColor,"NumBtn");
+                 BarFrame.numberPanelDlg.initComponent();
+                 BarFrame.payCashDlg.initComponent();
             }
         });
 		ccbArrowBtn.addColorChangedListener(new ColorChangedListener() {
@@ -527,21 +651,32 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 				BarOption.setBK(newColor, "Arrow");
 			}
 		});
+		
+		reLayout();
     }
 
     JLabel lblBillPageRow;
     JTextField tfdBillPageRow;
     JLabel lblBillPageCol;
     JTextField tfdBillPageCol;
+    JLabel lblCategoryRow;
+    JTextField tfdCategoryRow;
+    JLabel lblCategoryCol;
+    JTextField tfdCategoryCol;
+    JLabel lblDishRow;
+    JTextField tfdDishRow;
+    JLabel lblDishCol;
+    JTextField tfdDishCol;
+    
     JLabel lblStartTimeOfDay;
     JTextField tfdStartTimeOfDay;
     JCheckBox cbxIsSingleUser;
     JCheckBox cbxIsDiscBeforeTax;
 //    JCheckBox cbxIsPrintBillWhenPay;
-    JLabel lblGeneralBackGround;
-    ColorChooserButton ccbGeneral;
     JLabel lblLoginBackGround;
     ColorChooserButton ccbLogin;
+    JLabel lblTablePanelBackGround;
+    ColorChooserButton ccbTablePanel;
     JLabel lblBillBackGround;
     ColorChooserButton ccbBill;
     JLabel lblSalesBackGround;

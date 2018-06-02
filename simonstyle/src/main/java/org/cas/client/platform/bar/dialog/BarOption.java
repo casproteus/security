@@ -23,7 +23,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.cas.client.platform.CASControl;
-import org.cas.client.platform.bar.beans.ColorChooserButton;
 import org.cas.client.platform.casbeans.PIMSeparator;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
@@ -34,7 +33,6 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.platform.pos.dialog.modifyuser.MUserSwichDlg;
 import org.cas.client.platform.pos.dialog.modifyuser.ModifyPasswordDlg;
 import org.cas.client.resource.international.DlgConst;
-import org.cas.client.resource.international.OptionDlgConst;
 
 import com.jpos.POStest.POStestGUI;
 
@@ -174,6 +172,38 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     public static void setBillPageCol(String col) {
     	CustOpts.custOps.setKeyAndValue("BillPanel_Col", col);
     }
+    
+    public static int getCategoryRow() {
+    	return CustOpts.custOps.getValue("Category_Row") == null ? 
+    			3 : Integer.valueOf((String)CustOpts.custOps.getValue("Category_Row"));
+    }
+    public static void setCategoryRow(String row) {
+    	CustOpts.custOps.setKeyAndValue("Category_Row", row);
+    }
+    
+    public static int getCategoryCol() {
+    	return CustOpts.custOps.getValue("Category_Col") == null ? 
+    			5 : Integer.valueOf((String)CustOpts.custOps.getValue("Category_Col"));
+    }
+    public static void setCategoryCol(String col) {
+    	CustOpts.custOps.setKeyAndValue("Category_Col", col);
+    }
+    
+    public static int getDishRow() {
+    	return CustOpts.custOps.getValue("Dish_Row") == null ? 
+    			4 : Integer.valueOf((String)CustOpts.custOps.getValue("Dish_Row"));
+    }
+    public static void setDishRow(String row) {
+    	CustOpts.custOps.setKeyAndValue("Dish_Row", row);
+    }
+    
+    public static int getDishCol() {
+    	return CustOpts.custOps.getValue("Dish_Col") == null ? 
+    			4 : Integer.valueOf((String)CustOpts.custOps.getValue("Dish_Col"));
+    }
+    public static void setDishCol(String col) {
+    	CustOpts.custOps.setKeyAndValue("Dish_Col", col);
+    }
 
     public static boolean isSingleUser() {
     	return "true".equals(CustOpts.custOps.getValue("SingleUserMode"));
@@ -187,7 +217,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     }
     public static boolean isFastFoodMode() {
     	return CustOpts.custOps.getValue("FastFoodMode") == null ? 
-    			false : Boolean.valueOf((String)CustOpts.custOps.getValue("FastFoodMode"));
+    			false : (Boolean)CustOpts.custOps.getValue("FastFoodMode");
     }
     
     public static void setStartTime(String startTimeOfDay) {
@@ -195,7 +225,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     }
     public static String getStartTime() {
     	return CustOpts.custOps.getValue("StartTimeOfDay") == null ? 
-    			"00:00:00" : String.valueOf((String)CustOpts.custOps.getValue("StartTimeOfDay"));
+    			"00:00:00" : String.valueOf(CustOpts.custOps.getValue("StartTimeOfDay"));
     }
     
     public BarOption(JFrame pFrame) {

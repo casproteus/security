@@ -11,7 +11,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -431,13 +430,14 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         int xMenuArea = billPanel.getX() + billPanel.getWidth() + CustOpts.HOR_GAP;
         int widthMenuArea = getWidth() - billPanel.getWidth() - CustOpts.HOR_GAP * 2 - CustOpts.SIZE_EDGE;
 
-        BarFrame.instance.menuPanel.setBounds(xMenuArea, billPanel.getY(), widthMenuArea, topAreaHeight);
-        BarFrame.instance.menuPanel.reLayout();
+        BarFrame.menuPanel.setBounds(xMenuArea, billPanel.getY(), widthMenuArea, topAreaHeight);
+        BarFrame.menuPanel.reLayout();
 
         billPanel.resetColWidth(billPanel.getWidth());
     }
 
-    public void initComponent() {
+    void initComponent() {
+    	removeAll();
         btnLine_1_1 = new FunctionButton(BarFrame.consts.CASH());
         btnLine_1_2 = new FunctionButton(BarFrame.consts.DEBIT());
         btnLine_1_3 = new FunctionButton(BarFrame.consts.VISA());
@@ -516,6 +516,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_2_8.addActionListener(this);
         btnLine_2_9.addActionListener(this);
         btnLine_2_10.addActionListener(this);
+        
+		reLayout();
     }
 
     private FunctionButton btnLine_1_1;

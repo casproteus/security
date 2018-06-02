@@ -238,7 +238,8 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         return false;
     }
     
-    private void initComponent() {
+    void initComponent() {
+    	removeAll();
         btnLine_2_1 = new JToggleButton(BarFrame.consts.ChangeMode());
 		btnLine_2_2 = new FunctionButton(BarFrame.consts.AddTable());
 		btnLine_2_3 = new FunctionButton(BarFrame.consts.OrderManage());
@@ -249,7 +250,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 		btnCheckInOut = new FunctionButton(BarFrame.consts.CheckInOut());
 
         // border----------
-        setBackground(BarOption.getBK("General"));
+        setBackground(BarOption.getBK("TablePanel"));
         setLayout(null);
 
         // built
@@ -275,6 +276,8 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         btnCheckInOut.addActionListener(this);
         
         btnLine_2_1.setSelected(BarOption.isFastFoodMode());
+
+		reLayout();
     }
 
     // menu and category buttons must be init after initContent---------

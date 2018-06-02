@@ -436,7 +436,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		if(num > BarOption.MaxQTY * 100) {
     			num = num %(BarOption.MaxQTY * 100);
     		}
-    		int pS = (int)num /BarOption.MaxQTY;
+    		int pS = num /BarOption.MaxQTY;
     		if(num > BarOption.MaxQTY) {
     			num = num % BarOption.MaxQTY;
     		}
@@ -475,8 +475,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		//@TODO: I am not sure if it's correct to do like this, we don't know what tax rate is good for the bill discount.
     	}
 
-        lblDiscount.setText(discount > 0 ? BarFrame.consts.Discount() + " : -" + BarOption.getMoneySign() + String.valueOf(((int)discount)/100f) : "");
-        lblServiceFee.setText(serviceFee > 0 ? BarFrame.consts.ServiceFee() + " : " + BarOption.getMoneySign() + String.valueOf(((int)serviceFee)/100f) : "");
+        lblDiscount.setText(discount > 0 ? BarFrame.consts.Discount() + " : -" + BarOption.getMoneySign() + String.valueOf((discount)/100f) : "");
+        lblServiceFee.setText(serviceFee > 0 ? BarFrame.consts.ServiceFee() + " : " + BarOption.getMoneySign() + String.valueOf((serviceFee)/100f) : "");
     	lblSubTotle.setText(BarFrame.consts.Subtotal() + " : " + BarOption.getMoneySign() + String.valueOf(subTotal/100f));
         lblTPS.setText(BarFrame.consts.TPS() + " : " + BarOption.getMoneySign() + String.valueOf(((int)totalGst)/100f));
         lblTVQ.setText(BarFrame.consts.TVQ() + " : " + BarOption.getMoneySign() + String.valueOf(((int)totalQst)/100f));
@@ -533,7 +533,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	    		if(num > BarOption.MaxQTY * 100) {
 	    			num = num %(BarOption.MaxQTY * 100);
 	    		}
-	    		int pS = (int)num /BarOption.MaxQTY;
+	    		int pS = num /BarOption.MaxQTY;
 	    		if(num > BarOption.MaxQTY) {
 	    			num = num % BarOption.MaxQTY;
 	    		}
@@ -683,7 +683,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     }
     
     void initComponent() {
-
+    	removeAll();
         tblSelectedDish = new PIMTable();// 显示字段的表格,设置模型
         scrContent = new PIMScrollPane(tblSelectedDish);
         lblDiscount = new JLabel();
@@ -756,6 +756,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         tblSelectedDish.addMouseListener(this);
         tblSelectedDish.getSelectionModel().addListSelectionListener(this);
         scrContent.getViewport().addMouseListener(this);
+		reLayout();
     }
     
     public PIMTable tblSelectedDish;

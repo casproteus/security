@@ -6,12 +6,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.BarUtil;
+import org.cas.client.platform.bar.beans.FunctionButton;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -110,12 +110,12 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
     		ErrorUtil.write(exp);
     	}
     }
-	public void show(JButton btnMore) {
+	public void show(FunctionButton btnMore) {
 		reLayout(btnMore);
 		this.setVisible(true);
 	}
 	
-	private void reLayout(JButton btnMore) {
+	private void reLayout(FunctionButton btnMore) {
 		int x = btnMore.getX();
 		int y = btnMore.getY();
 		int width = btnMore.getWidth();
@@ -139,15 +139,15 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 	
 	private void initPanel() {
 		// 初始化－－－－－－－－－－－－－－－－
-		btnLine_3_1 = new JButton(BarFrame.consts.SETTINGS());
+		btnLine_3_1 = new FunctionButton(BarFrame.consts.SETTINGS());
         btnLine_3_2 = new JToggleButton(BarFrame.consts.QTY());
-        btnLine_3_3 = new JButton(BarFrame.consts.EXACT_AMOUNT());
-		btnLine_3_4 = new JButton("EN");
-		btnLine_3_5 = new JButton("FR");
-		btnLine_3_6 = new JButton("CN");
-		//btnLine_3_7 = new JButton(BarFrame.consts.DISC_VOLUMN);
-		//btnLine_3_8 = new JButton(BarFrame.consts.LOGOUT);
-		//btnLine_3_9 = new JButton(BarFrame.consts.MORE);
+        btnLine_3_3 = new FunctionButton(BarFrame.consts.EXACT_AMOUNT());
+		btnLine_3_4 = new FunctionButton("EN");
+		btnLine_3_5 = new FunctionButton("FR");
+		btnLine_3_6 = new FunctionButton("CN");
+		//btnLine_3_7 = new FunctionButton(BarFrame.consts.DISC_VOLUMN);
+		//btnLine_3_8 = new FunctionButton(BarFrame.consts.LOGOUT);
+		//btnLine_3_9 = new FunctionButton(BarFrame.consts.MORE);
 
 		// 属性设置－－－－－－－－－－－－－－
 		btnLine_3_1.setMargin(new Insets(0, 0, 0, 0));
@@ -187,15 +187,15 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		
 		this.addWindowFocusListener(this);
 	}
-	private JButton btnLine_3_1;
+	private FunctionButton btnLine_3_1;
 	private JToggleButton btnLine_3_2;
-	private JButton btnLine_3_3;
-	private JButton btnLine_3_4;
-	private JButton btnLine_3_5;
-	private JButton btnLine_3_6;
-//	private JButton btnLine_3_7;
-//	private JButton btnLine_3_8;
-//	private JButton btnLine_3_9;
+	private FunctionButton btnLine_3_3;
+	private FunctionButton btnLine_3_4;
+	private FunctionButton btnLine_3_5;
+	private FunctionButton btnLine_3_6;
+//	private FunctionButton btnLine_3_7;
+//	private FunctionButton btnLine_3_8;
+//	private FunctionButton btnLine_3_9;
 
 	@Override
 	public void windowGainedFocus(WindowEvent e) {

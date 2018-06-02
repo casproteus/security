@@ -195,6 +195,14 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String BillPageCol() {return "账单分布列数:";}
     @Override
+	public String CategoryRow() {return "类别按钮行数:";}
+    @Override
+	public String CategoryCol() {return "类别按钮列数:";}
+    @Override
+	public String DishRow() {return "菜单按钮行数:";}
+    @Override
+	public String DishCol() {return "菜单按钮列数:";}
+    @Override
 	public String IsSingleUser() {return "单人操作模式";}
     @Override
 	public String IsDiscBeforeTax() {return "打折时税款也进行打折";}
@@ -449,7 +457,7 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String RESET() {return "复位";}
 
     @Override
-	public String GeneralBK(){return "通用背景色";}
+	public String TablePanelBK(){return "通用背景色";}
     @Override
 	public String LoginBK(){return "登录对话盒背景色";};
     @Override

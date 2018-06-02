@@ -195,6 +195,14 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String BillPageCol() {return "Columns of Bills:";}
     @Override
+	public String CategoryRow() {return "Rows of Category Button:";}
+    @Override
+	public String CategoryCol() {return "Columns of Category Button:";}
+    @Override
+	public String DishRow() {return "Rows of Dish Button:";}
+    @Override
+	public String DishCol() {return "Columns of Dish Button:";}
+    @Override
 	public String IsSingleUser() {return "Is single user mode";}
     @Override
 	public String IsDiscBeforeTax() {return "Is discount apply on price before tax";}
@@ -449,7 +457,7 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String RESET() {return "RESET";}
 
     @Override
-	public String GeneralBK(){return "General Back Ground";}
+	public String TablePanelBK(){return "General Back Ground";}
     @Override
 	public String LoginBK(){return "Login Dialog Back Ground";};
     @Override

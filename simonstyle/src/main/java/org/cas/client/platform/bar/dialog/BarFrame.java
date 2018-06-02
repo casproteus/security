@@ -102,8 +102,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
-		lblVersion = new JLabel("V0.9-20180531");
-        menuPanel = new MenuPanel();
+		lblVersion = new JLabel("V0.10-20180602");
+        
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();
         panels[2] = new SalesPanel();
@@ -375,7 +375,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     private DecimalFormat decimalFormat = new DecimalFormat("#0.00");
     
     public JPanel[] panels = new JPanel[4];
-    public MenuPanel menuPanel;
+    public static MenuPanel menuPanel = new MenuPanel();;
     static JLabel lblStatus;
     private JLabel lblVersion;
 }

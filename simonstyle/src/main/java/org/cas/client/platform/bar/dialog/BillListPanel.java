@@ -10,7 +10,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -28,7 +27,11 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	int curPageNum;
 	
 	public BillListPanel() {
-		
+		initComponent();
+	}
+
+	void initComponent() {
+		removeAll();
 		billPanels= new ArrayList<BillPanel>();
 		onScrBills= new ArrayList<BillPanel>();
 
@@ -81,6 +84,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnReturn.addActionListener(this);
 		
 		btnLeft.setEnabled(curPageNum > 0);
+		reLayout();
 	}
 	
 	void initContent() {

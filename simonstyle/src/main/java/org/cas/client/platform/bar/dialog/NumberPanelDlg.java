@@ -16,7 +16,6 @@ import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
-import org.cas.client.resource.international.DlgConst;
 
 public class NumberPanelDlg extends JDialog implements ActionListener, ComponentListener{
 	public static String curContent = "";
@@ -34,7 +33,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         super(pParent, true);
         barFrame = pParent;
         
-        initDialog();
+        initComponent();
     }
 
     /*
@@ -172,7 +171,9 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 			btnSource.setSelected(false);
 	}
 
-    private void initDialog() {
+    void initComponent() {
+    	removeAll();
+    	
         setTitle(BarFrame.consts.QTY());
         setResizable(false);
         setModal(false);
@@ -258,6 +259,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
                 tfdQTY.grabFocus();
             }
         });
+        reLayout();
     }
 
 	public void setBtnSource(JToggleButton btnSource) {

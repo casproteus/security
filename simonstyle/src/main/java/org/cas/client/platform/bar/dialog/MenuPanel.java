@@ -32,10 +32,10 @@ public class MenuPanel extends JPanel implements ActionListener {
     private int curMenuPageNum = 0;
     private int curMenuPerPage = 0;
 
-    Integer categoryColumn = (Integer) CustOpts.custOps.hash2.get("categoryColumn");
-    Integer categoryRow = (Integer) CustOpts.custOps.hash2.get("categoryRow");
-    Integer menuColumn = (Integer) CustOpts.custOps.hash2.get("menuColumn");
-    Integer menuRow = (Integer) CustOpts.custOps.hash2.get("menuRow");
+    Integer categoryColumn;
+    Integer categoryRow;
+    Integer menuColumn;
+    Integer menuRow;
 
     String[][] categoryNameMetrix;
     ArrayList<ArrayList<CategoryToggleButton>> onSrcCategoryTgbMatrix = new ArrayList<ArrayList<CategoryToggleButton>>();
@@ -51,7 +51,17 @@ public class MenuPanel extends JPanel implements ActionListener {
     private Dish[] onScrDishAry;
     ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
 	public MenuPanel() {
-		
+		initComponent();
+	}
+
+	void initComponent() {
+		removeAll();
+
+	    categoryRow = BarOption.getCategoryRow();
+	    categoryColumn = BarOption.getCategoryCol();
+	    menuRow = BarOption.getDishRow();
+	    menuColumn = BarOption.getDishCol();
+	    
 		btnPageUpCategory = new ArrowButton("↑");
         btnPageDownCategory = new ArrowButton("↓");
         btnPageUpMenu = new ArrowButton("↑");
@@ -79,6 +89,9 @@ public class MenuPanel extends JPanel implements ActionListener {
         add(btnPageDownMenu);
         
 		initCategoryAndDishes();
+		reLayout();
+		validate();
+		repaint();
 	}
 	
     public void initCategoryAndDishes() {

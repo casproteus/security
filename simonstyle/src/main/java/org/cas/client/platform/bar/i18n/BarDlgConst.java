@@ -107,6 +107,10 @@ public interface BarDlgConst {
 
     String BillPageRow();
     String BillPageCol();
+    String CategoryRow();
+    String CategoryCol();
+    String DishRow();
+    String DishCol();
     String IsSingleUser();
     String IsDiscBeforeTax();
     String IsPrintBillWhenPay();
@@ -245,7 +249,7 @@ public interface BarDlgConst {
     String DELETE();
     String RESET();
 
-    String GeneralBK();
+    String TablePanelBK();
     String LoginBK();
     String BillPanelBK();
     String SalesPanelBK();

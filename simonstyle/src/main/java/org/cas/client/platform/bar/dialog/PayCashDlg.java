@@ -34,7 +34,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 	
     public PayCashDlg(BarFrame pParent) {
         super(pParent, true);
-        initDialog();
+        initComponent();
     }
     
     public void updateBill(int billId) {
@@ -328,7 +328,9 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 		valLeft.setText(String.valueOf((int)(total * 100 - received * 100)/100f));
 	}
 	
-    private void initDialog() {
+    void initComponent() {
+    	removeAll();
+    	
         setResizable(false);
         setModal(false);
         setAlwaysOnTop(true);
@@ -486,6 +488,8 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
                 tfdNewReceived.grabFocus();
             }
         });
+        
+        reLayout();
     }
 
 	public void setFloatSupport(boolean setFloatSupport) {
