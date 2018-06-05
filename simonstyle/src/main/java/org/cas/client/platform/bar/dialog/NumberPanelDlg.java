@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -14,6 +13,7 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
+import org.cas.client.platform.bar.beans.NumButton;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 
@@ -185,22 +185,23 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         // 初始化－－－－－－－－－－－－－－－－
         tfdQTY = new JTextField();
         lblQTY = new JLabel(BarFrame.consts.QTYNOTICE());
-        ok = new JButton("✔");
-        back = new JButton("←");
-        num1 = new JButton("1");
-        num2 = new JButton("2");
-        num3 = new JButton("3");
-        num4 = new JButton("4");
-        num5 = new JButton("5");
-        num6 = new JButton("6");
-        num7 = new JButton("7");
-        num8 = new JButton("8");
-        num9 = new JButton("9");
-        num0 = new JButton("0");
-        point = new JButton(".");
+        ok = new NumButton("✔");
+        back = new NumButton("←");
+        num1 = new NumButton("1");
+        num2 = new NumButton("2");
+        num3 = new NumButton("3");
+        num4 = new NumButton("4");
+        num5 = new NumButton("5");
+        num6 = new NumButton("6");
+        num7 = new NumButton("7");
+        num8 = new NumButton("8");
+        num9 = new NumButton("9");
+        num0 = new NumButton("0");
+        point = new NumButton(".");
 
         // 属性设置－－－－－－－－－－－－－－
         // ok.setFont(CustOpts.custOps.getFontOfDefault());
+        getContentPane().setBackground(BarOption.getBK("Login"));
         back.setMargin(new Insets(0, 0, 0, 0));
         ok.setMargin(new Insets(0, 0, 0, 0));
         num1.setMargin(back.getMargin());
@@ -281,19 +282,19 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 	}
 	
 	private BarFrame barFrame;
-    private JButton num1;
-    private JButton num2;
-    private JButton num3;
-    private JButton num4;
-    private JButton num5;
-    private JButton num6;
-    private JButton num7;
-    private JButton num8;
-    private JButton num9;
-    private JButton num0;
-    private JButton point;
-    private JButton back;
-    private JButton ok;
+    private NumButton num1;
+    private NumButton num2;
+    private NumButton num3;
+    private NumButton num4;
+    private NumButton num5;
+    private NumButton num6;
+    private NumButton num7;
+    private NumButton num8;
+    private NumButton num9;
+    private NumButton num0;
+    private NumButton point;
+    private NumButton back;
+    private NumButton ok;
 
     public JTextField tfdQTY;
     private JLabel lblQTY;

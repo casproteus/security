@@ -235,7 +235,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	public void actionPerformed(ActionEvent e) {	//@NOTE: the bill button could trigger two times of event.
 		Object o = e.getSource();
 		if(o instanceof JToggleButton) {
-			if(o == btnEqualBill) {
+			if(o == btnEqualBill) {	//aplite bill eually
 				BillPanel panel = getCurBillPanel();
 				if(panel == null) {
 					JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
@@ -311,7 +311,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			}else if(o == btnCombineAll) {//@note should consider the time, incase there'ss some bill not paid before, while was calculated into current client.
 		        String sql =
 		                "update output set contactID = 1 where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
-		                + "' and time > '" + BarFrame.instance.valStartTime.getText() + "' and DELETED != true";
+		                + "' and time = '" + BarFrame.instance.valStartTime.getText() + "' and DELETED != true";
 		        try {
 		        	PIMDBModel.getStatement().execute(sql);
 		        }catch(Exception exp) {

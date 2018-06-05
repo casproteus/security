@@ -8,7 +8,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Vector;
 
@@ -229,7 +228,6 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
 					default:
 						break;
 					}
-                    BarFrame.instance.initComponent();
                     setVisible(false);
                     return;
                 }

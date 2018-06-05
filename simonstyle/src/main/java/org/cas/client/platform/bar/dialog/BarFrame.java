@@ -41,6 +41,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
             String[] args) {
         CASControl.ctrl.initModel();
         CASControl.ctrl.setMainFrame(new CASMainFrame());
+        menuPanel = new MenuPanel();	//have to be after initModel, before new BarFrame().
         instance = new BarFrame();
         numberPanelDlg = new NumberPanelDlg(instance);
         payCashDlg = new PayCashDlg(instance);
@@ -102,7 +103,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
-		lblVersion = new JLabel("V0.11-20180602");
+		lblVersion = new JLabel("V0.14-20180535");
         
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();
@@ -375,7 +376,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     private DecimalFormat decimalFormat = new DecimalFormat("#0.00");
     
     public JPanel[] panels = new JPanel[4];
-    public static MenuPanel menuPanel = new MenuPanel();;
+    public static MenuPanel menuPanel;
     static JLabel lblStatus;
     private JLabel lblVersion;
 }

@@ -329,7 +329,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 	}
 	
     void initComponent() {
-    	removeAll();
+    	getContentPane().removeAll();
     	
         setResizable(false);
         setModal(false);

@@ -138,7 +138,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
 		        //in case some store need to stay in the interface after clicking the send button. 
                 StringBuilder sql = new StringBuilder("Select id from output where SUBJECT = '")
-                    .append(BarFrame.instance.valCurTable).append("' and CONTACTID = ")
+                    .append(BarFrame.instance.valCurTable.getText()).append("' and CONTACTID = ")
                     .append(BarFrame.instance.valCurBill.getText()).append(" and PRODUCTID = ")
                     .append(dish.getId()).append(" and AMOUNT = ")
                     .append(dish.getNum()).append(" and TOLTALPRICE = ")

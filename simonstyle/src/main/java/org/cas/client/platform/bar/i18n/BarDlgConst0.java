@@ -90,7 +90,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String QTY() {return "QTY";}
     @Override
-	public String QTYNOTICE() {return "Please input a number, it will be applied to selected dish";}
+	public String QTYNOTICE() {return "Please input a number to proceed";}
     @Override
 	public String DISC_ITEM() {return "DISC ITEM";}
     @Override
