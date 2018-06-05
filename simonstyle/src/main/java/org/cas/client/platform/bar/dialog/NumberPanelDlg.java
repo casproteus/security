@@ -91,6 +91,9 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 
     public void setAction(ActionListener action) {
     	this.ok.addActionListener(action);
+    	getContentPane().validate();
+    	getContentPane().repaint();
+    	reLayout();
     }
     
     /**
@@ -172,7 +175,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 	}
 
     void initComponent() {
-    	removeAll();
+    	getContentPane().removeAll();
     	
         setTitle(BarFrame.consts.QTY());
         setResizable(false);
@@ -217,7 +220,6 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         int tWidth = 310;
         setBounds((CustOpts.SCRWIDTH - tWidth) / 2, (CustOpts.SCRHEIGHT - tHight) / 2, tWidth, tHight); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
-        reLayout();
         
         // 搭建－－－－－－－－－－－－－
         getContentPane().add(tfdQTY);

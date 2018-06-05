@@ -88,8 +88,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 
     // ActionListner-------------------------------
     @Override
-    public void actionPerformed(
-            ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
         JComponent o = (JComponent)e.getSource();
         // category buttons---------------------------------------------------------------------------------
         if (o instanceof TableButton) {

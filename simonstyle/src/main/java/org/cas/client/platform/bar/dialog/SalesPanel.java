@@ -121,9 +121,14 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		
         	} else if (o == btnLine_1_4) {		//split bill
         		//check if there unsaved dish, and give warning.
-        		if(BillListPanel.curDish == null)
+        		if(BillListPanel.curDish == null) {
             		if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.UnSavedRecordFound(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
             			return;
+        		}
+        		if(billPanel.getNewDishes().size() > 0) {
+        			JOptionPane.showMessageDialog(this, BarFrame.consts.UnSendRecordFound());
+        			return;
+        		}
         		BarFrame.instance.switchMode(1);
         		
         	} else if (o == btnLine_1_5) {	//void item.
@@ -437,7 +442,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     }
 
     void initComponent() {
-    	removeAll();
+    	removeAll();	//when it's called by setting panel(changed colors...), it will be called to refresh.
         btnLine_1_1 = new FunctionButton(BarFrame.consts.CASH());
         btnLine_1_2 = new FunctionButton(BarFrame.consts.DEBIT());
         btnLine_1_3 = new FunctionButton(BarFrame.consts.VISA());

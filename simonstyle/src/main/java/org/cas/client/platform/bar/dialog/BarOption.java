@@ -96,7 +96,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 		return "75 cardinal";
 	}
 
-	private static String getStoreName() {
+	public static String getStoreName() {
 		// TODO Auto-generated method stub
 		return "NUDO";
 	}

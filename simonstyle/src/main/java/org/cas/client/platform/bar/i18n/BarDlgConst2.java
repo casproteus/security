@@ -149,7 +149,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String AllreadyRefund() {return "这个单据已经退过款了，您真的确定要再退一次款吗？已经退还的金额为： ";}
     @Override
-	public String UnSendRecordFound() {return "发现有尚未发送的记录! 请先确保所有的菜均已发送至厨房，然后再打印账单";}
+	public String UnSendRecordFound() {return "发现有尚未发送的记录! 请先确保所有的菜均已发送至厨房，然后再试";}
     @Override
 	public String Colon() {return "：";}
     @Override

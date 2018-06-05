@@ -149,7 +149,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String AllreadyRefund() {return "This bill is allready refunded, are you sure to do one more refund?, already refunded: ";}
     @Override
-	public String UnSendRecordFound() {return "Unsend records found! please make sure all dish have send to kitch before printing bill";}
+	public String UnSendRecordFound() {return "Unsend records found! please make sure all dish have send to kitch before this action";}
     @Override
 	public String Colon() {return "：";}
     @Override

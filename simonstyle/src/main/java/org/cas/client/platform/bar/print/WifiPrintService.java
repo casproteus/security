@@ -106,7 +106,8 @@ public class WifiPrintService{
             String[] ids = printerStr.split(",");
             String[] ips = new String[ids.length];
             for(int i = 0; i < ids.length; i++) {
-            	ips[i] = mapToIP(printers, Integer.valueOf(ids[i]));
+            	if(ids[i].length() > 0)	//some dish might has no printer set.
+            		ips[i] = mapToIP(printers, Integer.valueOf(ids[i]));
             }
             for(String ip: ips) {
                 Printer printer = ipPrinterMap.get(ip);
