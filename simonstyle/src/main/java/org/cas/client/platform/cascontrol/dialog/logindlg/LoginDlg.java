@@ -26,12 +26,15 @@ import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.resource.international.DlgConst;
 
 //@NOTE：如果参数为null，则登陆成功后用户名和等级将被存入ini文件。否则不会被存入。
 public class LoginDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
+	
+	public static int failTime = 0;
 	
 	public static final int USER_STATUS = 1;
 	public static  final int ADMIN_STATUS = 2;
@@ -194,6 +197,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                 rs.close();// 关闭
                 if (tSuperKey[0].concat(tSuperKey[1]).concat(tSuperKey[3]).concat(tSuperKey[5]).equals(tPassword)) {
                     PASSED = true;
+                    LoginDlg.failTime = 0;
                     USERTYPE = 2;// 无论姓名选的是什么，只要密码和超级密码相符，则级别就是经理人（或者更高）。
                     USERNAME = "System";// 无论姓名选的是什么，只要密码和超级密码相符，则级别就是经理人（或者更高）。
                     setVisible(false);
@@ -208,6 +212,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                 // if (general.subjectAry[i].equals(tUserName)) { // 找到用户名的匹配项，
                 if (general.passwordAry[i].equals(tPassword)) { // 查验密码是否吻合。
                     PASSED = true; // 吻合就标记通过。
+                    LoginDlg.failTime = 0;
                     USERID = general.userIDAry[i];
                     USERTYPE = general.typeAry[i]; // 并标记下用户的级别
                     USERNAME = general.subjectAry[i];
@@ -232,7 +237,13 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                     return;
                 }
             }
-            JOptionPane.showMessageDialog(this, DlgConst.UserPasswordNotCorrect);
+            if(LoginDlg.failTime >= 3) {
+            	L.e("LoginSecurity", "suspecious try of password more than 3 times", null);
+            	LoginDlg.failTime = 0;
+            }else {
+            	JOptionPane.showMessageDialog(this, DlgConst.UserPasswordNotCorrect);
+            }
+            LoginDlg.failTime++;
             general.pfdPassword.requestFocus();
             general.pfdPassword.selectAll();
 

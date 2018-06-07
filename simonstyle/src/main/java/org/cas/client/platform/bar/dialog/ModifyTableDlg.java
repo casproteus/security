@@ -213,21 +213,30 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
 	        	}
         	}
         	
-        	
-        	String sql = btnTable.getId() == -1 ?				//if has no index means it's new table/
-        			"INSERT INTO DINING_TABLE (name, posX, posY, width, height, type) VALUES ('"
-					+ name + "', " + tfdLocations[0].getText() + ", " + tfdLocations[1].getText() + ", "
-					+ tfdLocations[2].getText() + ", " + tfdLocations[3].getText() + ", " + cmbCategory.getSelectedItem() + ")"
-					:
-					"Update DINING_TABLE set name = '" + name 
-					+ "', posX = " + tfdLocations[0].getText() + ", posY = " + tfdLocations[1].getText()
-					+ ", width = " + tfdLocations[2].getText() + ", height = " + tfdLocations[3].getText()
-					+ ", type = " + cmbCategory.getSelectedItem() + " where id = " + btnTable.getId();
+        	StringBuilder sql = new StringBuilder();
+    		if(btnTable.getId() == -1) {	//if has no index means it's new table/
+    			int type = cmbCategory.getSelectedIndex();
+    			if(settingTabbleDlg == null){
+    				type += 100;
+    			}
+    			sql.append("INSERT INTO DINING_TABLE (name, posX, posY, width, height, type) VALUES ('")
+    			.append(name).append("', ").append(tfdLocations[0].getText()).append(", ")
+    			.append(tfdLocations[1].getText()).append(", ").append(tfdLocations[2].getText())
+    			.append(", ").append(tfdLocations[3].getText()).append(", ")
+    			.append(type).append(")");
+    		}else {
+    			sql.append("Update DINING_TABLE set name = '").append(name).append("', posX = ")
+    			.append(tfdLocations[0].getText()).append(", posY = ").append(tfdLocations[1].getText())
+    			.append(", width = ").append(tfdLocations[2].getText()).append(", height = ")
+    			.append(tfdLocations[3].getText()).append(", type = ").append(cmbCategory.getSelectedItem())
+    			.append(" where id = ").append(btnTable.getId());
+    		}
+        		
         	try {
-        		PIMDBModel.getStatement().execute(sql);
+        		PIMDBModel.getStatement().execute(sql.toString());
                 dispose();
                 if(settingTabbleDlg != null)
-                	settingTabbleDlg.initTableBtns();
+                	settingTabbleDlg.initContent();
                 else
                 	((TablesPanel)BarFrame.instance.panels[BarFrame.instance.curPanel]).initContent();
         	}catch(Exception exp) {
@@ -347,24 +356,14 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
 	@Override
 	public void componentResized(ComponentEvent e) {
 		reLayout();
-		
 	}
 
 	@Override
-	public void componentMoved(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void componentMoved(ComponentEvent e) {}
 
 	@Override
-	public void componentShown(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void componentShown(ComponentEvent e) {}
 
 	@Override
-	public void componentHidden(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void componentHidden(ComponentEvent e) {}
 }

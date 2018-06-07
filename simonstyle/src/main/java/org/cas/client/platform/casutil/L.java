@@ -23,7 +23,7 @@ import org.json.JSONObject;
 
 public class L extends Thread{
 	public static boolean debug;
-    private static final String ErrorLogURL = "http://stgo.giize.com:81";
+    private static final String ErrorLogURL = "http://stgo.giize.com:81/bigbang";
     private static int index = 0;
 
     private static L instance = null;
@@ -62,7 +62,7 @@ public class L extends Thread{
             instance = new L();
             instance.start();
         }
-        msgs.add(index++ + "_" + msg);
+        msgs.add(index++ + tag + "_" + msg);
     }
 
     @Override

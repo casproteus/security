@@ -8,6 +8,9 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -30,9 +33,14 @@ import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
 //Identity表应该和Employ表合并。
-public class TablesPanel extends JPanel implements ComponentListener, ActionListener, FocusListener {
+public class TablesPanel extends JPanel implements ComponentListener, ActionListener, FocusListener, MouseListener {
 
     static ArrayList<TableButton> btnTables = new ArrayList<TableButton>();
+    
+    private TableButton btnPressed;
+    private boolean isDragged;
+    private int xGap, yGap;
+    
     
     private final int USER_STATUS = 1;
     private final int ADMIN_STATUS = 2;
@@ -92,6 +100,9 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         JComponent o = (JComponent)e.getSource();
         // category buttons---------------------------------------------------------------------------------
         if (o instanceof TableButton) {
+        	if(isDragged) {
+        		return;	//do nothing.
+        	}
             TableButton tableToggle = (TableButton) o;
         	BarFrame.instance.valCurTable.setText(tableToggle.getText());
         	
@@ -295,22 +306,36 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             ResultSet rs = smt.executeQuery("select * from dining_Table order by DSP_INDEX");
             rs.beforeFirst();
 
-            int tmpPos = 0;
             while (rs.next()) {
             	TableButton tableToggleButton = new TableButton();
             	
-            	tableToggleButton.setId(tmpPos);
+            	tableToggleButton.setId(rs.getInt("ID"));
             	tableToggleButton.setText(rs.getString("Name"));
             	tableToggleButton.setBounds(rs.getInt("posX"), rs.getInt("posY"), rs.getInt("width"), rs.getInt("height"));
-            	tableToggleButton.setType(rs.getInt("type"));		//it's rectanglee or round?
             	tableToggleButton.setOpenTime(rs.getString("openTime"));
             	if(rs.getInt("status") > 0)
             		tableToggleButton.setBackground(colorSelected);
             	tableToggleButton.setMargin(new Insets(0, 0, 0, 0));
     			tableToggleButton.addActionListener(this);
+    			int type = rs.getInt("type");
+    			if(type >= 100) {
+    				type -= 100;
+    				tableToggleButton.addMouseListener(this);
+    				tableToggleButton.addMouseMotionListener(new MouseMotionListener(){
+        	        	@Override
+    					public void mouseDragged(MouseEvent e) {
+        	        		if(btnPressed != null) {
+        	        			btnPressed.setLocation(btnPressed.getX() + e.getX() - xGap, btnPressed.getY() + e.getY() - yGap);
+        	        			isDragged = true;
+        	        		}
+        	        	}
+        	        	@Override
+    					public void mouseMoved(MouseEvent e) {}
+        	        });
+    			}
+            	tableToggleButton.setType(type);		//it's rectanglee or round?
     			add(tableToggleButton);
             	btnTables.add(tableToggleButton);
-                tmpPos++;
             }
             
             rs.close();// 关闭
@@ -332,4 +357,45 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 	private FunctionButton btnLine_2_6;
 	private FunctionButton btnLine_2_8;
 	private FunctionButton btnCheckInOut;
+
+
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		Object o = e.getSource();
+		if( o instanceof TableButton) {
+			btnPressed = (TableButton)o;
+			xGap = e.getX();
+			yGap = e.getY();
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		Object o = e.getSource();
+		if(o instanceof TableButton) {
+			if(btnPressed != null && isDragged) {
+				TableButton btn = (TableButton)o;
+				//updateDB;
+				String sql = "Update DINING_TABLE set posX = " + (btn.getX() + e.getX() - xGap) + ", posY = " + (btn.getY() + e.getY()-yGap) + " where id = " + btn.getId();
+	        	try {
+	        		PIMDBModel.getStatement().execute(sql);
+	                initContent();
+	        	}catch(Exception exp) {
+	        		ErrorUtil.write(exp);
+	        	}
+				reLayout();
+			}
+		}
+
+		isDragged = false;
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
 }

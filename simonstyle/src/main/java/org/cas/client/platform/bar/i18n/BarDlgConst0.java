@@ -139,7 +139,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String USE_MODE() {return "System is in operating mode!";}
     @Override
-	public String Title() {return "STGOBar - Copyright 2018 - http://www.ShareTheGoodOnes.com";}
+	public String Title() {return "Aika Pos - Copyright 2018 - http://www.ShareTheGoodOnes.com";}
     @Override
 	public String DuplicatedInput() {return "Dubplicated name found! please choose an other name";}
     @Override

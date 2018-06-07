@@ -133,7 +133,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
         		if(!isAnyTableButtonSelected) {
         			new ModifyTableDlg(this, new TableButton()).setVisible(true);
         		}
-        		initTableBtns();
+        		initContent();
         	}else if(o == btnLess) {
         		Statement smt = PIMDBModel.getStatement();
         		for (TableButton tableButton : btnTables) {
@@ -147,7 +147,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
 						}
 					}
 				}
-        		initTableBtns();
+        		initContent();
         	}else if (o ==btnModify) {
         		for (TableButton tableButton : btnTables) {
 					if (tableButton.getBackground().equals(bg)) {
@@ -202,11 +202,11 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
         btnMore.addActionListener(this);
         btnLess.addActionListener(this);
         btnModify.addActionListener(this);
-        initTableBtns();
+        initContent();
     }
 
     // menu and category buttons must be init after initContent---------
-	void initTableBtns() {
+	void initContent() {
 		//clean existing btns
 		for (int i = btnTables.size() - 1; i >=0; i--) {
 			TableButton tableToggleButton = btnTables.get(i);
@@ -231,13 +231,15 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
             	tableToggleButton.setMargin(new Insets(0, 0, 0, 0));
     			tableToggleButton.addActionListener(this);
     			tableToggleButton.addMouseMotionListener(new MouseMotionListener(){
-    	        	public void mouseDragged(MouseEvent e) {
+    	        	@Override
+					public void mouseDragged(MouseEvent e) {
     	        		if(btnPressed != null) {
     	        			btnPressed.setLocation(btnPressed.getX() + e.getX() - xGap, btnPressed.getY() + e.getY() - yGap);
     	        			isDragged = true;
     	        		}
     	        	}
-    	        	public void mouseMoved(MouseEvent e) {}
+    	        	@Override
+					public void mouseMoved(MouseEvent e) {}
     	        });
     			tableToggleButton.addMouseListener(this);
     			this.add(tableToggleButton);
@@ -258,10 +260,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
     private JButton btnModify;
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseClicked(MouseEvent e) {}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -283,7 +282,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
 				String sql = "Update DINING_TABLE set posX = " + (btn.getX() + e.getX() - xGap) + ", posY = " + (btn.getY() + e.getY()-yGap) + " where id = " + btn.getId();
 	        	try {
 	        		PIMDBModel.getStatement().execute(sql);
-	                initTableBtns();
+	                initContent();
 	        	}catch(Exception exp) {
 	        		ErrorUtil.write(exp);
 	        	}
@@ -295,14 +294,8 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseEntered(MouseEvent e) {}
 
 	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseExited(MouseEvent e) {}
 }
