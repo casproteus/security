@@ -61,16 +61,25 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 		return null;
 	}
 
-    public static String getOwnerInfo() {
-    	StringBuilder sb = new StringBuilder(BarOption.getStoreName()).append("\n");
-    	sb.append(BarOption.getAddress()).append("\n");
-    	sb.append(BarOption.getCityAndProvince()).append("\n");
-    	sb.append(BarOption.getPostCode()).append("\n");
-    	sb.append(BarOption.getTel()).append("\n");
-    	sb.append(BarOption.getWebSite()).append("\n");
-    	return sb.toString();
+    public static String getBillHeadInfo() {
+    	String a = (String)CustOpts.custOps.getValue("BillHeadInfo");
+    	if(a == null || a.length() == 0) {
+	    	StringBuilder sb = new StringBuilder(BarOption.getStoreName()).append("\n");
+	    	sb.append(BarOption.getAddress()).append("\n");
+	    	sb.append(BarOption.getCityAndProvince()).append("\n");
+	    	sb.append(BarOption.getPostCode()).append("\n");
+	    	sb.append(BarOption.getTel()).append("\n");
+	    	sb.append(BarOption.getWebSite()).append("\n");
+	    	return sb.toString();
+    	}else {
+    		return a;
+    	}
     }
 
+    public static void setBillHeadInfo(String ownerInfo) {
+    	CustOpts.custOps.setKeyAndValue("BillHeadInfo", ownerInfo);
+    }
+    
     private static Object getWebSite() {
 		// TODO Auto-generated method stub
 		return "www.sharethegoodones.com/nudo";

@@ -49,6 +49,7 @@ public interface BarDlgConst {
     String VOID_ITEM();
     String SPLIT_BILL();
     String Modify();
+    String BillInfo();
     String ChangePrice();
     String ChangePriceNotice();
     String QTY();

@@ -222,6 +222,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		new EmployeeListDlg(BarFrame.instance).setVisible(true);
         	}else if(o == btnLine_2_6) {
         		new AddModificationDialog(BarFrame.instance, "").setVisible(true);
+        	}else if(o == btnLine_2_7) {
+        		new BillHeadDialog(BarFrame.instance, BarOption.getBillHeadInfo()).setVisible(true);
         	}
         }
         //JToggleButton-------------------------------------------------------------------------------------
@@ -462,7 +464,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
        
         btnLine_2_5 = new FunctionButton(BarFrame.consts.Operator());
         btnLine_2_6 = new FunctionButton(BarFrame.consts.Modify());
-        btnLine_2_7 = new FunctionButton("");//BarFrame.consts.Color());
+        btnLine_2_7 = new FunctionButton(BarFrame.consts.BillInfo());//BarFrame.consts.Color());
         btnLine_2_8 = new FunctionButton("");
         btnLine_2_9 = new FunctionButton("");
 

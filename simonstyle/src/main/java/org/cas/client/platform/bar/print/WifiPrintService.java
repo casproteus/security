@@ -279,7 +279,7 @@ public class WifiPrintService{
             }
         }
         
-        StringBuilder content = new StringBuilder(BarOption.getOwnerInfo());
+        StringBuilder content = new StringBuilder(BarOption.getBillHeadInfo());
         if(width < 20)
             content.append("\n\n");
         content.append("(").append(BarFrame.instance.valCurTable.getText()).append(")");

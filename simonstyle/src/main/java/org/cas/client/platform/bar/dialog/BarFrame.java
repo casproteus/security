@@ -98,8 +98,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valCurTable = new JLabel();
         lblCurBill = new JLabel(BarFrame.consts.BILL().concat(BarFrame.consts.Colon()));
         valCurBill = new JLabel();
-        
-        lblStartTime = new JLabel();
+        lblStartTime = new JLabel(BarFrame.consts.OPENTIME().concat(BarFrame.consts.Colon()));
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
@@ -154,6 +153,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 		if (i == 3) {
 			if (!adminAuthentication()) 
 				return -1;
+			resetStatus();
 		}else if(i == 2) {
 			((SalesPanel)panels[i]).billPanel.initContent();
 		}else if(i == 1) {
@@ -183,8 +183,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 		}
 		valCurTable.setText("");
 		valCurBill.setText("");
-
-		lblStartTime.setText(BarFrame.consts.OPENTIME().concat(BarFrame.consts.Colon()));
+		valStartTime.setText("");
 	}
     
     private boolean adminAuthentication() {
