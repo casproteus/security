@@ -77,6 +77,10 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     }
 
     public static void setBillHeadInfo(String ownerInfo) {
+    	if(ownerInfo == null)
+    		ownerInfo = "";
+    	if(!ownerInfo.endsWith("\n"))
+    		ownerInfo += "\n";
     	CustOpts.custOps.setKeyAndValue("BillHeadInfo", ownerInfo);
     }
     
