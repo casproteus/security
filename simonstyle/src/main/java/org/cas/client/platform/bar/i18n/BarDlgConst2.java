@@ -285,7 +285,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String Name() {return "名字";}
     @Override
-	public String IPAddress() {return "IP地址";}
+	public String IPAddress() {return "位置";}
     @Override
 	public String Categary() {return "类别";}
     @Override
