@@ -1,5 +1,7 @@
 package org.cas.client.platform.bar.print;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
@@ -9,10 +11,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.comm.CommPortIdentifier;
+import javax.comm.ParallelPort;
+import javax.swing.JOptionPane;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
@@ -23,7 +30,9 @@ import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.model.Printer;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 
+//If the ip of a printer is "LPT1", then will actually user com interface to drive the printer.
 public class WifiPrintService{
 
     public static int SUCCESS = -1;	//@NOTE:must be less than 0, because if it's 0, means the first element caused error.
@@ -59,18 +68,8 @@ public class WifiPrintService{
     public static final int ERR_PROCESSING = 1001;	//processing error
     public static final int ERR_PARAM = 1002;		//parameter error
     
-    private static String mapToIP(Printer[] printers, int id){
-    	String ip = "";
-    	for (Printer printer : printers) {
-			if(printer.getId() == id) {
-				return printer.getIp();
-			}
-		}
-    	return ip;
-    }
-  
     //The start time and end time are long format, need to be translate for print.
-    public static void exePrintReport(BillPanel billPanel, List<Dish> saleRecords){
+    public static void exePrintBill(BillPanel billPanel, List<Dish> saleRecords){
         String printerIP = BarFrame.instance.menuPanel.printers[0].getIp();
         if(!isIpContentMapEmpty()){
         	printContents();
@@ -82,7 +81,7 @@ public class WifiPrintService{
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).add(
-        		formatContentForReport(saleRecords, printerIP, billPanel, false) + "\n\n\n\n\n");
+        		formatContentForBill(saleRecords, printerIP, billPanel, false) + "\n\n\n\n\n");
         printContents();
     }
     
@@ -176,13 +175,24 @@ public class WifiPrintService{
         return printContents();
     }
     
+    private static String mapToIP(Printer[] printers, int id){
+    	String ip = "";
+    	for (Printer printer : printers) {
+			if(printer.getId() == id) {
+				return printer.getIp();
+			}
+		}
+    	return ip;
+    }
+  
     private static int printContents() {
     	BarFrame.setStatusMes("PRINTED...");
         for(Entry<String,List<String>> entry : ipContentMap.entrySet()) {
         	List<String> contents = entry.getValue();
         	for(int i = contents.size() - 1; i >= 0 ; i--) {
         		String sndMes = contents.get(i);
-            	if(doZiJiangPrint(entry.getKey(), null, sndMes)) {
+            	if("LPT1".equalsIgnoreCase(entry.getKey()) ? 
+            			doLPTPrint(entry.getKey(), null, sndMes) : doWebSocketPrint(entry.getKey(), null, sndMes)) {
             		contents.remove(i);//clean ipcontent;
             	}else {
             		return i;	//stop here, and return the error index.
@@ -208,60 +218,148 @@ public class WifiPrintService{
 		}
     }
     
-    private static boolean doZiJiangPrint(String ip, String font, String sndMsg){
+    private static boolean doLPTPrint(String ip, String font, String sndMsg) {
+        CommPortIdentifier tPortIdty;
+        try {
+            Enumeration tPorts = CommPortIdentifier.getPortIdentifiers();
+            if (tPorts == null) {
+                JOptionPane.showMessageDialog(BarFrame.instance, "no comm ports found!");
+                return false;
+            }
+
+            while (tPorts.hasMoreElements()) {
+                tPortIdty = (CommPortIdentifier) tPorts.nextElement();
+                if (!tPortIdty.getName().equals("LPT1"))
+                    continue;
+
+                if (!tPortIdty.isCurrentlyOwned()) {
+                    ParallelPort tParallelPort = (ParallelPort) tPortIdty.open("ParallelBlackBox", 2000);
+                    DataOutputStream outputStream = new DataOutputStream(tParallelPort.getOutputStream());
+        			sendContentThroughStream(font, sndMsg, outputStream);
+//                    outputStream.write(27); // 打印机初始化：
+//                    outputStream.write(64);
+//
+//                    char[] tTime = pDate.toCharArray(); // 输出日期时间 输出操作员工号
+//                    for (int i = 0; i < tTime.length; i++)
+//                        outputStream.write(tTime[i]);
+//
+//                    outputStream.write(13); // 回车
+//                    outputStream.write(10); // 换行
+//                    outputStream.write(10); // 进纸一行
+//
+//                    outputStream.write(28); // 设置为中文模式：
+//                    outputStream.write(38);
+//                    String tContent = ((String) CustOpts.custOps.getValue(PosDlgConst.PrintTitle)).concat("\n");
+//                    for (int i = 0, len = getUsedRowCount(); i < len; i++) { // 遍历有效行。
+//                        tContent = tContent.concat((String) tblContent.getValueAt(i, 1)).concat("\n"); // 再取出品名
+//                        tContent = tContent.concat((String) tblContent.getValueAt(i, 3)).concat("   "); // 再取出单价
+//                        tContent = tContent.concat((String) tblContent.getValueAt(i, 2)).concat("   "); // 再取出数量
+//                        tContent = tContent.concat((String) tblContent.getValueAt(i, 4)).concat("\n"); // 再取出小计
+//                    }
+//                    for (int i = 0; i < 4; i++)
+//                        // 换行
+//                        tContent = tContent.concat("\n");
+//
+//                    tContent = tContent.concat(PosDlgConst.SumTotal);
+//                    tContent = tContent.concat(tfdShoudReceive.getText());
+//                    tContent = tContent.concat(PosDlgConst.Unit).concat("   ");// 总计
+//
+//                    tContent = tContent.concat(PosDlgConst.Receive);
+//                    tContent = tContent.concat(tfdActuallyReceive.getText());
+//                    tContent = tContent.concat(PosDlgConst.Unit).concat("\n");// 收银
+//
+//                    tContent = tContent.concat(PosDlgConst.Change);
+//                    tContent = tContent.concat(tfdChange.getText());
+//                    tContent = tContent.concat(PosDlgConst.Unit);// 找零
+//
+//                    tContent =
+//                            tContent.concat("\n\n      ").concat(
+//                                    (String) CustOpts.custOps.getValue(PosDlgConst.Thankword));
+//                    tContent = tContent.concat("\n\n");
+//
+//                    Object tEncodType = CustOpts.custOps.getValue(PosDlgConst.EncodeStyle);
+//                    if (tEncodType == null)
+//                        tEncodType = "GBK";
+//                    if (!Charset.isSupported(tEncodType.toString()))
+//                        return;
+//                    BufferedWriter tWriter =
+//                            new BufferedWriter(new OutputStreamWriter(outputStream, tEncodType.toString()));
+//                    tWriter.write(tContent);
+//                    tWriter.close();
+//
+                    outputStream.close();
+                    tParallelPort.close();
+        			return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+			ErrorUtil.write(e);
+			L.e("LPT printing", "Error when printing content to LPT.", e);
+			return false;
+        }
+    }
+    
+    private static boolean doWebSocketPrint(String ip, String font, String sndMsg){
 		try {
 			Socket socket = new Socket(ip, 9100);
 			OutputStream outputStream = socket.getOutputStream();
-
-			if (!"silent".equals(CustOpts.custOps.getValue("mode"))) {
-				outputStream.write(Command.BEEP);
-			}
-			
-			if (font == null || font.length() < 1) {
-				outputStream.write(Command.GS_ExclamationMark);
-			} else {
-				// default: "27, 33, 48" because it works for both thermal and non-thermal
-				String[] pieces = font.split(",");
-				if (pieces.length != 3) {
-					outputStream.write(Command.GS_ExclamationMark);
-				} else {
-					for (int i = 0; i < 3; i++) {
-						Command.GS_ExclamationMark[i] = Integer.valueOf(pieces[i].trim()).byteValue();
-					}
-					outputStream.write(Command.GS_ExclamationMark);
-				}
-			}
-
-			// code can be customized
-			String charset = (String)CustOpts.custOps.getValue("code");
-			if (charset == null || charset.length() <= 2) {
-				charset = "GBK";
-			}
-			 if(sndMsg != null) {
-                byte[] send;
-                try {
-                    send = sndMsg.getBytes(charset);
-                } catch (UnsupportedEncodingException var5) {
-                	ErrorUtil.write("Can not conver with code:" + charset);
-                    send = sndMsg.getBytes();
-                	ErrorUtil.write("content to print will be:" + send);
-                }
-                outputStream.write(send);
-	        }
-
-			// cut the paper.
-			outputStream.write(Command.GS_V_m_n);
-
-			outputStream.flush();
+			sendContentThroughStream(font, sndMsg, outputStream);
+			outputStream.close();
 			socket.close();
 			return true;
 		} catch (Exception exp) {
 			ErrorUtil.write(exp);
+			L.e(ip, "Error when printing content to socket", exp);
 			return false;
 		}
     }
+
+	private static void sendContentThroughStream(String font, String sndMsg, OutputStream outputStream)
+			throws IOException {
+		if (!"silent".equals(CustOpts.custOps.getValue("mode"))) {
+			outputStream.write(Command.BEEP);
+		}
+		
+		if (font == null || font.length() < 1) {
+			outputStream.write(Command.GS_ExclamationMark);
+		} else {
+			// default: "27, 33, 48" because it works for both thermal and non-thermal
+			String[] pieces = font.split(",");
+			if (pieces.length != 3) {
+				outputStream.write(Command.GS_ExclamationMark);
+			} else {
+				for (int i = 0; i < 3; i++) {
+					Command.GS_ExclamationMark[i] = Integer.valueOf(pieces[i].trim()).byteValue();
+				}
+				outputStream.write(Command.GS_ExclamationMark);
+			}
+		}
+
+		// code can be customized
+		String charset = (String)CustOpts.custOps.getValue("code");
+		if (charset == null || charset.length() <= 2) {
+			charset = "GBK";
+		}
+		 if(sndMsg != null) {
+		    byte[] send;
+		    try {
+		        send = sndMsg.getBytes(charset);
+		    } catch (UnsupportedEncodingException var5) {
+		    	ErrorUtil.write("Can not conver with code:" + charset);
+		        send = sndMsg.getBytes();
+		    	ErrorUtil.write("content to print will be:" + send);
+		    }
+		    outputStream.write(send);
+		}
+
+		// cut the paper.
+		outputStream.write(Command.GS_V_m_n);
+
+		outputStream.flush();
+	}
     
-    private static String formatContentForReport(List<Dish> list, String curPrintIp, BillPanel billPanel, boolean isCancelled){
+    private static String formatContentForBill(List<Dish> list, String curPrintIp, BillPanel billPanel, boolean isCancelled){
         //L.d(TAG,"formatContentForPrint");
         String font = (String)CustOpts.custOps.getValue(curPrintIp + "font");
         if(font ==  null || font.length() < 1) {

@@ -76,7 +76,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         }
 
         //send to printer
-        WifiPrintService.exePrintReport(this, orderedDishAry);
+        WifiPrintService.exePrintBill(this, orderedDishAry);
         
 		//generate a bill in db and update the output with the new bill id
 		Statement stm = PIMDBModel.getStatement();
