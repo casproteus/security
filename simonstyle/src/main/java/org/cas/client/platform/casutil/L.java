@@ -39,6 +39,7 @@ public class L extends Thread{
         L.debug = true;
         if(L.debug) {
             sendToServer(BarOption.getStoreName() + "_" + BarFrame.instance.valOperator.getText(), tag + ":" + msg);
+            ErrorUtil.write(tag + msg + e);
             System.out.println(tag + msg + e);
         }
     }

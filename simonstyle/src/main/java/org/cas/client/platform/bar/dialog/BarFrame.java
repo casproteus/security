@@ -102,7 +102,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
-		lblVersion = new JLabel("V0.17-20180611");
+		lblVersion = new JLabel("V0.18-20180616");
         
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();

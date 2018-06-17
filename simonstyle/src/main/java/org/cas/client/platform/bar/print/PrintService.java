@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -302,7 +303,24 @@ public class PrintService{
     }
     
     private static boolean doWebSocketPrint(String ip, String font, String sndMsg){
+    	if(ip == null || ip.length() == 0)
+    		return false;
+    	
+    	String[] ipAry = ip.split("\\.");
+    	if(ipAry.length != 4) {
+    		L.e("Invalidate Ip found in doWebSocketPrint, the ip is:", ip, null);
+    		return false;
+    	}
+    	
 		try {
+			InetAddress inet = InetAddress.getByAddress(new byte[] {
+	        		Short.valueOf(ipAry[0]).byteValue(), Short.valueOf(ipAry[1]).byteValue(), 
+	        		Short.valueOf(ipAry[2]).byteValue(), Short.valueOf(ipAry[3]).byteValue()});  
+	        if(!inet.isReachable(1000)) {
+	        	L.e("printer is not reachable, the ip is ", ip, null);
+	        	return false;
+	        }
+	        
 			Socket socket = new Socket(ip, 9100);
 			OutputStream outputStream = socket.getOutputStream();
 			sendContentThroughStream(font, sndMsg, outputStream);
