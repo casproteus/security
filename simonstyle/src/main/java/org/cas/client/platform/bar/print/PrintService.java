@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.comm.CommPortIdentifier;
-import javax.comm.ParallelPort;
 import javax.swing.JOptionPane;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
@@ -32,8 +30,11 @@ import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 
+import gnu.io.CommPortIdentifier;
+import gnu.io.ParallelPort;
+
 //If the ip of a printer is "LPT1", then will actually user com interface to drive the printer.
-public class WifiPrintService{
+public class PrintService{
 
     public static int SUCCESS = -1;	//@NOTE:must be less than 0, because if it's 0, means the first element caused error.
     
@@ -191,8 +192,8 @@ public class WifiPrintService{
         	List<String> contents = entry.getValue();
         	for(int i = contents.size() - 1; i >= 0 ; i--) {
         		String sndMes = contents.get(i);
-            	if("LPT1".equalsIgnoreCase(entry.getKey()) ? 
-            			doLPTPrint(entry.getKey(), null, sndMes) : doWebSocketPrint(entry.getKey(), null, sndMes)) {
+            	if("Serial".equalsIgnoreCase(entry.getKey()) ? 
+            			doSerialPrint(entry.getKey(), null, sndMes) : doWebSocketPrint(entry.getKey(), null, sndMes)) {
             		contents.remove(i);//clean ipcontent;
             	}else {
             		return i;	//stop here, and return the error index.
@@ -218,8 +219,8 @@ public class WifiPrintService{
 		}
     }
     
-    private static boolean doLPTPrint(String ip, String font, String sndMsg) {
-        CommPortIdentifier tPortIdty;
+    private static boolean doSerialPrint(String ip, String font, String sndMsg) {
+        CommPortIdentifier commPortIdentifier;
         try {
             Enumeration tPorts = CommPortIdentifier.getPortIdentifiers();
             if (tPorts == null) {
@@ -228,12 +229,12 @@ public class WifiPrintService{
             }
 
             while (tPorts.hasMoreElements()) {
-                tPortIdty = (CommPortIdentifier) tPorts.nextElement();
-                if (!tPortIdty.getName().equals("LPT1"))
+                commPortIdentifier = (CommPortIdentifier) tPorts.nextElement();
+                if (commPortIdentifier.getPortType() != CommPortIdentifier.PORT_SERIAL)
                     continue;
 
-                if (!tPortIdty.isCurrentlyOwned()) {
-                    ParallelPort tParallelPort = (ParallelPort) tPortIdty.open("ParallelBlackBox", 2000);
+                if (!commPortIdentifier.isCurrentlyOwned()) {
+                    ParallelPort tParallelPort = (ParallelPort) commPortIdentifier.open("PrintService", 2000);//并口用"ParallelBlackBox"
                     DataOutputStream outputStream = new DataOutputStream(tParallelPort.getOutputStream());
         			sendContentThroughStream(font, sndMsg, outputStream);
 //                    outputStream.write(27); // 打印机初始化：

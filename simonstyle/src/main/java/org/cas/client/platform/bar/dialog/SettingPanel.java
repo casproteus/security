@@ -12,9 +12,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 
-import javax.comm.CommPortIdentifier;
-import javax.comm.ParallelPort;
-import javax.comm.PortInUseException;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,6 +29,10 @@ import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.resource.international.PaneConsts;
+
+import gnu.io.CommPortIdentifier;
+import gnu.io.ParallelPort;
+import gnu.io.PortInUseException;
 
 //Identity表应该和Employ表合并。
 public class SettingPanel extends JPanel implements ComponentListener, ActionListener, FocusListener {

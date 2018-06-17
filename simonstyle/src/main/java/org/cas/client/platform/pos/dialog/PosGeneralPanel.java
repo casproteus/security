@@ -16,7 +16,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -26,9 +25,6 @@ import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import javax.comm.CommPortIdentifier;
-import javax.comm.ParallelPort;
-import javax.comm.PortInUseException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -56,6 +52,10 @@ import org.cas.client.platform.pimview.pimtable.PIMTableColumn;
 import org.cas.client.platform.pos.dialog.statistics.Statistic;
 import org.cas.client.platform.refund.dialog.RefundDlg;
 import org.cas.client.resource.international.PaneConsts;
+
+import gnu.io.CommPortIdentifier;
+import gnu.io.ParallelPort;
+import gnu.io.PortInUseException;
 
 //Identity表应该和Employ表合并。
 public class PosGeneralPanel extends JPanel implements ComponentListener, KeyListener, ActionListener, FocusListener,

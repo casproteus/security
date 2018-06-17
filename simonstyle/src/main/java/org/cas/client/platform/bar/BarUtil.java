@@ -1,21 +1,21 @@
 package org.cas.client.platform.bar;
 
-import java.awt.MenuItem;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Enumeration;
 
-import javax.comm.CommPortIdentifier;
-import javax.comm.ParallelPort;
-import javax.comm.PortInUseException;
 import javax.swing.JOptionPane;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
+
+import gnu.io.CommPortIdentifier;
+import gnu.io.ParallelPort;
+import gnu.io.PortInUseException;
 
 public class BarUtil {
 	

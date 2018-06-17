@@ -30,7 +30,7 @@ import javax.swing.event.ListSelectionListener;
 import org.cas.client.platform.bar.beans.ArrowButton;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.Dish;
-import org.cas.client.platform.bar.print.WifiPrintService;
+import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -76,7 +76,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         }
 
         //send to printer
-        WifiPrintService.exePrintBill(this, orderedDishAry);
+        PrintService.exePrintBill(this, orderedDishAry);
         
 		//generate a bill in db and update the output with the new bill id
 		Statement stm = PIMDBModel.getStatement();
@@ -121,7 +121,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
 		//send to printer
 		//prepare the printing String and do printing
-		if(WifiPrintService.SUCCESS != WifiPrintService.exePrintDishes(dishes, isCancelled)) {
+		if(PrintService.SUCCESS != PrintService.exePrintDishes(dishes, isCancelled)) {
 			BarFrame.setStatusMes(BarFrame.consts.PrinterError());
 			JOptionPane.showMessageDialog(this, BarFrame.consts.PrinterError());
 		}

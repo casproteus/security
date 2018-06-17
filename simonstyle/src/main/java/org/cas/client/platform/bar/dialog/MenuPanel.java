@@ -18,7 +18,7 @@ import org.cas.client.platform.bar.beans.MenuButton;
 import org.cas.client.platform.bar.model.Category;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.model.Printer;
-import org.cas.client.platform.bar.print.WifiPrintService;
+import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -104,7 +104,7 @@ public class MenuPanel extends JPanel implements ActionListener {
             categoryRS.relative(-1);
             int tmpPos = categoryRS.getRow();
             categoryNameMetrix = new String[3][tmpPos];
-            WifiPrintService.allCategory = new Category[tmpPos];
+            PrintService.allCategory = new Category[tmpPos];
             categoryRS.beforeFirst();
 
             tmpPos = 0;
@@ -113,10 +113,10 @@ public class MenuPanel extends JPanel implements ActionListener {
                 categoryNameMetrix[1][tmpPos] = categoryRS.getString("LANG2");
                 categoryNameMetrix[2][tmpPos] = categoryRS.getString("LANG3");
                 
-                WifiPrintService.allCategory[tmpPos] =  new Category();
-                WifiPrintService.allCategory[tmpPos].setID(categoryRS.getInt("ID"));
-                WifiPrintService.allCategory[tmpPos].setDspIndex(tmpPos);
-                WifiPrintService.allCategory[tmpPos].setLanguage(new String[]{categoryNameMetrix[0][tmpPos],
+                PrintService.allCategory[tmpPos] =  new Category();
+                PrintService.allCategory[tmpPos].setID(categoryRS.getInt("ID"));
+                PrintService.allCategory[tmpPos].setDspIndex(tmpPos);
+                PrintService.allCategory[tmpPos].setLanguage(new String[]{categoryNameMetrix[0][tmpPos],
                 		categoryNameMetrix[1][tmpPos], categoryNameMetrix[2][tmpPos]});
                 
                 tmpPos++;
@@ -183,7 +183,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 			rs.close();
 			// rearrange into map
 			for(Printer printer:printers){
-	            WifiPrintService.ipPrinterMap.put(printer.getIp(),printer);
+	            PrintService.ipPrinterMap.put(printer.getIp(),printer);
 	        }
 			
         } catch (Exception e) {
