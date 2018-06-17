@@ -32,7 +32,7 @@ import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 
 import gnu.io.CommPortIdentifier;
-import gnu.io.ParallelPort;
+import gnu.io.SerialPort;
 
 //If the ip of a printer is "LPT1", then will actually user com interface to drive the printer.
 public class PrintService{
@@ -222,6 +222,8 @@ public class PrintService{
     
     private static boolean doSerialPrint(String ip, String font, String sndMsg) {
         CommPortIdentifier commPortIdentifier;
+        SerialPort tParallelPort = null;
+        DataOutputStream outputStream = null;
         try {
             Enumeration tPorts = CommPortIdentifier.getPortIdentifiers();
             if (tPorts == null) {
@@ -233,10 +235,10 @@ public class PrintService{
                 commPortIdentifier = (CommPortIdentifier) tPorts.nextElement();
                 if (commPortIdentifier.getPortType() != CommPortIdentifier.PORT_SERIAL)
                     continue;
-
-                if (!commPortIdentifier.isCurrentlyOwned()) {
-                    ParallelPort tParallelPort = (ParallelPort) commPortIdentifier.open("PrintService", 2000);//并口用"ParallelBlackBox"
-                    DataOutputStream outputStream = new DataOutputStream(tParallelPort.getOutputStream());
+                
+                //if (!commPortIdentifier.isCurrentlyOwned()) {
+                    tParallelPort = (SerialPort)commPortIdentifier.open("PrintService", 10000);//并口用"ParallelBlackBox"
+                    outputStream = new DataOutputStream(tParallelPort.getOutputStream());
         			sendContentThroughStream(font, sndMsg, outputStream);
 //                    outputStream.write(27); // 打印机初始化：
 //                    outputStream.write(64);
@@ -288,17 +290,30 @@ public class PrintService{
 //                            new BufferedWriter(new OutputStreamWriter(outputStream, tEncodType.toString()));
 //                    tWriter.write(tContent);
 //                    tWriter.close();
-//
-                    outputStream.close();
-                    tParallelPort.close();
+                    
         			return true;
-                }
+                //}
             }
             return false;
         } catch (Exception e) {
 			ErrorUtil.write(e);
 			L.e("LPT printing", "Error when printing content to LPT.", e);
 			return false;
+        }finally {
+        	if(outputStream != null) {
+        		try {
+        			outputStream.close();
+        		}catch(Exception exp) {
+        			System.out.println(exp);
+        		}
+        	}
+        	if(tParallelPort != null) {
+        		try {
+        			tParallelPort.close();
+        		}catch(Exception e) {
+        			System.out.println(e);
+        		}
+        	}
         }
     }
     
