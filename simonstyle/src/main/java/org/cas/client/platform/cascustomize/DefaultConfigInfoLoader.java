@@ -217,11 +217,12 @@ class DefaultConfigInfoLoader {
         }
 
         // 将字符串中的信息存入Hashtable。----------------------------------------
+        tmpFileText = tmpFileText.trim();
         int tmpLINKPos;
         int tmpENTERPos = 0;
         int tmpTextLen = tmpFileText.length();
 
-        if (tmpFileText.endsWith("}"))
+        if (tmpFileText.trim().endsWith("}"))
             tmpFileText = tmpFileText.substring(0, tmpTextLen - 1);
         // @NOTE:不可以去掉前面的“{”号，因为每次取Key的时候是从前一个“，”号位置＋＋开始取值，
         // 去掉“{”号会导致如“Vertical”变成了“ertical”的错误。
