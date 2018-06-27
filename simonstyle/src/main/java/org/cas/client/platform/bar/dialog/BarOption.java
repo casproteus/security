@@ -29,6 +29,7 @@ import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.platform.pos.dialog.modifyuser.MUserSwichDlg;
 import org.cas.client.platform.pos.dialog.modifyuser.ModifyPasswordDlg;
@@ -63,25 +64,28 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 
     public static String getBillHeadInfo() {
     	String a = (String)CustOpts.custOps.getValue("BillHeadInfo");
-    	if(a == null || a.length() == 0) {
-	    	StringBuilder sb = new StringBuilder(BarOption.getStoreName()).append("\n");
-	    	sb.append(BarOption.getAddress()).append("\n");
-	    	sb.append(BarOption.getCityAndProvince()).append("\n");
-	    	sb.append(BarOption.getPostCode()).append("\n");
-	    	sb.append(BarOption.getTel()).append("\n");
-	    	sb.append(BarOption.getWebSite()).append("\n");
-	    	return sb.toString();
-    	}else {
+//    	if(a == null || a.length() == 0) {
+//	    	StringBuilder sb = new StringBuilder(BarOption.getStoreName()).append("\n");
+//	    	sb.append(BarOption.getAddress()).append("\n");
+//	    	sb.append(BarOption.getCityAndProvince()).append("\n");
+//	    	sb.append(BarOption.getPostCode()).append("\n");
+//	    	sb.append(BarOption.getTel()).append("\n");
+//	    	sb.append(BarOption.getWebSite()).append("\n");
+//	    	return sb.toString();
+//    	}else {
     		return a;
-    	}
+//    	}
     }
 
-    public static void setBillHeadInfo(String ownerInfo) {
-    	if(ownerInfo == null)
-    		ownerInfo = "";
-    	if(!ownerInfo.endsWith("\n"))
-    		ownerInfo += "\n";
-    	CustOpts.custOps.setKeyAndValue("BillHeadInfo", ownerInfo);
+    public static void setBillHeadInfo(String billHeadInfo) {
+    	if(billHeadInfo == null) {
+    		L.e("setting BillHead", "trying to set null to bill head info.", null);
+    		return;
+    	}
+    	
+    	if(!billHeadInfo.endsWith("\n"))
+    		billHeadInfo += "\n";
+    	CustOpts.custOps.setKeyAndValue("BillHeadInfo", billHeadInfo);
     }
     
     private static Object getWebSite() {

@@ -14,6 +14,7 @@ import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -46,11 +47,32 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         numberPanelDlg = new NumberPanelDlg(instance);
         payCashDlg = new PayCashDlg(instance);
         
+        //activation check
+        if(!valicateActivation()) {
+        	return;
+        }
+        
         if(BarOption.isSingleUser()) {
 	        singleUserLoginProcess();
         }else {
         	instance.setVisible(true);
         }
+    }
+    
+    private static boolean valicateActivation() {
+    	if(BarOption.getBillHeadInfo() == null) {
+    		String activateCode = JOptionPane.showInputDialog(null, "Activate Code:");
+    		if("asdfas".equals(activateCode)) {
+    			if(BarOption.getBillHeadInfo() == null) {
+            		BarOption.setBillHeadInfo(" ");
+            	}
+    			return true;
+    		}else {
+    			return false;
+    		}
+    	}else {
+    		return true;
+    	}
     }
     
     public static void singleUserLoginProcess() {
@@ -102,7 +124,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
-		lblVersion = new JLabel("V0.18-20180616");
+		lblVersion = new JLabel("V0.20-20180626");
         
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();
