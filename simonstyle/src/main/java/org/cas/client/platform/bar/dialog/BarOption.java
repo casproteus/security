@@ -43,6 +43,11 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 	
 	public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
+	public static int getPrinterMinWaiTime() {
+		return CustOpts.custOps.getValue("PrinterMinWaiTime") == null ? 5000 : 
+			Integer.valueOf((String)CustOpts.custOps.getValue("PrinterMinWaiTime"));
+	}
+	
 	public static void setBK(Color color, String key) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(color.getRed()).append(",").append(color.getGreen()).append(",").append(color.getBlue());
@@ -63,20 +68,9 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 	}
 
     public static String getBillHeadInfo() {
-    	String a = (String)CustOpts.custOps.getValue("BillHeadInfo");
-//    	if(a == null || a.length() == 0) {
-//	    	StringBuilder sb = new StringBuilder(BarOption.getStoreName()).append("\n");
-//	    	sb.append(BarOption.getAddress()).append("\n");
-//	    	sb.append(BarOption.getCityAndProvince()).append("\n");
-//	    	sb.append(BarOption.getPostCode()).append("\n");
-//	    	sb.append(BarOption.getTel()).append("\n");
-//	    	sb.append(BarOption.getWebSite()).append("\n");
-//	    	return sb.toString();
-//    	}else {
-    		return a;
-//    	}
+    	return (String)CustOpts.custOps.getValue("BillHeadInfo");
     }
-
+    
     public static void setBillHeadInfo(String billHeadInfo) {
     	if(billHeadInfo == null) {
     		L.e("setting BillHead", "trying to set null to bill head info.", null);
@@ -86,6 +80,21 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     	if(!billHeadInfo.endsWith("\n"))
     		billHeadInfo += "\n";
     	CustOpts.custOps.setKeyAndValue("BillHeadInfo", billHeadInfo);
+    }
+    
+    public static String getBillFootInfo(){
+       	return (String)CustOpts.custOps.getValue("BillFootInfo");
+    }
+    
+    public static void setBillFootInfo(String billFootInfo) {
+    	if(billFootInfo == null) {
+    		L.e("setting BillFoot", "trying to set null to bill foot info.", null);
+    		return;
+    	}
+    	
+    	if(!billFootInfo.endsWith("\n"))
+    		billFootInfo += "\n";
+    	CustOpts.custOps.setKeyAndValue("BillFootInfo", billFootInfo);
     }
     
     private static Object getWebSite() {
@@ -234,7 +243,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     }
     public static boolean isFastFoodMode() {
     	return CustOpts.custOps.getValue("FastFoodMode") == null ? 
-    			false : (Boolean)CustOpts.custOps.getValue("FastFoodMode");
+    			false : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("FastFoodMode"));
     }
     
     public static void setStartTime(String startTimeOfDay) {
