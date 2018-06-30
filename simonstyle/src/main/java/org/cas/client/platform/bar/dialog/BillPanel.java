@@ -122,9 +122,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
 		//send to printer
 		//prepare the printing String and do printing
-		if(PrintService.SUCCESS != PrintService.exePrintDishes(dishes, isCancelled)) {
+		int idx = PrintService.exePrintDishes(dishes, isCancelled);
+		if(PrintService.SUCCESS != idx) {
 			BarFrame.setStatusMes(BarFrame.consts.PrinterError());
-			JOptionPane.showMessageDialog(this, BarFrame.consts.PrinterError());
 		}
 	}
 	

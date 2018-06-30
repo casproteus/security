@@ -333,7 +333,10 @@ public class PrintService{
 	        		Short.valueOf(ipAry[0]).byteValue(), Short.valueOf(ipAry[1]).byteValue(), 
 	        		Short.valueOf(ipAry[2]).byteValue(), Short.valueOf(ipAry[3]).byteValue()});  
 	        if(!inet.isReachable(BarOption.getPrinterMinWaiTime())) {
-	        	L.e("printer might be slow (is not reachable in min time), please check the printer with ip: ", ip, null);
+	        	L.e("printer slow. ip is: ", ip, null);
+                JOptionPane.showMessageDialog(BarFrame.instance, 
+                		"Content NOT printed!!! printer response too slow. Please check printer and try again. --ip: "+ip);
+	        	return false;
 	        }
 	        
 			Socket socket = new Socket(ip, 9100);
