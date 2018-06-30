@@ -194,7 +194,8 @@ public class PrintService{
         	for(int i = contents.size() - 1; i >= 0 ; i--) {
         		String sndMes = contents.get(i);
             	if("Serial".equalsIgnoreCase(entry.getKey()) ? 
-            			doSerialPrint(entry.getKey(), null, sndMes) : doWebSocketPrint(entry.getKey(), null, sndMes)) {
+            			doSerialPrint(entry.getKey(), null, sndMes) : 
+            				doWebSocketPrint(entry.getKey(), null, sndMes)) {
             		contents.remove(i);//clean ipcontent;
             	}else {
             		return i;	//stop here, and return the error index.
@@ -331,9 +332,8 @@ public class PrintService{
 			InetAddress inet = InetAddress.getByAddress(new byte[] {
 	        		Short.valueOf(ipAry[0]).byteValue(), Short.valueOf(ipAry[1]).byteValue(), 
 	        		Short.valueOf(ipAry[2]).byteValue(), Short.valueOf(ipAry[3]).byteValue()});  
-	        if(!inet.isReachable(1000)) {
-	        	L.e("printer is not reachable, the ip is ", ip, null);
-	        	return false;
+	        if(!inet.isReachable(BarOption.getPrinterMinWaiTime())) {
+	        	L.e("printer might be slow (is not reachable in min time), please check the printer with ip: ", ip, null);
 	        }
 	        
 			Socket socket = new Socket(ip, 9100);
@@ -442,10 +442,10 @@ public class PrintService{
         int langIndex = ipPrinterMap.get(curPrintIp).getType();
         for(Dish d:list){
             StringBuilder sb = new StringBuilder();
-            //if(BarOption.isDisDishIDInKitchen()) {
+            if(BarOption.isDisDishIDInKitchen()) {
                 sb.append(d.getId());
                 sb.append(generateString(5 - String.valueOf(d.getId()).length(), " "));
-            //}
+            }
             sb.append(d.getLanguage(langIndex));
             if(d.getNum() > 1){
             	sb.append(" x").append(Integer.toString(d.getNum()));
@@ -475,6 +475,13 @@ public class PrintService{
             content.append("Discount : ").append(strs[1]).append("\n");
         }
         content.append("TOTAL : $").append(billPanel.valTotlePrice.getText()).append("\n");
+        //end message.
+        String endMes = BarOption.getBillFootInfo();
+        if(endMes != null && endMes.trim().length() > 0) {
+        	content.append(generateString(width, sep_str2)).append("\n");
+        	content.append(endMes);
+        	content.append("\n");
+        }
         return content.toString();
     }
     
@@ -508,11 +515,10 @@ public class PrintService{
         	lengthOfStrToDisplay += curBill.length();
         }
         
-        if(BarOption.isDoNotDisplayWaiterInKitchen()) {	//the first 3 spaces of the spaceStr is consumed first.
-        	content.append("   ").append(waiterName);
+        content.append("   ");	//the first 3 spaces of the spaceStr is consumed first.
+        if(BarOption.isDoNotDisplayWaiterInKitchen()) {
+        	content.append(waiterName);
         	lengthOfStrToDisplay += waiterName.length();
-        }else {
-        	content.append("   ");
         }
 
         DateFormat df = new SimpleDateFormat("HH:mm");
@@ -560,9 +566,9 @@ public class PrintService{
                     content.append(generateString(5, " ")).append("* ").append(lang).append(" *\n");
                 }
             }
-            content.append(generateString(width, sep_str2)).append("\n");
+            //spec change: do not to show separator! content.append(generateString(width, sep_str2)).append("\n");
         }
-        return content.substring(0, content.length() - (width + 1));
+        return content.substring(0, content.length());//spec change: do not to show separator!  - (width + 1));
     }
     
     private static String generateString(int l, String character){
