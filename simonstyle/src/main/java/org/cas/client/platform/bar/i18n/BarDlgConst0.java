@@ -84,7 +84,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String Modify() {return "MODIFY";}
     @Override
-	public String BillInfo() {return "BILL HEAD";}
+	public String BillInfo() {return "BILL FOOT INFO";}
     @Override
 	public String ChangePrice() {return "CHANGE PRICE";}
     @Override
