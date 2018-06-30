@@ -662,13 +662,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
             		BarFrame.consts.SCROLLBAR_WIDTH, BarFrame.consts.SCROLLBAR_WIDTH);
             btnLess.setBounds(btnMore.getX() - CustOpts.HOR_GAP - BarFrame.consts.SCROLLBAR_WIDTH, btnMore.getY(), 
             		BarFrame.consts.SCROLLBAR_WIDTH, BarFrame.consts.SCROLLBAR_WIDTH);
-    		lblSubTotle.setBounds(btnLess.getX() - 100, 
+    		lblSubTotle.setBounds(btnLess.getX() - 120, 
     				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
-    				100, lblSubTotle.getPreferredSize().height);
+    				120, lblSubTotle.getPreferredSize().height);
         }else {
-        	lblSubTotle.setBounds(scrContent.getX() + scrContent.getWidth() - 100, 
+        	lblSubTotle.setBounds(scrContent.getX() + scrContent.getWidth() - 120, 
     				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
-    				100, lblSubTotle.getHeight());
+    				120, lblSubTotle.getHeight());
         }
         lblDiscount.setBounds(scrContent.getX(), scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP, 
         		scrContent.getWidth() / 4, lblSubTotle.getHeight());
@@ -680,7 +680,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		lblTVQ.setBounds(lblTPS.getX() + lblTPS.getWidth() + CustOpts.HOR_GAP, lblTPS.getY(), lblTPS.getWidth(), lblTPS.getHeight());
 		lblTotlePrice.setBounds(lblSubTotle.getX(), lblTVQ.getY(), lblTotlePrice.getPreferredSize().width, lblTVQ.getHeight());
 		valTotlePrice.setBounds(lblTotlePrice.getX() + lblTotlePrice.getWidth(), lblTotlePrice.getY(),
-				100 - lblTotlePrice.getWidth() - CustOpts.HOR_GAP, lblTVQ.getHeight());
+				120 - lblTotlePrice.getWidth() - CustOpts.HOR_GAP, lblTVQ.getHeight());
     }
     
     void initComponent() {
@@ -712,6 +712,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         tCellRender.setOpaque(true);
         tCellRender.setBackground(Color.LIGHT_GRAY);
         tblSelectedDish.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
+        //@do_not_work! valTotlePrice.setHorizontalAlignment(SwingConstants.RIGHT);
+        //@work! valTotlePrice.setAlignmentX(Component.RIGHT_ALIGNMENT);
+      //@do_not_work!valTotlePrice.setBackground(Color.RED);
+      //@do_not_work!valTotlePrice.setOpaque(false);
         
         JLabel tLbl = new JLabel();
         tLbl.setOpaque(true);
