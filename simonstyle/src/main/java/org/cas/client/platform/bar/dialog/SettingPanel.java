@@ -201,6 +201,17 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     			JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
     			tfdStartTimeOfDay.grabFocus();
     		}
+    	}else if(o == tfdPrinterMinReachTime) {
+    		String time = tfdPrinterMinReachTime.getText();
+    		try {
+	    		int t = Integer.valueOf(time);
+	    		if(t < 10) {
+	    			t *= 1000;
+	    		}
+	    		BarOption.setPrinterMinReachTime(String.valueOf(t));
+    		}catch(Exception exp) {
+    			JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
+    		}
     	}
     }
 
@@ -224,7 +235,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         	}else if(o == btnLine_2_6) {
         		new AddModificationDialog(BarFrame.instance, "").setVisible(true);
         	}else if(o == btnLine_2_7) {
-        		new BillHeadDialog(BarFrame.instance, BarOption.getBillHeadInfo()).setVisible(true);
+        		new BillFootDialog(BarFrame.instance, BarOption.getBillFootInfo()).setVisible(true);
         	}
         }
         //JToggleButton-------------------------------------------------------------------------------------
@@ -233,6 +244,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		BarOption.setSingleUser(cbxIsSingleUser.isSelected() ? "true" : "false");
         	}else if(o == cbxIsDiscBeforeTax) {
         		BarOption.setIsDisCountBeforeTax(cbxIsDiscBeforeTax.isSelected() ? true : false);
+        	}else if(o == cbxIsBuffetMode) {
+        		BarOption.setIsBuffetMode(cbxIsBuffetMode.isSelected() ? true : false);
 //        	}else if(o == cbxIsPrintBillWhenPay) {
 //        		BarOption.setIsPrintBillWhenPay(cbxIsPrintBillWhenPay.isSelected() ? true : false);
         	}
@@ -300,14 +313,21 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		cbxIsSingleUser.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsDiscBeforeTax.setBounds(CustOpts.HOR_GAP, cbxIsSingleUser.getY() + cbxIsSingleUser.getHeight() + CustOpts.VER_GAP,
         		cbxIsDiscBeforeTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxIsBuffetMode.setBounds(CustOpts.HOR_GAP, cbxIsDiscBeforeTax.getY() + cbxIsDiscBeforeTax.getHeight() + CustOpts.VER_GAP,
+        		cbxIsBuffetMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
 //        cbxIsPrintBillWhenPay.setBounds(CustOpts.HOR_GAP, cbxIsDiscBeforeTax.getY() + cbxIsDiscBeforeTax.getHeight() + CustOpts.VER_GAP,
 //        		cbxIsPrintBillWhenPay.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         
-        lblStartTimeOfDay.setBounds(CustOpts.HOR_GAP, cbxIsDiscBeforeTax.getY() + cbxIsDiscBeforeTax.getHeight() + CustOpts.VER_GAP,
+        lblStartTimeOfDay.setBounds(CustOpts.HOR_GAP, cbxIsBuffetMode.getY() + cbxIsBuffetMode.getHeight() + CustOpts.VER_GAP,
         		lblStartTimeOfDay.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdStartTimeOfDay.setBounds(lblStartTimeOfDay.getX() + lblStartTimeOfDay.getWidth() + CustOpts.HOR_GAP, lblStartTimeOfDay.getY(),
         		100, CustOpts.BTN_HEIGHT);
-        lblLoginBackGround.setBounds(CustOpts.HOR_GAP, tfdStartTimeOfDay.getY() + tfdStartTimeOfDay.getHeight() + CustOpts.VER_GAP,
+        lblPrinterMinReachTime.setBounds(CustOpts.HOR_GAP, lblStartTimeOfDay.getY() + lblStartTimeOfDay.getHeight() + CustOpts.VER_GAP,
+        		lblPrinterMinReachTime.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdPrinterMinReachTime.setBounds(lblPrinterMinReachTime.getX() + lblPrinterMinReachTime.getWidth() + CustOpts.HOR_GAP, lblPrinterMinReachTime.getY(),
+        		100, CustOpts.BTN_HEIGHT);
+        
+        lblLoginBackGround.setBounds(CustOpts.HOR_GAP, lblPrinterMinReachTime.getY() + lblPrinterMinReachTime.getHeight() + CustOpts.VER_GAP,
         		lblLoginBackGround.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         ccbLogin.setBounds(lblLoginBackGround.getX() + lblLoginBackGround.getWidth() + CustOpts.HOR_GAP, lblLoginBackGround.getY(),
         		100, CustOpts.BTN_HEIGHT);
@@ -429,9 +449,12 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         
         cbxIsSingleUser = new JCheckBox(BarFrame.consts.IsSingleUser());
         cbxIsDiscBeforeTax = new JCheckBox(BarFrame.consts.IsDiscBeforeTax());
+        cbxIsBuffetMode = new JCheckBox(BarFrame.consts.IsBuffetMode());
 //        cbxIsPrintBillWhenPay = new JCheckBox(BarFrame.consts.IsPrintBillWhenPay);
         lblStartTimeOfDay = new JLabel(BarFrame.consts.StartTimeOfDay());
         tfdStartTimeOfDay = new JTextField(String.valueOf(BarOption.getStartTime()));
+        lblPrinterMinReachTime = new JLabel(BarFrame.consts.PrinterMinReachTime());
+        tfdPrinterMinReachTime = new JTextField(String.valueOf(BarOption.getPrinterMinReachTime()));
         
         lblLoginBackGround = new JLabel(BarFrame.consts.LoginBK());
         ccbLogin = new ColorChooserButton(BarOption.getBK("Login"));
@@ -482,6 +505,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsDiscBeforeTax.setBackground(null);
         cbxIsSingleUser.setSelected(BarOption.isSingleUser());
         cbxIsDiscBeforeTax.setSelected(BarOption.isDisCountBeforeTax());
+        cbxIsBuffetMode.setSelected(BarOption.isBuffetMode());
 //        cbxIsPrintBillWhenPay.setSelected(BarOption.isPrintBillWhenPay());
         // built
 
@@ -500,9 +524,13 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         
         add(cbxIsSingleUser);
         add(cbxIsDiscBeforeTax);
+        add(cbxIsBuffetMode);
 //        add(cbxIsPrintBillWhenPay);
         add(lblStartTimeOfDay);
         add(tfdStartTimeOfDay);
+        add(lblPrinterMinReachTime);
+        add(tfdPrinterMinReachTime);
+        
         add(lblLoginBackGround);
         add(ccbLogin);
         add(lblLoginBackGround);
@@ -563,8 +591,10 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tfdDishCol.addFocusListener(this);
         cbxIsSingleUser.addActionListener(this);
         cbxIsDiscBeforeTax.addActionListener(this);
+        cbxIsBuffetMode.addActionListener(this);
 //        cbxIsPrintBillWhenPay.addActionListener(this);
         tfdStartTimeOfDay.addFocusListener(this);
+        tfdPrinterMinReachTime.addFocusListener(this);
         
         ccbLogin.addColorChangedListener(new ColorChangedListener() {
             @Override
@@ -673,8 +703,12 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     
     JLabel lblStartTimeOfDay;
     JTextField tfdStartTimeOfDay;
+    JLabel lblPrinterMinReachTime;
+    JTextField tfdPrinterMinReachTime;
+    
     JCheckBox cbxIsSingleUser;
     JCheckBox cbxIsDiscBeforeTax;
+    JCheckBox cbxIsBuffetMode;
 //    JCheckBox cbxIsPrintBillWhenPay;
     JLabel lblLoginBackGround;
     ColorChooserButton ccbLogin;

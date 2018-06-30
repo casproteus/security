@@ -209,9 +209,13 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String IsDiscBeforeTax() {return "打折时税款也进行打折";}
     @Override
+	public String IsBuffetMode() {return "自助餐模式";}
+    @Override
 	public String IsPrintBillWhenPay() {return "付款同时自动打印账单";}
     @Override
 	public String StartTimeOfDay() {return "每天开始营业的时间";}
+    @Override
+	public String PrinterMinReachTime() {return "打印机报警响应时间";}
     @Override
 	public String PrinterError() {return "警告！后台打印时发生错误，请检查相关打印机然后再试！";}
     

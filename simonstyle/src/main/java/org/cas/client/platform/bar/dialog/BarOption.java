@@ -42,7 +42,12 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 	public static Font bigFont = new Font("Arial", Font.PLAIN, 48);
 	
 	public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
+
+    public BarOption(JFrame pFrame) {
+        super(pFrame, false);
+        initDialog();
+    }
+    
 	public static int getPrinterMinWaiTime() {
 		return CustOpts.custOps.getValue("PrinterMinWaiTime") == null ? 5000 : 
 			Integer.valueOf((String)CustOpts.custOps.getValue("PrinterMinWaiTime"));
@@ -183,6 +188,14 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     	CustOpts.custOps.setKeyAndValue("isDisCountBeforeTax", isDisCountBeforeTax);
     }
     
+    public static boolean isBuffetMode() {
+    	return CustOpts.custOps.getValue("isBuffetMode") == null ? 
+    			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isBuffetMode"));
+    }
+    public static void setIsBuffetMode(Boolean isBuffetMode) {
+    	CustOpts.custOps.setKeyAndValue("isBuffetMode", isBuffetMode);
+    }
+    
     public static int getBillPageRow() {
     	return CustOpts.custOps.getValue("BillPanel_Row") == null ? 
     			1 : Integer.valueOf((String)CustOpts.custOps.getValue("BillPanel_Row"));
@@ -254,11 +267,14 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     			"00:00:00" : String.valueOf(CustOpts.custOps.getValue("StartTimeOfDay"));
     }
     
-    public BarOption(JFrame pFrame) {
-        super(pFrame, false);
-        initDialog();
+    public static void setPrinterMinReachTime(String printerMinReachTime) {
+    	CustOpts.custOps.setKeyAndValue("PrinterMinReachTime", printerMinReachTime);
     }
-
+    public static String getPrinterMinReachTime() {
+    	return CustOpts.custOps.getValue("PrinterMinReachTime") == null ? 
+    			"2468" : String.valueOf(CustOpts.custOps.getValue("PrinterMinReachTime"));
+    }
+    
     /*
      * 对话盒的布局独立出来，为了在对话盒尺寸发生改变后，界面各元素能够重新布局， 使整体保持美观。尤其在Linux系列的操作系统上，所有的对话盒都必须准备好应对用户的拖拉改变尺寸。
      * @NOTE:因为setBounds方法本身不会触发事件导致重新布局，所以本方法中设置Bounds之后调用了reLayout。

@@ -114,8 +114,10 @@ public interface BarDlgConst {
     String DishCol();
     String IsSingleUser();
     String IsDiscBeforeTax();
+    String IsBuffetMode();
     String IsPrintBillWhenPay();
     String StartTimeOfDay();
+    String PrinterMinReachTime();
     String PrinterError();
     
     String Other();

@@ -209,9 +209,13 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String IsDiscBeforeTax() {return "Is discount apply on price before tax";}
     @Override
+	public String IsBuffetMode() {return "Buffet Mode";}
+    @Override
 	public String IsPrintBillWhenPay() {return "automatic print bill when pay";}
     @Override
 	public String StartTimeOfDay() {return "Start time of a day";}
+    @Override
+	public String PrinterMinReachTime() {return "Printer Min Reach Time";}
     @Override
 	public String PrinterError() {return "WARNING! Error occured when printing in back end, please check printer and try again";}
     
