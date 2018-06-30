@@ -23,7 +23,7 @@ import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
-public class BillHeadDialog extends JDialog implements ActionListener, ComponentListener {
+public class BillFootDialog extends JDialog implements ActionListener, ComponentListener {
 
     /**
      * 创建一个 Category 的实例
@@ -33,7 +33,7 @@ public class BillHeadDialog extends JDialog implements ActionListener, Component
      * @param prmCategoryInfo
      *            逗号分隔的字符串
      */
-    public BillHeadDialog(Frame prmParent, String prmCategoryInfo) {
+    public BillFootDialog(Frame prmParent, String prmCategoryInfo) {
         super(prmParent, true);
         initComponent(); // 组件初始化并布局
         initContent(prmCategoryInfo); // 初始化文本区和列表框数据
@@ -66,7 +66,7 @@ public class BillHeadDialog extends JDialog implements ActionListener, Component
 
         // init--------------------------
         txaCurContent = new JTextArea(); // 加入会滚动的文本区
-        topLabel = new JLabel(BarFrame.consts.BillInfo()); // "项目属于这些类别"标签
+        topLabel = new JLabel(BarFrame.consts.BillInfo());
         btnOK = new JButton(BarFrame.consts.OK()); // 设置Cancel按钮
 
         // properties-------------------------
@@ -173,7 +173,7 @@ public class BillHeadDialog extends JDialog implements ActionListener, Component
 	public void actionPerformed(
             ActionEvent e) {
          if (e.getSource() == btnOK) {
-            BarOption.setBillHeadInfo(txaCurContent.getText());
+            BarOption.setBillFootInfo(txaCurContent.getText());
             dispose();
         }
     }
