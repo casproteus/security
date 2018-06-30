@@ -71,7 +71,10 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
     }
     
     public static void exactCash(int billId) {
-    	StringBuilder sb = new StringBuilder("update bill set cashReceived = total, valDebitReceived = 0, valVisaReceived = 0, valMasterReceived = 0, valOtherReceived = 0 where id = ").append(billId);
+    	StringBuilder sb = new StringBuilder("update bill set cashReceived = ");
+    	sb.append((int)(Float.valueOf(valTotal.getText()) * 100));
+    	sb.append(", DebitReceived = 0, VisaReceived = 0, MasterReceived = 0, OtherReceived = 0 where id = ");
+    	sb.append(billId);
    		try {
 			PIMDBModel.getStatement().execute(sb.toString());
 		}catch(Exception e) {
@@ -533,7 +536,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
     public JTextField tfdNewReceived;
 
     private JLabel lblTotal;
-    public JLabel valTotal;
+    public static JLabel valTotal;
     private JLabel lblLeft;
     public JLabel valLeft;
 
