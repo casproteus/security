@@ -55,8 +55,6 @@ public class MenuPanel extends JPanel implements ActionListener {
 	}
 
 	void initComponent() {
-		removeAll();
-
 	    categoryRow = BarOption.getCategoryRow();
 	    categoryColumn = BarOption.getCategoryCol();
 	    menuRow = BarOption.getDishRow();
@@ -83,10 +81,6 @@ public class MenuPanel extends JPanel implements ActionListener {
         btnPageDownMenu.addActionListener(this);
         
         setLayout(null);
-        add(btnPageUpCategory);
-        add(btnPageDownCategory);
-        add(btnPageUpMenu);
-        add(btnPageDownMenu);
         
 		initCategoryAndDishes();
 		reLayout();
@@ -205,6 +199,11 @@ public class MenuPanel extends JPanel implements ActionListener {
 
         // clean current catogory and menus from both screen and metrix if have---------------
         removeAll();
+        add(btnPageUpCategory);
+        add(btnPageDownCategory);
+        add(btnPageUpMenu);
+        add(btnPageDownMenu);
+        
 //        for (int r = 0; r < categoryRow; r++) {
 //            if (r < onSrcCategoryTgbMatrix.size()) {
 //                for (int c = 0; c < categoryColumn; c++) {

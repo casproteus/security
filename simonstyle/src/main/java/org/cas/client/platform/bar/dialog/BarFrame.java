@@ -68,6 +68,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
             	}
     			return true;
     		}else {
+    			//AppData.
     			return false;
     		}
     	}else {

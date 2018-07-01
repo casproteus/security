@@ -66,17 +66,28 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     @Override
     public void componentHidden(ComponentEvent e) {}
 
+    private String oldContent = null;
     @Override
     public void focusGained(
             FocusEvent e) {
         Object o = e.getSource();
-        if (o instanceof JTextField)
+        if (o instanceof JTextField) {
             ((JTextField) o).selectAll();
+            oldContent = ((JTextField) o).getText().trim();
+        }
     }
 
     @Override
     public void focusLost(FocusEvent e) {
         Object o = e.getSource();
+        //if content not changed, ignore.
+        if (o instanceof JTextField) {
+        	if(oldContent.equals(((JTextField)o).getText().trim())) {
+        		return;
+        	}
+        }
+        
+        
         if(o == tfdBillPageRow) {
     		int num;
     		try {
