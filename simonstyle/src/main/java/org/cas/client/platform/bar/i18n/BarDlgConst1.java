@@ -205,6 +205,8 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String DishCol() {return "Columns of Dish Button:";}
     @Override
+	public String CategoryAreaPortion() {return "Category Area Portion";}
+    @Override
 	public String IsSingleUser() {return "Is single user mode";}
     @Override
 	public String IsDiscBeforeTax() {return "Is discount apply on price before tax";}

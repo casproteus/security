@@ -205,6 +205,8 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String DishCol() {return "菜单按钮列数:";}
     @Override
+	public String CategoryAreaPortion() {return "类别区域所占比例";}
+    @Override
 	public String IsSingleUser() {return "单人操作模式";}
     @Override
 	public String IsDiscBeforeTax() {return "打折时税款也进行打折";}

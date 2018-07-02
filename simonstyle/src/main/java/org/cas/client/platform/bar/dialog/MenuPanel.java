@@ -311,8 +311,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 
     void reLayout() {
         // category area--------------
-        Double categoryHeight = (Double) CustOpts.custOps.hash2.get("categoryHeight");
-        categoryHeight = (categoryHeight == null || categoryHeight < 0.2) ? 0.4 : categoryHeight;
+        Float categoryHeight = BarOption.getCategoryAreaPortion();
 
         int categeryBtnWidth = (getWidth() - CustOpts.HOR_GAP * (categoryColumn - 1)) / categoryColumn;
         if(btnPageDownCategory.isVisible() || btnPageUpCategory.isVisible()) {

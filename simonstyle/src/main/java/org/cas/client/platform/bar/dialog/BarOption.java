@@ -127,7 +127,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 		return "75 cardinal";
 	}
 
-	public static String getStoreName() {
+	public static String getShopName() {
 		// TODO Auto-generated method stub
 		return "NUDO";
 	}
@@ -244,6 +244,16 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     	CustOpts.custOps.setKeyAndValue("Dish_Col", col);
     }
 
+    public static float getCategoryAreaPortion() {
+    	return CustOpts.custOps.getValue("CategoryAreaPortion") == null ? 
+    			0.4f : Float.valueOf((String)CustOpts.custOps.getValue("CategoryAreaPortion"));
+    }
+    public static void setCategoryAreaPortion(String col) {
+    	CustOpts.custOps.setKeyAndValue("CategoryAreaPortion", col);
+    }
+    
+    
+    
     public static boolean isSingleUser() {
     	return "true".equals(CustOpts.custOps.getValue("SingleUserMode"));
     }
