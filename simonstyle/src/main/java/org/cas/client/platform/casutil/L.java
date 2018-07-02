@@ -31,14 +31,14 @@ public class L extends Thread{
 
     public static void d(String tag, Object msg){
         if(L.debug) {
-            sendToServer(BarOption.getStoreName() + "_" + BarFrame.instance.valOperator.getText(), tag + ":" + String.valueOf(msg));
+            sendToServer(BarOption.getShopName() + "_" + BarFrame.instance.valOperator.getText(), tag + ":" + String.valueOf(msg));
         }
     }
 
     public static void e(String tag, String msg, Throwable e){
         L.debug = true;
         if(L.debug) {
-            sendToServer(BarOption.getStoreName() + "_" + BarFrame.instance.valOperator.getText(), tag + ":" + msg);
+            sendToServer(BarOption.getShopName() + "_" + BarFrame.instance.valOperator.getText(), tag + ":" + msg);
             ErrorUtil.write(tag + msg + e);
             System.out.println(tag + msg + e);
         }
@@ -46,14 +46,14 @@ public class L extends Thread{
 
     public static void i(String tag, String msg){
         if(L.debug) {
-            sendToServer(BarOption.getStoreName() + "_" + BarFrame.instance.valOperator.getText(), tag + ":" + msg);
+            sendToServer(BarOption.getShopName() + "_" + BarFrame.instance.valOperator.getText(), tag + ":" + msg);
             System.out.println(tag + msg);
         }
     }
 
     public static void w(String tag, String msg, Throwable e){
         if(L.debug) {
-            sendToServer(BarOption.getStoreName() + "_" + BarFrame.instance.valOperator.getText(), tag + ":" + msg);
+            sendToServer(BarOption.getShopName() + "_" + BarFrame.instance.valOperator.getText(), tag + ":" + msg);
         }
         System.out.println(tag + msg + e);
     }
