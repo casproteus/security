@@ -48,6 +48,11 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
         initDialog();
     }
     
+    public static boolean isDebugMode() {
+		return CustOpts.custOps.getValue("isDebugMode") == null ? false : 
+			Boolean.valueOf((String)CustOpts.custOps.getValue("isDebugMode"));
+	}
+    
 	public static int getPrinterMinWaiTime() {
 		return CustOpts.custOps.getValue("PrinterMinWaiTime") == null ? 5000 : 
 			Integer.valueOf((String)CustOpts.custOps.getValue("PrinterMinWaiTime"));
@@ -144,7 +149,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 //    			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isPrintBillWhenPay"));
 //    }
 //    public static void setIsPrintBillWhenPay(Boolean isPrintBillWhenPay) {
-//    	CustOpts.custOps.setKeyAndValue("isPrintBillWhenPay", isPrintBillWhenPay);
+//    	CustOpts.custOps.setKeyAndValue("isPrintBillWhenPay", String.valueOf(isPrintBillWhenPay));
 //    }
 	
 	public static boolean isDisDishIDInKitchen(){
@@ -152,7 +157,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isDisDishIDInKitchen"));
 	}
 	public static void setIsDisplayBillInKitchen(boolean isDisDishIDInKitchen){
-		CustOpts.custOps.setKeyAndValue("isDisDishIDInKitchen", isDisDishIDInKitchen);
+		CustOpts.custOps.setKeyAndValue("isDisDishIDInKitchen", String.valueOf(isDisDishIDInKitchen));
 	}
 
 	public static boolean isDisplayBillInKitchen(){
@@ -160,7 +165,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isDisplayBillInKitchen"));
 	}
 	public static void setDisplayBillInKitchen(boolean displayBillInKitchen){
-		CustOpts.custOps.setKeyAndValue("displayBillInKitchen", displayBillInKitchen);
+		CustOpts.custOps.setKeyAndValue("displayBillInKitchen", String.valueOf(displayBillInKitchen));
 	}
 
 	public static boolean isDoNotDisplayWaiterInKitchen(){
@@ -169,7 +174,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 	}
 	
 	public static void setDoNotDisplayWaiterInKitchen(boolean isDoNotDisplayWaiterInKitchen){
-		CustOpts.custOps.setKeyAndValue("isDoNotDisplayWaiterInKitchen", isDoNotDisplayWaiterInKitchen);
+		CustOpts.custOps.setKeyAndValue("isDoNotDisplayWaiterInKitchen", String.valueOf(isDoNotDisplayWaiterInKitchen));
 	}
 	
     public static String getMoneySign() {
@@ -185,7 +190,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isDisCountBeforeTax"));
     }
     public static void setIsDisCountBeforeTax(Boolean isDisCountBeforeTax) {
-    	CustOpts.custOps.setKeyAndValue("isDisCountBeforeTax", isDisCountBeforeTax);
+    	CustOpts.custOps.setKeyAndValue("isDisCountBeforeTax", String.valueOf(isDisCountBeforeTax));
     }
     
     public static boolean isBuffetMode() {
@@ -193,7 +198,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isBuffetMode"));
     }
     public static void setIsBuffetMode(Boolean isBuffetMode) {
-    	CustOpts.custOps.setKeyAndValue("isBuffetMode", isBuffetMode);
+    	CustOpts.custOps.setKeyAndValue("isBuffetMode", String.valueOf(isBuffetMode));
     }
     
     public static int getBillPageRow() {
@@ -262,7 +267,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     }
     
     public static void setFastFoodMode(boolean isFastFoodMode) {
-    	CustOpts.custOps.setKeyAndValue("FastFoodMode", isFastFoodMode);
+    	CustOpts.custOps.setKeyAndValue("FastFoodMode", String.valueOf(isFastFoodMode));
     }
     public static boolean isFastFoodMode() {
     	return CustOpts.custOps.getValue("FastFoodMode") == null ? 
@@ -361,8 +366,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     }
 
     @Override
-    public boolean setContents(
-            PIMRecord prmRecord) {
+    public boolean setContents(PIMRecord prmRecord) {
         return true;
     }
 

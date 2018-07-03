@@ -22,7 +22,7 @@ import org.json.JSONObject;
  */
 
 public class L extends Thread{
-	public static boolean debug;
+	public static boolean debug = BarOption.isDebugMode();
     private static final String ErrorLogURL = "http://stgo.giize.com:81";
     private static int index = 0;
 
@@ -30,7 +30,7 @@ public class L extends Thread{
     private static Vector<String> msgs = new Vector<String>();
 
     public static void d(String tag, Object msg){
-        if(L.debug) {
+        if(L.debug && BarFrame.instance != null) {
             sendToServer(BarOption.getShopName() + "_" + BarFrame.instance.valOperator.getText(), tag + ":" + String.valueOf(msg));
         }
     }

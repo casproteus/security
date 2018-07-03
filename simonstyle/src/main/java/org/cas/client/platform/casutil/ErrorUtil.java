@@ -74,7 +74,7 @@ public class ErrorUtil extends ByteArrayOutputStream {
             byte[] buf,
             int off,
             int len) {
-        // Start of Optimization,for stack & memory（01/11/2002）－by WuLiangqiao（User084）
+        // Start of Optimization,for stack & memory
         String id = "0";
         int stack = 0;
         boolean found = false;
