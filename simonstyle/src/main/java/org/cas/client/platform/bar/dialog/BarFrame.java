@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.AppData;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
@@ -27,6 +28,7 @@ import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascontrol.frame.CASMainFrame;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 
@@ -48,8 +50,11 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         payCashDlg = new PayCashDlg(instance);
         
         //activation check
-        if(!valicateActivation()) {
-        	return;
+        String returnStr = valicateActivation(null);
+        if(!"OK".equals(returnStr)) { 	// if not valid, might because of expired, then give clean the bill head, 
+        	if(!"OK".equals(valicateActivation(returnStr))) {	// give another valid to show up licence dialog.
+        		return;
+        	}
         }
         
         if(BarOption.isSingleUser()) {
@@ -59,21 +64,73 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         }
     }
     
-    private static boolean valicateActivation() {
-    	if(BarOption.getBillHeadInfo() == null) {
-    		String activateCode = JOptionPane.showInputDialog(null, "Activate Code:");
+    private static String valicateActivation(String activateCode) {
+    	if(BarOption.getBillHeadInfo() == null || BarOption.getBillHeadInfo().trim().length() == 0 ) {
+    		if(activateCode == null)
+    			activateCode = JOptionPane.showInputDialog(null, "Activate Code:");
     		if("asdfas".equals(activateCode)) {
     			if(BarOption.getBillHeadInfo() == null) {
-            		BarOption.setBillHeadInfo(" ");
+            		BarOption.setBillHeadInfo("AikaPos");
             	}
-    			return true;
+    			return "OK";
     		}else {
-    			//AppData.
-    			return false;
+    			authenticate(activateCode);
+    			return "OK";
     		}
     	}else {
-    		return true;
+    		long timeLeft = checkDaysleft();
+    		if(timeLeft > 0) {
+    			if (timeLeft < 3024000000l) {   //3024000000L == 35days
+                    JOptionPane.showMessageDialog(null, "Application is about to expire! Please re-activate it!");
+                }
+    			return "OK";
+    		}else {
+    			BarOption.setBillHeadInfo(null);
+    			return activateCode;
+    		}
     	}
+    }
+    
+    private static void authenticate(String inputedSN) {
+        if (inputedSN.length() != 6) {
+            JOptionPane.showMessageDialog(null,"Please input correct license code");
+            return;
+        }
+
+        BarOption.setLicense(inputedSN);
+        new AppData().start();
+    }
+    
+    private static long checkDaysleft() {
+        //none limitation check, limitation can ba a number(String format), null(not set) or a none(never expired)
+        if("none".equals(BarOption.getLimitation())) {         L.d("limitationMode", "none");
+            return 3024000000l + 1;
+        }
+        
+        //time of last open, @note:if existing last open time is not valid, then use lastSuccess will not be set.
+        long timepassed = 0l;
+        String lastsuccessStr = BarOption.getLastSuccessStr();    L.d("lastSuccessStr:",lastsuccessStr);
+        try{
+            Long lastSuccess= lastsuccessStr == null ? new Date().getTime() : Long.valueOf(lastsuccessStr);
+            timepassed = new Date().getTime() - lastSuccess;L.d("timePassed:",timepassed);        //time passed since last open.
+        }catch(Exception e){
+            L.e("BarFrame ", "the lastsuccessStr is not valid long", e);
+        }
+
+        //if timeLeftStr is valid, then it has a chance to turn the timeLeft to be a number bigger than 0.
+        long activateTimeLeft = BarOption.getActivateTimeLeft();//Number("number");               L.d("timeLeft(before deduct:", number);
+        try {
+            //the time left from last calculation, minus time passed. @note: we use abs, so is the time is negative, will still be minused!
+        	activateTimeLeft = activateTimeLeft - Math.abs(timepassed);    L.d("timeLeft - timePassed:", activateTimeLeft);
+
+            //update the number and lastsuccess into local cache.
+        	CustOpts.custOps.setKeyAndValue("lastsuccessStr", String.valueOf(new Date().getTime()));
+        	CustOpts.custOps.setKeyAndValue("activateTimeLeft", String.valueOf(activateTimeLeft));              L.d("update new number with:", activateTimeLeft);
+        }catch(Exception e){
+            L.e("MainActivity", "the left time number can not be pasered into a long", e);
+        }
+
+        return activateTimeLeft;
     }
     
     public static void singleUserLoginProcess() {
@@ -125,7 +182,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
-		lblVersion = new JLabel("V0.27-20180703");
+		lblVersion = new JLabel("V0.28-20180704");
         
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();

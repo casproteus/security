@@ -47,6 +47,33 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
         super(pFrame, false);
         initDialog();
     }
+
+    public static String getLicense(){
+    	return (String)CustOpts.custOps.getValue("license");
+    }
+    
+    public static void setLicense(String licence){
+    	CustOpts.custOps.setKeyAndValue("license", licence);
+    }
+    
+    public static String getLimitation(){
+    	return (String)CustOpts.custOps.getValue("limitation");
+    }
+
+    public static long getActivateTimeLeft(){
+    	Object o = CustOpts.custOps.getValue("activateTimeLeft");
+    	return o == null ? -1 : Long.valueOf((String)o);
+    }
+    public static void setActivateTimeLeft(String activateTimeLeft){
+    	CustOpts.custOps.setKeyAndValue("activateTimeLeft", activateTimeLeft);
+    }
+
+    public static String getLastSuccessStr() {
+    	return (String)CustOpts.custOps.getValue("lastsuccessStr");
+    }
+    public static void setLastSuccessStr(String lastsuccessStr) {
+    	CustOpts.custOps.setKeyAndValue("lastsuccessStr", lastsuccessStr);
+    }
     
     public static boolean isDebugMode() {
 		return CustOpts.custOps.getValue("isDebugMode") == null ? false : 
@@ -83,7 +110,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     
     public static void setBillHeadInfo(String billHeadInfo) {
     	if(billHeadInfo == null) {
-    		L.e("setting BillHead", "trying to set null to bill head info.", null);
+    		CustOpts.custOps.setKeyAndValue("BillHeadInfo", "");
     		return;
     	}
     	
