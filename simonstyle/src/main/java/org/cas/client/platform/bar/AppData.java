@@ -19,8 +19,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AppData extends Thread{
-    public static final String SERVER_URL = "http://test.sharethegoodones.com";
-    //public static final String SERVER_URL = "http://localhost:81/taostyle";
+	public static final String SERVER_URL = "http://test.sharethegoodones.com";
+	//public static final String SERVER_URL = "http://test.sharethegoodones.com/taostyle";
 
     public static final String KEY_SHOP_XML = "KEY_SHOP_XML";
     public static final String KEY_SHOP_LIST = "KEY_SHOP_LIST";
@@ -100,7 +100,8 @@ public class AppData extends Thread{
                 if (p < -1) {
                 	JOptionPane.showMessageDialog(null, "Activation failed with error code 520, please contact us at info@ShareTheGoodOnes.com");
                 }else {
-					long time = Long.valueOf(responseString.substring(0, p));
+                	String s = responseString.substring(0, p);
+					long time = "none".equals(s) ? 100 * 365 * 24 * 3600 * 1000 : Long.valueOf(s);
 					if (time > 0) {// if success
 						BarOption.setActivateTimeLeft(String.valueOf(time * 24 * 3600 * 1000));
 						BarOption.setLastSuccessStr(String.valueOf(new Date().getTime()));
