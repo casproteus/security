@@ -92,7 +92,7 @@ public class AppData extends Thread{
             String jsonstr = json.toString();//把JSON对象按JSON的编码格式转换为字符串
 
             writeOut(urlConnection, jsonstr);
-
+            urlConnection.setConnectTimeout(20000);
             if(urlConnection.getResponseCode()==HttpURLConnection.HTTP_OK){//得到服务端的返回码是否连接成功
 
                 String responseString = readBackFromConnection(urlConnection);

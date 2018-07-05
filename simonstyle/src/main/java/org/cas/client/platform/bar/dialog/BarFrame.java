@@ -50,9 +50,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         payCashDlg = new PayCashDlg(instance);
         
         //activation check
-        String returnStr = valicateActivation(null);
+        String returnStr = validateActivation(null);
         if(!"OK".equals(returnStr)) { 	// if not valid, might because of expired, then give clean the bill head, 
-        	if(!"OK".equals(valicateActivation(returnStr))) {	// give another valid to show up licence dialog.
+        	if(!"OK".equals(validateActivation(returnStr))) {	// give another valid to show up licence dialog.
         		return;
         	}
         }
@@ -64,8 +64,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         }
     }
     
-    private static String valicateActivation(String activateCode) {
+    private static String validateActivation(String activateCode) {
     	if(BarOption.getBillHeadInfo() == null || BarOption.getBillHeadInfo().trim().length() == 0 ) {
+    		
     		if(activateCode == null)
     			activateCode = JOptionPane.showInputDialog(null, "Activate Code:");
     		if("asdfas".equals(activateCode)) {
@@ -78,6 +79,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     			return "OK";
     		}
     	}else {
+    		System.out.println("bill info is:'" + BarOption.getBillHeadInfo() + "'");
     		long timeLeft = checkDaysleft();
     		if(timeLeft > 0) {
     			if (timeLeft < 3024000000l) {   //3024000000L == 35days
@@ -182,7 +184,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
-		lblVersion = new JLabel("V0.28-20180704");
+		lblVersion = new JLabel("V0.31-20180706");
         
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();

@@ -415,8 +415,7 @@ public class PrintService{
         }
         
         StringBuilder content = new StringBuilder(BarOption.getBillHeadInfo());
-        if(width < 20)
-            content.append("\n\n");
+        content.append("\n\n");
         content.append("(").append(BarFrame.instance.valCurTable.getText()).append(")");
         //bill
         int lengthOfStrToDisplay = 3 + BarFrame.instance.valCurTable.getText().length();
