@@ -414,8 +414,9 @@ public class PrintService{
             }
         }
         
-        StringBuilder content = new StringBuilder(BarOption.getBillHeadInfo());
-        content.append("\n\n");
+        StringBuilder content = getFormattedBillHeader();
+        content.append("\n");
+
         content.append("(").append(BarFrame.instance.valCurTable.getText()).append(")");
         //bill
         int lengthOfStrToDisplay = 3 + BarFrame.instance.valCurTable.getText().length();
@@ -485,6 +486,21 @@ public class PrintService{
         	content.append("\n");
         }
         return content.toString();
+    }
+    
+    private static StringBuilder getFormattedBillHeader() {
+    	StringBuilder sb = new StringBuilder();
+    	String s = BarOption.getBillHeadInfo();
+    	if(s != null && s.trim().length() > 0) {
+    		String[] infos = s.split(":");
+    		for(String info : infos) {
+    			int length = (width - info.length())/2;
+    			sb.append(generateString(length, " "));
+    			sb.append(info);
+    			sb.append("\n");
+    		}
+    	}
+    	return sb;
     }
     
     private static String formatContentForPrint(List<Dish> list, String curPrintIp,

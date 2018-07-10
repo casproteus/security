@@ -77,9 +77,9 @@ class DefaultConfigInfoLoader {
                 tmpENTERPos = tmpTextLen; // 此处不可直接返回，因为不该漏掉最后一个value。
                                           // @NOTE:可能需要判断是否是等于，如果最后一个符号是“＝”会不会出错？
             tmpValue = tmpFileText.substring(++tmpLINKPos, tmpENTERPos).trim();
-            System.out.println("开始塞值---------------------");
+            System.out.println("--------------------");
             System.out.println("key:" + tmpKey);
-            System.out.println("tmpValue" + tmpValue);
+            System.out.println("tmpValue：" + tmpValue);
             prmHash.put(tmpKey, tmpValue);
         }
     }

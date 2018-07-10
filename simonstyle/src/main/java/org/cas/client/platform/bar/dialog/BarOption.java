@@ -76,8 +76,8 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     }
     
     public static boolean isDebugMode() {
-		return CustOpts.custOps.getValue("isDebugMode") == null ? false : 
-			Boolean.valueOf((String)CustOpts.custOps.getValue("isDebugMode"));
+		return CustOpts.custOps.getValue("debug") == null ? true : 
+			"true".equals(CustOpts.custOps.getValue("debug"));
 	}
     
 	public static int getPrinterMinWaiTime() {
