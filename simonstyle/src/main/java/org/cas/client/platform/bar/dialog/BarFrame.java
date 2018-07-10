@@ -79,7 +79,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     			return "OK";
     		}
     	}else {
-    		System.out.println("bill info is:'" + BarOption.getBillHeadInfo() + "'");
+    		L.d("bill info is:", BarOption.getBillHeadInfo());
     		long timeLeft = checkDaysleft();
     		if(timeLeft > 0) {
     			if (timeLeft < 3024000000l) {   //3024000000L == 35days
@@ -184,7 +184,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
-		lblVersion = new JLabel("V0.31-20180706");
+		lblVersion = new JLabel("V0.33-20180710");
         
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();
