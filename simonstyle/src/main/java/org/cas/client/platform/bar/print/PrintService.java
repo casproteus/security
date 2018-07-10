@@ -416,6 +416,7 @@ public class PrintService{
         
         StringBuilder content = getFormattedBillHeader();
         content.append("\n");
+
         content.append("(").append(BarFrame.instance.valCurTable.getText()).append(")");
         //bill
         int lengthOfStrToDisplay = 3 + BarFrame.instance.valCurTable.getText().length();
