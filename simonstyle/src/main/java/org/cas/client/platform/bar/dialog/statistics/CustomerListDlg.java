@@ -28,6 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -70,6 +71,7 @@ public class CustomerListDlg extends JDialog implements ICASDialog, ActionListen
             if (Integer.parseInt(CustOpts.custOps.getUserType()) > 0) {// 如果当前登陆用户是个普通员工，则显示普通登陆对话盒。等待再次登陆
                 new LoginDlg(PosFrame.instance).setVisible(true);// 结果不会被保存到ini
                 if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+                	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
                     if (LoginDlg.USERTYPE >= 2) {// 进一步判断，如果新登陆是经理，弹出对话盒
                         int tRow = tblContent.getSelectedRow();
                         PIMRecord tRec =

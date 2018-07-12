@@ -47,7 +47,6 @@ import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.IPIMTableColumnModel;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.platform.pos.dialog.PosFrame;
-import org.cas.client.resource.international.DlgConst;
 
 public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener,
         MouseListener {
@@ -238,6 +237,7 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
             if (LoginDlg.USERTYPE > 0) {// 如果当前登陆用户是个普通员工，则显示普通登陆对话盒。等待再次登陆
                 new LoginDlg(PosFrame.instance).setVisible(true);// 结果不会被保存到ini
                 if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+                	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
                     if (LoginDlg.USERTYPE >= 2) {// 进一步判断，如果新登陆是经理，弹出对话盒
                         int tRow = tblContent.getSelectedRow();
                         PIMRecord tRec =

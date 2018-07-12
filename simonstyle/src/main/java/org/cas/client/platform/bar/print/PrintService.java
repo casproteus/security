@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +47,7 @@ public class PrintService{
     private static HashMap<String,List<String>> ipContentMap;
 
     private static String curPrintIp = "";
-    private static int width = 24;
+    private static int width = 28;
     private String code = "GBK";
     private static String SEP_STR1 = "=";
     private static String SEP_STR2 = "-";
@@ -410,7 +411,7 @@ public class PrintService{
             try {
                 width = Integer.valueOf(w);
             }catch(Exception e){
-
+            	//do nothing, if no with property set, width will keep default value.
             }
         }
         
@@ -419,19 +420,23 @@ public class PrintService{
 
         content.append("(").append(BarFrame.instance.valCurTable.getText()).append(")");
         //bill
-        int lengthOfStrToDisplay = 3 + BarFrame.instance.valCurTable.getText().length();
-        content.append(billPanel.billButton == null ? BarFrame.instance.valCurBill.getText() : billPanel.billButton.getText());
-        lengthOfStrToDisplay += BarFrame.instance.valCurBill.getText().length();
+        content.append("  ").append(billPanel.billButton == null ? BarFrame.instance.valCurBill.getText() : billPanel.billButton.getText());
         //waiter
-        content.append("   ").append(BarFrame.instance.valOperator.getText());
-        lengthOfStrToDisplay += BarFrame.instance.valOperator.getText().length();
+        content.append("  ").append(BarFrame.instance.valOperator.getText()).append("  ");
         //time
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String dateStr = df.format(new Date());
-        lengthOfStrToDisplay += dateStr.length();
-        String spaceStr = generateString(width - lengthOfStrToDisplay - 3, " ");
-        content.append(spaceStr).append(dateStr).append("\n");
-
+        
+        int lengthOfSpaceBeforeTime = width - content.length() - dateStr.length();
+        if(lengthOfSpaceBeforeTime > 0) {
+        	String spaceStr = generateString(lengthOfSpaceBeforeTime, " ");
+        	content.append(spaceStr).append(dateStr);
+        }else {
+        	String spaceStr = generateString(width - dateStr.length(), " ");
+        	content.append("\n").append(spaceStr).append(dateStr);
+        }
+        content.append("\n");
+        //seperator
         String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
         if(sep_str1 == null || sep_str1.length() == 0){
             sep_str1 = SEP_STR1;
@@ -440,20 +445,26 @@ public class PrintService{
         if(sep_str2 == null || sep_str2.length() == 0){
             sep_str2 = SEP_STR2;
         }
-
+        //dishes
         content.append(generateString(width, sep_str1)).append("\n\n");
         int langIndex = ipPrinterMap.get(curPrintIp).getType();
         for(Dish d:list){
             StringBuilder sb = new StringBuilder();
+            
             if(BarOption.isDisDishIDInKitchen()) {
                 sb.append(d.getId());
                 sb.append(generateString(5 - String.valueOf(d.getId()).length(), " "));
             }
-            sb.append(d.getLanguage(langIndex));
+            
+            String dishName = d.getLanguage(langIndex); 
+            sb.append(dishName);
+            
             if(d.getNum() > 1){
-            	sb.append(" x").append(Integer.toString(d.getNum()));
+            	String num = Integer.toString(d.getNum());
+            	sb.append(" x").append(num);
             }
-            String price = BarOption.getMoneySign() + d.getTotalPrice()/100f;
+            
+            String price = BarOption.getMoneySign() + new DecimalFormat("#0.00").format(d.getTotalPrice()/100f);
             int occupiedLength = getLengthOfString(sb.toString());
             sb.append(generateString(width - occupiedLength - (price.length()), " "));
             sb.append(price);
@@ -461,23 +472,45 @@ public class PrintService{
 
             content.append("\n");
         }
+        
+        //seperator
         content.append(generateString(width, sep_str2)).append("\n");
+        
         //totals
+        String SubTotal = "SubTotal";
+        String TPS = "TPS";
+        String TVQ = "TVQ";
+        String Total = "Total";
+        String ServiceFee = "Service Fee";
+        String Discount = "Discount";
+        
         String[] strs = billPanel.lblSubTotle.getText().split(":");
-        content.append("subtotal : ").append(strs[1]).append("\n");
+        content.append(SubTotal).append(" : ")
+        	.append(generateString(width - strs[1].length() - SubTotal.length() - 3, " "))
+        	.append(strs[1]).append("\n");
         strs = billPanel.lblTPS.getText().split(":");
-        content.append("TPS : ").append(strs[1]).append("\n");
+        content.append(TPS).append(" : ")
+    		.append(generateString(width - strs[1].length() - TPS.length() - 3, " "))
+        	.append(strs[1]).append("\n");
         strs = billPanel.lblTVQ.getText().split(":");
-        content.append("TVQ : ").append(strs[1]).append("\n");
+        content.append(TVQ).append(" : ")
+			.append(generateString(width - strs[1].length() - TVQ.length() - 3, " "))
+        	.append(strs[1]).append("\n");
         if(billPanel.lblServiceFee.getText().length() > 0) {
             strs = billPanel.lblServiceFee.getText().split(":");
-            content.append("Service Fee : ").append(strs[1]).append("\n");
+            content.append(ServiceFee).append(" : ")
+				.append(generateString(width - strs[1].length() - ServiceFee.length() - 3, " "))
+            	.append(strs[1]).append("\n");
         }
         if(billPanel.lblDiscount.getText().length() > 0) {
             strs = billPanel.lblDiscount.getText().split(":");
-            content.append("Discount : ").append(strs[1]).append("\n");
+            content.append(Discount).append(" : ")
+				.append(generateString(width - strs[1].length() - Discount.length() - 3, " "))
+            	.append(strs[1]).append("\n");
         }
-        content.append("TOTAL : $").append(billPanel.valTotlePrice.getText()).append("\n");
+        content.append(Total).append(" : ")
+			.append(generateString(width - strs[1].length() - Total.length() - 3 - 1, " "))
+			.append(BarOption.getMoneySign()).append(billPanel.valTotlePrice.getText()).append("\n");
         //end message.
         String endMes = BarOption.getBillFootInfo();
         if(endMes != null && endMes.trim().length() > 0) {

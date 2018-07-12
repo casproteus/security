@@ -139,7 +139,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     	new LoginDlg(instance).setVisible(true);
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
             instance.setVisible(true);
-            
+            instance.valOperator.setText(LoginDlg.USERNAME);
             //do sign in automatically
             String sql = "INSERT INTO evaluation(startTime, EMPLOYEEID) VALUES ('" + BarOption.df.format(new Date())
 				+ "', " + LoginDlg.USERID + ")";
@@ -184,7 +184,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
-		lblVersion = new JLabel("V0.33-20180710");
+		lblVersion = new JLabel("V0.35-20180712");
         
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();
@@ -232,15 +232,15 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 	
     public int switchMode(int i) {
     	BillListPanel.curDish = null;
-		if (i == 3) {
+		if (i == 3) {		//setting
 			if (!adminAuthentication()) 
 				return -1;
 			resetStatus();
-		}else if(i == 2) {
+		}else if(i == 2) {	//sale
 			((SalesPanel)panels[i]).billPanel.initContent();
-		}else if(i == 1) {
+		}else if(i == 1) {	//bill
 			((BillListPanel)panels[i]).initContent();
-		}else if(i == 0) {
+		}else if(i == 0) {	//table
 			resetStatus();
 			((TablesPanel)panels[i]).initContent();
 		}
@@ -258,9 +258,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 	}
     
 	private void resetStatus() {
-		if (BarOption.isSingleUser()) {
-			valOperator.setText(LoginDlg.USERNAME);
-		}else {
+		if (!BarOption.isSingleUser()) {
 			valOperator.setText("");
 		}
 		valCurTable.setText("");

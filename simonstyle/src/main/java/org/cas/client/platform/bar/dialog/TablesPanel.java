@@ -196,6 +196,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     			}else {
     				new LoginDlg(null).setVisible(true);
 	                if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+	                	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
 	                    //insert a record of start to work.
 	                	CheckInOutListDlg.updateCheckInRecord();
 	                }
@@ -232,20 +233,6 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
                 tBtnHeight);
         btnCheckInOut.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
                 tBtnHeight);
-    }
-
-    private boolean adminAuthentication() {
-        new LoginDlg(null).setVisible(true);
-        if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-            if ("System".equalsIgnoreCase(LoginDlg.USERNAME)) {
-                curSecurityStatus++;
-                BarFrame.setStatusMes(BarFrame.consts.ADMIN_MODE());
-                // @TODO: might need to do some modification on the interface.
-                revalidate();
-                return true;
-            }
-        }
-        return false;
     }
     
     void initComponent() {

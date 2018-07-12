@@ -523,6 +523,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
             if (tType > 0) {// 如果当前登陆用户是个普通员工，则显示普通登陆对话盒。等待再次登陆
                 new LoginDlg(BarFrame.instance).setVisible(true);// 结果不会被保存到ini
                 if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+                	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
                     if (LoginDlg.USERTYPE < 2) {// 进一步判断，如果新登陆不是为经理，弹出该密码对话盒（显示一个只有名字，密码，验证三项的LoginDlg）。
                         new ModifyPasswordDlg(BarFrame.instance, LoginDlg.USERNAME).setVisible(true);
                     } else
