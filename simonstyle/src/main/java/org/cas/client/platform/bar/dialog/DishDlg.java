@@ -325,22 +325,24 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             }
 
             // price check----------------------------------
-            String priceText = tfdPrice.getText();
-            float tPrice;
-            try {
-                tPrice = Float.parseFloat(priceText);
-                int tPosOfPoint = priceText.indexOf("."); // 若格式也没有问题，精度是否符合要求。
-                if (tPosOfPoint != -1 && priceText.substring(tPosOfPoint + 1).length() > 2) {
-                    JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
-                    tfdPrice.selectAll();
-                    tfdPrice.grabFocus();
-                    return;
-                }
-            } catch (Exception exp) {
-                JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
-                tfdPrice.grabFocus();
-                tfdPrice.selectAll();
-                return;
+	        String priceText = tfdPrice.getText();
+	        float tPrice = 0f;
+	        if(!BarOption.isBuffetMode()) {
+	            try {
+	                tPrice = Float.parseFloat(priceText);
+	                int tPosOfPoint = priceText.indexOf("."); // 若格式也没有问题，精度是否符合要求。
+	                if (tPosOfPoint != -1 && priceText.substring(tPosOfPoint + 1).length() > 2) {
+	                    JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
+	                    tfdPrice.selectAll();
+	                    tfdPrice.grabFocus();
+	                    return;
+	                }
+	            } catch (Exception exp) {
+	                JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
+	                tfdPrice.grabFocus();
+	                tfdPrice.selectAll();
+	                return;
+	            }
             }
             
             try {
