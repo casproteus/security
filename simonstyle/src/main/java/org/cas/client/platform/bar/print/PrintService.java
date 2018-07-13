@@ -508,9 +508,11 @@ public class PrintService{
 				.append(generateString(width - strs[1].length() - Discount.length() - 3, " "))
             	.append(strs[1]).append("\n");
         }
+        
+        String strTotal = billPanel.valTotlePrice.getText();
         content.append(Total).append(" : ")
-			.append(generateString(width - strs[1].length() - Total.length() - 3 - 1, " "))
-			.append(BarOption.getMoneySign()).append(billPanel.valTotlePrice.getText()).append("\n");
+			.append(generateString(width - strTotal.length() - Total.length() - 3 - 1, " "))
+			.append(BarOption.getMoneySign()).append(strTotal).append("\n");
         //end message.
         String endMes = BarOption.getBillFootInfo();
         if(endMes != null && endMes.trim().length() > 0) {
