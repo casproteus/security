@@ -90,7 +90,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		billPanel.sendNewDishesToKitchen();
         		//if the bill has not been printted, print the bill also.
         		if(billPanel.getBillId() == 0) {
-        			billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
+        			int newBillID = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
+        			billPanel.updateOutputRecords(newBillID);
         			billPanel.initContent();
         		}
         		

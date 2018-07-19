@@ -78,7 +78,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
         //send to printer
         PrintService.exePrintBill(this, orderedDishAry);
-        
+		int newBillID = generateBillRecord(tableID, billIndex, opentime);
+		return updateOutputRecords(newBillID);
+	}
+
+	public int generateBillRecord(String tableID, String billIndex, String opentime) {
 		//generate a bill in db and update the output with the new bill id
 		Statement stm = PIMDBModel.getStatement();
 		String createtime = BarOption.df.format(new Date());
@@ -100,8 +104,21 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
             rs.beforeFirst();
             rs.next();
-            int newBillID = rs.getInt("id");
-                
+            return rs.getInt("id");
+		 }catch(Exception e) {
+			ErrorUtil.write(e);
+			return -1;
+		 }
+	}
+
+	public int updateOutputRecords(int newBillID) {
+		if(newBillID < 0) {
+			return newBillID;
+		}
+		
+		StringBuilder sql;
+		Statement stm = PIMDBModel.getStatement();
+		try {
 		   	sql = new StringBuilder("update output set category = '").append(newBillID).append("' where id = ");
 			for (Dish dish : orderedDishAry) {
 				if(dish.getOutputID() > 0) {
