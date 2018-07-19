@@ -17,6 +17,9 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String ServiceFee() {return "Service Fee";}
     @Override
+	public String SERVICEFEE() {return "<html><center>SERVICE<br>FEE</center></html>";}
+    
+    @Override
 	public String ServiceFeeNotice() {return "Please input price of service fee";}
     @Override
 	public String CashBack() {return "Cash Back";}
@@ -35,20 +38,20 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String EnterMasterPayment() {return "Enter Master Payment";}
     
     @Override
-	public String ChangeMode() {return "CHANGE MODE";}
+	public String ChangeMode() {return "<html><center>CHANGE<br>MODE</center></html>";}
     @Override
-	public String AddTable() {return "ADD TABLE";}
+	public String AddTable() {return "<html><center>ADD<br>TABLE</center></html>";}
     @Override
-	public String OrderManage() {return "CHECK ORDER";}
+	public String OrderManage() {return "<html><center>CHECK<br>ORDER</center></html>";}
     @Override
-	public String OpenDrawer() {return "OPEN DRAWER";}
+	public String OpenDrawer() {return "<html><center>OPEN<br>DRAWER</center></html>";}
     @Override
-	public String VolumnDiscount() {return "DISC BILL";}
+	public String VolumnDiscount() {return "<html><center>DISC<br>BILL</center></html>";}
     @Override
 	public String VolumnDiscountNotice() {return "Please input how much to discount";}
     
     @Override
-	public String WaiterReport() {return "SERVER REPORT";}
+	public String WaiterReport() {return "<html><center>SERVER<br>REPORT</center></html>";}
     @Override
 	public String Reservation() {return "RESERVATION";}
     @Override
@@ -70,35 +73,35 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String PRICE() {return "Price";}
 
     @Override
-	public String EXACT_AMOUNT() {return "EXACT AMOUNT";}
+	public String EXACT_AMOUNT() {return "<html><center>EXACT<br>AMOUNT</center></html>";}
     @Override
 	public String CASH() {return "CASH";}
     @Override
 	public String PAY() {return "PAY";}
     @Override
-	public String REMOVEITEM() {return "REMOVE ITEM";}
+	public String REMOVEITEM() {return "<html><center>REMOVE<br>ITEM</center></html>";}
     @Override
 	public String VOID_ITEM() {return "VOID ITEM";}
     @Override
-	public String SPLIT_BILL() {return "SPLIT BILL";}
+	public String SPLIT_BILL() {return "<html><center>SPLIT<br>BILL</center></html>";}
     @Override
 	public String Modify() {return "MODIFY";}
     @Override
-	public String BillInfo() {return "BILL FOOT INFO";}
+	public String BillInfo() {return "<html><center>Bill<br>FOOT INFO</center></html>";}
     @Override
-	public String ChangePrice() {return "CHANGE PRICE";}
+	public String ChangePrice() {return "<html><center>CHANGE<br>PRICE</center></html>";}
     @Override
 	public String ChangePriceNotice() {return "Please input a different price for selected item";}
     @Override
 	public String QTY() {return "QTY";}
     @Override
-	public String QTYNOTICE() {return "Please input a number, it will be applied to selected dish";}
+	public String QTYNOTICE() {return "Please input a number to proceed";}
     @Override
-	public String DISC_ITEM() {return "DISC ITEM";}
+	public String DISC_ITEM() {return "<html><center>DISC<br>ITEM</center></html>";}
     @Override
 	public String DISC_ITEMNotice() {return "Please input how much to discount for selected item";}
     @Override
-	public String PRINT_BILL() {return "PRINT BILL";}
+	public String PRINT_BILL() {return "<html><center>PRINT<br>BILL</center></html>";}
 
     @Override
 	public String DEBIT() {return "DEBIT";}
@@ -107,9 +110,9 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String MASTER() {return "MASTER";}
     @Override
-	public String CANCEL_ALL() {return "CANCEL ALL";}
+	public String CANCEL_ALL() {return "<html><center>CANCEL<br>ALL</center></html>";}
     @Override
-	public String VOID_ORDER() {return "VOID ORDER";}
+	public String VOID_ORDER() {return "<html><center>VOID<br>ORDER</center></html>";}
     @Override
 	public String SETTINGS() {return "SETTINGS";}
     @Override
@@ -151,7 +154,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String AllreadyRefund() {return "This bill is allready refunded, are you sure to do one more refund?, already refunded: ";}
     @Override
-	public String UnSendRecordFound() {return "Unsend records found! please make sure all dish have send to kitch before printing bill";}
+	public String UnSendRecordFound() {return "Unsend records found! please make sure all dish have send to kitch before this action";}
     @Override
 	public String Colon() {return "：";}
     @Override
@@ -260,7 +263,7 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String Change() {return "Change";}
 
     @Override
-	public String AddUser() {return "ADD CLIENT";}
+	public String AddUser() {return "<html><center>ADD<br>CLIENT</center></html>";}
     @Override
 	public String PrintAll() {return "PRINT ALL";}
 
@@ -463,11 +466,11 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String DELETE() {return "DELETE";}
     @Override
 	public String RESET() {return "RESET";}
-
-    @Override
-	public String TablePanelBK(){return "General Back Ground";}
+    
     @Override
 	public String LoginBK(){return "Login Dialog Back Ground";};
+    @Override
+	public String TablePanelBK(){return "Table Panel Back Ground";}
     @Override
 	public String BillPanelBK(){return "Bill Panel Back Ground";}
     @Override
@@ -490,4 +493,5 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String ArrowBtnBk() {return "Arrow Button Back Ground";}
     @Override
 	public String Color() {return "Color";}
+    
 }

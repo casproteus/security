@@ -17,6 +17,9 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String ServiceFee() {return "服务费";}
     @Override
+	public String SERVICEFEE() {return "服务费";}
+    
+    @Override
 	public String ServiceFeeNotice() {return "请输入服务费";}
     @Override
 	public String CashBack() {return "返款";}
