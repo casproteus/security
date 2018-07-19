@@ -224,7 +224,7 @@ public class PrintService{
     
     private static boolean doSerialPrint(String ip, String font, String sndMsg) {
         CommPortIdentifier commPortIdentifier;
-        SerialPort tParallelPort = null;
+        SerialPort tSerialPort = null;
         DataOutputStream outputStream = null;
         try {
             Enumeration tPorts = CommPortIdentifier.getPortIdentifiers();
@@ -239,8 +239,8 @@ public class PrintService{
                     continue;
                 
                 //if (!commPortIdentifier.isCurrentlyOwned()) {
-                    tParallelPort = (SerialPort)commPortIdentifier.open("PrintService", 10000);//并口用"ParallelBlackBox"
-                    outputStream = new DataOutputStream(tParallelPort.getOutputStream());
+                    tSerialPort = (SerialPort)commPortIdentifier.open("PrintService", 10000);//并口用"ParallelBlackBox"
+                    outputStream = new DataOutputStream(tSerialPort.getOutputStream());
         			sendContentThroughStream(font, sndMsg, outputStream);
 //                    outputStream.write(27); // 打印机初始化：
 //                    outputStream.write(64);
@@ -307,13 +307,15 @@ public class PrintService{
         			outputStream.close();
         		}catch(Exception exp) {
         			System.out.println(exp);
+					L.e(ip, "Error when trying to close outputString of serial port", exp);
         		}
         	}
-        	if(tParallelPort != null) {
+        	if(tSerialPort != null) {
         		try {
-        			tParallelPort.close();
+        			tSerialPort.close();
         		}catch(Exception e) {
         			System.out.println(e);
+					L.e(ip, "Error when trying to close serial port", e);
         		}
         	}
         }
@@ -329,6 +331,8 @@ public class PrintService{
     		return false;
     	}
     	
+    	Socket socket = null;
+    	OutputStream outputStream = null;
 		try {
 			InetAddress inet = InetAddress.getByAddress(new byte[] {
 	        		Short.valueOf(ipAry[0]).byteValue(), Short.valueOf(ipAry[1]).byteValue(), 
@@ -340,8 +344,8 @@ public class PrintService{
 	        	return false;
 	        }
 	        
-			Socket socket = new Socket(ip, 9100);
-			OutputStream outputStream = socket.getOutputStream();
+			socket = new Socket(ip, 9100);
+			outputStream = socket.getOutputStream();
 			sendContentThroughStream(font, sndMsg, outputStream);
 			outputStream.close();
 			socket.close();
@@ -350,6 +354,21 @@ public class PrintService{
 			ErrorUtil.write(exp);
 			L.e(ip, "Error when printing content to socket", exp);
 			return false;
+		} finally {
+			if(outputStream != null) {
+				try {
+					outputStream.close();
+				}catch(Exception exp) {
+					L.e(ip, "Error when trying to close outputStream", exp);
+				}
+			}
+			if(socket != null) {
+				try {
+					socket.close();
+				}catch(Exception exp) {
+					L.e(ip, "Error when trying to close socket", exp);
+				}
+			}
 		}
     }
 
