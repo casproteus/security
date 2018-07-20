@@ -247,6 +247,16 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         	if(o == btnLine_2_1) {
         		LoginDlg.USERTYPE = -1;
         		BarFrame.instance.switchMode(0);
+        		if(BarOption.isSingleUser()) {
+    				BarFrame.instance.setVisible(false);
+    				BarFrame.singleUserLoginProcess();
+    			}else {
+    				new LoginDlg(null).setVisible(true);
+	                if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+	                	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
+	                }
+    			}
+        		
         	}else if(o == btnLine_2_2) {
         		new TabbleSettingDlg(BarFrame.instance).setVisible(true);
         	}else if(o == btnLine_2_3) {
