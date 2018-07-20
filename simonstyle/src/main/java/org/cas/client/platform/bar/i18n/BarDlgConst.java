@@ -34,6 +34,7 @@ public interface BarDlgConst {
     String WaiterReport();
     String Reservation();
     String Report();
+    String CheckOut();
     String CheckInOut();
     
     String Menu();

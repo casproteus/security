@@ -109,7 +109,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 			if(!BarOption.isSingleUser()) {	//if it's multi user, then login every time open table.
 				new LoginDlg(null).setVisible(true);
 	            if (LoginDlg.PASSED == true) {
-	            	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
+	            	BarFrame.checkSignIn();
 	            	//@note: lowdown a little the level, to enable the admin do sales work.
 	            	if ("admin".equalsIgnoreCase(LoginDlg.USERNAME))
 	            		 LoginDlg.USERTYPE = LoginDlg.USER_STATUS;
@@ -164,7 +164,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         		if(!BarOption.isSingleUser()) {
         			new LoginDlg(null).setVisible(true);
     	            if (LoginDlg.PASSED == true) {
-    	            	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
+    	            	BarFrame.checkSignIn();
     	            	//@note: lowdown a little the level, to enable the admin do sales work.
     	            	if ("admin".equalsIgnoreCase(LoginDlg.USERNAME))
     	            		 LoginDlg.USERTYPE = LoginDlg.USER_STATUS;
@@ -244,7 +244,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 		btnLine_2_5 = new FunctionButton(BarFrame.consts.WaiterReport());
 		btnLine_2_6 = new FunctionButton(BarFrame.consts.SETTINGS());
 		btnLine_2_8 = new FunctionButton(BarFrame.consts.Report());
-		btnCheckInOut = new FunctionButton(BarFrame.consts.CheckInOut());
+		btnCheckInOut = new FunctionButton(BarFrame.consts.CheckOut());
 
         // border----------
         setBackground(BarOption.getBK("TablePanel"));

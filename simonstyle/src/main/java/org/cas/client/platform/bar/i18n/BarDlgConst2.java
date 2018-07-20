@@ -57,7 +57,9 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String Report() {return "报告";}
     @Override
-	public String CheckInOut() {return "登入/登出";}
+	public String CheckOut() {return "登出";}
+    @Override
+	public String CheckInOut() {return "打卡记录";}
     
     @Override
 	public String Menu() {return "菜单";}

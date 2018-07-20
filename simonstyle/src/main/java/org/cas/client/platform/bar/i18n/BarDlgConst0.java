@@ -57,7 +57,9 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String Report() {return "REPORT";}
     @Override
-	public String CheckInOut() {return "SING IN/OUT";}
+    public String CheckOut(){return "SIGN OUT";}
+    @Override
+	public String CheckInOut() {return "SIGN IN/OUT";}
     
     @Override
 	public String Menu() {return "Menu";}

@@ -8,6 +8,8 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Vector;
@@ -139,19 +141,43 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     	new LoginDlg(instance).setVisible(true);
         if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
             instance.setVisible(true);
-            instance.valOperator.setText(LoginDlg.USERNAME);
-            //do sign in automatically
-            String sql = "INSERT INTO evaluation(startTime, EMPLOYEEID) VALUES ('" + BarOption.df.format(new Date())
-				+ "', " + LoginDlg.USERID + ")";
-			try {
-				PIMDBModel.getStatement().executeQuery(sql);
-			}catch(Exception exp) {
-				ErrorUtil.write(exp);
-			}
+            checkSignIn();
         }else {	//the case that user clicked X button.
             System.exit(0);
         }
     }
+
+    /**
+     * used when single user login, or when multiuser adding table or open table.
+     * if already has record, then ignore, if not have record yet. then add one.
+     */
+	public static void checkSignIn() {
+		//first make sure the name is displayed on BarFrame heder area.
+    	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
+    	
+		String time = BarOption.df.format(new Date());
+		int p = time.indexOf(" ");
+		time = time.substring(0, p + 1) + BarOption.getStartTime();
+		
+		String sql = "Select * from evaluation where EMPLOYEEID = " + LoginDlg.USERID + " and startTime > '" + time
+				+ "' and endTime is null";
+
+		Statement smt = PIMDBModel.getStatement();
+		try {
+			ResultSet rs =  smt.executeQuery(sql);
+            rs.next();
+			if(rs.getInt("id") > -1);	//if not throwning exception (means there is a record), then do nothing. 
+				return;
+		}catch(Exception exp) {			//otherwise(if no record yet), generate a record.
+			sql = "INSERT INTO evaluation(startTime, EMPLOYEEID) VALUES ('" + BarOption.df.format(new Date())
+					+ "', " + LoginDlg.USERID + ")";
+			try {
+				smt.executeQuery(sql);
+			}catch(Exception exp2) {
+				ErrorUtil.write(exp2);
+			}
+		}
+	}
     
     public BarFrame() {
     	initComponent();
@@ -184,7 +210,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
-		lblVersion = new JLabel("V0.38-20180718");
+		lblVersion = new JLabel("V0.39-20180720");
         
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();
@@ -268,14 +294,12 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     
     private boolean adminAuthentication() {
         new LoginDlg(null).setVisible(true);
-        if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-            if ("admin".equalsIgnoreCase(LoginDlg.USERNAME)) {
-            	valOperator.setText(LoginDlg.USERNAME);
-                BarFrame.setStatusMes(BarFrame.consts.ADMIN_MODE());
-                // @TODO: might need to do some modification on the interface.
-                revalidate();
-                return true;
-            }
+        if (LoginDlg.PASSED == true && "admin".equalsIgnoreCase(LoginDlg.USERNAME)) { // 如果用户选择了确定按钮。
+        	valOperator.setText(LoginDlg.USERNAME);
+            BarFrame.setStatusMes(BarFrame.consts.ADMIN_MODE());
+            // @TODO: might need to do some modification on the interface.
+            revalidate();
+            return true;
         }
         return false;
     }

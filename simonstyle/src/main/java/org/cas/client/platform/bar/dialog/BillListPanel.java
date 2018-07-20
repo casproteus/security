@@ -20,6 +20,7 @@ import org.cas.client.platform.bar.beans.FunctionButton;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
 public class BillListPanel extends  JPanel  implements ActionListener, ComponentListener{
@@ -351,12 +352,14 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
     	try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
             ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
-                    + BarFrame.instance.valCurTable.getText() + "' and deleted = false order by contactID");
+                    + BarFrame.instance.valCurTable.getText()
+                    + "' and deleted = false and time = '" + BarFrame.instance.valStartTime.getText()
+                    + "' order by contactID");
 			rs.afterLast();
 			rs.relative(-1);
 			num = rs.getInt("contactID");
 		} catch (Exception exp) {
-			System.out.println("lagest num is 0.");
+			L.d("BillListPane.getANewBillNumber", "lagest num is 0.");
 		}
     	return num + 1;
     }
