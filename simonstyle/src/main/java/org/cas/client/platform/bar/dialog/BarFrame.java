@@ -169,8 +169,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 			if(rs.getInt("id") > -1);	//if not throwning exception (means there is a record), then do nothing. 
 				return;
 		}catch(Exception exp) {			//otherwise(if no record yet), generate a record.
-			sql = "INSERT INTO evaluation(startTime, EMPLOYEEID) VALUES ('" + BarOption.df.format(new Date())
-					+ "', " + LoginDlg.USERID + ")";
+			sql = "INSERT INTO evaluation(startTime, EMPLOYEEID, subject) VALUES ('" + BarOption.df.format(new Date())
+					+ "', " + LoginDlg.USERID + ", '" + LoginDlg.USERNAME +"')";
 			try {
 				smt.executeQuery(sql);
 			}catch(Exception exp2) {

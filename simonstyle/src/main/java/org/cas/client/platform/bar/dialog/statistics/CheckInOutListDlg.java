@@ -52,8 +52,10 @@ public class CheckInOutListDlg  extends JDialog
 		super(pParent, true);
 		initDialog();
 	}
+	@Override
 	public void keyTyped(KeyEvent e){}
-    public void keyPressed(KeyEvent e){
+    @Override
+	public void keyPressed(KeyEvent e){
     	Object o = e.getSource();
     	if(o == tfdMoneyCurrent){
     		switch (e.getKeyCode()){
@@ -74,12 +76,14 @@ public class CheckInOutListDlg  extends JDialog
     		}
      	}
     }
-    public void keyReleased(KeyEvent e){}
+    @Override
+	public void keyReleased(KeyEvent e){}
 	
+	@Override
 	public void reLayout(){
 		srpContent.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
-				getWidth() - CustOpts.SIZE_EDGE*2 - CustOpts.HOR_GAP * 2,
-				getHeight() - CustOpts.SIZE_TITLE - CustOpts.SIZE_EDGE - CustOpts.VER_GAP*3 - CustOpts.BTN_HEIGHT);
+				getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP * 3,
+				getHeight() - CustOpts.SIZE_TITLE - CustOpts.SIZE_EDGE * 3 - CustOpts.VER_GAP * 3 - CustOpts.BTN_HEIGHT);
 		
 		lblMoneyLeft.setBounds(srpContent.getX(), srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP,
 				lblMoneyLeft.getPreferredSize().width, CustOpts.BTN_HEIGHT);
@@ -95,7 +99,7 @@ public class CheckInOutListDlg  extends JDialog
 		lblUnit.setBounds(tfdMoneyCurrent.getX() + tfdMoneyCurrent.getWidth(), tfdMoneyCurrent.getY(),
 				lblUnit.getPreferredSize().width, CustOpts.BTN_HEIGHT);
 		
-		btnClose.setBounds(getWidth() - CustOpts.HOR_GAP * 2 - CustOpts.BTN_WIDTH,
+		btnClose.setBounds(getWidth() - CustOpts.HOR_GAP * 3 - CustOpts.SIZE_EDGE - CustOpts.BTN_WIDTH,
 				lblMoneyCurrent.getY(),CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);//关闭
 		
 		IPIMTableColumnModel tTCM = tblContent.getColumnModel();
@@ -108,25 +112,36 @@ public class CheckInOutListDlg  extends JDialog
 		
     	validate();
 	}
+	@Override
 	public PIMRecord getContents(){return null;}
+	@Override
 	public boolean setContents(PIMRecord prmRecord){return true;}
+	@Override
 	public void makeBestUseOfTime(){}
+	@Override
 	public void addAttach(File[] file, Vector actualAttachFiles){}
+	@Override
 	public PIMTextPane getTextPane(){return null;}
 	
+	@Override
 	public void release(){
 		btnClose.removeActionListener(this);
 		dispose();//对于对话盒，如果不加这句话，就很难释放掉。
 		System.gc();//@TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
 	}
 
-    public void componentResized(ComponentEvent e){
+    @Override
+	public void componentResized(ComponentEvent e){
     	reLayout();
     };
-    public void componentMoved(ComponentEvent e){};
-    public void componentShown(ComponentEvent e){};
-    public void componentHidden(ComponentEvent e){};
+    @Override
+	public void componentMoved(ComponentEvent e){};
+    @Override
+	public void componentShown(ComponentEvent e){};
+    @Override
+	public void componentHidden(ComponentEvent e){};
 
+	@Override
 	public void actionPerformed(ActionEvent e){
 		Object o = e.getSource();
 		if(o == btnClose){
@@ -159,8 +174,8 @@ public class CheckInOutListDlg  extends JDialog
 			sql = "update evaluation set endtime = '" + BarOption.df.format(new Date()) + "' where id = " + id;
 			smt.executeQuery(sql);
 		}catch(Exception exp) {
-			sql = "INSERT INTO evaluation(startTime, EMPLOYEEID) VALUES ('" + BarOption.df.format(new Date())
-					+ "', " + LoginDlg.USERID + ")";
+			sql = "INSERT INTO evaluation(startTime, EMPLOYEEID, subject) VALUES ('" + BarOption.df.format(new Date())
+					+ "', " + LoginDlg.USERID + ", '" + LoginDlg.USERNAME +"')";
 			try {
 				smt.executeQuery(sql);
 			}catch(Exception exp2) {
@@ -169,6 +184,7 @@ public class CheckInOutListDlg  extends JDialog
 		}
 	}
 	
+	@Override
 	public Container getContainer(){
 		return getContentPane();
 	}
@@ -211,7 +227,7 @@ public class CheckInOutListDlg  extends JDialog
 		getRootPane().setDefaultButton(btnClose);
 		
 		//布局---------------
-		setBounds((CustOpts.SCRWIDTH - 580)/2, (CustOpts.SCRHEIGHT - 300)/2, 580, 300);	//对话框的默认尺寸。
+		setBounds((CustOpts.SCRWIDTH - 580)/2, (CustOpts.SCRHEIGHT - 320)/2, 580, 320);	//对话框的默认尺寸。
 		getContentPane().setLayout(null);
 		
 		//搭建－－－－－－－－－－－－－
@@ -230,6 +246,7 @@ public class CheckInOutListDlg  extends JDialog
 		getContentPane().addComponentListener(this);
 		//initContents--------------
 		SwingUtilities.invokeLater(new Runnable(){
+			@Override
 			public void run(){
 				initTable();
 				initMoneyInBox2();
@@ -251,7 +268,7 @@ public class CheckInOutListDlg  extends JDialog
 			rs.beforeFirst();
 			tmpPos = 0;
 			while (rs.next()){
-				tValues[tmpPos][0] = rs.getLong("EMPLOYEEID");
+				tValues[tmpPos][0] = rs.getString("Subject");
 				tValues[tmpPos][1] = rs.getString("startTime");
 				tValues[tmpPos][2] = rs.getString("endTime");
 				tValues[tmpPos][3] = Float.valueOf((float)(rs.getInt("target")/100.0));
