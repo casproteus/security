@@ -19,6 +19,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.bar.BarUtil;
+import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -82,7 +83,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 		}
     }
     
-    public void initContent(BillPanel billPanel) {
+	public void initContent(BillPanel billPanel) {
     	StringBuilder sb = new StringBuilder("select * from bill where id = " + billPanel.getBillId());
     	try {
     		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sb.toString());
@@ -214,16 +215,19 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 	    			return;
         	}else if(left < 0) {
             	this.setVisible(false);
-        		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign() + (0 - left)/100f).setVisible(true);
+        		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign() + (0 - left)/100f).setVisible(true); //it's a non-modal dialog.
             	updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId());
         	}
+
         	
         	resetContent();
         	this.setVisible(false);
-        	
+
         	BarUtil.openMoneyBox();
         	//let's qa decide if we should go back to table interface.
-        	if(left == 0) {
+        	if(left <= 0) {
+        		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
+        		PrintService.exePrintInvoice(bp, bp.orderedDishAry);
         		BarFrame.instance.switchMode(0);
         	}
         	
@@ -231,6 +235,9 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         	exactCash(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId());
         	resetContent();
         	this.setVisible(false);
+
+    		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
+    		PrintService.exePrintInvoice(bp, bp.orderedDishAry);
         	BarUtil.openMoneyBox();
         	BarFrame.instance.switchMode(0);
         	

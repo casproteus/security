@@ -88,6 +88,23 @@ public class PrintService{
         printContents();
     }
     
+    //The start time and end time are long format, need to be translate for print.
+    public static void exePrintInvoice(BillPanel billPanel, List<Dish> saleRecords){
+        String printerIP = BarFrame.instance.menuPanel.printers[0].getIp();
+        if(!isIpContentMapEmpty()){
+        	printContents();
+        	ErrorUtil.write("found non-empty ipContentMap when printing report.");
+        }
+
+        reInitPrintRelatedMaps();
+        
+        if(ipContentMap.get(printerIP) == null)
+        	ipContentMap.put(printerIP,new ArrayList<String>());
+        ipContentMap.get(printerIP).add(
+        		formatContentForBill(saleRecords, printerIP, billPanel, false) + "\n\n\n\n\n");
+        printContents();
+    }
+    
     public static int exePrintDishes(List<Dish> selectdDishAry, boolean isCancelled){
 
 		Printer[] printers = BarFrame.instance.menuPanel.printers;
