@@ -5,7 +5,7 @@ import javax.swing.JButton;
 import org.cas.client.platform.bar.dialog.BarOption;
 
 public class TableButton extends JButton {
-    private int id;
+    private int id = -1;
     private int type;
     private String openTime;
 
