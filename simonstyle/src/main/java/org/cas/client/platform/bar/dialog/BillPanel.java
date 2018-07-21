@@ -141,7 +141,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		//prepare the printing String and do printing
 		int idx = PrintService.exePrintDishes(dishes, isCancelled);
 		if(PrintService.SUCCESS != idx) {
-			BarFrame.setStatusMes(BarFrame.consts.PrinterError());
+			BarFrame.setStatusMes(BarFrame.consts.PrinterError()  + "： " + idx);
 		}
 	}
 	

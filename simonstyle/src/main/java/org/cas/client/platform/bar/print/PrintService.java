@@ -190,6 +190,7 @@ public class PrintService{
   
     private static int printContents() {
     	BarFrame.setStatusMes("PRINTED...");
+    	int resultForReturn = 0;
         for(Entry<String,List<String>> entry : ipContentMap.entrySet()) {
         	List<String> contents = entry.getValue();
         	for(int i = contents.size() - 1; i >= 0 ; i--) {
@@ -197,14 +198,19 @@ public class PrintService{
             	if("Serial".equalsIgnoreCase(entry.getKey()) ? 
             			doSerialPrint(entry.getKey(), null, sndMes) : 
             				doWebSocketPrint(entry.getKey(), null, sndMes)) {
-            		contents.remove(i);//clean ipcontent;
+            		contents.remove(i);//clean ip content; no need to do ipContentMap.remove(entry.getKey()), because will do ipContentMap.clear later.
             	}else {
-            		return i;	//stop here, and return the error index.
+            		resultForReturn *= 100;
+            		resultForReturn += i;
             	}
         	}
         }
-    	ipContentMap.clear();
-        return SUCCESS;
+        if(resultForReturn == 0) {
+	    	ipContentMap.clear();
+	        return SUCCESS;
+        }else {
+        	return resultForReturn;
+        }
     }
     
     public static boolean openDrawer(String ip){
