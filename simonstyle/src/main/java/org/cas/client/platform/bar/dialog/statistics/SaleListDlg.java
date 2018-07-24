@@ -327,7 +327,7 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
 
     public void initContent(String startTime, String endTime) {
         Object[][] tValues = null;
-        String sql = "select * from bill where createTime >= '" + startTime + "' and createTime < '" + endTime + "'";
+        String sql = "select * from bill, employee where createTime >= '" + startTime + "' and createTime < '" + endTime + "' and bill.employeeId = employee.id";
 
         try {
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
@@ -352,7 +352,7 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
                 tValues[tmpPos][6] = Float.valueOf((float) (rs.getInt("tip") / 100.0));
                 tValues[tmpPos][7] = Float.valueOf((float) (rs.getInt("cashback") / 100.0));
                 tValues[tmpPos][8] = rs.getInt("status");
-                tValues[tmpPos][9] = rs.getInt("employeeId");
+                tValues[tmpPos][9] = rs.getString("employee.nName");
                 tValues[tmpPos][10] = rs.getString("Comment");
                 tValues[tmpPos][11] = rs.getString("OpenTime");
                 tmpPos++;

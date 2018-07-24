@@ -365,7 +365,7 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
         }
 
         private void initContent() {
-            String sql = "select ID, LANG1, LANG2, LANG3, DSP_INDEX from CATEGORY";
+            String sql = "select ID, LANG1, LANG2, LANG3, DSP_INDEX from CATEGORY where DSP_INDEX >= 0 order by DSP_INDEX";
             try {
                 ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                 ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息

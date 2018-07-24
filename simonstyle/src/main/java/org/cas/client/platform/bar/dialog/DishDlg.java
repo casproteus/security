@@ -605,7 +605,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             Statement statement = PIMDBModel.getReadOnlyStatement();
 
             // load all the categorys---------------------------
-            ResultSet categoryRS = statement.executeQuery("select ID, LANG1, LANG2, LANG3 from CATEGORY order by DSP_INDEX");
+            ResultSet categoryRS = statement.executeQuery("select ID, LANG1, LANG2, LANG3 from CATEGORY  where DSP_INDEX >= 0 order by DSP_INDEX");
             categoryRS.afterLast();
             categoryRS.relative(-1);
             int tmpPos = categoryRS.getRow();
