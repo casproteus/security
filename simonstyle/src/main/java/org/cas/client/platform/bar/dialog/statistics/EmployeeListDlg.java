@@ -52,6 +52,8 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         MouseListener {
     final int IDCOLUM = 19;
 
+    private Object[][] tableModel = null;
+    
     /**
      * Creates a new instance of ContactDialog
      * 
@@ -125,14 +127,15 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         tTCM.getColumn(9).setPreferredWidth(120);
         tTCM.getColumn(10).setPreferredWidth(120);
         tTCM.getColumn(11).setPreferredWidth(60);
-//        tTCM.getColumn(12).setPreferredWidth(70);
-//        tTCM.getColumn(13).setPreferredWidth(50);
-//        tTCM.getColumn(14).setPreferredWidth(100);
-//        tTCM.getColumn(15).setPreferredWidth(100);
-//        tTCM.getColumn(16).setPreferredWidth(140);
-//        tTCM.getColumn(17).setPreferredWidth(100);
-//        tTCM.getColumn(18).setPreferredWidth(100);
-//        tTCM.getColumn(19).setPreferredWidth(180);
+//        tTCM.getColumn(12).setPreferredWidth(0);
+//        tTCM.getColumn(13).setPreferredWidth(0);
+//        tTCM.getColumn(14).setPreferredWidth(0);
+//        tTCM.getColumn(15).setPreferredWidth(0);
+//        tTCM.getColumn(16).setPreferredWidth(0);
+//        tTCM.getColumn(17).setPreferredWidth(0);
+//        tTCM.getColumn(18).setPreferredWidth(0);
+//        tTCM.getColumn(19).setPreferredWidth(0);
+//        tTCM.getColumn(20).setPreferredWidth(0);
 
         validate();
     }
@@ -243,7 +246,7 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
                         PIMRecord tRec =
                                 CASControl.ctrl.getModel().selectRecord(
                                         CustOpts.custOps.APPNameVec.indexOf("Employee"),
-                                        ((Integer) tblContent.getValueAt(tRow, 0)).intValue(), 5002); // to select
+                                        ((Integer) tableModel[tRow][20]).intValue(), 5002); // to select
                                                                                                             // a record
                                                                                                             // from DB.
                         // 不合适重用OpenAction。因为OpenAction的结果是调用View系统的更新机制。而这里需要的是更新list对话盒。
@@ -350,39 +353,39 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
     }
 
     private void initTable() {
-        Object[][] tValues = null;
         String sql =
-                "select NNAME,SUBJECT,SEX,TITLE,CPHONE,PHONE,ADDRESS,CNUMBER,EMAIL,WEBPAGE,CATEGORY,JOINTIME, SALARY, INSURANCE, SSCNUMBER,IDCARD,BIRTHDAY,BANKNUMBER,CONTENT,ID from employee where DELETED != true";
+                "select CODE,NNAME,SUBJECT,SEX,TITLE,CPHONE,PHONE,ADDRESS,CNUMBER,EMAIL,WEBPAGE,CATEGORY,JOINTIME, SALARY, INSURANCE, SSCNUMBER,IDCARD,BIRTHDAY,BANKNUMBER,CONTENT,ID from employee where DELETED != true";
 
         try {
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
-            tValues = new Object[tmpPos][20];
+            tableModel = new Object[tmpPos][21];
             rs.beforeFirst();
             tmpPos = 0;
             while (rs.next()) {
-                tValues[tmpPos][0] = rs.getInt("ID");
-                tValues[tmpPos][1] = rs.getString("NNAME");
-                tValues[tmpPos][2] = rs.getString("SUBJECT");
-                tValues[tmpPos][3] = rs.getString("SEX");
-                tValues[tmpPos][4] = rs.getString("TITLE");
-                tValues[tmpPos][5] = rs.getString("CPHONE");
-                tValues[tmpPos][6] = rs.getString("PHONE");
-                tValues[tmpPos][7] = rs.getString("ADDRESS");
-                tValues[tmpPos][8] = rs.getString("CNUMBER");
-                tValues[tmpPos][9] = rs.getString("EMAIL");
-                tValues[tmpPos][10] = rs.getString("WEBPAGE");
-                tValues[tmpPos][11] = rs.getString("CATEGORY");
-                tValues[tmpPos][12] = rs.getDate("JOINTIME");
-                tValues[tmpPos][13] = Integer.valueOf(rs.getInt("SALARY"));
-                tValues[tmpPos][14] = rs.getString("INSURANCE");
-                tValues[tmpPos][15] = rs.getString("SSCNUMBER");
-                tValues[tmpPos][16] = rs.getString("IDCARD");
-                tValues[tmpPos][17] = rs.getDate("BIRTHDAY");
-                tValues[tmpPos][18] = rs.getString("BANKNUMBER");
-                tValues[tmpPos][19] = rs.getString("CONTENT");
+                tableModel[tmpPos][0] = rs.getString("ID");
+                tableModel[tmpPos][1] = rs.getString("NNAME");
+                tableModel[tmpPos][2] = rs.getString("SUBJECT");
+                tableModel[tmpPos][3] = rs.getString("SEX");
+                tableModel[tmpPos][4] = rs.getString("TITLE");
+                tableModel[tmpPos][5] = rs.getString("CPHONE");
+                tableModel[tmpPos][6] = rs.getString("PHONE");
+                tableModel[tmpPos][7] = rs.getString("ADDRESS");
+                tableModel[tmpPos][8] = rs.getString("CNUMBER");
+                tableModel[tmpPos][9] = rs.getString("EMAIL");
+                tableModel[tmpPos][10] = rs.getString("WEBPAGE");
+                tableModel[tmpPos][11] = rs.getString("CATEGORY");
+                tableModel[tmpPos][12] = rs.getDate("JOINTIME");
+                tableModel[tmpPos][13] = Integer.valueOf(rs.getInt("SALARY"));
+                tableModel[tmpPos][14] = rs.getString("INSURANCE");
+                tableModel[tmpPos][15] = rs.getString("SSCNUMBER");
+                tableModel[tmpPos][16] = rs.getString("IDCARD");
+                tableModel[tmpPos][17] = rs.getDate("BIRTHDAY");
+                tableModel[tmpPos][18] = rs.getString("BANKNUMBER");
+                tableModel[tmpPos][19] = rs.getString("CONTENT");
+                tableModel[tmpPos][20] = rs.getInt("ID");
                 tmpPos++;
             }
             rs.close();// 关闭
@@ -390,7 +393,7 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
             ErrorUtil.write(e);
         }
 
-        tblContent.setDataVector(tValues, header);
+        tblContent.setDataVector(tableModel, header);
         DefaultPIMTableCellRenderer tCellRender = new DefaultPIMTableCellRenderer();
         tCellRender.setOpaque(true);
         tCellRender.setBackground(Color.LIGHT_GRAY);

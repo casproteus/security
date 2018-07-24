@@ -350,13 +350,18 @@ public interface ICASModel extends Releasable {
     /**
      * 从数据库中得到所有的类别名字
      */
-    public String[] getAllCategoryName();
+    public String[] getAllCategoryName();    
+    
+    /**
+     * 从数据库中得到所有的类别名字
+     */
+    public String[] getCategoryNamesByType(int type);
 
     /**
      * 把需要加入的名字加入数据库中
      */
     public boolean addCategroyName(
-            String prmCate);
+            String prmCate, int type);
 
     /**
      * 将指定的名字从库中删除

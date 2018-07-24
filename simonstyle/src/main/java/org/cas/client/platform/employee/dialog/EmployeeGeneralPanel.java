@@ -37,11 +37,11 @@ import org.cas.client.platform.cascontrol.dialog.CASDialogKit;
 import org.cas.client.platform.cascontrol.dialog.CASFileFilter;
 import org.cas.client.platform.cascontrol.dialog.category.CategoryDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.ImageToFile;
 import org.cas.client.platform.casutil.PIMDBUtil;
 import org.cas.client.platform.casutil.PIMPool;
-import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.Releasable;
 import org.cas.client.platform.employee.EmployeeDefaultViews;
 import org.cas.client.resource.international.DlgConst;
@@ -65,7 +65,8 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
      * @param e
      *            焦点事件
      */
-    public void focusGained(
+    @Override
+	public void focusGained(
             FocusEvent e) {
         Object source = e.getSource();
         if (source == cmbLanguage) {
@@ -78,7 +79,8 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
     }
 
     /** Invoked when an action occurs. */
-    public void focusLost(
+    @Override
+	public void focusLost(
             FocusEvent e) {
         Object source = e.getSource();
         // 新建联系人时，lastField、firstField、companyField失去焦点时，应调整提示域中的内容。----------------------------------------
@@ -88,22 +90,26 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
     }
 
     /** 当ArrowButton被按下时，记下拿一个Button被按。 */
-    public void mousePressed(
+    @Override
+	public void mousePressed(
             java.awt.event.MouseEvent e) {
     }
 
     /** Invoked when a mouse button has been released on a component. */
-    public void mouseReleased(
+    @Override
+	public void mouseReleased(
             java.awt.event.MouseEvent e) {
     }
 
     /** Invoked when the mouse button has been clicked (pressed and released) on a component. */
-    public void mouseClicked(
+    @Override
+	public void mouseClicked(
             java.awt.event.MouseEvent e) {
     }
 
     /** Invoked when the mouse enters a component. */
-    public void mouseEntered(
+    @Override
+	public void mouseEntered(
             java.awt.event.MouseEvent e) {
     }
 
@@ -113,12 +119,14 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
      * @param e
      *            鼠标事件源
      */
-    public void mouseExited(
+    @Override
+	public void mouseExited(
             java.awt.event.MouseEvent e) {
     }
 
     /** Invoked when an action occurs. 保存ismail的状态。 */
-    public void actionPerformed(
+    @Override
+	public void actionPerformed(
             ActionEvent e) {
         Object tmpObj = e.getSource();
         if (tmpObj == photo) {
@@ -141,7 +149,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
             // new TypeDialog(dlg, true).setVisible(true);
             // if(categoryDialog == null)
             // {
-            CategoryDialog tmpDlg = new CategoryDialog(dlg, fldCategories.getText());
+            CategoryDialog tmpDlg = new CategoryDialog(dlg, fldCategories.getText(), -1);
             tmpDlg.show();
             // }
             // else
@@ -164,7 +172,8 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
      *
      * @see java.lang.Thread#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         switch (swingInvoker) {
             case 1:
                 swingInvoker = 0;
@@ -193,7 +202,8 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
      * 2、此方法中要特别注意监听器的移除、Hashtable、Hashmap、Vector等结构中数据的移除和释放、 视图中UI的卸载等
      *
      */
-    public void release() {
+    @Override
+	public void release() {
         if (fldLastName != null) {
             fldLastName.removeFocusListener(this);
             fldLastName.setNextFocusableComponent(null);
@@ -953,14 +963,14 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         tmpTextInField = fldSalary.getText();
         if (!tmpTextInField.equals(CASUtility.EMPTYSTR))
             dlg.putValue(PIMPool.pool.getKey(EmployeeDefaultViews.SALARY),
-                    Integer.valueOf(CASUtility.getPriceByCent(Double.valueOf((String) tmpTextInField).doubleValue())));
+                    Integer.valueOf(CASUtility.getPriceByCent(Double.valueOf(tmpTextInField).doubleValue())));
         else
             dlg.putValue(PIMPool.pool.getKey(EmployeeDefaultViews.SALARY), Integer.valueOf(0));
         // 保存保险金信息-----------------------------------------
         tmpTextInField = fldInsurance.getText();
         if (!tmpTextInField.equals(CASUtility.EMPTYSTR))
             dlg.putValue(PIMPool.pool.getKey(EmployeeDefaultViews.INSURANCE),
-                    Integer.valueOf(CASUtility.getPriceByCent(Double.valueOf((String) tmpTextInField).doubleValue())));
+                    Integer.valueOf(CASUtility.getPriceByCent(Double.valueOf(tmpTextInField).doubleValue())));
         else
             dlg.putValue(PIMPool.pool.getKey(EmployeeDefaultViews.INSURANCE), Integer.valueOf(0));
         // 保存登录密码信息-----------------------------------------

@@ -30,6 +30,13 @@ import org.cas.client.resource.international.CategoryDialogConstants;
 
 public class CategoryDialog extends JDialog implements ActionListener, ListSelectionListener, KeyListener,
         MouseListener, Runnable, ComponentListener {
+	/**
+	 * to indicate the category is used for what. e.g. 
+	 * if type == -1 then it's used for employee.
+	 * if type >= 0, means it's for dish.
+	 */
+	private int type = 0;	
+	
     /**
      * 创建一个 Category 的实例
      * 
@@ -58,24 +65,43 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
         initComponent(); // 组件初始化并布局
     }
 
+    /**
+     * 创建一个 Category 的实例
+     * 
+     * @param prmParent
+     *            父窗体
+     * @param prmCategoryInfo
+     *            逗号分隔的字符串
+     */
+    public CategoryDialog(JDialog prmParent, String prmCategoryInfo, int type) {
+        super(prmParent, true);
+        textAreaData = prmCategoryInfo;
+        this.type = type;
+        initComponent(); // 组件初始化并布局
+    }
+    
     /** Invoked when the component's size changes. */
-    public void componentResized(
+    @Override
+	public void componentResized(
             ComponentEvent e) {
         reLayout();
     }
 
     /** Invoked when the component's position changes. */
-    public void componentMoved(
+    @Override
+	public void componentMoved(
             ComponentEvent e) {
     }
 
     /** Invoked when the component has been made visible. */
-    public void componentShown(
+    @Override
+	public void componentShown(
             ComponentEvent e) {
     }
 
     /** Invoked when the component has been made invisible. */
-    public void componentHidden(
+    @Override
+	public void componentHidden(
             ComponentEvent e) {
     }
 
@@ -180,8 +206,8 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
                 usedArr.add(usedFields[i]);
             }
         }
-
-        String[] categoryFields = CASControl.ctrl.getModel().getAllCategoryName();
+        
+        String[] categoryFields = CASControl.ctrl.getModel().getCategoryNamesByType(type);
 
         // 加入列表框模型
         for (int i = 0, count = categoryFields.length; i < count; i++) {
@@ -205,7 +231,7 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
                     // 加一个标志为真的
                     categoryListModel.addElement(new CheckItem(usedFields[i], true));
                     // 保存到数据库中
-                    CASControl.ctrl.getModel().addCategroyName(usedFields[i]);
+                    CASControl.ctrl.getModel().addCategroyName(usedFields[i], type);
                 }
             }
         }
@@ -249,7 +275,8 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
      * @param e
      *            动作事件
      */
-    public void actionPerformed(
+    @Override
+	public void actionPerformed(
             ActionEvent e) {
         if (e.getSource() == addToListBTN)
             addToListClicked();
@@ -307,7 +334,7 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
             for (int i = 0; i < usedArr.size(); i++) {
                 if (!categoryDBFieldsArr.contains(usedArr.get(i).toString())) {
                     // 要加入数据库和这个 ArrayList
-                    CASControl.ctrl.getModel().addCategroyName(usedArr.get(i).toString());
+                    CASControl.ctrl.getModel().addCategroyName(usedArr.get(i).toString(), type);
 
                     categoryDBFieldsArr.add(usedArr.get(i).toString());
                 }
@@ -316,7 +343,7 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
             for (int i = 0; i < modelArr.size(); i++) {
                 if (!categoryDBFieldsArr.contains(modelArr.get(i).toString())) {
                     // 要加入数据库和这个 ArrayList
-                    CASControl.ctrl.getModel().addCategroyName(modelArr.get(i).toString());
+                    CASControl.ctrl.getModel().addCategroyName(modelArr.get(i).toString(), type);
                     categoryDBFieldsArr.add(modelArr.get(i).toString());
                 }
             }
@@ -525,7 +552,7 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
                     // 加一个标志为真的
                     categoryListModel.addElement(new CheckItem(usedFields[i], true));
                     // 保存到数据库中
-                    CASControl.ctrl.getModel().addCategroyName(usedFields[i]);
+                    CASControl.ctrl.getModel().addCategroyName(usedFields[i], type);
                 }
             }
 
@@ -560,7 +587,8 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
      * @param e
      *            the event that characterizes the change.
      */
-    public void valueChanged(
+    @Override
+	public void valueChanged(
             ListSelectionEvent e) {
         /*
          * 主要来处理文本区中的显示 if(e.getSource() == categoryList) { StringBuffer sb = new StringBuffer(); int tmpSize =
@@ -579,7 +607,8 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
      * @param e
      *            键盘事件
      */
-    public void keyPressed(
+    @Override
+	public void keyPressed(
             KeyEvent e) {
         // 处理列表框空格键选中
         if (e.getSource() == categoryList && e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -614,7 +643,8 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
      * @param e
      *            键盘事件
      */
-    public void keyReleased(
+    @Override
+	public void keyReleased(
             KeyEvent e) {
     }
 
@@ -625,7 +655,8 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
      * @param e
      *            键盘事件
      */
-    public void keyTyped(
+    @Override
+	public void keyTyped(
             KeyEvent e) {
         // 处理文本区的击键
         if (e.getSource() == textArea) // && (e.getKeyChar() != ' ' && e.getKeyChar() != ',' && e.getKeyCode() !=
@@ -641,7 +672,8 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
      * @param e
      *            鼠标事件源
      */
-    public void mouseClicked(
+    @Override
+	public void mouseClicked(
             MouseEvent e) {
     }
 
@@ -651,7 +683,8 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
      * @param e
      *            鼠标事件源
      */
-    public void mouseEntered(
+    @Override
+	public void mouseEntered(
             MouseEvent e) {
 
     }
@@ -662,7 +695,8 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
      * @param e
      *            鼠标事件源
      */
-    public void mouseExited(
+    @Override
+	public void mouseExited(
             MouseEvent e) {
 
     }
@@ -673,7 +707,8 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
      * @param e
      *            鼠标事件源
      */
-    public void mousePressed(
+    @Override
+	public void mousePressed(
             MouseEvent e) {
         if (e.getSource() == categoryList) {
             updateTextArea();
@@ -686,7 +721,8 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
      * @param e
      *            鼠标事件源
      */
-    public void mouseReleased(
+    @Override
+	public void mouseReleased(
             MouseEvent e) {
 
     }
@@ -699,7 +735,8 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
      *
      * @see java.lang.Thread#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         textAreaData = textArea.getText(); // 要检查文本区中是否有新字段产生,如果有便要使'添至列表'按钮激活 把文本框中字段还原为字符串数组
         ArrayList modelData = getListFieldsArr();
         if (textAreaData == null || textAreaData.length() == 0) {

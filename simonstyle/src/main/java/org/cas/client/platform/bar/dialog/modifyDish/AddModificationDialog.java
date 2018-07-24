@@ -11,13 +11,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -32,7 +30,6 @@ import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.CASControl;
 import org.cas.client.platform.bar.dialog.BarFrame;
-import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
@@ -40,7 +37,6 @@ import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
-import org.cas.client.platform.casutil.ModelDBCons;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 
@@ -75,18 +71,22 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     }
 
     /** Invoked when the component's size changes. */
-    public void componentResized(ComponentEvent e) {
+    @Override
+	public void componentResized(ComponentEvent e) {
         reLayout();
     }
 
     /** Invoked when the component's position changes. */
-    public void componentMoved(ComponentEvent e) {}
+    @Override
+	public void componentMoved(ComponentEvent e) {}
 
     /** Invoked when the component has been made visible. */
-    public void componentShown(ComponentEvent e) {}
+    @Override
+	public void componentShown(ComponentEvent e) {}
 
     /** Invoked when the component has been made invisible. */
-    public void componentHidden(ComponentEvent e) {}
+    @Override
+	public void componentHidden(ComponentEvent e) {}
 
     /** 初始化并布局; */
     private void initComponent() {
@@ -293,7 +293,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      * @param e
      *            动作事件
      */
-    public void actionPerformed(
+    @Override
+	public void actionPerformed(
             ActionEvent e) {
         if (e.getSource() == btnApply)
             addToListClicked();
@@ -439,7 +440,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         int tmpSelectionIndex = modificationList.getSelectedIndex();
         int size = listModel.getSize();
         // 看来字段删除必须在这时处理
-        deleteModification(((CheckItem) modificationList.getSelectedValue()).getName());
+        deleteModification(modificationList.getSelectedValue().getName());
         listModel.remove(tmpSelectionIndex);
         itemChanged = true;
         // 如果是最后一个,且列表框中不止一个选项
@@ -584,7 +585,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         // 循环判断列表框中是否有打勾的,有就加入字符串
         for (int i = 0; i < tmpSize; i++) {
             // 要造型的
-            tmpItem = (CheckItem) listModel.get(i);
+            tmpItem = listModel.get(i);
             if (tmpItem.isSelected()) {
                 sb = sb.append(tmpItem.getName()).append(BarDlgConst.delimiter).append(" ");
             }
@@ -619,7 +620,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
                     // 加一个标志为真的
                     listModel.addElement(new CheckItem(usedFields[i], true));
                     // 保存到数据库中
-                    CASControl.ctrl.getModel().addCategroyName(usedFields[i]);
+                    CASControl.ctrl.getModel().addCategroyName(usedFields[i], i);
                 }
             }
 
@@ -654,7 +655,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      * @param e
      *            the event that characterizes the change.
      */
-    public void valueChanged(
+    @Override
+	public void valueChanged(
             ListSelectionEvent e) {
         /*
          * 主要来处理文本区中的显示 if(e.getSource() == categoryList) { StringBuffer sb = new StringBuffer(); int tmpSize =
@@ -673,7 +675,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      * @param e
      *            键盘事件
      */
-    public void keyPressed(
+    @Override
+	public void keyPressed(
             KeyEvent e) {
         // 处理列表框空格键选中
         if (e.getSource() == modificationList && e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -689,7 +692,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         // 处理列表本身的选中状态
         int index = modificationList.getSelectedIndex();
         if (index != -1) {
-            CheckItem seleItem = (CheckItem) modificationList.getSelectedValue();
+            CheckItem seleItem = modificationList.getSelectedValue();
             listModel.set(index, new CheckItem(seleItem.getName(), !seleItem.isSelected()));
 
             // 以列表框的模型来设置文本区中的显示
@@ -708,7 +711,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      * @param e
      *            键盘事件
      */
-    public void keyReleased(
+    @Override
+	public void keyReleased(
             KeyEvent e) {
     }
 
@@ -719,7 +723,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      * @param e
      *            键盘事件
      */
-    public void keyTyped(
+    @Override
+	public void keyTyped(
             KeyEvent e) {
         // 处理文本区的击键
         if (e.getSource() == txaCurContent) // && (e.getKeyChar() != ' ' && e.getKeyChar() != ',' && e.getKeyCode() !=
@@ -735,7 +740,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      * @param e
      *            鼠标事件源
      */
-    public void mouseClicked(
+    @Override
+	public void mouseClicked(
             MouseEvent e) {
     }
 
@@ -745,7 +751,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      * @param e
      *            鼠标事件源
      */
-    public void mouseEntered(
+    @Override
+	public void mouseEntered(
             MouseEvent e) {
 
     }
@@ -756,7 +763,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      * @param e
      *            鼠标事件源
      */
-    public void mouseExited(
+    @Override
+	public void mouseExited(
             MouseEvent e) {
 
     }
@@ -767,7 +775,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      * @param e
      *            鼠标事件源
      */
-    public void mousePressed(
+    @Override
+	public void mousePressed(
             MouseEvent e) {
         if (e.getSource() == modificationList) {
             updateTextArea();
@@ -780,7 +789,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      * @param e
      *            鼠标事件源
      */
-    public void mouseReleased(
+    @Override
+	public void mouseReleased(
             MouseEvent e) {
 
     }
@@ -793,7 +803,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      *
      * @see java.lang.Thread#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         String curContent = txaCurContent.getText(); // 要检查文本区中是否有新字段产生,如果有便要使'添至列表'按钮激活 把文本框中字段还原为字符串数组
         ArrayList<String> listInListComponent = getListInListComponent();
         if (curContent == null || curContent.length() == 0) {

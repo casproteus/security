@@ -1251,13 +1251,53 @@ public final class PIMDBModel extends AbstractModel {
 
     }
 
+
+    /**
+     * 从数据库中得到所有的类别名字
+     */
+    @Override
+    public String[] getCategoryNamesByType(int type) {
+        String tabName = ModelDBCons.CATEGORY_TABLE_NAME;
+
+        String sql = type >= 0 ? "SELECT * FROM ".concat(tabName).concat(" where DSP_INDEX >= " + type)
+        		: "SELECT * FROM ".concat(tabName).concat(" where DSP_INDEX = " + type);
+        Vector nameVec = new Vector();
+        try {
+            Connection conn = PIMDBConnecter.instance.getConnection();// 数据库连接
+
+            Statement smt = conn.createStatement();
+            ResultSet rs = smt.executeQuery(sql);
+            while (rs.next()) {
+                nameVec.add(rs.getString(2));
+            }
+
+            // 关闭
+            smt.close();
+            smt = null;
+            rs.close();
+            rs = null;
+            PIMDBConnecter.instance.reConnectDb();
+
+            return (String[]) nameVec.toArray(new String[0]);
+        } catch (SQLException e) {
+            PIMDBConnecter.instance.reConnectDb();
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+    
     /**
      * 把需要加入的名字加入数据库中
      */
     @Override
     public boolean addCategroyName(
-            String cate) {
-        return insOrDelCateName(cate, true);
+            String cate, int type) {
+    	StringBuffer sql = new StringBuffer();
+        sql.append("INSERT INTO ").append(ModelDBCons.CATEGORY_TABLE_NAME).append(" (LANG1,DSP_INDEX) VALUES('")
+        .append(cate).append("',").append(type).append(")");
+        
+        return updataDB(sql);
     }
 
     /**
@@ -1266,7 +1306,10 @@ public final class PIMDBModel extends AbstractModel {
     @Override
     public boolean deleteCategroyName(
             String cate) {
-        return insOrDelCateName(cate, false);
+    	StringBuffer sql = new StringBuffer();
+        sql.append("DELETE FROM ").append(ModelDBCons.CATEGORY_TABLE_NAME).append(" WHERE NAME = '").append(cate).append("';");
+
+        return updataDB(sql);
     }
 
     /**
@@ -3593,24 +3636,8 @@ public final class PIMDBModel extends AbstractModel {
         return createRecordHash(rs, types, startColumn, columnCount);
     }
 
-    /**
-     * 删除或者插入类型名
-     */
-    private boolean insOrDelCateName(
-            String cate,
-            boolean isInsert) {
-        // 数据库表名字
-        String tabName = ModelDBCons.CATEGORY_TABLE_NAME;
-        //
-        StringBuffer sql = new StringBuffer();
-        if (isInsert) {
-            sql.append("INSERT INTO ").append(tabName).append(" VALUES(");
-            sql.append("'").append(cate).append("');");
-        } else {
-            sql.append("DELETE FROM ").append(tabName).append(" WHERE NAME = '").append(cate).append("';");
-        }
-
-        try {
+	private boolean updataDB(StringBuffer sql) {
+		try {
             Connection conn = PIMDBConnecter.instance.getConnection();
             Statement smt = conn.createStatement();
             int rows = smt.executeUpdate(sql.toString());
@@ -3626,8 +3653,7 @@ public final class PIMDBModel extends AbstractModel {
             e.printStackTrace();
             return false;
         }
-
-    }
+	}
 
     /**
      * 判断当前的记录是否已经存在

@@ -81,6 +81,9 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 		}catch(Exception e) {
 			ErrorUtil.write(e);
 		}
+   		if(((SalesPanel)BarFrame.instance.panels[2]).isLastBillOfCurTable()) {
+			((SalesPanel)BarFrame.instance.panels[2]).resetCurTableDBStatus();
+		}
     }
     
 	public void initContent(BillPanel billPanel) {
@@ -217,6 +220,9 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
             	this.setVisible(false);
         		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign() + (0 - left)/100f).setVisible(true); //it's a non-modal dialog.
             	updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId());
+        		if(((SalesPanel)BarFrame.instance.panels[2]).isLastBillOfCurTable()) {
+        			((SalesPanel)BarFrame.instance.panels[2]).resetCurTableDBStatus();
+        		}
         	}
 
         	
