@@ -141,26 +141,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		BarFrame.instance.switchMode(1);
         		
         	} else if (o == btnLine_1_5) {	//remove item.
-        		if(BillListPanel.curDish == null) {//check if there's an item selected.
-        			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
-        			return;
-        		}
-        		if(BillListPanel.curDish.getOutputID() >= 0) {//check if it's send
-        			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.COMFIRMDELETEACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
-            			return;
-        			//clean output from db.
-        			Dish.deleteRelevantOutput(BillListPanel.curDish);
-        			//send cancel message to kitchen
-        			BillListPanel.curDish.setCanceled(true);	//set the dish with cancelled flag, so when it's printout, will with "!!!!!".
-        			billPanel.sendDishToKitchen(BillListPanel.curDish, true);
-        			//clean from screen.
-        			billPanel.removeFromSelection(billPanel.tblSelectedDish.getSelectedRow());
-        			//update bill info, must be after the screen update, because will get total from screen.
-        			updateTotalOfBillRecord();
-        		}else {
-        			//only do clean from screen, because the output not generated yet, and will not affect the toltal in bill.
-        			billPanel.removeFromSelection(billPanel.tblSelectedDish.getSelectedRow());
-        		}
+        		removeItem();
         		
         	} else if(o == btnLine_1_6) {	//Modify
         		//if there's a curDish?
@@ -377,6 +358,29 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         	}
         }
     }
+
+	void removeItem() {
+		if(BillListPanel.curDish == null) {//check if there's an item selected.
+			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
+			return;
+		}
+		if(BillListPanel.curDish.getOutputID() >= 0) {//check if it's send
+			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.COMFIRMDELETEACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
+				return;
+			//clean output from db.
+			Dish.deleteRelevantOutput(BillListPanel.curDish);
+			//send cancel message to kitchen
+			BillListPanel.curDish.setCanceled(true);	//set the dish with cancelled flag, so when it's printout, will with "!!!!!".
+			billPanel.sendDishToKitchen(BillListPanel.curDish, true);
+			//clean from screen.
+			billPanel.removeFromSelection(billPanel.tblSelectedDish.getSelectedRow());
+			//update bill info, must be after the screen update, because will get total from screen.
+			updateTotalOfBillRecord();
+		}else {
+			//only do clean from screen, because the output not generated yet, and will not affect the toltal in bill.
+			billPanel.removeFromSelection(billPanel.tblSelectedDish.getSelectedRow());
+		}
+	}
 
 	private void updateTotalOfBillRecord() {
 		String sql = "update bill set total = " + (int)(Float.valueOf(billPanel.valTotlePrice.getText()) * 100) + " where id = " + billPanel.orderedDishAry.get(0).getBillID();

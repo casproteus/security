@@ -217,13 +217,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				tblSelectedDish.setSelectedRow(selectedRow);
 	        } else if (o == btnLess) {
 	    		int selectedRow =  tblSelectedDish.getSelectedRow();
-				if(orderedDishAry.get(selectedRow).getOutputID() >= 0) {
-					if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION(), DlgConst.DlgTitle,
-		                    JOptionPane.YES_NO_OPTION) != 0) {
-						return;
-					}
-					//TODO: send a message to kitchen.
-					
+	    		Dish dish = orderedDishAry.get(selectedRow);
+				if(dish.getOutputID() >= 0) {	//if it's already send, then do the removePanel.
+					salesPanel.removeItem();
 				}else {
 					if(orderedDishAry.get(selectedRow).getNum() == 1) {
 						if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION2(), DlgConst.DlgTitle,
