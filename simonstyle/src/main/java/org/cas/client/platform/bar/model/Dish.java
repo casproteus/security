@@ -87,7 +87,7 @@ public class Dish {
 		}
 	}
 	
-	public static void delete(Dish dish) {
+	public static void deleteRelevantOutput(Dish dish) {
 		if(dish.getOutputID() < 0) {
 			return;
 		}

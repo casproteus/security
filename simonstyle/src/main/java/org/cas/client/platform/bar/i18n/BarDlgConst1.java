@@ -218,6 +218,8 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String IsBuffetMode() {return "Buffet Mode";}
     @Override
+	public String IsFastFoodMode() {return "Fast Food Mode";}
+    @Override
 	public String IsPrintBillWhenPay() {return "automatic print bill when pay";}
     @Override
 	public String StartTimeOfDay() {return "Start time of a day";}

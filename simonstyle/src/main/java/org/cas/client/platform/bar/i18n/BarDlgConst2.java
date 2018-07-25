@@ -218,6 +218,8 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String IsBuffetMode() {return "自助餐模式";}
     @Override
+	public String IsFastFoodMode() {return "快餐模式";}
+    @Override
 	public String IsPrintBillWhenPay() {return "付款同时自动打印账单";}
     @Override
 	public String StartTimeOfDay() {return "每天开始营业的时间";}

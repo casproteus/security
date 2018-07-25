@@ -93,7 +93,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	            .append(billIndex).append("', ")			//bill
 	            .append((int)(Float.valueOf(valTotlePrice.getText()) * 100)).append(", ")	//total
 	            .append(discount).append(", ")
-	            .append((tip)).append(", ")
+	            .append(tip).append(", ")
 	            .append(cashback).append(", ")	//discount
 	            .append(LoginDlg.USERID).append(", '")		//emoployid
 	            .append(comment).append("', '")
@@ -135,9 +135,15 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	   }
 		return -1;
 	}
+
+	void sendDishToKitchen(Dish dish, boolean isCancelled) {
+		List<Dish> dishes = new ArrayList<Dish>();
+		dishes.add(dish);
+		sendDishesToKitchen(dishes, isCancelled);
+	}
 	
+	//send to printer
 	void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
-		//send to printer
 		//prepare the printing String and do printing
 		int idx = PrintService.exePrintDishes(dishes, isCancelled);
 		if(PrintService.SUCCESS != idx) {
@@ -225,7 +231,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 							tblSelectedDish.setSelectedRow(-1);
 							return;
 						}
-						removeAtSelection(selectedRow);
+						removeFromSelection(selectedRow);
 					} else {
 						int tQTY = orderedDishAry.get(selectedRow).getNum() - 1;
 						int row = tblSelectedDish.getSelectedRow();
@@ -262,13 +268,16 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	@Override
 	public void componentHidden(ComponentEvent e) {}
 	
-    void resetTableArea() {
-    	orderedDishAry.clear();
-        Object[][] tValues = new Object[0][tblSelectedDish.getColumnCount()];
-        tblSelectedDish.setDataVector(tValues, header);
-        resetColWidth(scrContent.getWidth());
-        updateTotleArea();
-    }
+//	@deprecated
+	//was used when click send button, and found isFastFoodMode==true, then instead of returning back to table view, stay in
+	//the sales view. now I decide to use unified processor : initContent().
+//    void resetTableArea() {
+//    	resetStatus();
+//        Object[][] tValues = new Object[0][tblSelectedDish.getColumnCount()];
+//        tblSelectedDish.setDataVector(tValues, header);
+//        resetColWidth(scrContent.getWidth());
+//        updateTotleArea();
+//    }
     
     //table selection listener---------------------
 	@Override
@@ -348,7 +357,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 						return;
 					}
 				}
-				removeAtSelection(selectedRow);
+				removeFromSelection(selectedRow);
 			}
 		}
 	}
@@ -359,6 +368,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	public void mouseExited(MouseEvent e) {}
 	@Override
 	public void mouseEntered(MouseEvent e) {}
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == scrContent.getViewport()) {
@@ -424,12 +434,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		});
     }
 
-	public boolean sendNewDishesToKitchen() {
-		//if there's any new bill, send it to kitchen.
-		List<Dish> dishes = getNewDishes();
-		if (dishes == null || dishes.size() == 0) {
-			return false;
-		}
+	public void sendNewDishesToKitchen(List<Dish> dishes) {
 		//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
 		if(dishes.size() == orderedDishAry.size()) {
 		    BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
@@ -437,7 +442,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		sendDishesToKitchen(dishes, false);
 		saveDishesToDB(dishes);
 		initContent();
-		return true;
 	}
 
     public void updateTotleArea() {
@@ -506,7 +510,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     }
     
     void initContent() {
-    	orderedDishAry.clear();
+    	resetStatus();
     	//get outputs of current table and bill id.
 		try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
@@ -592,6 +596,17 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		updateTotleArea();
 	}
     
+    private void resetStatus(){
+        orderedDishAry.clear();
+        discount = 0;
+        tip = 0;
+        serviceFee = 0;
+        received = 0;
+        cashback = 0;
+        comment = "";
+        status = 0;
+    }
+    
     void resetColWidth(int tableWidth) {
         PIMTableColumn tmpCol1 = tblSelectedDish.getColumnModel().getColumn(0);
         tmpCol1.setWidth(60);
@@ -613,7 +628,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         tblSelectedDish.invalidate();
     }
 
-    void removeAtSelection(int selectedRow) {
+    void removeFromSelection(int selectedRow) {
 		int tValidRowCount = getUsedRowCount(); // get the used RowCount
     	if(selectedRow < 0 || selectedRow > tValidRowCount - 1) {
     		JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
@@ -623,7 +638,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	//update db first
     	Dish dish = orderedDishAry.get(selectedRow);
     	if(dish.getOutputID() > -1) {
-    		Dish.delete(dish);
+    		Dish.deleteRelevantOutput(dish);
     	}
     	//update array second.
 		orderedDishAry.remove(selectedRow);

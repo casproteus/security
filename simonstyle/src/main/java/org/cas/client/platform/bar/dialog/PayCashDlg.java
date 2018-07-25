@@ -87,7 +87,8 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
     }
     
 	public void initContent(BillPanel billPanel) {
-    	StringBuilder sb = new StringBuilder("select * from bill where id = " + billPanel.getBillId());
+		int billId = billPanel.getBillId();
+    	StringBuilder sb = new StringBuilder("select * from bill where id = " + billId);
     	try {
     		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sb.toString());
             rs.next();
@@ -220,9 +221,11 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 	        			SalesPanel.resetCurTableDBStatus();
 	        		}
 	        	}
-        	}else if(left < 0) {
+        	}else if(left <= 0) {
             	this.setVisible(false);
-        		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign() + (0 - left)/100f).setVisible(true); //it's a non-modal dialog.
+            	if(left < 0) {
+            		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign() + (0 - left)/100f).setVisible(true); //it's a non-modal dialog.
+            	}
         		if(SalesPanel.isLastBillOfCurTable()) {
         			SalesPanel.resetCurTableDBStatus();
         		}
