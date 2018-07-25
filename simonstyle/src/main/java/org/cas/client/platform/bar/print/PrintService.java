@@ -558,7 +558,8 @@ public class PrintService{
         //end message.
         String endMes = BarOption.getBillFootInfo();
         if(endMes != null && endMes.trim().length() > 0) {
-        	content.append(generateString(width, sep_str2)).append("\n");
+        	//content.append(generateString(width, sep_str2));
+        	content.append("\n");
         	content.append(endMes);
         	content.append("\n");
         }

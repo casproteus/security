@@ -424,9 +424,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		});
     }
 
-	public void sendNewDishesToKitchen() {
+	public boolean sendNewDishesToKitchen() {
 		//if there's any new bill, send it to kitchen.
 		List<Dish> dishes = getNewDishes();
+		if (dishes == null || dishes.size() == 0) {
+			return false;
+		}
 		//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
 		if(dishes.size() == orderedDishAry.size()) {
 		    BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
@@ -434,6 +437,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		sendDishesToKitchen(dishes, false);
 		saveDishesToDB(dishes);
 		initContent();
+		return true;
 	}
 
     public void updateTotleArea() {

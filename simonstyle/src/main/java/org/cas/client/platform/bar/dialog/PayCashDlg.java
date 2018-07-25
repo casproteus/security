@@ -214,18 +214,22 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
         	//check if left moeny is 0. 
         	int left = (int)(Float.valueOf(valLeft.getText()) * 100);
         	if( left > 0) {
-	        	if(JOptionPane.showConfirmDialog(this, BarFrame.consts.reCeivedMoneyNotEnough(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
-	    			return;
+	        	if(JOptionPane.showConfirmDialog(this, BarFrame.consts.reCeivedMoneyNotEnough(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
+	        		//if selected yes, then update the table status.
+	        		if(SalesPanel.isLastBillOfCurTable()) {
+	        			SalesPanel.resetCurTableDBStatus();
+	        		}
+	        	}
         	}else if(left < 0) {
             	this.setVisible(false);
         		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign() + (0 - left)/100f).setVisible(true); //it's a non-modal dialog.
-            	updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId());
-        		if(((SalesPanel)BarFrame.instance.panels[2]).isLastBillOfCurTable()) {
-        			((SalesPanel)BarFrame.instance.panels[2]).resetCurTableDBStatus();
+        		if(SalesPanel.isLastBillOfCurTable()) {
+        			SalesPanel.resetCurTableDBStatus();
         		}
         	}
 
-        	
+
+    		updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId());
         	resetContent();
         	this.setVisible(false);
 

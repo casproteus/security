@@ -26,6 +26,7 @@ import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
@@ -87,13 +88,24 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         //FunctionButton------------------------------------------------------------------------------------------------
         if (o instanceof FunctionButton) {
         	if(o == btnLine_1_1 || o == btnLine_1_2 || o == btnLine_1_3 || o == btnLine_2_3) { //pay
-        		billPanel.sendNewDishesToKitchen();
-        		//if the bill has not been printted, print the bill also.
-        		if(billPanel.getBillId() == 0) {
-        			int newBillID = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
-        			billPanel.updateOutputRecords(newBillID);
-        			billPanel.initContent();
+        		if(billPanel.sendNewDishesToKitchen()) {
+        			//if the bill has not been saved, save it first.
+            		if(billPanel.getBillId() == 0) {
+            			int newBillID = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
+            			billPanel.updateOutputRecords(newBillID);
+            			billPanel.initContent();
+            		}else {	//if bill already saved, update the total value.
+            			String sql = "update bill set total = " + (int)(Float.valueOf(billPanel.valTotlePrice.getText()) * 100) + " where id = " + billPanel.orderedDishAry.get(0).getBillID();
+            			try {
+            				PIMDBModel.getStatement().execute(sql);
+            			}catch(Exception exp) {
+                     		L.e("SalesPanel", "unexpected error when updating the totalvalue of bill.", exp);
+                     		return;
+                     	}
+            		}
+        			//means there new bill or an oldbill with new added dish. 
         		}
+        		
         		
         		//if it's already paid, show comfirmDialog.
         		if(billPanel.status >= 100)

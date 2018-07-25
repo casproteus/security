@@ -210,7 +210,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
-		lblVersion = new JLabel("V0.45-20180724");
+		lblVersion = new JLabel("V0.47-20180725");
         
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();
@@ -294,7 +294,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     
     private boolean adminAuthentication() {
         new LoginDlg(null).setVisible(true);
-        if (LoginDlg.PASSED == true && "admin".equalsIgnoreCase(LoginDlg.USERNAME)) { // 如果用户选择了确定按钮。
+        if (LoginDlg.PASSED == true && LoginDlg.USERTYPE == LoginDlg.ADMIN_STATUS) { // 如果用户选择了确定按钮。
         	valOperator.setText(LoginDlg.USERNAME);
             BarFrame.setStatusMes(BarFrame.consts.ADMIN_MODE());
             // @TODO: might need to do some modification on the interface.
