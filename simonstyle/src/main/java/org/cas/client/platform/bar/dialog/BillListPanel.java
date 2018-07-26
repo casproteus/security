@@ -203,16 +203,54 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	}
 	
 	void moveDishToBill(BillPanel billPanel) {
-		// Update the output to belongs to the new ContactID
-		String sql = "update output set CONTACTID = " + billPanel.billButton.getText() + " where id = "
-				+ curDish.getOutputID();
-		Statement smt = PIMDBModel.getStatement();
-		try {
-			smt.execute(sql);
-		}catch(Exception exp) {
-			ErrorUtil.write(exp);
-		}
+		int originalBillId = curDish.getBillID();
+		int targetBillId = billPanel.orderedDishAry != null && billPanel.orderedDishAry.size() > 0? 
+				billPanel.orderedDishAry.get(0).getBillID() : 0;
 		
+		try { 
+			//get the output price of the moving dish.
+			int outputTotalPrice = 0;
+			StringBuilder sql = new StringBuilder("select toltalprice from output where id = ").append(curDish.getOutputID());
+			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+	        rs.beforeFirst();
+	        while (rs.next()) {
+	        	outputTotalPrice = rs.getInt("toltalprice");
+	            break;
+	        }
+	        rs.close();// 关闭
+			
+			// Update the output to belongs to the new ContactID
+			sql = new StringBuilder("update output set CONTACTID = ")
+					.append(billPanel.billButton.getText()).append(" where id = ").append(curDish.getOutputID());
+			PIMDBModel.getStatement().execute(sql.toString());
+			
+			//update existing bill.
+			if(originalBillId > 0) {
+				sql = new StringBuilder("update bill set total = total - ")
+						.append(outputTotalPrice)
+						.append(" where id = ").append(originalBillId);
+				PIMDBModel.getStatement().execute(sql.toString());
+			}
+			
+			//generate/update bill for target bill
+			if(targetBillId > 0) {
+				//update the total price of the target bill
+				sql = new StringBuilder("update bill set total = total + ")
+						.append(outputTotalPrice)
+						.append(" where id = ").append(targetBillId);
+				PIMDBModel.getStatement().execute(sql.toString());
+			}else {
+				int id = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), billPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
+				sql = new StringBuilder("update bill set total = total + ")
+						.append(outputTotalPrice)
+						.append(" where id = ").append(id);
+				PIMDBModel.getStatement().execute(sql.toString());
+			}
+				
+		}catch(Exception exp) {
+			L.e("SalesPanel", "unexpected error when updating the totalvalue of bill.", exp);
+		}
+
 		// update all the table content.
 		curDish = null;
 		initContent();
@@ -254,9 +292,30 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 						return;
 					}
 					//splet into num bills. each dish's number and price will be devide by "num".
-					Dish.split(panel.orderedDishAry, num, null);//update existing outputs
-					for (int i = 1; i < num; i++) {				//generate splited ones.
-						Dish.split(panel.orderedDishAry, num, String.valueOf(BillListPanel.getANewBillNumber()));
+					Dish.splitOutputList(panel.orderedDishAry, num, null);//update existing outputs
+					//update existing bill.
+					int billId = panel.orderedDishAry.get(0).getBillID();
+					if(billId > 0) {
+						StringBuilder sql = new StringBuilder("update bill set total = ");
+						try {
+							sql.append((int)(Float.valueOf(panel.valTotlePrice.getText()) * 100)/num).append(" where id = ").append(billId);
+							PIMDBModel.getStatement().execute(sql.toString());
+							
+							sql = new StringBuilder("update bill set discount = discount/" + num).append(" where id = ").append(billId);
+							PIMDBModel.getStatement().execute(sql.toString());
+
+						}catch(Exception exp) {
+							L.e("SalesPanel", "unexpected error when updating the totalvalue of bill.", exp);
+						}
+					}
+											
+					for (int i = 1; i < num; i++) {				//generate output for splited ones.
+						int billIndex = BillListPanel.getANewBillNumber();
+						Dish.splitOutputList(panel.orderedDishAry, num, String.valueOf(billIndex));
+						//generate a bill for each new occupied panel, incase there's discount info need to set into it.
+						//Todo get the billPanel
+						int id = panel.generateBillRecord(BarFrame.instance.valCurTable.getText(), String.valueOf(billIndex), BarFrame.instance.valStartTime.getText());
+						//??shall we split service fee?
 					}
 				}
 				initContent();
@@ -283,9 +342,9 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 						JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.NoBillSeleted());
 						return;
 					}
-					Dish.split(curDish, panels.size() + 1, null); // update the num and totalprice of curDish
+					Dish.splitOutput(curDish, panels.size() + 1, null); // update the num and totalprice of curDish
 					for (BillPanel billPanel : panels) { // insert new output with other billID
-						Dish.split(curDish, panels.size() + 1, billPanel.billButton.getText());
+						Dish.splitOutput(curDish, panels.size() + 1, billPanel.billButton.getText());
 					}
 
 					curDish = null;

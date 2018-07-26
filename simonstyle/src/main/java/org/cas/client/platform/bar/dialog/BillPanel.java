@@ -52,9 +52,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	public JToggleButton billButton;
     private boolean isDragging;
     public ArrayList<Dish> orderedDishAry = new ArrayList<Dish>();
+    
+    //Bill property (not for specific item).the info should be retrieved from bill record if have.
     int discount;
     int tip;
     int serviceFee;
+    
     int received;
     int cashback;
     String comment = "";
@@ -87,13 +90,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		Statement stm = PIMDBModel.getStatement();
 		String createtime = BarOption.df.format(new Date());
 		StringBuilder sql = new StringBuilder(
-	            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
+	            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
 				.append(createtime).append("', '")
 	            .append(tableID).append("', '")	//table
 	            .append(billIndex).append("', ")			//bill
 	            .append((int)(Float.valueOf(valTotlePrice.getText()) * 100)).append(", ")	//total
 	            .append(discount).append(", ")
 	            .append(tip).append(", ")
+	            .append(serviceFee).append(", ")
 	            .append(cashback).append(", ")	//discount
 	            .append(LoginDlg.USERID).append(", '")		//emoployid
 	            .append(comment).append("', '")
@@ -145,7 +149,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	//send to printer
 	void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
 		//prepare the printing String and do printing
-		int idx = PrintService.exePrintDishes(dishes, isCancelled);
+		int idx = PrintService.exePrintOrderList(dishes, isCancelled);
 		if(PrintService.SUCCESS != idx) {
 			BarFrame.setStatusMes(BarFrame.consts.PrinterError()  + "： " + idx);
 		}
@@ -502,19 +506,20 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	lblSubTotle.setText(BarFrame.consts.Subtotal() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(subTotal/100f));
         lblTPS.setText(BarFrame.consts.TPS() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(((int)totalGst)/100f));
         lblTVQ.setText(BarFrame.consts.TVQ() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(((int)totalQst)/100f));
-        valTotlePrice.setText(new DecimalFormat("#0.00").format(((int) (subTotal + totalGst + totalQst))/100f));
+        valTotlePrice.setText(new DecimalFormat("#0.00").format(((int) (subTotal + totalGst + totalQst + serviceFee))/100f));
     }
     
     void initContent() {
     	resetStatus();
     	//get outputs of current table and bill id.
 		try {
-			Statement smt = PIMDBModel.getReadOnlyStatement();
 			String billIndex = billButton == null ? BarFrame.instance.valCurBill.getText() : billButton.getText();
-			String sql = "select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '" + BarFrame.instance.valCurTable.getText()
-					+ "' and CONTACTID = " + billIndex + " and deleted = false AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '"
-					+ BarFrame.instance.valStartTime.getText() + "'";
-			ResultSet rs = smt.executeQuery(sql);
+			StringBuilder sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
+					.append(BarFrame.instance.valCurTable.getText())
+					.append("' and CONTACTID = ").append(billIndex)
+					.append(" and deleted = false AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
+					.append(BarFrame.instance.valStartTime.getText()).append("'");
+			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
 			rs.relative(-1);
 			int tmpPos = rs.getRow();
@@ -583,12 +588,27 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			// do not set the default selected value, if it's used in billListDlg.
 			if (salesPanel != null)
 				tblSelectedDish.setSelectedRow(tmpPos - 1);
-			rs.close();
+			//rs.close();
+			
+			//update the dicount and servicefee, and tip info.
+			if(orderedDishAry.size() > 0 && orderedDishAry.get(0).getBillID() > 0) {
+				sql = new StringBuilder("select * from Bill where id = ")
+						.append(orderedDishAry.get(0).getBillID());
+				rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+				rs.beforeFirst();
+				if(rs.next()) {
+				    discount = rs.getInt("discount");
+				    tip = rs.getInt("tip");
+				    serviceFee = rs.getInt("otherreceived");
+				}
+			}
 		} catch (Exception e) {
 			ErrorUtil.write(e);
 		}
 
 		resetColWidth(scrContent.getWidth());
+		
+		
 		updateTotleArea();
 	}
     

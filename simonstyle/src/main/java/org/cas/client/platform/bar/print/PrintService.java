@@ -105,7 +105,7 @@ public class PrintService{
         printContents();
     }
     
-    public static int exePrintDishes(List<Dish> selectdDishAry, boolean isCancelled){
+    public static int exePrintOrderList(List<Dish> selectdDishAry, boolean isCancelled){
 
 		Printer[] printers = BarFrame.instance.menuPanel.printers;
 		String curTable = BarFrame.instance.valCurTable.getText();
@@ -217,6 +217,8 @@ public class PrintService{
             				doWebSocketPrint(entry.getKey(), null, sndMes)) {
             		contents.remove(i);//clean ip content; no need to do ipContentMap.remove(entry.getKey()), because will do ipContentMap.clear later.
             	}else {
+                    JOptionPane.showMessageDialog(BarFrame.instance, 
+        	        		"Content NOT printed!!! Please check printer and try again. --ip: "+entry.getKey());
             		resultForReturn *= 100;
             		resultForReturn += i;
             	}
@@ -251,8 +253,8 @@ public class PrintService{
         DataOutputStream outputStream = null;
         try {
             Enumeration tPorts = CommPortIdentifier.getPortIdentifiers();
-            if (tPorts == null) {
-                JOptionPane.showMessageDialog(BarFrame.instance, "no comm ports found!");
+            if (tPorts == null || !tPorts.hasMoreElements()) {
+            	JOptionPane.showMessageDialog(BarFrame.instance, "no comm ports found! please check the printer connection.");
                 return false;
             }
 

@@ -14,21 +14,21 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 public class Dish {
 	
 	//create new outputs.
-	public static void split(ArrayList<Dish> selectdDishAry, int splitAmount, String billID) {
+	public static void splitOutputList(ArrayList<Dish> selectdDishAry, int splitAmount, String billIndex) {
 		for(int i = 0; i < selectdDishAry.size(); i++) {
 			Dish dish = selectdDishAry.get(i);
-			split(dish, splitAmount, billID);
+			splitOutput(dish, splitAmount, billIndex);
 		}
 	}
 
-	public static void split(Dish dish, int splitAmount, String billID) {
+	public static void splitOutput(Dish dish, int splitAmount, String billIndex) {
 		int num = dish.getNum();			//current amount
 		//first pick out the number on 100,0000 and 10000 position
 		int pK = num /(BarOption.MaxQTY * 100);
 		if(num > BarOption.MaxQTY * 100) {
 			num = num %(BarOption.MaxQTY * 100);
 		}
-		int pS = (int)num /BarOption.MaxQTY;
+		int pS = num /BarOption.MaxQTY;
 		if(num > BarOption.MaxQTY) {
 			num = num % BarOption.MaxQTY;
 		}
@@ -47,7 +47,7 @@ public class Dish {
 		}
 		num += pX;
 		
-		if(billID == null) {		//updating the original one.
+		if(billIndex == null) {		//updating the original output.
 			Statement smt = PIMDBModel.getStatement();
 			try {
 				smt.execute("update output set amount = " + num
@@ -57,7 +57,7 @@ public class Dish {
 			}
 		}else {						//creating a splited one.
 			dish.setNum(num);
-			createSplitedOutput(dish, billID, priceChange);
+			createSplitedOutput(dish, billIndex, priceChange);
 		}
 	}
 
@@ -100,6 +100,7 @@ public class Dish {
 		}
 	}
 	
+	@Override
 	public Dish clone(){
 		Dish dish = new Dish();
 		dish.setCATEGORY(CATEGORY);

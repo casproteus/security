@@ -35,7 +35,7 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
-
+	private String VERSION = "V0.52-20180726";
     public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
@@ -210,7 +210,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
-		lblVersion = new JLabel("V0.49-20180725");
+		lblVersion = new JLabel(VERSION);
         
         panels[0] = new TablesPanel();
         panels[1] = new BillListPanel();

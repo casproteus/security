@@ -94,7 +94,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         			billPanel.sendNewDishesToKitchen(dishes);
         		}
         		
-    			//if the bill has not been generated, generate a bill.
+    			//if the bill has not been generated, generate a bill.@because: some information on the payment dialog is fetched from bill record.
+        		//@NODE: normally should only generate the bill when clicked the ok of paymentdlg, while I don't mind to have the bill generated earlier
+        		//as we need to care if there's bill exist anywhere when splitting bill or moving items.
+        		//@because: we might have half completed bill.(haven't paid enough, then split, then continue pay)
         		if(billPanel.getBillId() == 0) {
         			int newBillID = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
         			billPanel.updateOutputRecords(newBillID);
