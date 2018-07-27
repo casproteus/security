@@ -87,7 +87,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
 	public int generateBillRecord(String tableID, String billIndex, String opentime) {
 		//generate a bill in db and update the output with the new bill id
-		Statement stm = PIMDBModel.getStatement();
 		String createtime = BarOption.df.format(new Date());
 		StringBuilder sql = new StringBuilder(
 	            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
@@ -103,7 +102,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	            .append(comment).append("', '")
 	            .append(opentime).append("')");				//content
 		try {
-		   	stm.executeUpdate(sql.toString());
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
 		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime).append("'");
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
             rs.beforeFirst();
@@ -441,7 +440,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		}
 		sendDishesToKitchen(dishes, false);
 		saveDishesToDB(dishes);
-		initContent();
+		tblSelectedDish.repaint();//to update the color of dishes, it's saved, so it's not read anymore.
 	}
 
     public void updateTotleArea() {
