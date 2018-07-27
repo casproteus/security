@@ -88,23 +88,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         //FunctionButton------------------------------------------------------------------------------------------------
         if (o instanceof FunctionButton) {
         	if(o == btnLine_1_1 || o == btnLine_1_2 || o == btnLine_1_3 || o == btnLine_2_3) { //pay
-        		//if there's any new bill, send it to kitchen first, and this also made the output generated.
-        		List<Dish> dishes = billPanel.getNewDishes();
-        		if (dishes != null && dishes.size() > 0) {
-        			billPanel.sendNewDishesToKitchen(dishes);
-        		}
-        		
-    			//if the bill has not been generated, generate a bill.@because: some information on the payment dialog is fetched from bill record.
-        		//@NODE: normally should only generate the bill when clicked the ok of paymentdlg, while I don't mind to have the bill generated earlier
-        		//as we need to care if there's bill exist anywhere when splitting bill or moving items.
-        		//@because: we might have half completed bill.(haven't paid enough, then split, then continue pay)
-        		if(billPanel.getBillId() == 0) {
-        			int newBillID = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
-        			billPanel.updateOutputRecords(newBillID);
-        			billPanel.initContent();
-        		}else if(dishes != null && dishes.size() > 0) {//if bill record already exist, and there's new dish added, update the total value.
-        			updateTotalOfBillRecord();
-        		}
+        		outputStatusCheck();
+    			billStatusCheck();
         		
         		//if it's already paid, show comfirmDialog.
         		if(billPanel.status >= 100)
@@ -141,6 +126,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         			JOptionPane.showMessageDialog(this, BarFrame.consts.UnSendRecordFound());
         			return;
         		}
+        		
+        		outputStatusCheck();
+    			billStatusCheck();
         		BarFrame.instance.switchMode(1);
         		
         	} else if (o == btnLine_1_5) {	//remove item.
@@ -169,16 +157,17 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		float serviceFee = Float.valueOf(curContent);
              		billPanel.serviceFee = (int)(serviceFee * 100);
              		billPanel.updateTotleArea();
+             		
+             		outputStatusCheck();
+             		billStatusCheck();
+             		
              	}catch(Exception exp) {
                  	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
              		return;
              	}
         		
         	}else if (o == btnLine_1_10) { // print bill
-        		List<Dish> dishes = billPanel.getNewDishes();
-        		if (dishes != null && dishes.size() > 0) {
-        			billPanel.sendNewDishesToKitchen(dishes);
-        		}
+        		outputStatusCheck();
         		billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
         		billPanel.initContent();
         		
@@ -262,6 +251,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		float discount = Float.valueOf(curContent);
              		billPanel.discount = (int)(discount * 100);
              		billPanel.updateTotleArea();
+             		
+             		outputStatusCheck();
+             		billStatusCheck();
+             		
              	}catch(Exception exp) {
                  	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
              		return;
@@ -315,10 +308,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	new MoreButtonsDlg(this).show((FunctionButton)o);
             	
             } else if (o == btnLine_2_10) {//send
-        		List<Dish> dishes = billPanel.getNewDishes();
-        		if (dishes != null && dishes.size() > 0) {
-        			billPanel.sendNewDishesToKitchen(dishes);
-        		}
+        		outputStatusCheck();
             	if(BarOption.isFastFoodMode()) {
     		    	BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
     		    	billPanel.initContent();
@@ -362,6 +352,29 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         }
     }
 
+	private void billStatusCheck() {
+		//if the bill has not been generated, generate a bill.@because: some information on the payment dialog is fetched from bill record.
+		//@NODE: normally should only generate the bill when clicked the ok of paymentdlg, while I don't mind to have the bill generated earlier
+		//as we need to care if there's bill exist anywhere when splitting bill or moving items.
+		//@because: we might have half completed bill.(haven't paid enough, then split, then continue pay)
+		if(billPanel.getBillId() == 0) {
+			int newBillID = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
+			billPanel.updateOutputRecords(newBillID);
+			billPanel.initContent();
+		}else {//if bill record already exist, and there's new dish added, or discount, service fee changed.... update the total value.
+			//if(dishes != null && dishes.size() > 0) {
+			updateBillRecord();
+		}
+	}
+
+	private void outputStatusCheck() {
+		//if there's any new bill, send it to kitchen first, and this also made the output generated.
+		List<Dish> dishes = billPanel.getNewDishes();
+		if (dishes != null && dishes.size() > 0) {
+			billPanel.sendNewDishesToKitchen(dishes);
+		}
+	}
+
 	void removeItem() {
 		if(BillListPanel.curDish == null) {//check if there's an item selected.
 			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
@@ -378,20 +391,30 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			//clean from screen.
 			billPanel.removeFromSelection(billPanel.tblSelectedDish.getSelectedRow());
 			//update bill info, must be after the screen update, because will get total from screen.
-			updateTotalOfBillRecord();
+			updateBillRecord();
 		}else {
 			//only do clean from screen, because the output not generated yet, and will not affect the toltal in bill.
 			billPanel.removeFromSelection(billPanel.tblSelectedDish.getSelectedRow());
 		}
 	}
 
-	private void updateTotalOfBillRecord() {
-		String sql = "update bill set total = " + (int)(Float.valueOf(billPanel.valTotlePrice.getText()) * 100) + " where id = " + billPanel.orderedDishAry.get(0).getBillID();
+	private void updateBillRecord() {
+		int billId = billPanel.orderedDishAry.get(0).getBillID();
 		try {
-			PIMDBModel.getStatement().execute(sql);
+			StringBuilder sql = new StringBuilder("update bill set total = ")
+					.append((int)(Float.valueOf(billPanel.valTotlePrice.getText()) * 100)).append(" where id = ").append(billId);
+			PIMDBModel.getStatement().execute(sql.toString());
+			
+			sql = new StringBuilder("update bill set discount = ").append(billPanel.discount).append(" where id = ").append(billId);
+			PIMDBModel.getStatement().execute(sql.toString());
+
+			sql = new StringBuilder("update bill set otherReceived = ").append(billPanel.serviceFee).append(" where id = ").append(billId);
+			PIMDBModel.getStatement().execute(sql.toString());
+			
 		}catch(Exception exp) {
 			L.e("SalesPanel", "unexpected error when updating the totalvalue of bill.", exp);
 		}
+
 	}
 
     public static boolean isLastBillOfCurTable(){
