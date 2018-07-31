@@ -444,10 +444,11 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
     
 	List<BillPanel> getSelectedBillPannels(){
 		List<BillPanel> panels = new ArrayList<>();
-		for (BillPanel billPanel : billPanels) {
+		for (BillPanel billPanel : onScrBills) {
 			if(billPanel.billButton.isSelected())
 				panels.add(billPanel);
 		}
+		
 		return panels;
 	}
 	
