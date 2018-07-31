@@ -100,6 +100,26 @@ public class Dish {
 		}
 	}
 	
+	public String getDisplayableNum() {
+		int num = getNum();
+		//first pick out the number on 100,0000 and 10000 position
+		int pK = num /(BarOption.MaxQTY * 100);
+		if(num > BarOption.MaxQTY * 100) {
+			num = num %(BarOption.MaxQTY * 100);
+		}
+		int pS = num /BarOption.MaxQTY;
+		if(num > BarOption.MaxQTY) {
+			num = num % BarOption.MaxQTY;
+		}
+		StringBuilder strNum = new StringBuilder("x");
+		strNum.append(num);
+		if(pS > 0)
+			strNum.append("/").append(pS);
+		if(pK > 0)
+			strNum.append("/").append(pK);
+		return strNum.toString();
+	}
+	
 	@Override
 	public Dish clone(){
 		Dish dish = new Dish();

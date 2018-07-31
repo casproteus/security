@@ -310,7 +310,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             	StringBuilder onSrcString = new StringBuilder();
             	for(int i = 0; i < notes.length; i++) {
 					for (String fullString : allModification) {
-						if(fullString.indexOf(notes[i].trim()) > -1) {
+						if(notes[i].trim().length() > 0 && fullString.indexOf(notes[i].trim()) > -1) {
 							notes[i] = fullString;
 							break;
 						}

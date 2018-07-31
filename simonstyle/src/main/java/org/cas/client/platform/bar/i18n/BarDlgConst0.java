@@ -48,6 +48,8 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String VolumnDiscount() {return "<html><center>DISC<br>BILL</center></html>";}
     @Override
+	public String DISCOUNT_BILL() {return "DISCOUNT BILL";}
+    @Override
 	public String VolumnDiscountNotice() {return "Please input how much to discount";}
     
     @Override
@@ -100,6 +102,8 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String QTYNOTICE() {return "Please input a number to proceed";}
     @Override
 	public String DISC_ITEM() {return "<html><center>DISC<br>ITEM</center></html>";}
+    @Override
+	public String DISCITEM() {return "DISCOUNT ITEM";}
     @Override
 	public String DISC_ITEMNotice() {return "Please input how much to discount for selected item";}
     @Override
@@ -154,7 +158,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String NotPayYet() {return "Refund only available for bills already paid";}
     @Override
-	public String AllreadyRefund() {return "This bill is allready refunded, are you sure to do one more refund?, already refunded: ";}
+	public String AllreadyRefund() {return "This bill is allready refunded, are you sure to do one more refund? already refunded: ";}
     @Override
 	public String UnSendRecordFound() {return "Unsend records found! please make sure all dish have send to kitch before this action";}
     @Override

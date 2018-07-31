@@ -149,7 +149,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     		if(idx >= 0) {
     			String key = content.substring(0, idx);
     			String value = content.substring(idx + 1);
-    	    	CustOpts.custOps.setKeyAndValue("key", value);
+    	    	CustOpts.custOps.setKeyAndValue(key, value);
     		}else {
 	    		try {
 		    		int t = Integer.valueOf(content);

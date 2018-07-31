@@ -348,10 +348,10 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
                 received += rs.getInt("visaReceived");
                 received += rs.getInt("masterReceived"); 
                 received += rs.getInt("otherReceived");
-                tValues[tmpPos][5] = Float.valueOf((float) (received / 100.0));
-                tValues[tmpPos][6] = Float.valueOf((float) (rs.getInt("tip") / 100.0));
-                tValues[tmpPos][7] = Float.valueOf((float) (rs.getInt("cashback") / 100.0));
-                tValues[tmpPos][8] = rs.getInt("status");
+                tValues[tmpPos][5] = received / 100.0;
+                tValues[tmpPos][6] = rs.getInt("tip") / 100.0;
+                tValues[tmpPos][7] = rs.getInt("cashback") / 100.0;
+                tValues[tmpPos][8] = rs.getInt("status") / 100.0;
                 tValues[tmpPos][9] = rs.getString("employee.nName");
                 tValues[tmpPos][10] = rs.getString("Comment");
                 tValues[tmpPos][11] = rs.getString("OpenTime");

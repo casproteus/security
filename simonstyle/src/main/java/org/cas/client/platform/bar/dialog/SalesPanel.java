@@ -237,7 +237,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	BarUtil.openMoneyBox();
             	
             } else if (o == btnLine_2_7) {//disc bill
-         		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.VolumnDiscount());
+         		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.DISCOUNT_BILL());
          		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.VolumnDiscountNotice());
          		BarFrame.numberPanelDlg.setBtnSource(null);
          		BarFrame.numberPanelDlg.setFloatSupport(true);
@@ -286,8 +286,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     rs.next();
                     int status = rs.getInt("status");
                     if(status < 0) {
-                    	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.AllreadyRefund() + BarOption.getMoneySign() + (0-status), DlgConst.DlgTitle,
-    		                    JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
+                    	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.AllreadyRefund() + BarOption.getMoneySign() + (0-status)/100.0, DlgConst.DlgTitle,
+    		                    JOptionPane.YES_NO_OPTION) != 0) {// allready refunded, sure to refund again?
     						return;
     					}else {
     						status -= (int)(refund * 100);
@@ -325,7 +325,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          			return;
          		}
 
-         		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.DISC_ITEM());
+         		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.DISCITEM());
          		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.DISC_ITEMNotice());
          		BarFrame.numberPanelDlg.setBtnSource(btnLine_1_7);//pomp up a numberPanelDlg
          		BarFrame.numberPanelDlg.setFloatSupport(true);

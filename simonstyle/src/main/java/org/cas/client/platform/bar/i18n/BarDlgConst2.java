@@ -48,6 +48,8 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String VolumnDiscount() {return "整单打折";}
     @Override
+	public String DISCOUNT_BILL() {return VolumnDiscount();}
+    @Override
 	public String VolumnDiscountNotice() {return "请输入整单打折的金额";}
     
     @Override
@@ -100,6 +102,8 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String QTYNOTICE() {return "请输入份数，该数字将被应用到所选的菜";}
     @Override
 	public String DISC_ITEM() {return "单项打折";}
+    @Override
+	public String DISCITEM() {return DISC_ITEM();}
     @Override
 	public String DISC_ITEMNotice() {return "请输入选中项的打折金额";}
     @Override

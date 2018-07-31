@@ -47,7 +47,7 @@ public class PrintService{
     private static HashMap<String,List<String>> ipContentMap;
 
     private static String curPrintIp = "";
-    private static int width = 28;
+    private static int width = 46;
     private String code = "GBK";
     private static String SEP_STR1 = "=";
     private static String SEP_STR2 = "-";
@@ -83,8 +83,8 @@ public class PrintService{
         
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
-        ipContentMap.get(printerIP).add(
-        		formatContentForBill(saleRecords, printerIP, billPanel, false) + "\n\n\n\n\n");
+        ipContentMap.get(printerIP).addAll(
+        		formatContentForBill(saleRecords, printerIP, billPanel, false));
         printContents();
     }
     
@@ -100,12 +100,12 @@ public class PrintService{
         
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
-        ipContentMap.get(printerIP).add(
-        		formatContentForBill(saleRecords, printerIP, billPanel, false) + "\n\n\n\n\n");
+        ipContentMap.get(printerIP).addAll(
+        		formatContentForBill(saleRecords, printerIP, billPanel, false));
         printContents();
     }
     
-    public static int exePrintOrderList(List<Dish> selectdDishAry, boolean isCancelled){
+    public static void exePrintOrderList(List<Dish> selectdDishAry, boolean isCancelled){
 
 		Printer[] printers = BarFrame.instance.menuPanel.printers;
 		String curTable = BarFrame.instance.valCurTable.getText();
@@ -114,7 +114,8 @@ public class PrintService{
 
 		//ErrorUtil.(TAG,"start to translate selection into ipContent for printing.");
         if(!isIpContentMapEmpty()){
-        	return printContents();
+        	printContents();
+        	return;
         }
         
         reInitPrintRelatedMaps();
@@ -177,22 +178,33 @@ public class PrintService{
                 if(ipSelectionsMap.get(printerIP) != dishList){
                     ErrorUtil.write("the dishList are different from ipSelectionsMap.get(printerIP)!");
                 }
+
+        		if (!"silent".equals(CustOpts.custOps.getValue("mode"))) {
+        			ipContentMap.get(printerIP).add("beep");
+        		}
+        		ipContentMap.get(printerIP).add("BigFont");
                 if(ipPrinterMap.get(printerIP).getFirstPrint() == 1){  //全单封装
-                    ipContentMap.get(printerIP).add(formatContentForPrint(dishList, printerIP, curTable, curBill, waiterName, isCancelled) + "\n\n\n\n\n");
-                }else{                                          //分单封装
+                    ipContentMap.get(printerIP).add(
+                    		formatContentForOrder(dishList, printerIP, curTable, curBill, waiterName, isCancelled)
+                    		+ "\n\n\n\n\n");
+                    ipContentMap.get(printerIP).add("cut");
+                }else{   												//分单封装
                     for(Dish dish : dishList){
                         List<Dish> tlist = new ArrayList<Dish>();
                         tlist.add(dish);
-                        ipContentMap.get(printerIP).add(formatContentForPrint(tlist, printerIP, curTable, curBill, waiterName, isCancelled) + "\n\n");
+                        ipContentMap.get(printerIP).add(
+                        		formatContentForOrder(tlist, printerIP, curTable, curBill, waiterName, isCancelled) + "\n\n");
+                        ipContentMap.get(printerIP).add("cut");
                     }
                 }
+        		ipContentMap.get(printerIP).add("NormalFont");
             }
             //clear the ipSelectionsMap immediately
             ipSelectionsMap.get(printerIP).clear();
         }
 
         //L.d(TAG, "Order is translated into ipContentMap map and ready for print.");
-        return printContents();
+        printContents();
     }
     
     private static String mapToIP(Printer[] printers, int id){
@@ -205,30 +217,26 @@ public class PrintService{
     	return ip;
     }
   
-    private static int printContents() {
+    private static void printContents() {
     	BarFrame.setStatusMes("PRINTED...");
     	int resultForReturn = 0;
         for(Entry<String,List<String>> entry : ipContentMap.entrySet()) {
         	List<String> contents = entry.getValue();
-        	for(int i = contents.size() - 1; i >= 0 ; i--) {
-        		String sndMes = contents.get(i);
+        	//for(int i = contents.size() - 1; i >= 0 ; i--) {
+        	if(contents.size() > 0) {
             	if("Serial".equalsIgnoreCase(entry.getKey()) ? 
-            			doSerialPrint(entry.getKey(), null, sndMes) : 
-            				doWebSocketPrint(entry.getKey(), null, sndMes)) {
-            		contents.remove(i);//clean ip content; no need to do ipContentMap.remove(entry.getKey()), because will do ipContentMap.clear later.
+            			doSerialPrint(contents) : 
+            				doWebSocketPrint(entry.getKey(), contents)) {
+            		contents.clear();//clean ip content; no need to do ipContentMap.remove(entry.getKey()), because will do ipContentMap.clear later.
             	}else {
                     JOptionPane.showMessageDialog(BarFrame.instance, 
         	        		"Content NOT printed!!! Please check printer and try again. --ip: "+entry.getKey());
-            		resultForReturn *= 100;
-            		resultForReturn += i;
+            		resultForReturn ++;
             	}
         	}
         }
         if(resultForReturn == 0) {
 	    	ipContentMap.clear();
-	        return SUCCESS;
-        }else {
-        	return resultForReturn;
         }
     }
     
@@ -247,7 +255,7 @@ public class PrintService{
 		}
     }
     
-    private static boolean doSerialPrint(String ip, String font, String sndMsg) {
+    private static boolean doSerialPrint(List<String> sndMsg) {
         CommPortIdentifier commPortIdentifier;
         SerialPort tSerialPort = null;
         DataOutputStream outputStream = null;
@@ -266,7 +274,9 @@ public class PrintService{
                 //if (!commPortIdentifier.isCurrentlyOwned()) {
                     tSerialPort = (SerialPort)commPortIdentifier.open("PrintService", 10000);//并口用"ParallelBlackBox"
                     outputStream = new DataOutputStream(tSerialPort.getOutputStream());
-        			sendContentThroughStream(font, sndMsg, outputStream);
+                    for (String string : sndMsg) {
+            			sendContentThroughStream(string, outputStream);
+					}
 //                    outputStream.write(27); // 打印机初始化：
 //                    outputStream.write(64);
 //
@@ -296,7 +306,7 @@ public class PrintService{
 //                    tContent = tContent.concat(PosDlgConst.Unit).concat("   ");// 总计
 //
 //                    tContent = tContent.concat(PosDlgConst.Receive);
-//                    tContent = tContent.concat(tfdActuallyReceive.getText());
+//                    tContent = tContent.concat(tfdActuallyReve.getText());
 //                    tContent = tContent.concat(PosDlgConst.Unit).concat("\n");// 收银
 //
 //                    tContent = tContent.concat(PosDlgConst.Change);
@@ -332,7 +342,7 @@ public class PrintService{
         			outputStream.close();
         		}catch(Exception exp) {
         			System.out.println(exp);
-					L.e(ip, "Error when trying to close outputString of serial port", exp);
+					L.e("serial", "Error when trying to close outputString of serial port", exp);
         		}
         	}
         	if(tSerialPort != null) {
@@ -340,13 +350,13 @@ public class PrintService{
         			tSerialPort.close();
         		}catch(Exception e) {
         			System.out.println(e);
-					L.e(ip, "Error when trying to close serial port", e);
+					L.e("serial", "Error when trying to close serial port", e);
         		}
         	}
         }
     }
     
-    private static boolean doWebSocketPrint(String ip, String font, String sndMsg){
+    private static boolean doWebSocketPrint(String ip, List<String> sndMsg){
     	if(ip == null || ip.length() == 0)
     		return false;
     	
@@ -371,7 +381,9 @@ public class PrintService{
 	        
 			socket = new Socket(ip, 9100);
 			outputStream = socket.getOutputStream();
-			sendContentThroughStream(font, sndMsg, outputStream);
+			for (String msg : sndMsg) {
+				sendContentThroughStream(msg, outputStream);
+			}
 			outputStream.close();
 			socket.close();
 			return true;
@@ -397,86 +409,90 @@ public class PrintService{
 		}
     }
 
-	private static void sendContentThroughStream(String font, String sndMsg, OutputStream outputStream)
+	private static void sendContentThroughStream(String sndMsg, OutputStream outputStream)
 			throws IOException {
-		if (!"silent".equals(CustOpts.custOps.getValue("mode"))) {
+		if("Command.BEEP".equals(sndMsg)) {
 			outputStream.write(Command.BEEP);
-		}
-		
-		if (font == null || font.length() < 1) {
-			outputStream.write(Command.GS_ExclamationMark);
-		} else {
-			// default: "27, 33, 48" because it works for both thermal and non-thermal
-			String[] pieces = font.split(",");
-			if (pieces.length != 3) {
+		}else if("BigFont".equals(sndMsg)) {
+
+	        String font = (String)CustOpts.custOps.getValue(curPrintIp + "font");
+	        if(font ==  null || font.length() < 1) {
+	            font = (String)CustOpts.custOps.getValue("font");
+	        }
+	        
+			if (font == null || font.length() < 1) {
 				outputStream.write(Command.GS_ExclamationMark);
 			} else {
-				for (int i = 0; i < 3; i++) {
-					Command.GS_ExclamationMark[i] = Integer.valueOf(pieces[i].trim()).byteValue();
+				// default: "27, 33, 48" because it works for both thermal and non-thermal
+				String[] pieces = font.split(",");
+				if (pieces.length != 3) {
+					outputStream.write(Command.GS_ExclamationMark);
+				} else {
+					for (int i = 0; i < 3; i++) {
+						Command.GS_ExclamationMark[i] = Integer.valueOf(pieces[i].trim()).byteValue();
+					}
+					outputStream.write(Command.GS_ExclamationMark);
 				}
-				outputStream.write(Command.GS_ExclamationMark);
+			}
+		}else if("NormalFont".equals(sndMsg)) {
+			outputStream.write(Command.ESC_ExclamationMark);
+		}else if("cut".equals(sndMsg)){
+			// cut the paper.
+			outputStream.write(Command.GS_V_m_n);
+		}else {
+			// code can be customized
+			String charset = (String)CustOpts.custOps.getValue("code");
+			if (charset == null || charset.length() <= 2) {
+				charset = "GBK";
+			}
+			 if(sndMsg != null) {
+			    byte[] send;
+			    try {
+			        send = sndMsg.getBytes(charset);
+			    } catch (UnsupportedEncodingException var5) {
+			    	ErrorUtil.write("Can not conver with code:" + charset);
+			        send = sndMsg.getBytes();
+			    	ErrorUtil.write("content to print will be:" + send);
+			    }
+			    outputStream.write(send);
 			}
 		}
-
-		// code can be customized
-		String charset = (String)CustOpts.custOps.getValue("code");
-		if (charset == null || charset.length() <= 2) {
-			charset = "GBK";
-		}
-		 if(sndMsg != null) {
-		    byte[] send;
-		    try {
-		        send = sndMsg.getBytes(charset);
-		    } catch (UnsupportedEncodingException var5) {
-		    	ErrorUtil.write("Can not conver with code:" + charset);
-		        send = sndMsg.getBytes();
-		    	ErrorUtil.write("content to print will be:" + send);
-		    }
-		    outputStream.write(send);
-		}
-
-		// cut the paper.
-		outputStream.write(Command.GS_V_m_n);
-
 		outputStream.flush();
 	}
     
-    private static String formatContentForBill(List<Dish> list, String curPrintIp, BillPanel billPanel, boolean isCancelled){
-        //L.d(TAG,"formatContentForPrint");
-        String font = (String)CustOpts.custOps.getValue(curPrintIp + "font");
-        if(font ==  null || font.length() < 1) {
-            font = (String)CustOpts.custOps.getValue("font");
+    private static ArrayList<String> formatContentForBill(List<Dish> list, String curPrintIp, BillPanel billPanel, boolean isCancelled){
+    	ArrayList<String> strAryFR = new ArrayList<String>();
+    	//L.d(TAG,"formatContentForPrint");
+        String w = (String)CustOpts.custOps.getValue( "width");
+        int tWidth = width;
+        try {
+            tWidth = Integer.valueOf(w);
+        }catch(Exception e){
+        	//do nothing, if no with property set, width will keep default value.
         }
-        if(font != null && font.length() > 0){
-            String w = (String)CustOpts.custOps.getValue(curPrintIp + "width");
-            if( w== null || w.length() < 1) {
-                w = (String)CustOpts.custOps.getValue("width");
-            }
-            try {
-                width = Integer.valueOf(w);
-            }catch(Exception e){
-            	//do nothing, if no with property set, width will keep default value.
-            }
-        }
-        
-        StringBuilder content = getFormattedBillHeader();
+	            
+	    StringBuilder content = getFormattedBillHeader(tWidth);
         content.append("\n");
-
+        //push bill header
+        strAryFR.add(content.toString());
+        content.delete(0, content.length());
+        
+        //table
         content.append("(").append(BarFrame.instance.valCurTable.getText()).append(")");
         //bill
-        content.append("  ").append(billPanel.billButton == null ? BarFrame.instance.valCurBill.getText() : billPanel.billButton.getText());
+        content.append(billPanel.billButton == null ? BarFrame.instance.valCurBill.getText() : billPanel.billButton.getText());
         //waiter
-        content.append("  ").append(BarFrame.instance.valOperator.getText()).append("  ");
+        content.append(" ").append(BarFrame.instance.valOperator.getText()).append(" ");
         //time
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String dateStr = df.format(new Date());
-        
-        int lengthOfSpaceBeforeTime = width - content.length() - dateStr.length();
+        //space
+        int lengthOfSpaceBeforeTime = tWidth - content.length() - dateStr.length();
         if(lengthOfSpaceBeforeTime > 0) {
         	String spaceStr = generateString(lengthOfSpaceBeforeTime, " ");
         	content.append(spaceStr).append(dateStr);
         }else {
-        	String spaceStr = generateString(width - dateStr.length(), " ");
+        	String spaceStr = generateString(tWidth - dateStr.length(), " ");
         	content.append("\n").append(spaceStr).append(dateStr);
         }
         content.append("\n");
@@ -490,7 +506,7 @@ public class PrintService{
             sep_str2 = SEP_STR2;
         }
         //dishes
-        content.append(generateString(width, sep_str1)).append("\n\n");
+        content.append(generateString(tWidth, sep_str1)).append("\n\n");
         int langIndex = ipPrinterMap.get(curPrintIp).getType();
         for(Dish d:list){
             StringBuilder sb = new StringBuilder();
@@ -504,13 +520,12 @@ public class PrintService{
             sb.append(dishName);
             
             if(d.getNum() > 1){
-            	String num = Integer.toString(d.getNum());
-            	sb.append(" x").append(num);
+            	sb.append(" ").append(d.getDisplayableNum());
             }
             
             String price = BarOption.getMoneySign() + new DecimalFormat("#0.00").format(d.getTotalPrice()/100f);
             int occupiedLength = getLengthOfString(sb.toString());
-            sb.append(generateString(width - occupiedLength - (price.length()), " "));
+            sb.append(generateString(tWidth - occupiedLength - (price.length()), " "));
             sb.append(price);
             content.append(sb);
 
@@ -518,7 +533,7 @@ public class PrintService{
         }
         
         //seperator
-        content.append(generateString(width, sep_str2)).append("\n");
+        content.append(generateString(tWidth, sep_str2)).append("\n");
         
         //totals
         String SubTotal = "SubTotal";
@@ -530,51 +545,65 @@ public class PrintService{
         
         String[] strs = billPanel.lblSubTotle.getText().split(":");
         content.append(SubTotal).append(" : ")
-        	.append(generateString(width - strs[1].length() - SubTotal.length() - 3, " "))
+        	.append(generateString(tWidth - strs[1].length() - SubTotal.length() - 3, " "))
         	.append(strs[1]).append("\n");
         strs = billPanel.lblTPS.getText().split(":");
         content.append(TPS).append(" : ")
-    		.append(generateString(width - strs[1].length() - TPS.length() - 3, " "))
+    		.append(generateString(tWidth - strs[1].length() - TPS.length() - 3, " "))
         	.append(strs[1]).append("\n");
         strs = billPanel.lblTVQ.getText().split(":");
         content.append(TVQ).append(" : ")
-			.append(generateString(width - strs[1].length() - TVQ.length() - 3, " "))
+			.append(generateString(tWidth - strs[1].length() - TVQ.length() - 3, " "))
         	.append(strs[1]).append("\n");
         if(billPanel.lblServiceFee.getText().length() > 0) {
             strs = billPanel.lblServiceFee.getText().split(":");
             content.append(ServiceFee).append(" : ")
-				.append(generateString(width - strs[1].length() - ServiceFee.length() - 3, " "))
+				.append(generateString(tWidth - strs[1].length() - ServiceFee.length() - 3, " "))
             	.append(strs[1]).append("\n");
         }
         if(billPanel.lblDiscount.getText().length() > 0) {
             strs = billPanel.lblDiscount.getText().split(":");
             content.append(Discount).append(" : ")
-				.append(generateString(width - strs[1].length() - Discount.length() - 3, " "))
+				.append(generateString(tWidth - strs[1].length() - Discount.length() - 3, " "))
             	.append(strs[1]).append("\n");
         }
         
+        //do a push
+        strAryFR.add(content.toString());
+        content.delete(0, content.length());
+        //push bigger font.
+        strAryFR.add("BigFont");
+        //push total
         String strTotal = billPanel.valTotlePrice.getText();
         content.append(Total).append(" : ")
-			.append(generateString(width - strTotal.length() - Total.length() - 3 - 1, " "))
+			//.append(generateString(tWidth - strTotal.length() - Total.length() - 3 - 1, " "))
 			.append(BarOption.getMoneySign()).append(strTotal).append("\n");
-        //end message.
+        strAryFR.add(content.toString());
+        content.delete(0, content.length());
+        //push normal font
+        strAryFR.add("NormalFont");
+        
+        //push end message.
         String endMes = BarOption.getBillFootInfo();
         if(endMes != null && endMes.trim().length() > 0) {
-        	//content.append(generateString(width, sep_str2));
+        	//content.append(generateString(tWidth, sep_str2));
         	content.append("\n");
         	content.append(endMes);
-        	content.append("\n");
+        	content.append("\n\n\n\n\n");
         }
-        return content.toString();
+        strAryFR.add(content.toString());
+        content.delete(0, content.length());
+        strAryFR.add("cut");
+        return strAryFR;
     }
     
-    private static StringBuilder getFormattedBillHeader() {
+    private static StringBuilder getFormattedBillHeader(int tWidth) {
     	StringBuilder sb = new StringBuilder();
     	String s = BarOption.getBillHeadInfo();
     	if(s != null && s.trim().length() > 0) {
     		String[] infos = s.split(":");
     		for(String info : infos) {
-    			int length = (width - info.length())/2;
+    			int length = (tWidth - info.length())/2;
     			sb.append(generateString(length, " "));
     			sb.append(info);
     			sb.append("\n");
@@ -583,27 +612,27 @@ public class PrintService{
     	return sb;
     }
     
-    private static String formatContentForPrint(List<Dish> list, String curPrintIp,
+    private static String formatContentForOrder(List<Dish> list, String curPrintIp,
     		String curTable, String curBill, String waiterName, boolean isCancelled){
         //L.d(TAG,"formatContentForPrint");
         String font = (String)CustOpts.custOps.getValue(curPrintIp + "font");
+        int tWidth = width;
         if(font ==  null || font.length() < 1) {
             font = (String)CustOpts.custOps.getValue("font");
         }
-        if(font != null && font.length() > 0){
-            String w = (String)CustOpts.custOps.getValue(curPrintIp + "width");
-            if( w== null || w.length() < 1) {
-                w = (String)CustOpts.custOps.getValue("width");
-            }
-            try {
-                width = Integer.valueOf(w);
-            }catch(Exception e){
 
-            }
+        String w = (String)CustOpts.custOps.getValue(curPrintIp + "width");
+        if( w== null || w.length() < 1) {
+            w = (String)CustOpts.custOps.getValue("width");
+        }
+        try {
+        	tWidth = Integer.valueOf(w);
+        }catch(Exception e){
+        	//do nothing, if no with property set, width will keep default value.
         }
         
         StringBuilder content = new StringBuilder("\n\n");
-        if(width < 20)
+        if(tWidth < 20)
             content.append("\n\n");
         content.append("(").append(curTable).append(")");
 
@@ -622,7 +651,7 @@ public class PrintService{
         DateFormat df = new SimpleDateFormat("HH:mm");
         String dateStr = df.format(new Date());
         lengthOfStrToDisplay += dateStr.length();
-        String spaceStr = generateString(width - lengthOfStrToDisplay - 3, " ");
+        String spaceStr = generateString(tWidth - lengthOfStrToDisplay - 3, " ");
         
         content.append(spaceStr).append(dateStr).append("\n");
 
@@ -635,7 +664,7 @@ public class PrintService{
             sep_str2 = SEP_STR2;
         }
 
-        content.append(generateString(width, sep_str1)).append("\n\n");
+        content.append(generateString(tWidth, sep_str1)).append("\n\n");
         int langIndex = ipPrinterMap.get(curPrintIp).getType();
         for(Dish d:list){
             StringBuilder sb = new StringBuilder();
@@ -647,7 +676,7 @@ public class PrintService{
             if(d.getNum() > 1){
                 String space = " ";
                 int occupiedLength = getLengthOfString(sb.toString());
-                sb.append(generateString(width - occupiedLength - (d.getNum() < 10 ? 2 : 3), " "));
+                sb.append(generateString(tWidth - occupiedLength - (d.getNum() < 10 ? 2 : 3), " "));
                 sb.append("x").append(Integer.toString(d.getNum()));
             }
             content.append(sb);
@@ -666,7 +695,8 @@ public class PrintService{
             }
             //spec change: do not to show separator! content.append(generateString(width, sep_str2)).append("\n");
         }
-        return content.substring(0, content.length());//spec change: do not to show separator!  - (width + 1));
+        
+        return content.substring(0, content.length());//spec change: do not to show separator!  - (tWidth + 1));
     }
     
     private static String generateString(int l, String character){

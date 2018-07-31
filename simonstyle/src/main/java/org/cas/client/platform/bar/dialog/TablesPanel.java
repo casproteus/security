@@ -174,7 +174,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         		}
     			new ModifyTableDlg(null, null).setVisible(true);
     			initContent();
-        	}else if(o == btnLine_2_3) {	//order management
+        	}else if(o == btnLine_2_3) {	//bill management
         		String endNow = BarOption.df.format(new Date());
         		int p = endNow.indexOf(" ");
         		String startTime = endNow.substring(0, p + 1) + BarOption.getStartTime();

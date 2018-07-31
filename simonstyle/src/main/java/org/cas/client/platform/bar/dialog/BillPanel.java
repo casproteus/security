@@ -29,6 +29,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.bar.beans.ArrowButton;
+import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
@@ -148,10 +149,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	//send to printer
 	void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
 		//prepare the printing String and do printing
-		int idx = PrintService.exePrintOrderList(dishes, isCancelled);
-		if(PrintService.SUCCESS != idx) {
-			BarFrame.setStatusMes(BarFrame.consts.PrinterError()  + "： " + idx);
-		}
+		PrintService.exePrintOrderList(dishes, isCancelled);
 	}
 	
 	//save to db output
@@ -416,7 +414,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         newDish.setOpenTime(BarFrame.instance.valStartTime.getText());
         orderedDishAry.add(newDish);				//valueChanged process. not being cleared immediately-----while now dosn't matter
         BillListPanel.curDish = newDish;
-
+        
         //update the interface.
         tblSelectedDish.setValueAt("x1", tValidRowCount, 0); // set the count.
         tblSelectedDish.setValueAt(dish.getLanguage(CustOpts.custOps.getUserLang()), tValidRowCount, 1);// set the Name.
@@ -429,6 +427,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			@Override
 			public void run() {
 		        tblSelectedDish.setSelectedRow(orderedDishAry.size() - 1);
+		        if("true".equals(newDish.getPrompMofify())) {
+		        	new AddModificationDialog(BarFrame.instance, BillListPanel.curDish.getModification()).setVisible(true);
+		        }
 			}
 		});
     }
@@ -553,23 +554,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				dish.setTotalPrice(rs.getInt("OUTPUT.TOLTALPRICE"));
 				orderedDishAry.add(dish);
 
-				int num = dish.getNum();
-				//first pick out the number on 100,0000 and 10000 position
-	    		int pK = num /(BarOption.MaxQTY * 100);
-	    		if(num > BarOption.MaxQTY * 100) {
-	    			num = num %(BarOption.MaxQTY * 100);
-	    		}
-	    		int pS = num /BarOption.MaxQTY;
-	    		if(num > BarOption.MaxQTY) {
-	    			num = num % BarOption.MaxQTY;
-	    		}
-				StringBuilder strNum = new StringBuilder("x");
-				strNum.append(num);
-				if(pS > 0)
-					strNum.append("/").append(pS);
-				if(pK > 0)
-					strNum.append("/").append(pK);
-				tValues[tmpPos][0] = strNum.toString();
+				tValues[tmpPos][0] = dish.getDisplayableNum();
 				
 				tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
 
@@ -610,7 +595,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		
 		updateTotleArea();
 	}
-    
+
     private void resetStatus(){
         orderedDishAry.clear();
         discount = 0;

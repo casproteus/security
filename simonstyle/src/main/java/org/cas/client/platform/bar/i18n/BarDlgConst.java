@@ -30,6 +30,7 @@ public interface BarDlgConst {
     String OrderManage();
     String OpenDrawer();
     String VolumnDiscount();
+    String DISCOUNT_BILL();
     String VolumnDiscountNotice();
     String WaiterReport();
     String Reservation();
@@ -57,6 +58,7 @@ public interface BarDlgConst {
     String QTY();
     String QTYNOTICE();
     String DISC_ITEM();
+    String DISCITEM();
     String DISC_ITEMNotice();
     String PRINT_BILL();
 
