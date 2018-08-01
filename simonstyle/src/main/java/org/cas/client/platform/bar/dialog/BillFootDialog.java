@@ -59,14 +59,14 @@ public class BillFootDialog extends JDialog implements ActionListener, Component
 
     /** 初始化并布局; */
     private void initComponent() {
-        setTitle(BarFrame.consts.BillInfo()); // 设置标题
+        setTitle(BarFrame.consts.BillFootInfo()); // 设置标题
         getContentPane().setLayout(null);
         setBounds((CustOpts.SCRWIDTH - 350) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 350, 320); // 对话框的默认尺寸。
         setResizable(true);
 
         // init--------------------------
         txaCurContent = new JTextArea(); // 加入会滚动的文本区
-        topLabel = new JLabel(BarFrame.consts.BillInfo());
+        topLabel = new JLabel(BarFrame.consts.BillFootInfo());
         btnOK = new JButton(BarFrame.consts.OK()); // 设置Cancel按钮
 
         // properties-------------------------

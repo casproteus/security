@@ -168,6 +168,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		
         	}else if (o == btnLine_1_10) { // print bill
         		outputStatusCheck();
+        		billStatusCheck();
         		billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
         		billPanel.initContent();
         		
@@ -352,6 +353,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         }
     }
 
+    //to make sure bill saved.
+    //and make sure new added dish will be updated with new information.
 	private void billStatusCheck() {
 		//if the bill has not been generated, generate a bill.@because: some information on the payment dialog is fetched from bill record.
 		//@NODE: normally should only generate the bill when clicked the ok of paymentdlg, while I don't mind to have the bill generated earlier
@@ -360,11 +363,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		if(billPanel.getBillId() == 0) {
 			int newBillID = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
 			billPanel.updateOutputRecords(newBillID);
-			billPanel.initContent();
-		}else {//if bill record already exist, and there's new dish added, or discount, service fee changed.... update the total value.
-			//if(dishes != null && dishes.size() > 0) {
-			updateBillRecord();
 		}
+		else {//if bill record already exist, and there's new dish added, or discount, service fee changed.... update the total value.
+			//if(dishes != null && dishes.size() > 0) {
+			updateBillRecord();		//in case if added service fee or discout of bill.
+		}
+		billPanel.initContent();	//always need to initContent, to make sure dish has new price. e.g. when adding a dish to a printed bill,
+									//and click print bill immediatly, will need the initContent. 
 	}
 
 	private void outputStatusCheck() {

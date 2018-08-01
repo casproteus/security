@@ -93,6 +93,8 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String BillInfo() {return "<html><center>Bill<br>FOOT INFO</center></html>";}
     @Override
+	public String BillFootInfo() {return "Bill Foot Info";}
+    @Override
 	public String ChangePrice() {return "<html><center>CHANGE<br>PRICE</center></html>";}
     @Override
 	public String ChangePriceNotice() {return "Please input a different price for selected item";}

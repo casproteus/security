@@ -106,9 +106,9 @@ public class CheckInOutListDlg  extends JDialog
 		tTCM.getColumn(0).setPreferredWidth(70);
 		tTCM.getColumn(1).setPreferredWidth(130);
 		tTCM.getColumn(2).setPreferredWidth(130);
-		tTCM.getColumn(3).setPreferredWidth(60);
-		tTCM.getColumn(4).setPreferredWidth(60);
-		tTCM.getColumn(5).setPreferredWidth(srpContent.getWidth() - 450 - 4);
+		//tTCM.getColumn(3).setPreferredWidth(60);
+		//tTCM.getColumn(4).setPreferredWidth(60);
+		//tTCM.getColumn(5).setPreferredWidth(srpContent.getWidth() - 450 - 4);
 		
     	validate();
 	}
@@ -227,17 +227,17 @@ public class CheckInOutListDlg  extends JDialog
 		getRootPane().setDefaultButton(btnClose);
 		
 		//布局---------------
-		setBounds((CustOpts.SCRWIDTH - 580)/2, (CustOpts.SCRHEIGHT - 320)/2, 580, 320);	//对话框的默认尺寸。
+		setBounds((CustOpts.SCRWIDTH - 382)/2, (CustOpts.SCRHEIGHT - 320)/2, 382, 320);	//对话框的默认尺寸。
 		getContentPane().setLayout(null);
 		
 		//搭建－－－－－－－－－－－－－
 		getContentPane().add(srpContent);
-		getContainer().add(lblMoneyCurrent);
-		getContainer().add(tfdMoneyCurrent);
-		getContainer().add(lblUnit);
-		getContainer().add(lblMoneyLeft);
-		getContainer().add(tfdMoneyLeft);
-		getContainer().add(lblUnit2);
+//		getContainer().add(lblMoneyCurrent);
+//		getContainer().add(tfdMoneyCurrent);
+//		getContainer().add(lblUnit);
+//		getContainer().add(lblMoneyLeft);
+//		getContainer().add(tfdMoneyLeft);
+//		getContainer().add(lblUnit2);
 		getContentPane().add(btnClose);
 		
 		//加监听器－－－－－－－－
@@ -249,15 +249,15 @@ public class CheckInOutListDlg  extends JDialog
 			@Override
 			public void run(){
 				initTable();
-				initMoneyInBox2();
-				tfdMoneyCurrent.grabFocus();
+				//initMoneyInBox2();
+				//tfdMoneyCurrent.grabFocus();
 			}
 		});
 	}
 	
 	private void initTable(){
 		Object[][] tValues = null;
-		String sql = "select * from evaluation";
+		String sql = "select * from evaluation order by starttime desc";
 		
 		try{
     		ResultSet rs =  PIMDBModel.getReadOnlyStatement().executeQuery(sql);
@@ -271,9 +271,9 @@ public class CheckInOutListDlg  extends JDialog
 				tValues[tmpPos][0] = rs.getString("Subject");
 				tValues[tmpPos][1] = rs.getString("startTime");
 				tValues[tmpPos][2] = rs.getString("endTime");
-				tValues[tmpPos][3] = Float.valueOf((float)(rs.getInt("target")/100.0));
-				tValues[tmpPos][4] = Float.valueOf((float)(rs.getInt("receive")/100.0));
-				tValues[tmpPos][5] = Float.valueOf((float)(rs.getInt("profit")/100.0));
+				//tValues[tmpPos][3] = Float.valueOf((float)(rs.getInt("target")/100.0));
+				//tValues[tmpPos][4] = Float.valueOf((float)(rs.getInt("receive")/100.0));
+				//tValues[tmpPos][5] = Float.valueOf((float)(rs.getInt("profit")/100.0));
 				tmpPos++;
 			}
 			rs.close();//关闭
@@ -311,9 +311,10 @@ public class CheckInOutListDlg  extends JDialog
 			BarFrame.consts.Operator(), 	//"操作员"
 			BarFrame.consts.OPENTIME(), 	//"开始时间"
 			BarFrame.consts.EndTime(), 	//"结束时间"
-			BarFrame.consts.Calculate(), 	//"结算"
-			BarFrame.consts.Receive(), 	//"收银"
-			BarFrame.consts.Profit()}; 	//"盈利"
+			//BarFrame.consts.Calculate(), 	//"结算"
+			//BarFrame.consts.Receive(), 	//"收银"
+			//BarFrame.consts.Profit() 	//"盈利"
+	};
 	
 	PIMTable tblContent;
 	PIMScrollPane srpContent;

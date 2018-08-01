@@ -76,7 +76,9 @@ class DefaultConfigInfoLoader {
             if (tmpENTERPos <= tmpLINKPos) // 如果回车号位置不在等号位置之前，说明不对了，或到头了。
                 tmpENTERPos = tmpTextLen; // 此处不可直接返回，因为不该漏掉最后一个value。
                                           // @NOTE:可能需要判断是否是等于，如果最后一个符号是“＝”会不会出错？
-            tmpValue = tmpFileText.substring(++tmpLINKPos, tmpENTERPos).trim();
+            tmpValue = tmpFileText.substring(++tmpLINKPos, tmpENTERPos);
+            if(!"BillFootInfo".equals(tmpKey))	//don't want to lost the empty spaces at the head of the info.
+            	tmpValue = tmpValue.trim();
             System.out.println("--------------------");
             System.out.println("key:" + tmpKey);
             System.out.println("tmpValue：" + tmpValue);

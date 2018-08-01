@@ -354,7 +354,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 					}
 					Dish.splitOutput(curDish, panels.size() + 1, null); // update the num and totalprice of curDish
 					for (BillPanel billPanel : panels) { // insert new output with other billID
-						Dish.splitOutput(curDish, panels.size() + 1, billPanel.billButton.getText());
+						Dish.splitOutput(curDish.clone(), panels.size() + 1, billPanel.billButton.getText());
 					}
 
 					curDish = null;

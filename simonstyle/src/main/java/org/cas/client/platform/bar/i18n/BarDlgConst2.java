@@ -93,6 +93,8 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String BillInfo() {return "票据附加信息";}
     @Override
+	public String BillFootInfo() {return BillInfo();}
+    @Override
 	public String ChangePrice() {return "特价";}
     @Override
 	public String ChangePriceNotice() {return "请输入服务费金额";}

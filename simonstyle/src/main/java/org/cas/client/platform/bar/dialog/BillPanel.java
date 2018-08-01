@@ -159,7 +159,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		    	String curBillId = BarFrame.instance.valCurBill.getText();
 		    	if("0".equals(curBillId))
 		    		curBillId = "1";
-		    	Dish.createOutput(dish, curBillId);	//at this moment, the num shoul have not been soplitted.
+		    	Dish.createOutput(dish, curBillId);	//at this moment, the num should have not been soplitted.
 
 		        //in case some store need to stay in the interface after clicking the send button. 
                 StringBuilder sql = new StringBuilder("Select id from output where SUBJECT = '")
@@ -441,7 +441,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		}
 		sendDishesToKitchen(dishes, false);
 		saveDishesToDB(dishes);
-		tblSelectedDish.repaint();//to update the color of dishes, it's saved, so it's not read anymore.
+		tblSelectedDish.repaint();//to update the color of dishes, it's saved, so it's not red anymore.
 	}
 
     public void updateTotleArea() {
@@ -591,7 +591,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		}
 
 		resetColWidth(scrContent.getWidth());
-		
 		
 		updateTotleArea();
 	}

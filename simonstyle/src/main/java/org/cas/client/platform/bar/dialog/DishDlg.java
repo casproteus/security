@@ -406,7 +406,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                     StringBuilder sql = new StringBuilder("update product set code = '").append(tfdLanguages[0].getText())
 	                    .append("', MNEMONIC = '").append(tfdLanguages[1].getText())
 	                    .append("', SUBJECT = '").append(tfdLanguages[2].getText())
-	                    .append("', PRICE = ").append(String.valueOf((int) tPrice * 100))
+	                    .append("', PRICE = ").append(String.valueOf((int) (tPrice * 100)))
 	                    .append(", FOLDERID = ").append(cbxGST.isSelected() ? "1" : "0")
 	                    .append(", store = ").append(cbxQST.isSelected() ? "1" : "0")
 	                    .append(", Cost = ").append(getSelectedSize())
