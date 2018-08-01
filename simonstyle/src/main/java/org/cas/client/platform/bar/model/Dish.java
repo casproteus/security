@@ -33,15 +33,15 @@ public class Dish {
 			num = num % BarOption.MaxQTY;
 		}
 		//calculate the new rate of dividing price, and the new num to update into the db.
-		float priceChange = (float)num / splitAmount;	//default division rate.
+		float splitRate = (float)num / splitAmount;	//default division rate.
 		int pX = splitAmount * BarOption.MaxQTY;
 		if(pS > 0) {	//while if it's already a float, then reset the division rate.
-			priceChange = priceChange / pS;
+			splitRate = splitRate / pS;
 			num += pS * BarOption.MaxQTY ;		//if more than one time division, put the number on higher position.
 			pX *= 100;
 		}
 		if(pK > 0) {
-			priceChange = priceChange / pK;
+			splitRate = splitRate / pK;
 			num += pK * BarOption.MaxQTY * 100;
 			pX *= 100;
 		}
@@ -51,13 +51,13 @@ public class Dish {
 			Statement smt = PIMDBModel.getStatement();
 			try {
 				smt.execute("update output set amount = " + num
-						+ ", TOLTALPRICE = " + (dish.getPrice() - dish.getDiscount()) * priceChange + " where id = " + dish.getOutputID());
+						+ ", TOLTALPRICE = " + (dish.getPrice() - dish.getDiscount()) * splitRate + " where id = " + dish.getOutputID());
 			} catch (Exception exp) {
 				ErrorUtil.write(exp);
 			}
 		}else {						//creating a splited one.
 			dish.setNum(num);
-			createSplitedOutput(dish, billIndex, priceChange);
+			createSplitedOutput(dish, billIndex, splitRate);
 		}
 	}
 
@@ -65,7 +65,7 @@ public class Dish {
 		createSplitedOutput(dish, billID, dish.getNum());
 	}
 	
-	public static void createSplitedOutput(Dish dish, String billID, float priceChange) {
+	public static void createSplitedOutput(Dish dish, String billID, float splitRate) {
 		int num = dish.getNum();
 		Statement smt = PIMDBModel.getStatement();
 		try {
@@ -75,7 +75,7 @@ public class Dish {
 		            .append(billID).append(", ")			//contactID ->bill id
 		            .append(dish.getId()).append(", ")	//productid
 		            .append(dish.getNum()).append(", ")	//amount
-		            .append((dish.getPrice() - dish.getDiscount()) * priceChange).append(", ")	//totalprice int
+		            .append((dish.getPrice() - dish.getDiscount()) * splitRate).append(", ")	//totalprice int
 		            .append(dish.getDiscount() * dish.getNum()).append(", '")	//discount
 		            .append(dish.getModification()).append("', ")				//content
 		            .append(LoginDlg.USERID).append(", '")		//emoployid

@@ -325,7 +325,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 				}
             	
             	BillListPanel.curDish.setModification(fullModifyString.toString());
-            	PIMTable table = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.tblSelectedDish;
+            	PIMTable table = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.tblBillPanel;
             	int row = table.getSelectedRow();
             	table.setValueAt(onSrcString.toString(), row, 2);
             }

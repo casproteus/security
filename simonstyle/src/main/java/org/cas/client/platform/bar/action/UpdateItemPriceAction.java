@@ -33,7 +33,7 @@ public class UpdateItemPriceAction implements ActionListener{
  				String curContent = BarFrame.numberPanelDlg.tfdQTY.getText();
          		float price = Float.valueOf(curContent);
          		
-             	int row = billPanel.tblSelectedDish.getSelectedRow();
+             	int row = billPanel.tblBillPanel.getSelectedRow();
          		Dish dish = billPanel.orderedDishAry.get(row);
              	dish.setPrice((int)(price * 100));
 
@@ -53,7 +53,7 @@ public class UpdateItemPriceAction implements ActionListener{
  	    		if(pK > 0)
  	    			priceDSP /= pK;
  	    		
-             	billPanel.tblSelectedDish.setValueAt(BarOption.getMoneySign() + priceDSP/100f, row, 3);
+             	billPanel.tblBillPanel.setValueAt(BarOption.getMoneySign() + priceDSP/100f, row, 3);
              	billPanel.updateTotleArea();
              	int outputID = billPanel.orderedDishAry.get(row).getOutputID();
              	if(outputID >= 0) {

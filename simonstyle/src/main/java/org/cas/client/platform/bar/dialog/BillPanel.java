@@ -207,10 +207,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				if(orderedDishAry.get(selectedRow).getOutputID() >= 0) {	//already saved
 					BarFrame.setStatusMes(BarFrame.consts.SendItemCanNotModify());
 					addContentToList(orderedDishAry.get(selectedRow));
-				}else {
+				}else {														//not saved yet
 					int tQTY = orderedDishAry.get(selectedRow).getNum() + 1;
 					int row = tblSelectedDish.getSelectedRow();
-					orderedDishAry.get(row).setNum(tQTY);
+					Dish dish = orderedDishAry.get(row);
+					dish.setNum(tQTY);
+					dish.setTotalPrice((dish.getPrice() - dish.getDiscount()) * tQTY);
 					tblSelectedDish.setValueAt("x" + tQTY % BarOption.MaxQTY, row, 0);
 					tblSelectedDish.setValueAt(BarOption.getMoneySign() + new DecimalFormat("#0.00").format((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f), row, 3);
 				}
@@ -411,6 +413,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         Dish newDish = dish.clone();		//@NOTE: incase the cloned dish contains outpurID properties.
         newDish.setOutputID(-1);
         newDish.setNum(1);
+        newDish.setTotalPrice(dish.getPrice() * 1);
         newDish.setOpenTime(BarFrame.instance.valStartTime.getText());
         orderedDishAry.add(newDish);				//valueChanged process. not being cleared immediately-----while now dosn't matter
         BillListPanel.curDish = newDish;

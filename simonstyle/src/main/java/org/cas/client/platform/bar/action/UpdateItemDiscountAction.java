@@ -30,8 +30,8 @@ public class UpdateItemDiscountAction implements ActionListener{
  			try {
  				String curContent = BarFrame.numberPanelDlg.tfdQTY.getText();
          		float discount = Float.valueOf(curContent);
-             	int row = billPanel.tblSelectedDish.getSelectedRow();
-             	billPanel.tblSelectedDish.setValueAt("-"+ BarOption.getMoneySign() + curContent, row, 2);
+             	int row = billPanel.tblBillPanel.getSelectedRow();
+             	billPanel.tblBillPanel.setValueAt("-"+ BarOption.getMoneySign() + curContent, row, 2);
              	billPanel.orderedDishAry.get(row).setDiscount((int)(discount * 100));
              	billPanel.updateTotleArea();
              	int outputID = billPanel.orderedDishAry.get(row).getOutputID();

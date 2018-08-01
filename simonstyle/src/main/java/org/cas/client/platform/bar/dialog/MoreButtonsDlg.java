@@ -60,8 +60,8 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
     			try {
     				String curContent = BarFrame.instance.numberPanelDlg.curContent;
             		int tQTY = Integer.valueOf(curContent);
-                	int row = barGeneralPanel.billPanel.tblSelectedDish.getSelectedRow();
-                	barGeneralPanel.billPanel.tblSelectedDish.setValueAt("x" + curContent, row, 3);
+                	int row = barGeneralPanel.billPanel.tblBillPanel.getSelectedRow();
+                	barGeneralPanel.billPanel.tblBillPanel.setValueAt("x" + curContent, row, 3);
                 	barGeneralPanel.billPanel.orderedDishAry.get(row).setNum(tQTY);
                 	barGeneralPanel.billPanel.updateTotleArea();
             	}catch(Exception exp) {
@@ -69,11 +69,11 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
             		return;
             	}
     		}
-    		if(barGeneralPanel.billPanel.tblSelectedDish.getSelectedRow() < 0) {
-    			barGeneralPanel.billPanel.tblSelectedDish.setSelectedRow(barGeneralPanel.billPanel.tblSelectedDish.getRowCount()-1);
+    		if(barGeneralPanel.billPanel.tblBillPanel.getSelectedRow() < 0) {
+    			barGeneralPanel.billPanel.tblBillPanel.setSelectedRow(barGeneralPanel.billPanel.tblBillPanel.getRowCount()-1);
     		}
     		//present the value in number dialog.
-    		Object obj = barGeneralPanel.billPanel.tblSelectedDish.getValueAt(barGeneralPanel.billPanel.tblSelectedDish.getSelectedRow(), 3);
+    		Object obj = barGeneralPanel.billPanel.tblBillPanel.getValueAt(barGeneralPanel.billPanel.tblBillPanel.getSelectedRow(), 3);
     		BarFrame.instance.numberPanelDlg.setContents(obj.toString());
 
     	} else if (o == btnLine_3_3) {
