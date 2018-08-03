@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.sql.ResultSet;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -31,6 +32,7 @@ import org.cas.client.platform.bar.model.Printer;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
+import org.cas.client.platform.pimmodel.PIMDBModel;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
@@ -84,7 +86,7 @@ public class PrintService{
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
-        		formatContentForBill(saleRecords, printerIP, billPanel, false));
+        		formatContentForBill(saleRecords, printerIP, billPanel));
         printContents();
     }
     
@@ -101,7 +103,7 @@ public class PrintService{
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
-        		formatContentForBill(saleRecords, printerIP, billPanel, false));
+        		formatContentForInvoice(saleRecords, printerIP, billPanel));
         printContents();
     }
     
@@ -460,7 +462,7 @@ public class PrintService{
 		outputStream.flush();
 	}
     
-    private static ArrayList<String> formatContentForBill(List<Dish> list, String curPrintIp, BillPanel billPanel, boolean isCancelled){
+    private static ArrayList<String> formatContentForBill(List<Dish> list, String curPrintIp, BillPanel billPanel){
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	//L.d(TAG,"formatContentForPrint");
         String w = (String)CustOpts.custOps.getValue( "width");
@@ -471,13 +473,43 @@ public class PrintService{
         	//do nothing, if no with property set, width will keep default value.
         }
 	            
-	    StringBuilder content = getFormattedBillHeader(tWidth);
+	    pushBillHeadInfo(strAryFR, tWidth);
+        pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
+        pushTotal(billPanel, strAryFR);
+        pushEndMessage(strAryFR);
+        return strAryFR;
+    }
+    
+    private static ArrayList<String> formatContentForInvoice(List<Dish> list, String curPrintIp, BillPanel billPanel){
+    	ArrayList<String> strAryFR = new ArrayList<String>();
+    	//L.d(TAG,"formatContentForPrint");
+        String w = (String)CustOpts.custOps.getValue( "width");
+        int tWidth = width;
+        try {
+            tWidth = Integer.valueOf(w);
+        }catch(Exception e){
+        	//do nothing, if no with property set, width will keep default value.
+        }
+	            
+	    pushBillHeadInfo(strAryFR, tWidth);
+        pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
+        pushTotal(billPanel, strAryFR);
+        pushPayInfo(billPanel, strAryFR, tWidth);
+        pushEndMessage(strAryFR);
+        return strAryFR;
+    }
+
+	private static void pushBillHeadInfo(ArrayList<String> strAryFR, int tWidth) {
+		StringBuilder content = getFormattedBillHeader(tWidth);
         content.append("\n");
         //push bill header
         strAryFR.add(content.toString());
-        content.delete(0, content.length());
-        
-        //table
+	}
+	
+	private static void pushServiceDetail(List<Dish> list, String curPrintIp, BillPanel billPanel,
+			ArrayList<String> strAryFR, int tWidth) {
+		StringBuilder content = new StringBuilder();
+		//table
         content.append("(").append(BarFrame.instance.valCurTable.getText()).append(")");
         //bill
         content.append(billPanel.billButton == null ? BarFrame.instance.valCurBill.getText() : billPanel.billButton.getText());
@@ -523,7 +555,7 @@ public class PrintService{
             	sb.append(" ").append(d.getDisplayableNum());
             }
             
-            String price = BarOption.getMoneySign() + new DecimalFormat("#0.00").format(d.getTotalPrice()/100f);
+            String price = new DecimalFormat("#0.00").format(d.getTotalPrice()/100f);
             int occupiedLength = getLengthOfString(sb.toString());
             sb.append(generateString(tWidth - occupiedLength - (price.length()), " "));
             sb.append(price);
@@ -539,27 +571,30 @@ public class PrintService{
         String SubTotal = "SubTotal";
         String TPS = "TPS";
         String TVQ = "TVQ";
-        String Total = "Total";
         String ServiceFee = "Service Fee";
         String Discount = "Discount";
         
         String[] strs = billPanel.lblSubTotle.getText().split(":");
+        String subtotal = strs[1].trim().substring(1);
         content.append(SubTotal).append(" : ")
-        	.append(generateString(tWidth - strs[1].length() - SubTotal.length() - 3, " "))
-        	.append(strs[1]).append("\n");
+        	.append(generateString(tWidth - subtotal.length() - SubTotal.length() - 3, " "))
+        	.append(subtotal).append("\n");
         strs = billPanel.lblTPS.getText().split(":");
+        String tps = strs[1].trim().substring(1);
         content.append(TPS).append(" : ")
-    		.append(generateString(tWidth - strs[1].length() - TPS.length() - 3, " "))
-        	.append(strs[1]).append("\n");
+    		.append(generateString(tWidth - tps.length() - TPS.length() - 3, " "))
+        	.append(tps).append("\n");
         strs = billPanel.lblTVQ.getText().split(":");
+        String tvq = strs[1].trim().substring(1);
         content.append(TVQ).append(" : ")
-			.append(generateString(tWidth - strs[1].length() - TVQ.length() - 3, " "))
-        	.append(strs[1]).append("\n");
+			.append(generateString(tWidth - tvq.length() - TVQ.length() - 3, " "))
+        	.append(tvq).append("\n");
         if(billPanel.lblServiceFee.getText().length() > 0) {
             strs = billPanel.lblServiceFee.getText().split(":");
+            String serviceFee = strs[1].trim().substring(1);
             content.append(ServiceFee).append(" : ")
-				.append(generateString(tWidth - strs[1].length() - ServiceFee.length() - 3, " "))
-            	.append(strs[1]).append("\n");
+				.append(generateString(tWidth - serviceFee.length() - ServiceFee.length() - 3, " "))
+            	.append(serviceFee).append("\n");
         }
         if(billPanel.lblDiscount.getText().length() > 0) {
             strs = billPanel.lblDiscount.getText().split(":");
@@ -571,19 +606,78 @@ public class PrintService{
         //do a push
         strAryFR.add(content.toString());
         content.delete(0, content.length());
-        //push bigger font.
+	}
+
+	private static void pushTotal(BillPanel billPanel, ArrayList<String> strAryFR) {
+		StringBuilder content = new StringBuilder();
+		//push bigger font.
         strAryFR.add("BigFont");
         //push total
         String strTotal = billPanel.valTotlePrice.getText();
-        content.append(Total).append(" : ")
+        content.append("Total").append(" : ")
 			//.append(generateString(tWidth - strTotal.length() - Total.length() - 3 - 1, " "))
-			.append(BarOption.getMoneySign()).append(strTotal).append("\n");
+			.append(strTotal).append("\n");
         strAryFR.add(content.toString());
-        content.delete(0, content.length());
         //push normal font
         strAryFR.add("NormalFont");
-        
-        //push end message.
+	}
+
+	private static void pushPayInfo(BillPanel billPanel, ArrayList<String> strAryFR, int width) {
+
+		StringBuilder content = new StringBuilder("\n");
+		int billId = billPanel.getBillId();
+		
+    	StringBuilder sb = new StringBuilder("select * from bill where id = " + billId);
+    	try {
+    		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sb.toString());
+            rs.next();
+            float total = (float) (rs.getInt("total") / 100.0);
+            int cashReceived = rs.getInt("cashReceived");
+            String str = new DecimalFormat("#0.00").format(cashReceived/100f);
+            if(cashReceived > 0) {
+    			content.append("CASH").append(" : ")
+    			.append(generateString(width - 7 - str.length(), " "))
+    			.append(str).append("\n");
+    		}
+            int debitReceived = rs.getInt("debitReceived");
+            str = new DecimalFormat("#0.00").format(debitReceived/100f);
+            if(debitReceived > 0) {
+    			content.append("DEBIT").append(" : ")
+    			.append(generateString(width - 8 - str.length(), " "))
+    			.append(str).append("\n");
+    		}
+            int visaReceived = rs.getInt("visaReceived");
+            str = new DecimalFormat("#0.00").format(visaReceived/100f);
+            if(visaReceived > 0) {
+    			content.append("VISA").append(" : ")
+    			.append(generateString(width - 7 - str.length(), " "))
+    			.append(str).append("\n");
+    		}
+            int masterReceived = rs.getInt("masterReceived");
+            str = new DecimalFormat("#0.00").format(masterReceived/100f);
+        	if(masterReceived > 0) {
+    			content.append("MASTER").append(" : ")
+    			.append(generateString(width - 9 - str.length(), " "))
+    			.append(str).append("\n");
+    		}
+        	float otherReceived = (float) (rs.getInt("otherReceived") / 100.0);
+            
+            float left = -1 * ((int)((total * 100 - cashReceived - debitReceived - visaReceived - masterReceived - otherReceived * 100)));
+            str = new DecimalFormat("#0.00").format(left/100f);
+            content.append("Change").append(" : ")
+ 				.append(generateString(width - 9 - str.length(), " "))
+ 				.append(str).append("\n");
+
+    	}catch(Exception e) {
+    		ErrorUtil.write(e);
+    	}
+    	
+		strAryFR.add(content.toString());
+	}
+	
+	private static void pushEndMessage(ArrayList<String> strAryFR) {
+		 StringBuilder content = new StringBuilder();
+		//push end message.
         String endMes = BarOption.getBillFootInfo();
         if(endMes != null && endMes.length() > 0) {
         	//content.append(generateString(tWidth, sep_str2));
@@ -592,10 +686,8 @@ public class PrintService{
         	content.append("\n\n\n\n\n");
         }
         strAryFR.add(content.toString());
-        content.delete(0, content.length());
         strAryFR.add("cut");
-        return strAryFR;
-    }
+	}
     
     private static StringBuilder getFormattedBillHeader(int tWidth) {
     	StringBuilder sb = new StringBuilder();

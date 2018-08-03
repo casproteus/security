@@ -105,7 +105,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
             Float otherReceived = Float.valueOf((float) (rs.getInt("otherReceived") / 100.0));
             valOtherReceived.setText(otherReceived.toString());
             
-            float left = ((int)((total * 100 - cashReceived * 100 - debitReceived * 100 - visaReceived * 100 - masterReceived * 100 - otherReceived * 100))) / 100f;
+            float left = ((int)((total * 100 - cashReceived * 100 - debitReceived * 100 - visaReceived * 100 - masterReceived * 100))) / 100f;
             valLeft.setText(String.valueOf(left));
             
 //            if(BarFrame.consts.EnterCashPayment.equals(getTitle())) {
