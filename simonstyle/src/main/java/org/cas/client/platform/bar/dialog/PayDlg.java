@@ -25,7 +25,7 @@ import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
-public class PayCashDlg extends JDialog implements ActionListener, ComponentListener, WindowListener{
+public class PayDlg extends JDialog implements ActionListener, ComponentListener, WindowListener{
 	
 	private JToggleButton btnSource;
 	//flag
@@ -33,7 +33,7 @@ public class PayCashDlg extends JDialog implements ActionListener, ComponentList
 	
 	float originalReceived;
 	
-    public PayCashDlg(BarFrame pParent) {
+    public PayDlg(BarFrame pParent) {
         super(pParent, true);
         initComponent();
     }

@@ -97,24 +97,24 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             			return;
         		
         		//check the pay dialog is already visible, if yes, then update bill received values.
-        		if(BarFrame.payCashDlg.isVisible()) {
-        			BarFrame.payCashDlg.updateBill(billPanel.getBillId());
+        		if(BarFrame.payDlg.isVisible()) {
+        			BarFrame.payDlg.updateBill(billPanel.getBillId());
         		}
         		//show dialog-------------------------------------
-         		BarFrame.payCashDlg.setFloatSupport(true);
+         		BarFrame.payDlg.setFloatSupport(true);
          		if(o == btnLine_1_1) {
-         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterCashPayment());
+         			BarFrame.payDlg.setTitle(BarFrame.consts.EnterCashPayment());
          		}else if(o == btnLine_1_2) {
-         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterDebitPayment());
+         			BarFrame.payDlg.setTitle(BarFrame.consts.EnterDebitPayment());
          		}else if(o == btnLine_1_3) {
-         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterVisaPayment());
+         			BarFrame.payDlg.setTitle(BarFrame.consts.EnterVisaPayment());
          		}else if(o == btnLine_2_3) {
-         			BarFrame.payCashDlg.setTitle(BarFrame.consts.EnterMasterPayment());
+         			BarFrame.payDlg.setTitle(BarFrame.consts.EnterMasterPayment());
          		}
-         		BarFrame.payCashDlg.setVisible(true);
+         		BarFrame.payDlg.setVisible(true);
          		
          		//init payDialog content base on bill.
-         		BarFrame.payCashDlg.initContent(billPanel);
+         		BarFrame.payDlg.initContent(billPanel);
         		
         	} else if (o == btnLine_1_4) {		//split bill
         		//check if there unsaved dish, and give warning.

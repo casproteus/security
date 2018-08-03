@@ -205,7 +205,7 @@ public class SettingColorDlg extends JDialog implements ActionListener, Componen
             public void colorChanged(Color newColor) {
                  BarOption.setBK(newColor,"NumBtn");
                  BarFrame.numberPanelDlg.initComponent();
-                 BarFrame.payCashDlg.initComponent();
+                 BarFrame.payDlg.initComponent();
             }
         });
 		ccbArrowBtn.addColorChangedListener(new ColorChangedListener() {

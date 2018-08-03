@@ -77,7 +77,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
     		BarFrame.instance.numberPanelDlg.setContents(obj.toString());
 
     	} else if (o == btnLine_3_3) {
-    		PayCashDlg.exactCash(barGeneralPanel.billPanel.getBillId());
+    		PayDlg.exactCash(barGeneralPanel.billPanel.getBillId());
         	this.setVisible(false);
         	BarUtil.openMoneyBox();
         	BarFrame.instance.switchMode(0);
