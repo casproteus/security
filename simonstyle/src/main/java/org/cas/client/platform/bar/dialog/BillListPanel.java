@@ -99,7 +99,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
 			ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
-					+ "' and deleted = false and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID");
+					+ "' and deleted = 0 and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID");
 			rs.beforeFirst();
 
 			while (rs.next()) {
@@ -292,7 +292,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 						return;
 					}
 					//split into {num} bills. each dish's number and price will be divided by {num}.
-					Dish.splitOutputList(panel.orderedDishAry, num, null);//update existing outputs
+					Dish.splitOutputList(panel.orderedDishAry, num, null);//the third para is null, means update existing outputs
 					//update existing bill.
 					int billId = panel.orderedDishAry.get(0).getBillID();
 					if(billId > 0) {
@@ -316,16 +316,17 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 											
 					for (int i = 1; i < num; i++) {				//generate output for splited ones.
 						int billIndex = BillListPanel.getANewBillNumber();
+						
+						//generate a bill for each new occupied panel, incase there's discount info need to set into it.
+						//@Note, when the initContent of the panel called, the bill ID will be set into the dish instance in memory.
+						//and eventually, if the bill id is not 0, will calculate the service fee and discount into Total.
+						int id = panel.generateBillRecord(BarFrame.instance.valCurTable.getText(), String.valueOf(billIndex), BarFrame.instance.valStartTime.getText(), num);
+
 						ArrayList<Dish> tDishAry = new ArrayList<Dish>();
 						for (Dish dish : panel.orderedDishAry) {
 							tDishAry.add(dish.clone());
 						}
-								
-						Dish.splitOutputList(tDishAry, num, String.valueOf(billIndex));
-						//generate a bill for each new occupied panel, incase there's discount info need to set into it.
-						//@Note, when the initContent of the panel called, the bill ID will be set into the dish instance in memory.
-						int id = panel.generateBillRecord(BarFrame.instance.valCurTable.getText(), String.valueOf(billIndex), BarFrame.instance.valStartTime.getText());
-						//shall we split service fee? yes! also discount.
+						Dish.splitOutputList(tDishAry, num, String.valueOf(billIndex), id);
 					}
 				}
 				initContent();
@@ -395,8 +396,10 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		        	String tableID = BarFrame.instance.valCurTable.getText();
 					String sql =
 			                "update output set deleted = 100 where SUBJECT = '" + tableID
-			                + "' and time > '" + BarFrame.instance.valStartTime.getText() + "' and DELETED != true";
+			                + "' and time > '" + BarFrame.instance.valStartTime.getText() + "' and DELETED != 1";
 					smt.execute(sql);
+					
+					smt.execute("update bill set status = -1 where openTime = '" + BarFrame.instance.valStartTime.getText() + "'");
 		        	//update the tabel status
 		        	smt.execute("update dining_Table set status = 0 WHERE name = '" + tableID + "'");
 		        }catch(Exception exp) {
@@ -422,7 +425,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			Statement smt = PIMDBModel.getReadOnlyStatement();
             ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
                     + BarFrame.instance.valCurTable.getText()
-                    + "' and deleted = false and time = '" + BarFrame.instance.valStartTime.getText()
+                    + "' and deleted = 0 and time = '" + BarFrame.instance.valStartTime.getText()
                     + "' order by contactID");
 			rs.afterLast();
 			rs.relative(-1);

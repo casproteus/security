@@ -598,9 +598,10 @@ public class PrintService{
         }
         if(billPanel.lblDiscount.getText().length() > 0) {
             strs = billPanel.lblDiscount.getText().split(":");
+            String dicount = strs[1].trim().substring(2);
             content.append(Discount).append(" : ")
-				.append(generateString(tWidth - strs[1].length() - Discount.length() - 3, " "))
-            	.append(strs[1]).append("\n");
+				.append(generateString(tWidth - dicount.length() - Discount.length() - 3, " "))
+            	.append(dicount).append("\n");
         }
         
         //do a push
@@ -660,12 +661,12 @@ public class PrintService{
     			.append(generateString(width - 9 - str.length(), " "))
     			.append(str).append("\n");
     		}
-        	float otherReceived = (float) (rs.getInt("otherReceived") / 100.0);
             
-            float left = -1 * ((int)((total * 100 - cashReceived - debitReceived - visaReceived - masterReceived - otherReceived * 100)));
+            float left = -1 * ((int)((total * 100 - cashReceived - debitReceived - visaReceived - masterReceived)));
             str = new DecimalFormat("#0.00").format(left/100f);
-            content.append("Change").append(" : ")
- 				.append(generateString(width - 9 - str.length(), " "))
+            String lblText = debitReceived + visaReceived + masterReceived > 0 ? "Tip : " : "Change : ";
+            content.append(lblText)
+ 				.append(generateString(width - lblText.length() - str.length(), " "))
  				.append(str).append("\n");
 
     	}catch(Exception e) {

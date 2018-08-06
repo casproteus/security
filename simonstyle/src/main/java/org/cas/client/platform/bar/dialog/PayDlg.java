@@ -22,6 +22,7 @@ import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
@@ -59,11 +60,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 			String masterReceived = String.valueOf(
 					(int)(Float.valueOf(valMasterReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
 			sb.append("update bill set masterReceived = ").append(masterReceived).append(" where id = ").append(billId);
-		} else {
-			String otherReceived = String.valueOf(
-					(int)(Float.valueOf(valOtherReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
-			sb.append("update bill set otherReceived = ").append(otherReceived).append(" where id = ").append(billId);
 		}
+		
 		try {
 			PIMDBModel.getStatement().execute(sb.toString());
 		}catch(Exception e) {
@@ -74,16 +72,18 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     public static void exactCash(int billId) {
     	StringBuilder sb = new StringBuilder("update bill set cashReceived = ");
     	sb.append((int)(Float.valueOf(valTotal.getText()) * 100));
-    	sb.append(", DebitReceived = 0, VisaReceived = 0, MasterReceived = 0, OtherReceived = 0 where id = ");
+    	sb.append(", DebitReceived = 0, VisaReceived = 0, MasterReceived = 0, status = -1 where id = ");
     	sb.append(billId);
    		try {
+			PIMDBModel.getStatement().execute(sb.toString());
+			
+			sb = new StringBuilder("update output set deleted = 1 where category = ").append(billId);
 			PIMDBModel.getStatement().execute(sb.toString());
 		}catch(Exception e) {
 			ErrorUtil.write(e);
 		}
-   		if(((SalesPanel)BarFrame.instance.panels[2]).isLastBillOfCurTable()) {
-			((SalesPanel)BarFrame.instance.panels[2]).resetCurTableDBStatus();
-		}
+   		if(SalesPanel.isLastBillOfCurTable())
+			SalesPanel.resetCurTableDBStatus();
     }
     
 	public void initContent(BillPanel billPanel) {
@@ -102,8 +102,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             valVisaReceived.setText(visaReceived.toString());
             Float masterReceived = Float.valueOf((float) (rs.getInt("masterReceived") / 100.0));
             valMasterReceived.setText(masterReceived.toString());
-            Float otherReceived = Float.valueOf((float) (rs.getInt("otherReceived") / 100.0));
-            valOtherReceived.setText(otherReceived.toString());
             
             float left = ((int)((total * 100 - cashReceived * 100 - debitReceived * 100 - visaReceived * 100 - masterReceived * 100))) / 100f;
             valLeft.setText(String.valueOf(left));
@@ -212,33 +210,36 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         		return;
         	}
         	
+        	boolean billClosed = false;
         	//check if left moeny is 0. 
         	int left = (int)(Float.valueOf(valLeft.getText()) * 100);
         	if( left > 0) {
 	        	if(JOptionPane.showConfirmDialog(this, BarFrame.consts.reCeivedMoneyNotEnough(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
+	        		//user selected to close the bill. update the bill to close
+	        		billClosed = closeCurrentBill();
 	        		//if selected yes, then update the table status.
 	        		if(SalesPanel.isLastBillOfCurTable()) {
 	        			SalesPanel.resetCurTableDBStatus();
 	        		}
 	        	}
         	}else if(left <= 0) {
+        		closeCurrentBill();
             	this.setVisible(false);
-            	if(left < 0) {
+            	if(left < 0) {	//if it's equal to 0, then do not display the change dialog.
             		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign() + (0 - left)/100f).setVisible(true); //it's a non-modal dialog.
             	}
         		if(SalesPanel.isLastBillOfCurTable()) {
         			SalesPanel.resetCurTableDBStatus();
         		}
         	}
-
-
+        	//no matter it's closed or not, we need to update the pay info of the bill.
     		updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId());
         	resetContent();
         	this.setVisible(false);
 
         	BarUtil.openMoneyBox();
         	//let's qa decide if we should go back to table interface.
-        	if(left <= 0) {
+        	if(left <= 0 || billClosed) {
         		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
         		PrintService.exePrintInvoice(bp, bp.orderedDishAry);
         		BarFrame.instance.switchMode(0);
@@ -306,6 +307,21 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         }
         isAllContentSelected = false;
     }
+
+	private boolean closeCurrentBill() {
+		int billID = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
+		try {
+			String sql ="update output set deleted = 100 where category = " + billID;
+			PIMDBModel.getStatement().execute(sql);
+			
+			sql = "update bill set status = -1 where id = " + billID;
+			PIMDBModel.getStatement().execute(sql);
+			return true;
+		}catch(Exception exp) {
+			L.e("PayDlg", "unexpected error occured whenn updating bill status.", exp);
+		}
+		return false;
+	}
     
     private void increaseReceived(int amount) {
     	Float received = 0.0f;
@@ -344,7 +360,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		try{ 
 			received += Float.valueOf(valCashReceived.getText()) + Float.valueOf(valDebitReceived.getText());
 			received += Float.valueOf(valVisaReceived.getText()) + Float.valueOf(valMasterReceived.getText());
-			received += Float.valueOf(valOtherReceived.getText());
 			received += Float.valueOf(tfdNewReceived.getText());
 		}catch(Exception e) {}
 		
@@ -368,8 +383,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         valVisaReceived = new JLabel("");
         lblMasterReceived = new JLabel(BarFrame.consts.MASTER() + " : " + BarOption.getMoneySign());
         valMasterReceived = new JLabel("");
-        lblOtherReceived = new JLabel(BarFrame.consts.Other() + " : " + BarOption.getMoneySign());
-        valOtherReceived = new JLabel("");
         
         tfdNewReceived = new JTextField();
         
@@ -446,8 +459,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         getContentPane().add(valVisaReceived);
         getContentPane().add(lblMasterReceived);
         getContentPane().add(valMasterReceived);
-        getContentPane().add(lblOtherReceived);
-        getContentPane().add(valOtherReceived);
         
         getContentPane().add(tfdNewReceived);
         
@@ -550,8 +561,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     public JLabel valVisaReceived;
     private JLabel lblMasterReceived;
     public JLabel valMasterReceived;
-    private JLabel lblOtherReceived;
-    public JLabel valOtherReceived;
 
     public JTextField tfdNewReceived;
 
@@ -576,7 +585,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		valDebitReceived.setText("0.0");
 		valVisaReceived.setText("0.0");
 		valMasterReceived.setText("0.0");
-		valOtherReceived.setText("0.0");
 		
 		valTotal.setText("0.0");
 		valLeft.setText("0.0");

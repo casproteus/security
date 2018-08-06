@@ -74,19 +74,40 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		this.billButton = billButton;
 	}
 	
-	public int printBill(String tableID, String billIndex, String opentime) {
+	public void printBill(String tableID, String billIndex, String opentime) {
 		
         if(orderedDishAry.size() == 0){
-            return -1;
+            return;
         }
 
         //send to printer
         PrintService.exePrintBill(this, orderedDishAry);
-		int newBillID = generateBillRecord(tableID, billIndex, opentime);
-		return updateOutputRecords(newBillID);
+        
+        int targetBillId = orderedDishAry != null && orderedDishAry.size() > 0? 
+				orderedDishAry.get(0).getBillID() : 0;
+		if(targetBillId > 0) {
+			//update the total price of the target bill
+			StringBuilder sql = new StringBuilder("update bill set total = total + ")
+					.append((int)(Float.valueOf(valTotlePrice.getText()) * 100))
+					.append(", discount = ").append(discount)
+					.append(", servicefee = ").append(serviceFee)
+					.append(" where id = ").append(targetBillId);
+			try {
+				PIMDBModel.getStatement().execute(sql.toString());
+			}catch(Exception e) {
+				ErrorUtil.write(e);
+			}
+		}else {
+			int newBillID = generateBillRecord(tableID, billIndex, opentime);
+			updateOutputRecords(newBillID);
+		}
 	}
 
 	public int generateBillRecord(String tableID, String billIndex, String opentime) {
+		return generateBillRecord(tableID, billIndex, opentime, 1);
+	}
+	
+	public int generateBillRecord(String tableID, String billIndex, String opentime, int num) {
 		//generate a bill in db and update the output with the new bill id
 		String createtime = BarOption.df.format(new Date());
 		StringBuilder sql = new StringBuilder(
@@ -94,7 +115,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				.append(createtime).append("', '")
 	            .append(tableID).append("', '")	//table
 	            .append(billIndex).append("', ")			//bill
-	            .append((int)(Float.valueOf(valTotlePrice.getText()) * 100)).append(", ")	//total
+	            .append((int)(Float.valueOf(valTotlePrice.getText()) * 100)/num).append(", ")	//total
 	            .append(discount).append(", ")
 	            .append(tip).append(", ")
 	            .append(serviceFee).append(", ")
@@ -104,7 +125,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	            .append(opentime).append("')");				//content
 		try {
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
-		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime).append("'");
+		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime).append("' and billIndex = ").append(billIndex);
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
             rs.beforeFirst();
             rs.next();
@@ -114,10 +135,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			return -1;
 		 }
 	}
-
-	public int updateOutputRecords(int newBillID) {
+	
+	public void updateOutputRecords(int newBillID) {
 		if(newBillID < 0) {
-			return newBillID;
+			return;
 		}
 		
 		StringBuilder sql;
@@ -133,11 +154,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					}
 				}
 			}
-			return newBillID;
 	   }catch(Exception e) {
 			ErrorUtil.write(e);
 	   }
-		return -1;
 	}
 
 	void sendDishToKitchen(Dish dish, boolean isCancelled) {
@@ -521,7 +540,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			StringBuilder sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
 					.append(BarFrame.instance.valCurTable.getText())
 					.append("' and CONTACTID = ").append(billIndex)
-					.append(" and deleted = false AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
+					.append(" and deleted = 0 AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
 					.append(BarFrame.instance.valStartTime.getText()).append("'");
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
@@ -588,6 +607,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				    discount = rs.getInt("discount");
 				    tip = rs.getInt("tip");
 				    serviceFee = rs.getInt("otherreceived");
+				    setBackground(rs.getInt("status") < 0 ? Color.gray : null);
 				}
 			}
 		} catch (Exception e) {

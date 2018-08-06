@@ -35,12 +35,12 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
-	private String VERSION = "V0.65-20180801";
+	private String VERSION = "V0.70-20180803";
     public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
     public static NumberPanelDlg numberPanelDlg; 
-    public static PayCashDlg payCashDlg;
+    public static PayDlg payDlg;
     
     public static void main(
             String[] args) {
@@ -49,7 +49,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         menuPanel = new MenuPanel();	//have to be after initModel, before new BarFrame().
         instance = new BarFrame();
         numberPanelDlg = new NumberPanelDlg(instance);
-        payCashDlg = new PayCashDlg(instance);
+        payDlg = new PayDlg(instance);
         
         //activation check
         String returnStr = validateActivation(null);

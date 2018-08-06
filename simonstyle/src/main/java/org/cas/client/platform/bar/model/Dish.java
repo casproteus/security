@@ -15,13 +15,19 @@ public class Dish {
 	
 	//create new outputs.
 	public static void splitOutputList(ArrayList<Dish> selectdDishAry, int splitAmount, String billIndex) {
-		for(int i = 0; i < selectdDishAry.size(); i++) {
-			Dish dish = selectdDishAry.get(i);
-			splitOutput(dish, splitAmount, billIndex);
-		}
+		splitOutputList(selectdDishAry, splitAmount, billIndex, 0);
 	}
 
+	public static void splitOutputList(ArrayList<Dish> selectdDishAry, int splitAmount, String billIndex, int billID) {
+		for(int i = 0; i < selectdDishAry.size(); i++) {
+			Dish dish = selectdDishAry.get(i);
+			splitOutput(dish, splitAmount, billIndex, billID > 0 ? billID : dish.getBillID());
+		}
+	}
 	public static void splitOutput(Dish dish, int splitAmount, String billIndex) {
+		splitOutput(dish, splitAmount, billIndex, 0);
+	}
+	public static void splitOutput(Dish dish, int splitAmount, String billIndex, int billId) {
 		int num = dish.getNum();			//current amount
 		//first pick out the number on 100,0000 and 10000 position
 		int pK = num /(BarOption.MaxQTY * 100);
@@ -50,27 +56,29 @@ public class Dish {
 		if(billIndex == null) {		//updating the original output.
 			Statement smt = PIMDBModel.getStatement();
 			try {
-				smt.execute("update output set amount = " + num
+				smt.execute("update output set amount = " + num + ", category = " + billId
 						+ ", TOLTALPRICE = " + (dish.getPrice() - dish.getDiscount()) * splitRate + " where id = " + dish.getOutputID());
 			} catch (Exception exp) {
 				ErrorUtil.write(exp);
 			}
 		}else {						//creating a splited one.
 			dish.setNum(num);
-			createSplitedOutput(dish, billIndex, splitRate);
+			createSplitedOutput(dish, billIndex, splitRate, billId);
 		}
 	}
 
 	public static void createOutput(Dish dish, String billID) {
 		createSplitedOutput(dish, billID, dish.getNum());
 	}
-	
 	public static void createSplitedOutput(Dish dish, String billID, float splitRate) {
+		createSplitedOutput(dish, billID, splitRate, 0);
+	}
+	public static void createSplitedOutput(Dish dish, String billID, float splitRate, int billId) {
 		int num = dish.getNum();
 		Statement smt = PIMDBModel.getStatement();
 		try {
 			StringBuilder sql = new StringBuilder(
-		            "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME) VALUES ('")
+		            "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME, category) VALUES ('")
 		            .append(BarFrame.instance.valCurTable.getText()).append("', ")	//subject ->table id
 		            .append(billID).append(", ")			//contactID ->bill id
 		            .append(dish.getId()).append(", ")	//productid
@@ -79,7 +87,8 @@ public class Dish {
 		            .append(dish.getDiscount() * dish.getNum()).append(", '")	//discount
 		            .append(dish.getModification()).append("', ")				//content
 		            .append(LoginDlg.USERID).append(", '")		//emoployid
-		            .append(dish.getOpenTime()).append("') ");
+		            .append(dish.getOpenTime()).append("', ")	//opentime
+		            .append(billId).append(")");	//billId
 		        smt.executeUpdate(sql.toString());
 		
 		} catch (Exception exp) {
@@ -141,6 +150,7 @@ public class Dish {
 		dish.setPrompMofify(prompMofify);
 		dish.setPrompPrice(prompPrice);
 		dish.setBillIndex(billIndex);
+		dish.setBillID(billID);
 		dish.setOpenTime(openTime);
 		return dish;
 	}

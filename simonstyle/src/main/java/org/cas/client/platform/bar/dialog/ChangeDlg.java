@@ -45,11 +45,6 @@ public class ChangeDlg extends JDialog implements ComponentListener, ActionListe
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		this.dispose();
-		
-    	//if the bill amount is 1, cancel the selected status of the table.
-		if(SalesPanel.isLastBillOfCurTable()) {
-			SalesPanel.resetCurTableDBStatus();
-		}
     	BarFrame.instance.switchMode(0);
 	}
 	

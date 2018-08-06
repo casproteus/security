@@ -286,7 +286,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     rs.beforeFirst();
                     rs.next();
                     int status = rs.getInt("status");
-                    if(status < 0) {
+                    if(status < -1) {
                     	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.AllreadyRefund() + BarOption.getMoneySign() + (0-status)/100.0, DlgConst.DlgTitle,
     		                    JOptionPane.YES_NO_OPTION) != 0) {// allready refunded, sure to refund again?
     						return;
@@ -427,7 +427,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
             ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
-                    + BarFrame.instance.valCurTable.getText() + "' and deleted = false and time = '"
+                    + BarFrame.instance.valCurTable.getText() + "' and deleted = 0 and time = '"
             		+ BarFrame.instance.valStartTime.getText() + "' order by contactID");
 			rs.afterLast();
 			rs.relative(-1);
@@ -435,7 +435,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		} catch (Exception exp) {
 			ErrorUtil.write(exp);
 		}
-    	return num <= 1;
+    	return num < 1;
     }
     
     

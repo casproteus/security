@@ -347,7 +347,6 @@ public class SaleListDlg extends JDialog implements ICASDialog, ActionListener, 
                 received += rs.getInt("debitReceived");
                 received += rs.getInt("visaReceived");
                 received += rs.getInt("masterReceived"); 
-                received += rs.getInt("otherReceived");
                 tValues[tmpPos][5] = received / 100.0;
                 tValues[tmpPos][6] = rs.getInt("tip") / 100.0;
                 tValues[tmpPos][7] = rs.getInt("cashback") / 100.0;

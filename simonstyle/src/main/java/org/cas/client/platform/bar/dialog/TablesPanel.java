@@ -137,7 +137,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 	        	
 				Statement smt = PIMDBModel.getReadOnlyStatement();
 				ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
-						+ tableToggle.getText() + "' and deleted = false and time = '" + tableToggle.getOpenTime() + "' order by contactID");
+						+ tableToggle.getText() + "' and deleted = 0 and time = '" + tableToggle.getOpenTime() + "' order by contactID");
 				rs.afterLast();
 				rs.relative(-1);
 				int num = rs.getRow();
