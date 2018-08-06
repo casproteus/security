@@ -97,6 +97,8 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String ChangePrice() {return "特价";}
     @Override
+	public String CHANGEPRICE() {return ChangePrice();}
+    @Override
 	public String ChangePriceNotice() {return "请输入服务费金额";}
     @Override
 	public String QTY() {return "数量";}

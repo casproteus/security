@@ -55,6 +55,7 @@ public interface BarDlgConst {
     String BillInfo();
     String BillFootInfo();
     String ChangePrice();
+    String CHANGEPRICE();
     String ChangePriceNotice();
     String QTY();
     String QTYNOTICE();

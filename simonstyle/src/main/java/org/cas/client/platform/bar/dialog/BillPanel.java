@@ -90,7 +90,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			StringBuilder sql = new StringBuilder("update bill set total = total + ")
 					.append((int)(Float.valueOf(valTotlePrice.getText()) * 100))
 					.append(", discount = ").append(discount)
-					.append(", servicefee = ").append(serviceFee)
+					.append(", otherReceived = ").append(serviceFee)
 					.append(" where id = ").append(targetBillId);
 			try {
 				PIMDBModel.getStatement().execute(sql.toString());
@@ -474,9 +474,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	float qstRate = q == null ? 9.975f : Float.valueOf((String)q);
     	float totalGst = 0;
     	float totalQst = 0;
-    	float itemDisc = 0;
     	int subTotal = 0;
-    	
     	
     	for(Dish dish: orderedDishAry) {
     		//get out the num.
@@ -529,7 +527,21 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	lblSubTotle.setText(BarFrame.consts.Subtotal() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(subTotal/100f));
         lblTPS.setText(BarFrame.consts.TPS() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(((int)totalGst)/100f));
         lblTVQ.setText(BarFrame.consts.TVQ() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(((int)totalQst)/100f));
-        valTotlePrice.setText(new DecimalFormat("#0.00").format(((int) (subTotal + totalGst + totalQst + serviceFee))/100f));
+        int t = (int) (subTotal + totalGst + totalQst + serviceFee);
+        t = roundCent(t);
+        valTotlePrice.setText(new DecimalFormat("#0.00").format((t)/100f));
+    }
+    
+    private int roundCent(int t) {
+    	//get the last bit
+    	int last = t % 10;
+    	if(last == 1 || last == 2)
+    		last = 0;
+    	else if(last == 3 || last == 4 || last == 6 || last == 7)
+    		last = 5;
+    	else if(last == 8 || last == 9)
+    		last = 10;
+    	return t / 10 * 10 + last;
     }
     
     void initContent() {
