@@ -3,14 +3,12 @@ package org.cas.client.platform.bar.action;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillPanel;
-import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
@@ -28,9 +26,18 @@ public class UpdateItemDiscountAction implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if(btn.isSelected()) {
  			try {
- 				String curContent = BarFrame.numberPanelDlg.tfdQTY.getText();
-         		float discount = Float.valueOf(curContent);
+ 				String curContent = BarFrame.numberPanelDlg.curContent;
+ 				
              	int row = billPanel.tblBillPanel.getSelectedRow();
+             	float discount = 0;
+ 				if(BarFrame.numberPanelDlg.isPercentage) {
+ 					String price = (String)billPanel.tblBillPanel.getValueAt(row, 3);
+ 					price = price.trim().substring(1);
+ 					discount = Float.valueOf(price) * Float.valueOf(curContent);
+ 				}else {
+ 					discount = Float.valueOf(curContent);
+ 				}
+ 				
              	billPanel.tblBillPanel.setValueAt("-"+ BarOption.getMoneySign() + curContent, row, 2);
              	billPanel.orderedDishAry.get(row).setDiscount((int)(discount * 100));
              	billPanel.updateTotleArea();

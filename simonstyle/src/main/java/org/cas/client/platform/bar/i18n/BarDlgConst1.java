@@ -97,7 +97,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String ChangePrice() {return "<html><center>CHANGE<br>PRICE</center></html>";}
     @Override
-	public String ChangePriceNotice() {return "Please input a different price for selected item";}
+	public String ChangePriceNotice() {return "Please input a different price";}
     @Override
 	public String CHANGEPRICE() {return "CHANGE PRICE";}
     @Override

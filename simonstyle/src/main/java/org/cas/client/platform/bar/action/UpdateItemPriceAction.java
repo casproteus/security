@@ -3,7 +3,6 @@ package org.cas.client.platform.bar.action;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 
@@ -11,7 +10,6 @@ import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.model.Dish;
-import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
@@ -29,12 +27,18 @@ public class UpdateItemPriceAction implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if(btn.isSelected()) {
  			try {
- 				
- 				String curContent = BarFrame.numberPanelDlg.tfdQTY.getText();
-         		float price = Float.valueOf(curContent);
-         		
+ 				String curContent = BarFrame.numberPanelDlg.curContent;
+
              	int row = billPanel.tblBillPanel.getSelectedRow();
          		Dish dish = billPanel.orderedDishAry.get(row);
+         		
+         		float price = 0;
+         		if(BarFrame.numberPanelDlg.isPercentage) {
+         			price = dish.getPrice() * Float.valueOf(curContent)/100f;
+         		}else {
+         			price = Float.valueOf(curContent);
+         		}
+         		
              	dish.setPrice((int)(price * 100));
 
  				int num = dish.getNum();
@@ -42,7 +46,7 @@ public class UpdateItemPriceAction implements ActionListener{
  	    		if(num > BarOption.MaxQTY * 100) {
  	    			num = num %(BarOption.MaxQTY * 100);
  	    		}
- 	    		int pS = (int)num /BarOption.MaxQTY;
+ 	    		int pS = num /BarOption.MaxQTY;
  	    		if(num > BarOption.MaxQTY) {
  	    			num = num % BarOption.MaxQTY;
  	    		}

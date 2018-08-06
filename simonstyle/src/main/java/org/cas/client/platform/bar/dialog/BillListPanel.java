@@ -283,6 +283,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				}
 				BarFrame.numberPanelDlg.setBtnSource(btnEqualBill);
 				BarFrame.numberPanelDlg.setFloatSupport(false);
+				BarFrame.numberPanelDlg.setPercentSupport(false);
 				BarFrame.numberPanelDlg.setModal(true);
 				BarFrame.numberPanelDlg.setVisible(btnEqualBill.isSelected());
 				if(NumberPanelDlg.confirmed) {

@@ -147,6 +147,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.ServiceFeeNotice());
         		BarFrame.numberPanelDlg.setBtnSource(null);
          		BarFrame.numberPanelDlg.setFloatSupport(true);
+         		BarFrame.numberPanelDlg.setPercentSupport(true);
+         		
          		BarFrame.numberPanelDlg.setModal(true);
          		BarFrame.numberPanelDlg.setVisible(true);
          		
@@ -154,7 +156,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
      				String curContent = BarFrame.numberPanelDlg.curContent;
      				if(curContent == null || curContent.length() == 0)
      					return;
-             		float serviceFee = Float.valueOf(curContent);
+             		float serviceFee = BarFrame.numberPanelDlg.isPercentage ? 
+             				Float.valueOf(billPanel.valTotlePrice.getText()) * Float.valueOf(curContent)
+             				: Float.valueOf(curContent);
              		billPanel.serviceFee = (int)(serviceFee * 100);
              		billPanel.updateTotleArea();
              		
@@ -242,6 +246,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.VolumnDiscountNotice());
          		BarFrame.numberPanelDlg.setBtnSource(null);
          		BarFrame.numberPanelDlg.setFloatSupport(true);
+         		BarFrame.numberPanelDlg.setPercentSupport(true);
          		BarFrame.numberPanelDlg.setModal(true);
          		BarFrame.numberPanelDlg.setVisible(true);
          		
@@ -249,7 +254,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
      				String curContent = BarFrame.numberPanelDlg.curContent;
      				if(curContent == null || curContent.length() == 0)
      					return;
-             		float discount = Float.valueOf(curContent);
+             		float discount = BarFrame.numberPanelDlg.isPercentage ? 
+             				Float.valueOf(billPanel.valTotlePrice.getText()) * Float.valueOf(curContent)
+             				: Float.valueOf(curContent);
              		billPanel.discount = (int)(discount * 100);
              		billPanel.updateTotleArea();
              		
@@ -271,6 +278,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.RefundNotice());
             	BarFrame.numberPanelDlg.setBtnSource(null);
          		BarFrame.numberPanelDlg.setFloatSupport(true);
+         		BarFrame.numberPanelDlg.setPercentSupport(false);
+         		
          		BarFrame.numberPanelDlg.setModal(true);
          		BarFrame.numberPanelDlg.setVisible(true);
          		
@@ -278,7 +287,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
      				String curContent = BarFrame.numberPanelDlg.curContent;
      				if(curContent == null || curContent.length() == 0)
      					return;
-             		float refund = Float.valueOf(curContent);
+     				
+             		float refund = BarFrame.numberPanelDlg.isPercentage ? 
+             				Float.valueOf(billPanel.valTotlePrice.getText()) * Float.valueOf(curContent)
+             				: Float.valueOf(curContent);
              		
              		// get out existing status.
              		String sql = "select * from bill where id = " + billPanel.orderedDishAry.get(0).getBillID();
@@ -297,6 +309,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     	status = 0 - (int)(refund * 100);
                     }
                     
+            		new ChangeDlg(BarFrame.instance, 
+            				BarOption.getMoneySign() + curContent).setVisible(true); //it's a non-modal dialog.
+
              		sql = "update bill set status = " + status + " where id = " + billPanel.orderedDishAry.get(0).getBillID();
              		PIMDBModel.getStatement().execute(sql);
              		BarUtil.openMoneyBox();
@@ -319,7 +334,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             }
         }
         //JToggleButton-------------------------------------------------------------------------------------
-        else if(o instanceof JToggleButton) {	//
+        else if(o instanceof JToggleButton) {	//disc item
         	 if (o == btnLine_1_7) {
          		if(BillListPanel.curDish == null) {//check if there's an item selected.
          			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
@@ -330,6 +345,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.DISC_ITEMNotice());
          		BarFrame.numberPanelDlg.setBtnSource(btnLine_1_7);//pomp up a numberPanelDlg
          		BarFrame.numberPanelDlg.setFloatSupport(true);
+         		BarFrame.numberPanelDlg.setPercentSupport(true);
          		BarFrame.numberPanelDlg.setModal(false);
          		//should no record selected, select the last one.
          		BarFrame.numberPanelDlg.setVisible(btnLine_1_7.isSelected());	//@NOTE: it's not model mode.
@@ -340,10 +356,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
           			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
           			return;
           		}
-         		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.ChangePrice());
+         		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.CHANGEPRICE());
          		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.ChangePriceNotice());
             	BarFrame.numberPanelDlg.setBtnSource(btnLine_1_8);//pomp up a numberPanelDlg
          		BarFrame.numberPanelDlg.setFloatSupport(true);
+         		BarFrame.numberPanelDlg.setPercentSupport(true);
          		BarFrame.numberPanelDlg.setModal(false);
          		//should no record selected, select the last one.
          		BarFrame.numberPanelDlg.setVisible(btnLine_1_8.isSelected());	//@NOTE: it's not model mode.

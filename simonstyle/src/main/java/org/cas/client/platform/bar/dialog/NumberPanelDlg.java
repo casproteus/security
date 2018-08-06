@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -19,6 +20,7 @@ import org.cas.client.platform.casutil.ErrorUtil;
 
 public class NumberPanelDlg extends JDialog implements ActionListener, ComponentListener{
 	public static String curContent = "";
+	public boolean isPercentage = false;
 	public static boolean confirmed;
 	private JToggleButton btnSource;
 	//flag
@@ -60,8 +62,13 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         	back.setBounds(point.getX() + point.getWidth() + CustOpts.HOR_GAP, point.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         else
         	back.setBounds(num0.getX() + num0.getWidth() + CustOpts.HOR_GAP, num0.getY(), CustOpts.BTN_WIDTH_NUM * 2 + CustOpts.HOR_GAP, CustOpts.BTN_WIDTH_NUM);
-    	ok.setBounds(num3.getX() + num3.getWidth() + CustOpts.HOR_GAP, num3.getY(),
-    			CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM * 4 + CustOpts.VER_GAP * 3);
+
+        percent.setBounds(num3.getX() + num3.getWidth() + CustOpts.HOR_GAP, num3.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
+        
+        ok.setBounds(num3.getX() + num3.getWidth() + CustOpts.HOR_GAP,
+        		percent.isVisible() ?  num6.getY() : num3.getY(),
+    			CustOpts.BTN_WIDTH_NUM, 
+    			percent.isVisible() ? CustOpts.BTN_WIDTH_NUM * 3 + CustOpts.VER_GAP * 2 : CustOpts.BTN_WIDTH_NUM * 4 + CustOpts.VER_GAP * 3);
 
         validate();
     }
@@ -113,7 +120,15 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         if (o == ok) {
         	//check content
         	try {
-        		Float.valueOf(curContent);
+            	if(curContent.endsWith("%")) {
+                	String tContent = curContent.substring(0, curContent.length() - 1);
+            		Float f = Float.valueOf(tContent);
+            		curContent = String.valueOf(f/100f);
+            		isPercentage = true;
+            	}else {
+            		Float.valueOf(curContent);
+            		isPercentage = false;
+            	}
         	}catch(Exception exp) {
                 JOptionPane.showMessageDialog(this, BarFrame.consts.FORMATERROR());
         		return;
@@ -154,6 +169,8 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
             tfdQTY.setText(curContent.concat("0"));
         } else if(o == point) {
             tfdQTY.setText(curContent.concat("."));
+        } else if(o == percent) {
+        	tfdQTY.setText(curContent.concat("%"));
         }
         
         isAllContentSelected = false;
@@ -198,6 +215,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         num9 = new NumButton("9");
         num0 = new NumButton("0");
         point = new NumButton(".");
+        percent = new JButton("%");
 
         // 属性设置－－－－－－－－－－－－－－
         // ok.setFont(CustOpts.custOps.getFontOfDefault());
@@ -215,6 +233,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         num9.setMargin(back.getMargin());
         num0.setMargin(back.getMargin());
         point.setMargin(back.getMargin());
+        percent.setMargin(back.getMargin());
         // 布局---------------
         int tHight = CustOpts.BTN_HEIGHT + CustOpts.BTN_WIDTH_NUM * 4 + 5 * CustOpts.VER_GAP
                         + CustOpts.SIZE_EDGE + CustOpts.SIZE_TITLE;
@@ -238,6 +257,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         getContentPane().add(num9);
         getContentPane().add(num0);
         getContentPane().add(point);
+        getContentPane().add(percent);
 
         // 加监听器－－－－－－－－
         ok.addActionListener(this);
@@ -253,6 +273,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         num9.addActionListener(this);
         num0.addActionListener(this);
         point.addActionListener(this);
+        percent.addActionListener(this);
         addComponentListener(this);
         
         // init Contents
@@ -276,6 +297,10 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 		point.setVisible(setFloatSupport);
 		reLayout();
 	}
+
+	public void setPercentSupport(boolean setPercentSupport) {
+		percent.setVisible(setPercentSupport);
+	}
 	
 	public void setNotice(String notice) {
 		lblQTY.setText(notice);
@@ -294,9 +319,10 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
     private NumButton num0;
     private NumButton point;
     private NumButton back;
+    private JButton percent;
     private NumButton ok;
 
-    public JTextField tfdQTY;
+    private JTextField tfdQTY;
     private JLabel lblQTY;
     
 }

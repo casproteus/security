@@ -53,6 +53,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
      		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.QTYNOTICE());
     		BarFrame.instance.numberPanelDlg.setBtnSource(btnLine_3_2);//pomp up a numberPanelDlg
      		BarFrame.numberPanelDlg.setFloatSupport(false);
+     		BarFrame.numberPanelDlg.setPercentSupport(false);
      		BarFrame.numberPanelDlg.setModal(false);
     		//should no record selected, select the last one.
     		BarFrame.instance.numberPanelDlg.setVisible(btnLine_3_2.isSelected());	//@NOTE: it's not model mode.
