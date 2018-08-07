@@ -477,6 +477,9 @@ public class PrintService{
         pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
         pushTotal(billPanel, strAryFR);
         pushEndMessage(strAryFR);
+
+        strAryFR.add("\n\n\n\n\n");
+        strAryFR.add("cut");
         return strAryFR;
     }
     
@@ -496,6 +499,8 @@ public class PrintService{
         pushTotal(billPanel, strAryFR);
         pushPayInfo(billPanel, strAryFR, tWidth);
         pushEndMessage(strAryFR);
+        strAryFR.add("\n\n\n\n\n");
+        strAryFR.add("cut");
         return strAryFR;
     }
 
@@ -684,10 +689,8 @@ public class PrintService{
         	//content.append(generateString(tWidth, sep_str2));
         	content.append("\n");
         	content.append(endMes);
-        	content.append("\n\n\n\n\n");
         }
         strAryFR.add(content.toString());
-        strAryFR.add("cut");
 	}
     
     private static StringBuilder getFormattedBillHeader(int tWidth) {

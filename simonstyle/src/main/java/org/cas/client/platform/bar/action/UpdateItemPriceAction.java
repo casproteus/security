@@ -3,6 +3,7 @@ package org.cas.client.platform.bar.action;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.AbstractButton;
 import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 
@@ -27,17 +28,19 @@ public class UpdateItemPriceAction implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if(btn.isSelected()) {
  			try {
- 				String curContent = BarFrame.numberPanelDlg.curContent;
-
              	int row = billPanel.tblBillPanel.getSelectedRow();
          		Dish dish = billPanel.orderedDishAry.get(row);
-         		
          		float price = 0;
-         		if(BarFrame.numberPanelDlg.isPercentage) {
+ 				String curContent = BarFrame.numberPanelDlg.tfdQTY.getText();
+            	if(curContent.endsWith("%")) {
+                	String tContent = curContent.substring(0, curContent.length() - 1);
+            		Float f = Float.valueOf(tContent);
+            		curContent = String.valueOf(f/100f);
          			price = dish.getPrice() * Float.valueOf(curContent)/100f;
-         		}else {
+            	}else {
+            		Float.valueOf(curContent);
          			price = Float.valueOf(curContent);
-         		}
+            	}
          		
              	dish.setPrice((int)(price * 100));
 
@@ -65,10 +68,12 @@ public class UpdateItemPriceAction implements ActionListener{
              				+ (dish.getPrice() - dish.getDiscount()) + " where id = " + outputID;
              		PIMDBModel.getStatement().execute(sql);
              	}
+
          	}catch(Exception exp) {
              	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
          		return;
          	}
+ 	    	((AbstractButton)e.getSource()).removeActionListener(this);
  		}
 	}
 }

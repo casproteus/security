@@ -488,7 +488,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     			num = num % BarOption.MaxQTY;
     		}
     		
-    		int price = dish.getPrice();
+    		int price = dish.getTotalPrice();
     		int gst = (int) (price * (dish.getGst() * gstRate / 100f));
     		int qst = (int) (price * (dish.getQst() * qstRate / 100f));
     		

@@ -322,7 +322,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
     private JButton percent;
     private NumButton ok;
 
-    private JTextField tfdQTY;
+    public JTextField tfdQTY;
     private JLabel lblQTY;
     
 }

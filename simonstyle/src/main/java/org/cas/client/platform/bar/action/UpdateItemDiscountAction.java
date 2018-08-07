@@ -2,7 +2,9 @@ package org.cas.client.platform.bar.action;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 
+import javax.swing.AbstractButton;
 import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 
@@ -26,8 +28,15 @@ public class UpdateItemDiscountAction implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if(btn.isSelected()) {
  			try {
- 				String curContent = BarFrame.numberPanelDlg.curContent;
- 				
+ 				String curContent = BarFrame.numberPanelDlg.tfdQTY.getText();
+            	if(curContent.endsWith("%")) {
+                	String tContent = curContent.substring(0, curContent.length() - 1);
+            		Float f = Float.valueOf(tContent);
+            		curContent = String.valueOf(f/100f);
+            	}else {
+            		Float.valueOf(curContent);
+            	}
+
              	int row = billPanel.tblBillPanel.getSelectedRow();
              	float discount = 0;
  				if(BarFrame.numberPanelDlg.isPercentage) {
@@ -38,7 +47,7 @@ public class UpdateItemDiscountAction implements ActionListener{
  					discount = Float.valueOf(curContent);
  				}
  				
-             	billPanel.tblBillPanel.setValueAt("-"+ BarOption.getMoneySign() + curContent, row, 2);
+             	billPanel.tblBillPanel.setValueAt("-"+ BarOption.getMoneySign() + new DecimalFormat("#0.00").format(discount), row, 2);
              	billPanel.orderedDishAry.get(row).setDiscount((int)(discount * 100));
              	billPanel.updateTotleArea();
              	int outputID = billPanel.orderedDishAry.get(row).getOutputID();
@@ -50,6 +59,7 @@ public class UpdateItemDiscountAction implements ActionListener{
              	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
          		return;
          	}
+        	((AbstractButton)e.getSource()).removeActionListener(this);
  		}
 	}
 }
