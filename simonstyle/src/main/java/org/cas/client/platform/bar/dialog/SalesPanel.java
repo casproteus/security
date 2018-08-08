@@ -436,7 +436,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		}catch(Exception exp) {
 			L.e("SalesPanel", "unexpected error when updating the totalvalue of bill.", exp);
 		}
-
 	}
 
     public static boolean isLastBillOfCurTable(){

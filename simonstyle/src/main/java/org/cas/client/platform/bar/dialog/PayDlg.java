@@ -223,7 +223,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	        		}
 	        	}
         	}else if(left <= 0) {
-        		closeCurrentBill();
+        		billClosed = closeCurrentBill();
             	this.setVisible(false);
             	if(left < 0) {	//if it's equal to 0, then do not display the change dialog.
             		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign() + (0 - left)/100f).setVisible(true); //it's a non-modal dialog.

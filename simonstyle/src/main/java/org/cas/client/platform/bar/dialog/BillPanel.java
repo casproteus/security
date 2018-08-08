@@ -141,14 +141,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			return;
 		}
 		
-		StringBuilder sql;
+		String sql;
 		Statement stm = PIMDBModel.getStatement();
 		try {
-		   	sql = new StringBuilder("update output set category = '").append(newBillID).append("' where id = ");
+		   	sql = new StringBuilder("update output set category = '").append(newBillID).append("' where id = ").toString();
 			for (Dish dish : orderedDishAry) {
 				if(dish.getOutputID() > 0) {
 					try {
-						stm.executeUpdate(sql.append(dish.getOutputID()).toString());
+						stm.executeUpdate(sql + dish.getOutputID());
 					}catch(Exception exp) {
 						ErrorUtil.write(exp);
 					}
@@ -435,6 +435,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         newDish.setNum(1);
         newDish.setTotalPrice(dish.getPrice() * 1);
         newDish.setOpenTime(BarFrame.instance.valStartTime.getText());
+        if(orderedDishAry != null && orderedDishAry.size() > 0) {
+        	newDish.setBillID(orderedDishAry.get(0).getBillID());
+        }
         orderedDishAry.add(newDish);				//valueChanged process. not being cleared immediately-----while now dosn't matter
         BillListPanel.curDish = newDish;
         
@@ -488,11 +491,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     			num = num % BarOption.MaxQTY;
     		}
     		
-    		int price = dish.getTotalPrice();
+    		int price = dish.getPrice();
     		int gst = (int) (price * (dish.getGst() * gstRate / 100f));
     		int qst = (int) (price * (dish.getQst() * qstRate / 100f));
     		
-    	
+    		price -= dish.getDiscount();
     		price *= num;
     		gst *= num;
     		qst *= num;

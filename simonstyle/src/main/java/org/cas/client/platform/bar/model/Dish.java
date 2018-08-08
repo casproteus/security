@@ -21,12 +21,16 @@ public class Dish {
 	public static void splitOutputList(ArrayList<Dish> selectdDishAry, int splitAmount, String billIndex, int billID) {
 		for(int i = 0; i < selectdDishAry.size(); i++) {
 			Dish dish = selectdDishAry.get(i);
-			splitOutput(dish, splitAmount, billIndex, billID > 0 ? billID : dish.getBillID());
+			if(billID > 0)
+				dish.setBillID(billID);
+			splitOutput(dish, splitAmount, billIndex, dish.getBillID());
 		}
 	}
+	
 	public static void splitOutput(Dish dish, int splitAmount, String billIndex) {
 		splitOutput(dish, splitAmount, billIndex, 0);
 	}
+	
 	public static void splitOutput(Dish dish, int splitAmount, String billIndex, int billId) {
 		int num = dish.getNum();			//current amount
 		//first pick out the number on 100,0000 and 10000 position
@@ -56,14 +60,14 @@ public class Dish {
 		if(billIndex == null) {		//updating the original output.
 			Statement smt = PIMDBModel.getStatement();
 			try {
-				smt.execute("update output set amount = " + num + ", category = " + billId
+				smt.execute("update output set amount = " + num + ", category = " + dish.getBillID()
 						+ ", TOLTALPRICE = " + (dish.getPrice() - dish.getDiscount()) * splitRate + " where id = " + dish.getOutputID());
 			} catch (Exception exp) {
 				ErrorUtil.write(exp);
 			}
 		}else {						//creating a splited one.
 			dish.setNum(num);
-			createSplitedOutput(dish, billIndex, splitRate, billId);
+			createSplitedOutput(dish, billIndex, splitRate);
 		}
 	}
 
@@ -71,9 +75,6 @@ public class Dish {
 		createSplitedOutput(dish, billID, dish.getNum());
 	}
 	public static void createSplitedOutput(Dish dish, String billID, float splitRate) {
-		createSplitedOutput(dish, billID, splitRate, 0);
-	}
-	public static void createSplitedOutput(Dish dish, String billID, float splitRate, int billId) {
 		int num = dish.getNum();
 		Statement smt = PIMDBModel.getStatement();
 		try {
@@ -88,7 +89,7 @@ public class Dish {
 		            .append(dish.getModification()).append("', ")				//content
 		            .append(LoginDlg.USERID).append(", '")		//emoployid
 		            .append(dish.getOpenTime()).append("', ")	//opentime
-		            .append(billId).append(")");	//billId
+		            .append(dish.getBillID()).append(")");	//billId
 		        smt.executeUpdate(sql.toString());
 		
 		} catch (Exception exp) {
