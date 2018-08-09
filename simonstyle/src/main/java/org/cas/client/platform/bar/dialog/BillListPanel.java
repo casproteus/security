@@ -202,13 +202,13 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		repaint();
 	}
 	
-	void moveDishToBill(BillPanel billPanel) {
+	void moveDishToBill(BillPanel targetBillPanel) {
 		int originalBillId = curDish.getBillID();
-		int targetBillId = billPanel.orderedDishAry != null && billPanel.orderedDishAry.size() > 0? 
-				billPanel.orderedDishAry.get(0).getBillID() : 0;
+		int targetBillId = targetBillPanel.orderedDishAry != null && targetBillPanel.orderedDishAry.size() > 0? 
+				targetBillPanel.orderedDishAry.get(0).getBillID() : 0;
 		
 		try { 
-			//get the output price of the moving dish.
+			//get the output price of the moving dish, it will be used to adjust the total of two bill.
 			int outputTotalPrice = 0;
 			StringBuilder sql = new StringBuilder("select toltalprice from output where id = ").append(curDish.getOutputID());
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -218,11 +218,6 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	            break;
 	        }
 	        rs.close();// 关闭
-			
-			// Update the output to belongs to the new ContactID
-			sql = new StringBuilder("update output set CONTACTID = ")
-					.append(billPanel.billButton.getText()).append(" where id = ").append(curDish.getOutputID());
-			PIMDBModel.getStatement().execute(sql.toString());
 			
 			//update existing bill.
 			if(originalBillId > 0) {
@@ -240,13 +235,20 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 						.append(" where id = ").append(targetBillId);
 				PIMDBModel.getStatement().execute(sql.toString());
 			}else {
-				int id = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), billPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
-				sql = new StringBuilder("update bill set total = total + ")
+				targetBillId = targetBillPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), targetBillPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
+				sql = new StringBuilder("update bill set total = ")
 						.append(outputTotalPrice)
-						.append(" where id = ").append(id);
+						.append(" where id = ").append(targetBillId);
 				PIMDBModel.getStatement().execute(sql.toString());
 			}
-				
+			curDish.setBillID(targetBillId);	//might not necessary, just in case the billPanel will not updated before it's used anywhere.
+			
+			// Update the output to belongs to the new ContactID (contactID is bill Index,not  bill id)
+			sql = new StringBuilder("update output set CONTACTID = ")
+					.append(targetBillPanel.billButton.getText()).append(", category = " + targetBillId)
+					.append(" where id = ").append(curDish.getOutputID());
+			PIMDBModel.getStatement().execute(sql.toString());
+
 		}catch(Exception exp) {
 			L.e("SalesPanel", "unexpected error when updating the totalvalue of bill.", exp);
 		}

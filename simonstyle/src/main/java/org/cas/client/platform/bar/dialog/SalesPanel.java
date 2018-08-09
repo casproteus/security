@@ -220,17 +220,34 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	}
             	
             } else if (o == btnLine_2_5) { // void all include saved ones
-        		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
-        				BarFrame.consts.COMFIRMDELETEACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
-	                 return;	
+            	if(billPanel.getNewDishes().size() < billPanel.orderedDishAry.size()) {
+	        		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+	        				BarFrame.consts.COMFIRMDELETEACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+		                 return;	
+		            }
+	            }else {
+	            	if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+	        				BarFrame.consts.COMFIRMLOSTACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+		                 return;	
+		            }
 	            }
+        	
+        		for(int i = billPanel.orderedDishAry.size() - 1; i >= 0; i--) {
+	        		if(billPanel.orderedDishAry.get(i).getOutputID() <= 0) {
+	        			billPanel.orderedDishAry.remove(i);
+	            	}
+        		}
+            	//update array second.
+        		
+        		
     	        //update db, delete relevant orders.
             	for (Dish dish : billPanel.orderedDishAry) {
-            		dish.setCanceled(true);
+            		dish.setCanceled(true);	// to make it printed in special format(so it's know as a cancelled dish)
             		Dish.deleteRelevantOutput(dish);
 				}
-
-    			billPanel.sendDishesToKitchen(billPanel.orderedDishAry, true);
+            	if(billPanel.orderedDishAry.size() > 0) {
+            		billPanel.sendDishesToKitchen(billPanel.orderedDishAry, true);
+            	}
             	
             	//if the bill amount is 1, cancel the selected status of the table.
         		if(isLastBillOfCurTable()) {
