@@ -74,6 +74,7 @@ public class Dish {
 	public static void createOutput(Dish dish, String billID) {
 		createSplitedOutput(dish, billID, dish.getNum());
 	}
+	
 	public static void createSplitedOutput(Dish dish, String billID, float splitRate) {
 		int num = dish.getNum();
 		Statement smt = PIMDBModel.getStatement();

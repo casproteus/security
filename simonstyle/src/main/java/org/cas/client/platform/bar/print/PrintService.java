@@ -117,7 +117,8 @@ public class PrintService{
 		//ErrorUtil.(TAG,"start to translate selection into ipContent for printing.");
         if(!isIpContentMapEmpty()){
         	printContents();
-        	return;
+        	// when there's content left from last print, we will try to print it out, and success or not, we will add new content to queue;
+        	// return;
         }
         
         reInitPrintRelatedMaps();
@@ -133,7 +134,7 @@ public class PrintService{
             }
             for(String ip: ips) {
                 Printer printer = ipPrinterMap.get(ip);
-                if(printer == null) {                   //should never happen, jist in case someone changed db.
+                if(printer == null) {                   //should never happen, just in case someone changed db.
                     ErrorUtil.write("Selected dish not connected with any printer yet.");
                     continue;
                 }
@@ -816,6 +817,13 @@ public class PrintService{
     }
 
     private static boolean isIpContentMapEmpty(){
+    	if(ipContentMap == null) {
+        	ipContentMap = new HashMap<String,List<String>>();
+        	for(Entry<String,Printer> entry: ipPrinterMap.entrySet()){
+                ipContentMap.put(entry.getKey(),new ArrayList<String>());
+            }
+        }
+    	
 		if (ipContentMap != null) {
 			for (Map.Entry entry : ipContentMap.entrySet()) {
 				List<String> listTypeValue = (List<String>) entry.getValue();
@@ -828,12 +836,10 @@ public class PrintService{
     }    
 
     public static void reInitPrintRelatedMaps(){
-        ipContentMap = new HashMap<String,List<String>>();
         ipSelectionsMap = new HashMap<String,List<Dish>>();
 
         for(Entry<String,Printer> entry: ipPrinterMap.entrySet()){
             ipSelectionsMap.put(entry.getKey(),new ArrayList<Dish>());
-            ipContentMap.put(entry.getKey(),new ArrayList<String>());
         }
     }
 }
