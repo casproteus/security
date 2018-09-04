@@ -24,8 +24,9 @@ import javax.swing.JToggleButton;
 import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.beans.FunctionButton;
 import org.cas.client.platform.bar.beans.TableButton;
+import org.cas.client.platform.bar.dialog.statistics.BillRecordListDlg;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
-import org.cas.client.platform.bar.dialog.statistics.SaleListDlg;
+import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
 import org.cas.client.platform.bar.model.User;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -160,7 +161,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 		}
 		// FunctionButton------------------------------------------------------------------------------------------------
 		else if (o instanceof FunctionButton) {
-        	if(o == btnLine_2_2) {		//add table
+        	if(o == btnAddTable) {		//add table
         		if(!BarOption.isSingleUser()) {
         			new LoginDlg(null).setVisible(true);
     	            if (LoginDlg.PASSED == true) {
@@ -174,20 +175,21 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         		}
     			new ModifyTableDlg(null, null).setVisible(true);
     			initContent();
-        	}else if(o == btnLine_2_3) {	//bill management
+        	}else if(o == btnOrderManage) {	//bill management
         		String endNow = BarOption.df.format(new Date());
         		int p = endNow.indexOf(" ");
         		String startTime = endNow.substring(0, p + 1) + BarOption.getStartTime();
-        		SaleListDlg dlg = new SaleListDlg(BarFrame.instance);
+        		BillRecordListDlg dlg = new BillRecordListDlg(BarFrame.instance);
         		dlg.initContent(startTime, endNow);
         		dlg.setVisible(true);
-        	} else if (o == btnLine_2_4) {	//open drawer.
+        	} else if (o == btnOpenDrawer) {	//open drawer.
         		BarUtil.openMoneyBox();
-            } else if (o == btnLine_2_5) {
-            } else if (o == btnLine_2_6) {
+            //} else if (o == btnWaiterReport) {
+            } else if (o == btnSetting) {
                 BarFrame.instance.switchMode(3);
-//            } else if (o == btnLine_2_7) {
-            }else if (o == btnLine_2_8) {
+            }else if (o == btnReport) {
+	    		ReportDlg dlg = new ReportDlg(BarFrame.instance);
+	    		dlg.setVisible(true);
             }else if (o == btnCheckInOut) {
             	if(BarOption.isSingleUser()) {
             		CheckInOutListDlg.updateCheckInRecord();
@@ -203,8 +205,8 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     			}
             }
         }else if(o instanceof JToggleButton) {
-        	if(o == btnLine_2_1) {
-        		BarOption.setFastFoodMode(btnLine_2_1.isSelected());
+        	if(o == btnChangeMode) {
+        		BarOption.setFastFoodMode(btnChangeMode.isSelected());
         	}
         }
     }
@@ -212,67 +214,71 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     void reLayout() {
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 9) / 8;
+        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 8) / 7;
         int tBtnHeight = panelHeight / 10;
 
         // command buttons--------------
         // line 2
-        btnLine_2_1.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
+        btnChangeMode.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
                 tBtnHeight);
-        btnLine_2_2.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+        btnAddTable.setBounds(btnChangeMode.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_2_3.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+        btnOrderManage.setBounds(btnAddTable.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_2_4.setBounds(btnLine_2_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+        btnOpenDrawer.setBounds(btnOrderManage.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_2_5.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+        //btnWaiterReport.setBounds(btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
+        //        tBtnHeight);
+        btnSetting.setBounds(btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+        btnReport.setBounds(btnSetting.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_2_8.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnCheckInOut.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+        btnCheckInOut.setBounds(btnReport.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
                 tBtnHeight);
     }
     
     void initComponent() {
     	removeAll();
-        btnLine_2_1 = new JToggleButton(BarFrame.consts.ChangeMode());
-		btnLine_2_2 = new FunctionButton(BarFrame.consts.AddTable());
-		btnLine_2_3 = new FunctionButton(BarFrame.consts.OrderManage());
-		btnLine_2_4 = new FunctionButton(BarFrame.consts.OpenDrawer());
-		btnLine_2_5 = new FunctionButton(BarFrame.consts.WaiterReport());
-		btnLine_2_6 = new FunctionButton(BarFrame.consts.SETTINGS());
-		btnLine_2_8 = new FunctionButton(BarFrame.consts.Report());
+        btnChangeMode = new JToggleButton(BarFrame.consts.ChangeMode());
+		btnAddTable = new FunctionButton(BarFrame.consts.AddTable());
+		btnOrderManage = new FunctionButton(BarFrame.consts.OrderManage());
+		btnOpenDrawer = new FunctionButton(BarFrame.consts.OpenDrawer());
+		//btnWaiterReport = new FunctionButton(BarFrame.consts.WaiterReport());
+		btnSetting = new FunctionButton(BarFrame.consts.SETTINGS());
+		btnReport = new FunctionButton(BarFrame.consts.Report());
 		btnCheckInOut = new FunctionButton(BarFrame.consts.CheckOut());
 
         // border----------
-        setBackground(BarOption.getBK("TablePanel"));
+        Color bg = BarOption.getBK("TablePanel");
+    	if(bg == null) {
+    		bg = new Color(216,216,216);
+    	}
+        setBackground(bg);
         setLayout(null);
 
         // built
-        add(btnLine_2_1);
-        add(btnLine_2_2);
-        add(btnLine_2_3);
-        add(btnLine_2_4);
-        add(btnLine_2_5);
-        add(btnLine_2_6);
-        add(btnLine_2_8);
+        add(btnChangeMode);
+        add(btnAddTable);
+        add(btnOrderManage);
+        add(btnOpenDrawer);
+        //add(btnWaiterReport);
+        add(btnSetting);
+        add(btnReport);
         add(btnCheckInOut);
 
         // add listener
         addComponentListener(this);
 
-        btnLine_2_1.addActionListener(this);
-        btnLine_2_2.addActionListener(this);
-        btnLine_2_3.addActionListener(this);
-        btnLine_2_4.addActionListener(this);
-        btnLine_2_5.addActionListener(this);
-        btnLine_2_6.addActionListener(this);
-        btnLine_2_8.addActionListener(this);
+        btnChangeMode.addActionListener(this);
+        btnAddTable.addActionListener(this);
+        btnOrderManage.addActionListener(this);
+        btnOpenDrawer.addActionListener(this);
+        //btnWaiterReport.addActionListener(this);
+        btnSetting.addActionListener(this);
+        btnReport.addActionListener(this);
         btnCheckInOut.addActionListener(this);
         
-        btnLine_2_1.setSelected(BarOption.isFastFoodMode());
+        btnChangeMode.setSelected(BarOption.isFastFoodMode());
 
 		reLayout();
     }
@@ -302,7 +308,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             	tableToggleButton.setOpenTime(rs.getString("openTime"));
             	if(rs.getInt("status") > 0)
             		tableToggleButton.setBackground(colorSelected);
-            	tableToggleButton.setMargin(new Insets(0, 0, 0, 0));
+            	tableToggleButton.setMargin(new Insets(4, 4, 4, 4));
     			tableToggleButton.addActionListener(this);
     			int type = rs.getInt("type");
     			if(type >= 100) {
@@ -336,13 +342,13 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 		repaint();
 	}
 
-    private JToggleButton btnLine_2_1;
-	private FunctionButton btnLine_2_2;
-	private FunctionButton btnLine_2_3;
-	private FunctionButton btnLine_2_4;
-	private FunctionButton btnLine_2_5;
-	private FunctionButton btnLine_2_6;
-	private FunctionButton btnLine_2_8;
+    private JToggleButton btnChangeMode;
+	private FunctionButton btnAddTable;
+	private FunctionButton btnOrderManage;
+	private FunctionButton btnOpenDrawer;
+	//private FunctionButton btnWaiterReport;
+	private FunctionButton btnSetting;
+	private FunctionButton btnReport;
 	private FunctionButton btnCheckInOut;
 
 

@@ -770,8 +770,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         valTotlePrice = new JLabel();
         btnMore = new ArrowButton("+");
         btnLess = new ArrowButton("-");
-
-        setBackground(BarOption.getBK("Bill"));
+        
+        Color bg = BarOption.getBK("Bill");
+    	if(bg == null) {
+    		bg = new Color(216,216,216);
+    	}
+        setBackground(bg);
         setLayout(null);
         tblBillPanel.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         tblBillPanel.setAutoscrolls(true);

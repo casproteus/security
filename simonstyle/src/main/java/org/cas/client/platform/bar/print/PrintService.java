@@ -1,5 +1,9 @@
 package org.cas.client.platform.bar.print;
 
+import java.awt.print.PageFormat;
+import java.awt.print.Paper;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,9 +30,11 @@ import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
+import org.cas.client.platform.bar.model.Bill;
 import org.cas.client.platform.bar.model.Category;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.model.Printer;
+import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
@@ -40,9 +46,25 @@ import gnu.io.SerialPort;
 //If the ip of a printer is "LPT1", then will actually user com interface to drive the printer.
 public class PrintService{
 
+	public static void main(String[] args) {
+		PrinterJob job = PrinterJob.getPrinterJob();
+		PageFormat pf = job.defaultPage();
+		Paper paper = new Paper();
+		double margin = 1; // half inch
+		paper.setImageableArea(margin, margin, paper.getWidth() - margin * 2, paper.getHeight() - margin * 2);
+		pf.setPaper(paper);
+		//job.setPrintable(new PrinterTemplate(vo, templateVO), pf);
+		try {
+			job.print();
+		} catch (PrinterException e) {
+			e.printStackTrace();
+		}
+	}
+	
     public static int SUCCESS = -1;	//@NOTE:must be less than 0, because if it's 0, means the first element caused error.
     
     public static Category[] allCategory;
+    public static String[] sepLines;
     
     public static HashMap<String,Printer> ipPrinterMap = new HashMap<>();
     private static HashMap<String,List<Dish>> ipSelectionsMap;
@@ -53,7 +75,6 @@ public class PrintService{
     private String code = "GBK";
     private static String SEP_STR1 = "=";
     private static String SEP_STR2 = "-";
-
 
     private boolean printerConnectedFlag;
     private boolean contentReadyForPrintFlag;
@@ -75,14 +96,10 @@ public class PrintService{
     
     //The start time and end time are long format, need to be translate for print.
     public static void exePrintBill(BillPanel billPanel, List<Dish> saleRecords){
-        String printerIP = BarFrame.instance.menuPanel.printers[0].getIp();
-        if(!isIpContentMapEmpty()){
-        	printContents();
-        	ErrorUtil.write("found non-empty ipContentMap when printing report.");
-        }
-
+    	flushIpContent();
         reInitPrintRelatedMaps();
         
+        String printerIP = BarFrame.instance.menuPanel.printers[0].getIp();
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
@@ -91,25 +108,34 @@ public class PrintService{
     }
     
     //The start time and end time are long format, need to be translate for print.
-    public static void exePrintInvoice(BillPanel billPanel, List<Dish> saleRecords){
-        String printerIP = BarFrame.instance.menuPanel.printers[0].getIp();
-        if(!isIpContentMapEmpty()){
-        	printContents();
-        	ErrorUtil.write("found non-empty ipContentMap when printing report.");
-        }
-
+    public static void exePrintInvoice(BillPanel billPanel, List<Dish> saleRecords, boolean isCashBack){
+        flushIpContent();
         reInitPrintRelatedMaps();
-        
+
+        String printerIP = BarFrame.instance.menuPanel.printers[0].getIp();
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
-        		formatContentForInvoice(saleRecords, printerIP, billPanel));
+        		formatContentForInvoice(saleRecords, printerIP, billPanel, isCashBack));
+        printContents();
+    }
+    
+    public static void exePrintReport(List<Bill> bills, String startTime, String endTime){
+    	L.d("PrintService", "inside exePrint");
+    	flushIpContent();
+        reInitPrintRelatedMaps();
+      
+        String printerIP = BarFrame.instance.menuPanel.printers[0].getIp();
+        if(ipContentMap.get(printerIP) == null)
+        	ipContentMap.put(printerIP,new ArrayList<String>());
+        ipContentMap.get(printerIP).addAll(
+        		formatContentForReport(bills, printerIP, startTime, endTime));
         printContents();
     }
     
     public static void exePrintOrderList(List<Dish> selectdDishAry, boolean isCancelled){
 
-		Printer[] printers = BarFrame.instance.menuPanel.printers;
+		Printer[] printers = BarFrame.menuPanel.printers;
 		String curTable = BarFrame.instance.valCurTable.getText();
 		String curBill = BarFrame.instance.valCurBill.getText();
 		String waiterName = BarFrame.instance.valOperator.getText();
@@ -183,7 +209,7 @@ public class PrintService{
                 }
 
         		if (!"silent".equals(CustOpts.custOps.getValue("mode"))) {
-        			ipContentMap.get(printerIP).add("beep");
+        			ipContentMap.get(printerIP).add("Command.BEEP");
         		}
         		ipContentMap.get(printerIP).add("BigFont");
                 if(ipPrinterMap.get(printerIP).getFirstPrint() == 1){  //全单封装
@@ -238,9 +264,7 @@ public class PrintService{
             	}
         	}
         }
-        if(resultForReturn == 0) {
-	    	ipContentMap.clear();
-        }
+        
     }
     
     public static boolean openDrawer(String ip){
@@ -466,10 +490,9 @@ public class PrintService{
     private static ArrayList<String> formatContentForBill(List<Dish> list, String curPrintIp, BillPanel billPanel){
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	//L.d(TAG,"formatContentForPrint");
-        String w = (String)CustOpts.custOps.getValue( "width");
         int tWidth = width;
         try {
-            tWidth = Integer.valueOf(w);
+            tWidth = Integer.valueOf((String)CustOpts.custOps.getValue( "width"));
         }catch(Exception e){
         	//do nothing, if no with property set, width will keep default value.
         }
@@ -484,13 +507,13 @@ public class PrintService{
         return strAryFR;
     }
     
-    private static ArrayList<String> formatContentForInvoice(List<Dish> list, String curPrintIp, BillPanel billPanel){
+    private static ArrayList<String> formatContentForInvoice(
+    		List<Dish> list, String curPrintIp, BillPanel billPanel, boolean isCashBack){
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	//L.d(TAG,"formatContentForPrint");
-        String w = (String)CustOpts.custOps.getValue( "width");
         int tWidth = width;
         try {
-            tWidth = Integer.valueOf(w);
+            tWidth = Integer.valueOf((String)CustOpts.custOps.getValue( "width"));
         }catch(Exception e){
         	//do nothing, if no with property set, width will keep default value.
         }
@@ -498,17 +521,93 @@ public class PrintService{
 	    pushBillHeadInfo(strAryFR, tWidth);
         pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
         pushTotal(billPanel, strAryFR);
-        pushPayInfo(billPanel, strAryFR, tWidth);
+        pushPayInfo(billPanel, strAryFR, tWidth, isCashBack);
         pushEndMessage(strAryFR);
         strAryFR.add("\n\n\n\n\n");
         strAryFR.add("cut");
         return strAryFR;
     }
 
+    private static ArrayList<String> formatContentForReport(List<Bill> list, String curPrintIp, String startTime, String endTime){
+    	ArrayList<String> strAryFR = new ArrayList<String>();
+    	//L.d(TAG,"formatContentForPrint");
+        int tWidth = width;
+        try {
+            tWidth = Integer.valueOf((String)CustOpts.custOps.getValue( "width"));
+        }catch(Exception e){
+        	//do nothing, if no with property set, width will keep default value.
+        }
+        
+        //initContent
+        //content
+  		int refundCount = 0,refoundAmount = 0;
+  		int salesGrossCount = 0,salesGrossAmount = 0;
+  		int cashSale,cashRefund,cashNet = 0;
+  		int visaSale,visaRefund,visaNet = 0;
+  		int masterSale,masterRefund,masterNet = 0;
+  		float net = 0, HST = 0;
+  		
+  		Object g = CustOpts.custOps.getValue(BarFrame.consts.TVQ());
+    	Object q = CustOpts.custOps.getValue(BarFrame.consts.TPS());
+    	float gstRate = g == null ? 5 : Float.valueOf((String)g);
+    	float qstRate = q == null ? 9.975f : Float.valueOf((String)q);
+    	
+  		for (Bill bill : list) {
+  			int status = bill.getStatus();
+  			if(status < -1) {//means has refund)
+  				refundCount++;
+  				status = 0 - status / 100;
+  				refoundAmount += status;
+  			}else {
+  				salesGrossCount++;
+  				salesGrossAmount += bill.getCashReceived() + bill.getDebitReceived()
+  				+ bill.getVisaReceived() + bill.getMasterReceived() + bill.getOtherReceived() + bill.getCashback();
+  			}
+  		}
+  		net = salesGrossAmount * 100 /(100 + gstRate + qstRate);
+  		HST = net * (gstRate + qstRate)/100;
+  		//
+      		
+	    pushBillHeadInfo(strAryFR, tWidth);
+	    pushWaiterAndTime(strAryFR, list, tWidth, startTime, endTime);
+        pushSalesSummary(strAryFR, list, tWidth,
+        		String.valueOf(salesGrossCount), String.valueOf(refundCount), 
+        		new DecimalFormat("#0.00").format(salesGrossAmount/100.0),
+        		new DecimalFormat("#0.00").format(refoundAmount / 100.0),
+        		new DecimalFormat("#0.00").format(net / 100.0),
+        		new DecimalFormat("#0.00").format(HST / 100.0)
+        		);
+        pushPaymentSummary(list);
+        pushSummaryByServiceType(list);
+        pushSummaryByOrder(list);
+        pushAuditSummary(list);
+        strAryFR.add("\n\n\n\n\n");
+        strAryFR.add("cut");
+        return strAryFR;
+    }
+    
 	private static void pushBillHeadInfo(ArrayList<String> strAryFR, int tWidth) {
 		StringBuilder content = getFormattedBillHeader(tWidth);
         content.append("\n");
         //push bill header
+        strAryFR.add(content.toString());
+	}
+	
+	private static void pushWaiterAndTime(ArrayList<String> strAryFR, List<Bill> list, 
+			int tWidth, String startDateStr, String endDateStr) {
+		StringBuilder content = new StringBuilder();
+        //waiter
+        content.append(" ").append(LoginDlg.USERNAME).append(" ");
+        //space
+        int lengthOfSpaceBeforeTime = tWidth - content.length() - startDateStr.length() - endDateStr.length() - 3;
+        if(lengthOfSpaceBeforeTime > 0) {
+        	String spaceStr = generateString(lengthOfSpaceBeforeTime, " ");
+        	content.append(spaceStr).append(startDateStr).append("   ").append(endDateStr);
+        }else {
+        	String spaceStr = generateString(tWidth - startDateStr.length() - endDateStr.length() - 3, " ");
+        	content.append("\n").append(spaceStr).append(startDateStr).append("   ").append(endDateStr);
+        }
+        content.append("\n");
         strAryFR.add(content.toString());
 	}
 	
@@ -629,7 +728,7 @@ public class PrintService{
         strAryFR.add("NormalFont");
 	}
 
-	private static void pushPayInfo(BillPanel billPanel, ArrayList<String> strAryFR, int width) {
+	private static void pushPayInfo(BillPanel billPanel, ArrayList<String> strAryFR, int width, boolean isCashBack) {
 
 		StringBuilder content = new StringBuilder("\n");
 		int billId = billPanel.getBillId();
@@ -670,7 +769,7 @@ public class PrintService{
             
             float left = -1 * ((int)((total * 100 - cashReceived - debitReceived - visaReceived - masterReceived)));
             str = new DecimalFormat("#0.00").format(left/100f);
-            String lblText = debitReceived + visaReceived + masterReceived > 0 ? "Tip : " : "Change : ";
+            String lblText = isCashBack ? "Change : " : "Tip : ";
             content.append(lblText)
  				.append(generateString(width - lblText.length() - str.length(), " "))
  				.append(str).append("\n");
@@ -694,6 +793,72 @@ public class PrintService{
         strAryFR.add(content.toString());
 	}
     
+	private static void pushSalesSummary(ArrayList<String> strAryFR, List<Bill> list, int width, 
+			String countSale, String countRefund, String amountSaleGross, String refundGross,
+			String net, String HST) {
+		StringBuilder content = new StringBuilder();
+		//title
+		content.append(getSeperatorLine(1, width)).append("\n");
+		String saleSummary = "Sale Summary";
+		String emptySpaceStr = generateString((width - saleSummary.length())/2, " ");
+		content.append(emptySpaceStr).append(saleSummary).append("\n");
+		content.append(getSeperatorLine(0, width)).append("\n");
+		content.append("Tran Type").append(generateString(width - 15 - 9, " "))
+		.append("Count").append("    ").append("Amount").append("\n");
+		content.append(getSeperatorLine(0, width)).append("\n");
+		//countSaleGross + amountSaleGross
+		String totalSaleCount = String.valueOf(Integer.valueOf(countRefund) + Integer.valueOf(countSale));
+		content.append("Sale Gross").append(generateString(width - 10 - 10 - totalSaleCount.length(), " "))
+		.append(totalSaleCount).append(generateString(10 - amountSaleGross.length() , " ")).append(amountSaleGross)
+		.append("\n");
+		//countRefond
+		content.append("Refund Gross").append(generateString(width - 12 - 10 - countRefund.length(), " "))
+		.append(countRefund).append(generateString(10 - refundGross.length() , " ")).append(refundGross)
+		.append("\n");
+		content.append(getSeperatorLine(1, width)).append("\n");
+		
+		//Net
+		content.append("Net").append(generateString(width - 3 - 10 - countSale.length(), " "))
+		.append(countSale).append(generateString(10 - net.length() , " ")).append(net)
+		.append("\n");
+		
+		//HST
+		content.append("HST").append(generateString(width - 3 - 10 - countRefund.length(), " "))
+		.append(countRefund).append(generateString(10 - HST.length() , " ")).append(HST)
+		.append("\n");
+		
+		strAryFR.add(content.toString());
+	}
+	
+	private static void pushPaymentSummary(List<Bill> list) {};
+	private static void pushSummaryByServiceType(List<Bill> list) {};
+	private static void pushSummaryByOrder(List<Bill> list) {};
+	private static void pushAuditSummary(List<Bill> list) {};
+    
+	private static String getSeperatorLine(int index, int tWidth) {
+		//seperator
+		if(sepLines == null) {
+			sepLines = new String[2];
+	        String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
+	        if(sep_str1 == null || sep_str1.length() == 0){
+	            sep_str1 = SEP_STR1;
+	        }
+	        sepLines[0] = generateString(tWidth, sep_str1);
+
+	        String sep_str2 = (String)CustOpts.custOps.getValue("sep_str2");
+	        if(sep_str2 == null || sep_str2.length() == 0){
+	            sep_str2 = SEP_STR2;
+	        }
+
+	        sepLines[1] = generateString(tWidth, sep_str2);
+		}
+		if(index > sepLines.length) {
+			L.e("PrintService", "Unexpect index when getting item from sepLines with Index: " + index
+					+ "the width of sepLines is " + sepLines.length, null);
+		}
+		return sepLines[index];
+	}
+	
     private static StringBuilder getFormattedBillHeader(int tWidth) {
     	StringBuilder sb = new StringBuilder();
     	String s = BarOption.getBillHeadInfo();
@@ -816,26 +981,32 @@ public class PrintService{
         return realWidth;
     }
 
+    private static void flushIpContent() {
+    	if(!isIpContentMapEmpty()){
+        	printContents();
+        	ErrorUtil.write("found non-empty ipContentMap when printing report.");
+        }
+    }
+
     private static boolean isIpContentMapEmpty(){
     	if(ipContentMap == null) {
         	ipContentMap = new HashMap<String,List<String>>();
+        }
+    	if(ipContentMap.isEmpty()) {
         	for(Entry<String,Printer> entry: ipPrinterMap.entrySet()){
                 ipContentMap.put(entry.getKey(),new ArrayList<String>());
             }
-        }
-    	
-		if (ipContentMap != null) {
-			for (Map.Entry entry : ipContentMap.entrySet()) {
-				List<String> listTypeValue = (List<String>) entry.getValue();
-				if (listTypeValue.size() > 0) {
-					return false;
-				}
+    	}
+		for (Map.Entry entry : ipContentMap.entrySet()) {
+			List<String> listTypeValue = (List<String>) entry.getValue();
+			if (listTypeValue.size() > 0) {
+				return false;
 			}
 		}
 		return true;
     }    
 
-    public static void reInitPrintRelatedMaps(){
+    private static void reInitPrintRelatedMaps(){
         ipSelectionsMap = new HashMap<String,List<Dish>>();
 
         for(Entry<String,Printer> entry: ipPrinterMap.entrySet()){

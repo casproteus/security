@@ -24,9 +24,13 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String CashBack() {return "Cash Back";}
     @Override
+	public String AddToTip() {return "As Tip";}
+    @Override
 	public String Status() {return "Status";}
     @Override
 	public String APPLY() {return "APPLY";}
+    @Override
+	public String PRINT() {return "PRINT";}
 
     @Override
 	public String EnterCashPayment() {return "Enter Cash Payment";}

@@ -1,5 +1,7 @@
 package org.cas.client.platform.bar.beans;
 
+import java.awt.Color;
+
 import javax.swing.JButton;
 
 import org.cas.client.platform.bar.dialog.BarOption;
@@ -10,7 +12,11 @@ public class MenuButton extends JButton {
     private Dish dish;
 
     public MenuButton(int dspIndex) {
-    	setBackground(BarOption.getBK("Dish"));
+    	Color bg = BarOption.getBK("Dish");
+    	if(bg == null) {
+    		bg = new Color(204,255,102);
+    	}
+    	setBackground(bg);
         this.dspIndex = dspIndex;
     }
 

@@ -24,9 +24,13 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String CashBack() {return "返款";}
     @Override
+	public String AddToTip() {return "小费";}
+    @Override
 	public String Status() {return "状态";}
     @Override
 	public String APPLY() {return "应用";}
+    @Override
+	public String PRINT() {return "打印";}
 
     @Override
 	public String EnterCashPayment() {return "输入现金金额";}

@@ -1,5 +1,6 @@
 package org.cas.client.platform.cascontrol.dialog.logindlg;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -295,7 +296,11 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
         num0 = new NumButton("0");
 
         // 属性设置－－－－－－－－－－－－－－
-        getContentPane().setBackground(BarOption.getBK("Login"));
+        Color bg = BarOption.getBK("Login");
+    	if(bg == null) {
+    		bg = new Color(216,216,216);
+    	}
+        getContentPane().setBackground(bg);
         general.setBackground(null);
         // ok.setFont(CustOpts.custOps.getFontOfDefault());
         ok.setFocusable(false);

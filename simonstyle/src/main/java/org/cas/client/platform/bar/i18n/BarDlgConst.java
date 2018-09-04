@@ -17,8 +17,10 @@ public interface BarDlgConst {
     String SERVICEFEE();
     String ServiceFeeNotice();
     String CashBack();
+    String AddToTip();
     String Status();
     String APPLY();
+    String PRINT();
 
     String EnterCashPayment();
     String EnterDebitPayment();

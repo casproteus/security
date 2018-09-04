@@ -1,5 +1,7 @@
 package org.cas.client.platform.bar.beans;
 
+import java.awt.Color;
+
 import javax.swing.JButton;
 
 import org.cas.client.platform.bar.dialog.BarOption;
@@ -7,6 +9,10 @@ import org.cas.client.platform.bar.dialog.BarOption;
 public class ArrowButton extends JButton {
 	public ArrowButton(String title) {
 		super(title);
-		setBackground(BarOption.getBK("Arrow"));
+		Color bg = BarOption.getBK("Arrow");
+    	if(bg == null) {
+    		//bg = new Color(8,204,8);
+    	}
+		setBackground(bg);
 	}
 }

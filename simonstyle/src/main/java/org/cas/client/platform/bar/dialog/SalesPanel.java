@@ -1,5 +1,6 @@
 package org.cas.client.platform.bar.dialog;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -400,7 +401,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		}
 		else {//if bill record already exist, and there's new dish added, or discount, service fee changed.... update the total value.
 			//if(dishes != null && dishes.size() > 0) {
-			updateBillRecord();		//in case if added service fee or discout of bill.
+			updateBillRecord(billPanel.getBillId());		//in case if added service fee or discout of bill.
 		}
 		billPanel.initContent();	//always need to initContent, to make sure dish has new price. e.g. when adding a dish to a printed bill,
 									//and click print bill immediatly, will need the initContent. 
@@ -430,26 +431,18 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			//clean from screen.
 			billPanel.removeFromSelection(billPanel.tblBillPanel.getSelectedRow());
 			//update bill info, must be after the screen update, because will get total from screen.
-			updateBillRecord();
+			updateBillRecord(BillListPanel.curDish.getBillID());
 		}else {
 			//only do clean from screen, because the output not generated yet, and will not affect the toltal in bill.
 			billPanel.removeFromSelection(billPanel.tblBillPanel.getSelectedRow());
 		}
 	}
 
-	private void updateBillRecord() {
-		int billId = billPanel.orderedDishAry.get(0).getBillID();
+	private void updateBillRecord(int billId) {
 		try {
-			StringBuilder sql = new StringBuilder("update bill set total = ")
-					.append((int)(Float.valueOf(billPanel.valTotlePrice.getText()) * 100)).append(" where id = ").append(billId);
-			PIMDBModel.getStatement().execute(sql.toString());
-			
-			sql = new StringBuilder("update bill set discount = ").append(billPanel.discount).append(" where id = ").append(billId);
-			PIMDBModel.getStatement().execute(sql.toString());
-
-			sql = new StringBuilder("update bill set otherReceived = ").append(billPanel.serviceFee).append(" where id = ").append(billId);
-			PIMDBModel.getStatement().execute(sql.toString());
-			
+			PayDlg.updateBill(billId, "total", (int)(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
+			PayDlg.updateBill(billId, "discount", billPanel.discount);
+			PayDlg.updateBill(billId, "otherReceived", billPanel.serviceFee);
 		}catch(Exception exp) {
 			L.e("SalesPanel", "unexpected error when updating the totalvalue of bill.", exp);
 		}
@@ -471,7 +464,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	return num < 1;
     }
     
-    
     public static void resetCurTableDBStatus(){
     	try {
         	Statement smt =  PIMDBModel.getStatement();
@@ -480,7 +472,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     		ErrorUtil.write(exp);
     	}
     }
-    
     
     void reLayout() {
         int panelHeight = getHeight();
@@ -562,7 +553,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         
         billPanel = new BillPanel(this);
         // properties
-        setBackground(BarOption.getBK("Sales"));
+        Color bg = BarOption.getBK("Sales");
+    	if(bg == null) {
+    		bg = new Color(216,216,216);
+    	}
+		setBackground(bg);
         setLayout(null);
         
         // built

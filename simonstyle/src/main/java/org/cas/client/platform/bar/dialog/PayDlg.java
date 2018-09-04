@@ -45,20 +45,16 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		String curTitle = getTitle();
 		//calculate the received of diffent kind
 		if(curTitle.equals(BarFrame.consts.EnterCashPayment())){
-			String cashReceived = String.valueOf(
-					(int)(Float.valueOf(valCashReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
+			String cashReceived = reflectNewInput(valCashReceived.getText());
 			sb.append("update bill set cashReceived = ").append(cashReceived).append(" where id = ").append(billId);
 		} else if(curTitle.equals(BarFrame.consts.EnterDebitPayment())) {
-			String debitReceived = String.valueOf(
-					(int)(Float.valueOf(valDebitReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
+			String debitReceived = reflectNewInput(valDebitReceived.getText());
 			sb.append("update bill set debitReceived = ").append(debitReceived).append(" where id = ").append(billId);
 		} else if(curTitle.equals(BarFrame.consts.EnterVisaPayment())) {
-			String visaReceived = String.valueOf(
-					(int)(Float.valueOf(valVisaReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
+			String visaReceived = reflectNewInput(valVisaReceived.getText());
 			sb.append("update bill set visaReceived = ").append(visaReceived).append(" where id = ").append(billId);
 		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment())) {
-			String masterReceived = String.valueOf(
-					(int)(Float.valueOf(valMasterReceived.getText()) * 100 + Float.valueOf(tfdNewReceived.getText()) * 100));
+			String masterReceived = reflectNewInput(valMasterReceived.getText());
 			sb.append("update bill set masterReceived = ").append(masterReceived).append(" where id = ").append(billId);
 		}
 		
@@ -68,6 +64,25 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 			ErrorUtil.write(e);
 		}
     }
+
+	private String reflectNewInput(String existingAmount) {
+		Float existingMoney = 0f;
+		Float newAddedMoney = 0f;
+		
+		try {
+			existingMoney = Float.valueOf(existingAmount);
+		}catch(Exception e) {
+			//do nothing.
+		}
+		
+		try {
+			newAddedMoney = Float.valueOf(tfdNewReceived.getText());
+		}catch(Exception e) {
+			//do nothing.
+		}
+		
+		return String.valueOf((int)(existingMoney * 100 + newAddedMoney * 100));
+	}
     
     public static void exactCash(int billId) {
     	StringBuilder sb = new StringBuilder("update bill set cashReceived = ");
@@ -210,6 +225,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         		return;
         	}
         	
+        	int billId = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
         	boolean billClosed = false;
         	//check if left moeny is 0. 
         	int left = (int)(Float.valueOf(valLeft.getText()) * 100);
@@ -227,13 +243,19 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             	this.setVisible(false);
             	if(left < 0) {	//if it's equal to 0, then do not display the change dialog.
             		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign() + (0 - left)/100f).setVisible(true); //it's a non-modal dialog.
+            		//if the last pay was with cash, then might need cash back (no change, paid with a "50" bill)
+            		if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
+            			updateBill(billId, "cashback", left);
+            		}else {
+                		updateBill(billId, "TIP", 0 - left);	//otherwise, tread as tip.
+            		}
             	}
         		if(SalesPanel.isLastBillOfCurTable()) {
         			SalesPanel.resetCurTableDBStatus();
         		}
         	}
         	//no matter it's closed or not, we need to update the pay info of the bill.
-    		updateBill(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId());
+    		updateBill(billId);
         	resetContent();
         	this.setVisible(false);
 
@@ -241,7 +263,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	//let's qa decide if we should go back to table interface.
         	if(left <= 0 || billClosed) {
         		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
-        		PrintService.exePrintInvoice(bp, bp.orderedDishAry);
+        		PrintService.exePrintInvoice(bp, bp.orderedDishAry, getTitle().equals(BarFrame.consts.EnterCashPayment()));
         		BarFrame.instance.switchMode(0);
         	}
         	
@@ -251,7 +273,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	this.setVisible(false);
 
     		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
-    		PrintService.exePrintInvoice(bp, bp.orderedDishAry);
+    		PrintService.exePrintInvoice(bp, bp.orderedDishAry, true);
         	BarUtil.openMoneyBox();
         	BarFrame.instance.switchMode(0);
         	
@@ -307,6 +329,16 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         }
         isAllContentSelected = false;
     }
+
+	public static void updateBill(int billId, String fieldName, int value) {
+		StringBuilder sb = new StringBuilder("update bill set ").append(fieldName).append(" = ").append(value).append(" where id = ").append(billId);
+		
+		try {
+			PIMDBModel.getStatement().execute(sb.toString());
+		}catch(Exception e) {
+			ErrorUtil.write(e);
+		}
+	}
 
 	private boolean closeCurrentBill() {
 		int billID = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();

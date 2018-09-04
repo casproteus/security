@@ -2,7 +2,6 @@ package org.cas.client.platform.bar.dialog;
 
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -228,7 +227,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
             	tableToggleButton.setText(rs.getString("Name"));
             	tableToggleButton.setBounds(rs.getInt("posX"), rs.getInt("posY"), rs.getInt("width"), rs.getInt("height"));
             	tableToggleButton.setType(rs.getInt("type"));		//it's rectanglee or round?
-            	tableToggleButton.setMargin(new Insets(0, 0, 0, 0));
+            	//tableToggleButton.setMargin(new Insets(0, 0, 0, 0));
     			tableToggleButton.addActionListener(this);
     			tableToggleButton.addMouseMotionListener(new MouseMotionListener(){
     	        	@Override
