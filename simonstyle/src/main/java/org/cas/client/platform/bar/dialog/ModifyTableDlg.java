@@ -228,7 +228,7 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
     			sql.append("Update DINING_TABLE set name = '").append(name).append("', posX = ")
     			.append(tfdLocations[0].getText()).append(", posY = ").append(tfdLocations[1].getText())
     			.append(", width = ").append(tfdLocations[2].getText()).append(", height = ")
-    			.append(tfdLocations[3].getText()).append(", type = ").append(cmbCategory.getSelectedItem())
+    			.append(tfdLocations[3].getText()).append(", type = ").append(cmbCategory.getSelectedIndex())
     			.append(" where id = ").append(btnTable.getId());
     		}
         		
@@ -282,6 +282,7 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
         cancel = new JButton(DlgConst.CANCEL);
 
         // 属性设置－－－－－－－－－－－－－－
+
         if(btnTable.getText().length() > 0) {
 	        tfdLocations[0].setText(String.valueOf(btnTable.getX()));
 	        tfdLocations[1].setText(String.valueOf(btnTable.getY()));
@@ -293,12 +294,9 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
 	        tfdLocations[2].setText("120");
 	        tfdLocations[3].setText("60");
         }
-        String[] typeAry = new String[2];
-
-        typeAry[0] = "0";
-        typeAry[1] = "1";
+        String[] typeAry = new String[]{"2", "2H", "4", "4H", "4R", "6", "6H", "8", "8H", "8R", "10", "10H"};
         cmbCategory.setModel(new DefaultComboBoxModel(typeAry));
-        cmbCategory.setSelectedItem(btnTable.getType());
+        cmbCategory.setSelectedIndex(btnTable.getType());
     
     
         ok.setMnemonic('o');

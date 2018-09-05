@@ -19,7 +19,7 @@ public class TableButton extends JButton {
     public TableButton() {
         Color bg = BarOption.getBK("Table");
     	setBackground(bg);
-    	setHorizontalAlignment(CENTER);
+    	setHorizontalTextPosition(CENTER);
     }
 
     public int getId() {
@@ -32,8 +32,8 @@ public class TableButton extends JButton {
 
 	public void setType(int type) {
 		this.type = type;
-
-		ImageIcon icon = new ImageIcon(folerPath + type+ ".gif");
+		String fileName = folerPath + type+ ".gif";
+		ImageIcon icon = new ImageIcon(fileName);
 		Image temp = icon.getImage().getScaledInstance(getWidth(),
 				getHeight(), icon.getImage().SCALE_DEFAULT);
 		icon = new ImageIcon(temp);
