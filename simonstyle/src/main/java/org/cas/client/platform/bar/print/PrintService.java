@@ -905,7 +905,7 @@ public class PrintService{
         }
         
         content.append("   ");	//the first 3 spaces of the spaceStr is consumed first.
-        if(BarOption.isDoNotDisplayWaiterInKitchen()) {
+        if(BarOption.isDisplayWaiterInKitchen()) {
         	content.append(waiterName);
         	lengthOfStrToDisplay += waiterName.length();
         }
@@ -955,7 +955,13 @@ public class PrintService{
                     content.append(generateString(5, " ")).append("* ").append(lang).append(" *\n");
                 }
             }
-            //spec change: do not to show separator! content.append(generateString(width, sep_str2)).append("\n");
+            Object sep = CustOpts.custOps.getValue("customizedSeperator");
+            if(sep != null) {
+            	if("".equals(sep)) {
+            		sep = " ";
+            	}
+            	content.append(generateString(width, (String)sep)).append("\n");
+            }
         }
         
         return content.substring(0, content.length());//spec change: do not to show separator!  - (tWidth + 1));

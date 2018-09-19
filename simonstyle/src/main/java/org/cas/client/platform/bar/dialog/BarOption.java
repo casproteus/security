@@ -183,6 +183,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 		return CustOpts.custOps.getValue("isDisDishIDInKitchen") == null ? 
     			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isDisDishIDInKitchen"));
 	}
+
 	public static void setIsDisplayBillInKitchen(boolean isDisDishIDInKitchen){
 		CustOpts.custOps.setKeyAndValue("isDisDishIDInKitchen", String.valueOf(isDisDishIDInKitchen));
 	}
@@ -195,13 +196,13 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 		CustOpts.custOps.setKeyAndValue("displayBillInKitchen", String.valueOf(displayBillInKitchen));
 	}
 
-	public static boolean isDoNotDisplayWaiterInKitchen(){
-		return CustOpts.custOps.getValue("isDoNotDisplayWaiterInKitchen") == null ? 
-    			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isDoNotDisplayWaiterInKitchen"));
+	public static boolean isDisplayWaiterInKitchen(){
+		return CustOpts.custOps.getValue("displayWaiterInKitchen") == null ? 
+    			false : Boolean.valueOf((String)CustOpts.custOps.getValue("displayWaiterInKitchen"));
 	}
 	
-	public static void setDoNotDisplayWaiterInKitchen(boolean isDoNotDisplayWaiterInKitchen){
-		CustOpts.custOps.setKeyAndValue("isDoNotDisplayWaiterInKitchen", String.valueOf(isDoNotDisplayWaiterInKitchen));
+	public static void setDoNotDisplayWaiterInKitchen(boolean displayWaiterInKitchen){
+		CustOpts.custOps.setKeyAndValue("displayWaiterInKitchen", String.valueOf(displayWaiterInKitchen));
 	}
 	
     public static String getMoneySign() {

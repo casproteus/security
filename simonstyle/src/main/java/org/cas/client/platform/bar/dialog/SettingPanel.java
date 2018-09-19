@@ -28,11 +28,6 @@ import org.cas.client.resource.international.PaneConsts;
 //Identity表应该和Employ表合并。
 public class SettingPanel extends JPanel implements ComponentListener, ActionListener, FocusListener {
     
-    private int width = 24;
-    private String code = "GBK";
-    private String SEP_STR1 = "=";
-    private String SEP_STR2 = "-";
-    
     public static String startTime;
 
     //flags
