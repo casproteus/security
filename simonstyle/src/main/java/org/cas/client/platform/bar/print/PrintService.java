@@ -956,7 +956,7 @@ public class PrintService{
                 }
             }
             Object sep = CustOpts.custOps.getValue("customizedSeperator");
-            if(sep != null) {
+            if(sep != null && !"null".equalsIgnoreCase(sep.toString())) {
             	if("".equals(sep)) {
             		sep = " ";
             	}
