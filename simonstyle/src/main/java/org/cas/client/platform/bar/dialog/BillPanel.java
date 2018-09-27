@@ -93,7 +93,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					.append(", otherReceived = ").append(serviceFee)
 					.append(" where id = ").append(targetBillId);
 			try {
-				PIMDBModel.getStatement().execute(sql.toString());
+				PIMDBModel.getStatement().executeUpdate(sql.toString());
 			}catch(Exception e) {
 				ErrorUtil.write(e);
 			}

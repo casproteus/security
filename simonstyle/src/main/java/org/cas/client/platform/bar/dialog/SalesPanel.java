@@ -331,7 +331,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             				BarOption.getMoneySign() + curContent).setVisible(true); //it's a non-modal dialog.
 
              		sql = "update bill set status = " + status + " where id = " + billPanel.orderedDishAry.get(0).getBillID();
-             		PIMDBModel.getStatement().execute(sql);
+             		PIMDBModel.getStatement().executeUpdate(sql);
              		BarUtil.openMoneyBox();
              	}catch(Exception exp) {
                  	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
@@ -467,7 +467,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     public static void resetCurTableDBStatus(){
     	try {
         	Statement smt =  PIMDBModel.getStatement();
-            smt.executeQuery("update dining_Table set status = 0 WHERE name = '" + BarFrame.instance.valCurTable.getText() + "'");
+            smt.executeUpdate("update dining_Table set status = 0 WHERE name = '" + BarFrame.instance.valCurTable.getText() + "'");
     	}catch(Exception exp) {
     		ErrorUtil.write(exp);
     	}

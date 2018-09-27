@@ -53,7 +53,7 @@ public class UpdateItemDiscountAction implements ActionListener{
              	int outputID = billPanel.orderedDishAry.get(row).getOutputID();
              	if(outputID >= 0) {
              		String sql = "update output set discount = " + (int)(discount * 100) + " where id = " + outputID;
-             		PIMDBModel.getStatement().execute(sql);
+             		PIMDBModel.getStatement().executeUpdate(sql);
              	}
          	}catch(Exception exp) {
              	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);

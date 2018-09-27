@@ -101,7 +101,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
     
     private void updateInterface(String sb) {
     	try {
-    		PIMDBModel.getStatement().execute(sb);
+    		PIMDBModel.getStatement().executeUpdate(sb);
     		this.setVisible(false);
     		BarFrame.instance.initComponent();
     	}catch(Exception exp) {

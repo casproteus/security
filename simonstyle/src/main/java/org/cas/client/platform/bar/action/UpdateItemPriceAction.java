@@ -66,7 +66,7 @@ public class UpdateItemPriceAction implements ActionListener{
              	if(outputID >= 0) {
              		String sql = "update output set TOLTALPRICE = "
              				+ (dish.getPrice() - dish.getDiscount()) + " where id = " + outputID;
-             		PIMDBModel.getStatement().execute(sql);
+             		PIMDBModel.getStatement().executeUpdate(sql);
              	}
 
          	}catch(Exception exp) {

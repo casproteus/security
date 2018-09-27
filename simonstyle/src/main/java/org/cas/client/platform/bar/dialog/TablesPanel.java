@@ -126,7 +126,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         		
         		try {
         			Statement smt = PIMDBModel.getReadOnlyStatement();
-        			smt.executeQuery("update dining_Table set status = 1, opentime = '"
+        			smt.executeUpdate("update dining_Table set status = 1, opentime = '"
         			+ openTime + "' WHERE name = '" + tableToggle.getText() + "'");
         		}catch(Exception exp) {
         			ErrorUtil.write(exp);

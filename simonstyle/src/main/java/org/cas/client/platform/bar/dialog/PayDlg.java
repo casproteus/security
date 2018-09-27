@@ -59,7 +59,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		}
 		
 		try {
-			PIMDBModel.getStatement().execute(sb.toString());
+			PIMDBModel.getStatement().executeUpdate(sb.toString());
 		}catch(Exception e) {
 			ErrorUtil.write(e);
 		}
@@ -90,10 +90,10 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     	sb.append(", DebitReceived = 0, VisaReceived = 0, MasterReceived = 0, status = -1 where id = ");
     	sb.append(billId);
    		try {
-			PIMDBModel.getStatement().execute(sb.toString());
+			PIMDBModel.getStatement().executeUpdate(sb.toString());
 			
 			sb = new StringBuilder("update output set deleted = 1 where category = ").append(billId);
-			PIMDBModel.getStatement().execute(sb.toString());
+			PIMDBModel.getStatement().executeUpdate(sb.toString());
 		}catch(Exception e) {
 			ErrorUtil.write(e);
 		}
@@ -334,7 +334,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		StringBuilder sb = new StringBuilder("update bill set ").append(fieldName).append(" = ").append(value).append(" where id = ").append(billId);
 		
 		try {
-			PIMDBModel.getStatement().execute(sb.toString());
+			PIMDBModel.getStatement().executeUpdate(sb.toString());
 		}catch(Exception e) {
 			ErrorUtil.write(e);
 		}
@@ -344,10 +344,10 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		int billID = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
 		try {
 			String sql ="update output set deleted = 100 where category = " + billID;
-			PIMDBModel.getStatement().execute(sql);
+			PIMDBModel.getStatement().executeUpdate(sql);
 			
 			sql = "update bill set status = -1 where id = " + billID;
-			PIMDBModel.getStatement().execute(sql);
+			PIMDBModel.getStatement().executeUpdate(sql);
 			return true;
 		}catch(Exception exp) {
 			L.e("PayDlg", "unexpected error occured whenn updating bill status.", exp);
