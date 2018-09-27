@@ -120,8 +120,8 @@ public class App_Pos extends AbstractApp {
             }
         // 增建一个雇员绩效考评表。
         String sql =
-                "CREATE CACHED TABLE evaluation (ID INTEGER IDENTITY PRIMARY KEY, startTime VARCHAR(255),"
-                        .concat(" endTime VARCHAR(255), SUBJECT VARCHAR(255), receive INTEGER, target INTEGER, profit INTEGER);");
+                "CREATE TABLE evaluation (ID INTEGER NOT NULL AUTO_INCREMENT, startTime VARCHAR(255),"
+                        .concat(" endTime VARCHAR(255), SUBJECT VARCHAR(255), receive INTEGER, target INTEGER, profit INTEGER, PRIMARY KEY (ID));");
         try {
             stmt.executeUpdate(sql);
         } catch (Exception e) {

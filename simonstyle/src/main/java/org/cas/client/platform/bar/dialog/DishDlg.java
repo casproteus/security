@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import org.apache.commons.lang3.StringUtils;
 import org.cas.client.platform.bar.beans.CategoryToggleButton;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.casbeans.PIMSeparator;
@@ -34,10 +35,9 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.resource.international.DlgConst;
 import org.cas.client.resource.international.OptionDlgConst;
-import org.hsqldb.lib.StringUtil;
 
 /**
- * 微软的TextField的长度限制是228（约）， 本类的限制因为没有规格约束，暂定为912（约） // ID I NTEGER IDENTITY PRIMARY KEY // DELETED BIT DEFAULT false //
+ * 微软的TextField的长度限制是228（约）， 本类的限制因为没有规格约束，暂定为912（约） // ID I NTEGER IDENTITY PRIMARY KEY // DELETED BIT //
  * language1 CODE VARCHAR(255) // language2 MNEMONIC VARCHAR(255) // language3 SUBJECT VARCHAR(255) // price PRICE
  * INTEGER // gst FOLDERID INTEGER // qst STORE INTEGER // size COST INTEGER // printer BRAND VARCHAR(255) // CATEGORY
  * CATEGORY VARCHAR(255) // prompmenu UNIT VARCHAR(255) // prompprice CONTENT VARCHAR(255) // promp mofify PRODUCAREA
@@ -353,15 +353,15 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                 // index modified, need to modify affected categories
             	if (newIndex > dspIndex) {
                     for (int i = dspIndex + 1; i <= newIndex; i++) { // make index smaller
-                    	StringBuilder sql = new StringBuilder("UPDATE product SET INDEX = ").append(String.valueOf(i - 1))
-                        	.append(" where INDEX = ").append(i)
+                    	StringBuilder sql = new StringBuilder("UPDATE product SET INDEXER = ").append(String.valueOf(i - 1))
+                        	.append(" where INDEXER = ").append(i)
                         	.append(" and category = '").append(newCategory).append("'");
                         smt.executeUpdate(sql.toString());
                     }
                 } else if (newIndex < dspIndex){
                     for (int i = dspIndex - 1; i >= newIndex; i--) { // make index bigger @NOTE: have adjust from top to down.
-                    	StringBuilder sql = new StringBuilder("UPDATE product SET INDEX = ").append(String.valueOf(i + 1))
-                        	.append(" where INDEX = ").append(i)
+                    	StringBuilder sql = new StringBuilder("UPDATE product SET INDEXER = ").append(String.valueOf(i + 1))
+                        	.append(" where INDEXER = ").append(i)
                         	.append(" and category = '").append(newCategory).append("'");
                         smt.executeUpdate(sql.toString());
                     }
@@ -370,7 +370,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                 // insert the product record into db.==========================
                 if (isCreatingNewDish()) {
                     StringBuilder sql = new StringBuilder(
-                        "INSERT INTO Product(CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, store, Cost,  BRAND, CATEGORY, INDEX, CONTENT, Unit, PRODUCAREA) VALUES ('")
+                        "INSERT INTO Product(CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, store, Cost,  BRAND, CATEGORY, INDEXER, CONTENT, Unit, PRODUCAREA) VALUES ('")
                         .append(tfdLanguages[0].getText()).append("', '")
                         .append(tfdLanguages[1].getText()).append("', '")
                         .append(tfdLanguages[2].getText()).append("', ")
@@ -384,7 +384,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                         .append(cbxPricePomp.isSelected() ? "true" : "false").append("', '")
                         .append(cbxMenuPomp.isSelected() ? "true" : "false").append("', '")
                         .append(cbxModifyPomp.isSelected() ? "true" : "false").append("')");
-                    smt.executeUpdate(sql.toString());
+                    smt.execute(sql.toString());
 
                     sql = new StringBuilder("Select id from product where code = '")
                         .append(tfdLanguages[0].getText()).append("' and PRICE = ")
@@ -412,7 +412,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 	                    .append(", Cost = ").append(getSelectedSize())
 	                    .append(", BRAND = '").append(getSeletedPrinterIdStr())
 	                    .append("', CATEGORY = '").append(newCategory)
-	                    .append("', INDEX = ").append(newIndex)
+	                    .append("', INDEXER = ").append(newIndex)
 	                    .append(", CONTENT = '").append(cbxPricePomp.isSelected() ? "true" : "false")
 	                    .append("', UNIT = '").append(cbxMenuPomp.isSelected() ? "true" : "false")
 	                    .append("', PRODUCAREA = '").append(cbxModifyPomp.isSelected() ? "true" : "false")
@@ -581,7 +581,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             rdbSizes[size].setSelected(true);
 
             String printer = dish.getPrinter();
-            String[] printerStrs = StringUtil.split(printer, ",");
+            String[] printerStrs = StringUtils.split(printer, ",", 0);
             for (String string : printerStrs) {
                 try {
                     int i = Integer.valueOf(string);

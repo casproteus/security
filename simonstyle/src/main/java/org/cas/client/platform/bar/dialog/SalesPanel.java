@@ -22,7 +22,6 @@ import org.cas.client.platform.bar.action.UpdateItemDiscountAction;
 import org.cas.client.platform.bar.action.UpdateItemPriceAction;
 import org.cas.client.platform.bar.beans.CategoryToggleButton;
 import org.cas.client.platform.bar.beans.FunctionButton;
-import org.cas.client.platform.bar.beans.MenuButton;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -38,11 +37,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     ArrayList<ArrayList<CategoryToggleButton>> onSrcCategoryTgbMatrix = new ArrayList<ArrayList<CategoryToggleButton>>();
     CategoryToggleButton tgbActiveCategory;
     
-    //Dish is more complecated than category, it's devided by category first, then divided by page.
-    String[][] dishNameMetrix;// the struction must be [3][index]. it's more convenient than [index][3]
-    String[][] onScrDishNameMetrix;// it's sub set of all menuNameMetrix
-    private ArrayList<ArrayList<MenuButton>> onSrcMenuBtnMatrix = new ArrayList<ArrayList<MenuButton>>();
-
     //for print
     public static String SUCCESS = "0";
     public static String ERROR = "2";
@@ -331,7 +325,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             				BarOption.getMoneySign() + curContent).setVisible(true); //it's a non-modal dialog.
 
              		sql = "update bill set status = " + status + " where id = " + billPanel.orderedDishAry.get(0).getBillID();
-             		PIMDBModel.getStatement().execute(sql);
+             		PIMDBModel.getStatement().executeUpdate(sql);
              		BarUtil.openMoneyBox();
              	}catch(Exception exp) {
                  	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
@@ -467,7 +461,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     public static void resetCurTableDBStatus(){
     	try {
         	Statement smt =  PIMDBModel.getStatement();
-            smt.executeQuery("update dining_Table set status = 0 WHERE name = '" + BarFrame.instance.valCurTable.getText() + "'");
+            smt.executeUpdate("update dining_Table set status = 0 WHERE name = '" + BarFrame.instance.valCurTable.getText() + "'");
     	}catch(Exception exp) {
     		ErrorUtil.write(exp);
     	}

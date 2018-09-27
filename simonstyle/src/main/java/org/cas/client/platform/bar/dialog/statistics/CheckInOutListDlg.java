@@ -172,12 +172,12 @@ public class CheckInOutListDlg  extends JDialog
             rs.next();
 			int id = rs.getInt("id");
 			sql = "update evaluation set endtime = '" + BarOption.df.format(new Date()) + "' where id = " + id;
-			smt.executeQuery(sql);
+			smt.executeUpdate(sql);
 		}catch(Exception exp) {
 			sql = "INSERT INTO evaluation(startTime, EMPLOYEEID, subject) VALUES ('" + BarOption.df.format(new Date())
 					+ "', " + LoginDlg.USERID + ", '" + LoginDlg.USERNAME +"')";
 			try {
-				smt.executeQuery(sql);
+				smt.executeUpdate(sql);
 			}catch(Exception exp2) {
 				ErrorUtil.write(exp2);
 			}
@@ -279,8 +279,8 @@ public class CheckInOutListDlg  extends JDialog
 			rs.close();//关闭
     	}catch(SQLException e){
     		ErrorUtil.write(e);
-            sql = "CREATE CACHED TABLE evaluation (ID INTEGER IDENTITY PRIMARY KEY, startTime VARCHAR(255),"
-                    .concat(" endTime VARCHAR(255), EMPLOYEEID INTEGER, SUBJECT VARCHAR(255), receive INTEGER, target INTEGER, profit INTEGER);");
+            sql = "CREATE TABLE evaluation (ID INTEGER NOT NULL AUTO_INCREMENT, startTime VARCHAR(255),"
+                    .concat(" endTime VARCHAR(255), EMPLOYEEID INTEGER, SUBJECT VARCHAR(255), receive INTEGER, target INTEGER, profit INTEGER, PRIMARY KEY (ID));");
 		    try {
 		    	PIMDBModel.getReadOnlyStatement().executeUpdate(sql);
 		    }catch(Exception exp) {

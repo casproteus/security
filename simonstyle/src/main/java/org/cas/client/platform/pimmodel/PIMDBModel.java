@@ -4178,7 +4178,7 @@ public final class PIMDBModel extends AbstractModel {
 // //建立数据库表
 // StringBuffer sql = new StringBuffer();
 //
-// sql.append("CREATE CACHED TABLE ").append(prmTableName)
+// sql.append("CREATE TABLE ").append(prmTableName)
 // .append(" (");
 // String[] fieldList = DefaultDBInfo.TABLE_FIELD_LIST[iTablePos * 2];
 // String[] fieldTypeList = DefaultDBInfo.TABLE_FIELD_LIST[iTablePos * 2 + 1];

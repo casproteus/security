@@ -120,7 +120,7 @@ public class MenuPanel extends JPanel implements ActionListener {
             // load all the dishes----------------------------
             ResultSet productRS =
                     statement
-                            .executeQuery("select ID, CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, STORE,  COST, BRAND, CATEGORY, CONTENT, UNIT, PRODUCAREA, INDEX from product where deleted != true order by index");
+                            .executeQuery("select ID, CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, STORE,  COST, BRAND, CATEGORY, CONTENT, UNIT, PRODUCAREA, INDEXER from product where deleted is null order by indexer");
             productRS.afterLast();
             productRS.relative(-1);
             tmpPos = productRS.getRow();
@@ -149,7 +149,7 @@ public class MenuPanel extends JPanel implements ActionListener {
                 dishAry[tmpPos].setPrompPrice(productRS.getString("CONTENT"));
                 dishAry[tmpPos].setPrompMenu(productRS.getString("UNIT"));
                 dishAry[tmpPos].setPrompMofify(productRS.getString("PRODUCAREA"));
-                dishAry[tmpPos].setDspIndex(productRS.getInt("INDEX"));
+                dishAry[tmpPos].setDspIndex(productRS.getInt("INDEXER"));
                 tmpPos++;
             }
             productRS.close();// 关闭
@@ -272,7 +272,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 					try {
 		                Statement smt =  PIMDBModel.getReadOnlyStatement();
 
-			            StringBuilder sql = new StringBuilder("UPDATE product SET INDEX = ").append(onscrMenuIndex + 1)
+			            StringBuilder sql = new StringBuilder("UPDATE product SET INDEXER = ").append(onscrMenuIndex + 1)
 			                            	.append(" where ID = ").append(dishAry[i].getId());
 			            smt.executeUpdate(sql.toString());
 			            smt.close();

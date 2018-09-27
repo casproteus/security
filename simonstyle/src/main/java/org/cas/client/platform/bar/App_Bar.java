@@ -112,17 +112,17 @@ public class App_Bar extends AbstractApp {
         Statement stm = PIMDBModel.getStatement();
         try {
         	//add a customziatoin table. 
-        	String sql = "CREATE CACHED TABLE customizations (id INTEGER IDENTITY PRIMARY KEY, key VARCHAR(255),  value VARCHAR(255), type INTEGER, status INTEGER)";
+        	String sql = "CREATE TABLE customizations (ID INTEGER NOT NULL AUTO_INCREMENT, cuskey VARCHAR(255),  value VARCHAR(255), custype INTEGER, status INTEGER, PRIMARY KEY (ID))";
         	stm.executeUpdate(sql);
         	
         	//add a modification table. 
-        	sql = "CREATE CACHED TABLE modification (id INTEGER IDENTITY PRIMARY KEY, lang1 VARCHAR(255), lang2 VARCHAR(255), lang3 VARCHAR(255),lang4 VARCHAR(255),lang5 VARCHAR(255),lang6 VARCHAR(255), type INTEGER, status INTEGER)";
+        	sql = "CREATE TABLE modification (id INTEGER NOT NULL AUTO_INCREMENT, lang1 VARCHAR(255), lang2 VARCHAR(255), lang3 VARCHAR(255),lang4 VARCHAR(255),lang5 VARCHAR(255),lang6 VARCHAR(255), type INTEGER, status INTEGER, PRIMARY KEY (ID))";
         	stm.executeUpdate(sql);
         	
         	// 增建一个dining_Table表。select ID, Name, posX, posY, width, height, type from Tables order by DSP_INDEX"
             sql =
-                    "CREATE CACHED TABLE DINING_TABLE (ID INTEGER IDENTITY PRIMARY KEY, name VARCHAR(255),"
-                    .concat(" DSP_INDEX INTEGER, posX INTEGER, posY INTEGER, width INTEGER, height INTEGER, type INTEGER, opentime VARCHAR(255), status INTEGER);");
+                    "CREATE TABLE DINING_TABLE (ID INTEGER NOT NULL AUTO_INCREMENT, name VARCHAR(255),"
+                    .concat(" DSP_INDEX INTEGER, posX INTEGER, posY INTEGER, width INTEGER, height INTEGER, type INTEGER, opentime VARCHAR(255), status INTEGER, PRIMARY KEY (ID));");
             stm.executeUpdate(sql);
             
             sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T1', '0', 10, 10, 120, 60, 0)";
@@ -148,8 +148,8 @@ public class App_Bar extends AbstractApp {
 
             //create a printer device table
             sql =
-                    "CREATE CACHED TABLE Hardware (ID INTEGER IDENTITY PRIMARY KEY, name VARCHAR(255),"
-                    .concat(" category INTEGER, langType INTEGER,  ip VARCHAR(255), style INTEGER, status INTEGER);");
+                    "CREATE TABLE Hardware (ID INTEGER NOT NULL AUTO_INCREMENT, name VARCHAR(255),"
+                    .concat(" category INTEGER, langType INTEGER,  ip VARCHAR(255), style INTEGER, status INTEGER, PRIMARY KEY (ID));");
             stm.executeUpdate(sql);
 
             sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P1', 0, 0, '192.168.1.86', 1, 0)";	//打印机，全打
@@ -166,15 +166,15 @@ public class App_Bar extends AbstractApp {
             stm.executeUpdate(sql);
          
             // 增建一个雇员绩效考评表。
-            sql = "CREATE CACHED TABLE evaluation (ID INTEGER IDENTITY PRIMARY KEY, startTime VARCHAR(255),"
-                    .concat(" endTime VARCHAR(255), EMPLOYEEID INTEGER, SUBJECT VARCHAR(255), receive INTEGER, target INTEGER, profit INTEGER);");
+            sql = "CREATE TABLE evaluation (ID INTEGER NOT NULL AUTO_INCREMENT, startTime VARCHAR(255),"
+                    .concat(" endTime VARCHAR(255), EMPLOYEEID INTEGER, SUBJECT VARCHAR(255), receive INTEGER, target INTEGER, profit INTEGER, PRIMARY KEY (ID));");
             stm.executeUpdate(sql);
          
             // 增建一个Bill表, for remember the discount and comments and the cash back...
-            sql = "CREATE CACHED TABLE Bill (ID INTEGER IDENTITY PRIMARY KEY, createtime VARCHAR(255),"
+            sql = "CREATE TABLE Bill (ID INTEGER NOT NULL AUTO_INCREMENT, createtime VARCHAR(255),"
             		.concat(" tableID VARCHAR(255), BillIndex VARCHAR(255), total INTEGER, discount INTEGER,")
             		.concat(" cashReceived INTEGER, debitReceived INTEGER, visaReceived INTEGER, masterReceived INTEGER, otherReceived INTEGER,")
-            		.concat(" tip INTEGER, cashback INTEGER, status INTEGER, EMPLOYEEID INTEGER, Comment VARCHAR(255), opentime VARCHAR(255));");
+            		.concat(" tip INTEGER, cashback INTEGER, status INTEGER, EMPLOYEEID INTEGER, Comment VARCHAR(255), opentime VARCHAR(255), PRIMARY KEY (ID));");
             stm.executeUpdate(sql);
             
             //To occupy the record id of "0".

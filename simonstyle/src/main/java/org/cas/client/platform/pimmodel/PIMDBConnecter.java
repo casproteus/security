@@ -29,17 +29,18 @@ import org.cas.client.resource.international.PaneConsts;
 
 class PIMDBConnecter {
     // TODO：结构调整的时候需要将这几个常量的信息放入数据字典中或者资源文件中，方便修改，现在这样混在一起结构很不清晰
-    private static final String defaultDriver = "org.hsqldb.jdbcDriver";
-
+    //private static final String defaultDriver = "org.hsqldb.jdbcDriver";
     // private static final String defaultDriver = "org.apache.derby.jdbc.EmbeddedDriver";
+	private static final String defaultDriver = "com.mysql.jdbc.Driver";
 
-    private static final String defaultUserName = "sa";
-
-    private static final String defaultPassword = CASUtility.EMPTYSTR;
-
+    //private static final String defaultUserName = "sa";
+    //private static final String defaultPassword = CASUtility.EMPTYSTR;
     // 数据库在当前磁盘文件上的路径.例C:\Documents and Settings\Administrator\.storm0711\database\pim
     // 设置PIM 数据库路径、PIM数据库URL
-    private static final String url = "jdbc:hsqldb:".concat(Utility.getPIMDatabaseDirPath()).concat(PIMDBModel.dbName);
+    //private static final String url = "jdbc:hsqldb:".concat(Utility.getPIMDatabaseDirPath()).concat(PIMDBModel.dbName);
+    private static final String url = "jdbc:mysql://localhost:3306/simonstyle?useUnicode=yes&characterEncoding=UTF-8";
+	private static final String defaultUserName = "root";
+    private static final String defaultPassword = "2ert2ert";
 
     protected static PIMDBConnecter instance = new PIMDBConnecter();
 
@@ -229,13 +230,13 @@ class PIMDBConnecter {
         Statement tmpStateMent = connection.createStatement(); // 建立数据库连接执行状态
         for (int i = ModelConstants2.SYSTEMTABLE_NAME_LIST.length - 1; i >= 0; i--) { // 先把固定的表建好。
             tmpSQL.setLength(0);
-            tmpSQL.append("CREATE CACHED TABLE ").append(ModelConstants2.SYSTEMTABLE_NAME_LIST[i]).append(" (");
+            tmpSQL.append("CREATE TABLE ").append(ModelConstants2.SYSTEMTABLE_NAME_LIST[i]).append(" (");
             String[] fieldList = ModelConstants2.SYSTEMTABLE_FIELD_LIST[i * 2];
             String[] fieldTypeList = ModelConstants2.SYSTEMTABLE_FIELD_LIST[i * 2 + 1];
             int tmpLength = fieldList.length;
             for (int j = 0; j < tmpLength; j++)
                 tmpSQL.append(fieldList[j]).append(fieldTypeList[j]);
-            tmpSQL.append(");");
+            tmpSQL.append(", PRIMARY KEY (" + fieldList[0] + "));");
             try {
                 tmpStateMent.executeUpdate(tmpSQL.toString());
             } catch (Exception e) {

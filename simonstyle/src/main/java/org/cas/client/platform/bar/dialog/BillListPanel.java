@@ -224,7 +224,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				sql = new StringBuilder("update bill set total = total - ")
 						.append(outputTotalPrice)
 						.append(" where id = ").append(originalBillId);
-				PIMDBModel.getStatement().execute(sql.toString());
+				PIMDBModel.getStatement().executeUpdate(sql.toString());
 			}
 			
 			//generate/update bill for target bill
@@ -233,13 +233,13 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				sql = new StringBuilder("update bill set total = total + ")
 						.append(outputTotalPrice)
 						.append(" where id = ").append(targetBillId);
-				PIMDBModel.getStatement().execute(sql.toString());
+				PIMDBModel.getStatement().executeUpdate(sql.toString());
 			}else {
 				targetBillId = targetBillPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), targetBillPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
 				sql = new StringBuilder("update bill set total = ")
 						.append(outputTotalPrice)
 						.append(" where id = ").append(targetBillId);
-				PIMDBModel.getStatement().execute(sql.toString());
+				PIMDBModel.getStatement().executeUpdate(sql.toString());
 			}
 			curDish.setBillID(targetBillId);	//might not necessary, just in case the billPanel will not updated before it's used anywhere.
 			
@@ -247,7 +247,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			sql = new StringBuilder("update output set CONTACTID = ")
 					.append(targetBillPanel.billButton.getText()).append(", category = " + targetBillId)
 					.append(" where id = ").append(curDish.getOutputID());
-			PIMDBModel.getStatement().execute(sql.toString());
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
 
 		}catch(Exception exp) {
 			L.e("SalesPanel", "unexpected error when updating the totalvalue of bill.", exp);
@@ -302,15 +302,15 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 						try {
 							StringBuilder sql = new StringBuilder("update bill set total = ")
 							.append((int)(Float.valueOf(panel.valTotlePrice.getText()) * 100)/num).append(" where id = ").append(billId);
-							PIMDBModel.getStatement().execute(sql.toString());
+							PIMDBModel.getStatement().executeUpdate(sql.toString());
 							
 							panel.discount /= num;
 							sql = new StringBuilder("update bill set discount = discount/" + num).append(" where id = ").append(billId);
-							PIMDBModel.getStatement().execute(sql.toString());
+							PIMDBModel.getStatement().executeUpdate(sql.toString());
 
 							panel.serviceFee /= num;
 							sql = new StringBuilder("update bill set otherReceived = otherReceived/" + num).append(" where id = ").append(billId);
-							PIMDBModel.getStatement().execute(sql.toString());
+							PIMDBModel.getStatement().executeUpdate(sql.toString());
 
 						}catch(Exception exp) {
 							L.e("SalesPanel", "unexpected error when updating the totalvalue of bill.", exp);
@@ -387,7 +387,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		                "update output set contactID = 1 where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
 		                + "' and time = '" + BarFrame.instance.valStartTime.getText() + "' and DELETED != true";
 		        try {
-		        	PIMDBModel.getStatement().execute(sql);
+		        	PIMDBModel.getStatement().executeUpdate(sql);
 		        }catch(Exception exp) {
 		        	ErrorUtil.write(exp);
 		        }
@@ -400,11 +400,11 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 					String sql =
 			                "update output set deleted = 100 where SUBJECT = '" + tableID
 			                + "' and time > '" + BarFrame.instance.valStartTime.getText() + "' and DELETED != 1";
-					smt.execute(sql);
+					smt.executeUpdate(sql);
 					
-					smt.execute("update bill set status = -1 where openTime = '" + BarFrame.instance.valStartTime.getText() + "'");
+					smt.executeUpdate("update bill set status = -1 where openTime = '" + BarFrame.instance.valStartTime.getText() + "'");
 		        	//update the tabel status
-		        	smt.execute("update dining_Table set status = 0 WHERE name = '" + tableID + "'");
+		        	smt.executeUpdate("update dining_Table set status = 0 WHERE name = '" + tableID + "'");
 		        }catch(Exception exp) {
 		        	ErrorUtil.write(exp);
 		        }

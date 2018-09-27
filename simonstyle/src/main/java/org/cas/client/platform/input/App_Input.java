@@ -16,29 +16,19 @@ import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
 import org.cas.client.platform.cascontrol.AbstractApp;
 import org.cas.client.platform.cascontrol.IStatCons;
-import org.cas.client.platform.cascontrol.MainPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
-import org.cas.client.platform.cascontrol.menuaction.CategoriesAction;
-import org.cas.client.platform.cascontrol.menuaction.DeleteAction;
-import org.cas.client.platform.cascontrol.menuaction.FollowUpAction;
-import org.cas.client.platform.cascontrol.menuaction.MarkFollowUpCompleteAction;
 import org.cas.client.platform.cascontrol.menuaction.OpenAction;
-import org.cas.client.platform.cascontrol.menuaction.RemoveFollowupFlagAction;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.ModelCons;
 import org.cas.client.platform.casutil.PIMPool;
-import org.cas.client.platform.casutil.CASUtility;
-import org.cas.client.platform.contact.action.DisplayFieldsAction;
-import org.cas.client.platform.contact.action.NewListAction;
-import org.cas.client.platform.contact.action.SortAction;
 import org.cas.client.platform.input.action.NewInputAction;
 import org.cas.client.platform.input.dialog.InputDlg;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -47,16 +37,13 @@ import org.cas.client.platform.pimmodel.event.PIMModelEvent;
 import org.cas.client.platform.pimview.FieldDescription;
 import org.cas.client.platform.pimview.IView;
 import org.cas.client.platform.pimview.View_PIMThumbnails;
-import org.cas.client.platform.pimview.pimcard.CardViewPanel;
 import org.cas.client.platform.pimview.pimtable.DefaultPIMCellEditor;
 import org.cas.client.platform.pimview.pimtable.ImageIconPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.Item;
-import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.cas.client.platform.pimview.pimtable.tagcombo.TagCombo;
 import org.cas.client.resource.international.DlgConst;
 import org.cas.client.resource.international.IntlModelConstants;
 import org.cas.client.resource.international.PIMTableConstants;
-import org.cas.client.resource.international.PopupMenuConstant;
 
 /**
  * 该应用不能支持CVS外部数据导入,因为用到了ForeignKey,对于这类字段,外部数据如果用int表示,则导入时意义多半将发生错误, 如果用文本表示,则类型转换将过于烦琐和低效.
@@ -69,7 +56,8 @@ public class App_Input extends AbstractApp {
         initForeignKeys();
     }
 
-    public Action getAction(
+    @Override
+	public Action getAction(
             Object prmActionName) {
         if (actionFlags.get(prmActionName) != null) {// 看看该ActionName是否被系统维护.如果是系统有维护的,那么就是系统的Action.
             StringBuffer tmpClassPath = new StringBuffer("org.cas.client.platform.");
@@ -85,41 +73,47 @@ public class App_Input extends AbstractApp {
             return null;
     }
 
-    public int getStatus(
+    @Override
+	public int getStatus(
             Object prmActionName) {
         return -1;
     }
 
-    public int[] getImportableFields() {
+    @Override
+	public int[] getImportableFields() {
         return null;
     }// 返回应用中可以供导入的字段.
 
-    public String[] getImportDispStr() {
+    @Override
+	public String[] getImportDispStr() {
         return null;
     }// 返回应用所支持的可导入内容的字符串数组。
 
-    public String getImportIntrStr(
+    @Override
+	public String getImportIntrStr(
             Object prmKey) {
         return null;
     }
 
-    public boolean execImport(
+    @Override
+	public boolean execImport(
             Object prmKey) {
         return false;
     }
 
     /** 每个希望加入到PIM系统的应用都必须实现该方法，使系统在ViewInfo系统表中为其初始化ViewInfo。 */
-    public void initInfoInDB() {
+    @Override
+	public void initInfoInDB() {
         Statement stmt = null;
         StringBuffer tmpSQL = new StringBuffer();
-        tmpSQL.append("CREATE CACHED TABLE ").append("Input").append(" (");
+        tmpSQL.append("CREATE TABLE ").append("Input").append(" (");
         String[] tmpNameAry = getAppFields();
         String[] tmpTypeAry = getAppTypes();
         int tmpLength = tmpNameAry.length;
         for (int j = 0; j < tmpLength - 1; j++)
             tmpSQL.append(tmpNameAry[j]).append(" ").append(tmpTypeAry[j]).append(", ");
         tmpSQL.append(tmpNameAry[tmpLength - 1]).append(" ").append(tmpTypeAry[tmpLength - 1]);
-        tmpSQL.append(");");
+        tmpSQL.append(", PRIMARY KEY (" + tmpNameAry[0] + "));");
         try {
             stmt = PIMDBModel.getStatement();
             stmt.executeUpdate(tmpSQL.toString());
@@ -136,7 +130,8 @@ public class App_Input extends AbstractApp {
             }
     }
 
-    public void showDialog(
+    @Override
+	public void showDialog(
             Frame parent,
             ActionListener prmAction,
             PIMRecord prmRecord,
@@ -158,27 +153,33 @@ public class App_Input extends AbstractApp {
             new InputDlg(parent, prmAction, prmRecord).setVisible(true);
     }
 
-    public JToolBar[] getStaticBars() {
+    @Override
+	public JToolBar[] getStaticBars() {
         return null;
     }
 
-    public JToolBar[] getDynamicBars() {
+    @Override
+	public JToolBar[] getDynamicBars() {
         return null;
     }
 
-    public JPanel[] getStaticStateBars() {
+    @Override
+	public JPanel[] getStaticStateBars() {
         return null;
     }
 
-    public JPanel[] getDynamicStateBars() {
+    @Override
+	public JPanel[] getDynamicStateBars() {
         return null;
     }
 
-    public ICASDialog getADialog() {
+    @Override
+	public ICASDialog getADialog() {
         return new InputDlg((Frame) null, null, null);
     }
 
-    public JMenuItem getCreateMenu() {
+    @Override
+	public JMenuItem getCreateMenu() {
         JMenuItem tmpMenu = new JMenuItem(DlgConst.CONTACTS, CustOpts.custOps.getContactsIcon(false));
         tmpMenu.setMnemonic('c');
         tmpMenu.setAction(new NewInputAction(null));
@@ -187,28 +188,34 @@ public class App_Input extends AbstractApp {
         // array[PIMActionName.ID_FILE_NEW_LIST] = new NewListAction(PIMActionFlag.STATUS_ALL))
     }
 
-    public JMenuItem getCreateMenu(
+    @Override
+	public JMenuItem getCreateMenu(
             Vector prmSelectedRecVec) {
         return null;
     }
 
-    public String[] getAppFields() {
+    @Override
+	public String[] getAppFields() {
         return InputDefaultViews.FIELDS;
     }
 
-    public String[] getAppTypes() {
+    @Override
+	public String[] getAppTypes() {
         return InputDefaultViews.TYPES;
     }
 
-    public String[] getAppTexts() {
+    @Override
+	public String[] getAppTexts() {
         return InputDefaultViews.TEXTS;
     }
 
-    public IView getTiedView() {
+    @Override
+	public IView getTiedView() {
         return null;
     }
 
-    public Icon getAppIcon(
+    @Override
+	public Icon getAppIcon(
             boolean prmIsBig) {
         if (prmIsBig)
             return PIMPool.pool.getIcon("/org/cas/client/platform/input/img/Input32.gif");
@@ -217,12 +224,14 @@ public class App_Input extends AbstractApp {
     }
 
     /* 返回用于在查找对话盒中显示的一些文本类型的列名.方便用户做简单查找. */
-    public String[] getRecommendColAry() {
+    @Override
+	public String[] getRecommendColAry() {
         return null;
     }
 
     // 几种特殊的绘制器和编辑器
-    public FieldDescription getFieldDescription(
+    @Override
+	public FieldDescription getFieldDescription(
             String prmHeadName,
             boolean prmIsEditable) {
         if (prmHeadName == IntlModelConstants.ICON)// 人头
@@ -268,7 +277,8 @@ public class App_Input extends AbstractApp {
      * @param actionInfo
      *            其他信息
      */
-    public void processMouseDoubleClickAction(
+    @Override
+	public void processMouseDoubleClickAction(
             Component prmComp,
             int x,
             int y,
@@ -278,13 +288,15 @@ public class App_Input extends AbstractApp {
         else
             // 在记录上鼠标双击事件处理-------------------------
             SwingUtilities.invokeLater(new Runnable() { // 放到事件队列的末尾,为的是防止存盘之前就先显示对话盒.
-                        public void run() { // 因为存盘动作是由在线程中触发的editStopping方法中调到的.
+                        @Override
+						public void run() { // 因为存盘动作是由在线程中触发的editStopping方法中调到的.
                             new OpenAction().actionPerformed(null);
                         }
                     });
     }
 
-    public Object[][] processContent(
+    @Override
+	public Object[][] processContent(
             Object[][] pContents,
             Object[] pFieldNames) {
         if (pContents == null || pFieldNames == null || pContents.length < 1 || pFieldNames.length < 1
@@ -318,7 +330,8 @@ public class App_Input extends AbstractApp {
         return pContents;
     }
 
-    public void updateContent(
+    @Override
+	public void updateContent(
             PIMModelEvent e) {
         int tmpFoldID = CustOpts.custOps.getActivePathID();
         currentViewInfo = CASControl.ctrl.getViewInfo(tmpFoldID);
@@ -333,7 +346,8 @@ public class App_Input extends AbstractApp {
      * @param e
      *            键盘事件
      */
-    public void processKeyEvent(
+    @Override
+	public void processKeyEvent(
             KeyEvent e) {
         // warning 卡片视图的键盘事件被转移了
         if (e.getID() == KeyEvent.KEY_PRESSED && getActiveViewInfo().getViewType() == ModelCons.CARD_VIEW)

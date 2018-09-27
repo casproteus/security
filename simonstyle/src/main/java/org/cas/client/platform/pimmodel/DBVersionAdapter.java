@@ -352,7 +352,7 @@ class DBVersionAdapter {
             String prmDefaultFlgTableName) {
         StringBuffer tmpSql = new StringBuffer();
         // 建立数据库命令
-        tmpSql.append("CREATE CACHED TABLE ").append(prmDefaultFlgTableName).append(CASUtility.LEFT_BRACKET);
+        tmpSql.append("CREATE TABLE ").append(prmDefaultFlgTableName).append(CASUtility.LEFT_BRACKET);
         tmpSql.append(TEMP_DB_TABLE_FIELD[0]).append(TEMP_DB_FIELD_TYPES[0]);
 
         for (int i = 1; i < TEMP_DB_TABLE_FIELD.length; i++) {
@@ -563,7 +563,7 @@ class DBVersionAdapter {
     // {
     // return null;
     // }
-    // tmpSql.append("CREATE CACHED TABLE ").append(tmpTempName).append(PIMUtility.LEFT_BRACKET);
+    // tmpSql.append("CREATE TABLE ").append(tmpTempName).append(PIMUtility.LEFT_BRACKET);
     // tmpSql.append(tmpNames[0]); //处理第一个字段
     // for (int tmpSize = tmpNames.length - 1, i = tmpSize; i >= 0; i --)
     // {

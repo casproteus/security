@@ -11,8 +11,8 @@ public interface ProductDefaultViews {
     int[] importableFieldsIdx = { 3, 4, 5, 6, 7, 8, 9, 10 };
 
     String[] FIELDS = { "ID", "DELETED", "FOLDERID", "SUBJECT", "CONTENT", "CODE", "UNIT", "PRICE", "PRODUCAREA",
-            "BRAND", "CATEGORY", "MNEMONIC", "COST", "STORE", "INDEX" };
-    String[] TYPES = { "INTEGER IDENTITY PRIMARY KEY", "BIT DEFAULT false", "INTEGER", "VARCHAR(255)", "VARCHAR(255)",
+            "BRAND", "CATEGORY", "MNEMONIC", "COST", "STORE", "INDEXER" };
+    String[] TYPES = { "INTEGER NOT NULL AUTO_INCREMENT", "BIT", "INTEGER", "VARCHAR(255)", "VARCHAR(255)",
             "VARCHAR(255)", "VARCHAR(255)", "INTEGER", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)", "VARCHAR(255)",
             "INTEGER", "INTEGER", "INTEGER" };
 
@@ -29,7 +29,7 @@ public interface ProductDefaultViews {
     int CATEGORY = 10;
     int MNEMONIC = 11;
     int COST = 12;
-    int INDEX = 12;
+    int INDEXER = 12;
 
     /** 用来初始化pim系统在database中的缺省值 */
     final String INSERT_INTO =

@@ -18,7 +18,6 @@ import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
@@ -34,8 +33,6 @@ import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.ModelCons;
 import org.cas.client.platform.casutil.ModelDBCons;
 import org.cas.client.platform.casutil.PIMPool;
-import org.cas.client.platform.casutil.CASUtility;
-import org.cas.client.platform.output.OutputDefaultViews;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.platform.pimmodel.PIMViewInfo;
@@ -57,7 +54,8 @@ public class App_Product extends AbstractApp {
         actionFlags.put("NewProductAction", PIMPool.pool.getKey(IStatCons.ALWAYS));
     }
 
-    public Action getAction(
+    @Override
+	public Action getAction(
             Object prmActionName) {
         if (actionFlags.get(prmActionName) != null)// 看看该ActionName是否被系统维护.如果是系统有维护的,那么就是系统的Action.
         {
@@ -74,20 +72,24 @@ public class App_Product extends AbstractApp {
             return null;
     }
 
-    public int getStatus(
+    @Override
+	public int getStatus(
             Object prmActionName) {
         return -1;
     }
 
-    public int[] getImportableFields() {
+    @Override
+	public int[] getImportableFields() {
         return ProductDefaultViews.importableFieldsIdx;
     }// 返回应用中可以供导入的字段.
 
-    public String[] getImportDispStr() {
+    @Override
+	public String[] getImportDispStr() {
         return new String[] { ProductDefaultViews.strForImportItem };
     } // 返回应用所支持的可导入内容的字符串数组。
 
-    public String getImportIntrStr(
+    @Override
+	public String getImportIntrStr(
             Object prmKey) {
         if (ProductDefaultViews.strForImportItem.equals(prmKey)) {
             return ProductDefaultViews.describeForImportItem;
@@ -95,7 +97,8 @@ public class App_Product extends AbstractApp {
         return null;
     }
 
-    public boolean execImport(
+    @Override
+	public boolean execImport(
             Object prmKey) {
         if (ProductDefaultViews.strForImportItem.equals(prmKey)) {
             JFileChooser tmpFileChooser = new JFileChooser();
@@ -149,7 +152,8 @@ public class App_Product extends AbstractApp {
         return false;
     }
 
-    public FieldDescription getFieldDescription(
+    @Override
+	public FieldDescription getFieldDescription(
             String prmHeadName,
             boolean prmIsEditable) {
         return null;
@@ -162,7 +166,8 @@ public class App_Product extends AbstractApp {
      * @param e
      *            数据库事件
      */
-    public void updateContent(
+    @Override
+	public void updateContent(
             PIMModelEvent e) {
         int appType = currentViewInfo.getAppIndex();
         int tmpFolderID = currentViewInfo.getPathID();
@@ -185,7 +190,8 @@ public class App_Product extends AbstractApp {
         }
     }
 
-    public Object[][] processContent(
+    @Override
+	public Object[][] processContent(
             Object[][] pContents,
             Object[] pFieldNames) {
         if (pContents == null || pFieldNames == null || pContents.length < 1 || pFieldNames.length < 1
@@ -204,7 +210,8 @@ public class App_Product extends AbstractApp {
      * 
      * @return PIMViewInfo
      */
-    public PIMViewInfo getActiveViewInfo() {
+    @Override
+	public PIMViewInfo getActiveViewInfo() {
         return this.currentViewInfo;
     }
 
@@ -220,7 +227,8 @@ public class App_Product extends AbstractApp {
      * @param y
      *            Y坐标
      */
-    public void processMouseDoubleClickAction(
+    @Override
+	public void processMouseDoubleClickAction(
             Component prmComp,
             int x,
             int y,
@@ -230,7 +238,8 @@ public class App_Product extends AbstractApp {
         else
             // 在记录上鼠标双击事件处理-------------------------
             SwingUtilities.invokeLater(new Runnable() { // 放到事件队列的末尾,为的是防止存盘之前就先显示对话盒.
-                        public void run() { // 因为存盘动作是由在线程中触发的editStopping方法中调到的.
+                        @Override
+						public void run() { // 因为存盘动作是由在线程中触发的editStopping方法中调到的.
                             new OpenAction().actionPerformed(null);
                         }
                     });
@@ -239,7 +248,8 @@ public class App_Product extends AbstractApp {
     /**
      * 在鼠标单击时要执行的动作：设置已读属性和回执处理.
      */
-    public void processMouseClickAction(
+    @Override
+	public void processMouseClickAction(
             Component comp) {
         if (comp instanceof PIMTable) {
             PIMTable tmpTable = (PIMTable) comp;
@@ -270,17 +280,18 @@ public class App_Product extends AbstractApp {
     }
 
     /** 每个希望加入到PIM系统的应用都必须实现该方法，使系统在ViewInfo系统表中为其初始化ViewInfo。 */
-    public void initInfoInDB() {
+    @Override
+	public void initInfoInDB() {
         Statement stmt = null;
         StringBuffer tmpSQL = new StringBuffer();
-        tmpSQL.append("CREATE CACHED TABLE ").append("Product").append(" (");
+        tmpSQL.append("CREATE TABLE ").append("Product").append(" (");
         String[] tmpNameAry = getAppFields();
         String[] tmpTypeAry = getAppTypes();
         int tmpLength = tmpNameAry.length;
         for (int j = 0; j < tmpLength - 1; j++)
             tmpSQL.append(tmpNameAry[j]).append(" ").append(tmpTypeAry[j]).append(", ");
         tmpSQL.append(tmpNameAry[tmpLength - 1]).append(" ").append(tmpTypeAry[tmpLength - 1]);
-        tmpSQL.append(");");
+        tmpSQL.append(", PRIMARY KEY (" + tmpNameAry[0] + "));");
         try {
             stmt =  PIMDBModel.getStatement();
             stmt.executeUpdate(tmpSQL.toString());
@@ -297,7 +308,8 @@ public class App_Product extends AbstractApp {
             }
     }
 
-    public void showDialog(
+    @Override
+	public void showDialog(
             Frame parent,
             ActionListener prmAction,
             PIMRecord prmRecord,
@@ -319,52 +331,64 @@ public class App_Product extends AbstractApp {
             new ProductDlg(parent, prmAction, prmRecord).setVisible(true);
     }
 
-    public JToolBar[] getStaticBars() {
+    @Override
+	public JToolBar[] getStaticBars() {
         return null;
     }
 
-    public JToolBar[] getDynamicBars() {
+    @Override
+	public JToolBar[] getDynamicBars() {
         return null;
     }
 
-    public JPanel[] getStaticStateBars() {
+    @Override
+	public JPanel[] getStaticStateBars() {
         return null;
     }
 
-    public JPanel[] getDynamicStateBars() {
+    @Override
+	public JPanel[] getDynamicStateBars() {
         return null;
     }
 
-    public ICASDialog getADialog() {
+    @Override
+	public ICASDialog getADialog() {
         return new ProductDlg((Frame) null, null, null);
     }
 
-    public JMenuItem getCreateMenu() {
+    @Override
+	public JMenuItem getCreateMenu() {
         return null;
     }
 
-    public JMenuItem getCreateMenu(
+    @Override
+	public JMenuItem getCreateMenu(
             Vector prmSelectedRecVec) {
         return null;
     }
 
-    public String[] getAppFields() {
+    @Override
+	public String[] getAppFields() {
         return ProductDefaultViews.FIELDS;
     }
 
-    public String[] getAppTypes() {
+    @Override
+	public String[] getAppTypes() {
         return ProductDefaultViews.TYPES;
     }
 
-    public String[] getAppTexts() {
+    @Override
+	public String[] getAppTexts() {
         return ProductDefaultViews.TEXTS;
     }
 
-    public IView getTiedView() {
+    @Override
+	public IView getTiedView() {
         return null;
     }
 
-    public Icon getAppIcon(
+    @Override
+	public Icon getAppIcon(
             boolean prmIsBig) {
         if (prmIsBig)
             return PIMPool.pool.getIcon("/org/cas/client/platform/product/img/Product32.gif");
@@ -372,7 +396,8 @@ public class App_Product extends AbstractApp {
             return PIMPool.pool.getIcon("/org/cas/client/platform/product/img/Product16.gif");
     }
 
-    public String[] getRecommendColAry() {
+    @Override
+	public String[] getRecommendColAry() {
         return null;
     }// 返回用于在查找对话盒中显示的一些文本类型的列名.方便用户做简单查找.
 

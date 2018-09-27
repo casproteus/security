@@ -35,7 +35,7 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
-	private String VERSION = "V0.87-20180917";
+	private String VERSION = "V0.91-20180927";
     public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
@@ -172,7 +172,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 			sql = "INSERT INTO evaluation(startTime, EMPLOYEEID, subject) VALUES ('" + BarOption.df.format(new Date())
 					+ "', " + LoginDlg.USERID + ", '" + LoginDlg.USERNAME +"')";
 			try {
-				smt.executeQuery(sql);
+				PIMDBModel.getStatement().executeUpdate(sql);
 			}catch(Exception exp2) {
 				ErrorUtil.write(exp2);
 			}

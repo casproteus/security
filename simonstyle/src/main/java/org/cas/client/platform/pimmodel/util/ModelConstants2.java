@@ -47,7 +47,7 @@ public interface ModelConstants2 {
             };// 设置ViewFormat的缺省值----------------------------------------------
 
     // 以下字段为本接口内部各表的结构中共同用到的字段,所以特别列出来，让用到他们的数组保持对它们的引用，节约内存开销
-    String TYPE_ID = " INTEGER IDENTITY PRIMARY KEY, "; // ID
+    String TYPE_ID = " INTEGER NOT NULL AUTO_INCREMENT, "; // ID
     String TYPE_INTEGER = " INTEGER, ";
     String TYPE_SMALLINT = " SMALLINT, ";
     String TYPE_VARCHAR = " VARCHAR(255), ";
@@ -104,7 +104,7 @@ public interface ModelConstants2 {
     // 类别表字段----------------------------------------------------------
     String[] CATEGORY_TABLE_FIELD = new String[] { "ID", "LANG1", "LANG2", "LANG3", "DSP_INDEX" };
     String[] CATEGORY_TABLE_FIELD_TYPE = new String[] {// 字段类型
-            TYPE_ID, TYPE_VARCHAR, TYPE_VARCHAR, TYPE_VARCHAR, TYPE_INTEGER};// ----------------------------------------------------------------
+            TYPE_ID, TYPE_VARCHAR, TYPE_VARCHAR, TYPE_VARCHAR, " INTEGER"};// ----------------------------------------------------------------
     // 在自定义视图时定义的ViewFormat信息*************************************
     String[] VIEWFORMAT_TABLE_FIELD = new String[] { "ID", "APPTYPE", "MODETYPE", INFOLDER, "FONTSIZE", "FONTNAME",
             "FONTSTYLE", "HAVESTRIKETHROUGH", "FONTCOLOR", "UNREADED", "NUMBER", "SYCNSETTING", "SERVERFOLDER" };

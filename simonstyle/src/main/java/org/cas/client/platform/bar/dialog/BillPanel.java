@@ -93,7 +93,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					.append(", otherReceived = ").append(serviceFee)
 					.append(" where id = ").append(targetBillId);
 			try {
-				PIMDBModel.getStatement().execute(sql.toString());
+				PIMDBModel.getStatement().executeUpdate(sql.toString());
 			}catch(Exception e) {
 				ErrorUtil.write(e);
 			}
@@ -555,7 +555,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			StringBuilder sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
 					.append(BarFrame.instance.valCurTable.getText())
 					.append("' and CONTACTID = ").append(billIndex)
-					.append(" and deleted = 0 AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
+					.append(" and OUTPUT.deleted = 0 AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
 					.append(BarFrame.instance.valStartTime.getText()).append("'");
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
@@ -570,7 +570,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				Dish dish = new Dish();
 				dish.setCATEGORY(rs.getString("PRODUCT.CATEGORY"));
 				dish.setDiscount(rs.getInt("OUTPUT.discount"));//
-				dish.setDspIndex(rs.getInt("PRODUCT.INDEX"));
+				dish.setDspIndex(rs.getInt("PRODUCT.INDEXER"));
 				dish.setGst(rs.getInt("PRODUCT.FOLDERID"));
 				dish.setId(rs.getInt("PRODUCT.ID"));
 				dish.setLanguage(0, rs.getString("PRODUCT.CODE"));

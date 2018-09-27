@@ -125,8 +125,8 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         		tableToggle.setOpenTime(openTime);
         		
         		try {
-        			Statement smt = PIMDBModel.getReadOnlyStatement();
-        			smt.executeQuery("update dining_Table set status = 1, opentime = '"
+        			Statement smt = PIMDBModel.getStatement();
+        			smt.executeUpdate("update dining_Table set status = 1, opentime = '"
         			+ openTime + "' WHERE name = '" + tableToggle.getText() + "'");
         		}catch(Exception exp) {
         			ErrorUtil.write(exp);

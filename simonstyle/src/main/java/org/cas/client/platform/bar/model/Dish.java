@@ -60,7 +60,7 @@ public class Dish {
 		if(billIndex == null) {		//updating the original output.
 			Statement smt = PIMDBModel.getStatement();
 			try {
-				smt.execute("update output set amount = " + num + ", category = " + dish.getBillID()
+				smt.executeUpdate("update output set amount = " + num + ", category = " + dish.getBillID()
 						+ ", TOLTALPRICE = " + (dish.getPrice() - dish.getDiscount()) * splitRate + " where id = " + dish.getOutputID());
 			} catch (Exception exp) {
 				ErrorUtil.write(exp);
@@ -105,7 +105,7 @@ public class Dish {
 		
 		Statement smt = PIMDBModel.getStatement();
 		try {
-			smt.execute("update output set deleted = 100 where id = " + dish.getOutputID());
+			smt.executeUpdate("update output set deleted = 100 where id = " + dish.getOutputID());
 		} catch (Exception exp) {
 			ErrorUtil.write(exp);
 		}

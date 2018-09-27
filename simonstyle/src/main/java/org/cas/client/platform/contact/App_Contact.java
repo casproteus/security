@@ -181,14 +181,14 @@ public class App_Contact extends AbstractApp {
     public void initInfoInDB() {
         Statement stmt = null;
         StringBuffer tmpSQL = new StringBuffer();
-        tmpSQL.append("CREATE CACHED TABLE ").append("Contact").append(" (");
+        tmpSQL.append("CREATE TABLE ").append("Contact").append(" (");
         String[] tmpNameAry = getAppFields();
         String[] tmpTypeAry = getAppTypes();
         int tmpLength = tmpNameAry.length;
         for (int j = 0; j < tmpLength - 1; j++)
             tmpSQL.append(tmpNameAry[j]).append(" ").append(tmpTypeAry[j]).append(", ");
         tmpSQL.append(tmpNameAry[tmpLength - 1]).append(" ").append(tmpTypeAry[tmpLength - 1]);
-        tmpSQL.append(");");
+        tmpSQL.append(", PRIMARY KEY (" + tmpNameAry[0] + "));");
         try {
             stmt = PIMDBModel.getStatement();
             stmt.executeUpdate(tmpSQL.toString());

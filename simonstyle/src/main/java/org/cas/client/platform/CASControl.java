@@ -23,7 +23,6 @@ import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.EDate;
 import org.cas.client.platform.casutil.EDaySet;
 import org.cas.client.platform.casutil.ErrorUtil;
-import org.cas.client.platform.casutil.PIMDBUtil;
 import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMViewInfo;
@@ -512,22 +511,22 @@ public class CASControl {
         if (mainPane != null)
             mainPane.closed(true);
 
-        Thread tmpThread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    closePIMAPP(); // 在线程中关闭数据库后退出。
-                    PIMDBUtil.deletePIMTempDirectory(); // 删除临时目录
-                    CASUtility.backup();
-                } catch (Exception e) {
-                    ErrorUtil.write(e);
-                } finally {
-                    if(true)//isNotRunningInContainer())
-                    	System.exit(0);
-                }
-            }
-        };
-        tmpThread.start();
+//        Thread tmpThread = new Thread() {
+//            @Override
+//            public void run() {
+//                try {
+//                    closePIMAPP(); // 在线程中关闭数据库后退出。
+//                    PIMDBUtil.deletePIMTempDirectory(); // 删除临时目录
+//                    CASUtility.backup();
+//                } catch (Exception e) {
+//                    ErrorUtil.write(e);
+//                } finally {
+//                    if(true)//isNotRunningInContainer())
+//                    	System.exit(0);
+//                }
+//            }
+//        };
+//        tmpThread.start();
     }
 
     /** Get the path of the source code. */

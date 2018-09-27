@@ -180,7 +180,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
         if (o == ok) {
             // Object tUserName = general.cmbUserName.getSelectedItem();
             // 先判断密码是否是超级密码：是则修改权限，保持语言
-            String sql = "select type from useridentity where ID < 6";
+            String sql = "select type from useridentity where ID <= 6";
             try {
                 ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                 rs.afterLast();
