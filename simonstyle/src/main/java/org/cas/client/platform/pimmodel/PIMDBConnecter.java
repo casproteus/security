@@ -39,7 +39,9 @@ class PIMDBConnecter {
 
     // 数据库在当前磁盘文件上的路径.例C:\Documents and Settings\Administrator\.storm0711\database\pim
     // 设置PIM 数据库路径、PIM数据库URL
-    private static final String url = "jdbc:hsqldb:".concat(Utility.getPIMDatabaseDirPath()).concat(PIMDBModel.dbName);
+    //private static final String url = "jdbc:hsqldb:".concat(Utility.getPIMDatabaseDirPath()).concat(PIMDBModel.dbName);
+    //server mode hsql
+    private static final String url = "jdbc:hsqldb:hsql://localhost:9001".concat(PIMDBModel.dbName);
 
     protected static PIMDBConnecter instance = new PIMDBConnecter();
 

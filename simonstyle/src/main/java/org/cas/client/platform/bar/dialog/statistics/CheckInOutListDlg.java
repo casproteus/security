@@ -177,7 +177,7 @@ public class CheckInOutListDlg  extends JDialog
 			sql = "INSERT INTO evaluation(startTime, EMPLOYEEID, subject) VALUES ('" + BarOption.df.format(new Date())
 					+ "', " + LoginDlg.USERID + ", '" + LoginDlg.USERNAME +"')";
 			try {
-				smt.executeQuery(sql);
+				smt.executeUpdate(sql);
 			}catch(Exception exp2) {
 				ErrorUtil.write(exp2);
 			}
