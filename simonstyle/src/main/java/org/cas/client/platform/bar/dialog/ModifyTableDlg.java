@@ -233,7 +233,7 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
     		}
         		
         	try {
-        		PIMDBModel.getStatement().execute(sql.toString());
+        		PIMDBModel.getStatement().executeUpdate(sql.toString());
                 dispose();
                 if(settingTabbleDlg != null)
                 	settingTabbleDlg.initContent();

@@ -172,7 +172,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 			sql = "INSERT INTO evaluation(startTime, EMPLOYEEID, subject) VALUES ('" + BarOption.df.format(new Date())
 					+ "', " + LoginDlg.USERID + ", '" + LoginDlg.USERNAME +"')";
 			try {
-				smt.executeQuery(sql);
+				smt.executeUpdate(sql);
 			}catch(Exception exp2) {
 				ErrorUtil.write(exp2);
 			}

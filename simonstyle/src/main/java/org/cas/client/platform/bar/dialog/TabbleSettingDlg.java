@@ -122,7 +122,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
 								+ tableName + "', " + (tableButton.getX() + 10) + ", " + (tableButton.getY() + 10) + ", "
 								+ tableButton.getWidth() + ", " + tableButton.getHeight() + ", " + tableButton.getType() + ")";
 						try {
-							smt.execute(sql);
+							smt.executeUpdate(sql);
 						}catch(Exception exp) {
 							ErrorUtil.write(exp);
 						}
