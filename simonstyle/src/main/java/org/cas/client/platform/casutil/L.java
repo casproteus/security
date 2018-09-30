@@ -23,7 +23,7 @@ import org.json.JSONObject;
 
 public class L extends Thread{
 	public static boolean debug = BarOption.isDebugMode();
-    private static final String ErrorLogURL = "http://stgo.giize.com:81";
+    private static final String ErrorLogURL = "http://team.sharethegoodones.com";
     private static int index = 0;
 
     private static L instance = null;
