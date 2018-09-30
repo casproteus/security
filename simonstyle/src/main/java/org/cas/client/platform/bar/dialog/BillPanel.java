@@ -552,6 +552,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	//get outputs of current table and bill id.
 		try {
 			String billIndex = billButton == null ? BarFrame.instance.valCurBill.getText() : billButton.getText();
+			//used deleted <= 1, means both uncompleted and normally completed will be displayed, unnormally delted recored will be delted = 100
 			StringBuilder sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
 					.append(BarFrame.instance.valCurTable.getText())
 					.append("' and CONTACTID = ").append(billIndex)
