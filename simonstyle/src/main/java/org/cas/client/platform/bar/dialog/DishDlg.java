@@ -169,7 +169,8 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                 CustOpts.BTN_HEIGHT);
         cancel.setBounds(ok.getWidth() + ok.getX() + CustOpts.HOR_GAP * 2, ok.getY(), CustOpts.BTN_WIDTH,
                 CustOpts.BTN_HEIGHT);
-
+        delete.setBounds(cancel.getWidth() + cancel.getX() + CustOpts.HOR_GAP * 2, cancel.getY(), CustOpts.BTN_WIDTH,
+                CustOpts.BTN_HEIGHT);
         validate();
     }
 
@@ -204,7 +205,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         cmbCategory.removeActionListener(this);
         ok.removeActionListener(this);
         cancel.removeActionListener(this);
-
+        delete.removeActionListener(this);
         dispose();// 对于对话盒，如果不加这句话，就很难释放掉。
         System.gc();// @TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
     }
@@ -433,6 +434,32 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             dispose();
         } else if (o == cancel) {
             dispose();
+        } else if(o == delete) {
+        	if (isCreatingNewDish()) {
+                return;
+            } 
+        	if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION2(), BarFrame.consts.Operator(),
+                    JOptionPane.YES_NO_OPTION) != 0)// 确定删除吗？
+                return;
+        	
+            try {
+                Statement smt =  PIMDBModel.getReadOnlyStatement();
+
+                // insert the product record into db.==========================
+                StringBuilder sql = new StringBuilder("delete from product where ID = ").append(String.valueOf(prodID));
+
+                smt.executeUpdate(sql.toString());
+                
+                smt.close();
+                smt = null;
+            }catch(Exception exp) {
+            	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
+                exp.printStackTrace();
+            }
+
+            menuPanel.initCategoryAndDishes();
+            menuPanel.reLayout();
+            dispose();
         }
     }
 
@@ -515,7 +542,8 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 
         ok = new JButton(DlgConst.OK);
         cancel = new JButton(DlgConst.CANCEL);
-
+        delete = new JButton(DlgConst.DELETE);
+        
         // 属性设置－－－－－－－－－－－－－－
         ok.setMnemonic('o');
         ok.setMargin(new Insets(0, 0, 0, 0));
@@ -552,13 +580,15 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         getContentPane().add(cbxMenuPomp);
         getContentPane().add(cbxModifyPomp);
 
-        getContentPane().add(cancel);
         getContentPane().add(ok);
+        getContentPane().add(cancel);
+        getContentPane().add(delete);
 
         // 加监听器－－－－－－－－
         cmbCategory.addActionListener(this);
         ok.addActionListener(this);
         cancel.addActionListener(this);
+        delete.addActionListener(this);
         cbxQST.addActionListener(this);
         cbxGST.addActionListener(this);
         cbxPricePomp.addActionListener(this);
@@ -661,4 +691,5 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 
     private JButton ok;
     private JButton cancel;
+    private JButton delete;
 }
