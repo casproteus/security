@@ -57,8 +57,10 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
      */
     @Override
     public void reLayout() {
-        cancel.setBounds(getContainer().getWidth() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, 
+    	delete.setBounds(getContainer().getWidth() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, 
         		getContainer().getHeight() - CustOpts.BTN_HEIGHT - CustOpts.VER_GAP, 
+        		CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);// 关闭
+        cancel.setBounds(delete.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, delete.getY(), 
         		CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);// 关闭
         ok.setBounds(cancel.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, cancel.getY(), 
         		CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);// 关闭
@@ -98,6 +100,8 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
     public void release() {
         ok.removeActionListener(this);
         cancel.removeActionListener(this);
+        delete.removeActionListener(this);
+        
         if (general != null) {
             general.removeAll();
             general = null;
@@ -235,6 +239,32 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
             }
         } else if (o == cancel) {
             dispose();
+        } else if (o == delete) {
+        	if(menuPanel.categoryNameMetrix[0][dspIndex - 1] == null)
+        		return;
+        	
+        	if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION2(), BarFrame.consts.Operator(),
+                    JOptionPane.YES_NO_OPTION) != 0)// 确定删除吗？
+                return;
+                        
+            try {
+                Statement smt = PIMDBModel.getStatement();
+                
+              //start to save to db-----	if name was not null, it's an update, otherwise, an insert
+                String sql = "delete from Category where LANG1 = '"
+                		.concat(menuPanel.categoryNameMetrix[0][dspIndex - 1]).concat("'");
+                    	
+                smt.executeUpdate(sql.toString());
+                smt.close();
+                smt = null;
+                menuPanel.initCategoryAndDishes();
+                menuPanel.reLayout();
+                dispose();
+            } catch (Exception exception) {
+            	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
+                exception.printStackTrace();
+                return;
+            }
         }
     }
     
@@ -273,14 +303,14 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
         general = new GeneralPanel();
         ok = new JButton(DlgConst.OK);
         cancel = new JButton(DlgConst.CANCEL);
+        delete = new JButton(DlgConst.DELETE);
 
         // 属性设置－－－－－－－－－－－－－－
         ok.setFocusable(false);
         cancel.setFocusable(false);
-        ok.setMnemonic('o');
-        cancel.setMnemonic('c');
         ok.setMargin(new Insets(0, 0, 0, 0));
         cancel.setMargin(ok.getMargin());
+        delete.setMargin(ok.getMargin());
         getRootPane().setDefaultButton(ok);
         // 布局---------------
         int tHight = general.getPreferredSize().height + CustOpts.BTN_HEIGHT + 2 * CustOpts.VER_GAP + CustOpts.SIZE_EDGE
@@ -291,15 +321,19 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
         getContentPane().add(general);
         getContentPane().add(ok);
         getContentPane().add(cancel);
+        getContentPane().add(delete);
 
         // 加监听器－－－－－－－－
         ok.addActionListener(this);
         cancel.addActionListener(this);
+        delete.addActionListener(this);
+        
         getContentPane().addComponentListener(this);
     }
 
     private JButton ok;
     private JButton cancel;
+    private JButton delete;
     private GeneralPanel general;
 
     // ==========================================================================

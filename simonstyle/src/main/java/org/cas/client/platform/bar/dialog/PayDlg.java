@@ -231,7 +231,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	int left = (int)(Float.valueOf(valLeft.getText()) * 100);
         	if( left > 0) {
 	        	if(JOptionPane.showConfirmDialog(this, BarFrame.consts.reCeivedMoneyNotEnough(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
-	        		//user selected to close the bill. update the bill to close
+	        		//user selected to close the bill. update the bill to closed
 	        		billClosed = closeCurrentBill();
 	        		//if selected yes, then update the table status.
 	        		if(SalesPanel.isLastBillOfCurTable()) {
