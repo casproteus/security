@@ -5,6 +5,9 @@ import java.awt.print.Paper;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -24,6 +27,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintException;
+import javax.print.PrintServiceLookup;
+import javax.print.SimpleDoc;
+import javax.print.attribute.DocAttributeSet;
+import javax.print.attribute.HashDocAttributeSet;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
 import javax.swing.JOptionPane;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
@@ -47,18 +60,41 @@ import gnu.io.SerialPort;
 public class PrintService{
 
 	public static void main(String[] args) {
-		PrinterJob job = PrinterJob.getPrinterJob();
-		PageFormat pf = job.defaultPage();
+		PrinterJob job1 = PrinterJob.getPrinterJob();
+		PageFormat pf = job1.defaultPage();
 		Paper paper = new Paper();
 		double margin = 1; // half inch
 		paper.setImageableArea(margin, margin, paper.getWidth() - margin * 2, paper.getHeight() - margin * 2);
 		pf.setPaper(paper);
 		//job.setPrintable(new PrinterTemplate(vo, templateVO), pf);
 		try {
-			job.print();
+			job1.print();
 		} catch (PrinterException e) {
 			e.printStackTrace();
 		}
+		
+		PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();  
+	    DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;          
+	    javax.print.PrintService[] printService = PrintServiceLookup.lookupPrintServices(flavor, pras); 
+//	    if( printService.length > 0 ){  
+//	      DocPrintJob job = printService[5].createPrintJob();
+	    javax.print.PrintService defaultService = PrintServiceLookup.lookupDefaultPrintService(); 
+	    if(defaultService != null){  
+	      DocPrintJob job = defaultService.createPrintJob();
+	      FileInputStream fis = null;
+	      try {
+	        DocAttributeSet das = new HashDocAttributeSet();
+	        Doc doc = new SimpleDoc(new char[3],
+	        		//new FileInputStream(new File("C:\\Users\\pc\\Desktop\\POSTest-2\\34_CAL1_verif_taille BitImageMode_34.xml")),
+	        		flavor,
+	        		das);
+	        job.print(doc, pras);
+	      //} catch (FileNotFoundException e) {
+	      //  e.printStackTrace();
+	      } catch (PrintException e) {
+	        e.printStackTrace();
+	      }
+	    }
 	}
 	
     public static int SUCCESS = -1;	//@NOTE:must be less than 0, because if it's 0, means the first element caused error.
