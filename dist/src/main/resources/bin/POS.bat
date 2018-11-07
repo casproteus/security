@@ -1,5 +1,4 @@
 @echo off
-start dbserver
 setlocal
 
 set OLDCD=%CD%

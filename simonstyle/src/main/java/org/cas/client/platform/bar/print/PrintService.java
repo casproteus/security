@@ -13,11 +13,15 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -49,6 +53,7 @@ import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.model.Printer;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -60,41 +65,20 @@ import gnu.io.SerialPort;
 public class PrintService{
 
 	public static void main(String[] args) {
-		PrinterJob job1 = PrinterJob.getPrinterJob();
-		PageFormat pf = job1.defaultPage();
-		Paper paper = new Paper();
-		double margin = 1; // half inch
-		paper.setImageableArea(margin, margin, paper.getWidth() - margin * 2, paper.getHeight() - margin * 2);
-		pf.setPaper(paper);
-		//job.setPrintable(new PrinterTemplate(vo, templateVO), pf);
-		try {
-			job1.print();
-		} catch (PrinterException e) {
-			e.printStackTrace();
-		}
+//		PrinterJob job1 = PrinterJob.getPrinterJob();
+//		PageFormat pf = job1.defaultPage();
+//		Paper paper = new Paper();
+//		double margin = 1; // half inch
+//		paper.setImageableArea(margin, margin, paper.getWidth() - margin * 2, paper.getHeight() - margin * 2);
+//		pf.setPaper(paper);
+//		//job.setPrintable(new PrinterTemplate(vo, templateVO), pf);
+//		try {
+//			job1.print();
+//		} catch (PrinterException e) {
+//			e.printStackTrace();
+//		}
 		
-		PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();  
-	    DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;          
-	    javax.print.PrintService[] printService = PrintServiceLookup.lookupPrintServices(flavor, pras); 
-//	    if( printService.length > 0 ){  
-//	      DocPrintJob job = printService[5].createPrintJob();
-	    javax.print.PrintService defaultService = PrintServiceLookup.lookupDefaultPrintService(); 
-	    if(defaultService != null){  
-	      DocPrintJob job = defaultService.createPrintJob();
-	      FileInputStream fis = null;
-	      try {
-	        DocAttributeSet das = new HashDocAttributeSet();
-	        Doc doc = new SimpleDoc(new char[3],
-	        		//new FileInputStream(new File("C:\\Users\\pc\\Desktop\\POSTest-2\\34_CAL1_verif_taille BitImageMode_34.xml")),
-	        		flavor,
-	        		das);
-	        job.print(doc, pras);
-	      //} catch (FileNotFoundException e) {
-	      //  e.printStackTrace();
-	      } catch (PrintException e) {
-	        e.printStackTrace();
-	      }
-	    }
+		doSystemPrint("abc");
 	}
 	
     public static int SUCCESS = -1;	//@NOTE:must be less than 0, because if it's 0, means the first element caused error.
@@ -114,6 +98,8 @@ public class PrintService{
 
     private boolean printerConnectedFlag;
     private boolean contentReadyForPrintFlag;
+    
+    private static javax.print.PrintService defaultService;
 
     //fro BeiYangPrinter----------------------
 
@@ -282,28 +268,36 @@ public class PrintService{
     	return ip;
     }
   
-    private static void printContents() {
+    private static int printContents() {
     	BarFrame.setStatusMes("PRINTED...");
-    	int resultForReturn = 0;
+    	int errorsAmount = 0;
         for(Entry<String,List<String>> entry : ipContentMap.entrySet()) {
-        	List<String> contents = entry.getValue();
+        	List<String> sndMsg = entry.getValue();
         	//for(int i = contents.size() - 1; i >= 0 ; i--) {
-        	if(contents.size() > 0) {
-            	if("Serial".equalsIgnoreCase(entry.getKey()) ? 
-            			doSerialPrint(contents) : 
-            				doWebSocketPrint(entry.getKey(), contents)) {
-            		contents.clear();//clean ip content; no need to do ipContentMap.remove(entry.getKey()), because will do ipContentMap.clear later.
-            	}else {
-                    JOptionPane.showMessageDialog(BarFrame.instance, 
-        	        		"Content NOT printed!!! Please check printer and try again. --ip: "+entry.getKey());
-            		resultForReturn ++;
+        	if(sndMsg.size() > 0) {
+        		boolean printSuccessful = false;
+        		String printerID = entry.getKey();
+        		if("mev".equalsIgnoreCase(printerID)) {
+             		printSuccessful = doSystemPrint(sndMsg.get(0));
+             	} else if("serial".equalsIgnoreCase(printerID)) { 
+            		printSuccessful = doSerialPrint(sndMsg);
+            	} else {
+            		printSuccessful = doWebSocketPrint(printerID, sndMsg);
             	}
+            	
+            	if(printSuccessful) {
+            		sndMsg.clear();//clean ip content; no need to do ipContentMap.remove(entry.getKey()), because will do ipContentMap.clear later.
+             	}else {
+                    JOptionPane.showMessageDialog(BarFrame.instance, 
+         	        		"Content NOT print!!! Please check printer and try again. --ip: "+entry.getKey());
+                    errorsAmount ++;
+             	}
         	}
         }
-        
+        return errorsAmount;
     }
-    
-    public static boolean openDrawer(String ip){
+
+	public static boolean openDrawer(String ip){
     	try{
 			Socket socket = new Socket(ip != null ? ip : BarFrame.instance.menuPanel.printers[0].getIp(), 9100);
 			OutputStream outputStream = socket.getOutputStream();
@@ -318,6 +312,70 @@ public class PrintService{
 		}
     }
     
+    private static boolean doSystemPrint(String sndMsg) {
+		// save contents into a file.
+    	FileInputStream stream = null;
+		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat(new Date().getTime() + "transaction.xml");
+		Path path = Paths.get(filePath);
+		try {
+    		Files.write(path, buildMevFormatContent(sndMsg));
+    		stream = new FileInputStream(new File(filePath));
+        } catch (IOException e) {
+        	ErrorUtil.write(e);
+        }
+    	
+    	// print the file
+	    DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;
+    	PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();  
+	    
+    	//check printer.
+	    if(defaultService == null) {
+		    defaultService = PrintServiceLookup.lookupDefaultPrintService(); 
+		    if(defaultService == null) {
+		    	javax.print.PrintService[] printService = PrintServiceLookup.lookupPrintServices(flavor, pras); 
+			    if( printService.length > 0 ){  
+			    	defaultService = printService[0];
+			    }
+			    
+			    if (defaultService == null) {
+			    	ErrorUtil.write("Please install printer first.");
+			    	return false;
+			    }
+		    }
+	    }
+
+		boolean isSuccess = false;
+		DocPrintJob job = defaultService.createPrintJob();
+		try {
+			DocAttributeSet das = new HashDocAttributeSet();
+			Doc doc = new SimpleDoc(stream, flavor, das);
+			job.print(doc, pras);
+			isSuccess = true;
+			Files.deleteIfExists(path);
+		} catch (PrintException e) {
+			ErrorUtil.write(e);
+		} catch(IOException ioe) {
+			ErrorUtil.write(ioe);
+		}
+		
+		return isSuccess;
+	}
+    
+	private static byte[] buildMevFormatContent(String sndMsg) {
+		//the contents could be composed by :1/Command.BEEP 2/BigFont 3/NormalFont 4/cut 5/content.
+		//while when sending to mev device, the sndMsg could only be content. and length will always be 1.
+		//we will make the content into 
+		byte[] formattedContent = null;
+		String content = mev1.append(sndMsg).append(mev2).append(mev3).append(mev4).toString();
+		//try {
+			formattedContent = content.getBytes();//"UTF-8");
+		//}catch(UnsupportedEncodingException e) {
+		//	ErrorUtil.write(e);
+		//}
+		
+		return formattedContent;
+	}
+	
     private static boolean doSerialPrint(List<String> sndMsg) {
         CommPortIdentifier commPortIdentifier;
         SerialPort tSerialPort = null;
@@ -338,7 +396,7 @@ public class PrintService{
                     tSerialPort = (SerialPort)commPortIdentifier.open("PrintService", 10000);//并口用"ParallelBlackBox"
                     outputStream = new DataOutputStream(tSerialPort.getOutputStream());
                     for (String string : sndMsg) {
-            			sendContentThroughStream(string, outputStream);
+            			sendContentOutThroughStream(string, outputStream);
 					}
 //                    outputStream.write(27); // 打印机初始化：
 //                    outputStream.write(64);
@@ -445,7 +503,7 @@ public class PrintService{
 			socket = new Socket(ip, 9100);
 			outputStream = socket.getOutputStream();
 			for (String msg : sndMsg) {
-				sendContentThroughStream(msg, outputStream);
+				sendContentOutThroughStream(msg, outputStream);
 			}
 			outputStream.close();
 			socket.close();
@@ -472,7 +530,7 @@ public class PrintService{
 		}
     }
 
-	private static void sendContentThroughStream(String sndMsg, OutputStream outputStream)
+	private static void sendContentOutThroughStream(String sndMsg, OutputStream outputStream)
 			throws IOException {
 		if("Command.BEEP".equals(sndMsg)) {
 			outputStream.write(Command.BEEP);
@@ -1055,4 +1113,24 @@ public class PrintService{
             ipSelectionsMap.put(entry.getKey(),new ArrayList<Dish>());
         }
     }
+    
+    final static StringBuilder mev1 = new StringBuilder("<reqMEV>\r\n")
+    		.append("	<trans noVersionTrans=\"v02.00\" etatDoc=\"I\" modeTrans=\"O\" duplicata=\"N\">\r\n")
+    		.append("		<doc>\r\n")
+    		.append("			<texte>\r\n")
+    		.append("				<![CDATA[");
+    final static StringBuilder mev2 = 
+    		new StringBuilder("				]]>\r\n")
+    		.append("			</texte>\r\n")
+    		.append("		</doc>\r\n")
+    		.append("		<alignement>\r\n")
+    		.append("			<![CDATA[\r\n")
+    		.append("			]]>\r\n")
+    		.append("		</alignement>");
+    final static StringBuilder mev3 = new StringBuilder("<donneesTrans typeTrans=\"ADDI\" reimpression=\"N\" autreCompte=\"S\" serveurTrans=\"\" tableTrans=\"Tab18\" \r\n")
+    		.append("			paiementTrans=\"SOB\" comptoir=\"N\" numeroTrans=\"2\" dateTrans=\"20090128084800\" mtTransAvTaxes=\"+000021.85\"\r\n")
+    		.append("			TPSTrans=\"+000001.09\" TVQTrans=\"+000001.72\" mtTransApTaxes=\"+000024.66\"/>");
+    final static StringBuilder mev4 = new StringBuilder("</trans>\r\n")
+    		.append("    <verif taille=\"4569\"/>\r\n")
+    		.append("</reqMEV>");
 }
