@@ -1,6 +1,7 @@
 package org.cas.client.platform.pimmodel;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -22,6 +23,9 @@ import org.cas.client.platform.pimmodel.util.ModelConstants2;
 import org.cas.client.resource.international.DlgConst;
 import org.cas.client.resource.international.IntlModelConstants;
 import org.cas.client.resource.international.PaneConsts;
+import org.hsqldb.persist.HsqlProperties;
+import org.hsqldb.server.Server;
+import org.hsqldb.server.ServerAcl.AclFormatException;
 
 /**
  * 这个类的用途是通过给定的驱动程序、用户名、密码连接到使用的数据库上。而驱动程序、用户名、密码 则可以改变，甚至在程序运行的过程中就可以改变，这是以后要求多用户时候要做的事情。所以应该现在 应该只是建立连接而后检查数据库等操作在这里完成
@@ -56,6 +60,7 @@ class PIMDBConnecter {
      *        database, so it retrned false.
      */
     boolean checkDatabase() {
+    	makesureDBStarted();
         connection = buildConnection(defaultUserName, defaultPassword);
         if (connection == null) {
             JOptionPane.showMessageDialog(null, DlgConst.UNNORMALCLOSED);
@@ -87,7 +92,28 @@ class PIMDBConnecter {
         return dbValidation;
     }
 
-    /**
+    private void makesureDBStarted() {
+		// TODO Auto-generated method stub
+    	//call %TOOL_HOME%\jre\bin\java -cp %CLASSPATH% org.hsqldb.server.Server --database.0 file:qiji --dbname.0 pim
+    	try {
+            System.out.println("Starting Database");
+            HsqlProperties p = new HsqlProperties();
+            p.setProperty("server.database.0", "file:qiji");
+            p.setProperty("server.dbname.0", "pim");
+            p.setProperty("server.port", "9001");
+            Server server = new Server();
+            server.setProperties(p);
+            server.setLogWriter(null); // can use custom writer
+            server.setErrWriter(null); // can use custom writer
+            server.start();
+        } catch (AclFormatException afex) {
+        	afex.printStackTrace();
+        } catch (IOException ioex) {
+        	ioex.printStackTrace();
+        }
+    }
+
+	/**
      * 得到数据库的连接 如果数据库没有连接上，则连接数据库，如果连接上了则返回连接
      * 
      * @return
