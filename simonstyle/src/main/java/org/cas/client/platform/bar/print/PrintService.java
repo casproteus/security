@@ -366,7 +366,7 @@ public class PrintService{
 		//while when sending to mev device, the sndMsg could only be content. and length will always be 1.
 		//we will make the content into 
 		byte[] formattedContent = null;
-		String content = mev1.append(sndMsg).append(mev2).append(mev3).append(mev4).toString();
+		String content = new StringBuilder(mev1).append(sndMsg).append(mev2).append(mev3).append(mev4).toString();
 		//try {
 			formattedContent = content.getBytes();//"UTF-8");
 		//}catch(UnsupportedEncodingException e) {
@@ -1126,11 +1126,11 @@ public class PrintService{
     		.append("		<alignement>\r\n")
     		.append("			<![CDATA[\r\n")
     		.append("			]]>\r\n")
-    		.append("		</alignement>");
-    final static StringBuilder mev3 = new StringBuilder("<donneesTrans typeTrans=\"ADDI\" reimpression=\"N\" autreCompte=\"S\" serveurTrans=\"\" tableTrans=\"Tab18\" \r\n")
+    		.append("		</alignement>\r\n");
+    final static StringBuilder mev3 = new StringBuilder("		<donneesTrans typeTrans=\"ADDI\" reimpression=\"N\" autreCompte=\"S\" serveurTrans=\"\" tableTrans=\"Tab18\" \r\n")
     		.append("			paiementTrans=\"SOB\" comptoir=\"N\" numeroTrans=\"2\" dateTrans=\"20090128084800\" mtTransAvTaxes=\"+000021.85\"\r\n")
-    		.append("			TPSTrans=\"+000001.09\" TVQTrans=\"+000001.72\" mtTransApTaxes=\"+000024.66\"/>");
-    final static StringBuilder mev4 = new StringBuilder("</trans>\r\n")
-    		.append("    <verif taille=\"4569\"/>\r\n")
+    		.append("			TPSTrans=\"+000001.09\" TVQTrans=\"+000001.72\" mtTransApTaxes=\"+000024.66\"/>\r\n");
+    final static StringBuilder mev4 = new StringBuilder("		</trans>\r\n")
+    		//.append("    <verif taille=\"4569\"/>\r\n")
     		.append("</reqMEV>");
 }
