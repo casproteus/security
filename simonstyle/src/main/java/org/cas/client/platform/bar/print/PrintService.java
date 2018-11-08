@@ -43,6 +43,7 @@ import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.io.FileUtils;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillPanel;
@@ -328,27 +329,15 @@ public class PrintService{
 	    DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;
     	PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();  
 	    
-    	//check printer.
-	    if(defaultService == null) {
-		    defaultService = PrintServiceLookup.lookupDefaultPrintService(); 
-		    if(defaultService == null) {
-		    	javax.print.PrintService[] printService = PrintServiceLookup.lookupPrintServices(flavor, pras); 
-			    if( printService.length > 0 ){  
-			    	defaultService = printService[0];
-			    }
-			    
-			    if (defaultService == null) {
-			    	ErrorUtil.write("Please install printer first.");
-			    	return false;
-			    }
-		    }
-	    }
+    	checkPrinter(flavor, pras);
 
 		boolean isSuccess = false;
 		DocPrintJob job = defaultService.createPrintJob();
 		try {
 			DocAttributeSet das = new HashDocAttributeSet();
 			Doc doc = new SimpleDoc(stream, flavor, das);
+			job.print(doc, pras);
+			doc = new SimpleDoc(new FileInputStream(getCutCommandDocFile()), flavor, das);
 			job.print(doc, pras);
 			isSuccess = true;
 			Files.deleteIfExists(path);
@@ -360,7 +349,47 @@ public class PrintService{
 		
 		return isSuccess;
 	}
+
+	private static void checkPrinter(DocFlavor flavor, PrintRequestAttributeSet pras) {
+		//check printer.
+	    if(defaultService == null) {
+		    defaultService = PrintServiceLookup.lookupDefaultPrintService(); 
+		    if(defaultService == null) {
+		    	javax.print.PrintService[] printService = PrintServiceLookup.lookupPrintServices(flavor, pras); 
+			    if( printService.length > 0 ){  
+			    	defaultService = printService[0];
+			    }
+			    
+			    if (defaultService == null) {
+			    	ErrorUtil.write("Please install printer first.");
+			    }
+		    }
+	    }
+	}
     
+	private static File getCutCommandDocFile() {
+		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator"));
+		File file = new File(filePath);
+		
+		//check if it's exist.
+		if(!file.exists()) {
+			//creata the file
+			byte[] a = mevDocAutre1.getBytes();
+			byte[] b = mevDocAutre2.getBytes();
+			byte[] c = new byte[a.length + Command.GS_V_m_n.length + b.length];
+			System.arraycopy(a, 0, c, 0, a.length);
+			System.arraycopy(Command.GS_V_m_n, 0, c, a.length, Command.GS_V_m_n.length);
+			System.arraycopy(b, 0, c, a.length + Command.GS_V_m_n.length, b.length);
+			try {
+				Files.write(Paths.get(filePath), c);
+			}catch(Exception e) {
+				ErrorUtil.write(e);
+			}
+		}
+		
+		return file;
+	}
+
 	private static byte[] buildMevFormatContent(String sndMsg) {
 		//the contents could be composed by :1/Command.BEEP 2/BigFont 3/NormalFont 4/cut 5/content.
 		//while when sending to mev device, the sndMsg could only be content. and length will always be 1.
@@ -1116,13 +1145,9 @@ public class PrintService{
     
     final static StringBuilder mev1 = new StringBuilder("<reqMEV>\r\n")
     		.append("	<trans noVersionTrans=\"v02.00\" etatDoc=\"I\" modeTrans=\"O\" duplicata=\"N\">\r\n")
-    		.append("		<doc>\r\n")
-    		.append("			<texte>\r\n")
-    		.append("				<![CDATA[");
+    		.append("		<doc><texte><![CDATA[");
     final static StringBuilder mev2 = 
-    		new StringBuilder("				]]>\r\n")
-    		.append("			</texte>\r\n")
-    		.append("		</doc>\r\n")
+    		new StringBuilder("				]]></texte></doc>\r\n")
     		.append("		<alignement>\r\n")
     		.append("			<![CDATA[\r\n")
     		.append("			]]>\r\n")
@@ -1133,4 +1158,7 @@ public class PrintService{
     final static StringBuilder mev4 = new StringBuilder("		</trans>\r\n")
     		//.append("    <verif taille=\"4569\"/>\r\n")
     		.append("</reqMEV>");
+    
+    final static String mevDocAutre1 = "<reqMEV><docAutre noVersionAutre=\"v02.00\"><![CDATA[";
+    final static String mevDocAutre2 = "]]></docAutre></reqMEV>";
 }
