@@ -65,23 +65,6 @@ import gnu.io.SerialPort;
 //If the ip of a printer is "LPT1", then will actually user com interface to drive the printer.
 public class PrintService{
 
-	public static void main(String[] args) {
-//		PrinterJob job1 = PrinterJob.getPrinterJob();
-//		PageFormat pf = job1.defaultPage();
-//		Paper paper = new Paper();
-//		double margin = 1; // half inch
-//		paper.setImageableArea(margin, margin, paper.getWidth() - margin * 2, paper.getHeight() - margin * 2);
-//		pf.setPaper(paper);
-//		//job.setPrintable(new PrinterTemplate(vo, templateVO), pf);
-//		try {
-//			job1.print();
-//		} catch (PrinterException e) {
-//			e.printStackTrace();
-//		}
-		
-		doSystemPrint("abc");
-	}
-	
     public static int SUCCESS = -1;	//@NOTE:must be less than 0, because if it's 0, means the first element caused error.
     
     public static Category[] allCategory;
@@ -279,7 +262,7 @@ public class PrintService{
         		boolean printSuccessful = false;
         		String printerID = entry.getKey();
         		if("mev".equalsIgnoreCase(printerID)) {
-             		printSuccessful = doSystemPrint(sndMsg.get(0));
+             		printSuccessful = doSystemPrint(sndMsg);
              	} else if("serial".equalsIgnoreCase(printerID)) { 
             		printSuccessful = doSerialPrint(sndMsg);
             	} else {
@@ -313,7 +296,7 @@ public class PrintService{
 		}
     }
     
-    private static boolean doSystemPrint(String sndMsg) {
+    private static boolean doSystemPrint(List<String> sndMsg) {
 		// save contents into a file.
     	FileInputStream stream = null;
 		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat(new Date().getTime() + "transaction.xml");
@@ -334,18 +317,26 @@ public class PrintService{
 		boolean isSuccess = false;
 		DocPrintJob job = defaultService.createPrintJob();
 		try {
-			DocAttributeSet das = new HashDocAttributeSet();
-			Doc doc = new SimpleDoc(stream, flavor, das);
-			job.print(doc, pras);
-			doc = new SimpleDoc(new FileInputStream(getCutCommandDocFile()), flavor, das);
-			job.print(doc, pras);
-			isSuccess = true;
+			job.print(new SimpleDoc(stream, flavor, new HashDocAttributeSet()), pras);
 			Files.deleteIfExists(path);
+			isSuccess = true;
 		} catch (PrintException e) {
 			ErrorUtil.write(e);
 		} catch(IOException ioe) {
 			ErrorUtil.write(ioe);
 		}
+		
+		//do cut paper.
+		job = defaultService.createPrintJob();	
+		try {
+			job.print(new SimpleDoc(new FileInputStream(getCutCommandDocFile()), flavor, new HashDocAttributeSet()), pras);
+			isSuccess = true;
+		} catch (PrintException e) {
+			ErrorUtil.write(e);
+		}  catch(IOException ioe) {
+			ErrorUtil.write(ioe);
+		}
+		
 		
 		return isSuccess;
 	}
@@ -368,19 +359,19 @@ public class PrintService{
 	}
     
 	private static File getCutCommandDocFile() {
-		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator"));
+		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat("mevCutCommand.xml");
 		File file = new File(filePath);
 		
 		//check if it's exist.
 		if(!file.exists()) {
 			//creata the file
-			byte[] a = mevDocAutre1.getBytes();
-			byte[] b = mevDocAutre2.getBytes();
-			byte[] c = new byte[a.length + Command.GS_V_m_n.length + b.length];
-			System.arraycopy(a, 0, c, 0, a.length);
-			System.arraycopy(Command.GS_V_m_n, 0, c, a.length, Command.GS_V_m_n.length);
-			System.arraycopy(b, 0, c, a.length + Command.GS_V_m_n.length, b.length);
 			try {
+				byte[] a = mevDocAutre1.getBytes("ASCII");
+				byte[] b = mevDocAutre2.getBytes("ASCII");
+				byte[] c = new byte[a.length + Command.GS_V_m_n.length + b.length];
+				System.arraycopy(a, 0, c, 0, a.length);
+				System.arraycopy(Command.GS_V_m_n, 0, c, a.length, Command.GS_V_m_n.length);
+				System.arraycopy(b, 0, c, a.length + Command.GS_V_m_n.length, b.length);
 				Files.write(Paths.get(filePath), c);
 			}catch(Exception e) {
 				ErrorUtil.write(e);
@@ -390,17 +381,22 @@ public class PrintService{
 		return file;
 	}
 
-	private static byte[] buildMevFormatContent(String sndMsg) {
+	private static byte[] buildMevFormatContent(List<String> sndMsg) {
 		//the contents could be composed by :1/Command.BEEP 2/BigFont 3/NormalFont 4/cut 5/content.
 		//while when sending to mev device, the sndMsg could only be content. and length will always be 1.
 		//we will make the content into 
 		byte[] formattedContent = null;
-		String content = new StringBuilder(mev1).append(sndMsg).append(mev2).append(mev3).append(mev4).toString();
-		//try {
-			formattedContent = content.getBytes();//"UTF-8");
-		//}catch(UnsupportedEncodingException e) {
-		//	ErrorUtil.write(e);
-		//}
+		StringBuilder content = new StringBuilder(mev1);
+		for (int i = 0; i < sndMsg.size(); i++) {
+			content.append(sndMsg.get(i));
+		}
+		
+		content.append(mev2).append(mev3).append(mev4).toString();
+		try {
+			formattedContent = content.toString().getBytes("ASCII");
+		}catch(UnsupportedEncodingException e) {
+			ErrorUtil.write(e);
+		}
 		
 		return formattedContent;
 	}
@@ -622,10 +618,10 @@ public class PrintService{
 	            
 	    pushBillHeadInfo(strAryFR, tWidth);
         pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
-        pushTotal(billPanel, strAryFR);
+        //pushTotal(billPanel, strAryFR);
         pushEndMessage(strAryFR);
 
-        strAryFR.add("\n\n\n\n\n");
+        //strAryFR.add("\n\n\n\n\n");
         strAryFR.add("cut");
         return strAryFR;
     }
@@ -643,11 +639,9 @@ public class PrintService{
 	            
 	    pushBillHeadInfo(strAryFR, tWidth);
         pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
-        pushTotal(billPanel, strAryFR);
+        //pushTotal(billPanel, strAryFR);
         pushPayInfo(billPanel, strAryFR, tWidth, isCashBack);
         pushEndMessage(strAryFR);
-        strAryFR.add("\n\n\n\n\n");
-        strAryFR.add("cut");
         return strAryFR;
     }
 
@@ -839,7 +833,7 @@ public class PrintService{
 
 	private static void pushTotal(BillPanel billPanel, ArrayList<String> strAryFR) {
 		StringBuilder content = new StringBuilder();
-		//push bigger font.
+		//push bigger font. while it will not work for mev.
         strAryFR.add("BigFont");
         //push total
         String strTotal = billPanel.valTotlePrice.getText();
@@ -1159,6 +1153,6 @@ public class PrintService{
     		//.append("    <verif taille=\"4569\"/>\r\n")
     		.append("</reqMEV>");
     
-    final static String mevDocAutre1 = "<reqMEV><docAutre noVersionAutre=\"v02.00\"><![CDATA[";
+    final static String mevDocAutre1 = "<reqMEV><docAutre noVersionAutre=\"v01.00\"><![CDATA[";
     final static String mevDocAutre2 = "]]></docAutre></reqMEV>";
 }
