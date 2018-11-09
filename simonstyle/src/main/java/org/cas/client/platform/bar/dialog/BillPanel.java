@@ -245,10 +245,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					salesPanel.removeItem();
 				}else {
 					if(orderedDishAry.get(selectedRow).getNum() == 1) {
-						if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION2(), DlgConst.DlgTitle,
-			                    JOptionPane.YES_NO_OPTION) != 0) {
-							tblBillPanel.setSelectedRow(-1);
-							return;
+						if("true".equals(CustOpts.custOps.getValue("noticeForLastOne"))) {
+							if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION2(), DlgConst.DlgTitle,
+				                    JOptionPane.YES_NO_OPTION) != 0) {
+								tblBillPanel.setSelectedRow(-1);
+								return;
+							}
 						}
 						removeFromSelection(selectedRow);
 					} else {

@@ -186,6 +186,8 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String COMFIRMDELETEACTION2() {return "Are you sure to remove it from list?";}
     @Override
+	public String COMFIRMDELETECATEGORY() {return "Are you sure to remove the whole category? The menus under it will also be deleted! ";}
+    @Override
 	public String COMFIRMLOSTACTION() {return "Are you sure not to send or save the new input content?";}
     @Override
 	public String ConfirmPayAgain() {return "This bill has already been paid! Are you sure you will receive money for it again?";}

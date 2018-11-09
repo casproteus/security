@@ -101,6 +101,7 @@ public interface BarDlgConst {
     String UnSavedRecordFound();
     String COMFIRMDELETEACTION();
     String COMFIRMDELETEACTION2();
+    String COMFIRMDELETECATEGORY();
     String COMFIRMLOSTACTION();
     String ConfirmPayAgain();
     String SetCatogoryFirst();

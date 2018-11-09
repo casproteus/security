@@ -186,6 +186,8 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String COMFIRMDELETEACTION2() {return "您确定要把这个菜完全从列表中取消吗？";}
     @Override
+	public String COMFIRMDELETECATEGORY() {return "您确定要删除该类别吗? 该类别下的所有菜单将被同时删除 !";}
+    @Override
 	public String COMFIRMLOSTACTION() {return "您确定不要把新点的菜发送到厨房或者保存到系统中吗？";}
     @Override
 	public String ConfirmPayAgain() {return "本账单已经支付过了！您确定要再次收钱吗？";}

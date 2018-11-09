@@ -240,7 +240,8 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
         } else if (o == cancel) {
             dispose();
         } else if (o == delete) {
-        	if(menuPanel.categoryNameMetrix[0][dspIndex - 1] == null)
+        	String category = menuPanel.categoryNameMetrix[0][dspIndex - 1];
+        	if(category == null)
         		return;
         	
         	if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION2(), BarFrame.consts.Operator(),
@@ -249,10 +250,13 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
                         
             try {
                 Statement smt = PIMDBModel.getStatement();
+
+                // insert the product record into db.==========================
+                StringBuilder sql = new StringBuilder("delete from product where CATEGORY = '").append(category).append("'");
+                smt.executeUpdate(sql.toString());
                 
-              //start to save to db-----	if name was not null, it's an update, otherwise, an insert
-                String sql = "delete from Category where LANG1 = '"
-                		.concat(menuPanel.categoryNameMetrix[0][dspIndex - 1]).concat("'");
+                //start to save to db-----	if name was not null, it's an update, otherwise, an insert
+                sql = new StringBuilder("delete from Category where LANG1 = '").append(category).append("'");
                     	
                 smt.executeUpdate(sql.toString());
                 smt.close();
