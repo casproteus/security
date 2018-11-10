@@ -244,7 +244,7 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
         	if(category == null)
         		return;
         	
-        	if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION2(), BarFrame.consts.Operator(),
+        	if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETECATEGORY(), BarFrame.consts.Operator(),
                     JOptionPane.YES_NO_OPTION) != 0)// 确定删除吗？
                 return;
                         

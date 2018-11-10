@@ -261,11 +261,14 @@ public class PrintService{
         	if(sndMsg.size() > 0) {
         		boolean printSuccessful = false;
         		String printerID = entry.getKey();
-        		if("mev".equalsIgnoreCase(printerID)) {
-             		printSuccessful = doSystemPrint(sndMsg);
+        		//the first printer (P1) might be printer connected by serial port. and might be through a mev device.
+        		if("mev".equalsIgnoreCase(printerID)) {	// if it's for mev. then should be unique format, no command inside.
+             		printSuccessful = doMevPrint(sndMsg);
              	} else if("serial".equalsIgnoreCase(printerID)) { 
             		printSuccessful = doSerialPrint(sndMsg);
-            	} else {
+            	} 
+             	//if it's not connected to the serial port.
+             	else {
             		printSuccessful = doWebSocketPrint(printerID, sndMsg);
             	}
             	
@@ -296,7 +299,20 @@ public class PrintService{
 		}
     }
     
-    private static boolean doSystemPrint(List<String> sndMsg) {
+    private static boolean doMevPrint(List<String> sndMsg) {
+    	//check the msg (it's a bill/check(6 item inside)  or a receipt/invoice (7 item inside)
+    	if(sndMsg.size() == 8) {
+    		for(int i = 8 - 1; i > 1; i--) {
+    			sndMsg.remove(i);
+    		}
+    	}else if(sndMsg.size() == 7) {
+    		sndMsg.remove(2);
+    		sndMsg.remove(3);
+    		sndMsg.remove(4);
+    		sndMsg.remove(5);
+    		
+    	}
+    	//modify the sndMesg
 		// save contents into a file.
     	FileInputStream stream = null;
 		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat(new Date().getTime() + "transaction.xml");
@@ -341,23 +357,6 @@ public class PrintService{
 		return isSuccess;
 	}
 
-	private static void checkPrinter(DocFlavor flavor, PrintRequestAttributeSet pras) {
-		//check printer.
-	    if(defaultService == null) {
-		    defaultService = PrintServiceLookup.lookupDefaultPrintService(); 
-		    if(defaultService == null) {
-		    	javax.print.PrintService[] printService = PrintServiceLookup.lookupPrintServices(flavor, pras); 
-			    if( printService.length > 0 ){  
-			    	defaultService = printService[0];
-			    }
-			    
-			    if (defaultService == null) {
-			    	ErrorUtil.write("Please install printer first.");
-			    }
-		    }
-	    }
-	}
-    
 	private static File getCutCommandDocFile() {
 		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat("mevCutCommand.xml");
 		File file = new File(filePath);
@@ -386,12 +385,40 @@ public class PrintService{
 		//while when sending to mev device, the sndMsg could only be content. and length will always be 1.
 		//we will make the content into 
 		byte[] formattedContent = null;
-		StringBuilder content = new StringBuilder(mev1);
+		
+		StringBuilder content = new StringBuilder(String.format(mev1, "2", "I", "O", "N"));		//"<reqMEV><trans noVersionTrans=\"v02.00\" etatDoc=\"I\" modeTrans=\"O\" duplicata=\"N\"><doc><texte><![CDATA[";
 		for (int i = 0; i < sndMsg.size(); i++) {
 			content.append(sndMsg.get(i));
 		}
 		
-		content.append(mev2).append(mev3).append(mev4).toString();
+		content.append(mev2);
+		
+		HashMap<String, String> map = new HashMap<String, String>();
+		map.put("typeTrans", "ADDI");
+		map.put("reimpression", "N");
+		map.put("autreCompte", "S");
+		map.put("serveurTrans", "");
+		map.put("tableTrans", "Tab18");
+		map.put("paiementTrans", "SOB");
+		map.put("comptoir", "N");
+		map.put("numeroTrans", "2");
+		map.put("dateTrans", "20090128084800");
+		map.put("mtTransAvTaxes", "+000021.85");
+		map.put("TPSTrans", "+000001.09");
+		map.put("TVQTrans", "+000001.72");
+		map.put("mtTransApTaxes", "+000024.66");
+		
+		for (Entry<String, String> entry : map.entrySet()) {
+			content.append(entry.getKey());
+			content.append("=\"");
+			content.append(entry.getValue());
+			content.append("\" ");
+		}
+
+		content.append(mev3);
+		//TODO: add verify.
+		content.append(mev4);
+				
 		try {
 			formattedContent = content.toString().getBytes("ASCII");
 		}catch(UnsupportedEncodingException e) {
@@ -608,52 +635,38 @@ public class PrintService{
     
     private static ArrayList<String> formatContentForBill(List<Dish> list, String curPrintIp, BillPanel billPanel){
     	ArrayList<String> strAryFR = new ArrayList<String>();
-    	//L.d(TAG,"formatContentForPrint");
-        int tWidth = width;
-        try {
-            tWidth = Integer.valueOf((String)CustOpts.custOps.getValue( "width"));
-        }catch(Exception e){
-        	//do nothing, if no with property set, width will keep default value.
-        }
+        int tWidth = getPreferedWidth();
 	            
 	    pushBillHeadInfo(strAryFR, tWidth);
         pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
-        //pushTotal(billPanel, strAryFR);
+        pushTotal(billPanel, strAryFR);
+        
         pushEndMessage(strAryFR);
-
-        //strAryFR.add("\n\n\n\n\n");
+        strAryFR.add("\n\n\n\n\n");
         strAryFR.add("cut");
         return strAryFR;
     }
-    
+
     private static ArrayList<String> formatContentForInvoice(
     		List<Dish> list, String curPrintIp, BillPanel billPanel, boolean isCashBack){
     	ArrayList<String> strAryFR = new ArrayList<String>();
-    	//L.d(TAG,"formatContentForPrint");
-        int tWidth = width;
-        try {
-            tWidth = Integer.valueOf((String)CustOpts.custOps.getValue( "width"));
-        }catch(Exception e){
-        	//do nothing, if no with property set, width will keep default value.
-        }
+    	int tWidth = getPreferedWidth();
 	            
 	    pushBillHeadInfo(strAryFR, tWidth);
         pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
-        //pushTotal(billPanel, strAryFR);
+        pushTotal(billPanel, strAryFR);
+        
         pushPayInfo(billPanel, strAryFR, tWidth, isCashBack);
+        
         pushEndMessage(strAryFR);
+        strAryFR.add("\n\n\n\n\n");
+        strAryFR.add("cut");
         return strAryFR;
     }
 
     private static ArrayList<String> formatContentForReport(List<Bill> list, String curPrintIp, String startTime, String endTime){
     	ArrayList<String> strAryFR = new ArrayList<String>();
-    	//L.d(TAG,"formatContentForPrint");
-        int tWidth = width;
-        try {
-            tWidth = Integer.valueOf((String)CustOpts.custOps.getValue( "width"));
-        }catch(Exception e){
-        	//do nothing, if no with property set, width will keep default value.
-        }
+    	int tWidth = getPreferedWidth();
         
         //initContent
         //content
@@ -1136,22 +1149,39 @@ public class PrintService{
             ipSelectionsMap.put(entry.getKey(),new ArrayList<Dish>());
         }
     }
+
+	private static void checkPrinter(DocFlavor flavor, PrintRequestAttributeSet pras) {
+		//check printer.
+	    if(defaultService == null) {
+		    defaultService = PrintServiceLookup.lookupDefaultPrintService(); 
+		    if(defaultService == null) {
+		    	javax.print.PrintService[] printService = PrintServiceLookup.lookupPrintServices(flavor, pras); 
+			    if( printService.length > 0 ){  
+			    	defaultService = printService[0];
+			    }
+			    
+			    if (defaultService == null) {
+			    	ErrorUtil.write("Please install printer first.");
+			    }
+		    }
+	    }
+	}
+	
+	private static int getPreferedWidth() {
+		int tWidth = width;
+        try {
+            tWidth = Integer.valueOf((String)CustOpts.custOps.getValue( "width"));
+        }catch(Exception e){
+        	//do nothing, if no with property set, width will keep default value.
+        }
+		return tWidth;
+	}
     
-    final static StringBuilder mev1 = new StringBuilder("<reqMEV>\r\n")
-    		.append("	<trans noVersionTrans=\"v02.00\" etatDoc=\"I\" modeTrans=\"O\" duplicata=\"N\">\r\n")
-    		.append("		<doc><texte><![CDATA[");
-    final static StringBuilder mev2 = 
-    		new StringBuilder("				]]></texte></doc>\r\n")
-    		.append("		<alignement>\r\n")
-    		.append("			<![CDATA[\r\n")
-    		.append("			]]>\r\n")
-    		.append("		</alignement>\r\n");
-    final static StringBuilder mev3 = new StringBuilder("		<donneesTrans typeTrans=\"ADDI\" reimpression=\"N\" autreCompte=\"S\" serveurTrans=\"\" tableTrans=\"Tab18\" \r\n")
-    		.append("			paiementTrans=\"SOB\" comptoir=\"N\" numeroTrans=\"2\" dateTrans=\"20090128084800\" mtTransAvTaxes=\"+000021.85\"\r\n")
-    		.append("			TPSTrans=\"+000001.09\" TVQTrans=\"+000001.72\" mtTransApTaxes=\"+000024.66\"/>\r\n");
-    final static StringBuilder mev4 = new StringBuilder("		</trans>\r\n")
-    		//.append("    <verif taille=\"4569\"/>\r\n")
-    		.append("</reqMEV>");
+    final static String mev1 = "<reqMEV><trans noVersionTrans=\"v0%s.00\" etatDoc=\"%s\" modeTrans=\"%s\" duplicata=\"%s\"><doc><texte><![CDATA[";
+    final static String mev2 = "]]></texte></doc>\r\n		<donneesTrans ";
+    final static String mev3 = "/></trans>\r\n";
+    //.append("    <verif taille=\"4569\"/>\r\n")
+    final static String mev4 = "</reqMEV>";
     
     final static String mevDocAutre1 = "<reqMEV><docAutre noVersionAutre=\"v01.00\"><![CDATA[";
     final static String mevDocAutre2 = "]]></docAutre></reqMEV>";
