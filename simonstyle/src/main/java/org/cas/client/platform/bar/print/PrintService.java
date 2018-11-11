@@ -284,18 +284,37 @@ public class PrintService{
         return errorsAmount;
     }
 
-	public static boolean openDrawer(String ip){
-    	try{
-			Socket socket = new Socket(ip != null ? ip : BarFrame.instance.menuPanel.printers[0].getIp(), 9100);
-			OutputStream outputStream = socket.getOutputStream();
-			outputStream.write(Command.DLE_DC4);
-	
-			outputStream.flush();
-			socket.close();
-			return true;
-		} catch (Exception exp) {
-			ErrorUtil.write(exp);
-			return false;
+	public static boolean openDrawer(){
+		String key = BarFrame.menuPanel.printers[0].getIp();
+		if(key.equalsIgnoreCase("mev")) {
+			try{
+				printThroughOSdriver(getOpenCashierCommandDocFilePath(), new HashPrintRequestAttributeSet(), false);
+				return true;
+			} catch (Exception exp) {
+				ErrorUtil.write(exp);
+				return false;
+			}
+			
+		}else if (key.equalsIgnoreCase("serial")){
+			try{
+				return true;
+			} catch (Exception exp) {
+				ErrorUtil.write(exp);
+				return false;
+			}
+		}else {
+	    	try{
+				Socket socket = new Socket(key != null ? key : BarFrame.menuPanel.printers[0].getIp(), 9100);
+				OutputStream outputStream = socket.getOutputStream();
+				outputStream.write(Command.DLE_DC4);
+		
+				outputStream.flush();
+				socket.close();
+				return true;
+			} catch (Exception exp) {
+				ErrorUtil.write(exp);
+				return false;
+			}
 		}
     }
     
@@ -305,60 +324,57 @@ public class PrintService{
     		for(int i = 8 - 1; i > 1; i--) {
     			sndMsg.remove(i);
     		}
-    	}else if(sndMsg.size() == 7) {
-    		sndMsg.remove(2);
-    		sndMsg.remove(3);
+    	}else if(sndMsg.size() == 9) {
+    		sndMsg.remove(8);
+    		sndMsg.remove(7);
     		sndMsg.remove(4);
-    		sndMsg.remove(5);
-    		
+    		sndMsg.remove(2);
     	}
     	//modify the sndMesg
 		// save contents into a file.
-    	FileInputStream stream = null;
 		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat(new Date().getTime() + "transaction.xml");
 		Path path = Paths.get(filePath);
 		try {
     		Files.write(path, buildMevFormatContent(sndMsg));
-    		stream = new FileInputStream(new File(filePath));
         } catch (IOException e) {
         	ErrorUtil.write(e);
         }
     	
     	// print the file
-	    DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;
-    	PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();  
-	    
-    	checkPrinter(flavor, pras);
+    	checkPrinter(DocFlavor.INPUT_STREAM.AUTOSENSE, new HashPrintRequestAttributeSet());
 
 		boolean isSuccess = false;
+		isSuccess = printThroughOSdriver(path, new HashPrintRequestAttributeSet(), true);
+		
+		//do cut paper.
+		if(isSuccess) {
+			isSuccess = printThroughOSdriver(getCutCommandDocFilePath(), new HashPrintRequestAttributeSet(), false);
+	    }
+		
+		return isSuccess;
+	}
+
+	private static boolean printThroughOSdriver(Path path, PrintRequestAttributeSet pras,
+			boolean deleteCommandFile) {
 		DocPrintJob job = defaultService.createPrintJob();
 		try {
-			job.print(new SimpleDoc(stream, flavor, new HashDocAttributeSet()), pras);
-			Files.deleteIfExists(path);
-			isSuccess = true;
+	    	FileInputStream stream = new FileInputStream(path.toFile());
+			job.print(new SimpleDoc(stream,  DocFlavor.INPUT_STREAM.AUTOSENSE, new HashDocAttributeSet()), pras);
+			if(deleteCommandFile) {
+				Files.deleteIfExists(path);
+			}
+			return true;
 		} catch (PrintException e) {
 			ErrorUtil.write(e);
 		} catch(IOException ioe) {
 			ErrorUtil.write(ioe);
 		}
-		
-		//do cut paper.
-		job = defaultService.createPrintJob();	
-		try {
-			job.print(new SimpleDoc(new FileInputStream(getCutCommandDocFile()), flavor, new HashDocAttributeSet()), pras);
-			isSuccess = true;
-		} catch (PrintException e) {
-			ErrorUtil.write(e);
-		}  catch(IOException ioe) {
-			ErrorUtil.write(ioe);
-		}
-		
-		
-		return isSuccess;
+		return false;
 	}
 
-	private static File getCutCommandDocFile() {
+	private static Path getCutCommandDocFilePath() {
 		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat("mevCutCommand.xml");
+		Path path = Paths.get(filePath);
 		File file = new File(filePath);
 		
 		//check if it's exist.
@@ -371,15 +387,39 @@ public class PrintService{
 				System.arraycopy(a, 0, c, 0, a.length);
 				System.arraycopy(Command.GS_V_m_n, 0, c, a.length, Command.GS_V_m_n.length);
 				System.arraycopy(b, 0, c, a.length + Command.GS_V_m_n.length, b.length);
-				Files.write(Paths.get(filePath), c);
+				Files.write(path, c);
 			}catch(Exception e) {
 				ErrorUtil.write(e);
 			}
 		}
-		
-		return file;
+
+		return path;
 	}
 
+	private static Path getOpenCashierCommandDocFilePath() {
+		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat("mevOpenCashierCommand.xml");
+		Path path = Paths.get(filePath);
+		File file = new File(filePath);
+		
+		//check if it's exist.
+		if(!file.exists()) {
+			//creata the file
+			try {
+				byte[] a = mevDocAutre1.getBytes("ASCII");
+				byte[] b = mevDocAutre2.getBytes("ASCII");
+				byte[] c = new byte[a.length + Command.OPEN_CASHIER.length + b.length];
+				System.arraycopy(a, 0, c, 0, a.length);
+				System.arraycopy(Command.OPEN_CASHIER, 0, c, a.length, Command.OPEN_CASHIER.length);
+				System.arraycopy(b, 0, c, a.length + Command.OPEN_CASHIER.length, b.length);
+				Files.write(path, c);
+			}catch(Exception e) {
+				ErrorUtil.write(e);
+			}
+		}
+
+		return path;
+	}
+	
 	private static byte[] buildMevFormatContent(List<String> sndMsg) {
 		//the contents could be composed by :1/Command.BEEP 2/BigFont 3/NormalFont 4/cut 5/content.
 		//while when sending to mev device, the sndMsg could only be content. and length will always be 1.

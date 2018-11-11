@@ -259,7 +259,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	resetContent();
         	this.setVisible(false);
 
-        	BarUtil.openMoneyBox();
+        	PrintService.openDrawer();
         	//let's qa decide if we should go back to table interface.
         	if(left <= 0 || billClosed) {
         		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
@@ -274,7 +274,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 
     		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
     		PrintService.exePrintInvoice(bp, bp.orderedDishAry, true);
-        	BarUtil.openMoneyBox();
+    		PrintService.openDrawer();
         	BarFrame.instance.switchMode(0);
         	
         } else {

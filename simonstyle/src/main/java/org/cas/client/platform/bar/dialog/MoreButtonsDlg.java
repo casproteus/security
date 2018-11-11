@@ -12,6 +12,7 @@ import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.beans.FunctionButton;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
+import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -77,7 +78,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
     	} else if (o == btnLine_3_2) {
     		PayDlg.exactCash(barGeneralPanel.billPanel.getBillId());
         	this.setVisible(false);
-        	BarUtil.openMoneyBox();
+        	PrintService.openDrawer();
         	BarFrame.instance.switchMode(0);
         	
         } else if (o == btnLine_3_3) {

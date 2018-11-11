@@ -28,6 +28,7 @@ import org.cas.client.platform.bar.dialog.statistics.BillRecordListDlg;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
 import org.cas.client.platform.bar.model.User;
+import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -183,7 +184,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         		dlg.initContent(startTime, endNow);
         		dlg.setVisible(true);
         	} else if (o == btnOpenDrawer) {	//open drawer.
-        		BarUtil.openMoneyBox();
+        		PrintService.openDrawer();
             //} else if (o == btnWaiterReport) {
             } else if (o == btnSetting) {
                 BarFrame.instance.switchMode(3);

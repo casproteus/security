@@ -25,6 +25,7 @@ import org.cas.client.platform.bar.beans.FunctionButton;
 import org.cas.client.platform.bar.beans.MenuButton;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
@@ -257,7 +258,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	BarFrame.instance.switchMode(0);
             	
             } else if (o == btnLine_2_6) {		//open drawer
-            	BarUtil.openMoneyBox();
+            	PrintService.openDrawer();
             	
             } else if (o == btnLine_2_7) {//disc bill
          		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.DISCOUNT_BILL());
@@ -332,7 +333,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
              		sql = "update bill set status = " + status + " where id = " + billPanel.orderedDishAry.get(0).getBillID();
              		PIMDBModel.getStatement().executeUpdate(sql);
-             		BarUtil.openMoneyBox();
+             		PrintService.openDrawer();
              	}catch(Exception exp) {
                  	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
              		return;

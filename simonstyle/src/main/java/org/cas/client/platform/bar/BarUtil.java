@@ -19,6 +19,7 @@ import gnu.io.PortInUseException;
 
 public class BarUtil {
 	
+	//not sure the command still available. I am currently using Command.OPEN_CASHIER
 	public static void openMoneyBox() {
 		int[] ccs = new int[5];
 		ccs[0] = 27;
@@ -35,9 +36,9 @@ public class BarUtil {
 			else
 				while (tPorts.hasMoreElements()) {
 					tPortIdty = (CommPortIdentifier) tPorts.nextElement();
-					if (tPortIdty.getName().equals("LPT1")) {
+					if (tPortIdty.getName().equalsIgnoreCase("com1")) {
 						if (!tPortIdty.isCurrentlyOwned()) {
-							ParallelPort tParallelPort = (ParallelPort) tPortIdty.open("ParallelBlackBox", 2000);
+							ParallelPort tParallelPort = (ParallelPort) tPortIdty.open("serialBlackBox", 2000);
 							DataOutputStream tOutStream = new DataOutputStream(tParallelPort.getOutputStream());
 							for (int i = 0; i < 5; i++)
 								tOutStream.write(ccs[i]);

@@ -27,7 +27,9 @@ public class Command {
     public static byte[] GS_V_m_n = new byte[] {0x1d, 0x56, 0x42, 0x00 };
     public static byte[] GS_i = new byte[] {0x1b, 0x69 };
     public static byte[] GS_m = new byte[] {0x1b, 0x6d };
-
+    //open cashier;
+    public static byte[] OPEN_CASHIER = new byte[] {0x1b, 0x70, 0x00, 0x3c, 0x78};//27,112,0,60,120
+    
     /**
      * 字符设置命令
      */
