@@ -146,15 +146,22 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     			String value = content.substring(idx + 1);
     	    	CustOpts.custOps.setKeyAndValue(key, value);
     		}else {
-	    		try {
-		    		int t = Integer.valueOf(content);
-		    		if(t < 10) {
-		    			t *= 1000;
+    			idx = content.indexOf("?");
+        		if(idx >= 0) {
+        			String key = content.substring(0, idx);
+        			String value = (String)CustOpts.custOps.getValue(key);
+        			tfdPrinterMinReachTime.setText(value);
+        		}else {
+		    		try {
+			    		int t = Integer.valueOf(content);
+			    		if(t < 10) {
+			    			t *= 1000;
+			    		}
+			    		BarOption.setPrinterMinReachTime(String.valueOf(t));
+		    		}catch(Exception exp) {
+		    			JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
 		    		}
-		    		BarOption.setPrinterMinReachTime(String.valueOf(t));
-	    		}catch(Exception exp) {
-	    			JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
-	    		}
+    			}
     		}
     	}else if(o == tfdCategoryRow) {
     		int num;
