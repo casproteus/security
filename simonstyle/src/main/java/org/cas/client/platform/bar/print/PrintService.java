@@ -31,19 +31,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
 import javax.print.PrintException;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
-import javax.print.attribute.DocAttributeSet;
 import javax.print.attribute.HashDocAttributeSet;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.io.FileUtils;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillPanel;
@@ -288,21 +285,21 @@ public class PrintService{
 		String key = BarFrame.menuPanel.printers[0].getIp();
 		if(key.equalsIgnoreCase("mev")) {
 			try{
-				printThroughOSdriver(getOpenCashierCommandDocFilePath(), new HashPrintRequestAttributeSet(), false);
+				printThroughOSdriver(getMevCommandFilePath("mevOpenCashierCommand.xml", Command.OPEN_CASHIER), new HashPrintRequestAttributeSet(), false);
 				return true;
 			} catch (Exception exp) {
 				ErrorUtil.write(exp);
 				return false;
 			}
 			
-		}else if (key.equalsIgnoreCase("serial")){
+		}else if (key.equalsIgnoreCase("serial")){	//TODO: not implemented yet.
 			try{
 				return true;
 			} catch (Exception exp) {
 				ErrorUtil.write(exp);
 				return false;
 			}
-		}else {
+		}else {	//TODO: not tested yet. worked around year 2005
 	    	try{
 				Socket socket = new Socket(key != null ? key : BarFrame.menuPanel.printers[0].getIp(), 9100);
 				OutputStream outputStream = socket.getOutputStream();
@@ -320,22 +317,39 @@ public class PrintService{
     
     private static boolean doMevPrint(List<String> sndMsg) {
     	//check the msg (it's a bill/check(6 item inside)  or a receipt/invoice (7 item inside)
-    	if(sndMsg.size() == 8) {
-    		for(int i = 8 - 1; i > 1; i--) {
+    	String transType = checkTransType(sndMsg);
+    	switch (transType) {
+		case "ADDI"://check
+			for(int i = 8 - 1; i > 1; i--) {
     			sndMsg.remove(i);
     		}
-    	}else if(sndMsg.size() == 9) {
-    		sndMsg.remove(8);
+			break;
+			
+		case "RFER"://receipt
+			sndMsg.remove(8);
     		sndMsg.remove(7);
     		sndMsg.remove(4);
     		sndMsg.remove(2);
-    	}
+			break;
+			
+		case "R_RFER"://reprinted receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice.".
+			sndMsg.remove(9);
+			sndMsg.remove(8);
+    		sndMsg.remove(7);
+    		sndMsg.remove(4);
+    		sndMsg.remove(2);
+			break;
+			
+		default:
+			break;
+		}
+    	
     	//modify the sndMesg
 		// save contents into a file.
 		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat(new Date().getTime() + "transaction.xml");
 		Path path = Paths.get(filePath);
 		try {
-    		Files.write(path, buildMevFormatContent(sndMsg));
+    		Files.write(path, buildMevFormatContent(sndMsg, transType));
         } catch (IOException e) {
         	ErrorUtil.write(e);
         }
@@ -348,10 +362,21 @@ public class PrintService{
 		
 		//do cut paper.
 		if(isSuccess) {
-			isSuccess = printThroughOSdriver(getCutCommandDocFilePath(), new HashPrintRequestAttributeSet(), false);
+			isSuccess = printThroughOSdriver(getMevCommandFilePath("mevCutCommand.xml", Command.GS_V_m_n), new HashPrintRequestAttributeSet(), false);
 	    }
 		
 		return isSuccess;
+	}
+
+	private static String checkTransType(List<String> sndMsg) {
+		if(sndMsg.size() == 8) {	//currently if it's check, sndMsg has 8 element. 
+			return "ADDI";
+		}else if (sndMsg.size() == 9) {	//currently if it's receipt, sndMsg has 9 element. 
+			return "RFER";
+		}else if (sndMsg.size() == 10) {	//currently if it's receipt, sndMsg has 9 element. 
+			return "R_RFER";
+		}
+		return "";
 	}
 
 	private static boolean printThroughOSdriver(Path path, PrintRequestAttributeSet pras,
@@ -372,8 +397,8 @@ public class PrintService{
 		return false;
 	}
 
-	private static Path getCutCommandDocFilePath() {
-		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat("mevCutCommand.xml");
+	private static Path getMevCommandFilePath(String fileName, byte[] command) {
+		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat(fileName);
 		Path path = Paths.get(filePath);
 		File file = new File(filePath);
 		
@@ -383,34 +408,10 @@ public class PrintService{
 			try {
 				byte[] a = mevDocAutre1.getBytes("ASCII");
 				byte[] b = mevDocAutre2.getBytes("ASCII");
-				byte[] c = new byte[a.length + Command.GS_V_m_n.length + b.length];
+				byte[] c = new byte[a.length + command.length + b.length];
 				System.arraycopy(a, 0, c, 0, a.length);
-				System.arraycopy(Command.GS_V_m_n, 0, c, a.length, Command.GS_V_m_n.length);
-				System.arraycopy(b, 0, c, a.length + Command.GS_V_m_n.length, b.length);
-				Files.write(path, c);
-			}catch(Exception e) {
-				ErrorUtil.write(e);
-			}
-		}
-
-		return path;
-	}
-
-	private static Path getOpenCashierCommandDocFilePath() {
-		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat("mevOpenCashierCommand.xml");
-		Path path = Paths.get(filePath);
-		File file = new File(filePath);
-		
-		//check if it's exist.
-		if(!file.exists()) {
-			//creata the file
-			try {
-				byte[] a = mevDocAutre1.getBytes("ASCII");
-				byte[] b = mevDocAutre2.getBytes("ASCII");
-				byte[] c = new byte[a.length + Command.OPEN_CASHIER.length + b.length];
-				System.arraycopy(a, 0, c, 0, a.length);
-				System.arraycopy(Command.OPEN_CASHIER, 0, c, a.length, Command.OPEN_CASHIER.length);
-				System.arraycopy(b, 0, c, a.length + Command.OPEN_CASHIER.length, b.length);
+				System.arraycopy(command, 0, c, a.length, command.length);
+				System.arraycopy(b, 0, c, a.length + command.length, b.length);
 				Files.write(path, c);
 			}catch(Exception e) {
 				ErrorUtil.write(e);
@@ -420,47 +421,125 @@ public class PrintService{
 		return path;
 	}
 	
-	private static byte[] buildMevFormatContent(List<String> sndMsg) {
+	private static byte[] buildMevFormatContent(List<String> sndMsg, String transType) {
 		//the contents could be composed by :1/Command.BEEP 2/BigFont 3/NormalFont 4/cut 5/content.
 		//while when sending to mev device, the sndMsg could only be content. and length will always be 1.
 		//we will make the content into 
 		byte[] formattedContent = null;
 		
-		StringBuilder content = new StringBuilder(String.format(mev1, "2", "I", "O", "N"));		//"<reqMEV><trans noVersionTrans=\"v02.00\" etatDoc=\"I\" modeTrans=\"O\" duplicata=\"N\"><doc><texte><![CDATA[";
+		StringBuilder printContent = new StringBuilder(String.format(mev1, "2", "I", "O", "N"));		
+		//mev = "<reqMEV><trans noVersionTrans=\"v02.00\" etatDoc=\"I\" modeTrans=\"O\" duplicata=\"N\"><doc><texte><![CDATA[";
+		String paiementTrans = "SOB";
+		String comptoir = "N";
+		String autreCompte = "S";
+		String numeroTrans = "";
+		String tableTrans = "";
+		String serveurTrans = "";
+		String dateTrans = "00000000000000";	//20090128084800
+		String mtTransAvTaxes = "+000000.00";//+000021.85
+		String TPSTrans = "+000000.00";//+000001.09
+		String TVQTrans = "+000000.00";//+000001.72
+		String mtTransApTaxes = "+000000.00";//+000024.66
 		for (int i = 0; i < sndMsg.size(); i++) {
-			content.append(sndMsg.get(i));
+			String tText = sndMsg.get(i);
+			tText = tText.trim();
+			while(tText.startsWith("\n")) {
+				tText = tText.substring(1);
+			}
+			
+			if(i == 0) {							//find out the bill Number
+				int startPos = tText.indexOf("#");
+				if(startPos >= 0) {
+					numeroTrans = tText.substring(startPos + 1, tText.indexOf("\n", startPos));
+				}
+			}else if(i == 1) {//find out the table and client and time and sub total and tps tpq
+				String firstLine = tText.substring(0, tText.indexOf("\n"));
+				String[] ary = firstLine.split(" ");
+				if(ary.length > 0) {
+					int s = ary[0].indexOf("(");
+					if(s >= 0) {
+						tableTrans = ary[0].substring(s + 1, ary[0].indexOf(")"));
+					}
+				}
+				
+				if(ary[1].length() > 0) {	//user is configurable, so the ary.length could be 3.
+					serveurTrans = ary[1]; 
+				}
+				String time =  ary[ary.length - 1];
+				String date =  ary[ary.length - 2];
+				String[] tAry = time.split(":");
+				String[] dAry = date.split("-");
+				dateTrans = new StringBuilder(dAry[0]).append(dAry[1]).append(dAry[2]).append(tAry[0]).append(tAry[1]).toString();
+				if(tAry.length == 3) {
+					dateTrans  = dateTrans.concat(tAry[2]);
+				}else {
+					dateTrans  = dateTrans.concat("00");
+				}
+				
+				//money
+				String tContent = tText.substring(tText.lastIndexOf("-") + 2); //there's a "\n".
+				String[] a = tContent.split("\n");
+				if(a.length == 3) {
+					mtTransAvTaxes = formatMoneyForMev(a[0].substring(a[0].indexOf(":") + 1));//+000021.85
+					TPSTrans = formatMoneyForMev(a[1].substring(a[1].indexOf(":") + 1));//+000001.09
+					TVQTrans = formatMoneyForMev(a[2].substring(a[2].indexOf(":") + 1));//+000001.72
+				}
+			}else if(i == 2) {//find out the total
+				mtTransApTaxes = formatMoneyForMev(tText.substring(tText.indexOf(":") + 1));
+			}else if(i == 3) { // find out the payment.
+				String[] a = tText.split("\n");
+				if(a.length == 2) {
+					paiementTrans = getMatechPaytrans(a[0]);
+				}else if (a.length  > 2){
+					paiementTrans = "MIX";
+				}
+			}
+			printContent.append(sndMsg.get(i));
 		}
 		
-		content.append(mev2);
+		printContent.append(mev2);
 		
 		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("typeTrans", "ADDI");
+		
+		if(transType.startsWith("R_")) {	// whether this is a complete copy of a transaction to remit to the client.
+			transType = transType.substring(2);
+			map.put("reimpression", "O");
+		}
 		map.put("reimpression", "N");
-		map.put("autreCompte", "S");
-		map.put("serveurTrans", "");
-		map.put("tableTrans", "Tab18");
-		map.put("paiementTrans", "SOB");
-		map.put("comptoir", "N");
-		map.put("numeroTrans", "2");
-		map.put("dateTrans", "20090128084800");
-		map.put("mtTransAvTaxes", "+000021.85");
-		map.put("TPSTrans", "+000001.09");
-		map.put("TVQTrans", "+000001.72");
-		map.put("mtTransApTaxes", "+000024.66");
+		
+		map.put("typeTrans", transType);	//ADDI--ADDItion (Check)    RFER--Reçu de FERmeture (Closing receipt)
+		//When a previously generated bill needs to be reprinted. The date and time displayed, must be exactly the same.
+		//Only the attribute “reimpression” (reprint) will have a different value in the reprinting request.
+		//The reprinting request must reproduce the references contained in the original request.
+		
+		map.put("autreCompte", autreCompte);	//the amount paid or to be paid (in full or in part) is recorded in a system
+		//other than the SRS. possible values:• F(Package deal)• G(Group event) • S(N/A)
+		
+		map.put("serveurTrans", serveurTrans);	//Identifier of the waiter responsible for the transaction. 
+		map.put("tableTrans", tableTrans);	//table associated with the transaction.
+		map.put("paiementTrans", paiementTrans); //method of payment for the transaction.ARG ARGent (cash) • AUT(other) • CRE(credit card)• DEB(debit card)• MIX(mixed payment) • SOB(N/A)
+		map.put("comptoir", comptoir);	//whether the operator uses  the SRS’ Counter service operating mode
+		
+		map.put("numeroTrans", numeroTrans);//Number of the current transaction. This number must match the one in the body of the bill ( in the <doc> tag).
+		map.put("dateTrans", dateTrans);
+		map.put("mtTransAvTaxes", mtTransAvTaxes);
+		map.put("TPSTrans", TPSTrans);
+		map.put("TVQTrans", TVQTrans);
+		map.put("mtTransApTaxes", mtTransApTaxes);
 		
 		for (Entry<String, String> entry : map.entrySet()) {
-			content.append(entry.getKey());
-			content.append("=\"");
-			content.append(entry.getValue());
-			content.append("\" ");
+			printContent.append(entry.getKey());
+			printContent.append("=\"");
+			printContent.append(entry.getValue());
+			printContent.append("\" ");
 		}
 
-		content.append(mev3);
+		printContent.append(mev3);
 		//TODO: add verify.
-		content.append(mev4);
+		printContent.append(mev4);
 				
 		try {
-			formattedContent = content.toString().getBytes("ASCII");
+			formattedContent = printContent.toString().getBytes("ASCII");
 		}catch(UnsupportedEncodingException e) {
 			ErrorUtil.write(e);
 		}
@@ -468,7 +547,36 @@ public class PrintService{
 		return formattedContent;
 	}
 	
-    private static boolean doSerialPrint(List<String> sndMsg) {
+    private static String getMatechPaytrans(String string) {
+		if(string == null || string.length() == 0) {
+			return "SOB";
+		}else {
+			switch (string.substring(0, string.indexOf(":")).trim()) {
+			case "CASH":
+				return "ARG";
+			case "DEBIT":
+				return "DEB";
+			case "VISA":
+				return "CRE";
+			case "MASTER":
+				return "CRE";
+			default:
+				return "AUT";
+			}
+		}
+	}
+
+	private static String formatMoneyForMev(String string) {
+		// TODO Auto-generated method stub
+    	String cleanText = string.trim();
+    	StringBuilder stringFR = new StringBuilder("+");
+    	for(int i = 1; i < 10 - cleanText.length(); i++) {
+    		stringFR.append("0");
+    	}
+		return stringFR.append(cleanText).toString();
+	}
+
+	private static boolean doSerialPrint(List<String> sndMsg) {
         CommPortIdentifier commPortIdentifier;
         SerialPort tSerialPort = null;
         DataOutputStream outputStream = null;
@@ -677,7 +785,7 @@ public class PrintService{
     	ArrayList<String> strAryFR = new ArrayList<String>();
         int tWidth = getPreferedWidth();
 	            
-	    pushBillHeadInfo(strAryFR, tWidth);
+	    pushBillHeadInfo(strAryFR, tWidth, null);
         pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
         pushTotal(billPanel, strAryFR);
         
@@ -691,8 +799,8 @@ public class PrintService{
     		List<Dish> list, String curPrintIp, BillPanel billPanel, boolean isCashBack){
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	int tWidth = getPreferedWidth();
-	            
-	    pushBillHeadInfo(strAryFR, tWidth);
+    	
+	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
         pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
         pushTotal(billPanel, strAryFR);
         
@@ -738,7 +846,7 @@ public class PrintService{
   		HST = net * (gstRate + qstRate)/100;
   		//
       		
-	    pushBillHeadInfo(strAryFR, tWidth);
+	    pushBillHeadInfo(strAryFR, tWidth, null);
 	    pushWaiterAndTime(strAryFR, list, tWidth, startTime, endTime);
         pushSalesSummary(strAryFR, list, tWidth,
         		String.valueOf(salesGrossCount), String.valueOf(refundCount), 
@@ -756,8 +864,8 @@ public class PrintService{
         return strAryFR;
     }
     
-	private static void pushBillHeadInfo(ArrayList<String> strAryFR, int tWidth) {
-		StringBuilder content = getFormattedBillHeader(tWidth);
+	private static void pushBillHeadInfo(ArrayList<String> strAryFR, int tWidth, String billID) {
+		StringBuilder content = getFormattedBillHeader(tWidth, billID);
         content.append("\n");
         //push bill header
         strAryFR.add(content.toString());
@@ -1029,8 +1137,8 @@ public class PrintService{
 		return sepLines[index];
 	}
 	
-    private static StringBuilder getFormattedBillHeader(int tWidth) {
-    	StringBuilder sb = new StringBuilder();
+    private static StringBuilder getFormattedBillHeader(int tWidth, String id) {
+    	StringBuilder sb = id == null ? new StringBuilder() : new StringBuilder("#").append(id).append("\n");
     	String s = BarOption.getBillHeadInfo();
     	if(s != null && s.trim().length() > 0) {
     		String[] infos = s.split(":");
