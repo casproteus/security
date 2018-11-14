@@ -547,7 +547,9 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         // 属性设置－－－－－－－－－－－－－－
         ok.setMnemonic('o');
         ok.setMargin(new Insets(0, 0, 0, 0));
-
+        cancel.setMargin(ok.getMargin());
+        delete.setMargin(ok.getMargin());
+        
         setBounds((CustOpts.SCRWIDTH - 280) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 680, 300); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
         getRootPane().setDefaultButton(ok);

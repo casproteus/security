@@ -202,7 +202,7 @@ public interface DlgConst
     String SELECT_ADDRESS = "选择电子邮件地址(E)";
     String ASSOCIATE_ID = "与选定的电子邮件地址相关联的数字ID(D):";
     String PROPERTY_SECURE = "属性(R)";
-    String DELETE = "删除(D)";
+    String DELETE = "DELETE";
     String SET_DEFAULT = "设为默认值(S)";
     String IMPORT = "导入(M)...";
     String EXPORT = "导出(X)...";
