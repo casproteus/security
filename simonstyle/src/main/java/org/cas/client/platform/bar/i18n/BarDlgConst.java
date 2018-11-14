@@ -19,7 +19,7 @@ public interface BarDlgConst {
     String CashBack();
     String AddToTip();
     String Status();
-    String APPLY();
+    String Apply();
     String PRINT();
 
     String EnterCashPayment();
@@ -260,7 +260,7 @@ public interface BarDlgConst {
     String AvailableModification();
     String AddNewModificationItem();
     String ADD_TO_LIST();
-    String DELETE();
+    String Delete();
     String RESET();
 
     String TablePanelBK();

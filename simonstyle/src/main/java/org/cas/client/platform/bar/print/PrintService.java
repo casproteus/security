@@ -875,7 +875,7 @@ public class PrintService{
   		HST = net * (gstRate + qstRate)/100;
   		//
       		
-	    pushBillHeadInfo(strAryFR, tWidth, null);
+	    //pushBillHeadInfo(strAryFR, tWidth, null);
 	    pushWaiterAndTime(strAryFR, list, tWidth, startTime, endTime);
         pushSalesSummary(strAryFR, list, tWidth,
         		String.valueOf(salesGrossCount), String.valueOf(refundCount), 

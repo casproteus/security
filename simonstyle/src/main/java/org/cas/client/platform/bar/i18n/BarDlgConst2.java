@@ -28,7 +28,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String Status() {return "状态";}
     @Override
-	public String APPLY() {return "应用";}
+	public String Apply() {return "应用";}
     @Override
 	public String PRINT() {return "打印";}
 
@@ -481,7 +481,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String ADD_TO_LIST() {return "加入到列表";}
     @Override
-	public String DELETE() {return "删除";}
+	public String Delete() {return "删除";}
     @Override
 	public String RESET() {return "复位";}
 

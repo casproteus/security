@@ -28,9 +28,9 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String Status() {return "Status";}
     @Override
-	public String APPLY() {return "APPLY";}
+	public String Apply() {return "Apply";}
     @Override
-	public String PRINT() {return "PRINT";}
+	public String PRINT() {return "Print";}
 
     @Override
 	public String EnterCashPayment() {return "Enter Cash Payment";}
@@ -481,9 +481,9 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String ADD_TO_LIST() {return "Add To List";}
     @Override
-	public String DELETE() {return "DELETE";}
+	public String Delete() {return "Delete";}
     @Override
-	public String RESET() {return "RESET";}
+	public String RESET() {return "Reset";}
     
     @Override
 	public String LoginBK(){return "Login Dialog Back Ground";};

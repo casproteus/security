@@ -204,7 +204,7 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
         	endTime.append(tfdMonthTo.getText());
         	endTime.append("-");
         	endTime.append(tfdDayTo.getText());
-        	endTime.append(" 00:00:00");
+        	endTime.append(" 23:59:59");
         	
         	initContent(startTime.toString(), endTime.toString());
         	reLayout();
@@ -272,7 +272,7 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
         tfdYearTo = new JTextField();
         tfdMonthTo = new JTextField();
         tfdDayTo = new JTextField();
-        btnChangeDate = new JButton(BarFrame.consts.APPLY());
+        btnChangeDate = new JButton(BarFrame.consts.Apply());
         
         // properties
         btnChangeDate.setMnemonic('F');

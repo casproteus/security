@@ -100,8 +100,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         txaCurContent = new JTextArea(); // 加入会滚动的文本区
         topLabel = new JLabel(BarFrame.consts.AddNewModificationItem()); // "项目属于这些类别"标签
         modificationList = new JList();
-        btnApply = new JButton(BarFrame.consts.APPLY()); // 加至列表按钮
-        btnDelete = new JButton(BarFrame.consts.DELETE()); // 删除按钮
+        btnApply = new JButton(BarFrame.consts.Apply()); // 加至列表按钮
+        btnDelete = new JButton(BarFrame.consts.Delete()); // 删除按钮
         resetBTN = new JButton(BarFrame.consts.RESET()); // 重置按钮
         btnOK = new JButton(BarFrame.consts.OK()); // 设置Cancel按钮
 
