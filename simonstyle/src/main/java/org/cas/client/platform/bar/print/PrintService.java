@@ -339,37 +339,44 @@ public class PrintService{
     		sndMsg.remove(4);
     		sndMsg.remove(2);
 			break;
+		case "REPORT"://reprinted receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice.".
+    		sndMsg.remove(4);
+    		sndMsg.remove(3);
+			break;
 			
 		default:
 			break;
 		}
-    	
+
+    	// print the file
+    	checkPrinter(DocFlavor.INPUT_STREAM.AUTOSENSE, new HashPrintRequestAttributeSet());
+
+		boolean isSuccess = false;
     	//modify the sndMesg
 		// save contents into a file.
 		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat(new Date().getTime() + "transaction.xml");
 		Path path = Paths.get(filePath);
 		try {
-    		Files.write(path, buildMevFormatContent(sndMsg, transType));
+	    	Files.write(path, "REPORT".equals(transType) ? buildMevReportContent(sndMsg) : buildMevFormatContent(sndMsg, transType));
         } catch (IOException e) {
         	ErrorUtil.write(e);
         }
-    	
-    	// print the file
-    	checkPrinter(DocFlavor.INPUT_STREAM.AUTOSENSE, new HashPrintRequestAttributeSet());
 
-		boolean isSuccess = false;
 		isSuccess = printThroughOSdriver(path, new HashPrintRequestAttributeSet(), true);
 		
 		//do cut paper.
 		if(isSuccess) {
 			isSuccess = printThroughOSdriver(getMevCommandFilePath("mevCutCommand.xml", Command.GS_V_m_n), new HashPrintRequestAttributeSet(), false);
-	    }
+			//TODO:clean the file on disk.
+		}
 		
 		return isSuccess;
 	}
 
 	private static String checkTransType(List<String> sndMsg) {
-		if(sndMsg.size() == 8) {	//currently if it's check, sndMsg has 8 element. 
+		if(sndMsg.size() == 5) {	//currently if it's check, sndMsg has 8 element. 
+			return "REPORT";
+		}else if(sndMsg.size() == 8) {	//currently if it's check, sndMsg has 8 element. 
 			return "ADDI";
 		}else if (sndMsg.size() == 9) {	//currently if it's receipt, sndMsg has 9 element. 
 			return "RFER";
@@ -397,6 +404,28 @@ public class PrintService{
 		return false;
 	}
 
+	private static byte[] buildMevReportContent(List<String> sndMsg) {
+		//the contents could be composed by :1/Command.BEEP 2/BigFont 3/NormalFont 4/cut 5/content.
+		//while when sending to mev device, the sndMsg could only be content. and length will always be 1.
+		//we will make the content into 
+		byte[] formattedContent = null;
+		
+		StringBuilder printContent = new StringBuilder(mevDocAutre1);		
+		for (int i = 0; i < sndMsg.size(); i++) {					
+			printContent.append(sndMsg.get(i));
+		}
+		
+		printContent.append(mevDocAutre2);
+		
+		try {
+			formattedContent = printContent.toString().getBytes("ASCII");
+		}catch(UnsupportedEncodingException e) {
+			ErrorUtil.write(e);
+		}
+		
+		return formattedContent;
+	}
+	
 	private static Path getMevCommandFilePath(String fileName, byte[] command) {
 		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat(fileName);
 		Path path = Paths.get(filePath);
@@ -488,7 +517,7 @@ public class PrintService{
 				mtTransApTaxes = formatMoneyForMev(tText.substring(tText.indexOf(":") + 1));
 			}else if(i == 3) { // find out the payment.
 				String[] a = tText.split("\n");
-				if(a.length == 2) {
+				if(a.length == 2) {		//we use I, because there's a line of "change" or "tip".
 					paiementTrans = getMatechPaytrans(a[0]);
 				}else if (a.length  > 2){
 					paiementTrans = "MIX";
