@@ -84,11 +84,11 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		return String.valueOf((int)(existingMoney * 100 + newAddedMoney * 100));
 	}
     
-    public static void exactCash(int billId) {
-    	StringBuilder sb = new StringBuilder("update bill set cashReceived = ");
-    	sb.append((int)(Float.valueOf(valTotal.getText()) * 100));
-    	sb.append(", DebitReceived = 0, VisaReceived = 0, MasterReceived = 0, status = -1 where id = ");
-    	sb.append(billId);
+    public static void exactMoney(int billId, String pay) {
+    	StringBuilder sb = new StringBuilder("update bill set " + pay + "Received = ")
+    	.append((int)(Float.valueOf(valTotal.getText()) * 100))
+    	//.append(", DebitReceived = 0, VisaReceived = 0, MasterReceived = 0")
+    	.append(", status = -1 where id = ").append(billId);
    		try {
 			PIMDBModel.getStatement().executeUpdate(sb.toString());
 			
@@ -268,7 +268,19 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	}
         	
         } else if(o == btnExact) {//update bill and display change 0.00;
-        	exactCash(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId());
+        	String strPay = "other";
+    		String curTitle = getTitle();
+    		//calculate the received of diffent kind
+    		if(curTitle.equals(BarFrame.consts.EnterCashPayment())){
+    			strPay = "cash";
+    		} else if(curTitle.equals(BarFrame.consts.EnterDebitPayment())) {
+    			strPay = "debit";
+    		} else if(curTitle.equals(BarFrame.consts.EnterVisaPayment())) {
+    			strPay = "visa";
+    		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment())) {
+    			strPay = "master";
+    		}
+        	exactMoney(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId(), strPay);
         	resetContent();
         	this.setVisible(false);
 

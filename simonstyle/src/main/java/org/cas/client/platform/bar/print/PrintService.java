@@ -509,9 +509,14 @@ public class PrintService{
 				String tContent = tText.substring(tText.lastIndexOf("-") + 2); //there's a "\n".
 				String[] a = tContent.split("\n");
 				if(a.length == 3) {
-					mtTransAvTaxes = formatMoneyForMev(a[0].substring(a[0].indexOf(":") + 1));//+000021.85
-					TPSTrans = formatMoneyForMev(a[1].substring(a[1].indexOf(":") + 1));//+000001.09
-					TVQTrans = formatMoneyForMev(a[2].substring(a[2].indexOf(":") + 1));//+000001.72
+					String strAvT = a[0].substring(a[0].indexOf(":") + 1);
+					mtTransAvTaxes = formatMoneyForMev(strAvT);//+000021.85
+					String strTPS = a[1].substring(a[1].indexOf(":") + 1);
+					TPSTrans = formatMoneyForMev(strTPS);//+000001.09
+					String strTVQ = a[2].substring(a[2].indexOf(":") + 1);
+					TVQTrans = formatMoneyForMev(strTVQ);//+000001.72
+					Float total = Float.valueOf(strAvT) +  Float.valueOf(strTPS) +  Float.valueOf(strTVQ);
+					mtTransApTaxes = formatMoneyForMev(new DecimalFormat("#0.00").format(total));
 				}
 			}else if(i == 2) {//find out the total
 				mtTransApTaxes = formatMoneyForMev(tText.substring(tText.indexOf(":") + 1));
@@ -549,7 +554,7 @@ public class PrintService{
 		map.put("paiementTrans", paiementTrans); //method of payment for the transaction.ARG ARGent (cash) • AUT(other) • CRE(credit card)• DEB(debit card)• MIX(mixed payment) • SOB(N/A)
 		map.put("comptoir", comptoir);	//whether the operator uses  the SRS’ Counter service operating mode
 		
-		map.put("numeroTrans", numeroTrans);//Number of the current transaction. This number must match the one in the body of the bill ( in the <doc> tag).
+		map.put("numeroTrans", (numeroTrans == null || numeroTrans.trim().length() == 0) ? "0" : numeroTrans);//Number of the current transaction. This number must match the one in the body of the bill ( in the <doc> tag).
 		map.put("dateTrans", dateTrans);
 		map.put("mtTransAvTaxes", mtTransAvTaxes);
 		map.put("TPSTrans", TPSTrans);
@@ -814,7 +819,7 @@ public class PrintService{
     	ArrayList<String> strAryFR = new ArrayList<String>();
         int tWidth = getPreferedWidth();
 	            
-	    pushBillHeadInfo(strAryFR, tWidth, null);
+	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(list.get(0).getBillID()));
         pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
         pushTotal(billPanel, strAryFR);
         
@@ -882,7 +887,7 @@ public class PrintService{
         		new DecimalFormat("#0.00").format(HST / 100.0),
         		new DecimalFormat("#0.00").format((net + HST) / 100.0)
         		);
-        pushPaymentSummary(strAryFR, list);
+        pushPaymentSummary(strAryFR, list, tWidth);
         pushSummaryByServiceType(list);
         pushSummaryByOrder(list);
         pushAuditSummary(list);
@@ -1138,7 +1143,7 @@ public class PrintService{
 		strAryFR.add(content.toString());
 	}
 	
-	private static void pushPaymentSummary(ArrayList<String> strAryFR, List<Bill> list) {
+	private static void pushPaymentSummary(ArrayList<String> strAryFR, List<Bill> list, int width) {
 		StringBuilder content = new StringBuilder();
 		//title
 		String paymentSummary = "Payment Summary";
@@ -1178,49 +1183,49 @@ public class PrintService{
 		  	  		otherTotal -= bill.getOtherReceived();
   				}
   			}else {
-  				boolean tipPaid = false;
+  				boolean tipCounted = false;
   				if(bill.getCashReceived() > 0) {
   	  				cashQt++;
-		  	  		cashTotal += bill.getCashReceived();
+		  	  		cashTotal += bill.getCashReceived() + bill.getCashback();	//@NOTE: cashback is negtive value.
   				}
   				if(bill.getDebitReceived() > 0) {
   					debitQt++;
   					debitTotal += bill.getDebitReceived();
 					debitSales = debitTotal;
-  					if(bill.getCashback() > 0 && !tipPaid) {
-  						debitTip += bill.getCashback();
+  					if(bill.getTip() > 0 && !tipCounted) {
+  						debitTip += bill.getTip();
   						debitSales -= debitTip;
-  						tipPaid = true;
+  						tipCounted = true;
   					}
   				}
   				if(bill.getVisaReceived() > 0) {
   	  				visaQt++;
 		  	  		visaTotal += bill.getVisaReceived();
 		  	  		visaSales = visaTotal;
-  					if(bill.getCashback() > 0 && !tipPaid) {
-  						visaTip += bill.getCashback();
+  					if(bill.getTip() > 0 && !tipCounted) {
+  						visaTip += bill.getTip();
   						visaSales -= visaTip;
-  						tipPaid = true;
+  						tipCounted = true;
   					}
   				}
   				if(bill.getMasterReceived() > 0) {
   	  				masterQt++;
   	  				masterTotal += bill.getMasterReceived();
   	  				masterSales = masterTotal;
-  					if(bill.getCashback() > 0 && !tipPaid) {
-  						masterTip += bill.getCashback();
+  					if(bill.getTip() > 0 && !tipCounted) {
+  						masterTip += bill.getTip();
   						masterSales -= masterTip;
-  						tipPaid = true;
+  						tipCounted = true;
   					}
   				}
   				if(bill.getOtherReceived() > 0) {
   	  				otherQt++;
 		  	  		otherTotal += bill.getOtherReceived();
 		  	  		otherSales = otherTotal;
-  					if(bill.getCashback() > 0 && !tipPaid) {
-  						otherTip += bill.getCashback();
+  					if(bill.getTip() > 0 && !tipCounted) {
+  						otherTip += bill.getTip();
   						otherSales -= otherTip;
-  						tipPaid = true;
+  						tipCounted = true;
   					}
   				}
   			}
@@ -1228,37 +1233,41 @@ public class PrintService{
 		
 		DecimalFormat formater = new DecimalFormat("#0.00");
 		String strcashTotal = formater.format(cashTotal / 100.0);
-		String strdebitSales = formater.format(debitTotal / 100.0), strdebitTip = formater.format(debitTotal / 100.0), strdebitTotal = formater.format(debitTotal / 100.0);
-		String strvisaSales = formater.format(visaTotal / 100.0), strvisaTip = formater.format(visaTotal / 100.0), strvisaTotal = formater.format(visaTotal / 100.0);
-		String strmasterSales = formater.format(masterTotal / 100.0), strmasterTip = formater.format(masterTotal / 100.0), strmasterTotal = formater.format(masterTotal / 100.0);
-		String strotherSales = formater.format(otherTotal / 100.0), strotherTip = formater.format(otherTotal / 100.0), strotherTotal = formater.format(otherTotal / 100.0);
-		
-		//content.append("PayBy  Qt     Sales   Tip   
+		String strdebitSales = formater.format(debitSales / 100.0), strdebitTip = formater.format(debitTip / 100.0), strdebitTotal = formater.format(debitTotal / 100.0);
+		String strvisaSales = formater.format(visaSales / 100.0), strvisaTip = formater.format(visaTip / 100.0), strvisaTotal = formater.format(visaTotal / 100.0);
+		String strmasterSales = formater.format(masterSales / 100.0), strmasterTip = formater.format(masterTip / 100.0), strmasterTotal = formater.format(masterTotal / 100.0);
+		String strotherSales = formater.format(otherSales / 100.0), strotherTip = formater.format(otherTip / 100.0), strotherTotal = formater.format(otherTotal / 100.0);
+		String strtotalTip = formater.format((debitTip + visaTip + masterTip + otherTip) / 100.0);
+		//content.append("PayBy  Qt     Sales      Tip   
 		content.append("Cash   ").append(cashQt)
 		.append(generateString(width - 7 - getNumberStrLength(cashQt, strcashTotal), " "))
 		.append(strcashTotal).append("\n");
 		
 		content.append("Debit  ").append(debitQt)
 		.append(generateString(12 - getNumberStrLength(debitQt, strdebitSales), " ")).append(strdebitSales)
-		.append(generateString(6 - strdebitTip.length(), " ")).append(strdebitTip)
-		.append(generateString(width - 25 - strdebitTotal.length(), " ")).append(strdebitTotal).append("\n");
+		.append(generateString(9 - strdebitTip.length(), " ")).append(strdebitTip)
+		.append(generateString(width - 28 - strdebitTotal.length(), " ")).append(strdebitTotal).append("\n");
 		
 		content.append("Visa   ").append(visaQt)
 		.append(generateString(12 - getNumberStrLength(visaQt, strvisaSales), " ")).append(strvisaSales)
-		.append(generateString(6 - strvisaTip.length(), " ")).append(strvisaTip)
-		.append(generateString(width - 25 - strvisaTotal.length(), " ")).append(strvisaTotal).append("\n");
+		.append(generateString(9 - strvisaTip.length(), " ")).append(strvisaTip)
+		.append(generateString(width - 28 - strvisaTotal.length(), " ")).append(strvisaTotal).append("\n");
 		
 		content.append("Master ").append(masterQt)
 		.append(generateString(12 - getNumberStrLength(masterQt, strmasterSales), " ")).append(strmasterSales)
-		.append(generateString(6 - strmasterTip.length(), " ")).append(strmasterTip)
-		.append(generateString(width - 25 - strmasterTotal.length(), " ")).append(strmasterTotal).append("\n");
+		.append(generateString(9 - strmasterTip.length(), " ")).append(strmasterTip)
+		.append(generateString(width - 28 - strmasterTotal.length(), " ")).append(strmasterTotal).append("\n");
 		
 		content.append("Other  ").append(otherQt)
 		.append(generateString(12 - getNumberStrLength(otherQt, strotherSales), " ")).append(strotherSales)
-		.append(generateString(6 - strotherTip.length(), " ")).append(strotherTip)
-		.append(generateString(width - 25 - strotherTotal.length(), " ")).append(strotherTotal).append("\n");
+		.append(generateString(9 - strotherTip.length(), " ")).append(strotherTip)
+		.append(generateString(width - 28 - strotherTotal.length(), " ")).append(strotherTotal).append("\n");
 		
-		content.append(getSeperatorLine(1, width)).append("\n");		
+		content.append(getSeperatorLine(1, width)).append("\n");
+		
+		content.append(generateString(18 - strtotalTip.length(), " ")).append("total tip:").append(strtotalTip)
+		.append(generateString(width - 28 - strcashTotal.length() - 5, " ")).append("cash:").append(strcashTotal).append("\n");
+		
 		strAryFR.add(content.toString());
 	}
 

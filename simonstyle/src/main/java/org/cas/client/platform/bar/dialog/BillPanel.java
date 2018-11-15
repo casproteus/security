@@ -79,9 +79,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         if(orderedDishAry.size() == 0){
             return;
         }
-
-        //send to printer
-        PrintService.exePrintBill(this, orderedDishAry);
         
         int targetBillId = orderedDishAry != null && orderedDishAry.size() > 0? 
 				orderedDishAry.get(0).getBillID() : 0;
@@ -101,6 +98,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			int newBillID = generateBillRecord(tableID, billIndex, opentime);
 			updateOutputRecords(newBillID);
 		}
+		
+        //send to printer @NOTE: run it behind saving to db, so the bill has an id to use.
+        PrintService.exePrintBill(this, orderedDishAry);
 	}
 
 	public int generateBillRecord(String tableID, String billIndex, String opentime) {
