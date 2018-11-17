@@ -43,16 +43,9 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     private boolean isDragged;
     private int xGap, yGap;
     
-    
-    private final int USER_STATUS = 1;
-    private final int ADMIN_STATUS = 2;
     static Color colorSelected = new Color(123, 213, 132);
     static Color colorDefault = new Color(255, 255, 255);
-    
-    private int curSecurityStatus = USER_STATUS;
-    
-    User curUser;
-    
+            
     Integer tableColumn = (Integer) CustOpts.custOps.hash2.get("tableColumn");
     Integer tableRow = (Integer) CustOpts.custOps.hash2.get("tableRow");
 
@@ -61,8 +54,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     //for print
     public static String SUCCESS = "0";
     public static String ERROR = "2";
-    
-    
+        
     public TablesPanel() {
         initComponent();
     }

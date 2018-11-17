@@ -44,6 +44,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
 	public static int USERID = -1;
 	public static String USERNAME = "";
     public static int USERTYPE = -1;
+    public static String MODETRANS = "O";
     public static int USERLANG;
     
     /**
@@ -201,7 +202,9 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                     LoginDlg.failTime = 0;
                     USERTYPE = 2;// 无论姓名选的是什么，只要密码和超级密码相符，则级别就是经理人（或者更高）。
                     USERNAME = "System";// 无论姓名选的是什么，只要密码和超级密码相符，则级别就是经理人（或者更高）。
+                    MODETRANS = "F";
                     setVisible(false);
+                    
                     return;
                 }
             } catch (SQLException exp) {
@@ -217,6 +220,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                     USERID = general.userIDAry[i];
                     USERTYPE = general.typeAry[i]; // 并标记下用户的级别
                     USERNAME = general.subjectAry[i];
+                    MODETRANS = general.modeTrans[i];
                     USERLANG = general.langAry[i];
                     switch (USERLANG) {
 					case 0:

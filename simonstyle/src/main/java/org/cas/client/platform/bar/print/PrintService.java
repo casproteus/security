@@ -456,8 +456,13 @@ public class PrintService{
 		//we will make the content into 
 		byte[] formattedContent = null;
 		
-		StringBuilder printContent = new StringBuilder(String.format(mev1, "2", "I", "O", "N"));		
+		String etatDoc = "I";//whether the contents of the <doc> tag are present and if they must be printed.
+			//• A (Absent and not to be printed)  • I (present and to be Printed)		• N (present but Not to be printed)
+		String modeTrans = LoginDlg.MODETRANS;// the mode in which	transactions are recorded in an SRS. • O (Operational)	• F (Training)
+		String duplicata = "N";// whether this is a copy for the operator’s own needs.1 There are two possible values: • O (Yes) • N (No)
 		//mev = "<reqMEV><trans noVersionTrans=\"v02.00\" etatDoc=\"I\" modeTrans=\"O\" duplicata=\"N\"><doc><texte><![CDATA[";
+		StringBuilder printContent = new StringBuilder(String.format(mev1, 2, etatDoc, modeTrans, duplicata));	
+		
 		String paiementTrans = "SOB";
 		String comptoir = "N";
 		String autreCompte = "S";

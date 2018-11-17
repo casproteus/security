@@ -128,12 +128,14 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
             String[] tSubjectAry = new String[newLength];
             String[] tPasswordAry = new String[newLength];
             int[] tLangAry = new int[newLength];
+            String[] tModeTrans = new String[newLength];
             
             System.arraycopy(userIDAry, 0, tUserIDAry, 0, userIDAry.length);
             System.arraycopy(typeAry, 0, tTypeAry, 0, userIDAry.length);
             System.arraycopy(subjectAry, 0, tSubjectAry, 0, userIDAry.length);
             System.arraycopy(passwordAry, 0, tPasswordAry, 0, userIDAry.length);
             System.arraycopy(langAry, 0, tLangAry, 0, userIDAry.length);
+            System.arraycopy(modeTrans, 0, tModeTrans, 0, userIDAry.length);
             
             rs.beforeFirst();
             tmpPos = userIDAry.length;
@@ -152,6 +154,7 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
             	}else if(BarFrame.consts.langs()[3].equalsIgnoreCase(lang)) {
             		tLangAry[tmpPos] = 3;
             	}
+            	tModeTrans[tmpPos] = "O";
                 tmpPos++;
             }
             
@@ -160,6 +163,7 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
             subjectAry = tSubjectAry;
             passwordAry = tPasswordAry;
             langAry = tLangAry;
+            modeTrans = tModeTrans;
             
             rs.close();// 关闭
         } catch (SQLException e) {
@@ -181,6 +185,7 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
             subjectAry = new String[tmpPos];
             passwordAry = new String[tmpPos];
             langAry = new int[tmpPos];
+	        modeTrans = new String[tmpPos];
             
             rs.beforeFirst();
             tmpPos = 0;
@@ -190,6 +195,7 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
                 subjectAry[tmpPos] = rs.getString("UserName");
                 passwordAry[tmpPos] = rs.getString("PASSWORD");
                 langAry[tmpPos] = rs.getInt("LANG");
+                modeTrans[tmpPos] = "T";
                 tmpPos++;
             }
             rs.close();// 关闭
@@ -246,4 +252,5 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
     String[] subjectAry;
     String[] passwordAry;
     int[] langAry;
+    String[] modeTrans;
 }
