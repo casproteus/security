@@ -37,14 +37,14 @@ public interface DlgConst
     String FIX_BUTTON = "调整(F)";
     String BUY_BUTTON = "在线购买";
     String KEY_BUTTON = "输入CD－Key";
-    String FINISH_BUTTON = "关闭"; 
+    String FINISH_BUTTON = "Close"; 
     String NO_FILE = "相关资源文件已被改动，此项功能无法使用！";
     String NO_KEY = "系统无法找到相关的错误号码：";
 
     
     // Contacts...
     String CONTACTS = "联系人(C)...";
-    String CATEGORIES = "类别(G)...";
+    String CATEGORIES = "Category...";
     /* The follow contents are used for option dialog */
     /* name of option dialog */
     String OPTION_DIALOG = "选项";

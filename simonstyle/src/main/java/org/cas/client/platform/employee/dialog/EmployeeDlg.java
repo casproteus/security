@@ -30,9 +30,9 @@ import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.navigation.CASNode;
 import org.cas.client.platform.cascontrol.navigation.CASTree;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.MessageCons;
 import org.cas.client.platform.casutil.PIMPool;
-import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.SOptionPane;
 import org.cas.client.platform.employee.EmployeeDefaultViews;
 import org.cas.client.platform.pimmodel.PIMRecord;
@@ -96,7 +96,8 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
      * 对话盒的布局独立出来，为了在对话盒尺寸发生改变后，界面各元素能够重新布局， 使整体保持美观。尤其在Linux系列的操作系统上，所有的对话盒都必须准备好应对用户的拖拉改变尺寸。
      * @NOTE:因为setBounds方法本身不会触发事件导致重新布局，所以本方法中设置Bounds之后调用了reLayout。
      */
-    public void reLayout() {
+    @Override
+	public void reLayout() {
         cancel.setBounds(getContainer().getWidth() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, getContainer().getHeight()
                 - CustOpts.BTN_HEIGHT - CustOpts.VER_GAP, isPartOfView ? 0 : CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);// 关闭
         ok.setBounds(cancel.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, cancel.getY(), isPartOfView ? 0
@@ -113,7 +114,8 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
      * 
      * @return 要保存的内容
      */
-    public PIMRecord getContents() {
+    @Override
+	public PIMRecord getContents() {
         general.saveData();
         record.setAppIndex(CustOpts.custOps.APPNameVec.indexOf("Employee"));
         return record;
@@ -124,7 +126,8 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
      * 
      * @NOTE：当对话盒作为detailView的预览面板使用时，参数可能为空，为空表示对话盒上内容清空。
      */
-    public boolean setContents(
+    @Override
+	public boolean setContents(
             PIMRecord prmRecord) {
         record = (prmRecord == null) ? new PIMRecord() : prmRecord;
         hashtable = record.getFieldValues();
@@ -137,15 +140,18 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
         return true;
     }
 
-    public void makeBestUseOfTime() {
+    @Override
+	public void makeBestUseOfTime() {
     }
 
-    public void addAttach(
+    @Override
+	public void addAttach(
             File[] file,
             Vector actualAttachFiles) {
     }
 
-    public PIMTextPane getTextPane() {
+    @Override
+	public PIMTextPane getTextPane() {
         return null;
     }
 
@@ -154,7 +160,8 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
      * 
      * @called by:emo.pim.pimcontrol.action.pimmenu.file.Aciton;
      */
-    public void release() {
+    @Override
+	public void release() {
         if (newFlag) {
             setContents(null);
             return;
@@ -182,7 +189,8 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
     /**
      * Invoked when the component's size changes.
      */
-    public void componentResized(
+    @Override
+	public void componentResized(
             ComponentEvent e) {
         reLayout();
     };
@@ -190,21 +198,24 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
     /**
      * Invoked when the component's position changes.
      */
-    public void componentMoved(
+    @Override
+	public void componentMoved(
             ComponentEvent e) {
     };
 
     /**
      * Invoked when the component has been made visible.
      */
-    public void componentShown(
+    @Override
+	public void componentShown(
             ComponentEvent e) {
     };
 
     /**
      * Invoked when the component has been made invisible.
      */
-    public void componentHidden(
+    @Override
+	public void componentHidden(
             ComponentEvent e) {
     };
 
@@ -217,7 +228,8 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
      * @param e
      *            动作事件
      */
-    public void actionPerformed(
+    @Override
+	public void actionPerformed(
             ActionEvent e) {
         if (e.getSource() == ok) {
             // 按照规格，fileAsBox中必然时刻有值。否则不能存盘：
@@ -274,7 +286,8 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
                     record.setInfolderID(tmpAppNodeID);
                 }
                 SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         general.fldEmployID.requestFocus();
                     }
                 });
@@ -333,7 +346,8 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
      * highlighted title bar. The active Window is always either the focused Window, or the first Frame or Dialog that
      * is an owner of the focused Window.
      */
-    public void windowActivated(
+    @Override
+	public void windowActivated(
             WindowEvent e) {
     }
 
@@ -342,7 +356,8 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
      * 
      * @NOTE:当通过左上角Windows菜单，或右上角的叉号关闭时不触发本事件，而触发windowClosing事件。
      */
-    public void windowClosed(
+    @Override
+	public void windowClosed(
             WindowEvent e) {
     }
 
@@ -352,7 +367,8 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
      * 
      * @Note:当通过OK,Cancel按钮关闭时不触发本事件，而触发windowClosed事件。
      */
-    public void windowClosing(
+    @Override
+	public void windowClosing(
             WindowEvent e) {
         release();
     }
@@ -363,14 +379,16 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
      * highlighted title bar. The active Window is always either the focused Window, or the first Frame or Dialog that
      * is an owner of the focused Window.
      */
-    public void windowDeactivated(
+    @Override
+	public void windowDeactivated(
             WindowEvent e) {
     }
 
     /**
      * Invoked when a window is changed from a minimized to a normal state.
      */
-    public void windowDeiconified(
+    @Override
+	public void windowDeiconified(
             WindowEvent e) {
     }
 
@@ -380,18 +398,21 @@ public class EmployeeDlg extends JDialog implements ICASDialog, ActionListener, 
      * 
      * @see java.awt.Frame#setIconImage
      */
-    public void windowIconified(
+    @Override
+	public void windowIconified(
             WindowEvent e) {
     }
 
     /**
      * Invoked the first time a window is made visible.
      */
-    public void windowOpened(
+    @Override
+	public void windowOpened(
             WindowEvent e) {
     }
 
-    public Container getContainer() {
+    @Override
+	public Container getContainer() {
         return getContentPane();
     }
 

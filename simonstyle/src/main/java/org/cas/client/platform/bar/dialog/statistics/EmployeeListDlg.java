@@ -301,8 +301,8 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
         btnClose = new JButton(BarFrame.consts.Close());
-        btnAdd = new JButton(BarFrame.consts.AddNewUser());
-        btnDelete = new JButton(BarFrame.consts.DeleteUser());
+        btnAdd = new JButton(BarFrame.consts.Add());//NewUser());
+        btnDelete = new JButton(BarFrame.consts.Delete());
 
         // properties
         btnClose.setMnemonic('o');

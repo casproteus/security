@@ -8,9 +8,9 @@ import java.awt.event.WindowFocusListener;
 
 import javax.swing.JFrame;
 
-import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.beans.FunctionButton;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
+import org.cas.client.platform.bar.i18n.BarDlgConst1;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -85,7 +85,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
     		BarFrame.consts = new BarDlgConst0();
         	updateInterface("update employee set subject = 'EN' where id = " + LoginDlg.USERID);
         } else if (o == btnLine_3_4) {
-    		BarFrame.consts = new BarDlgConst0();
+    		BarFrame.consts = new BarDlgConst1();
     		updateInterface("update employee set subject = 'FR' where id = " + LoginDlg.USERID);
         } else if (o == btnLine_3_5) {
     		BarFrame.consts = new BarDlgConst2();

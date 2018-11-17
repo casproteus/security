@@ -178,7 +178,7 @@ public interface BarDlgConst {
     String FROM();
     String TO();
 
-    String EMPLOYEEID();
+    String Code();
     String PHOTO();
     String LASTNAME();
     String FIRSTNAME();
@@ -188,8 +188,8 @@ public interface BarDlgConst {
     String RELATION();
     String IS_LADY();
     String PASSWORD();
-    String ANNIVERSARY1();
-    String ANNIVERSARY2();
+    String Anniversary1();
+    String Anniversary2();
     String JOIN_TIME();
     String ADDRESS();
     String PHONE();

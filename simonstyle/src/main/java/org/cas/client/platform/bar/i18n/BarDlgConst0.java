@@ -329,7 +329,7 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String TO() {return "TO";}
 
     @Override
-	public String EMPLOYEEID() {return "ID:";}
+	public String Code() {return "Code:";}
     @Override
 	public String PHOTO() {return "Add Photo...";}
     @Override
@@ -349,9 +349,9 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String PASSWORD() {return "Password";}
     @Override
-	public String ANNIVERSARY1() {return "ANNIVERSARY1";}
+	public String Anniversary1() {return "Anniversary1";}
     @Override
-	public String ANNIVERSARY2() {return "ANNIVERSARY2";}
+	public String Anniversary2() {return "Anniversary2";}
     @Override
 	public String JOIN_TIME() {return "Join Time";}
     @Override
@@ -379,7 +379,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String[] langs() {return new String[] { lang1(), lang2(), lang3(), lang4() };}
     @Override
-	public String[] ANNIVERSARYTYPE() {return new String[] { ANNIVERSARY1(), ANNIVERSARY2() };}
+	public String[] ANNIVERSARYTYPE() {return new String[] { Anniversary1(), Anniversary2() };}
     
     @Override
 	public String GENERAL() {return "EMPLOYEE CARD";}

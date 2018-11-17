@@ -22,6 +22,7 @@ import org.cas.client.platform.bar.beans.NumButton;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
+import org.cas.client.platform.bar.i18n.BarDlgConst1;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
@@ -227,7 +228,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                     	BarFrame.consts = new BarDlgConst0();
 						break;
 					case 1:
-                    	BarFrame.consts = new BarDlgConst0();
+                    	BarFrame.consts = new BarDlgConst1();
 						break;
 					case 2:
                     	BarFrame.consts = new BarDlgConst2();

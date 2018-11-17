@@ -177,7 +177,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         switch (swingInvoker) {
             case 1:
                 swingInvoker = 0;
-                fldEmployID.grabFocus(); // 设置焦点默认落点
+                fldLastName.grabFocus(); // 设置焦点默认落点
                 break;
             case 2:
                 swingInvoker = 0;
@@ -357,7 +357,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
 
         panel = new JPanel();
         // 第一区域----------------------------------------------------------
-        lblEmployID = new JLabel(BarFrame.consts.EMPLOYEEID());
+        lblEmployID = new JLabel(BarFrame.consts.Code());
         fldEmployID = new JTextField();
         cbxIsmFemale = new JCheckBox(BarFrame.consts.IS_LADY(), false);
 
@@ -385,7 +385,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
         // 第二区域----------------------------------------------------------------------
         lblBirthday = new JLabel(BarFrame.consts.BIRTHDAY());
         clbBirthday = new CalendarCombo();
-        lblAnniversary = new JLabel(BarFrame.consts.ANNIVERSARY2());
+        lblAnniversary = new JLabel(BarFrame.consts.Anniversary2());
         clbAnniversary = new CalendarCombo();
         arbAnniversary = new EmployeeArrowButton(this);
         lblJointime = new JLabel(BarFrame.consts.JOIN_TIME());
@@ -616,7 +616,8 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
 //        fileAsVec.add();
         fileAsModel = new DefaultComboBoxModel(BarFrame.consts.langs()); // 给fileAsBox赋值
         cmbLanguage.setModel(fileAsModel);
-        ((JTextField) ((MetalComboBoxEditor) cmbLanguage.getEditor()).getEditorComponent()).setText((String)dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.SUBJECT)));
+        cmbLanguage.setSelectedIndex(0);
+        //((JTextField) ((MetalComboBoxEditor) cmbLanguage.getEditor()).getEditorComponent()).setText((String)dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.SUBJECT)));
 
         fldNickName.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.NNAME)));
         fldTitle.setText((String) dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.TITLE)));
@@ -642,7 +643,7 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
             clbAnniversary.setTimeText("");
         }
         tObj = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.ANNIVERSARYTYPE));
-        lblAnniversary.setText(tObj == null ? BarFrame.consts.ANNIVERSARY1() : (String) tObj);
+        lblAnniversary.setText(tObj == null ? BarFrame.consts.Anniversary1() : (String) tObj);
         tObj = dlg.getValue(PIMPool.pool.getKey(EmployeeDefaultViews.JOINTIME));
         if (tObj != null)
             clbJointime.setSelectedItem(tObj);

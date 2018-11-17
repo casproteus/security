@@ -329,7 +329,7 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String TO() {return "到";}
     
     @Override
-	public String EMPLOYEEID() {return "ID:";}
+	public String Code() {return "内部编号:";}
     @Override
 	public String PHOTO() {return "添加照片...";}
     @Override
@@ -349,9 +349,9 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String PASSWORD() {return "密码";}
     @Override
-	public String ANNIVERSARY1() {return "结婚纪念日";}
+	public String Anniversary1() {return "结婚纪念日";}
     @Override
-	public String ANNIVERSARY2() {return "其他纪念日";}
+	public String Anniversary2() {return "其他纪念日";}
     @Override
 	public String JOIN_TIME() {return "加入时间";}
     @Override
@@ -379,7 +379,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String[] langs() {return new String[] { lang1(), lang2(), lang3(), lang4() };}
     @Override
-	public String[] ANNIVERSARYTYPE() {return new String[] { ANNIVERSARY1(), ANNIVERSARY2() };}
+	public String[] ANNIVERSARYTYPE() {return new String[] { Anniversary1(), Anniversary2() };}
 
     @Override
 	public String GENERAL() {return "员工卡";}
