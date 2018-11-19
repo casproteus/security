@@ -41,6 +41,7 @@ import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.swing.JOptionPane;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillPanel;
@@ -72,7 +73,6 @@ public class PrintService{
     private static HashMap<String,List<String>> ipContentMap;
 
     private static String curPrintIp = "";
-    private static int width = 46;
     private String code = "GBK";
     private static String SEP_STR1 = "=";
     private static String SEP_STR2 = "-";
@@ -822,7 +822,7 @@ public class PrintService{
     
     private static ArrayList<String> formatContentForBill(List<Dish> list, String curPrintIp, BillPanel billPanel){
     	ArrayList<String> strAryFR = new ArrayList<String>();
-        int tWidth = getPreferedWidth();
+        int tWidth = BarUtil.getPreferedWidth();
 	            
 	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(list.get(0).getBillID()));
         pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
@@ -837,7 +837,7 @@ public class PrintService{
     private static ArrayList<String> formatContentForInvoice(
     		List<Dish> list, String curPrintIp, BillPanel billPanel, boolean isCashBack){
     	ArrayList<String> strAryFR = new ArrayList<String>();
-    	int tWidth = getPreferedWidth();
+    	int tWidth = BarUtil.getPreferedWidth();
     	
 	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
         pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
@@ -853,7 +853,7 @@ public class PrintService{
 
     private static ArrayList<String> formatContentForReport(List<Bill> list, String curPrintIp, String startTime, String endTime){
     	ArrayList<String> strAryFR = new ArrayList<String>();
-    	int tWidth = getPreferedWidth();
+    	int tWidth = BarUtil.getPreferedWidth();
         
         //initContent
         //content
@@ -916,10 +916,10 @@ public class PrintService{
         //space
         int lengthOfSpaceBeforeTime = tWidth - content.length() - startDateStr.length() - endDateStr.length() - 3;
         if(lengthOfSpaceBeforeTime > 0) {
-        	String spaceStr = generateString(lengthOfSpaceBeforeTime, " ");
+        	String spaceStr = BarUtil.generateString(lengthOfSpaceBeforeTime, " ");
         	content.append(spaceStr).append(startDateStr).append("   ").append(endDateStr);
         }else {
-        	String spaceStr = generateString(tWidth - startDateStr.length() - endDateStr.length() - 3, " ");
+        	String spaceStr = BarUtil.generateString(tWidth - startDateStr.length() - endDateStr.length() - 3, " ");
         	content.append("\n").append(spaceStr).append(startDateStr).append("   ").append(endDateStr);
         }
         content.append("\n");
@@ -941,10 +941,10 @@ public class PrintService{
         //space
         int lengthOfSpaceBeforeTime = tWidth - content.length() - dateStr.length();
         if(lengthOfSpaceBeforeTime > 0) {
-        	String spaceStr = generateString(lengthOfSpaceBeforeTime, " ");
+        	String spaceStr = BarUtil.generateString(lengthOfSpaceBeforeTime, " ");
         	content.append(spaceStr).append(dateStr);
         }else {
-        	String spaceStr = generateString(tWidth - dateStr.length(), " ");
+        	String spaceStr = BarUtil.generateString(tWidth - dateStr.length(), " ");
         	content.append("\n").append(spaceStr).append(dateStr);
         }
         content.append("\n");
@@ -958,14 +958,14 @@ public class PrintService{
             sep_str2 = SEP_STR2;
         }
         //dishes
-        content.append(generateString(tWidth, sep_str1)).append("\n\n");
+        content.append(BarUtil.generateString(tWidth, sep_str1)).append("\n\n");
         int langIndex = ipPrinterMap.get(curPrintIp).getType();
         for(Dish d:list){
             StringBuilder sb = new StringBuilder();
             
             if(BarOption.isDisDishIDInKitchen()) {
                 sb.append(d.getId());
-                sb.append(generateString(5 - String.valueOf(d.getId()).length(), " "));
+                sb.append(BarUtil.generateString(5 - String.valueOf(d.getId()).length(), " "));
             }
             
             String dishName = d.getLanguage(langIndex); 
@@ -976,8 +976,8 @@ public class PrintService{
             }
             
             String price = new DecimalFormat("#0.00").format(d.getTotalPrice()/100f);
-            int occupiedLength = getLengthOfString(sb.toString());
-            sb.append(generateString(tWidth - occupiedLength - (price.length()), " "));
+            int occupiedLength = BarUtil.getLengthOfString(sb.toString());
+            sb.append(BarUtil.generateString(tWidth - occupiedLength - (price.length()), " "));
             sb.append(price);
             content.append(sb);
 
@@ -985,7 +985,7 @@ public class PrintService{
         }
         
         //seperator
-        content.append(generateString(tWidth, sep_str2)).append("\n");
+        content.append(BarUtil.generateString(tWidth, sep_str2)).append("\n");
         
         //totals
         String SubTotal = "SubTotal";
@@ -997,30 +997,30 @@ public class PrintService{
         String[] strs = billPanel.lblSubTotle.getText().split(":");
         String subtotal = strs[1].trim().substring(1);
         content.append(SubTotal).append(" : ")
-        	.append(generateString(tWidth - subtotal.length() - SubTotal.length() - 3, " "))
+        	.append(BarUtil.generateString(tWidth - subtotal.length() - SubTotal.length() - 3, " "))
         	.append(subtotal).append("\n");
         strs = billPanel.lblTPS.getText().split(":");
         String tps = strs[1].trim().substring(1);
         content.append(TPS).append(" : ")
-    		.append(generateString(tWidth - tps.length() - TPS.length() - 3, " "))
+    		.append(BarUtil.generateString(tWidth - tps.length() - TPS.length() - 3, " "))
         	.append(tps).append("\n");
         strs = billPanel.lblTVQ.getText().split(":");
         String tvq = strs[1].trim().substring(1);
         content.append(TVQ).append(" : ")
-			.append(generateString(tWidth - tvq.length() - TVQ.length() - 3, " "))
+			.append(BarUtil.generateString(tWidth - tvq.length() - TVQ.length() - 3, " "))
         	.append(tvq).append("\n");
         if(billPanel.lblServiceFee.getText().length() > 0) {
             strs = billPanel.lblServiceFee.getText().split(":");
             String serviceFee = strs[1].trim().substring(1);
             content.append(ServiceFee).append(" : ")
-				.append(generateString(tWidth - serviceFee.length() - ServiceFee.length() - 3, " "))
+				.append(BarUtil.generateString(tWidth - serviceFee.length() - ServiceFee.length() - 3, " "))
             	.append(serviceFee).append("\n");
         }
         if(billPanel.lblDiscount.getText().length() > 0) {
             strs = billPanel.lblDiscount.getText().split(":");
             String dicount = strs[1].trim().substring(2);
             content.append(Discount).append(" : ")
-				.append(generateString(tWidth - dicount.length() - Discount.length() - 3, " "))
+				.append(BarUtil.generateString(tWidth - dicount.length() - Discount.length() - 3, " "))
             	.append(dicount).append("\n");
         }
         
@@ -1036,7 +1036,7 @@ public class PrintService{
         //push total
         String strTotal = billPanel.valTotlePrice.getText();
         content.append("Total").append(" : ")
-			//.append(generateString(tWidth - strTotal.length() - Total.length() - 3 - 1, " "))
+			//.append(BarUtil.generateString(tWidth - strTotal.length() - Total.length() - 3 - 1, " "))
 			.append(strTotal).append("\n");
         strAryFR.add(content.toString());
         //push normal font
@@ -1057,28 +1057,28 @@ public class PrintService{
             String str = new DecimalFormat("#0.00").format(cashReceived/100f);
             if(cashReceived > 0) {
     			content.append("CASH").append(" : ")
-    			.append(generateString(width - 7 - str.length(), " "))
+    			.append(BarUtil.generateString(width - 7 - str.length(), " "))
     			.append(str).append("\n");
     		}
             int debitReceived = rs.getInt("debitReceived");
             str = new DecimalFormat("#0.00").format(debitReceived/100f);
             if(debitReceived > 0) {
     			content.append("DEBIT").append(" : ")
-    			.append(generateString(width - 8 - str.length(), " "))
+    			.append(BarUtil.generateString(width - 8 - str.length(), " "))
     			.append(str).append("\n");
     		}
             int visaReceived = rs.getInt("visaReceived");
             str = new DecimalFormat("#0.00").format(visaReceived/100f);
             if(visaReceived > 0) {
     			content.append("VISA").append(" : ")
-    			.append(generateString(width - 7 - str.length(), " "))
+    			.append(BarUtil.generateString(width - 7 - str.length(), " "))
     			.append(str).append("\n");
     		}
             int masterReceived = rs.getInt("masterReceived");
             str = new DecimalFormat("#0.00").format(masterReceived/100f);
         	if(masterReceived > 0) {
     			content.append("MASTER").append(" : ")
-    			.append(generateString(width - 9 - str.length(), " "))
+    			.append(BarUtil.generateString(width - 9 - str.length(), " "))
     			.append(str).append("\n");
     		}
             
@@ -1086,7 +1086,7 @@ public class PrintService{
             str = new DecimalFormat("#0.00").format(left/100f);
             String lblText = isCashBack ? "Change : " : "Tip : ";
             content.append(lblText)
- 				.append(generateString(width - lblText.length() - str.length(), " "))
+ 				.append(BarUtil.generateString(width - lblText.length() - str.length(), " "))
  				.append(str).append("\n");
 
     	}catch(Exception e) {
@@ -1101,7 +1101,7 @@ public class PrintService{
 		//push end message.
         String endMes = BarOption.getBillFootInfo();
         if(endMes != null && endMes.length() > 0) {
-        	//content.append(generateString(tWidth, sep_str2));
+        	//content.append(BarUtil.generateString(tWidth, sep_str2));
         	content.append("\n");
         	content.append(endMes);
         }
@@ -1115,35 +1115,35 @@ public class PrintService{
 		//title
 		content.append(getSeperatorLine(1, width)).append("\n");
 		String saleSummary = "Sale Summary";
-		String emptySpaceStr = generateString((width - saleSummary.length())/2, " ");
+		String emptySpaceStr = BarUtil.generateString((width - saleSummary.length())/2, " ");
 		content.append(emptySpaceStr).append(saleSummary).append("\n");
 		content.append(getSeperatorLine(0, width)).append("\n");
-		content.append("Tran Type").append(generateString(width - 15 - 9, " "))
+		content.append("Tran Type").append(BarUtil.generateString(width - 15 - 9, " "))
 		.append("Count").append("    ").append("Amount").append("\n");
 		content.append(getSeperatorLine(0, width)).append("\n");
 		//countSaleGross + amountSaleGross
 		String totalSaleCount = String.valueOf(Integer.valueOf(countRefund) + Integer.valueOf(countSale));
-		content.append("Sale Gross").append(generateString(width - 10 - 10 - totalSaleCount.length(), " "))
-		.append(totalSaleCount).append(generateString(10 - amountSaleGross.length() , " ")).append(amountSaleGross)
+		content.append("Sale Gross").append(BarUtil.generateString(width - 10 - 10 - totalSaleCount.length(), " "))
+		.append(totalSaleCount).append(BarUtil.generateString(10 - amountSaleGross.length() , " ")).append(amountSaleGross)
 		.append("\n");
 		//countRefond
-		content.append("Refund Gross").append(generateString(width - 12 - 10 - countRefund.length(), " "))
-		.append(countRefund).append(generateString(10 - refundGross.length() , " ")).append(refundGross)
+		content.append("Refund Gross").append(BarUtil.generateString(width - 12 - 10 - countRefund.length(), " "))
+		.append(countRefund).append(BarUtil.generateString(10 - refundGross.length() , " ")).append(refundGross)
 		.append("\n");
 		content.append(getSeperatorLine(1, width)).append("\n");
 		
 		//Net
-		content.append("Net").append(generateString(width - 3 - 10 - countSale.length(), " "))
-		.append(countSale).append(generateString(10 - net.length() , " ")).append(net)
+		content.append("Net").append(BarUtil.generateString(width - 3 - 10 - countSale.length(), " "))
+		.append(countSale).append(BarUtil.generateString(10 - net.length() , " ")).append(net)
 		.append("\n");
 		
 		//HST
-		content.append("HST").append(generateString(width - 3 - 10 - countRefund.length(), " "))
-		.append(countRefund).append(generateString(10 - HST.length() , " ")).append(HST)
+		content.append("HST").append(BarUtil.generateString(width - 3 - 10 - countRefund.length(), " "))
+		.append(countRefund).append(BarUtil.generateString(10 - HST.length() , " ")).append(HST)
 		.append("\n");
 		//total
 		content.append(getSeperatorLine(1, width)).append("\n");
-		content.append(generateString(width - total.length(), " ")).append(total);
+		content.append(BarUtil.generateString(width - total.length(), " ")).append(total);
 		
 		strAryFR.add(content.toString());
 	}
@@ -1152,10 +1152,10 @@ public class PrintService{
 		StringBuilder content = new StringBuilder();
 		//title
 		String paymentSummary = "Payment Summary";
-		String emptySpaceStr = generateString((width - paymentSummary.length())/2, " ");
+		String emptySpaceStr = BarUtil.generateString((width - paymentSummary.length())/2, " ");
 		content.append(emptySpaceStr).append(paymentSummary).append("\n");
 		content.append(getSeperatorLine(0, width)).append("\n");
-		content.append("PayBy  Qt     Sales   Tip   ").append(generateString(width - 34, " ")).append("TOTAL").append("\n");
+		content.append("PayBy  Qt     Sales   Tip   ").append(BarUtil.generateString(width - 34, " ")).append("TOTAL").append("\n");
 		content.append(getSeperatorLine(0, width)).append("\n");
 
 		int cashQt = 0, cashTotal = 0;
@@ -1245,33 +1245,33 @@ public class PrintService{
 		String strtotalTip = formater.format((debitTip + visaTip + masterTip + otherTip) / 100.0);
 		//content.append("PayBy  Qt     Sales      Tip   
 		content.append("Cash   ").append(cashQt)
-		.append(generateString(width - 7 - getNumberStrLength(cashQt, strcashTotal), " "))
+		.append(BarUtil.generateString(width - 7 - getNumberStrLength(cashQt, strcashTotal), " "))
 		.append(strcashTotal).append("\n");
 		
 		content.append("Debit  ").append(debitQt)
-		.append(generateString(12 - getNumberStrLength(debitQt, strdebitSales), " ")).append(strdebitSales)
-		.append(generateString(9 - strdebitTip.length(), " ")).append(strdebitTip)
-		.append(generateString(width - 28 - strdebitTotal.length(), " ")).append(strdebitTotal).append("\n");
+		.append(BarUtil.generateString(12 - getNumberStrLength(debitQt, strdebitSales), " ")).append(strdebitSales)
+		.append(BarUtil.generateString(9 - strdebitTip.length(), " ")).append(strdebitTip)
+		.append(BarUtil.generateString(width - 28 - strdebitTotal.length(), " ")).append(strdebitTotal).append("\n");
 		
 		content.append("Visa   ").append(visaQt)
-		.append(generateString(12 - getNumberStrLength(visaQt, strvisaSales), " ")).append(strvisaSales)
-		.append(generateString(9 - strvisaTip.length(), " ")).append(strvisaTip)
-		.append(generateString(width - 28 - strvisaTotal.length(), " ")).append(strvisaTotal).append("\n");
+		.append(BarUtil.generateString(12 - getNumberStrLength(visaQt, strvisaSales), " ")).append(strvisaSales)
+		.append(BarUtil.generateString(9 - strvisaTip.length(), " ")).append(strvisaTip)
+		.append(BarUtil.generateString(width - 28 - strvisaTotal.length(), " ")).append(strvisaTotal).append("\n");
 		
 		content.append("Master ").append(masterQt)
-		.append(generateString(12 - getNumberStrLength(masterQt, strmasterSales), " ")).append(strmasterSales)
-		.append(generateString(9 - strmasterTip.length(), " ")).append(strmasterTip)
-		.append(generateString(width - 28 - strmasterTotal.length(), " ")).append(strmasterTotal).append("\n");
+		.append(BarUtil.generateString(12 - getNumberStrLength(masterQt, strmasterSales), " ")).append(strmasterSales)
+		.append(BarUtil.generateString(9 - strmasterTip.length(), " ")).append(strmasterTip)
+		.append(BarUtil.generateString(width - 28 - strmasterTotal.length(), " ")).append(strmasterTotal).append("\n");
 		
 		content.append("Other  ").append(otherQt)
-		.append(generateString(12 - getNumberStrLength(otherQt, strotherSales), " ")).append(strotherSales)
-		.append(generateString(9 - strotherTip.length(), " ")).append(strotherTip)
-		.append(generateString(width - 28 - strotherTotal.length(), " ")).append(strotherTotal).append("\n");
+		.append(BarUtil.generateString(12 - getNumberStrLength(otherQt, strotherSales), " ")).append(strotherSales)
+		.append(BarUtil.generateString(9 - strotherTip.length(), " ")).append(strotherTip)
+		.append(BarUtil.generateString(width - 28 - strotherTotal.length(), " ")).append(strotherTotal).append("\n");
 		
 		content.append(getSeperatorLine(1, width)).append("\n");
 		
-		content.append(generateString(18 - strtotalTip.length(), " ")).append("total tip:").append(strtotalTip)
-		.append(generateString(width - 28 - strcashTotal.length() - 5, " ")).append("cash:").append(strcashTotal).append("\n");
+		content.append(BarUtil.generateString(18 - strtotalTip.length(), " ")).append("total tip:").append(strtotalTip)
+		.append(BarUtil.generateString(width - 28 - strcashTotal.length() - 5, " ")).append("cash:").append(strcashTotal).append("\n");
 		
 		strAryFR.add(content.toString());
 	}
@@ -1292,14 +1292,14 @@ public class PrintService{
 	        if(sep_str1 == null || sep_str1.length() == 0){
 	            sep_str1 = SEP_STR1;
 	        }
-	        sepLines[0] = generateString(tWidth, sep_str1);
+	        sepLines[0] = BarUtil.generateString(tWidth, sep_str1);
 
 	        String sep_str2 = (String)CustOpts.custOps.getValue("sep_str2");
 	        if(sep_str2 == null || sep_str2.length() == 0){
 	            sep_str2 = SEP_STR2;
 	        }
 
-	        sepLines[1] = generateString(tWidth, sep_str2);
+	        sepLines[1] = BarUtil.generateString(tWidth, sep_str2);
 		}
 		if(index > sepLines.length) {
 			L.e("PrintService", "Unexpect index when getting item from sepLines with Index: " + index
@@ -1315,7 +1315,7 @@ public class PrintService{
     		String[] infos = s.split(":");
     		for(String info : infos) {
     			int length = (tWidth - info.length())/2;
-    			sb.append(generateString(length, " "));
+    			sb.append(BarUtil.generateString(length, " "));
     			sb.append(info);
     			sb.append("\n");
     		}
@@ -1327,15 +1327,12 @@ public class PrintService{
     		String curTable, String curBill, String waiterName, boolean isCancelled){
         //L.d(TAG,"formatContentForPrint");
         String font = (String)CustOpts.custOps.getValue(curPrintIp + "font");
-        int tWidth = width;
         if(font ==  null || font.length() < 1) {
             font = (String)CustOpts.custOps.getValue("font");
         }
-
+        
+        int tWidth = BarUtil.getPreferedWidth();
         String w = (String)CustOpts.custOps.getValue(curPrintIp + "width");
-        if( w== null || w.length() < 1) {
-            w = (String)CustOpts.custOps.getValue("width");
-        }
         try {
         	tWidth = Integer.valueOf(w);
         }catch(Exception e){
@@ -1362,7 +1359,7 @@ public class PrintService{
         DateFormat df = new SimpleDateFormat("HH:mm");
         String dateStr = df.format(new Date());
         lengthOfStrToDisplay += dateStr.length();
-        String spaceStr = generateString(tWidth - lengthOfStrToDisplay - 3, " ");
+        String spaceStr = BarUtil.generateString(tWidth - lengthOfStrToDisplay - 3, " ");
         
         content.append(spaceStr).append(dateStr).append("\n");
 
@@ -1375,19 +1372,19 @@ public class PrintService{
             sep_str2 = SEP_STR2;
         }
 
-        content.append(generateString(tWidth, sep_str1)).append("\n\n");
+        content.append(BarUtil.generateString(tWidth, sep_str1)).append("\n\n");
         int langIndex = ipPrinterMap.get(curPrintIp).getType();
         for(Dish d:list){
             StringBuilder sb = new StringBuilder();
             if(BarOption.isDisDishIDInKitchen()) {
                 sb.append(d.getId());
-                sb.append(generateString(5 - String.valueOf(d.getId()).length(), " "));
+                sb.append(BarUtil.generateString(5 - String.valueOf(d.getId()).length(), " "));
             }
             sb.append(d.getLanguage(langIndex));
             if(d.getNum() > 1){
                 String space = " ";
-                int occupiedLength = getLengthOfString(sb.toString());
-                sb.append(generateString(tWidth - occupiedLength - (d.getNum() < 10 ? 2 : 3), " "));
+                int occupiedLength = BarUtil.getLengthOfString(sb.toString());
+                sb.append(BarUtil.generateString(tWidth - occupiedLength - (d.getNum() < 10 ? 2 : 3), " "));
                 sb.append("x").append(Integer.toString(d.getNum()));
             }
             content.append(sb);
@@ -1401,7 +1398,7 @@ public class PrintService{
                 	String lang = langs.length > langIndex ? langs[langIndex] : langs[0];
                 	if(lang.length() == 0)
                 		lang = langs[0];
-                    content.append(generateString(5, " ")).append("* ").append(lang).append(" *\n");
+                    content.append(BarUtil.generateString(5, " ")).append("* ").append(lang).append(" *\n");
                 }
             }
             Object sep = CustOpts.custOps.getValue("customizedSeperator");
@@ -1409,31 +1406,11 @@ public class PrintService{
             	if("".equals(sep)) {
             		sep = " ";
             	}
-            	content.append(generateString(width, (String)sep)).append("\n");
+            	content.append(BarUtil.generateString(tWidth, (String)sep)).append("\n");
             }
         }
         
         return content.substring(0, content.length());//spec change: do not to show separator!  - (tWidth + 1));
-    }
-    
-    private static String generateString(int l, String character){
-        StringBuilder sb = new StringBuilder("");
-        for (int i = 0;i<l;i++){
-            sb.append(character);
-        }
-        return sb.toString();
-    }
-
-    private static int getLengthOfString(String content){
-        int length = content.length();
-        int realWidth = length;
-        for(int i = 0; i < length; i++) {
-            char c = content.charAt(i);
-            if(c >=19968 && c <= 171941) {
-                realWidth++;
-            }
-        }
-        return realWidth;
     }
 
     private static void flushIpContent() {
@@ -1486,16 +1463,6 @@ public class PrintService{
 	    }
 	}
 	
-	private static int getPreferedWidth() {
-		int tWidth = width;
-        try {
-            tWidth = Integer.valueOf((String)CustOpts.custOps.getValue( "width"));
-        }catch(Exception e){
-        	//do nothing, if no with property set, width will keep default value.
-        }
-		return tWidth;
-	}
-    
     final static String mev1 = "<reqMEV><trans noVersionTrans=\"v0%s.00\" etatDoc=\"%s\" modeTrans=\"%s\" duplicata=\"%s\"><doc><texte><![CDATA[";
     final static String mev2 = "]]></texte></doc>\r\n		<donneesTrans ";
     final static String mev3 = "/></trans>\r\n";

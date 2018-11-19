@@ -118,4 +118,35 @@ public class BarUtil {
         }
         return tProdCodeLen;
     }
+
+    public static int getPreferedWidth() {
+		int tWidth = 42;
+        try {
+            tWidth = Integer.valueOf((String)CustOpts.custOps.getValue( "width"));
+        }catch(Exception e){
+        	//do nothing, if no with property set, width will keep default value.
+        }
+		return tWidth;
+	}
+
+
+    public static String generateString(int l, String character){
+        StringBuilder sb = new StringBuilder("");
+        for (int i = 0;i<l;i++){
+            sb.append(character);
+        }
+        return sb.toString();
+    }
+    
+    public static int getLengthOfString(String content){
+        int length = content.length();
+        int realWidth = length;
+        for(int i = 0; i < length; i++) {
+            char c = content.charAt(i);
+            if(c >=19968 && c <= 171941) {
+                realWidth++;
+            }
+        }
+        return realWidth;
+    }
 }
