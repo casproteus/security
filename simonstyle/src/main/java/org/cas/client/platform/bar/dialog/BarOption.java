@@ -51,7 +51,6 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     public static String getLicense(){
     	return (String)CustOpts.custOps.getValue("license");
     }
-    
     public static void setLicense(String licence){
     	CustOpts.custOps.setKeyAndValue("license", licence);
     }
@@ -90,7 +89,6 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 		sb.append(color.getRed()).append(",").append(color.getGreen()).append(",").append(color.getBlue());
 		CustOpts.custOps.setKeyAndValue(key, sb.toString());
 	}
-	
 	public static Color getBK(String key) {
 		String colorStr = (String)CustOpts.custOps.getValue(key);
 		if(colorStr != null) {
@@ -107,7 +105,6 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     public static String getBillHeadInfo() {
     	return (String)CustOpts.custOps.getValue("BillHeadInfo");
     }
-    
     public static void setBillHeadInfo(String billHeadInfo) {
     	if(billHeadInfo == null) {
     		CustOpts.custOps.setKeyAndValue("BillHeadInfo", "");
@@ -122,7 +119,6 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     public static String getBillFootInfo(){
        	return (String)CustOpts.custOps.getValue("BillFootInfo");
     }
-    
     public static void setBillFootInfo(String billFootInfo) {
     	if(billFootInfo == null) {
     		L.e("setting BillFoot", "trying to set null to bill foot info.", null);
@@ -183,25 +179,20 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 		return CustOpts.custOps.getValue("isDisDishIDInKitchen") == null ? 
     			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isDisDishIDInKitchen"));
 	}
-
+	
 	public static void setIsDisplayBillInKitchen(boolean isDisDishIDInKitchen){
 		CustOpts.custOps.setKeyAndValue("isDisDishIDInKitchen", String.valueOf(isDisDishIDInKitchen));
 	}
-
 	public static boolean isDisplayBillInKitchen(){
 		return CustOpts.custOps.getValue("isDisplayBillInKitchen") == null ? 
     			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isDisplayBillInKitchen"));
-	}
-	public static void setDisplayBillInKitchen(boolean displayBillInKitchen){
-		CustOpts.custOps.setKeyAndValue("displayBillInKitchen", String.valueOf(displayBillInKitchen));
 	}
 
 	public static boolean isDisplayWaiterInKitchen(){
 		return CustOpts.custOps.getValue("displayWaiterInKitchen") == null ? 
     			false : Boolean.valueOf((String)CustOpts.custOps.getValue("displayWaiterInKitchen"));
 	}
-	
-	public static void setDoNotDisplayWaiterInKitchen(boolean displayWaiterInKitchen){
+	public static void setIsDisplayWaiterInKitchen(boolean displayWaiterInKitchen){
 		CustOpts.custOps.setKeyAndValue("displayWaiterInKitchen", String.valueOf(displayWaiterInKitchen));
 	}
 	
@@ -284,8 +275,6 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     public static void setCategoryAreaPortion(String col) {
     	CustOpts.custOps.setKeyAndValue("CategoryAreaPortion", col);
     }
-    
-    
     
     public static boolean isSingleUser() {
     	return "true".equals(CustOpts.custOps.getValue("SingleUserMode"));
