@@ -540,9 +540,9 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
         lblDspIndex = new JLabel(BarFrame.consts.DSPINDEX());
         tfdDspIndex = new JTextField();
 
-        ok = new JButton(DlgConst.OK);
-        cancel = new JButton(DlgConst.CANCEL);
-        delete = new JButton(DlgConst.DELETE);
+        ok = new JButton(BarFrame.consts.OK());
+        cancel = new JButton(BarFrame.consts.Cancel());
+        delete = new JButton(BarFrame.consts.Delete());
         
         // 属性设置－－－－－－－－－－－－－－
         ok.setMnemonic('o');

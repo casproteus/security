@@ -305,9 +305,9 @@ public class CategoryDlg extends JDialog implements ICASDialog, ActionListener, 
 
         // 初始化－－－－－－－－－－－－－－－－
         general = new GeneralPanel();
-        ok = new JButton(DlgConst.OK);
-        cancel = new JButton(DlgConst.CANCEL);
-        delete = new JButton(DlgConst.DELETE);
+        ok = new JButton(BarFrame.consts.OK());
+        cancel = new JButton(BarFrame.consts.Cancel());
+        delete = new JButton(BarFrame.consts.Delete());
 
         // 属性设置－－－－－－－－－－－－－－
         ok.setFocusable(false);

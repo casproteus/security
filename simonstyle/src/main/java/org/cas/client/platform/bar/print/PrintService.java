@@ -1,13 +1,8 @@
 package org.cas.client.platform.bar.print;
 
-import java.awt.print.PageFormat;
-import java.awt.print.Paper;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -17,11 +12,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -893,8 +888,8 @@ public class PrintService{
         		new DecimalFormat("#0.00").format((net + HST) / 100.0)
         		);
         pushPaymentSummary(strAryFR, list, tWidth);
-        pushSummaryByServiceType(list);
-        pushSummaryByOrder(list);
+        pushSummaryByServiceType(strAryFR, list, tWidth);
+        pushSummaryByOrder(strAryFR, tWidth, startTime, endTime);
         pushAuditSummary(list);
         strAryFR.add("\n\n\n\n\n");
         strAryFR.add("cut");
@@ -1153,6 +1148,7 @@ public class PrintService{
 		//title
 		String paymentSummary = "Payment Summary";
 		String emptySpaceStr = BarUtil.generateString((width - paymentSummary.length())/2, " ");
+		content.append("\n");
 		content.append(emptySpaceStr).append(paymentSummary).append("\n");
 		content.append(getSeperatorLine(0, width)).append("\n");
 		content.append("PayBy  Qt     Sales   Tip   ").append(BarUtil.generateString(width - 34, " ")).append("TOTAL").append("\n");
@@ -1280,8 +1276,67 @@ public class PrintService{
 		return String.valueOf(cashQt).length() + cashTotal.length();
 	};
 	
-	private static void pushSummaryByServiceType(List<Bill> list) {};
-	private static void pushSummaryByOrder(List<Bill> list) {};
+	private static void pushSummaryByServiceType(ArrayList<String> strAryFR, List<Bill> list, int width) {};
+	
+	private static void pushSummaryByOrder(ArrayList<String> strAryFR, int width, String startDateStr, String endDateStr) {
+		StringBuilder content = new StringBuilder();
+		//title
+		String voidItemSummary = "Void Item Summary";
+		String emptySpaceStr = BarUtil.generateString((width - voidItemSummary.length())/2, " ");
+		content.append("\n");
+		content.append(emptySpaceStr).append(voidItemSummary).append("\n");
+		content.append(getSeperatorLine(0, width)).append("\n");
+		content.append("Time        Table  Dish         Qt   Sales").append("\n");
+		content.append(getSeperatorLine(0, width)).append("\n");
+
+		StringBuilder sql = new StringBuilder("Select * from Output, product where deleted > 99 and time >= '")
+				.append(startDateStr).append("' and time <= '").append(endDateStr).append("' and output.productID = product.id");
+        if(LoginDlg.USERTYPE < 2) {
+        	sql.append(" and employeeId = ").append(LoginDlg.USERID);
+        }
+        
+        try {
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+            ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
+            rs.afterLast();
+            rs.relative(-1);
+            rs.beforeFirst();
+            int totalAmount = 0;
+            float totalSales = 0f;
+            while (rs.next()) {
+                String time = rs.getString("Output.time");
+                content.append(time.substring(5, 16));	//remove the year to make it shorter.
+                
+                String table = rs.getString("Output.subject");
+                content.append(BarUtil.generateString(6 - table.length(), " ")).append(table);
+        		
+                String product = rs.getString("product.subject");
+                content.append("  ").append(product);
+                
+                int i = rs.getInt("Output.amount");
+                content.append(BarUtil.generateString(15 - product.length() - String.valueOf(i).length(), " ")).append(i);
+                totalAmount += i;
+                
+                float f = Float.valueOf((float) (rs.getInt("Output.toltalPrice") / 100.0));
+                String money = new DecimalFormat("#0.00").format(f);
+                content.append(BarUtil.generateString(width - 34 - money.length(), " ")).append(money).append("\n");
+                totalSales += f;
+            }
+            
+    		content.append(getSeperatorLine(1, width)).append("\n");
+    		
+    		String toltal = new DecimalFormat("#0.00").format(totalSales);
+    		content.append(BarUtil.generateString(34 - String.valueOf(totalAmount).length(), " ")).append(totalAmount)
+    		.append(BarUtil.generateString(width - 34 - toltal.length(), " "))
+    		.append(toltal).append("\n");
+    		
+    		strAryFR.add(content.toString());
+
+            rs.close();// 关闭
+        }catch(Exception e) {
+        	L.e("Pos", "Printing Report", e);
+        }
+	};
 	private static void pushAuditSummary(List<Bill> list) {};
     
 	private static String getSeperatorLine(int index, int tWidth) {
