@@ -8,7 +8,7 @@
 		<variable name="product.version" value="#PRODUCT_VERSION#" />
 		<variable name="wrapper.version" value="#WRAPPER_VERSION#" />
 		<variable name="wrapper.home" value="" />
-		<variable name="app.install.dir" value="System/Security/Monitor" />
+		<variable name="app.install.dir" value="stgo/sanjipos" />
 		<variable name="TargetPanel.dir.unix" value="/opt/$app.install.dir" />
 		<variable name="TargetPanel.dir.windows" value="$INSTALL_PATH"/>
 

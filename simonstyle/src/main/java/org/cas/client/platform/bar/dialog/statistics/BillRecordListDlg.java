@@ -327,7 +327,7 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
 
     public void initContent(String startTime, String endTime) {
         Object[][] tValues = null;
-        String sql = "select * from bill, employee where createTime >= '" + startTime + "' and createTime < '" + endTime + "' and bill.employeeId = employee.id";
+        String sql = "select * from bill, employee where createTime >= '" + startTime + "' and createTime <= '" + endTime + "' and bill.employeeId = employee.id";
 
         try {
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);

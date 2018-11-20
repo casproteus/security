@@ -270,7 +270,7 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
     
     public ArrayList<Bill> queryBillList(String startTime, String endTime) {
         StringBuilder sql = new StringBuilder("select * from bill, employee where createTime >= '").append(startTime)
-        		.append("' and createTime < '").append(endTime).append("' and bill.employeeId = employee.id");
+        		.append("' and createTime <= '").append(endTime).append("' and bill.employeeId = employee.id");
         if(LoginDlg.USERTYPE < 2) {	//if is not admin, then get out only user related records.
         	sql.append(" and employee.id = ").append(LoginDlg.USERID);
         }
