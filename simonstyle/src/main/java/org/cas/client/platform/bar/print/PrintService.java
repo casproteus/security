@@ -1277,6 +1277,7 @@ public class PrintService{
 	};
 	
 	private static void pushSummaryByServiceType(ArrayList<String> strAryFR, List<Bill> list, int width) {};
+	private static void pushAuditSummary(List<Bill> list) {};
 	
 	private static void pushSummaryByOrder(ArrayList<String> strAryFR, int width, String startDateStr, String endDateStr) {
 		StringBuilder content = new StringBuilder();
@@ -1289,7 +1290,7 @@ public class PrintService{
 		content.append("Time        Table  Dish         Qt   Sales").append("\n");
 		content.append(getSeperatorLine(0, width)).append("\n");
 
-		StringBuilder sql = new StringBuilder("Select * from Output, product where deleted > 99 and time >= '")
+		StringBuilder sql = new StringBuilder("Select * from Output, product where deleted = 100 and time >= '")
 				.append(startDateStr).append("' and time <= '").append(endDateStr).append("' and output.productID = product.id");
         if(LoginDlg.USERTYPE < 2) {
         	sql.append(" and employeeId = ").append(LoginDlg.USERID);
@@ -1337,7 +1338,6 @@ public class PrintService{
         	L.e("Pos", "Printing Report", e);
         }
 	};
-	private static void pushAuditSummary(List<Bill> list) {};
     
 	private static String getSeperatorLine(int index, int tWidth) {
 		//seperator
