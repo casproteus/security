@@ -315,9 +315,10 @@ public class PrintService{
     	String transType = checkTransType(sndMsg);
     	switch (transType) {
 		case "ADDI"://check
-			for(int i = 8 - 1; i > 1; i--) {
+			for(int i = 8 - 1; i > 3; i--) {
     			sndMsg.remove(i);
     		}
+			sndMsg.remove(2);
 			break;
 			
 		case "RFER"://receipt
@@ -369,7 +370,7 @@ public class PrintService{
 	}
 
 	private static String checkTransType(List<String> sndMsg) {
-		if(sndMsg.size() == 5) {	//currently if it's check, sndMsg has 8 element. 
+		if(sndMsg.size() == 6) {	//currently if it's check, sndMsg has 8 element. 
 			return "REPORT";
 		}else if(sndMsg.size() == 8) {	//currently if it's check, sndMsg has 8 element. 
 			return "ADDI";
