@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Enumeration;
 
 import javax.swing.JOptionPane;
@@ -149,4 +150,24 @@ public class BarUtil {
         }
         return realWidth;
     }
+    
+	public static boolean isCurBillSplited() {
+		try {
+			Statement smt = PIMDBModel.getReadOnlyStatement();
+			ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
+					+ BarFrame.instance.valCurTable.getText() + "' and deleted = 0 and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID");
+			rs.afterLast();
+			rs.relative(-1);
+			int num = rs.getRow();
+	
+			if (num < 2) {	//more than 1 record, means splitted.
+				return false;
+			} else {
+				return true;
+			}
+		}
+		catch(Exception e) {
+			return false;
+		}
+	}
 }

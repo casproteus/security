@@ -932,8 +932,12 @@ public class PrintService{
 		StringBuilder content = new StringBuilder();
 		//table
         content.append("(").append(BarFrame.instance.valCurTable.getText()).append(")");
-        //bill
-        content.append(billPanel.billButton == null ? BarFrame.instance.valCurBill.getText() : billPanel.billButton.getText());
+        //bill index
+        if(!BarUtil.isCurBillSplited()) {
+        	content.append(" ");
+        }else {
+        	content.append(billPanel.billButton == null ? BarFrame.instance.valCurBill.getText() : billPanel.billButton.getText());
+        }
         //waiter
         content.append(" ").append(BarFrame.instance.valOperator.getText()).append(" ");
         //time
