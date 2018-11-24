@@ -443,7 +443,7 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
     		BarFrame.consts.Discount(),
     		BarFrame.consts.Receive(),
     		BarFrame.consts.Tip(),
-    		BarFrame.consts.CashBack(),
+    		BarFrame.consts.Changes(),
     		BarFrame.consts.Status(),
     		BarFrame.consts.Operator(), // "操作员"
     		BarFrame.consts.comment(),

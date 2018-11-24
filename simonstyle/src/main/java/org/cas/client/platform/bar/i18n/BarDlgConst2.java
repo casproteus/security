@@ -22,7 +22,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String ServiceFeeNotice() {return "请输入服务费";}
     @Override
-	public String CashBack() {return "返款";}
+	public String Changes() {return "返款";}
     @Override
 	public String AddToTip() {return "小费";}
     @Override
