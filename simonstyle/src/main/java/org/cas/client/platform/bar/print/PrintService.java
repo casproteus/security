@@ -319,6 +319,11 @@ public class PrintService{
     			sndMsg.remove(i);
     		}
 			sndMsg.remove(2);
+			String total = sndMsg.get(2);
+			int p = total.indexOf(":");
+			total = total.substring(0, p + 1) + BarUtil.generateString(BarUtil.getPreferedWidth() - total.length(), " ") + total.substring(p+1);
+			sndMsg.remove(2);
+			sndMsg.add(total);
 			break;
 			
 		case "RFER"://receipt
@@ -336,8 +341,8 @@ public class PrintService{
     		sndMsg.remove(2);
 			break;
 		case "REPORT"://reprinted receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice.".
+    		sndMsg.remove(5);
     		sndMsg.remove(4);
-    		sndMsg.remove(3);
 			break;
 			
 		default:
