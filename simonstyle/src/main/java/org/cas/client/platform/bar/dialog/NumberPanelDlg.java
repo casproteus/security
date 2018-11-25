@@ -76,8 +76,8 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
     public void setContents(String qty) {
     	
     	if(qty!= null) { //remove the "x" in the string.
-    		if(qty.startsWith("x")) {
-    			qty = qty.substring(1).trim();
+    		if(qty.endsWith("x")) {
+    			qty = qty.substring(0, qty.length() - 1).trim();
     			try {
     				Integer.valueOf(qty);
     			}catch(Exception e) {

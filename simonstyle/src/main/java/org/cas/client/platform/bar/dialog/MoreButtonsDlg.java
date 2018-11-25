@@ -60,7 +60,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 //    				String curContent = BarFrame.instance.numberPanelDlg.curContent;
 //            		int tQTY = Integer.valueOf(curContent);
 //                	int row = barGeneralPanel.billPanel.tblBillPanel.getSelectedRow();
-//                	barGeneralPanel.billPanel.tblBillPanel.setValueAt("x" + curContent, row, 0);
+//                	barGeneralPanel.billPanel.tblBillPanel.setValueAt(curContent + "x", row, 0);
 //                	barGeneralPanel.billPanel.orderedDishAry.get(row).setNum(tQTY);
 //                	barGeneralPanel.billPanel.updateTotleArea();
 //            	}catch(Exception exp) {
