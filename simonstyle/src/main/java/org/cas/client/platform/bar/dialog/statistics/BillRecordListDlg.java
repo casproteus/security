@@ -29,6 +29,7 @@ import javax.swing.event.ListSelectionListener;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
+import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -327,10 +328,16 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
 
     public void initContent(String startTime, String endTime) {
         Object[][] tValues = null;
-        String sql = "select * from bill, employee where createTime >= '" + startTime + "' and createTime <= '" + endTime + "' and bill.employeeId = employee.id";
-
+        StringBuilder sql = new StringBuilder("select * from bill, employee where createTime >= '").append(startTime)
+        		.append("' and createTime <= '").append(endTime)
+        		.append("' and bill.employeeId = employee.id");
+        //if configured, then do not show records of other waiter.
+        if("true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("HideRecordFromOtherWaiter")))
+        		&& LoginDlg.USERTYPE < 2) {
+        	sql.append(" and employee.id = ").append(LoginDlg.USERID);
+        }
         try {
-            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();

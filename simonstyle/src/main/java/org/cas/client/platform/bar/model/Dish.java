@@ -128,7 +128,7 @@ public class Dish {
 			strNum.append("/").append(pS);
 		if(pK > 0)
 			strNum.append("/").append(pK);
-		return strNum.toString();
+		return "x1".equals(strNum.toString()) ? "" : strNum.toString();
 	}
 	
 	@Override

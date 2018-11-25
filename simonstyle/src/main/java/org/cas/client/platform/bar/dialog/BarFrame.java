@@ -35,7 +35,7 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
-	private String VERSION = "V0.94-20181121";
+	private String VERSION = "V0.95-20181124";
     public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
@@ -202,9 +202,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         
         lblOperator = new JLabel(BarFrame.consts.Operator().concat(BarFrame.consts.Colon()));
         valOperator = new JLabel();
-        lblCurTable = new JLabel(BarFrame.consts.TABLE().concat(BarFrame.consts.Colon()));
+        lblCurTable = new JLabel(BarFrame.consts.TABLE().concat(" #"));
         valCurTable = new JLabel();
-        lblCurBill = new JLabel(BarFrame.consts.BILL().concat(BarFrame.consts.Colon()));
+        lblCurBill = new JLabel(BarFrame.consts.BILL().concat(" #"));
         valCurBill = new JLabel();
         lblStartTime = new JLabel(BarFrame.consts.OPENTIME().concat(BarFrame.consts.Colon()));
         valStartTime = new JLabel();

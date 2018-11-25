@@ -257,7 +257,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 						int tQTY = orderedDishAry.get(selectedRow).getNum() - 1;
 						int row = tblBillPanel.getSelectedRow();
 						orderedDishAry.get(row).setNum(tQTY);
-						tblBillPanel.setValueAt("x" + tQTY, row, 0);		
+						tblBillPanel.setValueAt(tQTY == 1 ? "" : "x" + tQTY, row, 0);		
 						tblBillPanel.setValueAt(BarOption.getMoneySign() + new DecimalFormat("#0.00").format((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f), row, 3);
 					}
 				}
@@ -444,7 +444,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         BillListPanel.curDish = newDish;
         
         //update the interface.
-        tblBillPanel.setValueAt("x1", tValidRowCount, 0); // set the count.
+        tblBillPanel.setValueAt("", tValidRowCount, 0); // set the count.
         tblBillPanel.setValueAt(dish.getLanguage(CustOpts.custOps.getUserLang()), tValidRowCount, 1);// set the Name.
         tblBillPanel.setValueAt(dish.getSize() > 1 ? dish.getSize() : "", tValidRowCount, 2); // set the count.
         tblBillPanel.setValueAt(BarOption.getMoneySign() + new DecimalFormat("#0.00").format(dish.getPrice()/100f), tValidRowCount, 3); // set the price.

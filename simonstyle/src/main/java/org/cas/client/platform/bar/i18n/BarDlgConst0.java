@@ -281,7 +281,7 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String Change() {return "Change";}
 
     @Override
-	public String AddUser() {return "<html><center>ADD<br>CLIENT</center></html>";}
+	public String AddUser() {return "ADD BILL";}
     @Override
 	public String PrintAll() {return "PRINT ALL";}
 

@@ -19,15 +19,12 @@ import java.util.Date;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 
-import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.beans.FunctionButton;
 import org.cas.client.platform.bar.beans.TableButton;
 import org.cas.client.platform.bar.dialog.statistics.BillRecordListDlg;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
-import org.cas.client.platform.bar.model.User;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -137,7 +134,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 				int num = rs.getRow();
 
 				if (num == 0) { // check if it's empty
-					BarFrame.instance.valCurBill.setText("0");
+					BarFrame.instance.valCurBill.setText("");
 					BarFrame.instance.switchMode(2);
 				} else { // if it's not empty, display a dialog to show all the bills.
 					if(num == 1 && CustOpts.custOps.getValue("FrobiddenQuickEnter") == null) {
@@ -197,42 +194,43 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 	                }
     			}
             }
-        }else if(o instanceof JToggleButton) {
-        	if(o == btnChangeMode) {
-        		BarOption.setFastFoodMode(btnChangeMode.isSelected());
-        	}
         }
+//		else if(o instanceof JToggleButton) {
+//        	if(o == btnChangeMode) {
+//        		BarOption.setFastFoodMode(btnChangeMode.isSelected());
+//        	}
+//        }
     }
 
     void reLayout() {
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 8) / 7;
+        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 7) / 6;
         int tBtnHeight = panelHeight / 10;
 
         // command buttons--------------
         // line 2
-        btnChangeMode.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
+//        btnChangeMode.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
+//                tBtnHeight);
+        btnAddTable.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
                 tBtnHeight);
-        btnAddTable.setBounds(btnChangeMode.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
+        btnOrderManage.setBounds(btnAddTable.getX() + tBtnWidht + CustOpts.HOR_GAP, btnAddTable.getY(), tBtnWidht,
                 tBtnHeight);
-        btnOrderManage.setBounds(btnAddTable.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
-                tBtnHeight);
-        btnOpenDrawer.setBounds(btnOrderManage.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
+        btnOpenDrawer.setBounds(btnOrderManage.getX() + tBtnWidht + CustOpts.HOR_GAP, btnOrderManage.getY(), tBtnWidht,
                 tBtnHeight);
         //btnWaiterReport.setBounds(btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
         //        tBtnHeight);
-        btnSetting.setBounds(btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
+        btnSetting.setBounds(btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, btnOpenDrawer.getY(), tBtnWidht,
                 tBtnHeight);
-        btnReport.setBounds(btnSetting.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
+        btnReport.setBounds(btnSetting.getX() + tBtnWidht + CustOpts.HOR_GAP, btnSetting.getY(), tBtnWidht,
                 tBtnHeight);
-        btnCheckInOut.setBounds(btnReport.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
+        btnCheckInOut.setBounds(btnReport.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReport.getY(), tBtnWidht,
                 tBtnHeight);
     }
     
     void initComponent() {
     	removeAll();
-        btnChangeMode = new JToggleButton(BarFrame.consts.ChangeMode());
+//        btnChangeMode = new JToggleButton(BarFrame.consts.ChangeMode());
 		btnAddTable = new FunctionButton(BarFrame.consts.AddTable());
 		btnOrderManage = new FunctionButton(BarFrame.consts.OrderManage());
 		btnOpenDrawer = new FunctionButton(BarFrame.consts.OpenDrawer());
@@ -250,7 +248,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         setLayout(null);
 
         // built
-        add(btnChangeMode);
+//        add(btnChangeMode);
         add(btnAddTable);
         add(btnOrderManage);
         add(btnOpenDrawer);
@@ -262,7 +260,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         // add listener
         addComponentListener(this);
 
-        btnChangeMode.addActionListener(this);
+//        btnChangeMode.addActionListener(this);
         btnAddTable.addActionListener(this);
         btnOrderManage.addActionListener(this);
         btnOpenDrawer.addActionListener(this);
@@ -271,7 +269,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         btnReport.addActionListener(this);
         btnCheckInOut.addActionListener(this);
         
-        btnChangeMode.setSelected(BarOption.isFastFoodMode());
+//        btnChangeMode.setSelected(BarOption.isFastFoodMode());
 
 		reLayout();
     }
@@ -335,7 +333,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 		repaint();
 	}
 
-    private JToggleButton btnChangeMode;
+    //private JToggleButton btnChangeMode;
 	private FunctionButton btnAddTable;
 	private FunctionButton btnOrderManage;
 	private FunctionButton btnOpenDrawer;

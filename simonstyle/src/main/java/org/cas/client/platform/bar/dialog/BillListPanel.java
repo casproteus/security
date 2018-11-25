@@ -375,7 +375,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			initContent();
 		}else {
 			if(o == btnAddUser){
-				BarFrame.instance.valCurBill.setText("0");
+				BarFrame.instance.valCurBill.setText("");
 				BarFrame.instance.switchMode(2);
 			}else if(o == btnPrintAll) {
 				for (BillPanel billPanel : billPanels) {

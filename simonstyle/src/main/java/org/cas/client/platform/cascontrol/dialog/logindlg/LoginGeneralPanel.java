@@ -195,7 +195,7 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
                 subjectAry[tmpPos] = rs.getString("UserName");
                 passwordAry[tmpPos] = rs.getString("PASSWORD");
                 langAry[tmpPos] = rs.getInt("LANG");
-                modeTrans[tmpPos] = "T";
+                modeTrans[tmpPos] = "F";
                 tmpPos++;
             }
             rs.close();// 关闭
