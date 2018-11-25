@@ -122,7 +122,7 @@ public class Dish {
 		if(num > BarOption.MaxQTY) {
 			num = num % BarOption.MaxQTY;
 		}
-		StringBuilder strNum = new StringBuilder(num);
+		StringBuilder strNum = new StringBuilder(String.valueOf(num));
 		if(pS > 0)
 			strNum.append("/").append(pS);
 		if(pK > 0)
