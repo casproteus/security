@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
-import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.action.UpdateItemDiscountAction;
 import org.cas.client.platform.bar.action.UpdateItemPriceAction;
 import org.cas.client.platform.bar.beans.CategoryToggleButton;
@@ -124,9 +123,14 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.UnSavedRecordFound(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
             			return;
         		}
-        		if(billPanel.getNewDishes().size() > 0) {
-        			JOptionPane.showMessageDialog(this, BarFrame.consts.UnSendRecordFound());
-        			return;
+        		List<Dish> newDishes = billPanel.getNewDishes();
+        		if(newDishes.size() > 0) {
+        			for (Dish dish : newDishes) {
+						if(dish.getPrinter() != null && dish.getPrinter().length() > 1) {
+		        			JOptionPane.showMessageDialog(this, BarFrame.consts.UnSendRecordFound());
+		        			return;
+						}
+					}
         		}
         		
         		outputStatusCheck();
