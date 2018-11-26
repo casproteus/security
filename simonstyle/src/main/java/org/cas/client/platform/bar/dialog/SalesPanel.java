@@ -466,7 +466,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		} catch (Exception exp) {
 			ErrorUtil.write(exp);
 		}
-    	return num < 1;
+    	return num <= 1;
     }
     
     public static void resetCurTableDBStatus(){
