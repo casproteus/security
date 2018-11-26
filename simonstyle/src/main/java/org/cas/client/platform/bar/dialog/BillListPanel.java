@@ -391,7 +391,9 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		        }catch(Exception exp) {
 		        	ErrorUtil.write(exp);
 		        }
-				
+		        
+	        	checkCombination(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valStartTime.getText(), 1);
+
 		        initContent();
 			}else if( o == btnCompleteAll) {
 		        try {
@@ -409,11 +411,11 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		        	ErrorUtil.write(exp);
 		        }
 		        
-				BarFrame.instance.valCurBill.setText("0");
+				BarFrame.instance.valCurBill.setText("");
 				BarFrame.instance.switchMode(0);
 				
 			}else if(o == btnReturn) {
-				BarFrame.instance.valCurBill.setText("0");
+				BarFrame.instance.valCurBill.setText("");
 				BarFrame.instance.switchMode(0);
 			}
 
@@ -422,7 +424,58 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		}
 	}
 	
-    public static int getANewBillNumber(){
+    private void checkCombination(String tableName, String startTime, int tableIndex) {
+    	String sql =
+                "select * from output where SUBJECT = '" + tableName
+                + "' and time = '" + startTime + "' and contactID = " + tableIndex + " and DELETED != true";
+        try {
+        	PIMDBModel.getReadOnlyStatement().executeQuery(sql);
+        	ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+			rs.afterLast();
+			rs.relative(-1);
+			int tmpPos = rs.getRow();
+
+			int tColCount = getCurBillPanel().tblBillPanel.getColumnCount();
+			Object[][] tValues = new Object[tmpPos][tColCount];
+			rs.beforeFirst();
+			tmpPos = 0;
+			while (rs.next()) {
+				Dish dish = new Dish();
+				dish.setCATEGORY(rs.getString("PRODUCT.CATEGORY"));
+				dish.setDiscount(rs.getInt("OUTPUT.discount"));//
+				dish.setDspIndex(rs.getInt("PRODUCT.INDEX"));
+				dish.setGst(rs.getInt("PRODUCT.FOLDERID"));
+				dish.setId(rs.getInt("PRODUCT.ID"));
+				dish.setLanguage(0, rs.getString("PRODUCT.CODE"));
+				dish.setLanguage(1, rs.getString("PRODUCT.MNEMONIC"));
+				dish.setLanguage(2, rs.getString("PRODUCT.SUBJECT"));
+				dish.setModification(rs.getString("OUTPUT.CONTENT"));//
+				dish.setNum(rs.getInt("OUTPUT.AMOUNT"));//
+				dish.setOutputID(rs.getInt("OUTPUT.ID"));//
+				dish.setPrice(rs.getInt("PRODUCT.PRICE"));
+				dish.setPrinter(rs.getString("PRODUCT.BRAND"));
+				dish.setPrompMenu(rs.getString("PRODUCT.UNIT"));
+				dish.setPrompMofify(rs.getString("PRODUCT.PRODUCAREA"));
+				dish.setPrompPrice(rs.getString("PRODUCT.CONTENT"));
+				dish.setQst(rs.getInt("PRODUCT.STORE"));
+				dish.setSize(rs.getInt("PRODUCT.COST"));
+				dish.setOpenTime(rs.getString("OUTPUT.TIME"));	//output time is table's open time. no need to remember output created time.
+				dish.setBillID(rs.getInt("OUTPUT.Category"));
+				dish.setTotalPrice(rs.getInt("OUTPUT.TOLTALPRICE"));
+
+				tValues[tmpPos][0] = dish.getDisplayableNum();				
+				tValues[tmpPos][1] =  dish.getTotalPrice() / 100f;		
+				tValues[tmpPos][2] =  dish.getOutputID();
+				
+				
+				tmpPos++;
+			}
+        }catch(Exception exp) {
+        	ErrorUtil.write(exp);
+        }
+	}
+
+	public static int getANewBillNumber(){
     	int num = 0;
     	try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();

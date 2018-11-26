@@ -482,4 +482,12 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     public static MenuPanel menuPanel;
     static JLabel lblStatus;
     private JLabel lblVersion;
+
+	public String getCurBillIndex() {
+		String curBillIndex = valCurBill.getText();
+		if(curBillIndex == null || curBillIndex.trim().length() == 0 || "0".equals(curBillIndex))
+			return "1";
+		else
+			return curBillIndex;
+	}
 }

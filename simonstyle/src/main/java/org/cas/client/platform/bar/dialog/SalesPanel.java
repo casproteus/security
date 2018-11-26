@@ -179,7 +179,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         	}else if (o == btnLine_1_10) { // print bill
         		outputStatusCheck();
         		billStatusCheck();
-        		billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
+        		billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.getCurBillIndex(), BarFrame.instance.valStartTime.getText());
         		billPanel.initContent();
         		
             } else if (o == btnLine_2_1) { // return
@@ -195,7 +195,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	BarFrame.instance.switchMode(0);
             	
             } else if(o == btnLine_2_2) {		//Add client
-				BarFrame.instance.valCurBill.setText("0");
+				BarFrame.instance.valCurBill.setText("");
 				BarFrame.instance.switchMode(2);
 				
         	} else if (o == btnLine_2_4) { // cancel all
@@ -401,7 +401,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		//as we need to care if there's bill exist anywhere when splitting bill or moving items.
 		//@because: we might have half completed bill.(haven't paid enough, then split, then continue pay)
 		if(billPanel.getBillId() == 0) {
-			int newBillID = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
+			int newBillID = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), BarFrame.instance.getCurBillIndex(), BarFrame.instance.valStartTime.getText());
 			billPanel.updateOutputRecords(newBillID);
 		}
 		else {//if bill record already exist, and there's new dish added, or discount, service fee changed.... update the total value.

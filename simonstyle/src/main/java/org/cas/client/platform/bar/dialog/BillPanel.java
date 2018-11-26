@@ -175,15 +175,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	void saveDishesToDB(List<Dish> dishes) {
 		try {
 		    for (Dish dish : dishes) {
-		    	String curBillId = BarFrame.instance.valCurBill.getText();
-		    	if("0".equals(curBillId))
-		    		curBillId = "1";
+		    	String curBillId = BarFrame.instance.getCurBillIndex();
 		    	Dish.createOutput(dish, curBillId);	//at this moment, the num should have not been soplitted.
 
 		        //in case some store need to stay in the interface after clicking the send button. 
                 StringBuilder sql = new StringBuilder("Select id from output where SUBJECT = '")
                     .append(BarFrame.instance.valCurTable.getText()).append("' and CONTACTID = ")
-                    .append(BarFrame.instance.valCurBill.getText()).append(" and PRODUCTID = ")
+                    .append(curBillId).append(" and PRODUCTID = ")
                     .append(dish.getId()).append(" and AMOUNT = ")
                     .append(dish.getNum()).append(" and TOLTALPRICE = ")
                     .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = ")
@@ -553,7 +551,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	resetStatus();
     	//get outputs of current table and bill id.
 		try {
-			String billIndex = billButton == null ? BarFrame.instance.valCurBill.getText() : billButton.getText();
+			String billIndex = billButton == null ? BarFrame.instance.getCurBillIndex() : billButton.getText();
 			//used deleted <= 1, means both uncompleted and normally completed will be displayed, unnormally delted recored will be delted = 100
 			StringBuilder sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
 					.append(BarFrame.instance.valCurTable.getText())
