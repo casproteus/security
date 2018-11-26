@@ -516,11 +516,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		}
     		
     		subTotal += price;
-    		subTotal -= dish.getDiscount();
+    		//@NOTE the price is deducted the discount already. subTotal -= dish.getDiscount();
     		totalGst += gst;
     		totalQst += qst;
     	}
-    	subTotal -= discount;
+    	subTotal -= discount;	//deduct the total discount.
     	if(BarOption.isDisCountBeforeTax()) {
     		//@TODO: I am not sure if it's correct to do like this, we don't know what tax rate is good for the bill discount.
     	}
@@ -601,6 +601,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				String lang = langs.length > LoginDlg.USERLANG ? langs[LoginDlg.USERLANG] : langs[0];
 				if(lang.length() == 0 || "null".equalsIgnoreCase(lang))
 					lang = langs[0].length() == 0 || "null".equalsIgnoreCase(lang) ? "" : langs[0];
+				
 				tValues[tmpPos][2] = lang;
 				
 				tValues[tmpPos][3] =  BarOption.getMoneySign() + dish.getTotalPrice() / 100f;
