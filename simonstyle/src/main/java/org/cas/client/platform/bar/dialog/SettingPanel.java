@@ -287,6 +287,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		BarOption.setIsBuffetMode(cbxIsBuffetMode.isSelected() ? true : false);
         	}else if(o == cbxIsFastFoodMode) {
         		BarOption.setFastFoodMode(cbxIsFastFoodMode.isSelected() ? true : false);
+        	}else if(o == cbxIsHideRecordFromOtherWaiter) {
+        		BarOption.setHideRecordFromOtherWaiter(cbxIsHideRecordFromOtherWaiter.isSelected() ? true : false);
 //        	}else if(o == cbxIsPrintBillWhenPay) {
 //        		BarOption.setIsPrintBillWhenPay(cbxIsPrintBillWhenPay.isSelected() ? true : false);
         	}
@@ -347,6 +349,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		cbxIsBuffetMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsFastFoodMode.setBounds(cbxIsBuffetMode.getX(), cbxIsBuffetMode.getY() + cbxIsBuffetMode.getHeight() + CustOpts.VER_GAP,
         		cbxIsFastFoodMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxIsHideRecordFromOtherWaiter.setBounds(cbxIsFastFoodMode.getX(), cbxIsFastFoodMode.getY() + cbxIsFastFoodMode.getHeight() + CustOpts.VER_GAP,
+        		cbxIsHideRecordFromOtherWaiter.getPreferredSize().width, CustOpts.BTN_HEIGHT);
 //        cbxIsPrintBillWhenPay.setBounds(CustOpts.HOR_GAP, cbxIsDiscBeforeTax.getY() + cbxIsDiscBeforeTax.getHeight() + CustOpts.VER_GAP,
 //        		cbxIsPrintBillWhenPay.getPreferredSize().width, CustOpts.BTN_HEIGHT);
 
@@ -388,6 +392,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsDiscBeforeTax = new JCheckBox(BarFrame.consts.IsDiscBeforeTax());
         cbxIsBuffetMode = new JCheckBox(BarFrame.consts.IsBuffetMode());
         cbxIsFastFoodMode = new JCheckBox(BarFrame.consts.IsFastFoodMode());
+        cbxIsHideRecordFromOtherWaiter = new JCheckBox(BarFrame.consts.IsHideRecordFromOtherWaiter());
 //        cbxIsPrintBillWhenPay = new JCheckBox(BarFrame.consts.IsPrintBillWhenPay);
         lblStartTimeOfDay = new JLabel(BarFrame.consts.StartTimeOfDay());
         tfdStartTimeOfDay = new JTextField(String.valueOf(BarOption.getStartTime()));
@@ -435,6 +440,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsDiscBeforeTax.setSelected(BarOption.isDisCountBeforeTax());
         cbxIsBuffetMode.setSelected(BarOption.isBuffetMode());
         cbxIsFastFoodMode.setSelected(BarOption.isFastFoodMode());
+        cbxIsHideRecordFromOtherWaiter.setSelected(BarOption.isHideRecordFromOtherWaiter());
 //        cbxIsPrintBillWhenPay.setSelected(BarOption.isPrintBillWhenPay());
 
         addControlButtons();
@@ -468,6 +474,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsDiscBeforeTax.addActionListener(this);
         cbxIsBuffetMode.addActionListener(this);
         cbxIsFastFoodMode.addActionListener(this);
+        cbxIsHideRecordFromOtherWaiter.addActionListener(this);
 //        cbxIsPrintBillWhenPay.addActionListener(this);
         tfdStartTimeOfDay.addFocusListener(this);
         tfdPrinterMinReachTime.addFocusListener(this);
@@ -519,6 +526,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(cbxIsDiscBeforeTax);
         add(cbxIsBuffetMode);
         add(cbxIsFastFoodMode);
+        add(cbxIsHideRecordFromOtherWaiter);
 //        add(cbxIsPrintBillWhenPay);
 	}
 
@@ -536,6 +544,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     JCheckBox cbxIsDiscBeforeTax;
     JCheckBox cbxIsBuffetMode;
     JCheckBox cbxIsFastFoodMode;
+    JCheckBox cbxIsHideRecordFromOtherWaiter;
 //    JCheckBox cbxIsPrintBillWhenPay;
     
     //component for setting category and menus

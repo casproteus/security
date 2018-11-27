@@ -3,6 +3,7 @@ package org.cas.client.platform.bar.model;
 
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
@@ -71,6 +72,46 @@ public class Dish {
 		}
 	}
 
+	public static void mergeOutputs(Dish dish, int splitAmount, String billIndex, int billId) {
+		int num = dish.getNum();			//current amount
+		//first pick out the number on 100,0000 and 10000 position
+		int pK = num /(BarOption.MaxQTY * 100);
+		if(num > BarOption.MaxQTY * 100) {
+			num = num %(BarOption.MaxQTY * 100);
+		}
+		int pS = num /BarOption.MaxQTY;
+		if(num > BarOption.MaxQTY) {
+			num = num % BarOption.MaxQTY;
+		}
+		//calculate the new rate of dividing price, and the new num to update into the db.
+		float splitRate = (float)num / splitAmount;	//default division rate.
+		int pX = splitAmount * BarOption.MaxQTY;
+		if(pS > 0) {	//while if it's already a float, then reset the division rate.
+			splitRate = splitRate / pS;
+			num += pS * BarOption.MaxQTY ;		//if more than one time division, put the number on higher position.
+			pX *= 100;
+		}
+		if(pK > 0) {
+			splitRate = splitRate / pK;
+			num += pK * BarOption.MaxQTY * 100;
+			pX *= 100;
+		}
+		num += pX;
+		
+		if(billIndex == null) {		//updating the original output.
+			Statement smt = PIMDBModel.getStatement();
+			try {
+				smt.executeUpdate("update output set amount = " + num + ", category = " + dish.getBillID()
+						+ ", TOLTALPRICE = " + (dish.getPrice() - dish.getDiscount()) * splitRate + " where id = " + dish.getOutputID());
+			} catch (Exception exp) {
+				ErrorUtil.write(exp);
+			}
+		}else {						//creating a splited one.
+			dish.setNum(num);
+			createSplitedOutput(dish, billIndex, splitRate);
+		}
+	}
+	
 	public static void createOutput(Dish dish, String billID) {
 		createSplitedOutput(dish, billID, dish.getNum());
 	}

@@ -511,4 +511,6 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String ArrowBtnBk() {return "箭头按钮背景色";}
     @Override
 	public String Color() {return "背景色";}
+	@Override
+	public String IsHideRecordFromOtherWaiter() {return "隐藏其他员工的销售记录";};
 }

@@ -43,6 +43,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 
 		btnEqualBill = new JToggleButton(BarFrame.consts.EqualBill());
 		btnSplitItem = new JToggleButton(BarFrame.consts.SplitItem());
+		btnMoveItem = new JToggleButton(BarFrame.consts.MoveItem());
 		btnCombineAll = new FunctionButton(BarFrame.consts.CombineAll());
 		
 		btnCompleteAll = new FunctionButton(BarFrame.consts.CompleteAll());
@@ -57,6 +58,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnEqualBill.setMargin(btnAddUser.getMargin());
 		btnCombineAll.setMargin(btnAddUser.getMargin());
 		btnSplitItem.setMargin(btnAddUser.getMargin());
+		btnMoveItem.setMargin(btnAddUser.getMargin());
 		btnCompleteAll.setMargin(btnAddUser.getMargin());
 		btnReturn.setMargin(btnAddUser.getMargin());
 		
@@ -70,6 +72,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		add(btnEqualBill);
 		add(btnCombineAll);
 		add(btnSplitItem);
+		add(btnMoveItem);
 		add(btnCompleteAll);
 		add(btnReturn);
 		
@@ -81,6 +84,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnEqualBill.addActionListener(this);
 		btnCombineAll.addActionListener(this);
 		btnSplitItem.addActionListener(this);
+		btnMoveItem.addActionListener(this);
 		btnCompleteAll.addActionListener(this);
 		btnReturn.addActionListener(this);
 		
@@ -141,7 +145,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 8) / 7;
+        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 9) / 8;
         int tBtnHeight = panelHeight / 10;
 
 
@@ -163,8 +167,11 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnSplitItem.setBounds(btnCombineAll.getX() + btnCombineAll.getWidth() + CustOpts.HOR_GAP, 
 				btnPrintAll.getY(),
 				tBtnWidht, tBtnHeight);
-		btnCompleteAll.setBounds(btnSplitItem.getX() + btnSplitItem.getWidth() + CustOpts.HOR_GAP, 
-				btnPrintAll.getY(),
+		btnMoveItem.setBounds(btnSplitItem.getX() + btnSplitItem.getWidth() + CustOpts.HOR_GAP, 
+				btnSplitItem.getY(),
+				tBtnWidht, tBtnHeight);
+		btnCompleteAll.setBounds(btnMoveItem.getX() + btnMoveItem.getWidth() + CustOpts.HOR_GAP, 
+				btnMoveItem.getY(),
 				tBtnWidht, tBtnHeight);
 		
 		separator.setBounds(CustOpts.HOR_GAP, 
@@ -364,6 +371,39 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 					curDish = null;
 					initContent();
 				}
+			}else if(o == btnMoveItem) {//@note should consider the time, incase there'ss some bill not paid before, while was calculated into current client.
+				if(curDish == null) {
+					JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
+					btnMoveItem.setSelected(false);
+					return;
+				}
+				BillPanel panel = getCurBillPanel();
+				if(panel == null) {
+					JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
+					btnMoveItem.setSelected(false);
+					return;
+				}
+				BarFrame.numberPanelDlg.setBtnSource(btnMoveItem);
+				BarFrame.numberPanelDlg.setFloatSupport(false);
+				BarFrame.numberPanelDlg.setPercentSupport(false);
+				BarFrame.numberPanelDlg.setModal(true);
+				BarFrame.numberPanelDlg.setVisible(btnMoveItem.isSelected());
+				if(NumberPanelDlg.confirmed) {
+					int num = Integer.valueOf(NumberPanelDlg.curContent);
+					if(num < 1) {
+						JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+						return;
+					}
+					// the selecteed output to this bill.
+					String sql = "update output set contactID = " + num + " where id = " + curDish.getOutputID();
+			        try {
+			        	PIMDBModel.getStatement().executeUpdate(sql);
+			        }catch(Exception exp) {
+			        	ErrorUtil.write(exp);
+			        }
+			        
+			        initContent();
+				}
 			}
 		}else if(o instanceof ArrowButton){
 			if(o == btnLeft) {
@@ -392,7 +432,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		        	ErrorUtil.write(exp);
 		        }
 		        
-	        	checkCombination(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valStartTime.getText(), 1);
+	        	//combineOutputs(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valStartTime.getText(), 1);
 
 		        initContent();
 			}else if( o == btnCompleteAll) {
@@ -424,10 +464,25 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		}
 	}
 	
-    private void checkCombination(String tableName, String startTime, int tableIndex) {
+	//if in same table same openTime same billIndex, we should combine the outputs.
+	//quy, total price, discount, otherReceived
+    private void combineOutputs(String tableName, String startTime, int tableIndex) {
+    	
+//    			StringBuilder sql = new StringBuilder("update bill set total = ")
+//				.append((int)(Float.valueOf(panel.valTotlePrice.getText()) * 100)/num).append(" where id = ").append(billId);
+//				PIMDBModel.getStatement().executeUpdate(sql.toString());
+//				
+//				panel.discount /= num;
+//				sql = new StringBuilder("update bill set discount = discount/" + num).append(" where id = ").append(billId);
+//				PIMDBModel.getStatement().executeUpdate(sql.toString());
+//
+//				panel.serviceFee /= num;
+//				sql = new StringBuilder("update bill set otherReceived = otherReceived/" + num).append(" where id = ").append(billId);
+//				PIMDBModel.getStatement().executeUpdate(sql.toString());
+				
     	String sql =
                 "select * from output where SUBJECT = '" + tableName
-                + "' and time = '" + startTime + "' and contactID = " + tableIndex + " and DELETED != true";
+                + "' and time = '" + startTime + "' and contactID = " + tableIndex + " and DELETED == 0";
         try {
         	PIMDBModel.getReadOnlyStatement().executeQuery(sql);
         	ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -521,6 +576,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	FunctionButton btnPrintAll;
 	JToggleButton btnEqualBill;
 	JToggleButton btnSplitItem;
+	JToggleButton btnMoveItem;
 	FunctionButton btnCombineAll;
 	
 	FunctionButton btnCompleteAll;

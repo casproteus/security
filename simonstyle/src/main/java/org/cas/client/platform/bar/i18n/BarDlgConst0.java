@@ -290,7 +290,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String SplitItem() {return "SPLIT ITEM";}
     @Override
-	public String MoveItem() {return "MoveItem";}
+	public String MoveItem() {return "MOVE ITEM";}
     @Override
 	public String CombineAll() {return "COMBINE ALL";}
     @Override
@@ -511,5 +511,7 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String ArrowBtnBk() {return "Arrow Button Back Ground";}
     @Override
 	public String Color() {return "Color";}
+	@Override
+	public String IsHideRecordFromOtherWaiter() {return "Hide Records From Other Waiter";};
     
 }

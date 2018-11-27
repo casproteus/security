@@ -276,4 +276,5 @@ public interface BarDlgConst {
     String NumberBtnBk();
 	String ArrowBtnBk();
     String Color();
+	String IsHideRecordFromOtherWaiter();
 }

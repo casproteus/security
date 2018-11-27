@@ -290,6 +290,14 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     	return CustOpts.custOps.getValue("FastFoodMode") == null ? 
     			false : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("FastFoodMode"));
     }
+
+    public static void setHideRecordFromOtherWaiter(boolean isHideRecordFromOtherWaiter) {
+    	CustOpts.custOps.setKeyAndValue("HideRecordFromOtherWaiter", String.valueOf(isHideRecordFromOtherWaiter));
+    }
+    public static boolean isHideRecordFromOtherWaiter() {
+    	return CustOpts.custOps.getValue("HideRecordFromOtherWaiter") == null ? 
+    			false : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("HideRecordFromOtherWaiter"));
+    }
     
     public static void setStartTime(String startTimeOfDay) {
     	CustOpts.custOps.setKeyAndValue("StartTimeOfDay", startTimeOfDay);
