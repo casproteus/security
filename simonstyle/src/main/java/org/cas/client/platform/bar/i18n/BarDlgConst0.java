@@ -54,7 +54,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String DISCOUNT_BILL() {return "DISCOUNT BILL";}
     @Override
-	public String VolumnDiscountNotice() {return "Please input how much to discount";}
+	public String VolumnDiscountNotice() {return "will discount from the whole bill";}
     
     @Override
 	public String WaiterReport() {return "<html><center>SERVER<br>REPORT</center></html>";}
@@ -113,7 +113,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String DISCITEM() {return "DISCOUNT ITEM";}
     @Override
-	public String DISC_ITEMNotice() {return "Please input how much to discount for selected item";}
+	public String DISC_ITEMNotice() {return "will discount from selected item";}
     @Override
 	public String PRINT_BILL() {return "<html><center>PRINT<br>BILL</center></html>";}
 

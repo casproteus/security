@@ -54,7 +54,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String DISCOUNT_BILL() {return VolumnDiscount();}
     @Override
-	public String VolumnDiscountNotice() {return "请输入整单打折的金额";}
+	public String VolumnDiscountNotice() {return "整单打折的金额";}
     
     @Override
 	public String WaiterReport() {return "当日报告";}

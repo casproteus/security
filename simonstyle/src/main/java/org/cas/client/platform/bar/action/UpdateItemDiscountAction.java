@@ -28,7 +28,7 @@ public class UpdateItemDiscountAction implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if(btn.isSelected()) {
  			try {
- 				String curContent = BarFrame.numberPanelDlg.tfdQTY.getText();
+ 				String curContent = BarFrame.discountDlg.tfdQTY.getText();
             	if(curContent.endsWith("%")) {
                 	String tContent = curContent.substring(0, curContent.length() - 1);
             		Float f = Float.valueOf(tContent);
@@ -39,20 +39,23 @@ public class UpdateItemDiscountAction implements ActionListener{
 
              	int row = billPanel.tblBillPanel.getSelectedRow();
              	float discount = 0;
+             	String strTotalPrice = (String)billPanel.tblBillPanel.getValueAt(row, 3);
+				strTotalPrice = strTotalPrice.trim().substring(1);
+             	float totalPrice = Float.valueOf(strTotalPrice);
  				if(BarFrame.numberPanelDlg.isPercentage) {
- 					String price = (String)billPanel.tblBillPanel.getValueAt(row, 3);
- 					price = price.trim().substring(1);
- 					discount = Float.valueOf(price) * Float.valueOf(curContent);
+ 					discount = totalPrice * Float.valueOf(curContent);
  				}else {
  					discount = Float.valueOf(curContent);
  				}
  				
              	billPanel.tblBillPanel.setValueAt("-"+ BarOption.getMoneySign() + new DecimalFormat("#0.00").format(discount), row, 2);
+             	
              	billPanel.orderedDishAry.get(row).setDiscount((int)(discount * 100));
+             	
              	billPanel.updateTotleArea();
              	int outputID = billPanel.orderedDishAry.get(row).getOutputID();
              	if(outputID >= 0) {
-             		String sql = "update output set discount = " + (int)(discount * 100) + " where id = " + outputID;
+             		String sql = "update output set discount = " + (int)(discount * 100) + " and totalprice = " + totalPrice + " where id = " + outputID;
              		PIMDBModel.getStatement().executeUpdate(sql);
              	}
          	}catch(Exception exp) {

@@ -283,7 +283,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	public void actionPerformed(ActionEvent e) {	//@NOTE: the bill button could trigger two times of event.
 		Object o = e.getSource();
 		if(o instanceof JToggleButton) {
-			if(o == btnEqualBill) {	//aplite bill eually
+			if(o == btnEqualBill) {	//splite bill eually
 				BillPanel panel = getCurBillPanel();
 				if(panel == null) {
 					JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());

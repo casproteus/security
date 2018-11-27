@@ -3,7 +3,6 @@ package org.cas.client.platform.bar.model;
 
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
@@ -126,8 +125,8 @@ public class Dish {
 		            .append(billID).append(", ")			//contactID ->bill id
 		            .append(dish.getId()).append(", ")	//productid
 		            .append(dish.getNum()).append(", ")	//amount
-		            .append((dish.getPrice() - dish.getDiscount()) * splitRate).append(", ")	//totalprice int
-		            .append(dish.getDiscount() * dish.getNum()).append(", '")	//discount
+		            .append(dish.getTotalPrice() * splitRate).append(", ")	//totalprice int
+		            .append(dish.getDiscount() >= 100 ? dish.getDiscount() * splitRate : dish.getDiscount()).append(", '")	//discount
 		            .append(dish.getModification()).append("', ")				//content
 		            .append(LoginDlg.USERID).append(", '")		//emoployid
 		            .append(dish.getOpenTime()).append("', ")	//opentime

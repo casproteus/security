@@ -40,6 +40,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
     public static NumberPanelDlg numberPanelDlg; 
+    public static DiscountDlg discountDlg; 
     public static PayDlg payDlg;
     
     public static void main(
@@ -49,6 +50,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         menuPanel = new MenuPanel();	//have to be after initModel, before new BarFrame().
         instance = new BarFrame();
         numberPanelDlg = new NumberPanelDlg(instance);
+        discountDlg = new DiscountDlg(instance);
         payDlg = new PayDlg(instance);
         
         //activation check

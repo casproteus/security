@@ -177,7 +177,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		    for (Dish dish : dishes) {
 		    	String curBillId = BarFrame.instance.getCurBillIndex();
 		    	Dish.createOutput(dish, curBillId);	//at this moment, the num should have not been soplitted.
-
+		    	//TODO: the getNum could be wrong, because it might be like 20001(splitted)
 		        //in case some store need to stay in the interface after clicking the send button. 
                 StringBuilder sql = new StringBuilder("Select id from output where SUBJECT = '")
                     .append(BarFrame.instance.valCurTable.getText()).append("' and CONTACTID = ")
@@ -491,14 +491,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     			num = num % BarOption.MaxQTY;
     		}
     		
-    		int price = dish.getPrice();
+    		int price = dish.getTotalPrice();
     		int gst = (int) (price * (dish.getGst() * gstRate / 100f));
     		int qst = (int) (price * (dish.getQst() * qstRate / 100f));
     		
-    		price -= dish.getDiscount();
-    		price *= num;
-    		gst *= num;
-    		qst *= num;
     		if(BarOption.isDisCountBeforeTax()) {
     			gst -= dish.getDiscount() * (dish.getGst() * gstRate / 100f);
     			qst -= dish.getDiscount() * (dish.getQst() * gstRate / 100f);
@@ -516,7 +512,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		}
     		
     		subTotal += price;
-    		//@NOTE the price is deducted the discount already. subTotal -= dish.getDiscount();
     		totalGst += gst;
     		totalQst += qst;
     	}
@@ -603,6 +598,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					lang = langs[0].length() == 0 || "null".equalsIgnoreCase(lang) ? "" : langs[0];
 				
 				tValues[tmpPos][2] = lang;
+				if(dish.getDiscount() > 0) {
+					tValues[tmpPos][2] = lang + "  -" + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(dish.getDiscount()/100.0);
+				}
 				
 				tValues[tmpPos][3] =  BarOption.getMoneySign() + dish.getTotalPrice() / 100f;
 				tmpPos++;

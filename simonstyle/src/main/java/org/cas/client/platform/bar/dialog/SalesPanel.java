@@ -265,19 +265,19 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	PrintService.openDrawer();
             	
             } else if (o == btnLine_2_7) {//disc bill
-         		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.DISCOUNT_BILL());
-         		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.VolumnDiscountNotice());
-         		BarFrame.numberPanelDlg.setBtnSource(null);
-         		BarFrame.numberPanelDlg.setFloatSupport(true);
-         		BarFrame.numberPanelDlg.setPercentSupport(true);
-         		BarFrame.numberPanelDlg.setModal(true);
-         		BarFrame.numberPanelDlg.setVisible(true);
+         		BarFrame.discountDlg.setTitle(BarFrame.consts.DISCOUNT_BILL());
+         		BarFrame.discountDlg.setNotice(BarFrame.consts.VolumnDiscountNotice());
+         		BarFrame.discountDlg.setBtnSource(null);
+         		BarFrame.discountDlg.setFloatSupport(true);
+         		BarFrame.discountDlg.setPercentSupport(true);
+         		BarFrame.discountDlg.setModal(true);
+         		BarFrame.discountDlg.setVisible(true);
          		
          		try {
-     				String curContent = BarFrame.numberPanelDlg.curContent;
+     				String curContent = BarFrame.discountDlg.curContent;
      				if(curContent == null || curContent.length() == 0)
      					return;
-             		float discount = BarFrame.numberPanelDlg.isPercentage ? 
+             		float discount = BarFrame.discountDlg.isPercentage ? 
              				Float.valueOf(billPanel.valTotlePrice.getText()) * Float.valueOf(curContent)
              				: Float.valueOf(curContent);
              		billPanel.discount = (int)(discount * 100);
@@ -287,7 +287,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		billStatusCheck();
              		
              	}catch(Exception exp) {
-                 	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
+                 	JOptionPane.showMessageDialog(BarFrame.discountDlg, DlgConst.FORMATERROR);
              		return;
              	}
             }else if(o == btnLine_2_8) {	//refund
@@ -364,17 +364,17 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          			return;
          		}
 
-         		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.DISCITEM());
-         		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.DISC_ITEMNotice());
-         		BarFrame.numberPanelDlg.setBtnSource(btnLine_1_7);//pomp up a numberPanelDlg
-         		BarFrame.numberPanelDlg.setFloatSupport(true);
-         		BarFrame.numberPanelDlg.setPercentSupport(true);
-         		BarFrame.numberPanelDlg.setModal(false);
+         		BarFrame.discountDlg.setTitle(BarFrame.consts.DISCITEM());
+         		BarFrame.discountDlg.setNotice(BarFrame.consts.DISC_ITEMNotice());
+         		BarFrame.discountDlg.setBtnSource(btnLine_1_7);//pomp up a discountDlg
+         		BarFrame.discountDlg.setFloatSupport(true);
+         		BarFrame.discountDlg.setPercentSupport(true);
+         		BarFrame.discountDlg.setModal(false);
          		//should no record selected, select the last one.
-         		BarFrame.numberPanelDlg.setVisible(btnLine_1_7.isSelected());	//@NOTE: it's not model mode.
-         		BarFrame.numberPanelDlg.setAction(new UpdateItemDiscountAction(btnLine_1_7, billPanel));
+         		BarFrame.discountDlg.setVisible(btnLine_1_7.isSelected());	//@NOTE: it's not model mode.
+         		BarFrame.discountDlg.setAction(new UpdateItemDiscountAction(btnLine_1_7, billPanel));
          		
-             }else if(o == btnLine_1_8) {
+             }else if(o == btnLine_1_8) {	//change price
             	if(BillListPanel.curDish == null) {//check if there's an item selected.
           			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
           			return;
@@ -383,7 +383,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.ChangePriceNotice());
             	BarFrame.numberPanelDlg.setBtnSource(btnLine_1_8);//pomp up a numberPanelDlg
          		BarFrame.numberPanelDlg.setFloatSupport(true);
-         		BarFrame.numberPanelDlg.setPercentSupport(true);
+         		BarFrame.numberPanelDlg.setPercentSupport(false);
          		BarFrame.numberPanelDlg.setModal(false);
          		//should no record selected, select the last one.
          		BarFrame.numberPanelDlg.setVisible(btnLine_1_8.isSelected());	//@NOTE: it's not model mode.
