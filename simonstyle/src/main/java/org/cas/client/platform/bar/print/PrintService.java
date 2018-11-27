@@ -368,7 +368,6 @@ public class PrintService{
 		//do cut paper.
 		if(isSuccess) {
 			isSuccess = printThroughOSdriver(getMevCommandFilePath("mevCutCommand.xml", Command.GS_V_m_n), new HashPrintRequestAttributeSet(), false);
-			//TODO:clean the file on disk.
 		}
 		
 		return isSuccess;
@@ -976,7 +975,7 @@ public class PrintService{
             String dishName = d.getLanguage(langIndex); 
             sb.append(dishName);
             
-            if(d.getNum() > 1){
+            if(d.getNum() > 1){//NOTE: the number could be bigger than 10000.
             	sb.append(" ").append(d.getDisplayableNum());
             }
             
@@ -1446,7 +1445,7 @@ public class PrintService{
                 sb.append(BarUtil.generateString(5 - String.valueOf(d.getId()).length(), " "));
             }
             sb.append(d.getLanguage(langIndex));
-            if(d.getNum() > 1){
+            if(d.getNum() > 1){//Note：when sending to kitchen, the number couldnot be bigger than 10000.
                 String space = " ";
                 int occupiedLength = BarUtil.getLengthOfString(sb.toString());
                 sb.append(BarUtil.generateString(tWidth - occupiedLength - (d.getNum() < 10 ? 2 : 3), " "));

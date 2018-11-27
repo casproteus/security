@@ -342,7 +342,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				initContent();
 			}else if(o == btnSplitItem) {
 				if(btnSplitItem.isSelected()) {//select
-					//Todo:check if there's one item selected.
+					//check if there's one item selected.
 					if(curDish == null) {
 						JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
 						btnSplitItem.setSelected(false);

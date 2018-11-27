@@ -126,7 +126,7 @@ public class Dish {
 		            .append(dish.getId()).append(", ")	//productid
 		            .append(dish.getNum()).append(", ")	//amount
 		            .append(dish.getTotalPrice() * splitRate).append(", ")	//totalprice int
-		            .append(dish.getDiscount() >= 100 ? dish.getDiscount() * splitRate : dish.getDiscount()).append(", '")	//discount
+		            .append(dish.getDiscount() * splitRate).append(", '")	//discount
 		            .append(dish.getModification()).append("', ")				//content
 		            .append(LoginDlg.USERID).append(", '")		//emoployid
 		            .append(dish.getOpenTime()).append("', ")	//opentime

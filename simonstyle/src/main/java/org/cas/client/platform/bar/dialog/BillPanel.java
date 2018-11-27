@@ -172,20 +172,19 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	}
 	
 	//save to db output
-	void saveDishesToDB(List<Dish> dishes) {
+	void persistDishesToOutput(List<Dish> dishes) {
 		try {
 		    for (Dish dish : dishes) {
 		    	String curBillIndex = BarFrame.instance.getCurBillIndex();
 		    	Dish.createOutput(dish, curBillIndex);	//at this moment, the num should have not been soplitted.
-		    	//TODO: the getNum could be wrong, because it might be like 20001(splitted)
 		        //in case some store need to stay in the interface after clicking the send button. 
                 StringBuilder sql = new StringBuilder("Select id from output where SUBJECT = '")
                     .append(BarFrame.instance.valCurTable.getText()).append("' and CONTACTID = ")
                     .append(curBillIndex).append(" and PRODUCTID = ")
                     .append(dish.getId()).append(" and AMOUNT = ")
                     .append(dish.getNum()).append(" and TOLTALPRICE = ")
-                    .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = ")
-                    .append(dish.getDiscount() * dish.getNum()).append(" and EMPLOYEEID = ")
+                    .append(dish.getTotalPrice()).append(" and DISCOUNT = ")
+                    .append(dish.getDiscount()).append(" and EMPLOYEEID = ")
                     .append(LoginDlg.USERID).append(" and TIME = '")
                     .append(dish.getOpenTime()).append("'");
                 ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -224,7 +223,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				if(orderedDishAry.get(selectedRow).getOutputID() >= 0) {	//already saved
 					BarFrame.setStatusMes(BarFrame.consts.SendItemCanNotModify());
 					addContentToList(orderedDishAry.get(selectedRow));
-				}else {														//not saved yet
+				}else {			//not saved yet  //NOTE:getNum() couldn't be bigger than 10000, if it's saved, + button will insert a new line.
 					int tQTY = orderedDishAry.get(selectedRow).getNum() + 1;
 					int row = tblBillPanel.getSelectedRow();
 					Dish dish = orderedDishAry.get(row);
@@ -466,7 +465,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		    BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
 		}
 		sendDishesToKitchen(dishes, false);
-		saveDishesToDB(dishes);
+		persistDishesToOutput(dishes);
 		tblBillPanel.repaint();//to update the color of dishes, it's saved, so it's not red anymore.
 	}
 
