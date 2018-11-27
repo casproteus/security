@@ -111,8 +111,8 @@ public class Dish {
 		}
 	}
 	
-	public static void createOutput(Dish dish, String billID) {
-		createSplitedOutput(dish, billID, dish.getNum());
+	public static void createOutput(Dish dish, String billIndex) {
+		createSplitedOutput(dish, billIndex, 1);
 	}
 	
 	public static void createSplitedOutput(Dish dish, String billID, float splitRate) {

@@ -49,8 +49,9 @@ public class UpdateItemDiscountAction implements ActionListener{
  				}
  				
              	billPanel.tblBillPanel.setValueAt("-"+ BarOption.getMoneySign() + new DecimalFormat("#0.00").format(discount), row, 2);
-             	
+             	billPanel.tblBillPanel.setValueAt("-"+ BarOption.getMoneySign() + new DecimalFormat("#0.00").format(totalPrice - discount), row, 3);
              	billPanel.orderedDishAry.get(row).setDiscount((int)(discount * 100));
+             	billPanel.orderedDishAry.get(row).setTotalPrice((int)((totalPrice - discount) * 100));
              	
              	billPanel.updateTotleArea();
              	int outputID = billPanel.orderedDishAry.get(row).getOutputID();

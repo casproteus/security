@@ -175,13 +175,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	void saveDishesToDB(List<Dish> dishes) {
 		try {
 		    for (Dish dish : dishes) {
-		    	String curBillId = BarFrame.instance.getCurBillIndex();
-		    	Dish.createOutput(dish, curBillId);	//at this moment, the num should have not been soplitted.
+		    	String curBillIndex = BarFrame.instance.getCurBillIndex();
+		    	Dish.createOutput(dish, curBillIndex);	//at this moment, the num should have not been soplitted.
 		    	//TODO: the getNum could be wrong, because it might be like 20001(splitted)
 		        //in case some store need to stay in the interface after clicking the send button. 
                 StringBuilder sql = new StringBuilder("Select id from output where SUBJECT = '")
                     .append(BarFrame.instance.valCurTable.getText()).append("' and CONTACTID = ")
-                    .append(curBillId).append(" and PRODUCTID = ")
+                    .append(curBillIndex).append(" and PRODUCTID = ")
                     .append(dish.getId()).append(" and AMOUNT = ")
                     .append(dish.getNum()).append(" and TOLTALPRICE = ")
                     .append((dish.getPrice() - dish.getDiscount()) * dish.getNum()).append(" and DISCOUNT = ")
