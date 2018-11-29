@@ -45,6 +45,8 @@ public class Dish {
 		//calculate the new rate of dividing price, and the new num to update into the db.
 		float splitRate = (float)num / splitAmount;	//default division rate.
 		int pX = splitAmount * BarOption.MaxQTY;
+		
+		//check the new split number should be added onto pS or pK.
 		if(pS > 0) {	//while if it's already a float, then reset the division rate.
 			splitRate = splitRate / pS;
 			num += pS * BarOption.MaxQTY ;		//if more than one time division, put the number on higher position.
@@ -56,7 +58,6 @@ public class Dish {
 			pX *= 100;
 		}
 		num += pX;
-		
 		if(billIndex == null) {		//updating the original output.
 			Statement smt = PIMDBModel.getStatement();
 			try {
@@ -173,6 +174,8 @@ public class Dish {
 	@Override
 	public Dish clone(){
 		Dish dish = new Dish();
+		dish.setBillID(billID);
+		dish.setBillIndex(billIndex);
 		dish.setCATEGORY(CATEGORY);
 		dish.setDiscount(discount);
 		dish.setDspIndex(dspIndex);
@@ -184,15 +187,16 @@ public class Dish {
 		dish.setLanguage(2, language[2]);
 		dish.setModification(modification);
 		dish.setNum(num);
+		dish.setOpenTime(openTime);
 		dish.setOutputID(outputID);
 		dish.setPrice(price);
 		dish.setPrinter(printer);
 		dish.setPrompMenu(prompMenu);
 		dish.setPrompMofify(prompMofify);
 		dish.setPrompPrice(prompPrice);
-		dish.setBillIndex(billIndex);
-		dish.setBillID(billID);
-		dish.setOpenTime(openTime);
+		dish.setQst(qst);
+		dish.setSize(size);
+		dish.setTotalPrice(totalPrice);
 		return dish;
 	}
     

@@ -35,7 +35,7 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
-	private String VERSION = "V0.97-20181126";
+	private String VERSION = "V0.98-20181128";
     public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
@@ -145,6 +145,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
             instance.setVisible(true);
             checkSignIn();
         }else {	//the case that user clicked X button.
+        	CASControl.ctrl.exitSystem();
             System.exit(0);
         }
     }
@@ -380,28 +381,21 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 
     /** Invoked when the component's size changes. */
     @Override
-    public void componentResized(
-            ComponentEvent e) {
+    public void componentResized(ComponentEvent e) {
         reLayout();
     };
 
     /** Invoked when the component's position changes. */
     @Override
-    public void componentMoved(
-            ComponentEvent e) {
-    };
+    public void componentMoved(ComponentEvent e) {};
 
     /** Invoked when the component has been made visible. */
     @Override
-    public void componentShown(
-            ComponentEvent e) {
-    };
+    public void componentShown(ComponentEvent e) {};
 
     /** Invoked when the component has been made invisible. */
     @Override
-    public void componentHidden(
-            ComponentEvent e) {
-    };
+    public void componentHidden(ComponentEvent e) {};
 
     /**
      * Invoked when an action occurs. NOTE:PIM的绝大多数用于新建和编辑的对话盒，对于确定事件的处理，采用如下规则：
@@ -412,24 +406,17 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
      *            动作事件
      */
     @Override
-    public void actionPerformed(
-            ActionEvent e) {
-    }
+    public void actionPerformed(ActionEvent e) {}
 
     @Override
-    public void windowActivated(
-            WindowEvent e) {
-    }
+    public void windowActivated(WindowEvent e) {}
 
     @Override
-    public void windowClosed(
-            WindowEvent e) {
-    }
+    public void windowClosed(WindowEvent e) {}
 
 	static boolean ISCLOSING = false;
     @Override
-    public void windowClosing(
-            WindowEvent e) {
+    public void windowClosing(WindowEvent e) {
 		if (ISCLOSING) {
 			return;
 		}
@@ -442,24 +429,16 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     }
 
     @Override
-    public void windowDeactivated(
-            WindowEvent e) {
-    }
+    public void windowDeactivated(WindowEvent e) {}
 
     @Override
-    public void windowDeiconified(
-            WindowEvent e) {
-    }
+    public void windowDeiconified(WindowEvent e) {}
 
     @Override
-    public void windowIconified(
-            WindowEvent e) {
-    }
+    public void windowIconified(WindowEvent e) {}
 
     @Override
-    public void windowOpened(
-            WindowEvent e) {
-    }
+    public void windowOpened(WindowEvent e) {}
 
     @Override
     public Container getContainer() {

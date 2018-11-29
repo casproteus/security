@@ -30,33 +30,42 @@ public class UpdateItemDiscountAction implements ActionListener{
  			try {
  				String curContent = BarFrame.discountDlg.tfdQTY.getText();
             	if(curContent.endsWith("%")) {
+            		BarFrame.discountDlg.isPercentage = true;	//NOTE：maybe ok's action not called yet, so the percentage flag not set yet.
                 	String tContent = curContent.substring(0, curContent.length() - 1);
             		Float f = Float.valueOf(tContent);
             		curContent = String.valueOf(f/100f);
             	}else {
+            		BarFrame.discountDlg.isPercentage = false;
             		Float.valueOf(curContent);
             	}
 
              	int row = billPanel.tblBillPanel.getSelectedRow();
-             	float discount = 0;
+             	//NOTE: current total price + existing discount = original total price.
+             	String strDisCount = (String)billPanel.tblBillPanel.getValueAt(row, 2);
+             	strDisCount = (strDisCount == null || strDisCount.length() == 0) ? "0" : strDisCount.trim().substring(2);//remove "-$"
+             	float oldDiscount = Float.valueOf(strDisCount);
+             	
              	String strTotalPrice = (String)billPanel.tblBillPanel.getValueAt(row, 3);
 				strTotalPrice = strTotalPrice.trim().substring(1);
              	float totalPrice = Float.valueOf(strTotalPrice);
- 				if(BarFrame.numberPanelDlg.isPercentage) {
- 					discount = totalPrice * Float.valueOf(curContent);
+             	
+             	float newDiscount = 0;
+ 				if(BarFrame.discountDlg.isPercentage) {
+ 					newDiscount = (totalPrice + oldDiscount) * Float.valueOf(curContent);
  				}else {
- 					discount = Float.valueOf(curContent);
+ 					newDiscount = Float.valueOf(curContent);
  				}
  				
-             	billPanel.tblBillPanel.setValueAt("-"+ BarOption.getMoneySign() + new DecimalFormat("#0.00").format(discount), row, 2);
-             	billPanel.tblBillPanel.setValueAt("-"+ BarOption.getMoneySign() + new DecimalFormat("#0.00").format(totalPrice - discount), row, 3);
-             	billPanel.orderedDishAry.get(row).setDiscount((int)(discount * 100));
-             	billPanel.orderedDishAry.get(row).setTotalPrice((int)((totalPrice - discount) * 100));
+ 				totalPrice = totalPrice + oldDiscount - newDiscount;
+             	billPanel.tblBillPanel.setValueAt("-"+ BarOption.getMoneySign() + new DecimalFormat("#0.00").format(newDiscount), row, 2);
+             	billPanel.tblBillPanel.setValueAt(BarOption.getMoneySign() + new DecimalFormat("#0.00").format(totalPrice), row, 3);
+             	billPanel.orderedDishAry.get(row).setDiscount((int)(newDiscount * 100));
+             	billPanel.orderedDishAry.get(row).setTotalPrice((int)((totalPrice) * 100));
              	
              	billPanel.updateTotleArea();
              	int outputID = billPanel.orderedDishAry.get(row).getOutputID();
              	if(outputID >= 0) {
-             		String sql = "update output set discount = " + (int)(discount * 100) + " and totalprice = " + totalPrice + " where id = " + outputID;
+             		String sql = "update output set discount = " + (int)(newDiscount * 100) + ", toltalprice = " + Math.round(totalPrice * 100) + " where id = " + outputID;
              		PIMDBModel.getStatement().executeUpdate(sql);
              	}
          	}catch(Exception exp) {

@@ -550,7 +550,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			StringBuilder sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
 					.append(BarFrame.instance.valCurTable.getText())
 					.append("' and CONTACTID = ").append(billIndex)
-					.append(" and deleted <= 1 AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
+					.append(" and deleted = 0 AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
 					.append(BarFrame.instance.valStartTime.getText()).append("'");
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();

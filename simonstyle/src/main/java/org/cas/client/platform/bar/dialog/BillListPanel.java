@@ -22,6 +22,7 @@ import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
+import org.hsqldb.lib.HashMap;
 
 public class BillListPanel extends  JPanel  implements ActionListener, ComponentListener{
 	public static Dish curDish;
@@ -432,7 +433,10 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		        	ErrorUtil.write(exp);
 		        }
 		        
-	        	//combineOutputs(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valStartTime.getText(), 1);
+//				一轮遍历过之后，可以确定消灭了二次分单的存在。但是一次分单的情况仍然存在。所以有必要再进行一遍，用来把pS也去掉。
+//				两遍目前是足够的。但程序上应该写成说只要发现“pkOrPsFoundFlag”没有被打上，就表示合并结束（没分单过的是否合并是个问题，因为有的菜点了多次，但每个菜可能给了不同的折扣）
+	        	combineOutputs(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valStartTime.getText(), 1);
+//TODO：hasbug	        	combineOutputs(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valStartTime.getText(), 1);
 
 		        initContent();
 			}else if( o == btnCompleteAll) {
@@ -468,66 +472,86 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	//quy, total price, discount, otherReceived
     private void combineOutputs(String tableName, String startTime, int tableIndex) {
     	
-//    			StringBuilder sql = new StringBuilder("update bill set total = ")
-//				.append((int)(Float.valueOf(panel.valTotlePrice.getText()) * 100)/num).append(" where id = ").append(billId);
-//				PIMDBModel.getStatement().executeUpdate(sql.toString());
-//				
-//				panel.discount /= num;
-//				sql = new StringBuilder("update bill set discount = discount/" + num).append(" where id = ").append(billId);
-//				PIMDBModel.getStatement().executeUpdate(sql.toString());
-//
-//				panel.serviceFee /= num;
-//				sql = new StringBuilder("update bill set otherReceived = otherReceived/" + num).append(" where id = ").append(billId);
-//				PIMDBModel.getStatement().executeUpdate(sql.toString());
-				
+    	//target the items which can be combined.
+    	List<Dish> dishes = new ArrayList<Dish>();
+    	
     	String sql =
                 "select * from output where SUBJECT = '" + tableName
-                + "' and time = '" + startTime + "' and contactID = " + tableIndex + " and DELETED == 0";
+                + "' and time = '" + startTime + "' and contactID = " + tableIndex + " and DELETED = 0 order by id";
         try {
         	PIMDBModel.getReadOnlyStatement().executeQuery(sql);
         	ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-			rs.afterLast();
-			rs.relative(-1);
-			int tmpPos = rs.getRow();
-
-			int tColCount = getCurBillPanel().tblBillPanel.getColumnCount();
-			Object[][] tValues = new Object[tmpPos][tColCount];
 			rs.beforeFirst();
-			tmpPos = 0;
 			while (rs.next()) {
-				Dish dish = new Dish();
-				dish.setCATEGORY(rs.getString("PRODUCT.CATEGORY"));
-				dish.setDiscount(rs.getInt("OUTPUT.discount"));//
-				dish.setDspIndex(rs.getInt("PRODUCT.INDEX"));
-				dish.setGst(rs.getInt("PRODUCT.FOLDERID"));
-				dish.setId(rs.getInt("PRODUCT.ID"));
-				dish.setLanguage(0, rs.getString("PRODUCT.CODE"));
-				dish.setLanguage(1, rs.getString("PRODUCT.MNEMONIC"));
-				dish.setLanguage(2, rs.getString("PRODUCT.SUBJECT"));
-				dish.setModification(rs.getString("OUTPUT.CONTENT"));//
-				dish.setNum(rs.getInt("OUTPUT.AMOUNT"));//
-				dish.setOutputID(rs.getInt("OUTPUT.ID"));//
-				dish.setPrice(rs.getInt("PRODUCT.PRICE"));
-				dish.setPrinter(rs.getString("PRODUCT.BRAND"));
-				dish.setPrompMenu(rs.getString("PRODUCT.UNIT"));
-				dish.setPrompMofify(rs.getString("PRODUCT.PRODUCAREA"));
-				dish.setPrompPrice(rs.getString("PRODUCT.CONTENT"));
-				dish.setQst(rs.getInt("PRODUCT.STORE"));
-				dish.setSize(rs.getInt("PRODUCT.COST"));
-				dish.setOpenTime(rs.getString("OUTPUT.TIME"));	//output time is table's open time. no need to remember output created time.
-				dish.setBillID(rs.getInt("OUTPUT.Category"));
-				dish.setTotalPrice(rs.getInt("OUTPUT.TOLTALPRICE"));
-
-				tValues[tmpPos][0] = dish.getDisplayableNum();				
-				tValues[tmpPos][1] =  dish.getTotalPrice() / 100f;		
-				tValues[tmpPos][2] =  dish.getOutputID();
-				
-				
-				tmpPos++;
+				int num = rs.getInt("OUTPUT.AMOUNT");
+				if(num < BarOption.MaxQTY) {
+					continue;
+				}
+ 	    		Dish dish = new Dish();
+ 	    		dish.setNum(num);
+ 	    		dish.setDiscount(rs.getInt("discount"));//
+ 	    		dish.setId(rs.getInt("PRODUCTID"));
+ 	    		dish.setModification(rs.getString("OUTPUT.CONTENT"));//
+ 	    		dish.setOutputID(rs.getInt("OUTPUT.ID"));//
+ 	    		dish.setTotalPrice(rs.getInt("OUTPUT.TOLTALPRICE"));
+				dishes.add(dish);
 			}
         }catch(Exception exp) {
         	ErrorUtil.write(exp);
         }
+
+        HashMap map = new HashMap();
+    	for (int i = dishes.size() - 1; i >= 0; i--) {	//here, all dish是带有PS或者PK的
+    		Dish dish = dishes.get(i);
+    		int num = dish.getNum();
+    		//记录下PK和PS.和Num。总单的discount，和totalPrice（total price应该是已经扣除了本菜的discount的）
+			int pK = num /(BarOption.MaxQTY * 100);
+    		if(num > BarOption.MaxQTY * 100) {
+    			num = num %(BarOption.MaxQTY * 100);
+    		}
+    		int pS = num /BarOption.MaxQTY;
+    		if(num > BarOption.MaxQTY) {
+    			num = num % BarOption.MaxQTY;
+    		}
+    		
+        	String key = "pk:" + pK + "ps:" + pS + "num:" + num + "dish:" + dish.getId() + String.valueOf(dish.getModification());
+    		if(map.containsKey(key)) {//如果发现map中已经有这个key了，
+    			//那么删掉这个output，
+    			sql = new StringBuilder("update output set deleted = 10 where id = ").append(dish.getOutputID()).toString();
+    			try {
+    				PIMDBModel.getStatement().executeUpdate(sql.toString());
+    			}catch(Exception e) {
+    				L.e("combineOutputs", "update output set deleted = 1 where id = " + dish.getOutputID(), e);
+    			}
+    			dishes.remove(i);
+    			
+    			//并把map中的value减少1.如果减完1后value值为1，map中去掉这个key。同时更新原始的（那个key相同但是没有被删除的）的output记录到数据库，
+				//把discount*value，totalPrice也*valuev，num中的pK位去掉，如果已经去掉了，那么把PS位去掉。（继续遍历时，如果发现还有这个key的，将会新建一个key存入map）
+    			Dish tD = (Dish)map.get(key);
+    			int value = tD.getDspIndex() - 1;
+
+				tD.setDspIndex(value);
+				tD.setDiscount(tD.getDiscount() + dish.getDiscount());
+				tD.setTotalPrice(tD.getTotalPrice() + dish.getTotalPrice());
+				
+    			if(value == 1) {
+    				map.remove(key);
+    				int newNum = pK > 1 ? pS * BarOption.MaxQTY + num : num;
+    				sql = new StringBuilder("update output set AMOUNT = ").append(newNum)
+    						.append(", discount = ").append(tD.getDiscount())
+    						.append(", TOLTALPRICE = ").append(tD.getTotalPrice())
+    						.append(" where id = ").append(tD.getOutputID()).toString();
+        			try {
+        				PIMDBModel.getStatement().executeUpdate(sql.toString());
+        			}catch(Exception e) {
+        				L.e("combineOutputs", "update output set deleted = 10 where id = " + dish.getOutputID(), e);
+        			}
+    			}
+    		}else {//如果发现map中没有这个key，那么创建一个key存入map。PK为value，如果PK不存在，或者为1，或者为0，那么用PS为value。
+    			dish.setDspIndex(pK > 1 ? pK : pS);	//use dspIndex to save the temparal new value, so we can know if it's merged every
+    			map.put(key, dish);
+    		}
+		}
 	}
 
 	public static int getANewBillNumber(){

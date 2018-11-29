@@ -357,8 +357,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             }
         }
         //JToggleButton-------------------------------------------------------------------------------------
-        else if(o instanceof JToggleButton) {	//disc item
-        	 if (o == btnLine_1_7) {
+        else if(o instanceof JToggleButton) {
+        	 if (o == btnLine_1_7) {	//disc item
          		if(BillListPanel.curDish == null) {//check if there's an item selected.
          			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
          			return;

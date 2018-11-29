@@ -207,7 +207,9 @@ public class DiscountDlg extends JDialog implements ActionListener, ComponentLis
 	private void setDisCountValueTo(int i) {
 		tfdQTY.setText(i+"%");
 		curContent = i+"%";
-		ok.doClick();
+		for (ActionListener listener : ok.getActionListeners()) {
+			listener.actionPerformed(new ActionEvent(ok, -1, ""));
+		}
 	}
 
 	@Override
