@@ -51,6 +51,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	SalesPanel salesPanel;
 	BillListPanel billListPanel;
 	public JToggleButton billButton;
+	
+	private int stepCounter;
+	private int minStepCounter = CustOpts.custOps.getValue("minMoveStep") == null ? 5 : Integer.valueOf((String)CustOpts.custOps.getValue("minMoveStep"));
+
     private boolean isDragging;
     public ArrayList<Dish> orderedDishAry = new ArrayList<Dish>();
     
@@ -360,6 +364,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		stepCounter = 0;
 		if(isDragging == true) {
 			isDragging = false;
 			ListSelectionModel selectionModel = ((PIMTable)e.getSource()).getSelectionModel();
@@ -408,7 +413,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		isDragging = true;
+		stepCounter++;
+		if(stepCounter > minStepCounter ) {
+			stepCounter = 0;
+			isDragging = true;
+		}
 	}
 	@Override
 	public void mouseMoved(MouseEvent e) {}

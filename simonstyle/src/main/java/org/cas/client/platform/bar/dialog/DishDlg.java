@@ -375,7 +375,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                         .append(tfdLanguages[0].getText()).append("', '")
                         .append(tfdLanguages[1].getText()).append("', '")
                         .append(tfdLanguages[2].getText()).append("', ")
-                        .append(String.valueOf((int) tPrice * 100)).append(", ")
+                        .append(String.valueOf((int) (tPrice * 100))).append(", ")
                         .append(cbxGST.isSelected() ? "1" : "0").append(", ")
                         .append(cbxQST.isSelected() ? "1" : "0").append(", ")
                         .append(getSelectedSize()).append(", '")
@@ -387,9 +387,9 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                         .append(cbxModifyPomp.isSelected() ? "true" : "false").append("')");
                     smt.executeUpdate(sql.toString());
 
-                    sql = new StringBuilder("Select id from product where code = '")
+                    sql = new StringBuilder("Select ID from product where code = '")
                         .append(tfdLanguages[0].getText()).append("' and PRICE = ")
-                        .append(String.valueOf((int) tPrice * 100)).append(" and MNEMONIC = '")
+                        .append(String.valueOf((int) (tPrice * 100))).append(" and MNEMONIC = '")
                         .append(tfdLanguages[1].getText()).append("' and SUBJECT = '")
                         .append(tfdLanguages[2].getText()).append("' and store = ")
                         .append(cbxGST.isSelected() ? "1" : "0").append(" and UNIT = '")
@@ -400,7 +400,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
                     ResultSet rs = smt.executeQuery(sql.toString());
                     rs.beforeFirst();
                     rs.next();
-                    prodID = rs.getInt("id");
+                    prodID = rs.getInt("ID");
                     rs.close();
                     ADDED = true;
                 } else {
