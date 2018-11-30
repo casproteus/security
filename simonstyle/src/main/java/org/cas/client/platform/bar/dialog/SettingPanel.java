@@ -289,7 +289,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		BarOption.setFastFoodMode(cbxIsFastFoodMode.isSelected() ? true : false);
         	}else if(o == cbxIsHideRecordFromOtherWaiter) {
         		BarOption.setHideRecordFromOtherWaiter(cbxIsHideRecordFromOtherWaiter.isSelected() ? true : false);
-//        	}else if(o == cbxIsPrintBillWhenPay) {
+        	}else if(o == cbxIsDisplayBillInKitchen) {
+        		BarOption.setIsDisplayBillInKitchen(cbxIsDisplayBillInKitchen.isSelected() ? true : false);
+        		//        	}else if(o == cbxIsPrintBillWhenPay) {
 //        		BarOption.setIsPrintBillWhenPay(cbxIsPrintBillWhenPay.isSelected() ? true : false);
         	}
         }
@@ -351,7 +353,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		cbxIsFastFoodMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsHideRecordFromOtherWaiter.setBounds(cbxIsFastFoodMode.getX(), cbxIsFastFoodMode.getY() + cbxIsFastFoodMode.getHeight() + CustOpts.VER_GAP,
         		cbxIsHideRecordFromOtherWaiter.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-//        cbxIsPrintBillWhenPay.setBounds(CustOpts.HOR_GAP, cbxIsDiscBeforeTax.getY() + cbxIsDiscBeforeTax.getHeight() + CustOpts.VER_GAP,
+        cbxIsDisplayBillInKitchen.setBounds(cbxIsHideRecordFromOtherWaiter.getX(), cbxIsHideRecordFromOtherWaiter.getY() + cbxIsHideRecordFromOtherWaiter.getHeight() + CustOpts.VER_GAP,
+        		cbxIsDisplayBillInKitchen.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        //        cbxIsPrintBillWhenPay.setBounds(CustOpts.HOR_GAP, cbxIsDiscBeforeTax.getY() + cbxIsDiscBeforeTax.getHeight() + CustOpts.VER_GAP,
 //        		cbxIsPrintBillWhenPay.getPreferredSize().width, CustOpts.BTN_HEIGHT);
 
         //menu area----------
@@ -393,6 +397,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsBuffetMode = new JCheckBox(BarFrame.consts.IsBuffetMode());
         cbxIsFastFoodMode = new JCheckBox(BarFrame.consts.IsFastFoodMode());
         cbxIsHideRecordFromOtherWaiter = new JCheckBox(BarFrame.consts.IsHideRecordFromOtherWaiter());
+        cbxIsDisplayBillInKitchen = new JCheckBox(BarFrame.consts.IsDisplayBillInKitchen());
 //        cbxIsPrintBillWhenPay = new JCheckBox(BarFrame.consts.IsPrintBillWhenPay);
         lblStartTimeOfDay = new JLabel(BarFrame.consts.StartTimeOfDay());
         tfdStartTimeOfDay = new JTextField(String.valueOf(BarOption.getStartTime()));
@@ -441,6 +446,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsBuffetMode.setSelected(BarOption.isBuffetMode());
         cbxIsFastFoodMode.setSelected(BarOption.isFastFoodMode());
         cbxIsHideRecordFromOtherWaiter.setSelected(BarOption.isHideRecordFromOtherWaiter());
+        cbxIsDisplayBillInKitchen.setSelected(BarOption.isDisplayBillInKitchen());
 //        cbxIsPrintBillWhenPay.setSelected(BarOption.isPrintBillWhenPay());
 
         addControlButtons();
@@ -475,6 +481,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsBuffetMode.addActionListener(this);
         cbxIsFastFoodMode.addActionListener(this);
         cbxIsHideRecordFromOtherWaiter.addActionListener(this);
+        cbxIsDisplayBillInKitchen.addActionListener(this);
+        
 //        cbxIsPrintBillWhenPay.addActionListener(this);
         tfdStartTimeOfDay.addFocusListener(this);
         tfdPrinterMinReachTime.addFocusListener(this);
@@ -527,6 +535,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(cbxIsBuffetMode);
         add(cbxIsFastFoodMode);
         add(cbxIsHideRecordFromOtherWaiter);
+        add(cbxIsDisplayBillInKitchen);
+        
 //        add(cbxIsPrintBillWhenPay);
 	}
 
@@ -545,6 +555,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     JCheckBox cbxIsBuffetMode;
     JCheckBox cbxIsFastFoodMode;
     JCheckBox cbxIsHideRecordFromOtherWaiter;
+    JCheckBox cbxIsDisplayBillInKitchen;
 //    JCheckBox cbxIsPrintBillWhenPay;
     
     //component for setting category and menus

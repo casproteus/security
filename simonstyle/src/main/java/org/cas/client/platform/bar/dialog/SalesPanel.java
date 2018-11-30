@@ -195,9 +195,23 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	BarFrame.instance.switchMode(0);
             	
             } else if(o == btnLine_2_2) {		//Add bill
-            	//save unsaved bill
+            	//save unsaved output
+            	outputStatusCheck();
+            	
             	//add new bill with an Index bigger than 1.
-				BarFrame.instance.valCurBill.setText("");
+            	try {
+	    			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
+	    					+ "' and deleted = 0 and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID DESC");
+	    			rs.beforeFirst();
+	    			rs.next();
+
+					BarFrame.instance.valCurBill.setText(String.valueOf(rs.getInt("contactID") + 1));
+            	}catch(Exception exp) {
+            		L.e("Add Bill function",
+            				"SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
+    					+ "' and deleted = 0 and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID DESC", exp);
+            	}
+    			
 				BarFrame.instance.switchMode(2);
 				
         	} else if (o == btnLine_2_4) { // cancel all

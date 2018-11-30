@@ -161,7 +161,7 @@ public interface BarDlgConst {
     String CombineAll();
     String Refund();
     String RefundNotice();
-    String CompleteAll();
+    String SuspendAll();
     String CancelAll();
     String ProdCodeLength();
     String Shoestring();
@@ -277,4 +277,5 @@ public interface BarDlgConst {
 	String ArrowBtnBk();
     String Color();
 	String IsHideRecordFromOtherWaiter();
+	String IsDisplayBillInKitchen();
 }

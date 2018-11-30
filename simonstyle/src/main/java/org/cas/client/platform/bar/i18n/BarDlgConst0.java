@@ -298,7 +298,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String RefundNotice() {return "Please input how much to refund";}
     @Override
-	public String CompleteAll() {return "COMPLETE ALL";}
+	public String SuspendAll() {return "SUSPEND ALL";}
     @Override
 	public String CancelAll() {return "Cancel All";}
     @Override
@@ -513,5 +513,7 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String Color() {return "Color";}
 	@Override
 	public String IsHideRecordFromOtherWaiter() {return "Hide Records From Other Waiter";};
+	@Override
+	public String IsDisplayBillInKitchen() {return "Display Bill Index In Kitchen Print";};
     
 }

@@ -479,10 +479,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	}
 
     public void updateTotleArea() {
-    	Object g = CustOpts.custOps.getValue(BarFrame.consts.TVQ());
-    	Object q = CustOpts.custOps.getValue(BarFrame.consts.TPS());
-    	float gstRate = g == null ? 5 : Float.valueOf((String)g);
-    	float qstRate = q == null ? 9.975f : Float.valueOf((String)q);
+    	Object tvq = CustOpts.custOps.getValue(BarFrame.consts.TVQ());
+    	Object tps = CustOpts.custOps.getValue(BarFrame.consts.TPS());
+    	float gstRate = tps == null ? 5 : Float.valueOf((String)tps);
+    	float qstRate = tvq == null ? 9.975f : Float.valueOf((String)tvq);
     	float totalGst = 0;
     	float totalQst = 0;
     	int subTotal = 0;
@@ -500,8 +500,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		}
     		
     		int price = dish.getTotalPrice();
-    		int gst = (int) (price * (dish.getGst() * gstRate / 100f));	//an item could have a different tax rate.
-    		int qst = (int) (price * (dish.getQst() * qstRate / 100f));
+    		int gst = Math.round(price * (dish.getGst() * gstRate / 100f));	//an item could have a different tax rate.
+    		int qst = Math.round(price * (dish.getQst() * qstRate / 100f));
     		
     		if(BarOption.isDisCountBeforeTax()) {
     			gst -= dish.getDiscount() * (dish.getGst() * gstRate / 100f);

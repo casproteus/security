@@ -47,7 +47,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnMoveItem = new JToggleButton(BarFrame.consts.MoveItem());
 		btnCombineAll = new FunctionButton(BarFrame.consts.CombineAll());
 		
-		btnCompleteAll = new FunctionButton(BarFrame.consts.CompleteAll());
+		btnSuspendAll = new FunctionButton(BarFrame.consts.SuspendAll());
 		btnReturn = new FunctionButton(BarFrame.consts.RETURN());
 		
 		separator= new JSeparator();
@@ -60,7 +60,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnCombineAll.setMargin(btnAddUser.getMargin());
 		btnSplitItem.setMargin(btnAddUser.getMargin());
 		btnMoveItem.setMargin(btnAddUser.getMargin());
-		btnCompleteAll.setMargin(btnAddUser.getMargin());
+		btnSuspendAll.setMargin(btnAddUser.getMargin());
 		btnReturn.setMargin(btnAddUser.getMargin());
 		
 		setLayout(null);
@@ -74,7 +74,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		add(btnCombineAll);
 		add(btnSplitItem);
 		add(btnMoveItem);
-		add(btnCompleteAll);
+		add(btnSuspendAll);
 		add(btnReturn);
 		
 		addComponentListener(this);
@@ -86,7 +86,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnCombineAll.addActionListener(this);
 		btnSplitItem.addActionListener(this);
 		btnMoveItem.addActionListener(this);
-		btnCompleteAll.addActionListener(this);
+		btnSuspendAll.addActionListener(this);
 		btnReturn.addActionListener(this);
 		
 		btnLeft.setEnabled(curPageNum > 0);
@@ -171,12 +171,12 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnMoveItem.setBounds(btnSplitItem.getX() + btnSplitItem.getWidth() + CustOpts.HOR_GAP, 
 				btnSplitItem.getY(),
 				tBtnWidht, tBtnHeight);
-		btnCompleteAll.setBounds(btnMoveItem.getX() + btnMoveItem.getWidth() + CustOpts.HOR_GAP, 
+		btnSuspendAll.setBounds(btnMoveItem.getX() + btnMoveItem.getWidth() + CustOpts.HOR_GAP, 
 				btnMoveItem.getY(),
 				tBtnWidht, tBtnHeight);
 		
 		separator.setBounds(CustOpts.HOR_GAP, 
-				btnCompleteAll.getY() - CustOpts.VER_GAP * 2,
+				btnSuspendAll.getY() - CustOpts.VER_GAP * 2,
 				getWidth() - CustOpts.HOR_GAP * 2, tBtnHeight);
 		
 		btnLeft.setBounds(CustOpts.SIZE_EDGE, 
@@ -439,7 +439,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 //TODO：hasbug	        	combineOutputs(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valStartTime.getText(), 1);
 
 		        initContent();
-			}else if( o == btnCompleteAll) {
+			}else if( o == btnSuspendAll) {
 		        try {
 		        	Statement smt = PIMDBModel.getStatement();
 		        	String tableID = BarFrame.instance.valCurTable.getText();
@@ -603,7 +603,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	JToggleButton btnMoveItem;
 	FunctionButton btnCombineAll;
 	
-	FunctionButton btnCompleteAll;
+	FunctionButton btnSuspendAll;
 
 	FunctionButton btnReturn;
 }
