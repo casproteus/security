@@ -50,7 +50,7 @@ import org.cas.client.platform.pos.dialog.PosFrame;
 
 public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener,
         MouseListener {
-    final int IDCOLUM = 19;
+    final int IDCOLUM = 0; //with column id field stays.
 
     private Object[][] tableModel = null;
     
@@ -212,13 +212,11 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
             initTable();
             reLayout();
         } else if (o == btnDelete) {
-            if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION(), BarFrame.consts.Operator(),
+            if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION2(), BarFrame.consts.Operator(),
                     JOptionPane.YES_NO_OPTION) != 0)// 确定删除吗？
                 return;
             int tSeleRow = tblContent.getSelectedRow();
-            String sql =
-                    "delete from Employee where ID = '".concat(
-                            ((Integer) tblContent.getValueAt(tSeleRow, IDCOLUM)).toString()).concat("'");
+            String sql = "delete from Employee where ID = " + tblContent.getValueAt(tSeleRow, IDCOLUM);
             try {
                 Statement smt = PIMDBModel.getStatement();
                 smt.executeUpdate(sql.toString());
