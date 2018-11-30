@@ -282,6 +282,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
 
     private void initDialog() {
         setTitle(LoginDlgConst.LoginDlgTitle);
+        setAlwaysOnTop(true);
         setResizable(false);
 
         // 初始化－－－－－－－－－－－－－－－－

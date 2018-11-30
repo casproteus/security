@@ -777,8 +777,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         lblTVQ = new JLabel(BarFrame.consts.TVQ());
         lblTotlePrice = new JLabel(BarFrame.consts.Total() + " : " + BarOption.getMoneySign());
         valTotlePrice = new JLabel();
-        btnMore = new ArrowButton("+");
-        btnLess = new ArrowButton("-");
+        btnMore = new ArrowButton("<html><h1 style='text-align: center; padding-bottom: 5px; color:#18F507;'>+</h1></html>");
+        btnLess = new ArrowButton("<html><h1 style='text-align: center; padding-bottom: 5px; color:#FB112C;'>-</h1></html>");
         
         Color bg = BarOption.getBK("Bill");
     	if(bg == null) {
