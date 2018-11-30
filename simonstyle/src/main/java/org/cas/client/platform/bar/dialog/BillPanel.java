@@ -500,7 +500,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		}
     		
     		int price = dish.getTotalPrice();
-    		int gst = (int) (price * (dish.getGst() * gstRate / 100f));
+    		int gst = (int) (price * (dish.getGst() * gstRate / 100f));	//an item could have a different tax rate.
     		int qst = (int) (price * (dish.getQst() * qstRate / 100f));
     		
     		if(BarOption.isDisCountBeforeTax()) {
@@ -508,16 +508,17 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     			qst -= dish.getDiscount() * (dish.getQst() * gstRate / 100f);
     		}
     		
-    		if(pS > 0) {
-    			price /= pS;
-    			gst /= pS;
-    			qst /= pS;
-    		}
-    		if(pK > 0) {
-    			price /= pK;
-    			gst /= pK;
-    			qst /= pK;
-    		}
+//@NOTE: the price is already the final item totalprice (even the discount calculated), so no need to devide again.
+//    		if(pS > 0) {
+//    			price /= pS;
+//    			gst /= pS;
+//    			qst /= pS;
+//    		}
+//    		if(pK > 0) {
+//    			price /= pK;
+//    			gst /= pK;
+//    			qst /= pK;
+//    		}
     		
     		subTotal += price;
     		totalGst += gst;

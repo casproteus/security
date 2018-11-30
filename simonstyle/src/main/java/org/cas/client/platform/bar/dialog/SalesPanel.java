@@ -194,7 +194,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	}
             	BarFrame.instance.switchMode(0);
             	
-            } else if(o == btnLine_2_2) {		//Add client
+            } else if(o == btnLine_2_2) {		//Add bill
+            	//save unsaved bill
+            	//add new bill with an Index bigger than 1.
 				BarFrame.instance.valCurBill.setText("");
 				BarFrame.instance.switchMode(2);
 				
@@ -253,6 +255,19 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 				}
             	if(billPanel.orderedDishAry.size() > 0) {
             		billPanel.sendDishesToKitchen(billPanel.orderedDishAry, true);
+            	}
+            	//??: do we need to process cur bill? maybe we can leave the bill there, so we can see the voided bills
+            	//in check order dialog?
+            	String curBill = BarFrame.instance.valCurBill.getText();
+            	if(false) {//curBill != null && curBill.length() > 0) {
+            		try {
+            		StringBuilder sql = new StringBuilder("update bill set status = -1 where billIndex = ")
+            			.append(curBill).append(" and openTime = '")
+            			.append(BarFrame.instance.valStartTime.getText()).append("'");
+                    PIMDBModel.getStatement().executeQuery(sql.toString());
+            		}catch(Exception exp) {
+            			L.e("void all", "failed when setting bill deleted = 1 aftetr void all command", exp);
+            		}
             	}
             	
             	//if the bill amount is 1, cancel the selected status of the table.
@@ -466,7 +481,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		} catch (Exception exp) {
 			ErrorUtil.write(exp);
 		}
-    	return num <= 1;
+    	return num == 0;
     }
     
     public static void resetCurTableDBStatus(){
