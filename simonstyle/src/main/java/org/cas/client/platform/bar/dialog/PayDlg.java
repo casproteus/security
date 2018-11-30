@@ -18,7 +18,6 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
-import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -415,7 +414,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     	
         setResizable(false);
         setModal(false);
-        setAlwaysOnTop(true);
+        //setAlwaysOnTop(true);
 
         // 初始化－－－－－－－－－－－－－－－－
 

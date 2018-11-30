@@ -197,7 +197,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         setTitle(BarFrame.consts.QTY());
         setResizable(false);
         setModal(false);
-        setAlwaysOnTop(true);
+        //setAlwaysOnTop(true);
 
         // 初始化－－－－－－－－－－－－－－－－
         tfdQTY = new JTextField();

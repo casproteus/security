@@ -233,7 +233,7 @@ public class DiscountDlg extends JDialog implements ActionListener, ComponentLis
         setTitle(BarFrame.consts.QTY());
         setResizable(false);
         setModal(false);
-        setAlwaysOnTop(true);
+        //setAlwaysOnTop(true);
 
         // 初始化－－－－－－－－－－－－－－－－
         tfdQTY = new JTextField();
