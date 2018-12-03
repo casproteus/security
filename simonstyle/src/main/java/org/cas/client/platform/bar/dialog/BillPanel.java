@@ -499,13 +499,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     			num = num % BarOption.MaxQTY;
     		}
     		
-    		int price = dish.getTotalPrice();
-    		int gst = Math.round(price * (dish.getGst() * gstRate / 100f));	//an item could have a different tax rate.
-    		int qst = Math.round(price * (dish.getQst() * qstRate / 100f));
+    		int totalPrice = dish.getTotalPrice();
+    		int gst = Math.round(totalPrice * (dish.getGst() * gstRate / 100f));	//an item could have a different tax rate.
+    		int qst = Math.round(totalPrice * (dish.getQst() * qstRate / 100f));
     		
-    		if(BarOption.isDisCountBeforeTax()) {
-    			gst -= dish.getDiscount() * (dish.getGst() * gstRate / 100f);
-    			qst -= dish.getDiscount() * (dish.getQst() * gstRate / 100f);
+    		if(BarOption.isTaxNotAllowDiscount()) {
+    			gst += dish.getDiscount() * (dish.getGst() * gstRate / 100f);
+    			qst += dish.getDiscount() * (dish.getQst() * gstRate / 100f);
     		}
     		
 //@NOTE: the price is already the final item totalprice (even the discount calculated), so no need to devide again.
@@ -520,12 +520,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 //    			qst /= pK;
 //    		}
     		
-    		subTotal += price;
+    		subTotal += totalPrice;
     		totalGst += gst;
     		totalQst += qst;
     	}
     	subTotal -= discount;	//deduct the total discount.
-    	if(BarOption.isDisCountBeforeTax()) {
+    	if(BarOption.isTaxNotAllowDiscount()) {
     		//@TODO: I am not sure if it's correct to do like this, we don't know what tax rate is good for the bill discount.
     	}
 

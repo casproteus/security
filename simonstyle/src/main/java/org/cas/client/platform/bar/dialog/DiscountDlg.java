@@ -238,7 +238,7 @@ public class DiscountDlg extends JDialog implements ActionListener, ComponentLis
         // 初始化－－－－－－－－－－－－－－－－
         tfdQTY = new JTextField();
         lblQTY = new JLabel(BarFrame.consts.QTYNOTICE());
-        ok = new NumButton("✔");
+        ok = new NumButton("<html><h1 style='text-align: center; padding-bottom: 5px; color:#18F507;'>✔</h1></html>");
         back = new NumButton("←");
         
         btn5 = new JButton("5%");

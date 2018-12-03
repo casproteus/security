@@ -123,7 +123,7 @@ public interface BarDlgConst {
     String DishCol();
     String CategoryAreaPortion();
     String IsSingleUser();
-    String IsDiscBeforeTax();
+    String IsTaxNotAllowDiscount();
     String IsBuffetMode();
     String IsFastFoodMode();
     String IsPrintBillWhenPay();

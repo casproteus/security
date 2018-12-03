@@ -393,7 +393,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tfdBillPageCol = new JTextField(String.valueOf(BarOption.getBillPageCol()));
 
         cbxIsSingleUser = new JCheckBox(BarFrame.consts.IsSingleUser());
-        cbxIsDiscBeforeTax = new JCheckBox(BarFrame.consts.IsDiscBeforeTax());
+        cbxIsDiscBeforeTax = new JCheckBox(BarFrame.consts.IsTaxNotAllowDiscount());
         cbxIsBuffetMode = new JCheckBox(BarFrame.consts.IsBuffetMode());
         cbxIsFastFoodMode = new JCheckBox(BarFrame.consts.IsFastFoodMode());
         cbxIsHideRecordFromOtherWaiter = new JCheckBox(BarFrame.consts.IsHideRecordFromOtherWaiter());
@@ -442,7 +442,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsSingleUser.setBackground(null);
         cbxIsDiscBeforeTax.setBackground(null);
         cbxIsSingleUser.setSelected(BarOption.isSingleUser());
-        cbxIsDiscBeforeTax.setSelected(BarOption.isDisCountBeforeTax());
+        cbxIsDiscBeforeTax.setSelected(BarOption.isTaxNotAllowDiscount());
         cbxIsBuffetMode.setSelected(BarOption.isBuffetMode());
         cbxIsFastFoodMode.setSelected(BarOption.isFastFoodMode());
         cbxIsHideRecordFromOtherWaiter.setSelected(BarOption.isHideRecordFromOtherWaiter());

@@ -204,7 +204,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     	CustOpts.custOps.setKeyAndValue("moneySign", moneySign);
     }
 	    
-    public static boolean isDisCountBeforeTax() {
+    public static boolean isTaxNotAllowDiscount() {
     	return CustOpts.custOps.getValue("isDisCountBeforeTax") == null ? 
     			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isDisCountBeforeTax"));
     }

@@ -228,7 +228,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String IsSingleUser() {return "Is single user mode";}
     @Override
-	public String IsDiscBeforeTax() {return "Is discount apply on price before tax";}
+	public String IsTaxNotAllowDiscount() {return "Tax should not be affected by discount of dish";}
     @Override
 	public String IsBuffetMode() {return "Buffet Mode";}
     @Override

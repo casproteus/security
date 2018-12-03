@@ -434,7 +434,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         lblLeft = new JLabel(BarFrame.consts.Left() + " : " + BarOption.getMoneySign());
         valLeft = new JLabel("");
         
-        ok = new JButton("✔");
+        ok = new JButton("<html><h1 style='text-align: center; padding-bottom: 5px; color:#18F507;'>✔</h1></html>");
         back = new JButton("←");
         
         btn10 = new JButton(BarOption.getMoneySign() + "10");

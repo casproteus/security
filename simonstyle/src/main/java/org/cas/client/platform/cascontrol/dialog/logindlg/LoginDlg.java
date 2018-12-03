@@ -288,7 +288,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
         // 初始化－－－－－－－－－－－－－－－－
         general = new LoginGeneralPanel();
 
-        ok = new NumButton("✔");
+        ok = new NumButton("<html><h1 style='text-align: center; padding-bottom: 5px; color:#18F507;'>✔</h1></html>");
         back = new NumButton("←");
         num1 = new NumButton("1");
         num2 = new NumButton("2");
