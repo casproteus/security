@@ -521,7 +521,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
     			try {
     				PIMDBModel.getStatement().executeUpdate(sql.toString());
     			}catch(Exception e) {
-    				L.e("combineOutputs", "update output set deleted = 1 where id = " + dish.getOutputID(), e);
+    				L.e("combineOutputs", "update output set deleted = 10 where id = " + dish.getOutputID(), e);
     			}
     			dishes.remove(i);
     			

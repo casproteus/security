@@ -90,9 +90,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     	.append(", status = -1 where id = ").append(billId);
    		try {
 			PIMDBModel.getStatement().executeUpdate(sb.toString());
-			
-			sb = new StringBuilder("update output set deleted = 1 where category = ").append(billId);
-			PIMDBModel.getStatement().executeUpdate(sb.toString());
 		}catch(Exception e) {
 			ErrorUtil.write(e);
 		}

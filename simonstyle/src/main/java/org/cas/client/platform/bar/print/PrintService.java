@@ -321,7 +321,8 @@ public class PrintService{
 			sndMsg.remove(2);
 			String total = sndMsg.get(2);
 			int p = total.indexOf(":");
-			total = total.substring(0, p + 1) + BarUtil.generateString(BarUtil.getPreferedWidth() - total.length(), " ") + total.substring(p+1);
+			//NOTE:there's a \n at the end of total, use PreferedWidth() - (total.length() - 1)
+			total = total.substring(0, p + 1) + BarUtil.generateString(BarUtil.getPreferedWidth() - (total.length() - 1), " ") + total.substring(p+1);
 			sndMsg.remove(2);
 			sndMsg.add(total);
 			break;

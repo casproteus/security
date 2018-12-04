@@ -205,7 +205,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	    			rs.beforeFirst();
 	    			rs.next();
 
-					BarFrame.instance.valCurBill.setText(String.valueOf(rs.getInt("contactID") + 1));
+					BarFrame.instance.valCurBill.setText(String.valueOf(rs.getInt("contaD") + 1));
             	}catch(Exception exp) {
             		L.e("Add Bill function",
             				"SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
@@ -270,17 +270,18 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	if(billPanel.orderedDishAry.size() > 0) {
             		billPanel.sendDishesToKitchen(billPanel.orderedDishAry, true);
             	}
-            	//??: do we need to process cur bill? maybe we can leave the bill there, so we can see the voided bills
-            	//in check order dialog?
+            	//we need to process cur bill, give it a special status, so we can see the voided bills
+            	//in check order dialog. and have to process it to be not null, better to be a negative. 
+            	//so will not be considered as there's still non closed bill, when checking in isLastBill()
             	String curBill = BarFrame.instance.valCurBill.getText();
-            	if(false) {//curBill != null && curBill.length() > 0) {
+            	if(curBill != null && curBill.length() > 0) {
             		try {
-            		StringBuilder sql = new StringBuilder("update bill set status = -1 where billIndex = ")
+            		StringBuilder sql = new StringBuilder("update bill set status = -100 where billIndex = ")
             			.append(curBill).append(" and openTime = '")
             			.append(BarFrame.instance.valStartTime.getText()).append("'");
-                    PIMDBModel.getStatement().executeQuery(sql.toString());
+                    	PIMDBModel.getStatement().executeQuery(sql.toString());
             		}catch(Exception exp) {
-            			L.e("void all", "failed when setting bill deleted = 1 aftetr void all command", exp);
+            			L.e("void all", "failed when setting bill status = -100 aftetr void all command", exp);
             		}
             	}
             	
@@ -486,9 +487,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	int num = 0;
     	try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
-            ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
-                    + BarFrame.instance.valCurTable.getText() + "' and deleted = 0 and time = '"
-            		+ BarFrame.instance.valStartTime.getText() + "' order by contactID");
+            ResultSet rs = smt.executeQuery("SELECT * from bill where tableID = '"
+                    + BarFrame.instance.valCurTable.getText() + "' and opentime = '"
+            		+ BarFrame.instance.valStartTime.getText() + "' and status is null");
 			rs.afterLast();
 			rs.relative(-1);
 			num = rs.getRow();
