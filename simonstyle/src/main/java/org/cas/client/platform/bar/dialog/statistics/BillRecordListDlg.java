@@ -12,6 +12,7 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -348,16 +349,18 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
                 tValues[tmpPos][0] = rs.getString("createTime");;
                 tValues[tmpPos][1] = rs.getString("tableID");
                 tValues[tmpPos][2] = rs.getString("billIndex");
-                tValues[tmpPos][3] = Float.valueOf((float) (rs.getInt("total") / 100.0));
-                tValues[tmpPos][4] = Float.valueOf((float) (rs.getInt("discount") / 100.0));
+                tValues[tmpPos][3] = new DecimalFormat("#0.00").format(rs.getInt("total") / 100.0);
+                tValues[tmpPos][4] = new DecimalFormat("#0.00").format(rs.getInt("discount") / 100.0);
                 int received = rs.getInt("cashReceived");
                 received += rs.getInt("debitReceived");
                 received += rs.getInt("visaReceived");
                 received += rs.getInt("masterReceived"); 
                 tValues[tmpPos][5] = received / 100.0;
-                tValues[tmpPos][6] = rs.getInt("tip") / 100.0;
-                tValues[tmpPos][7] = rs.getInt("cashback") / 100.0;
-                tValues[tmpPos][8] = rs.getInt("status") / 100.0;
+                tValues[tmpPos][6] = new DecimalFormat("#0.00").format(rs.getInt("tip") / 100.0);
+                tValues[tmpPos][7] = new DecimalFormat("#0.00").format(rs.getInt("cashback") / 100.0);
+                int status = rs.getInt("status");
+                tValues[tmpPos][8] = status == -1 ? "paid" : 
+                	(status == 0 ? "to pay" : new DecimalFormat("#0.00").format(status / 100.0));
                 tValues[tmpPos][9] = rs.getString("employee.nName");
                 tValues[tmpPos][10] = rs.getString("Comment");
                 tValues[tmpPos][11] = rs.getString("OpenTime");

@@ -322,7 +322,24 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              	}
             }else if(o == btnLine_2_8) {	//refund
             	//check if it's already paid.
-            	if(billPanel.orderedDishAry.size() < 1 || billPanel.orderedDishAry.get(0).getBillID() == 0) {
+            	boolean notPaiedYet = billPanel.orderedDishAry.size() < 1;
+            	if(!notPaiedYet) {
+            		int billID = billPanel.orderedDishAry.get(0).getBillID();
+            		notPaiedYet = billID == 0;
+            		if(!notPaiedYet) { //if already has billid, then check bill status.
+            			try {
+            				String sql = "select * from bill where id = " + billID;
+                            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
+                            rs.beforeFirst();
+                            rs.next();
+                            notPaiedYet = rs.getInt("status") == 0;
+            			}catch(Exception exp) {
+            				L.e("Refund function", "error happend when searching for bill with ID:"+billID, exp);
+            			}
+            		}
+            	}
+            	
+            	if(notPaiedYet) {
             		JOptionPane.showMessageDialog(this, BarFrame.consts.NotPayYet());
             		return;
             	}
