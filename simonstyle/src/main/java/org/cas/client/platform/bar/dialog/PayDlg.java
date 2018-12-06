@@ -9,6 +9,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.ResultSet;
+import java.text.DecimalFormat;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -238,7 +239,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         		billClosed = closeCurrentBill();
             	this.setVisible(false);
             	if(left < 0) {	//if it's equal to 0, then do not display the change dialog.
-            		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign() + (0 - left)/100f).setVisible(true); //it's a non-modal dialog.
+            		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign()
+            				+ new DecimalFormat("#0.00").format((0 - left)/100f)).setVisible(true); //it's a non-modal dialog.
             		//if the last pay was with cash, then might need cash back (no change, paid with a "50" bill)
             		if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
             			updateBill(billId, "cashback", left);
@@ -351,10 +353,11 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	private boolean closeCurrentBill() {
 		int billID = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
 		try {
-			String sql ="update output set deleted = 100 where category = " + billID;
-			PIMDBModel.getStatement().executeUpdate(sql);
+			//do not modify the status of output. because it's a normal output, shouldn't be deleted.
+			//String sql ="update output set deleted = 100 where category = " + billID;
+			//PIMDBModel.getStatement().executeUpdate(sql);
 			
-			sql = "update bill set status = -1 where id = " + billID;
+			String sql = "update bill set status = -1 where id = " + billID;
 			PIMDBModel.getStatement().executeUpdate(sql);
 			return true;
 		}catch(Exception exp) {

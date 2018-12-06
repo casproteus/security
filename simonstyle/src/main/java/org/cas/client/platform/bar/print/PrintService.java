@@ -118,6 +118,19 @@ public class PrintService{
         printContents();
     }
     
+    //
+    public static void exePrintRefund(BillPanel billPanel, List<Dish> saleRecords, boolean isCashBack){
+        flushIpContent();
+        reInitPrintRelatedMaps();
+
+        String printerIP = BarFrame.instance.menuPanel.printers[0].getIp();
+        if(ipContentMap.get(printerIP) == null)
+        	ipContentMap.put(printerIP,new ArrayList<String>());
+        ipContentMap.get(printerIP).addAll(
+        		formatContentForRefund(saleRecords, printerIP, billPanel, isCashBack));
+        printContents();
+    }
+    
     public static void exePrintReport(List<Bill> bills, String startTime, String endTime){
     	L.d("PrintService", "inside exePrint");
     	flushIpContent();
@@ -851,7 +864,24 @@ public class PrintService{
         strAryFR.add("cut");
         return strAryFR;
     }
-
+    
+    private static ArrayList<String> formatContentForRefund(
+    		List<Dish> list, String curPrintIp, BillPanel billPanel, boolean isCashBack){
+    	ArrayList<String> strAryFR = new ArrayList<String>();
+    	int tWidth = BarUtil.getPreferedWidth();
+    	
+    	strAryFR.add("\n!!!!!!!!!!REFUND!!!!!!!!\n\n");
+	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
+        pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
+        pushTotal(billPanel, strAryFR);
+        
+        pushEndMessage(strAryFR);
+    	strAryFR.add("\n!!!!!!!!!!REFUND!!!!!!!!\n\n");
+        strAryFR.add("\n\n\n\n\n");
+        strAryFR.add("cut");
+        return strAryFR;
+    }
+    
     private static ArrayList<String> formatContentForReport(List<Bill> list, String curPrintIp, String startTime, String endTime){
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	int tWidth = BarUtil.getPreferedWidth();

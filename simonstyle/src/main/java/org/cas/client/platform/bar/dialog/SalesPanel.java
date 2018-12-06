@@ -9,6 +9,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -381,12 +382,16 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     }
                     
             		new ChangeDlg(BarFrame.instance, 
-            				BarOption.getMoneySign() + curContent).setVisible(true); //it's a non-modal dialog.
+            				BarOption.getMoneySign() + new DecimalFormat("#0.00").format(refund)).setVisible(true); //it's a non-modal dialog.
 
              		sql = "update bill set status = " + status + " where id = " + billPanel.orderedDishAry.get(0).getBillID();
              		PIMDBModel.getStatement().executeUpdate(sql);
-             		//print a bill
              		
+             		//print a bill, so let revenue know the store didn't receive the money.
+             		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
+            		PrintService.exePrintRefund(bp, bp.orderedDishAry, true);
+            		BarFrame.instance.switchMode(0);
+            		
              		PrintService.openDrawer();
              	}catch(Exception exp) {
                  	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
