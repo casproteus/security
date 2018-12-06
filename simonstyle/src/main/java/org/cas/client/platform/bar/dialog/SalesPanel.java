@@ -156,6 +156,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		BarFrame.numberPanelDlg.setPercentSupport(true);
          		
          		BarFrame.numberPanelDlg.setModal(true);
+				BarFrame.numberPanelDlg.reLayout();
          		BarFrame.numberPanelDlg.setVisible(true);
          		
          		try {
@@ -276,12 +277,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	String curBill = BarFrame.instance.valCurBill.getText();
             	if(curBill != null && curBill.length() > 0) {
             		try {
-            		StringBuilder sql = new StringBuilder("update bill set status = -100 where billIndex = ")
+            		StringBuilder sql = new StringBuilder("update bill set status = 100 where billIndex = ")
             			.append(curBill).append(" and openTime = '")
             			.append(BarFrame.instance.valStartTime.getText()).append("'");
                     	PIMDBModel.getStatement().executeQuery(sql.toString());
             		}catch(Exception exp) {
-            			L.e("void all", "failed when setting bill status = -100 aftetr void all command", exp);
+            			L.e("void all", "failed when setting bill status = 100 aftetr void all command", exp);
             		}
             	}
             	
@@ -384,6 +385,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
              		sql = "update bill set status = " + status + " where id = " + billPanel.orderedDishAry.get(0).getBillID();
              		PIMDBModel.getStatement().executeUpdate(sql);
+             		//print a bill
+             		
              		PrintService.openDrawer();
              	}catch(Exception exp) {
                  	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);

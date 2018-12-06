@@ -295,6 +295,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				BarFrame.numberPanelDlg.setFloatSupport(false);
 				BarFrame.numberPanelDlg.setPercentSupport(false);
 				BarFrame.numberPanelDlg.setModal(true);
+				BarFrame.numberPanelDlg.reLayout();
 				BarFrame.numberPanelDlg.setVisible(btnEqualBill.isSelected());
 				if(NumberPanelDlg.confirmed) {
 					int num = Integer.valueOf(NumberPanelDlg.curContent);

@@ -359,8 +359,20 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
                 tValues[tmpPos][6] = new DecimalFormat("#0.00").format(rs.getInt("tip") / 100.0);
                 tValues[tmpPos][7] = new DecimalFormat("#0.00").format(rs.getInt("cashback") / 100.0);
                 int status = rs.getInt("status");
-                tValues[tmpPos][8] = status == -1 ? "paid" : 
-                	(status == 0 ? "to pay" : new DecimalFormat("#0.00").format(status / 100.0));
+                switch (status) {
+				case -1:
+					tValues[tmpPos][8] = "paid";
+					break;
+				case 0:
+					tValues[tmpPos][8] = "to pay";
+					break;
+				case 100:
+					tValues[tmpPos][8] = "void";
+					break;
+				default:
+					tValues[tmpPos][8] = new DecimalFormat("#0.00").format(status / 100.0);
+					break;
+				}
                 tValues[tmpPos][9] = rs.getString("employee.nName");
                 tValues[tmpPos][10] = rs.getString("Comment");
                 tValues[tmpPos][11] = rs.getString("OpenTime");

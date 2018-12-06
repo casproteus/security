@@ -87,8 +87,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         int targetBillId = orderedDishAry != null && orderedDishAry.size() > 0? 
 				orderedDishAry.get(0).getBillID() : 0;
 		if(targetBillId > 0) {
-			//update the total price of the target bill
-			StringBuilder sql = new StringBuilder("update bill set total = total + ")
+			//update the total price of the target bill, 
+			//---beause when add dish into the billPane, bill in db will not get updated.
+			StringBuilder sql = new StringBuilder("update bill set total = ")
 					.append((int)(Float.valueOf(valTotlePrice.getText()) * 100))
 					.append(", discount = ").append(discount)
 					.append(", otherReceived = ").append(serviceFee)
