@@ -104,6 +104,7 @@ public interface BarDlgConst {
     String COMFIRMDELETECATEGORY();
     String COMFIRMLOSTACTION();
     String ConfirmPayAgain();
+    String ClosedBillCantVoid();
     String SetCatogoryFirst();
     String SendItemCanNotModify();
     String reCeivedMoneyNotEnough();

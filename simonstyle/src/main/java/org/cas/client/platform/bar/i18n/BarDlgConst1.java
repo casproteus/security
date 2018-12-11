@@ -192,6 +192,8 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String ConfirmPayAgain() {return "This bill has already been paid! Are you sure you will receive money for it again?";}
     @Override
+	public String ClosedBillCantVoid() {return "This bill has been closed already, can not do void order any more.";}
+    @Override
 	public String SetCatogoryFirst() {return "Please Set Category First";}
     @Override
 	public String SendItemCanNotModify() {return "Item already send can not be modified. we added a new item into the list";}

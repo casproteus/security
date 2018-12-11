@@ -190,7 +190,9 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String COMFIRMLOSTACTION() {return "您确定不要把新点的菜发送到厨房或者保存到系统中吗？";}
     @Override
-	public String ConfirmPayAgain() {return "本账单已经支付过了！您确定要再次收钱吗？";}
+	public String ConfirmPayAgain() {return "该账单已经支付过了！您确定要再次收钱吗？";}
+    @Override
+	public String ClosedBillCantVoid() {return "该账单已经关闭了，不可以再进行取消。";}
     @Override
 	public String SetCatogoryFirst() {return "请先进行类别设置，然后再添加菜单";}
     @Override

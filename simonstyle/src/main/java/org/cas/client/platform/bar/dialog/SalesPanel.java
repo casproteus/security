@@ -243,13 +243,30 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		BarFrame.instance.switchMode(0);
             	}
             	
-            } else if (o == btnLine_2_5) { // void all include saved ones
-            	if(billPanel.getNewDishes().size() < billPanel.orderedDishAry.size()) {
+            } else if (o == btnLine_2_5) { // void order include saved ones
+            	int dishLength = billPanel.orderedDishAry.size();
+            	int billID = dishLength > 0 ? billPanel.orderedDishAry.get(0).getBillID() : -1;
+            	if(billID > 0) {//if already paid
+            		try {
+        				String sql = "select * from bill where id = " + billID;
+                        ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
+                        rs.beforeFirst();
+                        rs.next();
+                        if(rs.getInt("status") != 0) {
+                        	JOptionPane.showMessageDialog(this, BarFrame.consts.ClosedBillCantVoid());
+                        	return;
+                        }
+        			}catch(Exception exp) {
+        				L.e("Refund function", "error happend when searching for bill with ID:"+billID, exp);
+        			}
+            	}
+            	
+            	if(billPanel.getNewDishes().size() < dishLength) {	//not all new
 	        		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
 	        				BarFrame.consts.COMFIRMDELETEACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
 		                 return;	
 		            }
-	            }else {
+	            }else {			//all new
 	            	if(JOptionPane.showConfirmDialog(BarFrame.instance, 
 	        				BarFrame.consts.COMFIRMLOSTACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
 		                 return;	
