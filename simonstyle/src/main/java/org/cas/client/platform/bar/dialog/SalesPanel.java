@@ -386,27 +386,27 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                     rs.beforeFirst();
                     rs.next();
-                    int status = rs.getInt("status");
-                    if(status < -1) {
-                    	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.AllreadyRefund() + BarOption.getMoneySign() + (0-status)/100.0, DlgConst.DlgTitle,
+                    int refundAmount = rs.getInt("status");
+                    if(refundAmount < -1) {	//if already refund, then add into existing amount.
+                    	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.AllreadyRefund() + BarOption.getMoneySign() + (0-refundAmount)/100.0, DlgConst.DlgTitle,
     		                    JOptionPane.YES_NO_OPTION) != 0) {// allready refunded, sure to refund again?
     						return;
     					}else {
-    						status -= (int)(refund * 100);
+    						refundAmount -= (int)(refund * 100);
     					}
-                    }else {
-                    	status = 0 - (int)(refund * 100);
+                    }else {		//first time refund, then set the refund.
+                    	refundAmount = 0 - (int)(refund * 100);
                     }
                     
             		new ChangeDlg(BarFrame.instance, 
             				BarOption.getMoneySign() + new DecimalFormat("#0.00").format(refund)).setVisible(true); //it's a non-modal dialog.
 
-             		sql = "update bill set status = " + status + " where id = " + billPanel.orderedDishAry.get(0).getBillID();
+             		sql = "update bill set status = " + refundAmount + " where id = " + billPanel.orderedDishAry.get(0).getBillID();
              		PIMDBModel.getStatement().executeUpdate(sql);
              		
              		//print a bill, so let revenue know the store didn't receive the money.
              		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
-            		PrintService.exePrintRefund(bp, bp.orderedDishAry, true);
+            		PrintService.exePrintRefund(bp, bp.orderedDishAry, refundAmount);
             		BarFrame.instance.switchMode(0);
             		
              		PrintService.openDrawer();

@@ -119,7 +119,7 @@ public class PrintService{
     }
     
     //
-    public static void exePrintRefund(BillPanel billPanel, List<Dish> saleRecords, boolean isCashBack){
+    public static void exePrintRefund(BillPanel billPanel, List<Dish> saleRecords, int refundAmount){
         flushIpContent();
         reInitPrintRelatedMaps();
 
@@ -127,7 +127,7 @@ public class PrintService{
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
-        		formatContentForRefund(saleRecords, printerIP, billPanel, isCashBack));
+        		formatContentForRefund(saleRecords, printerIP, billPanel, refundAmount));
         printContents();
     }
     
@@ -866,14 +866,14 @@ public class PrintService{
     }
     
     private static ArrayList<String> formatContentForRefund(
-    		List<Dish> list, String curPrintIp, BillPanel billPanel, boolean isCashBack){
+    		List<Dish> list, String curPrintIp, BillPanel billPanel, int refundAmount){
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	int tWidth = BarUtil.getPreferedWidth();
     	
     	strAryFR.add("\n!!!!!!!!!!REFUND!!!!!!!!\n\n");
 	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
         pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
-        pushTotal(billPanel, strAryFR);
+        pushNewTotal(billPanel, strAryFR, refundAmount);
         
         pushEndMessage(strAryFR);
     	strAryFR.add("\n!!!!!!!!!!REFUND!!!!!!!!\n\n");
@@ -901,7 +901,7 @@ public class PrintService{
   			int status = bill.getStatus();
   			if(status < -1) {//means has refund)
   				refundCount++;
-  				status = 0 - status / 100;
+  				status = 0 - status;
   				refoundAmount += status;
   			}else {
   				salesGrossCount++;
@@ -1077,7 +1077,25 @@ public class PrintService{
         //push normal font
         strAryFR.add("NormalFont");
 	}
+	
+	private static void pushNewTotal(BillPanel billPanel, ArrayList<String> strAryFR, int refund) {
+		StringBuilder content = new StringBuilder();
+		//push bigger font. while it will not work for mev.
+        strAryFR.add("BigFont");
+        //push total
+        String strTotal = billPanel.valTotlePrice.getText();
+        content.append("Total : ")
+			.append(strTotal).append("\n");
 
+        String refundStr = new DecimalFormat("#0.00").format(refund/100f);
+        content.append("Refund : ").append(refundStr)
+        //content.append(BarUtil.generateString(tWidth - 9 - refundStr.length(), " "))
+        .append("\n");
+        strAryFR.add(content.toString());
+        //push normal font
+        strAryFR.add("NormalFont");
+	}
+	
 	private static void pushPayInfo(BillPanel billPanel, ArrayList<String> strAryFR, int width, boolean isCashBack) {
 
 		StringBuilder content = new StringBuilder("\n");
