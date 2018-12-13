@@ -116,14 +116,14 @@ public class Dish {
 		createSplitedOutput(dish, billIndex, 1);
 	}
 	
-	public static void createSplitedOutput(Dish dish, String billID, float splitRate) {
+	public static void createSplitedOutput(Dish dish, String billIndex, float splitRate) {
 		int num = dish.getNum();
 		Statement smt = PIMDBModel.getStatement();
 		try {
 			StringBuilder sql = new StringBuilder(
 		            "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME, category) VALUES ('")
 		            .append(BarFrame.instance.valCurTable.getText()).append("', ")	//subject ->table id
-		            .append(billID).append(", ")			//contactID ->bill id
+		            .append(billIndex).append(", ")			//contactID ->bill id
 		            .append(dish.getId()).append(", ")	//productid
 		            .append(dish.getNum()).append(", ")	//amount
 		            .append(dish.getTotalPrice() * splitRate).append(", ")	//totalprice int

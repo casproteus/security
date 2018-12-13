@@ -135,8 +135,6 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         		            .append(0).append("', '")
         		            .append(tableToggle.getOpenTime()).append("')");				//content
         			smt.executeUpdate(sql.toString());
-        			
-        			PIMDBModel.getStatement().executeUpdate(sql.toString());
         		}catch(Exception exp) {
         			ErrorUtil.write(exp);
         		}
