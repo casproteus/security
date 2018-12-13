@@ -870,13 +870,13 @@ public class PrintService{
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	int tWidth = BarUtil.getPreferedWidth();
     	
-    	strAryFR.add("\n!!!!!!!!!!REFUND!!!!!!!!\n\n");
+    	strAryFR.add("\n##REFUND##\n\n");
 	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
         pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
-        pushNewTotal(billPanel, strAryFR, refundAmount);
+        pushNewTotal(billPanel, strAryFR, refundAmount, tWidth);
         
         pushEndMessage(strAryFR);
-    	strAryFR.add("\n!!!!!!!!!!REFUND!!!!!!!!\n\n");
+    	strAryFR.add("\n##REFUND##\n\n");
         strAryFR.add("\n\n\n\n\n");
         strAryFR.add("cut");
         return strAryFR;
@@ -1078,19 +1078,22 @@ public class PrintService{
         strAryFR.add("NormalFont");
 	}
 	
-	private static void pushNewTotal(BillPanel billPanel, ArrayList<String> strAryFR, int refund) {
+	private static void pushNewTotal(BillPanel billPanel, ArrayList<String> strAryFR, int refund, int tWidth) {
 		StringBuilder content = new StringBuilder();
+		String refundStr = new DecimalFormat("#0.00").format(refund/100f);
+	    content.append("Refund : ")
+	    	.append(BarUtil.generateString(tWidth - 9 - refundStr.length(), " ")).append(refundStr)
+	        .append("\n");
+	    strAryFR.add(content.toString());    
 		//push bigger font. while it will not work for mev.
         strAryFR.add("BigFont");
-        //push total
+        //push NEW total
         String strTotal = billPanel.valTotlePrice.getText();
-        content.append("Total : ")
-			.append(strTotal).append("\n");
+        String newTotal = new DecimalFormat("#0.00").format(Float.valueOf(strTotal) + Float.valueOf(refundStr));
+        content = new StringBuilder("Total : ")
+			.append(newTotal).append("\n");
 
-        String refundStr = new DecimalFormat("#0.00").format(refund/100f);
-        content.append("Refund : ").append(refundStr)
-        //content.append(BarUtil.generateString(tWidth - 9 - refundStr.length(), " "))
-        .append("\n");
+       
         strAryFR.add(content.toString());
         //push normal font
         strAryFR.add("NormalFont");
