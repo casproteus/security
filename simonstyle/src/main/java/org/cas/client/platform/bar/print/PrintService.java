@@ -1221,73 +1221,54 @@ public class PrintService{
 		for (Bill bill : list) {
   			int status = bill.getStatus();
   			if(status < -1) {//means has refund)
-  				if(bill.getCashReceived() > 0) {
-  	  				cashQt--;
-		  	  		cashTotal -= bill.getCashReceived();
-  				}
-  				if(bill.getDebitReceived() > 0) {
-  					debitQt--;
-  					debitTotal -= bill.getDebitReceived();
-  				}
-  				if(bill.getVisaReceived() > 0) {
-  	  				visaQt--;
-		  	  		visaTotal -= bill.getVisaReceived();
-  				}
-  				if(bill.getMasterReceived() > 0) {
-  	  				masterQt--;
-  	  				masterTotal -= bill.getMasterReceived();
-  				}
-  				if(bill.getOtherReceived() > 0) {
-  	  				otherQt--;
-		  	  		otherTotal -= bill.getOtherReceived();
-  				}
-  			}else {
-  				boolean tipCounted = false;
-  				if(bill.getCashReceived() > 0) {
-  	  				cashQt++;
-		  	  		cashTotal += bill.getCashReceived() + bill.getCashback();	//@NOTE: cashback is negtive value.
-  				}
-  				if(bill.getDebitReceived() > 0) {
-  					debitQt++;
-  					debitTotal += bill.getDebitReceived();
-					debitSales = debitTotal;
-  					if(bill.getTip() > 0 && !tipCounted) {
-  						debitTip += bill.getTip();
-  						debitSales -= debitTip;
-  						tipCounted = true;
-  					}
-  				}
-  				if(bill.getVisaReceived() > 0) {
-  	  				visaQt++;
-		  	  		visaTotal += bill.getVisaReceived();
-		  	  		visaSales = visaTotal;
-  					if(bill.getTip() > 0 && !tipCounted) {
-  						visaTip += bill.getTip();
-  						visaSales -= visaTip;
-  						tipCounted = true;
-  					}
-  				}
-  				if(bill.getMasterReceived() > 0) {
-  	  				masterQt++;
-  	  				masterTotal += bill.getMasterReceived();
-  	  				masterSales = masterTotal;
-  					if(bill.getTip() > 0 && !tipCounted) {
-  						masterTip += bill.getTip();
-  						masterSales -= masterTip;
-  						tipCounted = true;
-  					}
-  				}
-  				if(bill.getOtherReceived() > 0) {
-  	  				otherQt++;
-		  	  		otherTotal += bill.getOtherReceived();
-		  	  		otherSales = otherTotal;
-  					if(bill.getTip() > 0 && !tipCounted) {
-  						otherTip += bill.getTip();
-  						otherSales -= otherTip;
-  						tipCounted = true;
-  					}
-  				}
+		  	  	cashTotal += bill.getCashReceived();
   			}
+  			
+			boolean tipCounted = false;
+			if(bill.getCashReceived() > 0) {
+  				cashQt++;
+	  	  		cashTotal += bill.getCashReceived() + bill.getCashback();	//@NOTE: cashback is negtive value.
+			}
+			if(bill.getDebitReceived() > 0) {
+				debitQt++;
+				debitTotal += bill.getDebitReceived();
+				debitSales = debitTotal;
+				if(bill.getTip() > 0 && !tipCounted) {
+					debitTip += bill.getTip();
+					debitSales -= debitTip;
+					tipCounted = true;
+				}
+			}
+			if(bill.getVisaReceived() > 0) {
+  				visaQt++;
+	  	  		visaTotal += bill.getVisaReceived();
+	  	  		visaSales = visaTotal;
+				if(bill.getTip() > 0 && !tipCounted) {
+					visaTip += bill.getTip();
+					visaSales -= visaTip;
+					tipCounted = true;
+				}
+			}
+			if(bill.getMasterReceived() > 0) {
+  				masterQt++;
+  				masterTotal += bill.getMasterReceived();
+  				masterSales = masterTotal;
+				if(bill.getTip() > 0 && !tipCounted) {
+					masterTip += bill.getTip();
+					masterSales -= masterTip;
+					tipCounted = true;
+				}
+			}
+			if(bill.getOtherReceived() > 0) {
+  				otherQt++;
+	  	  		otherTotal += bill.getOtherReceived();
+	  	  		otherSales = otherTotal;
+				if(bill.getTip() > 0 && !tipCounted) {
+					otherTip += bill.getTip();
+					otherSales -= otherTip;
+					tipCounted = true;
+				}
+			}
   		}
 		
 		DecimalFormat formater = new DecimalFormat("#0.00");
