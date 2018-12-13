@@ -284,7 +284,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	        //update db, delete relevant orders.
             	for (Dish dish : billPanel.orderedDishAry) {
             		dish.setCanceled(true);	// to make it printed in special format(so it's know as a cancelled dish)
-            		Dish.deleteRelevantOutput(dish);
+            		//Dish.deleteRelevantOutput(dish);
 				}
             	if(billPanel.orderedDishAry.size() > 0) {
             		billPanel.sendDishesToKitchen(billPanel.orderedDishAry, true);
@@ -420,6 +420,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	
             } else if (o == btnLine_2_10) {//send
         		outputStatusCheck();
+        		billStatusCheck();
             	if(BarOption.isFastFoodMode()) {
     		    	BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
     		    	billPanel.initContent();
@@ -465,24 +466,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         }
     }
 
-    //to make sure bill saved.
     //and make sure new added dish will be updated with new information.
 	private void billStatusCheck() {
-		//if the bill has not been generated, generate a bill.@because: some information on the payment dialog is fetched from bill record.
-		//@NODE: normally should only generate the bill when clicked the ok of paymentdlg, while I don't mind to have the bill generated earlier
-		//as we need to care if there's bill exist anywhere when splitting bill or moving items.
-		//@because: we might have half completed bill.(haven't paid enough, then split, then continue pay)
-		if(billPanel.getBillId() == 0) {
-			int newBillID = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), BarFrame.instance.getCurBillIndex(), BarFrame.instance.valStartTime.getText());
-			billPanel.updateOutputRecords(newBillID);
-		}
-		else {//if bill record already exist, and there's new dish added, or discount, service fee changed.... update the total value.
-			//if(dishes != null && dishes.size() > 0) {
-			updateBillRecord(billPanel.getBillId());		//in case if added service fee or discout of bill.
-		}
+		//if there's new dish added, or discount, service fee changed.... update the total value of bill record.
+		updateBillRecord(billPanel.getBillId());		//in case if added service fee or discout of bill.
 		billPanel.initContent();	//always need to initContent, to make sure dish has new price. e.g. when adding a dish to a printed bill,
-									//and click print bill immediatly, will need the initContent. 
-	}
+	}								//and click print bill immediatly, will need the initContent. 
 
 	private void outputStatusCheck() {
 		//if there's any new bill, send it to kitchen first, and this also made the output generated.

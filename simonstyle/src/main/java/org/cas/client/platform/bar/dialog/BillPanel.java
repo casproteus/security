@@ -59,6 +59,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     public ArrayList<Dish> orderedDishAry = new ArrayList<Dish>();
     
     //Bill property (not for specific item).the info should be retrieved from bill record if have.
+    int billID;
     int discount;
     int tip;
     int serviceFee;
@@ -444,9 +445,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         newDish.setNum(1);
         newDish.setTotalPrice(dish.getPrice() * 1);
         newDish.setOpenTime(BarFrame.instance.valStartTime.getText());
-        if(orderedDishAry != null && orderedDishAry.size() > 0) {
-        	newDish.setBillID(orderedDishAry.get(0).getBillID());
-        }
+        newDish.setBillIndex(BarFrame.instance.valCurBill.getText());
+        newDish.setBillID(billID);
         orderedDishAry.add(newDish);				//valueChanged process. not being cleared immediately-----while now dosn't matter
         BillListPanel.curDish = newDish;
         
@@ -622,10 +622,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				tblBillPanel.setSelectedRow(tmpPos - 1);
 			//rs.close();
 			
-			//update the dicount and servicefee, and tip info.
+			//update the dicount and servicefee, and tip info, and (don't forget the billID).
+			//if has output, then get hte billID from any output, if has no output, then search related bill from db.
+			//@NOTE could be an non-first but empty bill, so must consider the bill ID if it's not empty string.
 			if(orderedDishAry.size() > 0 && orderedDishAry.get(0).getBillID() > 0) {
-				sql = new StringBuilder("select * from Bill where id = ")
-						.append(orderedDishAry.get(0).getBillID());
+				billID = orderedDishAry.get(0).getBillID();
+				sql = new StringBuilder("select * from Bill where id = ").append(billID);
 				rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 				rs.beforeFirst();
 				if(rs.next()) {
@@ -634,7 +636,18 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				    serviceFee = rs.getInt("otherreceived");
 				    setBackground(rs.getInt("status") < 0 ? Color.gray : null);
 				}
+			}else {
+				sql = new StringBuilder("Select id from bill where tableID = '").append(BarFrame.instance.valCurTable.getText())
+						.append("' and opentime = '").append(BarFrame.instance.valStartTime.getText()).append("'");
+				if(BarFrame.instance.valCurBill.getText().length() > 0) {
+					sql.append(" and tableIdx = ").append(BarFrame.instance.valCurBill.getText());
+				}
+                ResultSet resultSet = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+                resultSet.beforeFirst();
+                resultSet.next();
+                billID = resultSet.getInt("id");
 			}
+			rs.close();
 		} catch (Exception e) {
 			ErrorUtil.write(e);
 		}
@@ -716,10 +729,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     }
 
     public int getBillId(){
-    	if(orderedDishAry.size() > 0) {
-    		return orderedDishAry.get(0).getBillID();
-    	}
-    	return 0;
+    	return billID;
     }
     
     void reLayout() {
