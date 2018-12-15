@@ -449,7 +449,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			                + "' and time > '" + BarFrame.instance.valStartTime.getText() + "' and DELETED != 1";
 					smt.executeUpdate(sql);
 					
-					smt.executeUpdate("update bill set status = -1 where openTime = '" + BarFrame.instance.valStartTime.getText() + "'");
+					smt.executeUpdate("update bill set status = 50 where openTime = '" + BarFrame.instance.valStartTime.getText() + "'");
 		        	//update the tabel status
 		        	smt.executeUpdate("update dining_Table set status = 0 WHERE name = '" + tableID + "'");
 		        }catch(Exception exp) {

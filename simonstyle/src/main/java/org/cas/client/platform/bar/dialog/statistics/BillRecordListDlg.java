@@ -366,6 +366,9 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
 				case 0:
 					tValues[tmpPos][8] = "to pay";
 					break;
+				case 50:
+					tValues[tmpPos][8] = "suspended";
+					break;
 				case 100:
 					tValues[tmpPos][8] = "void";
 					break;
