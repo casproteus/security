@@ -925,7 +925,7 @@ public class PrintService{
         		);
         pushPaymentSummary(strAryFR, list, tWidth);
         pushSummaryByServiceType(strAryFR, list, tWidth);
-        pushSummaryByOrder(strAryFR, tWidth, startTime, endTime);
+        pushVoidItemSummary(strAryFR, tWidth, startTime, endTime);
         pushOtherSummary(list);
         strAryFR.add("\n\n\n\n\n");
         strAryFR.add("cut");
@@ -1007,7 +1007,7 @@ public class PrintService{
             sb.append(dishName);
             
             if(d.getNum() > 1){//NOTE: the number could be bigger than 10000.
-            	sb.append(" ").append(d.getDisplayableNum());
+            	sb.append(" ").append(Dish.getDisplayableNum(d.getNum()));
             }
             
             String price = new DecimalFormat("#0.00").format(d.getTotalPrice()/100f);
@@ -1189,13 +1189,11 @@ public class PrintService{
 		content.append(getSeperatorLine(1, width)).append("\n");
 		
 		//Net
-		content.append("Net").append(BarUtil.generateString(width - 3 - 10 - countSale.length(), " "))
-		.append(countSale).append(BarUtil.generateString(10 - net.length() , " ")).append(net)
+		content.append("Net").append(BarUtil.generateString(width - 3 - net.length(), " ")).append(net)
 		.append("\n");
 		
 		//HST
-		content.append("HST").append(BarUtil.generateString(width - 3 - 10 - countRefund.length(), " "))
-		.append(countRefund).append(BarUtil.generateString(10 - HST.length() , " ")).append(HST)
+		content.append("HST").append(BarUtil.generateString(width - 3 - HST.length(), " ")).append(HST)
 		.append("\n");
 		//total
 		content.append(getSeperatorLine(1, width)).append("\n");
@@ -1321,7 +1319,7 @@ public class PrintService{
 	private static void pushSummaryByServiceType(ArrayList<String> strAryFR, List<Bill> list, int width) {};
 	private static void pushOtherSummary(List<Bill> list) {};
 	
-	private static void pushSummaryByOrder(ArrayList<String> strAryFR, int width, String startDateStr, String endDateStr) {
+	private static void pushVoidItemSummary(ArrayList<String> strAryFR, int width, String startDateStr, String endDateStr) {
 		StringBuilder content = new StringBuilder();
 		//title
 		String voidItemSummary = "Void Item Summary";
@@ -1332,8 +1330,8 @@ public class PrintService{
 		content.append("Time        Table  Dish         Qt   Sales").append("\n");
 		content.append(getSeperatorLine(0, width)).append("\n");
 
-		StringBuilder sql = new StringBuilder("Select * from Output, product where deleted = 100 and time >= '")
-				.append(startDateStr).append("' and time <= '").append(endDateStr).append("' and output.productID = product.id");
+		StringBuilder sql = new StringBuilder("Select * from Output, product, bill where bill.status = 100 and time >= '")
+				.append(startDateStr).append("' and time <= '").append(endDateStr).append("' and output.productID = product.id and output.category = bill.id");
         if(LoginDlg.USERTYPE < 2) {
         	sql.append(" and employeeId = ").append(LoginDlg.USERID);
         }
@@ -1344,7 +1342,6 @@ public class PrintService{
             rs.afterLast();
             rs.relative(-1);
             rs.beforeFirst();
-            int totalAmount = 0;
             float totalSales = 0f;
             while (rs.next()) {
                 String time = rs.getString("Output.time");
@@ -1357,8 +1354,8 @@ public class PrintService{
                 content.append("  ").append(product);
                 
                 int i = rs.getInt("Output.amount");
-                content.append(BarUtil.generateString(15 - product.length() - String.valueOf(i).length(), " ")).append(i);
-                totalAmount += i;
+                String displayableNum = Dish.getDisplayableNum(i);
+                content.append(BarUtil.generateString(15 - product.length() - String.valueOf(displayableNum).length(), " ")).append(displayableNum);
                 
                 float f = Float.valueOf((float) (rs.getInt("Output.toltalPrice") / 100.0));
                 String money = new DecimalFormat("#0.00").format(f);
@@ -1367,10 +1364,8 @@ public class PrintService{
             }
             
     		content.append(getSeperatorLine(1, width)).append("\n");
-    		
     		String toltal = new DecimalFormat("#0.00").format(totalSales);
-    		content.append(BarUtil.generateString(34 - String.valueOf(totalAmount).length(), " ")).append(totalAmount)
-    		.append(BarUtil.generateString(width - 34 - toltal.length(), " "))
+    		content.append(BarUtil.generateString(width - toltal.length(), " "))
     		.append(toltal).append("\n");
     		
     		strAryFR.add(content.toString());

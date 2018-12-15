@@ -598,7 +598,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				dish.setTotalPrice(rs.getInt("OUTPUT.TOLTALPRICE"));
 				orderedDishAry.add(dish);
 
-				tValues[tmpPos][0] = dish.getDisplayableNum();
+				tValues[tmpPos][0] = dish.getDisplayableNum(dish.getNum());
 				
 				tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
 
@@ -640,7 +640,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				sql = new StringBuilder("Select id from bill where tableID = '").append(BarFrame.instance.valCurTable.getText())
 						.append("' and opentime = '").append(BarFrame.instance.valStartTime.getText()).append("'");
 				if(BarFrame.instance.valCurBill.getText().length() > 0) {
-					sql.append(" and tableIdx = ").append(BarFrame.instance.valCurBill.getText());
+					sql.append(" and billIndex = ").append(BarFrame.instance.valCurBill.getText());
 				}
                 ResultSet resultSet = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
                 resultSet.beforeFirst();
