@@ -43,17 +43,17 @@ public class Dish {
 			num = num % BarOption.MaxQTY;
 		}
 		//calculate the new rate of dividing price, and the new num to update into the db.
-		float splitRate = (float)num / splitAmount;	//default division rate.
+		float splitRate = (float) 1.0 / splitAmount;	//default division rate.
 		int pX = splitAmount * BarOption.MaxQTY;
 		
 		//check the new split number should be added onto pS or pK.
 		if(pS > 0) {	//while if it's already a float, then reset the division rate.
-			splitRate = splitRate / pS;
+			//dont' need ot do it as the total price is not price anymore, now we save final pirce in total price. splitRate = splitRate / pS;
 			num += pS * BarOption.MaxQTY ;		//if more than one time division, put the number on higher position.
 			pX *= 100;
 		}
 		if(pK > 0) {
-			splitRate = splitRate / pK;
+			//splitRate = splitRate / pK;
 			num += pK * BarOption.MaxQTY * 100;
 			pX *= 100;
 		}
@@ -61,8 +61,11 @@ public class Dish {
 		if(billIndex == null) {		//updating the original output.
 			Statement smt = PIMDBModel.getStatement();
 			try {
-				smt.executeUpdate("update output set amount = " + num + ", category = " + dish.getBillID()
-						+ ", TOLTALPRICE = " + (dish.getPrice() - dish.getDiscount()) * splitRate + " where id = " + dish.getOutputID());
+				smt.executeUpdate("update output set amount = " + num
+						+ ", category = " + dish.getBillID()
+						+ ", TOLTALPRICE = " + dish.getTotalPrice() * splitRate 
+						+ ", discount = " + dish.getDiscount() * splitRate
+						+" where id = " + dish.getOutputID());
 			} catch (Exception exp) {
 				ErrorUtil.write(exp);
 			}
@@ -152,8 +155,7 @@ public class Dish {
 		}
 	}
 	
-	public String getDisplayableNum() {
-		int num = getNum();
+	public static String getDisplayableNum(int num) {
 		//first pick out the number on 100,0000 and 10000 position
 		int pK = num /(BarOption.MaxQTY * 100);
 		if(num > BarOption.MaxQTY * 100) {

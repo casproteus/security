@@ -162,7 +162,7 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         	String endDate = endTime.toString();
         	endTime.append(" 23:59:59");
         	ArrayList<Bill> bills = queryBillList(startTime.toString(), endTime.toString());
-        	PrintService.exePrintReport(bills, startDate, endDate);
+        	PrintService.exePrintReport(bills, startTime.toString(), endTime.toString());
         }
     }
     
