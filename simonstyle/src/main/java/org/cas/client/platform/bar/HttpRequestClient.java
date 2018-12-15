@@ -1,5 +1,7 @@
 package org.cas.client.platform.bar;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -9,18 +11,19 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Date;
 
 import javax.swing.JOptionPane;
 
-import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.casutil.L;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-public class AppData extends Thread{
+public class HttpRequestClient extends Thread{
 	public static final String SERVER_URL = "http://test.sharethegoodones.com";
 	//public static final String SERVER_URL = "http://test.sharethegoodones.com/taostyle";
+	public String url;
+	public String responseString;
+	public ActionListener actionListener;
+	private String jsonstr;
 
     public static final String KEY_SHOP_XML = "KEY_SHOP_XML";
     public static final String KEY_SHOP_LIST = "KEY_SHOP_LIST";
@@ -29,6 +32,11 @@ public class AppData extends Thread{
     private static final String KEY_SHOP_NAME = "shopName";
     public static final String KEY_CUST_LAST_CHAR = "KEY_CUST_LAST_CHAR";
 
+    public HttpRequestClient(String url, String jsonstr, ActionListener actionListener) {
+    	this.url = url;
+    	this.jsonstr = jsonstr;
+    	this.actionListener = actionListener;
+    }
 //    private static SharedPreferencesHelper getShopData(Context context) {
 //        return SharedPreferencesHelper.getCache(context, KEY_SHOP_XML);
 //    }
@@ -85,40 +93,19 @@ public class AppData extends Thread{
         super.run();
         HttpURLConnection urlConnection = null;
         try {
-            urlConnection = prepareConnection(AppData.SERVER_URL + "/activeAccount");
-
-            JSONObject json = new JSONObject();//创建json对象
-            json.put("licence", BarOption.getLicense());//使用URLEncoder.encode对特殊和不可见字符进行编码
-            String jsonstr = json.toString();//把JSON对象按JSON的编码格式转换为字符串
-
+            urlConnection = prepareConnection(url);
             writeOut(urlConnection, jsonstr);
+            
             urlConnection.setConnectTimeout(20000);
             if(urlConnection.getResponseCode()==HttpURLConnection.HTTP_OK){//得到服务端的返回码是否连接成功
-
-                String responseString = readBackFromConnection(urlConnection);
-                int p = responseString.indexOf("_");
-                if (p < -1) {
-                	JOptionPane.showMessageDialog(null, "Activation failed with error code 520, please contact us at info@ShareTheGoodOnes.com");
-                }else {
-                	String s = responseString.substring(0, p);
-					long time = "none".equals(s) ? 100 * 365 * 24 * 3600 * 1000 : Long.valueOf(s);
-					if (time > 0) {// if success
-						BarOption.setActivateTimeLeft(String.valueOf(time * 24 * 3600 * 1000));
-						BarOption.setLastSuccessStr(String.valueOf(new Date().getTime()));
-
-						BarOption.setBillHeadInfo(responseString.substring(p + 1));
-						JOptionPane.showMessageDialog(null, "Application is activated successfully!");
-					} else {
-						JOptionPane.showMessageDialog(null,
-								"Software expired, please contact us at info@ShareTheGoodOnes.com");
-					}
-                }
+                responseString = readBackFromConnection(urlConnection);
+                actionListener.actionPerformed(new ActionEvent(null, -1, responseString));
             }else{
             	JOptionPane.showMessageDialog(null, "Activation failed with error code 522, please contact us at info@ShareTheGoodOnes.com");
             }
         } catch (Exception e) {
-            L.e("TAG", "USERLOGIN_FAILED", e);
-            JOptionPane.showMessageDialog(null, "Activation  failed with code 520, please contact us at info@ShareTheGoodOnes.com");
+            L.e("AppData USER Request failed", "url:" + url, e);
+            JOptionPane.showMessageDialog(null, "User request failed with code 520, please contact us at info@ShareTheGoodOnes.com");
         }finally{
             if(urlConnection != null)
                 urlConnection.disconnect();//使用完关闭TCP连接，释放资源

@@ -21,7 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
-import org.cas.client.platform.bar.AppData;
+import org.cas.client.platform.bar.HttpRequestClient;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
@@ -33,9 +33,10 @@ import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
+import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
-	private String VERSION = "V0.103-20181206";
+	private String VERSION = "V0.108-20181215";
     public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
@@ -97,6 +98,13 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     	}
     }
     
+	public static String prepareLicenceJSONString() {
+		JSONObject json = new JSONObject();//创建json对象
+		json.put("licence", BarOption.getLicense());//使用URLEncoder.encode对特殊和不可见字符进行编码
+		String jsonstr = json.toString();//把JSON对象按JSON的编码格式转换为字符串
+		return jsonstr;
+	}
+	
     private static void authenticate(String inputedSN) {
         if (inputedSN.length() != 6) {
             JOptionPane.showMessageDialog(null,"Please input correct license code");
@@ -104,7 +112,29 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         }
 
         BarOption.setLicense(inputedSN);
-        new AppData().start();
+        new HttpRequestClient(HttpRequestClient.SERVER_URL + "/activeAccount", prepareLicenceJSONString(), new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String responseString = e.getActionCommand();
+				int p = responseString.indexOf("_");
+                if (p < -1) {
+                	JOptionPane.showMessageDialog(null, "Activation failed with error code 520, please contact us at info@ShareTheGoodOnes.com");
+                }else {
+                	String timeLeft = responseString.substring(0, p);
+					long time = "none".equals(timeLeft) ? 100 * 365 * 24 * 3600 * 1000 : Long.valueOf(timeLeft);
+					if (time > 0) {// if success
+						BarOption.setActivateTimeLeft(String.valueOf(time * 24 * 3600 * 1000));
+						BarOption.setLastSuccessStr(String.valueOf(new Date().getTime()));
+
+						BarOption.setBillHeadInfo(responseString.substring(p + 1));
+						JOptionPane.showMessageDialog(null, "Application is activated successfully!");
+					} else {
+						JOptionPane.showMessageDialog(null,
+								"Software expired, please contact us at info@ShareTheGoodOnes.com");
+					}
+                }
+			}
+		}).start();
     }
     
     private static long checkDaysleft() {
