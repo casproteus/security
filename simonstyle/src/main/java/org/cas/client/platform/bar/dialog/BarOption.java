@@ -314,6 +314,14 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     	return CustOpts.custOps.getValue("PrinterMinReachTime") == null ? 
     			"2468" : String.valueOf(CustOpts.custOps.getValue("PrinterMinReachTime"));
     }
+
+    public static void setServerHost(String serverHost) {
+    	CustOpts.custOps.setKeyAndValue("serverHost", serverHost);
+    }
+    public static String getServerHost() {
+    	return CustOpts.custOps.getValue("serverHost") == null ? 
+    			null : String.valueOf(CustOpts.custOps.getValue("serverHost"));
+    }
     
     /*
      * 对话盒的布局独立出来，为了在对话盒尺寸发生改变后，界面各元素能够重新布局， 使整体保持美观。尤其在Linux系列的操作系统上，所有的对话盒都必须准备好应对用户的拖拉改变尺寸。

@@ -903,13 +903,13 @@ public class PrintService{
   				refundCount++;
   				status = 0 - status;
   				refoundAmount += status;
-  			}else {
-  				salesGrossCount++;
-  				salesGrossAmount += bill.getCashReceived() + bill.getDebitReceived()
-  				+ bill.getVisaReceived() + bill.getMasterReceived() + bill.getOtherReceived() + bill.getCashback();
+  				salesGrossAmount -= status;
   			}
+			salesGrossCount++;
+			salesGrossAmount += bill.getCashReceived() + bill.getDebitReceived()
+			+ bill.getVisaReceived() + bill.getMasterReceived() + bill.getOtherReceived() + bill.getCashback();
   		}
-  		net = (salesGrossAmount + refoundAmount)  * 100 /(100 + gstRate + qstRate);
+  		net = salesGrossAmount * 100 /(100 + gstRate + qstRate); //???
   		HST = net * (gstRate + qstRate)/100;
   		//
       		
@@ -926,7 +926,7 @@ public class PrintService{
         pushPaymentSummary(strAryFR, list, tWidth);
         pushSummaryByServiceType(strAryFR, list, tWidth);
         pushSummaryByOrder(strAryFR, tWidth, startTime, endTime);
-        pushAuditSummary(list);
+        pushOtherSummary(list);
         strAryFR.add("\n\n\n\n\n");
         strAryFR.add("cut");
         return strAryFR;
@@ -1224,7 +1224,7 @@ public class PrintService{
 		for (Bill bill : list) {
   			int status = bill.getStatus();
   			if(status < -1) {//means has refund)
-		  	  	cashTotal += bill.getCashReceived();
+		  	  	cashTotal += status;
   			}
   			
 			boolean tipCounted = false;
@@ -1319,7 +1319,7 @@ public class PrintService{
 	};
 	
 	private static void pushSummaryByServiceType(ArrayList<String> strAryFR, List<Bill> list, int width) {};
-	private static void pushAuditSummary(List<Bill> list) {};
+	private static void pushOtherSummary(List<Bill> list) {};
 	
 	private static void pushSummaryByOrder(ArrayList<String> strAryFR, int width, String startDateStr, String endDateStr) {
 		StringBuilder content = new StringBuilder();

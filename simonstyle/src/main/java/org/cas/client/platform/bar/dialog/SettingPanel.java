@@ -163,6 +163,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 		    		}
     			}
     		}
+    	}else if(o == tfdServerHost) {
+			BarOption.setServerHost(tfdServerHost.getText());
     	}else if(o == tfdCategoryRow) {
     		int num;
     		try {
@@ -341,9 +343,13 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		lblPrinterMinReachTime.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdPrinterMinReachTime.setBounds(lblPrinterMinReachTime.getX() + lblPrinterMinReachTime.getWidth() + CustOpts.HOR_GAP, lblPrinterMinReachTime.getY(),
         		100, CustOpts.BTN_HEIGHT);
-
+        lblServerHost.setBounds(lblPrinterMinReachTime.getX(), lblPrinterMinReachTime.getY() + lblPrinterMinReachTime.getHeight() + CustOpts.VER_GAP,
+        		lblServerHost.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdServerHost.setBounds(lblServerHost.getX() + lblServerHost.getWidth() + CustOpts.HOR_GAP, lblServerHost.getY(),
+        		100, CustOpts.BTN_HEIGHT);
+        
         //cbx------------------------------------
-        cbxIsSingleUser.setBounds(lblBillPageRow.getX(), lblPrinterMinReachTime.getY() + lblPrinterMinReachTime.getHeight() + CustOpts.VER_GAP * 4,
+        cbxIsSingleUser.setBounds(lblServerHost.getX(), lblServerHost.getY() + lblServerHost.getHeight() + CustOpts.VER_GAP * 4,
         		cbxIsSingleUser.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsDiscBeforeTax.setBounds(cbxIsSingleUser.getX(), cbxIsSingleUser.getY() + cbxIsSingleUser.getHeight() + CustOpts.VER_GAP,
         		cbxIsDiscBeforeTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
@@ -403,6 +409,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tfdStartTimeOfDay = new JTextField(String.valueOf(BarOption.getStartTime()));
         lblPrinterMinReachTime = new JLabel(BarFrame.consts.PrinterMinReachTime());
         tfdPrinterMinReachTime = new JTextField(String.valueOf(BarOption.getPrinterMinReachTime()));
+        lblServerHost = new JLabel(BarFrame.consts.ServerHost());
+        tfdServerHost = new JTextField(String.valueOf(BarOption.getServerHost()));
         
         //compomnents for setting category and menus
         lblCategoryRow = new JLabel(BarFrame.consts.CategoryRow());
@@ -486,7 +494,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 //        cbxIsPrintBillWhenPay.addActionListener(this);
         tfdStartTimeOfDay.addFocusListener(this);
         tfdPrinterMinReachTime.addFocusListener(this);
-        
+        tfdServerHost.addFocusListener(this);
 		reLayout();
     }
 
@@ -529,6 +537,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         
         add(lblPrinterMinReachTime);
         add(tfdPrinterMinReachTime);
+        add(lblServerHost);
+        add(tfdServerHost);
         
         add(cbxIsSingleUser);
         add(cbxIsDiscBeforeTax);
@@ -549,6 +559,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     JTextField tfdStartTimeOfDay;
     JLabel lblPrinterMinReachTime;
     JTextField tfdPrinterMinReachTime;
+    JLabel lblServerHost;
+    JTextField tfdServerHost;
     
     JCheckBox cbxIsSingleUser;
     JCheckBox cbxIsDiscBeforeTax;

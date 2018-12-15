@@ -242,6 +242,8 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String PrinterMinReachTime() {return "打印机报警响应时间";}
     @Override
+	public String ServerHost() {return "服务器地址";}
+    @Override
 	public String PrinterError() {return "警告！后台打印时发生错误，请检查相关打印机然后再试！";}
     
     @Override

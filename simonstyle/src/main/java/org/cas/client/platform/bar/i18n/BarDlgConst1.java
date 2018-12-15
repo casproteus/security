@@ -242,6 +242,8 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String PrinterMinReachTime() {return "Printer Min Reach Time";}
     @Override
+	public String ServerHost() {return "Server Host";}
+    @Override
 	public String PrinterError() {return "WARNING! Error occured when printing in back end, please check printer and try again";}
     
     @Override

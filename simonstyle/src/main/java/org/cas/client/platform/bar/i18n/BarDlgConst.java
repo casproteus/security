@@ -130,6 +130,7 @@ public interface BarDlgConst {
     String IsPrintBillWhenPay();
     String StartTimeOfDay();
     String PrinterMinReachTime();
+    String ServerHost();
     String PrinterError();
     
     String Other();
