@@ -293,16 +293,14 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	//in check order dialog. and have to process it to be not null, better to be a negative. 
             	//so will not be considered as there's still non closed bill, when checking in isLastBill()
             	String curBill = BarFrame.instance.valCurBill.getText();
-            	if(curBill != null && curBill.length() > 0) {
-            		try {
-            		StringBuilder sql = new StringBuilder("update bill set status = 100 where billIndex = ")
-            			.append(curBill).append(" and openTime = '")
-            			.append(BarFrame.instance.valStartTime.getText()).append("'");
-                    	PIMDBModel.getStatement().executeQuery(sql.toString());
-            		}catch(Exception exp) {
-            			L.e("void all", "failed when setting bill status = 100 aftetr void all command", exp);
-            		}
-            	}
+        		try {
+        			StringBuilder sql = new StringBuilder("update bill set status = 100 where billIndex = ")
+	        			.append("".equals(curBill) ? 1 : curBill).append(" and openTime = '")
+	        			.append(BarFrame.instance.valStartTime.getText()).append("'");
+                	PIMDBModel.getStatement().executeQuery(sql.toString());
+        		}catch(Exception exp) {
+        			L.e("void all", "failed when setting bill status = 100 aftetr void all command", exp);
+        		}
             	
             	//if the bill amount is 1, cancel the selected status of the table.
         		if(isLastBillOfCurTable()) {
