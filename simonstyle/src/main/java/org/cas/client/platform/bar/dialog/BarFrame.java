@@ -22,6 +22,7 @@ import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
 import org.cas.client.platform.bar.HttpRequestClient;
+import org.cas.client.platform.bar.RequestNewOrderThread;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
@@ -66,6 +67,12 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 	        singleUserLoginProcess();
         }else {
         	instance.setVisible(true);
+        }
+        
+        String hostStr = BarOption.getServerHost();
+        if(hostStr != null && hostStr.trim().length() > 1) {
+        	//this thread will start a request thread every 20 seconds to fetch new order from server..
+        	new RequestNewOrderThread(hostStr).start();
         }
     }
     
@@ -112,28 +119,29 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         }
 
         BarOption.setLicense(inputedSN);
-        new HttpRequestClient(HttpRequestClient.SERVER_URL + "/activeAccount", prepareLicenceJSONString(), new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String responseString = e.getActionCommand();
-				int p = responseString.indexOf("_");
-                if (p < -1) {
-                	JOptionPane.showMessageDialog(null, "Activation failed with error code 520, please contact us at info@ShareTheGoodOnes.com");
-                }else {
-                	String timeLeft = responseString.substring(0, p);
-					long time = "none".equals(timeLeft) ? 100 * 365 * 24 * 3600 * 1000 : Long.valueOf(timeLeft);
-					if (time > 0) {// if success
-						BarOption.setActivateTimeLeft(String.valueOf(time * 24 * 3600 * 1000));
-						BarOption.setLastSuccessStr(String.valueOf(new Date().getTime()));
-
-						BarOption.setBillHeadInfo(responseString.substring(p + 1));
-						JOptionPane.showMessageDialog(null, "Application is activated successfully!");
-					} else {
-						JOptionPane.showMessageDialog(null,
-								"Software expired, please contact us at info@ShareTheGoodOnes.com");
+        new HttpRequestClient(HttpRequestClient.SERVER_URL + "/activeAccount", "POST", prepareLicenceJSONString(), 
+        		new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						String responseString = e.getActionCommand();
+						int p = responseString.indexOf("_");
+		                if (p < -1) {
+		                	JOptionPane.showMessageDialog(null, "Activation failed with error code 520, please contact us at info@ShareTheGoodOnes.com");
+		                }else {
+		                	String timeLeft = responseString.substring(0, p);
+							long time = "none".equals(timeLeft) ? 100 * 365 * 24 * 3600 * 1000 : Long.valueOf(timeLeft);
+							if (time > 0) {// if success
+								BarOption.setActivateTimeLeft(String.valueOf(time * 24 * 3600 * 1000));
+								BarOption.setLastSuccessStr(String.valueOf(new Date().getTime()));
+		
+								BarOption.setBillHeadInfo(responseString.substring(p + 1));
+								JOptionPane.showMessageDialog(null, "Application is activated successfully!");
+							} else {
+								JOptionPane.showMessageDialog(null,
+										"Software expired, please contact us at info@ShareTheGoodOnes.com");
+							}
+		                }
 					}
-                }
-			}
 		}).start();
     }
     
