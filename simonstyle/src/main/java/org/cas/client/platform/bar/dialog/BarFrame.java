@@ -135,7 +135,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 								BarOption.setLastSuccessStr(String.valueOf(new Date().getTime()));
 		
 								BarOption.setBillHeadInfo(responseString.substring(p + 1));
-								JOptionPane.showMessageDialog(null, "Application is activated successfully!");
+								//@NOTE: can not use JOptionPane.showMessageDialog, because it will be hided by LoginDlg, and stuck there.
+								BarFrame.setStatusMes("Application is activated successfully!");
 							} else {
 								JOptionPane.showMessageDialog(null,
 										"Software expired, please contact us at info@ShareTheGoodOnes.com");

@@ -28,7 +28,7 @@ public class RequestNewOrderThread extends Thread {
     		}catch(Exception e) {
     			//do nothing.
     		}
-    		new HttpRequestClient(url, "GET", jsonStr, new ActionListener() {
+    		new HttpRequestClient(url, "POST", jsonStr, new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					System.out.print(e.getActionCommand());

@@ -14,6 +14,7 @@ import java.net.URL;
 
 import javax.swing.JOptionPane;
 
+import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.casutil.L;
 import org.json.JSONException;
 
@@ -51,9 +52,9 @@ public class HttpRequestClient extends Thread{
             urlConnection.setConnectTimeout(20000);
             if(urlConnection.getResponseCode()==HttpURLConnection.HTTP_OK){//得到服务端的返回码是否连接成功
                 responseString = readBackFromConnection(urlConnection);
-                actionListener.actionPerformed(new ActionEvent(null, -1, responseString));
+                actionListener.actionPerformed(new ActionEvent(this, -1, responseString));
             }else{
-            	JOptionPane.showMessageDialog(null, "Activation failed with error code 522, please contact us at info@ShareTheGoodOnes.com");
+            	BarFrame.setStatusMes("net error when asking for lastest order.");
             }
         } catch (Exception e) {
             L.e("AppData USER Request failed", "url:" + url, e);
