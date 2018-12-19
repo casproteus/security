@@ -909,7 +909,8 @@ public class PrintService{
 			salesGrossAmount += bill.getCashReceived() + bill.getDebitReceived()
 			+ bill.getVisaReceived() + bill.getMasterReceived() + bill.getOtherReceived() + bill.getCashback();
   		}
-  		net = salesGrossAmount * 100 /(100 + gstRate + qstRate); //???
+  		//@NOTE times goes first, to make the number bigger, then do divide. to avoid lost number after ".".
+  		net = salesGrossAmount * 100 /(100 + gstRate + qstRate);
   		HST = net * (gstRate + qstRate)/100;
   		//
       		
@@ -1077,6 +1078,15 @@ public class PrintService{
         //push normal font
         strAryFR.add("NormalFont");
 	}
+
+	private static void pushRound(BillPanel billPanel, ArrayList<String> strAryFR, int tWidth) {
+		StringBuilder content = new StringBuilder();
+        //push total
+        String strTotal = roundCent(billPanel.valTotlePrice.getText());
+        content.append("Round").append(" : ").append(BarUtil.generateString(tWidth - 9 - strTotal.length(), " "))
+			.append(strTotal).append("\n");
+        strAryFR.add(content.toString());
+	}
 	
 	private static void pushNewTotal(BillPanel billPanel, ArrayList<String> strAryFR, int refund, int tWidth) {
 		StringBuilder content = new StringBuilder();
@@ -1092,7 +1102,6 @@ public class PrintService{
         String newTotal = new DecimalFormat("#0.00").format(Float.valueOf(strTotal) + Float.valueOf(refundStr));
         content = new StringBuilder("Total : ")
 			.append(newTotal).append("\n");
-
        
         strAryFR.add(content.toString());
         //push normal font
@@ -1140,10 +1149,27 @@ public class PrintService{
             
             float left = -1 * ((int)((total * 100 - cashReceived - debitReceived - visaReceived - masterReceived)));
             str = new DecimalFormat("#0.00").format(left/100f);
-            String lblText = isCashBack ? "Change : " : "Tip : ";
-            content.append(lblText)
+            String lblText;
+            if(!isCashBack) {
+            	lblText = "Tip : ";
+            	content.append(lblText)
  				.append(BarUtil.generateString(width - lblText.length() - str.length(), " "))
  				.append(str).append("\n");
+            }else {
+            	lblText = "Change : ";
+            	content.append(lblText)
+ 				.append(BarUtil.generateString(width - lblText.length() - str.length(), " "))
+ 				.append(str).append("\n");
+            	
+            	String roundedStr = roundCent(str);
+            	if(!roundedStr.equals(str)) {
+            		lblText = "Rounded Change : ";
+            		content.append(lblText)
+     				.append(BarUtil.generateString(width - lblText.length() - roundedStr.length(), " "))
+     				.append(roundedStr).append("\n");
+            	}
+            }
+            
 
     	}catch(Exception e) {
     		ErrorUtil.write(e);
@@ -1432,8 +1458,12 @@ public class PrintService{
         }
         
         StringBuilder content = new StringBuilder("\n\n");
-        if(tWidth < 20)
+        if(isCancelled) {
+        	content.append(BarUtil.generateString((tWidth - 4)/2, " ")).append("STOP");
+        }
+        if(tWidth < 20) {
             content.append("\n\n");
+        }
         content.append("(").append(curTable).append(")");
 
         int lengthOfStrToDisplay = 3 + curTable.length();
@@ -1554,6 +1584,20 @@ public class PrintService{
 		    }
 	    }
 	}
+	
+	private static String roundCent(String priceStr) {
+		Float f = Float.parseFloat(priceStr);
+		int t = (int)(f * 100);
+    	//get the last bit
+    	int last = t % 10;
+    	if(last == 1 || last == 2)
+    		last = 0;
+    	else if(last == 3 || last == 4 || last == 6 || last == 7)
+    		last = 5;
+    	else if(last == 8 || last == 9)
+    		last = 10;
+    	return new DecimalFormat("#0.00").format((t/ 10 * 10 + last) / 100.0);
+    }
 	
     final static String mev1 = "<reqMEV><trans noVersionTrans=\"v0%s.00\" etatDoc=\"%s\" modeTrans=\"%s\" duplicata=\"%s\"><doc><texte><![CDATA[";
     final static String mev2 = "]]></texte></doc>\r\n		<donneesTrans ";

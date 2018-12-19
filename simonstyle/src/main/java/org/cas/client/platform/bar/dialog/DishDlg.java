@@ -57,7 +57,7 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 
     // for initializing the status of category combobox.
     private String activeCategory;
-    private int[] categoryIdAry;
+    //private int[] categoryIdAry;
     private String[] categorySubjectAry;
     
     private MenuPanel menuPanel;
@@ -641,13 +641,13 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
             categoryRS.afterLast();
             categoryRS.relative(-1);
             int tmpPos = categoryRS.getRow();
-            categoryIdAry = new int[tmpPos];
+            //categoryIdAry = new int[tmpPos];
             categorySubjectAry = new String[tmpPos];
             categoryRS.beforeFirst();
 
             tmpPos = 0;
             while (categoryRS.next()) {
-                categoryIdAry[tmpPos] = categoryRS.getInt("ID");
+                //categoryIdAry[tmpPos] = categoryRS.getInt("ID");
                 categorySubjectAry[tmpPos] = categoryRS.getString("LANG" + (CustOpts.custOps.getUserLang() + 1));
                 tmpPos++;
             }

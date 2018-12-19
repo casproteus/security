@@ -535,21 +535,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	lblSubTotle.setText(BarFrame.consts.Subtotal() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(subTotal/100f));
         lblTPS.setText(BarFrame.consts.TPS() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(((int)totalGst)/100f));
         lblTVQ.setText(BarFrame.consts.TVQ() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(((int)totalQst)/100f));
-        int t = (int) (subTotal + totalGst + totalQst + serviceFee);
-        t = roundCent(t);
-        valTotlePrice.setText(new DecimalFormat("#0.00").format((t)/100f));
-    }
-    
-    private int roundCent(int t) {
-    	//get the last bit
-    	int last = t % 10;
-    	if(last == 1 || last == 2)
-    		last = 0;
-    	else if(last == 3 || last == 4 || last == 6 || last == 7)
-    		last = 5;
-    	else if(last == 8 || last == 9)
-    		last = 10;
-    	return t / 10 * 10 + last;
+        int total = (int) (subTotal + totalGst + totalQst + serviceFee);
+        valTotlePrice.setText(new DecimalFormat("#0.00").format((total)/100f));
     }
     
     void initContent() {
