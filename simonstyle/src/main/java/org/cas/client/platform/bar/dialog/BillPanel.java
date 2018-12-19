@@ -174,7 +174,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	//send to printer
 	void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
 		//prepare the printing String and do printing
-		PrintService.exePrintOrderList(dishes, isCancelled);
+		String curTable = BarFrame.instance.valCurTable.getText();
+		String curBill = BarFrame.instance.valCurBill.getText();
+		String waiterName = BarFrame.instance.valOperator.getText();
+		PrintService.exePrintOrderList(dishes, curTable, curBill, waiterName, isCancelled);
 	}
 	
 	//save to db output

@@ -144,12 +144,9 @@ public class PrintService{
         printContents();
     }
     
-    public static void exePrintOrderList(List<Dish> selectdDishAry, boolean isCancelled){
+    public static void exePrintOrderList(List<Dish> selectdDishAry, String curTable, String curBill, String waiterName, boolean isCancelled){
 
 		Printer[] printers = BarFrame.menuPanel.printers;
-		String curTable = BarFrame.instance.valCurTable.getText();
-		String curBill = BarFrame.instance.valCurBill.getText();
-		String waiterName = BarFrame.instance.valOperator.getText();
 
 		//ErrorUtil.(TAG,"start to translate selection into ipContent for printing.");
         if(!isIpContentMapEmpty()){
@@ -1024,7 +1021,7 @@ public class PrintService{
         content.append(BarUtil.generateString(tWidth, sep_str2)).append("\n");
         
         //totals
-        String SubTotal = "SubTotal";
+        String SubTotal = "SOUS-TOTAL";
         String TPS = "TPS";
         String TVQ = "TVQ";
         String ServiceFee = "Service Fee";
@@ -1121,7 +1118,7 @@ public class PrintService{
             int cashReceived = rs.getInt("cashReceived");
             String str = new DecimalFormat("#0.00").format(cashReceived/100f);
             if(cashReceived > 0) {
-    			content.append("CASH").append(" : ")
+    			content.append("ARGENT").append(" : ")
     			.append(BarUtil.generateString(width - 7 - str.length(), " "))
     			.append(str).append("\n");
     		}
@@ -1151,19 +1148,19 @@ public class PrintService{
             str = new DecimalFormat("#0.00").format(left/100f);
             String lblText;
             if(!isCashBack) {
-            	lblText = "Tip : ";
+            	lblText = "TIP : ";
             	content.append(lblText)
  				.append(BarUtil.generateString(width - lblText.length() - str.length(), " "))
  				.append(str).append("\n");
             }else {
-            	lblText = "Change : ";
+            	lblText = "MONNAIE : ";
             	content.append(lblText)
  				.append(BarUtil.generateString(width - lblText.length() - str.length(), " "))
  				.append(str).append("\n");
             	
             	String roundedStr = roundCent(str);
             	if(!roundedStr.equals(str)) {
-            		lblText = "Rounded Change : ";
+            		lblText = "ARRONDI DE MONTANT : ";	//rounded price
             		content.append(lblText)
      				.append(BarUtil.generateString(width - lblText.length() - roundedStr.length(), " "))
      				.append(roundedStr).append("\n");

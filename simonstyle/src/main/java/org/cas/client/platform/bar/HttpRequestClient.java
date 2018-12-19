@@ -52,7 +52,9 @@ public class HttpRequestClient extends Thread{
             urlConnection.setConnectTimeout(20000);
             if(urlConnection.getResponseCode()==HttpURLConnection.HTTP_OK){//得到服务端的返回码是否连接成功
                 responseString = readBackFromConnection(urlConnection);
-                actionListener.actionPerformed(new ActionEvent(this, -1, responseString));
+                if(actionListener != null) {
+                	actionListener.actionPerformed(new ActionEvent(this, -1, responseString));
+                }
             }else{
             	BarFrame.setStatusMes("net error when asking for lastest order.");
             }

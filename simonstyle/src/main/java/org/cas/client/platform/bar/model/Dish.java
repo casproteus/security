@@ -13,6 +13,17 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 
 public class Dish {
 	
+	public Dish() {
+	}
+	
+	public Dish(int id, String category, String name1, String name2, String name3, String printerStr) {
+    	setId(id);
+    	setCATEGORY(category);
+    	setLanguage(0, name1);
+    	setLanguage(1, name2);
+    	setLanguage(2, name3);
+    	setPrinter(printerStr);
+	}
 	//create new outputs.
 	public static void splitOutputList(ArrayList<Dish> selectdDishAry, int splitAmount, String billIndex) {
 		splitOutputList(selectdDishAry, splitAmount, billIndex, 0);

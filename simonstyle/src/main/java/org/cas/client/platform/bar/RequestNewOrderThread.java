@@ -3,7 +3,6 @@ package org.cas.client.platform.bar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -13,9 +12,12 @@ import java.util.List;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
+import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.netbeans.MainOrder;
 import org.cas.client.platform.bar.netbeans.Material;
+import org.cas.client.platform.bar.netbeans.NetUtil;
 import org.cas.client.platform.bar.netbeans.TextContent;
+import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
@@ -78,7 +80,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	        //create a bill
 	        String createtime = BarOption.df.format(new Date());
 	        String tableID = mainOrder.sizeTable;
-	        String billIndex = "1";
+	        String billIndex = "1";			//@default value, will change if tableID contains "_".
 	        int p = tableID.indexOf("_");
 	        if(p > 0) {
 	        	billIndex = tableID.substring(p+1);
@@ -105,35 +107,46 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	            rs.beforeFirst();
 	            rs.next();
 	            int billId = rs.getInt("id");
+	            //because the qt (4X) will stands for 4 material, so need to merge it before creating output. 
+	            HashMap<String, Integer> qtMap = conbineMainOrders(materials);
+	            List<Dish> dishes = new ArrayList();;
+	            //create output record for each materials of this mainOrder. @materials has been cleaned.
 	            for (int j = 0; j < materials.size(); j++) {
 	            	Material material = materials.get(j);
 	            	if(material.mainOrder.id == mainOrder.id) {
 	                	String location = material.location;
 	                	String portionName = material.portionName;	//dish name
+	                	int num = qtMap.get(material.portionName + material.remark);	//@NOTE we supposed the dish name should not duplicate.
+	                	int price = material.dencity == null ? 0 : (int)(Float.valueOf(material.dencity.substring(1).trim()) * 100);
 	                	//make sure product exist.
-	                	makeSureCateAndDishExist(tableID, location, portionName, material.dencity, material.MenFu);
-	                	
+	                	Dish dish = synchronizeToLocalDB(tableID, location, portionName, price, material.MenFu);
+	                	dish.setNum(num);
+	                	dish.setModification(material.remark);
 	            		Statement smt = PIMDBModel.getStatement();
-//	            		try {
-//	            			sql = new StringBuilder(
-//	            		    	"INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME, category) VALUES ('")
-//	            					.append(tableID).append("', ")	//subject ->table id
-//	            		            .append(billIndex).append(", ")			//contactID ->bill id
-//	            		            .append(dish.getId()).append(", ")	//productid
-//	            		            .append(dish.getNum()).append(", ")	//amount
-//	            		            .append(dish.getTotalPrice() * splitRate).append(", ")	//totalprice int
-//	            		            .append(dish.getDiscount() * splitRate).append(", '")	//discount
-//	            		            .append(dish.getModification()).append("', ")				//content
-//	            		            .append(LoginDlg.USERID).append(", '")		//emoployid
-//	            		            .append(dish.getOpenTime()).append("', ")	//opentime
-//	            		            .append(dish.getBillID()).append(")");	//billId
-//	            		        smt.executeUpdate(sql.toString());
-//	            		
-//	            		} catch (Exception exp) {
-//	            			ErrorUtil.write(exp);
-//	            		}
+	            		try {
+	            			sql = new StringBuilder(
+	            		    	"INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME, category) VALUES ('")
+	            					.append(tableID).append("', ")	//subject ->table id
+	            		            .append(billIndex).append(", ")			//contactID ->bill id
+	            		            .append(dish.getId()).append(", ")	//product id
+	            		            .append(num).append(", ")	//amount
+	            		            .append(price).append(", ")	//totalprice int
+	            		            .append(0).append(", '")	//discount
+	            		            .append(material.remark).append("', ")				//content
+	            		            .append(LoginDlg.USERID).append(", '")		//emoployid
+	            		            .append(createtime).append("', ")	//opentime
+	            		            .append(billId).append(")");	//category ->billId
+	            			smt.executeUpdate(sql.toString());
+	            			dishes.add(dish);
+	            		} catch (Exception exp) {
+	            			ErrorUtil.write(exp);
+	            		}
 	            	}
 	            }
+	            //send these output to kitchen.
+	            PrintService.exePrintOrderList(dishes, tableID, billIndex, "customer", false);
+	            //send request to updat the status.
+	        	new HttpRequestClient(prepareUpdateOrderStatusURL(BarOption.getServerHost(), mainOrder.id, 50), "POST", BarFrame.prepareLicenceJSONString(), null).start();
 			 }catch(Exception exp) {
 				ErrorUtil.write(exp);
 			 }
@@ -156,18 +169,45 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
     
 	}
 	
+	private String prepareUpdateOrderStatusURL(String url, long mainOrderId, int targetStatus) {
+		StringBuilder sb = new StringBuilder(!url.startsWith("http") ? "http://" : "");//url);
+		sb.append(url);
+		if(!url.endsWith("/")) {
+			sb.append("/");
+		}
+		sb.append("updateMainOrderStatus/");
+		sb.append(mainOrderId).append("/").append(targetStatus);
+		return sb.toString();
+	}
+	
+	//combine the material list. remove the duplicated ones, and add the qt into the map value (use name+comment as key).
+	private HashMap<String, Integer> conbineMainOrders(List<Material> materials) {
+		HashMap<String, Integer> qtMap = new HashMap<String, Integer>();
+		for(int i = materials.size() - 1; i >= 0; i--) {
+			Material material = materials.get(i);
+			String key = material.portionName + material.remark;
+			if(qtMap.containsKey(key)) {
+				qtMap.put(key, qtMap.get(key) + 1);//increase the qt.
+				materials.remove(i);			//remove the none-first one from list.
+			}else {
+				qtMap.put(key, 1);	//put into it and set the start qt 1.
+			}
+		}
+		return qtMap;
+	}
+
 	//check the category and dish, make sure they exist.
-	private void makeSureCateAndDishExist(String table, String location, String portionName, String dencity, String menFu) {
+	private Dish synchronizeToLocalDB(String table, String location, String portionName, int price, String menFu) {
 		String[] strAry = location.split("_");
 		int idx = Integer.parseInt(strAry[1]);
 		makeSureTableExistsAndOpened(table);
 		String category = makeSureCategoryExist(idx);
-		makeSureDishExist(category, location, Integer.parseInt(strAry[3]), portionName, dencity, menFu);
+		return makeSureDishExist(category, location, Integer.parseInt(strAry[3]), portionName, price, menFu);
 	}
 
 	//creata a table record if it's not exist yet. and make it opened. @NOTE: is the status is already opened, then report error.
 	private void makeSureTableExistsAndOpened(String table) {
-		StringBuilder sql = new StringBuilder("select status from dining_Table where name = ")
+		StringBuilder sql = new StringBuilder("select status from dining_Table where name = '")
 				.append(table).append("'");
 		try {
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -211,7 +251,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
         String sql = "select ID, LANG1, LANG2, LANG3, DSP_INDEX from CATEGORY where DSP_INDEX = " + idx;
         try {
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
-            ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
+            
 
             rs.afterLast();
             rs.relative(-1);
@@ -249,13 +289,11 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	}
 
 	//the dencity must be a null or $1
-	private int makeSureDishExist(String category, String location, int menuIdx, String portionName, String dencity, String menFu) {
+	private Dish makeSureDishExist(String category, String location, int menuIdx, String portionName, int price, String menFu) {
 		//ID, CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, STORE,  COST, BRAND, CATEGORY, CONTENT, UNIT, PRODUCAREA, INDEX
-		int price = dencity == null ? 0 : (int)(Float.valueOf(dencity.substring(1).trim()) * 100);
-		
-		StringBuilder sql = new StringBuilder("select * from product where deleted != true and CODE = ")
-				.append(portionName).append(" and price = ").append(price)
-				.append(" and category = '").append(category);
+		StringBuilder sql = new StringBuilder("select * from product where deleted != true and CODE = '")
+				.append(portionName).append("' and price = ").append(price)
+				.append(" and category = '").append(category).append("'");
 
         try {
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -265,33 +303,36 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
             if(tmpPos == 0) {
             	return createNewDish(location, price, menFu, category);
             }else {
-            	return rs.getInt("id");
+            	return new Dish(rs.getInt("id"), category, portionName, rs.getString("MNEMONIC"), rs.getString("SUBJECT"), menFu);
             }
         } catch (SQLException e) {
             ErrorUtil.write(e);
         }
-        return -1;
+        return null;
 	}
 
 	//create the new dish in the given category.
-	private int createNewDish(String location, int price, String seletedPrinterIdStr, String category) {
+	private Dish createNewDish(String location, int price, String seletedPrinterIdStr, String category) {
 		//we need to find out the 3 name of the product and the first category string of the product.
 		HashMap<String, String> contentMap = new HashMap<>(); 
 		for(TextContent textContent : serviceTexts) {
 			String posInPage = textContent.posInPage;
 			if(posInPage.contains(location)) {
-				if(posInPage.endsWith("_content")) {	//if it's name of dish.
+				if(posInPage.endsWith("_description")) {	//if it's name of dish.
 					String[] strs = posInPage.split("_");
-					contentMap.put(posInPage, getNameOut(textContent.content));
+					contentMap.put(posInPage, NetUtil.fetchProductPrice(textContent.content, BarOption.getMoneySign()));
 				}
 			}
-		 }
-		
-		 StringBuilder sql = new StringBuilder(
+		}
+
+		String name1 = contentMap.get("en_service_" + location + "_description");
+		String name2 = contentMap.get("fr_service_" + location + "_description");
+		String name3 = contentMap.get("zh_service_" + location + "_description");
+		StringBuilder sql = new StringBuilder(
                  "INSERT INTO Product(CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, store, Cost,  BRAND, CATEGORY, INDEX, CONTENT, Unit, PRODUCAREA) VALUES ('")
-                 .append(contentMap.get("en_service_" + location + "_content")).append("', '")//CODE
-                 .append(contentMap.get("fr_service_" + location + "_content")).append("', '")//MNEMONIC
-                 .append(contentMap.get("zh_service_" + location + "_content")).append("', ")//SUBJECT
+                 .append(name1).append("', '")//CODE
+                 .append(name2).append("', '")//MNEMONIC
+                 .append(name3).append("', ")//SUBJECT
                  .append(price).append(", ")	//PRICE
                  .append(1).append(", ")		//FOLDERID---if need gst?
                  .append(1).append(", ")		//store---if need qst?
@@ -305,20 +346,13 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
         try {
 	        PIMDBModel.getStatement().executeUpdate(sql.toString());
 	        sql = new StringBuilder("Select id from product where CODE = '")
-	        		.append("en_service_" + location + "_content")
-	        		.append("' and category = '").append(category).append("'");
+	        		.append(name1).append("' and category = '").append(category).append("'");
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
             rs.beforeFirst();
             rs.next();
-            return rs.getInt("id");
+            return new Dish(rs.getInt("id"), category, name1, name2, name3, seletedPrinterIdStr);
         }catch(Exception exp) {
         }
-        return -1;
-	}
-
-	//get only the name out, remove the price part form the string.
-	private String getNameOut(String content) {
-		int p = content.indexOf(BarOption.getMoneySign());
-		return p > 0 ? content.substring(0, p).trim() : content.trim();
+        return null;
 	}
 }

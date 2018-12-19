@@ -9,7 +9,7 @@ public class Material {
     public String MenFu;
     public String color;
     public String location;
-    public String remark;
+    public String remark = "";
     public Person person;
     public int recordStatus;
 }
