@@ -6,7 +6,7 @@ public class Material {
     public MainOrder mainOrder;
     public String portionName;
     public String dencity;
-    public String MenFu;
+    public String menFu;
     public String color;
     public String location;
     public String remark = "";

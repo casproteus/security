@@ -119,7 +119,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	                	int num = qtMap.get(material.portionName + material.remark);	//@NOTE we supposed the dish name should not duplicate.
 	                	int price = material.dencity == null ? 0 : (int)(Float.valueOf(material.dencity.substring(1).trim()) * 100);
 	                	//make sure product exist.
-	                	Dish dish = synchronizeToLocalDB(tableID, location, portionName, price, material.MenFu);
+	                	Dish dish = synchronizeToLocalDB(tableID, location, portionName, price, material.menFu);
 	                	dish.setNum(num);
 	                	dish.setModification(material.remark);
 	            		Statement smt = PIMDBModel.getStatement();
