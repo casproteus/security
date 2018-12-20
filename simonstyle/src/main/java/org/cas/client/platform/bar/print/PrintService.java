@@ -160,6 +160,9 @@ public class PrintService{
         //1、遍历每个选中的菜，并分别遍历加在其上的打印机。并在ipSelectionsMap上对应IP后面增加菜品
         for(Dish dish : selectdDishAry){
             String printerStr = dish.getPrinter();
+            if(printerStr == null) {
+            	continue;
+            }
             String[] ids = printerStr.split(",");
             String[] ips = new String[ids.length];
             for(int i = 0; i < ids.length; i++) {
