@@ -900,8 +900,10 @@ class EmployeeGeneralPanel extends JScrollPane implements FocusListener, MouseLi
             dlg.putValue(PIMPool.pool.getKey(EmployeeDefaultViews.SUBJECT), tmpTextInField);
         // 昵称信息。------------------------------
         tmpTextInField = fldNickName.getText();
-        if (tmpTextInField != null)
+        if (tmpTextInField != null && tmpTextInField.trim().length() > 0)
             dlg.putValue(PIMPool.pool.getKey(EmployeeDefaultViews.NNAME), tmpTextInField);
+        else
+        	dlg.putValue(PIMPool.pool.getKey(EmployeeDefaultViews.NNAME), (fldLastName.getText() + " " + fldFirstName.getText()).trim());
         // Title信息。----------------------------
         tmpTextInField = fldTitle.getText();
         if (tmpTextInField != null)

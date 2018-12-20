@@ -346,7 +346,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         lblServerHost.setBounds(lblPrinterMinReachTime.getX(), lblPrinterMinReachTime.getY() + lblPrinterMinReachTime.getHeight() + CustOpts.VER_GAP,
         		lblServerHost.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdServerHost.setBounds(lblServerHost.getX() + lblServerHost.getWidth() + CustOpts.HOR_GAP, lblServerHost.getY(),
-        		100, CustOpts.BTN_HEIGHT);
+        		200, CustOpts.BTN_HEIGHT);
         
         //cbx------------------------------------
         cbxIsSingleUser.setBounds(lblServerHost.getX(), lblServerHost.getY() + lblServerHost.getHeight() + CustOpts.VER_GAP * 4,
