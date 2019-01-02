@@ -155,7 +155,7 @@ public class BarUtil {
 		try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
 			ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
-					+ BarFrame.instance.valCurTable.getText() + "' and deleted = 0 and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID");
+					+ BarFrame.instance.valCurTable.getText() + "' and deleted is null and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID");
 			rs.afterLast();
 			rs.relative(-1);
 			int num = rs.getRow();
