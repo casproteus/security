@@ -203,7 +203,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	//add new bill with an Index bigger than 1.
             	try {
 	    			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
-	    					+ "' and deleted is null and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID DESC");
+	    					+ "' and (deleted is null or deleted = 0) and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID DESC");
 	    			rs.beforeFirst();
 	    			rs.next();
 
@@ -211,7 +211,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	}catch(Exception exp) {
             		L.e("Add Bill function",
             				"SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
-    					+ "' and deleted is null and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID DESC", exp);
+    					+ "' and (deleted is null or deleted = 0) and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID DESC", exp);
             	}
     			
 				BarFrame.instance.switchMode(2);

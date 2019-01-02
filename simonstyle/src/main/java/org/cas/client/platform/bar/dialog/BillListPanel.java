@@ -104,7 +104,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
 			ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
-					+ "' and deleted is null and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID");
+					+ "' and (deleted is null or deleted = 0) and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID");
 			rs.beforeFirst();
 
 			while (rs.next()) {
@@ -478,7 +478,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
     	
     	String sql =
                 "select * from output where SUBJECT = '" + tableName
-                + "' and time = '" + startTime + "' and contactID = " + tableIndex + " and DELETED is null order by id";
+                + "' and time = '" + startTime + "' and contactID = " + tableIndex + " and (deleted is null or deleted = 0) order by id";
         try {
         	PIMDBModel.getReadOnlyStatement().executeQuery(sql);
         	ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -561,7 +561,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			Statement smt = PIMDBModel.getReadOnlyStatement();
             ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
                     + BarFrame.instance.valCurTable.getText()
-                    + "' and deleted is null and time = '" + BarFrame.instance.valStartTime.getText()
+                    + "' and (deleted is null or deleted = 0) and time = '" + BarFrame.instance.valStartTime.getText()
                     + "' order by contactID");
 			rs.afterLast();
 			rs.relative(-1);
