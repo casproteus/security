@@ -2,6 +2,17 @@ package org.cas.client.platform.bar.netbeans;
 
 public class NetUtil {
 	
+    public static String fetchProductName(
+            String description,
+            String moneyLetter) {
+    	if (description == null || description.trim().length() == 0) {
+            return "";
+        }
+        int p = description.indexOf(moneyLetter);
+        String html = p > 0 ? description.substring(0, p) : description;
+        return trimContentFromHTML(html);
+    }
+
     public static String fetchProductPrice(
             String description,
             String moneyLetter) {
@@ -38,4 +49,25 @@ public class NetUtil {
 
         return html;
     }
+    
+    //if the www is missing, then add one.
+    public static String validateURL(String url) {
+		if(url.indexOf(".") == url.lastIndexOf(".")) {
+			if(url.startsWith("http://")) {
+				url = url.substring(7);
+			}
+			
+			if(url.indexOf(".") != -1) {
+				url = "http://www." + url;
+			}else {
+				int p = url.indexOf("/");
+				if(p != -1) {
+					url = "http://www." + url.substring(0, p) + ".com" + url.substring(p);
+				}else {
+					url = "http://www." + url + ".com";
+				}
+			}
+		}
+		return url;
+	}
 }

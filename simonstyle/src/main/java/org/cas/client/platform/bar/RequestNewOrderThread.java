@@ -35,11 +35,11 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	List<TextContent> serviceTexts;
 	 
 	public RequestNewOrderThread(String url) {
+
+		url = NetUtil.validateURL(url);
+		
 		if(!url.endsWith("/")) {
 			url = url + "/";
-		}
-		if(!url.startsWith("http")) {
-			url = "http://" + url;
 		}
 		this.url =  url + "requestNewOrders";
 		jsonStr = BarFrame.prepareLicenceJSONString();
@@ -170,8 +170,8 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	}
 	
 	private String prepareUpdateOrderStatusURL(String url, long mainOrderId, int targetStatus) {
-		StringBuilder sb = new StringBuilder(!url.startsWith("http") ? "http://" : "");//url);
-		sb.append(url);
+		url = NetUtil.validateURL(url);
+		StringBuilder sb = new StringBuilder(url);
 		if(!url.endsWith("/")) {
 			sb.append("/");
 		}
@@ -320,7 +320,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 			if(posInPage.contains(location)) {
 				if(posInPage.endsWith("_description")) {	//if it's name of dish.
 					String[] strs = posInPage.split("_");
-					contentMap.put(posInPage, NetUtil.fetchProductPrice(textContent.content, BarOption.getMoneySign()));
+					contentMap.put(posInPage, NetUtil.fetchProductName(textContent.content, BarOption.getMoneySign()));
 				}
 			}
 		}
