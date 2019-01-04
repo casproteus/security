@@ -37,7 +37,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
-	private String VERSION = "V0.113-20190101";
+	private String VERSION = "V0.114-20190104";
     public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
@@ -170,7 +170,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 
             //update the number and lastsuccess into local cache.
         	CustOpts.custOps.setKeyAndValue("lastsuccessStr", String.valueOf(new Date().getTime()));
-        	CustOpts.custOps.setKeyAndValue("activateTimeLeft", String.valueOf(activateTimeLeft));              L.d("update new number with:", activateTimeLeft);
+        	CustOpts.custOps.setKeyAndValue("activateTimeLeft", String.valueOf(activateTimeLeft));  L.d("update new number with:", activateTimeLeft);
         }catch(Exception e){
             L.e("MainActivity", "the left time number can not be pasered into a long", e);
         }
