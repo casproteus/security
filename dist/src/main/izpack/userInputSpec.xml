@@ -29,7 +29,7 @@
         
         <field type="space" />        
 		<field type="text" variable="security.service.port">
-			<spec txt="Security Service Port:"  size="30" set="80" />
+			<spec txt="Security Service Port:"  size="30" set="369" />
 			<validator class="com.izforge.izpack.util.RegularExpressionValidator"
 				txt="Security service port value must be between 1-65535">
 				<param name="pattern" value="(6553[0-5]|655[0-2]\d|65[0-4]\d{2}|6[0-4]\d{3}|[1-5]\d{4}|[1-9]\d{0,3})" />
@@ -38,7 +38,7 @@
 		
 		<field type="space" />
 		<field type="text" variable="security.service.server.ensemble">
-            <spec txt="Security Sverver Ensemble:"  size="30" set="security.sharethegoodones.com:80" />
+            <spec txt="Security Sverver Ensemble:"  size="30" set="www.sharethegoodones.com:80" />
 			<validator class="com.izforge.izpack.util.RegularExpressionValidator"
 				txt="Security Server Ensemble is not valid, it must be composed with [host name]:[port number].">
 				<param name="pattern"
