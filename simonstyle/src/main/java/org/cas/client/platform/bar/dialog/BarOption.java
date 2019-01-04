@@ -119,6 +119,7 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     public static String getBillFootInfo(){
        	return (String)CustOpts.custOps.getValue("BillFootInfo");
     }
+    
     public static void setBillFootInfo(String billFootInfo) {
     	if(billFootInfo == null) {
     		L.e("setting BillFoot", "trying to set null to bill foot info.", null);
@@ -131,17 +132,34 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
     }
     
     private static Object getWebSite() {
-		// TODO Auto-generated method stub
-		return "www.sharethegoodones.com/nudo";
+		String headInfo = getBillHeadInfo();;
+		if (headInfo != null) {
+			int p = headInfo.indexOf(':');
+			if(p > 0)
+				return "www.sharethegoodones.com/" + headInfo.substring(0, p).trim();
+	    }
+		return "www.sharethegoodones.com/";
 	}
 
 	private static Object getTel() {
-		// TODO Auto-generated method stub
+		String headInfo = getBillHeadInfo();;
+		if (headInfo != null) {
+			int p = headInfo.lastIndexOf(':');
+			if(p > 0) {
+				return headInfo.substring(p + 1).trim();
+			}
+		}
 		return "514 552 5771";
 	}
 
 	private static Object getPostCode() {
-		// TODO Auto-generated method stub
+		String headInfo = getBillHeadInfo();
+		if (headInfo != null) {
+			int p = headInfo.lastIndexOf(':');
+			if(p > 0) {
+				return headInfo.substring(p + 1).trim();
+			}
+		}
 		return "H4L 3E8";
 	}
 
@@ -156,9 +174,16 @@ public class BarOption extends JDialog implements ICASDialog, ActionListener, Co
 	}
 
 	public static String getShopName() {
-		// TODO Auto-generated method stub
-		return "NUDO";
+		String headInfo = getBillHeadInfo();;
+		if (headInfo != null) {
+			int p = headInfo.indexOf(':');
+			if(p > 0) {
+				return headInfo.substring(0, p).trim();
+			}
+		}
+		return "noname";
 	}
+	
 //	public static void setMaxRooBackWorkHour(int workhour) {
 //		CustOpts.custOps.setKeyAndValue("MaxRooBackWorkHour", workhour);
 //	}
