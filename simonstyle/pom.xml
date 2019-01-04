@@ -7,7 +7,7 @@
 		<version>1-SNAPSHOT</version>
   </parent>
   <artifactId>simonstyle</artifactId>
-  <name>STGO POS</name>
+  <name>SANJI POS</name>
   
   <url>http://maven.apache.org</url>
   
