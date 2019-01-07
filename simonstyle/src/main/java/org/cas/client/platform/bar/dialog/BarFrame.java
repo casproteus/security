@@ -1,6 +1,8 @@
 package org.cas.client.platform.bar.dialog;
 
 import java.awt.Container;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -44,6 +46,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     public static NumberPanelDlg numberPanelDlg; 
     public static DiscountDlg discountDlg; 
     public static PayDlg payDlg;
+	private static CustomerFrame customerFrame;
     
     public static void main(
             String[] args) {
@@ -54,6 +57,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         numberPanelDlg = new NumberPanelDlg(instance);
         discountDlg = new DiscountDlg(instance);
         payDlg = new PayDlg(instance);
+        customerFrame = new CustomerFrame();
         
         //activation check
         String returnStr = validateActivation(null);
@@ -73,6 +77,18 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         if(hostStr != null && hostStr.trim().length() > 1) {
         	//this thread will start a request thread every 20 seconds to fetch new order from server..
         	new RequestNewOrderThread(hostStr).start();
+        }
+        
+        if(BarOption.isShowCustomerFrame()) {
+            GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+            GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            for (GraphicsDevice graphicsDevice : gds) {
+				if(gd != graphicsDevice) {
+					graphicsDevice.setFullScreenWindow( customerFrame );
+					customerFrame.reLayout();
+					break;
+				}
+			}
         }
     }
     

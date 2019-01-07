@@ -518,5 +518,7 @@ public class BarDlgConst2 implements BarDlgConst{
 	@Override
 	public String IsHideRecordFromOtherWaiter() {return "隐藏其他员工的销售记录";};
 	@Override
-	public String IsDisplayBillInKitchen() {return "厨房打印单上显示客人位置编号";};
+	public String IsDisplayBillInKitchen() {return "厨房打印单上显示客人位置编号";}
+	@Override
+	public String IsShowCustomerFrame() {return "双屏时显示客人窗口";}
 }

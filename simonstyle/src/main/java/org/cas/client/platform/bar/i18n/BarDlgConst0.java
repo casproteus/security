@@ -518,6 +518,8 @@ public class BarDlgConst0 implements BarDlgConst{
 	@Override
 	public String IsHideRecordFromOtherWaiter() {return "Hide Records From Other Waiter";};
 	@Override
-	public String IsDisplayBillInKitchen() {return "Display Bill Index In Kitchen Print";};
+	public String IsDisplayBillInKitchen() {return "Display Bill Index In Kitchen Print";}
+	@Override
+	public String IsShowCustomerFrame() {return "Show Customer Frame";};
     
 }

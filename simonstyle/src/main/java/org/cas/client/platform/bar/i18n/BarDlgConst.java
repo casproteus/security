@@ -280,4 +280,5 @@ public interface BarDlgConst {
     String Color();
 	String IsHideRecordFromOtherWaiter();
 	String IsDisplayBillInKitchen();
+	String IsShowCustomerFrame();
 }
