@@ -46,7 +46,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     public static NumberPanelDlg numberPanelDlg; 
     public static DiscountDlg discountDlg; 
     public static PayDlg payDlg;
-	private static CustomerFrame customerFrame;
+	public static CustomerFrame customerFrame;
+	private static GraphicsDevice secondScreen;
     
     public static void main(
             String[] args) {
@@ -84,8 +85,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
             GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             for (GraphicsDevice graphicsDevice : gds) {
 				if(gd != graphicsDevice) {
-					graphicsDevice.setFullScreenWindow( customerFrame );
-					customerFrame.reLayout();
+					secondScreen = graphicsDevice;
+					secondScreen.setFullScreenWindow(customerFrame);
 					break;
 				}
 			}
@@ -322,6 +323,10 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 			resetStatus();
 		}else if(i == 2) {	//sale
 			((SalesPanel)panels[i]).billPanel.initContent();
+			customerFrame.initContent();
+			if(secondScreen != null) {
+				secondScreen.setFullScreenWindow(customerFrame);
+			}
 		}else if(i == 1) {	//bill
 			((BillListPanel)panels[i]).initContent();
 		}else if(i == 0) {	//table

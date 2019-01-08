@@ -407,6 +407,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		}catch(Exception e) {}
 		
 		valLeft.setText(String.valueOf((int)(total * 100 - received * 100)/100f));
+		BarFrame.customerFrame.updateChange(0 - (int)(total * 100 - received * 100));
 	}
 	
     void initComponent() {

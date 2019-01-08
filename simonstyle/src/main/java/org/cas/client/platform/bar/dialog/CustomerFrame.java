@@ -1,19 +1,27 @@
 package org.cas.client.platform.bar.dialog;
 
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.Label;
 import java.awt.Panel;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.text.DecimalFormat;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.beans.FunctionButton;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.CASUtility;
 
 public class CustomerFrame extends JDialog implements ComponentListener{
+	
+	Image temp = null;
+	private ImageIcon icon;
 	
 	public CustomerFrame() {
 		initComponent();
@@ -21,16 +29,30 @@ public class CustomerFrame extends JDialog implements ComponentListener{
  
 	void initComponent() {
         
-        billPanel = new BillPanel(null);
+        billPanel = new BillPanel((SalesPanel)BarFrame.instance.panels[2]);
 
-    	imagePanel = new Panel();
-    	lblTotalPrice = new Label(BarFrame.consts.Total());
-    	lblReceived = new Label(BarFrame.consts.Receive());
-    	lblChange = new Label(BarFrame.consts.Change());
+    	String fileName = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")) + "CustomerFrameBG.jpg";
+		icon = new ImageIcon(fileName);
+    	imagePanel = new JLabel(icon);
+    	
+    	lblTotalPrice = new Label(BarFrame.consts.Total() + " : ");
+    	lblReceived = new Label(BarFrame.consts.Receive() + " : ");
+    	lblChange = new Label(BarFrame.consts.Change() + " : ");
     	
     	valTotalPrice = new Label();
     	valReceived = new Label();
     	valChange = new Label();
+
+    	lblTotalPrice.setFont(BarOption.bigFont);
+    	//lblReceived.setFont(BarOption.bigFont);
+    	lblChange.setFont(BarOption.bigFont);
+    	valTotalPrice.setFont(BarOption.bigFont);
+    	//valReceived.setFont(BarOption.bigFont);
+    	valChange.setFont(BarOption.bigFont);
+
+    	valTotalPrice.setAlignment(Label.RIGHT);
+    	valReceived.setAlignment(Label.RIGHT);
+    	valChange.setAlignment(Label.RIGHT);
     	
         // properties
         Color bg = BarOption.getBK("Sales");
@@ -51,21 +73,30 @@ public class CustomerFrame extends JDialog implements ComponentListener{
 
         // add listener
         addComponentListener(this);
-        
+        billPanel.initContent();
 		reLayout();
     }
 	
-    public void reLayout() {
-        billPanel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, getWidth()/2 - CustOpts.HOR_GAP * 2, getHeight() - CustOpts.VER_GAP * 2);
+    private void reLayout() {
+    	if(temp == null && getWidth() > 0 && getHeight() > 0) {
+	   		temp = icon.getImage().getScaledInstance(getWidth()/2 - CustOpts.HOR_GAP,  getHeight() - CustOpts.VER_GAP * 9  - 300,
+				icon.getImage().SCALE_DEFAULT);
+		
+	   		icon = new ImageIcon(temp);
+	   		imagePanel.setIcon(icon);
+    	}
+        billPanel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 
+        		getWidth()/2 - CustOpts.HOR_GAP * 4, getHeight() - CustOpts.VER_GAP * 9);
+        
         imagePanel.setBounds(billPanel.getX() + billPanel.getWidth() + CustOpts.HOR_GAP, billPanel.getY(),
-        		getWidth()/2 - CustOpts.HOR_GAP,  getHeight() - 300);
+        		getWidth()/2 - CustOpts.HOR_GAP,  getHeight() - CustOpts.VER_GAP * 9  - 300);
 
     	lblTotalPrice.setBounds(imagePanel.getX(), imagePanel.getY() + imagePanel.getHeight() + CustOpts.VER_GAP, 
-    			40, 100 - CustOpts.VER_GAP);
+    			lblTotalPrice.getPreferredSize().width, 100 - CustOpts.VER_GAP);
     	lblReceived.setBounds(lblTotalPrice.getX(), lblTotalPrice.getY() + lblTotalPrice.getHeight() + CustOpts.VER_GAP,
-    			40, 100);
+    			lblReceived.getPreferredSize().width, 100);
     	lblChange.setBounds(lblReceived.getX(), lblReceived.getY() + lblReceived.getHeight() + CustOpts.VER_GAP, 
-    			40, 100);
+    			lblChange.getPreferredSize().width, 100);
     	
     	valTotalPrice.setBounds(lblTotalPrice.getX() + lblTotalPrice.getWidth(), lblTotalPrice.getY(), imagePanel.getWidth() - lblTotalPrice.getWidth(), 100 - CustOpts.VER_GAP);
     	valReceived.setBounds(lblReceived.getX() + lblReceived.getWidth(), lblReceived.getY(), imagePanel.getWidth() - lblReceived.getWidth(), 100);
@@ -87,12 +118,24 @@ public class CustomerFrame extends JDialog implements ComponentListener{
 	public void componentHidden(ComponentEvent e) {}
 
 	public BillPanel billPanel;
-	public Panel imagePanel;
+	public JLabel imagePanel;
 	private Label lblTotalPrice;
 	private Label lblReceived;
 	private Label lblChange;
 	private Label valTotalPrice;
 	private Label valReceived;
 	private Label valChange;
+
+	public void initContent() {
+		billPanel.initContent();
+		valTotalPrice.setText(BarOption.getMoneySign() + billPanel.valTotlePrice.getText());
+	}
+
+	public void updateChange(int left) {
+		valChange.setText(BarOption.getMoneySign() + String.valueOf(left/100f));
+		
+		int totalprice = (int)(Float.valueOf(billPanel.valTotlePrice.getText()) * 100);
+		valReceived.setText(BarOption.getMoneySign() + new DecimalFormat("#0.00").format((totalprice + left)/100f));
+	}
 	
 }
