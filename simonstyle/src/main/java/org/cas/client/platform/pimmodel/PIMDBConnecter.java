@@ -96,7 +96,7 @@ class PIMDBConnecter {
 		// TODO Auto-generated method stub
     	//call %TOOL_HOME%\jre\bin\java -cp %CLASSPATH% org.hsqldb.server.Server --database.0 file:qiji --dbname.0 pim
     	try {
-            System.out.println("Starting Database");
+            //System.out.println("Starting Database");
             HsqlProperties p = new HsqlProperties();
             String dbFilePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat("qiji");
             p.setProperty("server.database.0", "file:" + dbFilePath);

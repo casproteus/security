@@ -79,9 +79,9 @@ class DefaultConfigInfoLoader {
             tmpValue = tmpFileText.substring(++tmpLINKPos, tmpENTERPos);
             if(!"BillFootInfo".equals(tmpKey))	//don't want to lost the empty spaces at the head of the info.
             	tmpValue = tmpValue.trim();
-            System.out.println("--------------------");
-            System.out.println("key:" + tmpKey);
-            System.out.println("tmpValue：" + tmpValue);
+//            System.out.println("--------------------");
+//            System.out.println("key:" + tmpKey);
+//            System.out.println("tmpValue：" + tmpValue);
             prmHash.put(tmpKey, tmpValue);
         }
     }

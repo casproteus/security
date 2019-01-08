@@ -626,7 +626,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				    serviceFee = rs.getInt("otherreceived");
 				    setBackground(rs.getInt("status") < 0 ? Color.gray : null);
 				}
-			}else {
+			}else if(BarFrame.instance.valCurTable.getText().length() > 0 && BarFrame.instance.valStartTime.getText().length() > 0) {
 				sql = new StringBuilder("Select id from bill where tableID = '").append(BarFrame.instance.valCurTable.getText())
 						.append("' and opentime = '").append(BarFrame.instance.valStartTime.getText()).append("'");
 				if(BarFrame.instance.valCurBill.getText().length() > 0) {

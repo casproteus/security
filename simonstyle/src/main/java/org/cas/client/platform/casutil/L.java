@@ -75,20 +75,21 @@ public class L extends Thread{
                 String msg = msgs.get(0);
                 msgs.remove(0);
                 try {
-                    urlConnection = prepareConnection(ErrorLogURL +"/useraccounts/loglog");
 
                     JSONObject json = new JSONObject();//创建json对象
                     json.put("tag", URLEncoder.encode(BarFrame.instance.valOperator.getText(), "UTF-8"));//使用URLEncoder.encode对特殊和不可见字符进行编码
                     json.put("msg", URLEncoder.encode(msg, "UTF-8"));//把数据put进json对象中
                     String jsonstr = json.toString();//把JSON对象按JSON的编码格式转换为字符串
 
+                    urlConnection = prepareConnection(ErrorLogURL +"/useraccounts/loglog");
                     writeOut(urlConnection, jsonstr);
 
                     if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {//得到服务端的返回码是否连接成功
 
                         String rjson = readBackFromConnection(urlConnection);
-
-                        System.out.println("zxy" + "rjson=" + rjson);//rjson={"json":true}
+                        if(rjson != null && rjson.trim().length() > 0) {
+                        	System.out.println("Response from server is:" + rjson);//rjson={"json":true}
+                        }
                     } else {
                         System.out.println("L" + "response code is:" + urlConnection.getResponseCode());
                     }
