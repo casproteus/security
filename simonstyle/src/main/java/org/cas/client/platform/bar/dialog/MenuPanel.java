@@ -349,7 +349,7 @@ public class MenuPanel extends JPanel implements ActionListener {
                                 menuY + (menuBtnHeight + CustOpts.VER_GAP) * r, menuBtnWidth, menuBtnHeight);
             }
         }
-        btnPageUpMenu.setBounds(btnPageUpCategory.getX(),
+        btnPageUpMenu.setBounds((menuBtnWidth + CustOpts.HOR_GAP) * menuColumn,
         		getHeight() - BarFrame.consts.SCROLLBAR_WIDTH * 4 - CustOpts.VER_GAP,
                 BarFrame.consts.SCROLLBAR_WIDTH,
                 BarFrame.consts.SCROLLBAR_WIDTH * 2);

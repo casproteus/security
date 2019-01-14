@@ -75,7 +75,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         }
         
         String hostStr = BarOption.getServerHost();
-        if(hostStr != null && hostStr.trim().length() > 1) {
+        if(hostStr != null && hostStr.trim().length() > 1 && !"null".equals(hostStr.trim().toLowerCase())) {
         	//this thread will start a request thread every 20 seconds to fetch new order from server..
         	new RequestNewOrderThread(hostStr).start();
         }

@@ -40,6 +40,7 @@ import com.jpos.POStest.POStestGUI;
 public class BarOption {
 	public static final int MaxQTY = 10000;
 	public static Font bigFont = new Font("Arial", Font.PLAIN, 48);
+	public static Font lessBigFont = new Font("Arial", Font.PLAIN, 24);
 	
 	public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 

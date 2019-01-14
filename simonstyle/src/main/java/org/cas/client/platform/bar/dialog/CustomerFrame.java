@@ -44,10 +44,10 @@ public class CustomerFrame extends JDialog implements ComponentListener{
     	valChange = new Label();
 
     	lblTotalPrice.setFont(BarOption.bigFont);
-    	//lblReceived.setFont(BarOption.bigFont);
+    	lblReceived.setFont(BarOption.lessBigFont);
     	lblChange.setFont(BarOption.bigFont);
     	valTotalPrice.setFont(BarOption.bigFont);
-    	//valReceived.setFont(BarOption.bigFont);
+    	valReceived.setFont(BarOption.lessBigFont);
     	valChange.setFont(BarOption.bigFont);
 
     	valTotalPrice.setAlignment(Label.RIGHT);
