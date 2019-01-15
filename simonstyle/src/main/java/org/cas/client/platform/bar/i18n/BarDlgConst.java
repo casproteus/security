@@ -140,8 +140,8 @@ public interface BarDlgConst {
     String Price();
     String Subtotal();
     String Total();
-    String TPS();
-    String TVQ();
+    String QST();
+    String GST();
     String PricePomp();
     String MenuPomp();
     String ModifyPomp();

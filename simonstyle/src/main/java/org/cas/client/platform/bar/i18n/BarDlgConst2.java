@@ -261,9 +261,9 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String Total() {return "总计";}
     @Override
-	public String TPS() {return "国税";}
+	public String QST() {return "国税";}
     @Override
-	public String TVQ() {return "省税";}
+	public String GST() {return "省税";}
     @Override
 	public String PricePomp() {return "价格提醒";}
     @Override

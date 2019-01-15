@@ -83,7 +83,35 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         }
         
         
-        if(o == tfdBillPageRow) {
+        if(o == tfdGST) {
+    		float num;
+    		try {
+    			num = Float.valueOf(tfdGST.getText());
+    		}catch(Exception exp) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+				return;
+    		}
+    		if(num > 100 || num < 0) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+				return;
+    		}
+    		BarOption.setGST(tfdGST.getText());
+            
+    	}else if(o == tfdQST) {
+    		float num;
+    		try {
+    			num = Float.valueOf(tfdQST.getText());
+    		}catch(Exception exp) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+				return;
+    		}
+    		if(num > 100 || num < 0) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+				return;
+    		}
+    		BarOption.setQST(tfdQST.getText());
+            
+    	}else if(o == tfdBillPageRow) {
     		int num;
     		try {
     			num = Integer.valueOf(tfdBillPageRow.getText());
@@ -328,7 +356,16 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
                 tBtnHeight);
 
         // TOP part============================
-        lblBillPageRow.setBounds(CustOpts.HOR_GAP * 4, CustOpts.VER_GAP * 4,
+		lblGST.setBounds(CustOpts.HOR_GAP * 4, CustOpts.VER_GAP * 4,
+				lblGST.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdGST.setBounds(lblGST.getX() + lblGST.getWidth() + CustOpts.HOR_GAP, lblGST.getY(),
+        		90, CustOpts.BTN_HEIGHT);
+        lblQST.setBounds(tfdGST.getX() + tfdGST.getWidth() + CustOpts.HOR_GAP * 2, tfdGST.getY(),
+        		lblQST.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdQST.setBounds(lblQST.getX() + lblQST.getWidth() + CustOpts.HOR_GAP, lblQST.getY(),
+        		90, CustOpts.BTN_HEIGHT);
+        
+        lblBillPageRow.setBounds(lblGST.getX(), lblGST.getY() + lblGST.getHeight() + CustOpts.VER_GAP,
         		lblBillPageRow.getPreferredSize().width, lblBillPageRow.getPreferredSize().height);
         tfdBillPageRow.setBounds(lblBillPageRow.getX() + lblBillPageRow.getWidth() + CustOpts.HOR_GAP, lblBillPageRow.getY(),
         		20, CustOpts.BTN_HEIGHT);
@@ -397,6 +434,12 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 
     private void initComponent() {
     	removeAll();
+
+        lblGST = new JLabel(BarFrame.consts.GST());
+        tfdGST = new JTextField(String.valueOf(BarOption.getGST()));
+        lblQST = new JLabel(BarFrame.consts.QST());
+        tfdQST = new JTextField(String.valueOf(BarOption.getQST()));
+        
         lblBillPageRow = new JLabel(BarFrame.consts.BillPageRow());
         tfdBillPageRow = new JTextField(String.valueOf(BarOption.getBillPageRow()));
         lblBillPageCol = new JLabel(BarFrame.consts.BillPageCol());
@@ -454,6 +497,12 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         
         cbxIsSingleUser.setBackground(null);
         cbxIsDiscBeforeTax.setBackground(null);
+        cbxIsBuffetMode.setBackground(null);
+        cbxIsFastFoodMode.setBackground(null);
+        cbxIsHideRecordFromOtherWaiter.setBackground(null);
+        cbxIsDisplayBillInKitchen.setBackground(null);
+        cbxShowCustomerFrame.setBackground(null);
+        
         cbxIsSingleUser.setSelected(BarOption.isSingleUser());
         cbxIsDiscBeforeTax.setSelected(BarOption.isTaxNotAllowDiscount());
         cbxIsBuffetMode.setSelected(BarOption.isBuffetMode());
@@ -488,6 +537,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_2_8.addActionListener(this);
         btnLine_2_9.addActionListener(this);
 
+        tfdGST.addFocusListener(this);
+        tfdQST.addFocusListener(this);
         tfdBillPageRow.addFocusListener(this);
         tfdBillPageCol.addFocusListener(this);
         cbxIsSingleUser.addActionListener(this);
@@ -532,6 +583,13 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 	}
 	
 	private void addOtherComponentes() {
+
+		add(lblGST);
+        add(tfdGST);
+        
+        add(lblQST);
+        add(tfdQST);
+        
 		add(lblBillPageRow);
         add(tfdBillPageRow);
         
@@ -557,6 +615,11 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 //        add(cbxIsPrintBillWhenPay);
 	}
 
+    JLabel lblGST;
+    JTextField tfdGST;
+    JLabel lblQST;
+    JTextField tfdQST;
+    
 	JLabel lblBillPageRow;
     JTextField tfdBillPageRow;
     JLabel lblBillPageCol;

@@ -897,10 +897,8 @@ public class PrintService{
   		int salesGrossCount = 0,salesGrossAmount = 0;
   		float net = 0, HST = 0;
   		
-  		Object g = CustOpts.custOps.getValue(BarFrame.consts.TVQ());
-    	Object q = CustOpts.custOps.getValue(BarFrame.consts.TPS());
-    	float gstRate = g == null ? 5 : Float.valueOf((String)g);
-    	float qstRate = q == null ? 9.975f : Float.valueOf((String)q);
+    	float gstRate = Float.valueOf(BarOption.getGST());
+    	float qstRate = Float.valueOf(BarOption.getQST());
     	
   		for (Bill bill : list) {
   			int status = bill.getStatus();

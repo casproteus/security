@@ -261,9 +261,9 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String Total() {return "Total";}
     @Override
-	public String TPS() {return "TPS";}
+	public String QST() {return "TPS";}
     @Override
-	public String TVQ() {return "TVQ";}
+	public String GST() {return "TVQ";}
     @Override
 	public String PricePomp() {return "PricePomp";}
     @Override
