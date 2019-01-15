@@ -35,13 +35,20 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	List<TextContent> serviceTexts;
 	 
 	public RequestNewOrderThread(String url) {
-
+        
 		url = NetUtil.validateURL(url);
 		
 		if(!url.endsWith("/")) {
 			url = url + "/";
 		}
-		this.url =  url + "requestNewOrders";
+		
+		String storeName = BarOption.getBillHeadInfo();
+    	int p = storeName.indexOf(":");
+    	if(p > 0) {
+    		storeName = storeName.substring(0, p).trim();
+    	}
+    	
+		this.url =  url + storeName + "/requestNewOrders";
 		jsonStr = BarFrame.prepareLicenceJSONString();
 	}
 	

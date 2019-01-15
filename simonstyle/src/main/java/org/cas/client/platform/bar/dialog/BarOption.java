@@ -1,41 +1,11 @@
 package org.cas.client.platform.bar.dialog;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Font;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Vector;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-
-import org.cas.client.platform.CASControl;
-import org.cas.client.platform.casbeans.PIMSeparator;
-import org.cas.client.platform.casbeans.textpane.PIMTextPane;
-import org.cas.client.platform.cascontrol.dialog.ICASDialog;
-import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
-import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
-import org.cas.client.platform.pimmodel.PIMRecord;
-import org.cas.client.platform.pos.dialog.modifyuser.MUserSwichDlg;
-import org.cas.client.platform.pos.dialog.modifyuser.ModifyPasswordDlg;
-import org.cas.client.resource.international.DlgConst;
-
-import com.jpos.POStest.POStestGUI;
 
 public class BarOption {
 	public static final int MaxQTY = 10000;
@@ -341,7 +311,7 @@ public class BarOption {
     }
     public static String getServerHost() {
     	return CustOpts.custOps.getValue("serverHost") == null ? 
-    			null : String.valueOf(CustOpts.custOps.getValue("serverHost"));
+    		"" : String.valueOf(CustOpts.custOps.getValue("serverHost"));
     }
 
     public static void setShowCustomerFrame(boolean isShowCustomerFrame) {

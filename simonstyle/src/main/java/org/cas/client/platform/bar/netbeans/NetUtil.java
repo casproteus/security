@@ -52,22 +52,25 @@ public class NetUtil {
     
     //if the www is missing, then add one.
     public static String validateURL(String url) {
-		if(url.indexOf(".") == url.lastIndexOf(".")) {
-			if(url.startsWith("http://")) {
-				url = url.substring(7);
-			}
-			
-			if(url.indexOf(".") != -1) {
-				url = "http://www." + url;
-			}else {
-				int p = url.indexOf("/");
-				if(p != -1) {
-					url = "http://www." + url.substring(0, p) + ".com" + url.substring(p);
-				}else {
-					url = "http://www." + url + ".com";
-				}
-			}
-		}
-		return url;
+    	if(url != null && url.trim().length() > 1 && !"null".equals(url.trim().toLowerCase())) {
+        	StringBuilder protocal = new StringBuilder(url.startsWith("https://") ? "https://" : "http://");
+        	
+        	if(url.indexOf("//") > 0) {
+        		url = url.substring(url.indexOf("//") + 2);	//remove the front end
+        	}
+        	if(url.indexOf("/") > 0) {
+        		url = url.substring(0, url.indexOf("/"));		//remove the back end
+        	}
+	    	if(url.indexOf(".") < 0) {
+	    		url = url + ".com";
+	    	}
+	    	if(url.indexOf(".") == url.lastIndexOf(".")) {
+	    		url = "www." + url;
+	    	}
+	    	
+	    	return protocal.append(url).append("/").toString();
+        }else {
+        	return url;
+        }
 	}
 }
