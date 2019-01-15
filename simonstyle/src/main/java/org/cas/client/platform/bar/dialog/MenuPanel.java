@@ -27,10 +27,10 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 public class MenuPanel extends JPanel implements ActionListener {
 	
     private int curCategoryPage = 0;
-    private int categoryNumPerPage = 0;
+    private int categoryQtPerPage = 0;
 
     private int curMenuPageNum = 0;
-    private int curMenuPerPage = 0;
+    private int menuQTPerPage = 0;
 
     Integer categoryColumn;
     Integer categoryRow;
@@ -191,11 +191,11 @@ public class MenuPanel extends JPanel implements ActionListener {
         // validate rows and columns first(in case they are changed into bad value)--------
         categoryColumn = (categoryColumn == null || categoryColumn < 4) ? 5 : categoryColumn;
         categoryRow = (categoryRow == null || categoryRow < 1 || categoryRow > 9) ? 3 : categoryRow;
-        categoryNumPerPage = categoryColumn * categoryRow;
+        categoryQtPerPage = categoryColumn * categoryRow;
 
         menuColumn = (menuColumn == null || menuColumn < 1) ? 4 : menuColumn;
         menuRow = (menuRow == null || menuRow < 1) ? 4 : menuRow;
-        curMenuPerPage = menuColumn * menuRow;
+        menuQTPerPage = menuColumn * menuRow;
 
         // clean current catogory and menus from both screen and metrix if have---------------
         removeAll();
@@ -204,45 +204,29 @@ public class MenuPanel extends JPanel implements ActionListener {
         add(btnPageUpMenu);
         add(btnPageDownMenu);
         
-//        for (int r = 0; r < categoryRow; r++) {
-//            if (r < onSrcCategoryTgbMatrix.size()) {
-//                for (int c = 0; c < categoryColumn; c++) {
-//                    if (c < onSrcCategoryTgbMatrix.get(r).size())
-//                        remove(onSrcCategoryTgbMatrix.get(r).get(c));
-//                }
-//            }
-//        }
-//        for (int r = 0; r < menuRow; r++) {
-//            if (r < onSrcMenuBtnMatrix.size()) {
-//                for (int c = 0; c < menuColumn; c++) {
-//                    if (c < onSrcMenuBtnMatrix.get(r).size())
-//                        remove(onSrcMenuBtnMatrix.get(r).get(c));
-//                }
-//            }
-//        }
         onSrcCategoryTgbMatrix.clear();
         onSrcMenuBtnMatrix.clear();
 
         // create new buttons and add onto the screen (no layout yet)------------
-        int globleMenuIdxOfCurCategory = curCategoryPage * categoryNumPerPage;
+        int globleCategoryIdxOfCurCategory = curCategoryPage * categoryQtPerPage;
         for (int r = 0; r < categoryRow; r++) {
             ArrayList<CategoryToggleButton> btnCategoryArry = new ArrayList<CategoryToggleButton>();
             for (int c = 0; c < categoryColumn; c++) {
-                globleMenuIdxOfCurCategory++;
-                CategoryToggleButton btnCategory = new CategoryToggleButton(globleMenuIdxOfCurCategory);
+                
+                CategoryToggleButton btnCategory = new CategoryToggleButton(globleCategoryIdxOfCurCategory + 1);
                 btnCategory.setMargin(new Insets(0, 0, 0, 0));
                 add(btnCategory);
                 btnCategory.addActionListener(this);
                 btnCategoryArry.add(btnCategory);
-                if (globleMenuIdxOfCurCategory <= categoryNameMetrix[0].length) {
-                    btnCategory.setText(categoryNameMetrix[CustOpts.custOps.getUserLang()][globleMenuIdxOfCurCategory - 1]);
-                    if (tgbActiveCategory != null
-                            && categoryNameMetrix[CustOpts.custOps.getUserLang()][globleMenuIdxOfCurCategory - 1].equalsIgnoreCase(tgbActiveCategory.getText())) {
+                
+                if (globleCategoryIdxOfCurCategory < categoryNameMetrix[0].length) {
+                    btnCategory.setText(categoryNameMetrix[CustOpts.custOps.getUserLang()][globleCategoryIdxOfCurCategory]);
+                    if (tgbActiveCategory != null && categoryNameMetrix[CustOpts.custOps.getUserLang()][globleCategoryIdxOfCurCategory].equalsIgnoreCase(tgbActiveCategory.getText())) {
                         btnCategory.setSelected(true);
                     }
-                } else {
-                    btnPageDownCategory.setVisible(false);
                 }
+                
+                globleCategoryIdxOfCurCategory++;
             }
             onSrcCategoryTgbMatrix.add(btnCategoryArry);
         }
@@ -258,21 +242,21 @@ public class MenuPanel extends JPanel implements ActionListener {
         classifiedDishNameMetrix = new String[3][dishNameMetrix[0].length];
         classifiedDishAry = new Dish[dishNameMetrix[0].length];
         
-        int onscrMenuIndex = 0;
+        int classifiedMenuIndex = 0;
         for (int i = 0; i < dishAry.length; i++) {
 			if(dishAry[i].getCATEGORY().equals(tgbActiveCategory.getText())) {
 				
-				classifiedDishNameMetrix[0][onscrMenuIndex] = dishNameMetrix[0][i];
-				classifiedDishNameMetrix[1][onscrMenuIndex] = dishNameMetrix[1][i];
-				classifiedDishNameMetrix[2][onscrMenuIndex] = dishNameMetrix[2][i];
+				classifiedDishNameMetrix[0][classifiedMenuIndex] = dishNameMetrix[0][i];
+				classifiedDishNameMetrix[1][classifiedMenuIndex] = dishNameMetrix[1][i];
+				classifiedDishNameMetrix[2][classifiedMenuIndex] = dishNameMetrix[2][i];
 				
-				classifiedDishAry[onscrMenuIndex] = dishAry[i];
+				classifiedDishAry[classifiedMenuIndex] = dishAry[i];
 				//make sure the display index are lined
-				if(dishAry[i].getDspIndex() != onscrMenuIndex + 1) {
+				if(dishAry[i].getDspIndex() != classifiedMenuIndex + 1) {
 					try {
 		                Statement smt =  PIMDBModel.getReadOnlyStatement();
 
-			            StringBuilder sql = new StringBuilder("UPDATE product SET INDEX = ").append(onscrMenuIndex + 1)
+			            StringBuilder sql = new StringBuilder("UPDATE product SET INDEX = ").append(classifiedMenuIndex + 1)
 			                            	.append(" where ID = ").append(dishAry[i].getId());
 			            smt.executeUpdate(sql.toString());
 			            smt.close();
@@ -280,14 +264,14 @@ public class MenuPanel extends JPanel implements ActionListener {
 		            }catch(Exception exp) {
 		                exp.printStackTrace();
 		            }
-					dishAry[i].setDspIndex(onscrMenuIndex + 1);
+					dishAry[i].setDspIndex(classifiedMenuIndex + 1);
 				}
 				
-				onscrMenuIndex++;
+				classifiedMenuIndex++;
 			}
 		}
-        //when init, should be no need to set pageup button to be visible.
-        globleMenuIdxOfCurCategory = curMenuPageNum * curMenuPerPage;	//the ones which will be on current page.
+        
+        int globleMenuIdxOfCurCategory = curMenuPageNum * menuQTPerPage;	//the ones which will be on current page.
         for (int r = 0; r < menuRow; r++) {
             ArrayList<MenuButton> btnMenuArry = new ArrayList<MenuButton>();
             for (int c = 0; c < menuColumn; c++) {
@@ -296,22 +280,43 @@ public class MenuPanel extends JPanel implements ActionListener {
                 add(btnMenu);
                 btnMenu.addActionListener(this);
                 btnMenuArry.add(btnMenu);
-                //if (globleMenuIdxOfCurCategory < onscrMenuIndex) {
+                if (globleMenuIdxOfCurCategory < classifiedMenuIndex) {	//the last page could be not full page.
                     btnMenu.setText(classifiedDishNameMetrix[CustOpts.custOps.getUserLang()][globleMenuIdxOfCurCategory]);
                     btnMenu.setDish(classifiedDishAry[globleMenuIdxOfCurCategory]);
-                //}
+                }
 
                 globleMenuIdxOfCurCategory++;
             }
             onSrcMenuBtnMatrix.add(btnMenuArry);
         }
-        //page up
-        if(globleMenuIdxOfCurCategory <= curMenuPerPage) {//the last diaplaied menu is less than curMenuPerPage 
-            btnPageUpMenu.setVisible(false);				  // means now it's on first page. no need to display up arrow.
+        
+        adjustPageArrowStatus(globleCategoryIdxOfCurCategory, globleMenuIdxOfCurCategory);
+    }
+
+	private void adjustPageArrowStatus(int globleCategoryIdxOfCurCategory, int globleMenuIdxOfCurCategory) {
+		
+		//for category panel page up
+        if(globleCategoryIdxOfCurCategory <= categoryQtPerPage) {		//the last displayed category is less than categoryQtPerPage, means
+        	btnPageUpCategory.setVisible(false);				  			// now it's on first page. no need to display up arrow.
+        }else {
+        	btnPageUpCategory.setVisible(true);			//as long as not the first page, page up should display.
+        }
+        //for category panel page down
+        if(globleCategoryIdxOfCurCategory > categoryNameMetrix[0].length) {//if is the last page, sure should not display page down arrow.
+        	btnPageDownCategory.setVisible(false);
+        }else if(categoryNameMetrix[0].length < categoryRow * categoryColumn) {//if there'no enough to display, then don't display page down.
+        	btnPageDownCategory.setVisible(false);
+        }else {	// if there's more than one page to display, and currently it's not last page then show it.
+        	btnPageDownCategory.setVisible(true);
+        }
+		
+		//for menu panel page up
+        if(globleMenuIdxOfCurCategory <= menuQTPerPage) {		//the last displayed menu is less than curMenuPerPage, means
+            btnPageUpMenu.setVisible(false);				  	// now it's on first page. no need to display up arrow.
         }else {
         	btnPageUpMenu.setVisible(true);			//as long as not the first page, page up should display.
         }
-        
+        //for menu panel page down
         if(globleMenuIdxOfCurCategory > classifiedDishAry.length) {//if is the last page, sure should not display page down arrow.
         	btnPageDownMenu.setVisible(false);
         }else if(classifiedDishAry.length < menuRow * menuColumn) {//if there'no enough to display, then don't display page down.
@@ -319,7 +324,7 @@ public class MenuPanel extends JPanel implements ActionListener {
         }else {	// if there's more than one page to display, and currently it's not last page then show it.
         	btnPageDownMenu.setVisible(true);
         }
-    }
+	}
 
     void reLayout() {
         // category area--------------
@@ -388,7 +393,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	            curCategoryPage++;
 	            // adjust status
 	            btnPageUpCategory.setVisible(true);
-	            if (curCategoryPage * categoryNumPerPage > categoryNameMetrix.length) {
+	            if (curCategoryPage * categoryQtPerPage > categoryNameMetrix.length) {
 	                btnPageDownCategory.setVisible(false);
 	            }
 	
@@ -405,7 +410,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	        } else if (o == btnPageDownMenu) {
 	            curMenuPageNum++;
 	            btnPageUpMenu.setVisible(true);
-	            if (curMenuPageNum * curMenuPerPage > dishNameMetrix.length) {
+	            if (curMenuPageNum * menuQTPerPage > dishNameMetrix.length) {
 	                btnPageDownMenu.setVisible(false);
 	            }
 	            reInitCategoryAndMenuBtns();
