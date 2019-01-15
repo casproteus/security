@@ -237,9 +237,9 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
 
     private boolean isMenuNameModified(int lang) {
 
-        boolean isNotInitYet = dspIndex - 1 >= menuPanel.onScrDishNameMetrix[lang].length;
+        boolean isNotInitYet = dspIndex - 1 >= menuPanel.classifiedDishNameMetrix[lang].length;
         
-        String oldText = isNotInitYet ? null : menuPanel.onScrDishNameMetrix[lang][dspIndex - 1];
+        String oldText = isNotInitYet ? null : menuPanel.classifiedDishNameMetrix[lang][dspIndex - 1];
         boolean isEmptyBefore = oldText == null || oldText.length() == 0;
         
         String newText = tfdLanguages[lang].getText();
@@ -466,9 +466,9 @@ public class DishDlg extends JDialog implements ICASDialog, ActionListener, Comp
     private boolean isCreatingNewDish() {
     	//currently the onScrAry is as long ad whole ary. so this will not work.
     	//so, check only if the original language1 is empty or not.
-        return dspIndex - 1 >= menuPanel.onScrDishNameMetrix[0].length 
-        		|| menuPanel.onScrDishNameMetrix[0][dspIndex - 1] == null
-        		|| menuPanel.onScrDishNameMetrix[0][dspIndex - 1].length() < 1;
+        return dspIndex - 1 >= menuPanel.classifiedDishNameMetrix[0].length 
+        		|| menuPanel.classifiedDishNameMetrix[0][dspIndex - 1] == null
+        		|| menuPanel.classifiedDishNameMetrix[0][dspIndex - 1].length() < 1;
     }
 
     //save printer id into dish relevant printer field. so when name changed, the dish can still find printer.

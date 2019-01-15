@@ -43,12 +43,12 @@ public class MenuPanel extends JPanel implements ActionListener {
     
     //Dish is more complecated than category, it's devided by category first, then divided by page.
     String[][] dishNameMetrix;// the struction must be [3][index]. it's more convenient than [index][3]
-    String[][] onScrDishNameMetrix;// it's sub set of all menuNameMetrix
+    String[][] classifiedDishNameMetrix;// it's sub set of all menuNameMetrix
     private ArrayList<ArrayList<MenuButton>> onSrcMenuBtnMatrix = new ArrayList<ArrayList<MenuButton>>();
 
     public Printer[] printers;
     private Dish[] dishAry;
-    private Dish[] onScrDishAry;
+    private Dish[] classifiedDishAry;
     ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
 	public MenuPanel() {
 		initComponent();
@@ -224,20 +224,20 @@ public class MenuPanel extends JPanel implements ActionListener {
         onSrcMenuBtnMatrix.clear();
 
         // create new buttons and add onto the screen (no layout yet)------------
-        int dspIndex = curCategoryPage * categoryNumPerPage;
+        int globleMenuIdxOfCurCategory = curCategoryPage * categoryNumPerPage;
         for (int r = 0; r < categoryRow; r++) {
             ArrayList<CategoryToggleButton> btnCategoryArry = new ArrayList<CategoryToggleButton>();
             for (int c = 0; c < categoryColumn; c++) {
-                dspIndex++;
-                CategoryToggleButton btnCategory = new CategoryToggleButton(dspIndex);
+                globleMenuIdxOfCurCategory++;
+                CategoryToggleButton btnCategory = new CategoryToggleButton(globleMenuIdxOfCurCategory);
                 btnCategory.setMargin(new Insets(0, 0, 0, 0));
                 add(btnCategory);
                 btnCategory.addActionListener(this);
                 btnCategoryArry.add(btnCategory);
-                if (dspIndex <= categoryNameMetrix[0].length) {
-                    btnCategory.setText(categoryNameMetrix[CustOpts.custOps.getUserLang()][dspIndex - 1]);
+                if (globleMenuIdxOfCurCategory <= categoryNameMetrix[0].length) {
+                    btnCategory.setText(categoryNameMetrix[CustOpts.custOps.getUserLang()][globleMenuIdxOfCurCategory - 1]);
                     if (tgbActiveCategory != null
-                            && categoryNameMetrix[CustOpts.custOps.getUserLang()][dspIndex - 1].equalsIgnoreCase(tgbActiveCategory.getText())) {
+                            && categoryNameMetrix[CustOpts.custOps.getUserLang()][globleMenuIdxOfCurCategory - 1].equalsIgnoreCase(tgbActiveCategory.getText())) {
                         btnCategory.setSelected(true);
                     }
                 } else {
@@ -255,18 +255,18 @@ public class MenuPanel extends JPanel implements ActionListener {
 
         // initialize on screen menus===============================================================
         //find out menus matching to current category and current lang
-        onScrDishNameMetrix = new String[3][dishNameMetrix[0].length];
-        onScrDishAry = new Dish[dishNameMetrix[0].length];
+        classifiedDishNameMetrix = new String[3][dishNameMetrix[0].length];
+        classifiedDishAry = new Dish[dishNameMetrix[0].length];
         
         int onscrMenuIndex = 0;
         for (int i = 0; i < dishAry.length; i++) {
 			if(dishAry[i].getCATEGORY().equals(tgbActiveCategory.getText())) {
 				
-				onScrDishNameMetrix[0][onscrMenuIndex] = dishNameMetrix[0][i];
-				onScrDishNameMetrix[1][onscrMenuIndex] = dishNameMetrix[1][i];
-				onScrDishNameMetrix[2][onscrMenuIndex] = dishNameMetrix[2][i];
+				classifiedDishNameMetrix[0][onscrMenuIndex] = dishNameMetrix[0][i];
+				classifiedDishNameMetrix[1][onscrMenuIndex] = dishNameMetrix[1][i];
+				classifiedDishNameMetrix[2][onscrMenuIndex] = dishNameMetrix[2][i];
 				
-				onScrDishAry[onscrMenuIndex] = dishAry[i];
+				classifiedDishAry[onscrMenuIndex] = dishAry[i];
 				//make sure the display index are lined
 				if(dishAry[i].getDspIndex() != onscrMenuIndex + 1) {
 					try {
@@ -286,26 +286,38 @@ public class MenuPanel extends JPanel implements ActionListener {
 				onscrMenuIndex++;
 			}
 		}
-        
-        dspIndex = curMenuPageNum * curMenuPerPage;
+        //when init, should be no need to set pageup button to be visible.
+        globleMenuIdxOfCurCategory = curMenuPageNum * curMenuPerPage;	//the ones which will be on current page.
         for (int r = 0; r < menuRow; r++) {
             ArrayList<MenuButton> btnMenuArry = new ArrayList<MenuButton>();
             for (int c = 0; c < menuColumn; c++) {
-                MenuButton btnMenu = new MenuButton(dspIndex + 1);
+                MenuButton btnMenu = new MenuButton(globleMenuIdxOfCurCategory + 1);
                 btnMenu.setMargin(new Insets(0, 0, 0, 0));
                 add(btnMenu);
                 btnMenu.addActionListener(this);
                 btnMenuArry.add(btnMenu);
-                if (dspIndex < onscrMenuIndex) {
-                    btnMenu.setText(onScrDishNameMetrix[CustOpts.custOps.getUserLang()][dspIndex]);
-                    btnMenu.setDish(onScrDishAry[dspIndex]);
-                } else {
-                    btnPageDownMenu.setVisible(false);
-                }
+                //if (globleMenuIdxOfCurCategory < onscrMenuIndex) {
+                    btnMenu.setText(classifiedDishNameMetrix[CustOpts.custOps.getUserLang()][globleMenuIdxOfCurCategory]);
+                    btnMenu.setDish(classifiedDishAry[globleMenuIdxOfCurCategory]);
+                //}
 
-                dspIndex++;
+                globleMenuIdxOfCurCategory++;
             }
             onSrcMenuBtnMatrix.add(btnMenuArry);
+        }
+        //page up
+        if(globleMenuIdxOfCurCategory <= curMenuPerPage) {//the last diaplaied menu is less than curMenuPerPage 
+            btnPageUpMenu.setVisible(false);				  // means now it's on first page. no need to display up arrow.
+        }else {
+        	btnPageUpMenu.setVisible(true);			//as long as not the first page, page up should display.
+        }
+        
+        if(globleMenuIdxOfCurCategory > classifiedDishAry.length) {//if is the last page, sure should not display page down arrow.
+        	btnPageDownMenu.setVisible(false);
+        }else if(classifiedDishAry.length < menuRow * menuColumn) {//if there'no enough to display, then don't display page down.
+        	btnPageDownMenu.setVisible(false);
+        }else {	// if there's more than one page to display, and currently it's not last page then show it.
+        	btnPageDownMenu.setVisible(true);
         }
     }
 
