@@ -158,7 +158,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String USE_MODE() {return "系统处于销售模式!";}
     @Override
-	public String Title() {return "Aika Pos - Copyright 2018 - http://www.ShareTheGoodOnes.com";}
+	public String Title() {return "SanjiPos - Copyright 2019 - http://www.ShareTheGoodOnes.com";}
     @Override
 	public String DuplicatedInput() {return "该名称已经有人用了!请重新选择一个名字";}
     @Override

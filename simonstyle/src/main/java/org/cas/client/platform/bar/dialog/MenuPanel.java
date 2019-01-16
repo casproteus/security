@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -29,7 +30,7 @@ public class MenuPanel extends JPanel implements ActionListener {
     private int curCategoryPage = 0;
     private int categoryQtPerPage = 0;
 
-    private int curMenuPageNum = 0;
+    private int curMenuPage = 0;
     private int menuQTPerPage = 0;
 
     Integer categoryColumn;
@@ -48,7 +49,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 
     public Printer[] printers;
     private Dish[] dishAry;
-    private Dish[] classifiedDishAry;
+    private List<Dish> classifiedDishAry;
     ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
 	public MenuPanel() {
 		initComponent();
@@ -183,6 +184,7 @@ public class MenuPanel extends JPanel implements ActionListener {
         } catch (Exception e) {
             ErrorUtil.write(e);
         }
+        curMenuPage = 0;
         reInitCategoryAndMenuBtns();
     }
 
@@ -240,7 +242,7 @@ public class MenuPanel extends JPanel implements ActionListener {
         // initialize on screen menus===============================================================
         //find out menus matching to current category and current lang
         classifiedDishNameMetrix = new String[3][dishNameMetrix[0].length];
-        classifiedDishAry = new Dish[dishNameMetrix[0].length];
+        classifiedDishAry = new ArrayList<Dish>();
         
         int classifiedMenuIndex = 0;
         for (int i = 0; i < dishAry.length; i++) {
@@ -250,7 +252,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 				classifiedDishNameMetrix[1][classifiedMenuIndex] = dishNameMetrix[1][i];
 				classifiedDishNameMetrix[2][classifiedMenuIndex] = dishNameMetrix[2][i];
 				
-				classifiedDishAry[classifiedMenuIndex] = dishAry[i];
+				classifiedDishAry.add(dishAry[i]);
 				//make sure the display index are lined
 				if(dishAry[i].getDspIndex() != classifiedMenuIndex + 1) {
 					try {
@@ -271,7 +273,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 			}
 		}
         
-        int globleMenuIdxOfCurCategory = curMenuPageNum * menuQTPerPage;	//the ones which will be on current page.
+        int globleMenuIdxOfCurCategory = curMenuPage * menuQTPerPage;	//the ones which will be on current page.
         for (int r = 0; r < menuRow; r++) {
             ArrayList<MenuButton> btnMenuArry = new ArrayList<MenuButton>();
             for (int c = 0; c < menuColumn; c++) {
@@ -282,10 +284,9 @@ public class MenuPanel extends JPanel implements ActionListener {
                 btnMenuArry.add(btnMenu);
                 if (globleMenuIdxOfCurCategory < classifiedMenuIndex) {	//the last page could be not full page.
                     btnMenu.setText(classifiedDishNameMetrix[CustOpts.custOps.getUserLang()][globleMenuIdxOfCurCategory]);
-                    btnMenu.setDish(classifiedDishAry[globleMenuIdxOfCurCategory]);
+                    btnMenu.setDish(classifiedDishAry.get(globleMenuIdxOfCurCategory));
+                    globleMenuIdxOfCurCategory++;
                 }
-
-                globleMenuIdxOfCurCategory++;
             }
             onSrcMenuBtnMatrix.add(btnMenuArry);
         }
@@ -302,7 +303,7 @@ public class MenuPanel extends JPanel implements ActionListener {
         	btnPageUpCategory.setVisible(true);			//as long as not the first page, page up should display.
         }
         //for category panel page down
-        if(globleCategoryIdxOfCurCategory > categoryNameMetrix[0].length) {//if is the last page, sure should not display page down arrow.
+        if(globleCategoryIdxOfCurCategory > categoryNameMetrix[0].length) {//if is the last page, and not full of last page, then should not display page down arrow.
         	btnPageDownCategory.setVisible(false);
         }else if(categoryNameMetrix[0].length < categoryRow * categoryColumn) {//if there'no enough to display, then don't display page down.
         	btnPageDownCategory.setVisible(false);
@@ -317,9 +318,9 @@ public class MenuPanel extends JPanel implements ActionListener {
         	btnPageUpMenu.setVisible(true);			//as long as not the first page, page up should display.
         }
         //for menu panel page down
-        if(globleMenuIdxOfCurCategory > classifiedDishAry.length) {//if is the last page, sure should not display page down arrow.
+        if(globleMenuIdxOfCurCategory == classifiedDishAry.size() && globleMenuIdxOfCurCategory % (menuRow * menuColumn) != 0) {//if is the last page, and not full of last page, then should not display page down arrow.
         	btnPageDownMenu.setVisible(false);
-        }else if(classifiedDishAry.length < menuRow * menuColumn) {//if there'no enough to display, then don't display page down.
+        }else if(classifiedDishAry.size() < menuRow * menuColumn) {//if there'no enough to display, then don't display page down.
         	btnPageDownMenu.setVisible(false);
         }else {	// if there's more than one page to display, and currently it's not last page then show it.
         	btnPageDownMenu.setVisible(true);
@@ -344,8 +345,8 @@ public class MenuPanel extends JPanel implements ActionListener {
                         (categeryBtnHeight + CustOpts.VER_GAP) * r, categeryBtnWidth, categeryBtnHeight);
             }
         }
-        btnPageUpCategory.setBounds(getWidth(), 0, BarFrame.consts.SCROLLBAR_WIDTH,
-                BarFrame.consts.SCROLLBAR_WIDTH * 2);
+        btnPageUpCategory.setBounds((categeryBtnWidth + CustOpts.HOR_GAP) * categoryColumn, 0, 
+        	BarFrame.consts.SCROLLBAR_WIDTH, BarFrame.consts.SCROLLBAR_WIDTH * 2);
         btnPageDownCategory.setBounds(btnPageUpCategory.getX(),
                 btnPageUpCategory.getY() + btnPageUpCategory.getHeight() + CustOpts.VER_GAP,
                 BarFrame.consts.SCROLLBAR_WIDTH, BarFrame.consts.SCROLLBAR_WIDTH * 2);
@@ -400,17 +401,17 @@ public class MenuPanel extends JPanel implements ActionListener {
 	            reInitCategoryAndMenuBtns();
 	            reLayout();
 	        } else if (o == btnPageUpMenu) {
-	            curMenuPageNum--;
+	            curMenuPage--;
 	            btnPageDownMenu.setVisible(true);
-	            if (curMenuPageNum == 0) {
+	            if (curMenuPage == 0) {
 	                btnPageUpMenu.setVisible(false);
 	            }
 	            reInitCategoryAndMenuBtns();
 	            reLayout();
 	        } else if (o == btnPageDownMenu) {
-	            curMenuPageNum++;
+	            curMenuPage++;
 	            btnPageUpMenu.setVisible(true);
-	            if (curMenuPageNum * menuQTPerPage > dishNameMetrix.length) {
+	            if (curMenuPage * menuQTPerPage > dishNameMetrix.length) {
 	                btnPageDownMenu.setVisible(false);
 	            }
 	            reInitCategoryAndMenuBtns();
