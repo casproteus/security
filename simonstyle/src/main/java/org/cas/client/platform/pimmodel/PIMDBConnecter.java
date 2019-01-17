@@ -98,7 +98,7 @@ class PIMDBConnecter {
     	try {
             //System.out.println("Starting Database");
             HsqlProperties p = new HsqlProperties();
-            String dbFilePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat("qiji");
+            String dbFilePath = CASUtility.getPIMDirPath().concat("qiji");
             p.setProperty("server.database.0", "file:" + dbFilePath);
             p.setProperty("server.dbname.0", "pim");
             p.setProperty("server.port", "9001");

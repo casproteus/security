@@ -374,7 +374,7 @@ public class PrintService{
 		boolean isSuccess = false;
     	//modify the sndMesg
 		// save contents into a file.
-		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat(new Date().getTime() + "transaction.xml");
+		String filePath = CASUtility.getPIMDirPath().concat(new Date().getTime() + "transaction.xml");
 		Path path = Paths.get(filePath);
 		try {
 	    	Files.write(path, "REPORT".equals(transType) ? buildMevReportContent(sndMsg) : buildMevFormatContent(sndMsg, transType));
@@ -446,7 +446,7 @@ public class PrintService{
 	}
 	
 	private static Path getMevCommandFilePath(String fileName, byte[] command) {
-		String filePath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat(fileName);
+		String filePath = CASUtility.getPIMDirPath().concat(fileName);
 		Path path = Paths.get(filePath);
 		File file = new File(filePath);
 		

@@ -22,7 +22,7 @@ class DefaultConfigInfoLoader {
 
     /** 取得PIM的config文件的路径, @Called by ConfigFileWriter */
     static String getConfigFilePath() {
-        return CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")).concat("PIMConfig.ini");
+        return CASUtility.getPIMDirPath().concat("PIMConfig.ini");
     }
 
     /**

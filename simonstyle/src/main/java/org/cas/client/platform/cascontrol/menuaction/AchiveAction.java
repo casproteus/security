@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -13,8 +13,9 @@ import javax.swing.JFileChooser;
 
 import org.cas.client.platform.CASControl;
 import org.cas.client.platform.cascontrol.dialog.CASFileFilter;
-import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.CASUtility;
+import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.FileSystemUtil;
 import org.cas.client.platform.casutil.SOptionPane;
 import org.cas.client.resource.international.PaneConsts;
 
@@ -22,7 +23,8 @@ public class AchiveAction extends SAction {
     /**
      * Invoked when an action occurs.
      */
-    public void actionPerformed(
+    @Override
+	public void actionPerformed(
             ActionEvent e) {
         String mailPath = CASUtility.getPIMDirPath();
         try {
@@ -68,8 +70,8 @@ public class AchiveAction extends SAction {
         int length = path.length();
         File read = new File(path);
         File[] files = read.listFiles();
-        Vector v = new Vector();
-        getFiles(files, v, length);
+        ArrayList<String> v = new ArrayList<String>();
+        FileSystemUtil.getAllFilesIntoArray(files, v, length);
 
         try {
             String write = savePath;// "C:\\Documents and Settings\\Administrator\\桌面\\文件与磁盘操作.zip";
@@ -85,7 +87,7 @@ public class AchiveAction extends SAction {
                 // 创建文件输入流对象
                 // 创建指向压缩原始文件的入口
                 in = new FileInputStream(file);
-                ZipEntry entry = new ZipEntry((String) v.get(i));
+                ZipEntry entry = new ZipEntry(v.get(i));
                 zipOut.putNextEntry(entry);
                 // 向压缩文件中输出数据
                 int nNumber;
@@ -104,31 +106,6 @@ public class AchiveAction extends SAction {
 
         // 重新开启数据库链接。
         CASControl.ctrl.initModel();
-    }
-
-    /**
-     * 保存文件路径
-     * 
-     * @param files
-     *            :文件表
-     * @param v
-     *            ,保存相对路径
-     * @param length
-     *            :初始路径长度
-     */
-    private void getFiles(
-            File[] files,
-            Vector v,
-            int length) {
-        for (int i = 0; i < files.length; i++) {
-            if (!files[i].isDirectory()) {
-                String path = files[i].getPath();
-                String spath = path.substring(length + 1);
-                v.add(spath);
-            } else {
-                getFiles(files[i].listFiles(), v, length);
-            }
-        }
     }
 }
 

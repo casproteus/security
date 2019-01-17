@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.Icon;
@@ -17,17 +18,17 @@ import org.cas.client.platform.cascustomize.CustOpts;
 
 import sun.awt.shell.ShellFolder;
 
-public abstract class FileSystem {
-    static FileSystem windowsFileSystemView;
-    static FileSystem unixFileSystemView;
-    static FileSystem genericFileSystemView;
+public abstract class FileSystemUtil {
+    static FileSystemUtil windowsFileSystemView;
+    static FileSystemUtil unixFileSystemView;
+    static FileSystemUtil genericFileSystemView;
 
     /**
      * 得到文件系统
      * 
      * @return 文件系统
      */
-    public static FileSystem getFileSystemView() {
+    public static FileSystemUtil getFileSystemView() {
         if (File.separatorChar == '\\') {
             if (windowsFileSystemView == null) {
                 windowsFileSystemView = new WindowsFileSystemView();
@@ -421,7 +422,32 @@ public abstract class FileSystem {
         }
         return f;
     }
-
+    
+    /**
+     * 保存文件路径
+     * 
+     * @param files
+     *            :文件表
+     * @param v
+     *            ,保存相对路径
+     * @param length
+     *            :初始路径长度
+     */
+    public static void getAllFilesIntoArray(
+            File[] files,
+            ArrayList<String> v,
+            int length) {
+        for (int i = 0; i < files.length; i++) {
+            if (!files[i].isDirectory()) {
+                String path = files[i].getPath();
+                String spath = path.substring(length);
+                v.add(spath);
+            } else {
+                getAllFilesIntoArray(files[i].listFiles(), v, length);
+            }
+        }
+    }
+    
     /**
      * Gets the list of shown (i.e. not hidden) files.
      * 
@@ -566,7 +592,8 @@ public abstract class FileSystem {
          * 
          * @return 判断结果
          */
-        public boolean isDirectory() {
+        @Override
+		public boolean isDirectory() {
             return true;
         }
 
@@ -575,7 +602,8 @@ public abstract class FileSystem {
          * 
          * @return 名字
          */
-        public String getName() {
+        @Override
+		public String getName() {
             return getPath();
         }
     }
@@ -584,7 +612,7 @@ public abstract class FileSystem {
 /**
  * FileSystem that handles some specific unix-isms.
  */
-class UnixFileSystemView extends FileSystem {
+class UnixFileSystemView extends FileSystemUtil {
 
     private static final String newFolderString = UIManager.getString("FileChooser.other.newFolder");
     private static final String newFolderNextString = UIManager.getString("FileChooser.other.newFolder.subsequent");
@@ -598,7 +626,8 @@ class UnixFileSystemView extends FileSystem {
      *             IO异常
      * @return 新文件夹
      */
-    public File createNewFolder(
+    @Override
+	public File createNewFolder(
             File containingDir) throws IOException {
         if (containingDir == null) {
             throw new IOException("Containing directory is null:");
@@ -630,7 +659,8 @@ class UnixFileSystemView extends FileSystem {
      * @param dir
      *            一个文件
      */
-    public boolean isFileSystemRoot(
+    @Override
+	public boolean isFileSystemRoot(
             File dir) {
         return (dir != null && dir.getAbsolutePath().equals("/"));
     }
@@ -642,7 +672,8 @@ class UnixFileSystemView extends FileSystem {
      * @param dir
      *            一个文件
      */
-    public boolean isDrive(
+    @Override
+	public boolean isDrive(
             File dir) {
         if (isFloppyDrive(dir)) {
             return true;
@@ -658,7 +689,8 @@ class UnixFileSystemView extends FileSystem {
      * @param dir
      *            一个文件
      */
-    public boolean isFloppyDrive(
+    @Override
+	public boolean isFloppyDrive(
             File dir) {
         // Could be looking at the path for Solaris, but wouldn't be reliable.
         // For example:
@@ -673,7 +705,8 @@ class UnixFileSystemView extends FileSystem {
      *            一个文件
      * @return 判断结果
      */
-    public boolean isComputerNode(
+    @Override
+	public boolean isComputerNode(
             File dir) {
         if (dir != null) {
             String parent = dir.getParent();
@@ -688,7 +721,7 @@ class UnixFileSystemView extends FileSystem {
 /**
  * FileSystem that handles some specific windows concepts.
  */
-class WindowsFileSystemView extends FileSystem {
+class WindowsFileSystemView extends FileSystemUtil {
 
     private static final String newFolderString = UIManager.getString("FileChooser.win32.newFolder");
     private static final String newFolderNextString = UIManager.getString("FileChooser.win32.newFolder.subsequent");
@@ -700,7 +733,8 @@ class WindowsFileSystemView extends FileSystem {
      * @param f
      *            一个文件
      */
-    public Boolean isTraversable(
+    @Override
+	public Boolean isTraversable(
             File f) {
         return Boolean.valueOf(isFileSystemRoot(f) || isComputerNode(f) || f.isDirectory());
     }
@@ -714,7 +748,8 @@ class WindowsFileSystemView extends FileSystem {
      *            文件名
      * @return 目录下文件
      */
-    public File getChild(
+    @Override
+	public File getChild(
             File parent,
             String fileName) {
         if (fileName.startsWith("\\") && !(fileName.startsWith("\\\\")) && isFileSystem(parent)) {
@@ -739,7 +774,8 @@ class WindowsFileSystemView extends FileSystem {
      *            一个文件
      * @return 系统类型描述
      */
-    public String getSystemTypeDescription(
+    @Override
+	public String getSystemTypeDescription(
             File f) {
         if (f != null) {
             return getShellFolder(f).getFolderType();
@@ -753,7 +789,8 @@ class WindowsFileSystemView extends FileSystem {
      * 
      * @return the Desktop folder.
      */
-    public File getHomeDirectory() {
+    @Override
+	public File getHomeDirectory() {
         return getRoots()[0];
     }
 
@@ -766,7 +803,8 @@ class WindowsFileSystemView extends FileSystem {
      * @throws IOException
      *             文件异常
      */
-    public File createNewFolder(
+    @Override
+	public File createNewFolder(
             File containingDir) throws IOException {
         if (containingDir == null) {
             throw new IOException("Containing directory is null:");
@@ -798,7 +836,8 @@ class WindowsFileSystemView extends FileSystem {
      * @param dir
      *            一个文件
      */
-    public boolean isDrive(
+    @Override
+	public boolean isDrive(
             File dir) {
         return isFileSystemRoot(dir);
     }
@@ -810,7 +849,8 @@ class WindowsFileSystemView extends FileSystem {
      * @param dir
      *            一个文件
      */
-    public boolean isFloppyDrive(
+    @Override
+	public boolean isFloppyDrive(
             File dir) {
         String path = dir.getAbsolutePath();
         return (path != null && (path.equals("A:\\") || path.equals("B:\\")));
@@ -823,7 +863,8 @@ class WindowsFileSystemView extends FileSystem {
      *            文件名
      * @return 文件对象
      */
-    public File createFileObject(
+    @Override
+	public File createFileObject(
             String path) {
         // Check for missing backslash after drive letter such as "C:" or "C:filename"
         if (path.length() >= 2 && path.charAt(1) == ':' && Character.isLetter(path.charAt(0))) {
@@ -836,7 +877,8 @@ class WindowsFileSystemView extends FileSystem {
         return super.createFileObject(path);
     }
 
-    protected File createFileSystemRoot(
+    @Override
+	protected File createFileSystemRoot(
             File f) {
         // Problem: Removable drives on Windows return false on f.exists()
         // Workaround: Override exists() to always return true.
@@ -862,7 +904,8 @@ class WindowsFileSystemView extends FileSystem {
          * 
          * @return 存在
          */
-        public boolean exists() {
+        @Override
+		public boolean exists() {
             return true;
         }
     }
@@ -871,7 +914,7 @@ class WindowsFileSystemView extends FileSystem {
 /**
  * Fallthrough FileSystem in case we can't determine the OS.
  */
-class GenericFileSystemView extends FileSystem {
+class GenericFileSystemView extends FileSystemUtil {
 
     private static final String newFolderString = UIManager.getString("FileChooser.other.newFolder");
 
@@ -884,7 +927,8 @@ class GenericFileSystemView extends FileSystem {
      * @throws IOException
      *             文件异常
      */
-    public File createNewFolder(
+    @Override
+	public File createNewFolder(
             File containingDir) throws IOException {
         if (containingDir == null) {
             throw new IOException("Containing directory is null:");
@@ -901,5 +945,4 @@ class GenericFileSystemView extends FileSystem {
 
         return newFolder;
     }
-
 }

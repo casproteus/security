@@ -14,9 +14,11 @@ public class TableButton extends JButton {
     private int type;
     private String openTime;
 
-	static String folerPath = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator"));
+	static String folerPath = CASUtility.getPIMDirPath();
 	
     public TableButton() {
+    	setBorder(null);
+    	setFont(BarOption.lessBigFont);
         Color bg = BarOption.getBK("Table");
     	setBackground(bg);
     	setHorizontalTextPosition(CENTER);
@@ -31,8 +33,11 @@ public class TableButton extends JButton {
 	}
 
 	public void setType(int type) {
+		if(type < 1) {
+			type = 1;
+		}
 		this.type = type;
-		String fileName = folerPath + type+ ".gif";
+		String fileName = folerPath + type+ ".png";
 		ImageIcon icon = new ImageIcon(fileName);
 		Image temp = icon.getImage().getScaledInstance(getWidth(),
 				getHeight(), icon.getImage().SCALE_DEFAULT);

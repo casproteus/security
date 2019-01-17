@@ -5,9 +5,9 @@ import java.util.StringTokenizer;
 
 import org.cas.client.platform.cascontrol.MainPane;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.ModelDBCons;
-import org.cas.client.platform.casutil.CASUtility;
 
 class Utility {
     /**
@@ -16,7 +16,7 @@ class Utility {
      * @return 数据库保存路径
      */
     static String getPIMDatabaseDirPath() {
-        String tmpDBPathStr = CASUtility.getPIMDirPath() + System.getProperty("file.separator") + "database";
+        String tmpDBPathStr = CASUtility.getPIMDirPath() + "database";
         // 至此构造出PIM的数据库文件在系统目录下的路径字符串。
         File tmpDir = new File(tmpDBPathStr);
         if (!tmpDir.exists()) {
@@ -56,7 +56,7 @@ class Utility {
 
         // 得到应用类型对应的数据库表的名字,在数据库表中的索引值
         String[] tmpField;// 数据库表对应的所有的字段
-        String tmpKey = (String) CustOpts.custOps.APPNameVec.get(prmApp);
+        String tmpKey = CustOpts.custOps.APPNameVec.get(prmApp);
         tmpField = MainPane.getApp(tmpKey).getAppFields();
 
         StringTokenizer token = new StringTokenizer(prmFieldNames, ModelDBCons.DELIMITER);

@@ -771,7 +771,10 @@ public class CASUtility {
     /* 取得PIM默认保存数据的路径 @return 默认路径 */
     public static String getPIMDirPath() {
         String tmpDataDirectoryStr =
-                System.getProperty("user.home") + System.getProperty("file.separator") + ".Storm070111";
+                new StringBuilder(System.getProperty("user.home"))
+                .append(System.getProperty("file.separator"))
+                .append(".Storm070111")
+                .append(System.getProperty("file.separator")).toString();
         // 至此构造出PIM在系统目录下的路径字符串。
         File tmpDir = new File(tmpDataDirectoryStr);
         if (!tmpDir.exists()) {
@@ -789,7 +792,7 @@ public class CASUtility {
      * @return 保存邮件的路径
      */
     public static String getPIMMailDirPath() {
-        String tmpMailPathStr = getPIMDirPath() + System.getProperty("file.separator") + "mail";
+        String tmpMailPathStr = getPIMDirPath() + "mail";
         // 至此构造出PIM的邮件文件在系统目录下的路径字符串。File tmpDir = new File(tmpDBPathStr);
         File tmpDir = new File(tmpMailPathStr);
         if (!tmpDir.exists())

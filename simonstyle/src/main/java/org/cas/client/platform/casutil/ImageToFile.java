@@ -47,7 +47,7 @@ public class ImageToFile {
         try {
             ParameterBlock pb = new ParameterBlock();
             pb.add(image);
-            PlanarImage tPlanarImage = (PlanarImage) JAI.create("awtImage", pb, null);
+            PlanarImage tPlanarImage = JAI.create("awtImage", pb, null);
             OutputStream output = new FileOutputStream(PNGFilePath);
             ImageEncoder tEncode = ImageCodec.createImageEncoder("png", output, null);
             tEncode.encode(tPlanarImage);
@@ -64,7 +64,7 @@ public class ImageToFile {
             Image image,
             String TIFFilePath) {
         try {
-            String path = CASUtility.getPIMDirPath().concat(File.separator).concat("Temp").concat(File.separator);
+            String path = CASUtility.getPIMDirPath().concat("Temp").concat(File.separator);
             File dir = new File(path);
             if (!dir.exists()) {
                 dir.mkdirs();
@@ -72,7 +72,7 @@ public class ImageToFile {
             String outPutPath = path + "convert.png";
             ParameterBlock pb = new ParameterBlock();
             pb.add(image);
-            PlanarImage tPlanarImage = (PlanarImage) JAI.create("awtImage", pb, null);
+            PlanarImage tPlanarImage = JAI.create("awtImage", pb, null);
             JAI.create("filestore", tPlanarImage, outPutPath, "png", null);
             RenderedOp drc = JAI.create("fileload", outPutPath);
             JAI.create("filestore", drc, TIFFilePath, "tiff", null);
@@ -97,14 +97,14 @@ public class ImageToFile {
     public static void imageToJPGForWP(
             Image image,
             String JPGFilePath) throws java.io.IOException, java.io.FileNotFoundException {
-        String path = CASUtility.getPIMDirPath().concat(File.separator).concat("Temp").concat(File.separator);
+        String path = CASUtility.getPIMDirPath().concat("Temp").concat(File.separator);
         File dir = new File(path);
         if (!dir.exists()) {
             dir.mkdirs();
         }
         ParameterBlock pb = new ParameterBlock();
         pb.add(image);
-        PlanarImage tPlanarImage = (PlanarImage) JAI.create("awtImage", pb, null);
+        PlanarImage tPlanarImage = JAI.create("awtImage", pb, null);
         String outPutPath = path + "convert.png";
         OutputStream output = new FileOutputStream(outPutPath);
         ImageEncoder tEncode = ImageCodec.createImageEncoder("png", output, null);
@@ -131,7 +131,7 @@ public class ImageToFile {
             Image image,
             String BMPFilePath) {
         try {
-            String path = CASUtility.getPIMDirPath().concat(File.separator).concat("Temp").concat(File.separator);
+            String path = CASUtility.getPIMDirPath().concat("Temp").concat(File.separator);
             File dir = new File(path);
             if (!dir.exists()) {
                 dir.mkdirs();
@@ -139,7 +139,7 @@ public class ImageToFile {
             String outPutPath = path + "convert.png";
             ParameterBlock pb = new ParameterBlock();
             pb.add(image);
-            PlanarImage tPlanarImage = (PlanarImage) JAI.create("awtImage", pb, null);
+            PlanarImage tPlanarImage = JAI.create("awtImage", pb, null);
             JAI.create("filestore", tPlanarImage, outPutPath, "png", null);
             RenderedOp drc = JAI.create("fileload", outPutPath);
             JAI.create("filestore", drc, BMPFilePath, "bmp", null);

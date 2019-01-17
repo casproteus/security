@@ -3,18 +3,14 @@ package org.cas.client.platform.bar.dialog;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Label;
-import java.awt.Panel;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.text.DecimalFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JToggleButton;
 
-import org.cas.client.platform.bar.beans.FunctionButton;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.CASUtility;
 
@@ -31,7 +27,7 @@ public class CustomerFrame extends JDialog implements ComponentListener{
         
         billPanel = new BillPanel((SalesPanel)BarFrame.instance.panels[2]);
 
-    	String fileName = CASUtility.getPIMDirPath().concat(System.getProperty("file.separator")) + "CustomerFrameBG.jpg";
+    	String fileName = CASUtility.getPIMDirPath() + "CustomerFrameBG.jpg";
 		icon = new ImageIcon(fileName);
     	imagePanel = new JLabel(icon);
     	

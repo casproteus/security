@@ -3,7 +3,9 @@ package org.cas.client.platform.bar;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -15,7 +17,10 @@ import javax.swing.JToolBar;
 
 import org.cas.client.platform.cascontrol.AbstractApp;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
+import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.FileSystemUtil;
 import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.platform.foregrounding.dialog.ForegroundingDlg;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -125,26 +130,32 @@ public class App_Bar extends AbstractApp {
                     .concat(" DSP_INDEX INTEGER, posX INTEGER, posY INTEGER, width INTEGER, height INTEGER, type INTEGER, opentime VARCHAR(255), status INTEGER);");
             stm.executeUpdate(sql);
             
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T1', '0', 10, 10, 120, 60, 0)";
-            stm.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T2', '1', 160, 10, 120, 60, 0)";
-            stm.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T3', '2', 320, 10, 120, 60, 0)";
-            stm.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T4', '3', 480, 10, 120, 60, 0)";
-            stm.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T5', '4', 640, 10, 120, 60, 0)";
-            stm.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T6', '5', 10, 10, 120, 60, 0)";
-            stm.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T7', '6', 160, 110, 120, 60, 0)";
-            stm.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T8', '7', 320, 110, 120, 60, 0)";
-            stm.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T9', '8', 480, 110, 120, 60, 0)";
-            stm.executeUpdate(sql);
-            sql = "INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('T10', '9', 640, 110, 120, 60, 0)";
-            stm.executeUpdate(sql);
+            String path = CASUtility.getPIMDirPath();
+            int length = path.length();
+            File read = new File(path);
+            File[] files = read.listFiles();
+            ArrayList<String> arry = new ArrayList<String>();
+            FileSystemUtil.getAllFilesIntoArray(files, arry, length);
+            for (String string : arry) {
+				if(string.endsWith(".png")) {
+					string = string.substring(0, string.length() - 4);
+					int p = string.lastIndexOf("\\");
+					if(p > -1) {
+						string = string.substring(p + 1);
+					}
+					try {
+						int idx = Integer.valueOf(string);
+						int row = idx / 10 + 1;
+						int col = idx % 10;
+						sql = new StringBuilder("INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('")
+								.append(string).append("', '").append(idx).append("', ")
+								.append(col * 90 + CustOpts.HOR_GAP).append(", ").append(row * 90 + CustOpts.VER_GAP).append(", 90, 90, ").append(string).append(")").toString();
+						stm.executeUpdate(sql);
+					}catch(Exception e) {
+						//CustOpts.custOps is null now, can not do L.w()!!1 L.w("app_bar", "customer might have put wrong format of *.png in .storm07111 folder.", e);
+					}
+				}
+			}
 
             //create a printer device table
             sql =
