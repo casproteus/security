@@ -13,8 +13,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
@@ -366,7 +368,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		90, CustOpts.BTN_HEIGHT);
         
         lblBillPageRow.setBounds(lblGST.getX(), lblGST.getY() + lblGST.getHeight() + CustOpts.VER_GAP,
-        		lblBillPageRow.getPreferredSize().width, lblBillPageRow.getPreferredSize().height);
+        		lblBillPageRow.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdBillPageRow.setBounds(lblBillPageRow.getX() + lblBillPageRow.getWidth() + CustOpts.HOR_GAP, lblBillPageRow.getY(),
         		20, CustOpts.BTN_HEIGHT);
         lblBillPageCol.setBounds(tfdBillPageRow.getX() + tfdBillPageRow.getWidth() + CustOpts.HOR_GAP, lblBillPageRow.getY(),
@@ -382,13 +384,14 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		lblPrinterMinReachTime.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdPrinterMinReachTime.setBounds(lblPrinterMinReachTime.getX() + lblPrinterMinReachTime.getWidth() + CustOpts.HOR_GAP, lblPrinterMinReachTime.getY(),
         		100, CustOpts.BTN_HEIGHT);
-        lblServerHost.setBounds(lblPrinterMinReachTime.getX(), lblPrinterMinReachTime.getY() + lblPrinterMinReachTime.getHeight() + CustOpts.VER_GAP,
-        		lblServerHost.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        tfdServerHost.setBounds(lblServerHost.getX() + lblServerHost.getWidth() + CustOpts.HOR_GAP, lblServerHost.getY(),
-        		200, CustOpts.BTN_HEIGHT);
-        
+
+    	sepH1.setBounds(CustOpts.HOR_GAP * 4, 
+    			lblPrinterMinReachTime.getY() + lblPrinterMinReachTime.getHeight() + CustOpts.VER_GAP * 2,
+    			BarFrame.instance.menuPanel.getX() - CustOpts.HOR_GAP * 8 ,
+    			sepH1.getPreferredSize().height);
+    	
         //cbx------------------------------------
-        cbxIsSingleUser.setBounds(lblServerHost.getX(), lblServerHost.getY() + lblServerHost.getHeight() + CustOpts.VER_GAP * 4,
+        cbxIsSingleUser.setBounds(lblServerHost.getX(), sepH1.getY() + sepH1.getHeight() + CustOpts.VER_GAP * 2,
         		cbxIsSingleUser.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsDiscBeforeTax.setBounds(cbxIsSingleUser.getX(), cbxIsSingleUser.getY() + cbxIsSingleUser.getHeight() + CustOpts.VER_GAP,
         		cbxIsDiscBeforeTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
@@ -402,9 +405,25 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		cbxIsDisplayBillInKitchen.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxShowCustomerFrame.setBounds(cbxIsDisplayBillInKitchen.getX(), cbxIsDisplayBillInKitchen.getY() + cbxIsDisplayBillInKitchen.getHeight() + CustOpts.VER_GAP,
         		cbxShowCustomerFrame.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        //        cbxIsPrintBillWhenPay.setBounds(CustOpts.HOR_GAP, cbxIsDiscBeforeTax.getY() + cbxIsDiscBeforeTax.getHeight() + CustOpts.VER_GAP,
+//        cbxIsPrintBillWhenPay.setBounds(CustOpts.HOR_GAP, cbxIsDiscBeforeTax.getY() + cbxIsDiscBeforeTax.getHeight() + CustOpts.VER_GAP,
 //        		cbxIsPrintBillWhenPay.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-
+    	sepH2.setBounds(CustOpts.HOR_GAP * 4, 
+    			cbxShowCustomerFrame.getY() + cbxShowCustomerFrame.getHeight() + CustOpts.VER_GAP * 2,
+    			BarFrame.instance.menuPanel.getX() - CustOpts.HOR_GAP * 8 ,
+    			sepH2.getPreferredSize().height);
+    	
+    	//------------------------------------------------
+    	lblServerHost.setBounds(sepH2.getX(), sepH2.getY() + sepH2.getHeight() + CustOpts.VER_GAP * 2,
+         		lblServerHost.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdServerHost.setBounds(lblServerHost.getX() + lblServerHost.getWidth() + CustOpts.HOR_GAP, lblServerHost.getY(),
+         		200, CustOpts.BTN_HEIGHT);
+        
+        //==========================================================
+    	sepV.setBounds(BarFrame.instance.menuPanel.getX() - sepV.getPreferredSize().width - CustOpts.HOR_GAP, 
+    			BarFrame.menuPanel.getY(),
+    			sepV.getPreferredSize().width, 
+    			BarFrame.menuPanel.getHeight() + CustOpts.BTN_HEIGHT * 2 + CustOpts.VER_GAP);
+    	
         //menu area----------
 		if(BarFrame.instance != null && BarFrame.instance.menuPanel != null) {
 			BarFrame.instance.menuPanel.reLayout();
@@ -429,12 +448,15 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		lblCategoryAreaPortion.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdCategoryAreaPortion.setBounds(lblCategoryAreaPortion.getX() + lblCategoryAreaPortion.getWidth() + CustOpts.HOR_GAP, lblCategoryAreaPortion.getY(),
         		40, CustOpts.BTN_HEIGHT);
-        
     }
 
     private void initComponent() {
     	removeAll();
 
+        sepH1 = new JSeparator(SwingConstants.HORIZONTAL);
+        sepH2 = new JSeparator(SwingConstants.HORIZONTAL);
+        sepV = new JSeparator(SwingConstants.VERTICAL);
+        
         lblGST = new JLabel(BarFrame.consts.GST());
         tfdGST = new JTextField(String.valueOf(BarOption.getGST()));
         lblQST = new JLabel(BarFrame.consts.QST());
@@ -613,6 +635,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(cbxShowCustomerFrame);
         
 //        add(cbxIsPrintBillWhenPay);
+        add(sepH1);
+        add(sepH2);
+        add(sepV);
 	}
 
     JLabel lblGST;
@@ -652,7 +677,11 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     JTextField tfdDishCol;
     JLabel lblCategoryAreaPortion;
     JTextField tfdCategoryAreaPortion;
-    
+
+	JSeparator sepH1;
+	JSeparator sepH2;
+	JSeparator sepV;
+	
     private FunctionButton btnLine_2_1;
     private FunctionButton btnLine_2_2;
     //private FunctionButton btnLine_2_3;

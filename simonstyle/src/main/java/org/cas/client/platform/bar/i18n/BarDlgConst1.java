@@ -238,7 +238,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String IsPrintBillWhenPay() {return "automatic print bill when pay";}
     @Override
-	public String StartTimeOfDay() {return "Start time of a day";}
+	public String StartTimeOfDay() {return "Start Time of The Day";}
     @Override
 	public String PrinterMinReachTime() {return "Printer Min Reach Time";}
     @Override
