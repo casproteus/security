@@ -1,4 +1,4 @@
-package org.cas.client.platform.bar.beans;
+package org.cas.client.platform.bar.uibeans;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

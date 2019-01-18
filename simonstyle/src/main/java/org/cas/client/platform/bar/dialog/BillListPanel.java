@@ -15,9 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 
-import org.cas.client.platform.bar.beans.ArrowButton;
-import org.cas.client.platform.bar.beans.FunctionButton;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.uibeans.ArrowButton;
+import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;

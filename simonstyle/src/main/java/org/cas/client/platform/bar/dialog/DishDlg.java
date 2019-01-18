@@ -23,8 +23,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import org.cas.client.platform.bar.beans.CategoryToggleButton;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.uibeans.CategoryToggleButton;
 import org.cas.client.platform.casbeans.PIMSeparator;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;

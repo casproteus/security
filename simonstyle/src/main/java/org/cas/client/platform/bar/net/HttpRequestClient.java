@@ -1,4 +1,4 @@
-package org.cas.client.platform.bar;
+package org.cas.client.platform.bar.net;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

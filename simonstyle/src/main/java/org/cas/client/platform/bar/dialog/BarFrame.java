@@ -23,10 +23,10 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
-import org.cas.client.platform.bar.HttpRequestClient;
-import org.cas.client.platform.bar.RequestNewOrderThread;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
+import org.cas.client.platform.bar.net.HttpRequestClient;
+import org.cas.client.platform.bar.net.RequestNewOrderThread;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;

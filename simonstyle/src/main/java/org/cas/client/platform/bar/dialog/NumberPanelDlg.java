@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
-import org.cas.client.platform.bar.beans.NumButton;
+import org.cas.client.platform.bar.uibeans.NumButton;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 

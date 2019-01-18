@@ -16,9 +16,9 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
-import org.cas.client.platform.bar.beans.ColorChooserButton;
-import org.cas.client.platform.bar.beans.ColorChooserButton.ColorChangedListener;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
+import org.cas.client.platform.bar.uibeans.ColorChooserButton;
+import org.cas.client.platform.bar.uibeans.ColorChooserButton.ColorChangedListener;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;

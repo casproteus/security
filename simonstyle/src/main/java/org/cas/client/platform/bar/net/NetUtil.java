@@ -1,4 +1,4 @@
-package org.cas.client.platform.bar.netbeans;
+package org.cas.client.platform.bar.net;
 
 public class NetUtil {
 	

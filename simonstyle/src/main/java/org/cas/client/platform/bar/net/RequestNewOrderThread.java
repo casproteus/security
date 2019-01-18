@@ -1,4 +1,4 @@
-package org.cas.client.platform.bar;
+package org.cas.client.platform.bar.net;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,10 +13,9 @@ import java.util.List;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.model.Dish;
-import org.cas.client.platform.bar.netbeans.MainOrder;
-import org.cas.client.platform.bar.netbeans.Material;
-import org.cas.client.platform.bar.netbeans.NetUtil;
-import org.cas.client.platform.bar.netbeans.TextContent;
+import org.cas.client.platform.bar.net.bean.MainOrder;
+import org.cas.client.platform.bar.net.bean.Material;
+import org.cas.client.platform.bar.net.bean.TextContent;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.casutil.ErrorUtil;
