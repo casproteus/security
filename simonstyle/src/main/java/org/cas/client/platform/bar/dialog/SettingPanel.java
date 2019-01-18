@@ -387,7 +387,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 
     	sepH1.setBounds(CustOpts.HOR_GAP * 4, 
     			lblPrinterMinReachTime.getY() + lblPrinterMinReachTime.getHeight() + CustOpts.VER_GAP * 2,
-    			BarFrame.instance.menuPanel.getX() - CustOpts.HOR_GAP * 8 ,
+    			BarFrame.instance.menuPanel.getX() - CustOpts.HOR_GAP * 7 ,
     			sepH1.getPreferredSize().height);
     	
         //cbx------------------------------------
@@ -409,7 +409,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 //        		cbxIsPrintBillWhenPay.getPreferredSize().width, CustOpts.BTN_HEIGHT);
     	sepH2.setBounds(CustOpts.HOR_GAP * 4, 
     			cbxShowCustomerFrame.getY() + cbxShowCustomerFrame.getHeight() + CustOpts.VER_GAP * 2,
-    			BarFrame.instance.menuPanel.getX() - CustOpts.HOR_GAP * 8 ,
+    			BarFrame.instance.menuPanel.getX() - CustOpts.HOR_GAP * 7 ,
     			sepH2.getPreferredSize().height);
     	
     	//------------------------------------------------
