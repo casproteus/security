@@ -97,7 +97,7 @@ public class PrintService{
     	flushIpContent();
         reInitPrintRelatedMaps();
         
-        String printerIP = BarFrame.instance.menuPanel.printers[0].getIp();
+        String printerIP = BarFrame.menuPanel.printers[0].getIp();
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
@@ -110,7 +110,7 @@ public class PrintService{
         flushIpContent();
         reInitPrintRelatedMaps();
 
-        String printerIP = BarFrame.instance.menuPanel.printers[0].getIp();
+        String printerIP = BarFrame.menuPanel.printers[0].getIp();
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
@@ -123,7 +123,7 @@ public class PrintService{
         flushIpContent();
         reInitPrintRelatedMaps();
 
-        String printerIP = BarFrame.instance.menuPanel.printers[0].getIp();
+        String printerIP = BarFrame.menuPanel.printers[0].getIp();
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
@@ -136,7 +136,7 @@ public class PrintService{
     	flushIpContent();
         reInitPrintRelatedMaps();
       
-        String printerIP = BarFrame.instance.menuPanel.printers[0].getIp();
+        String printerIP = BarFrame.menuPanel.printers[0].getIp();
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(

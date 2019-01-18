@@ -13,6 +13,7 @@ import java.util.List;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.model.Printer;
 import org.cas.client.platform.bar.net.bean.MainOrder;
 import org.cas.client.platform.bar.net.bean.Material;
 import org.cas.client.platform.bar.net.bean.TextContent;
@@ -27,42 +28,48 @@ import flexjson.JSONDeserializer;
 
 public class RequestNewOrderThread extends Thread implements ActionListener{
 	
-	String url;
+	static String url;
 	String jsonStr;
 	List<MainOrder> mainOrders;
 	List<Material> materials;
 	List<TextContent> menus;
 	List<TextContent> serviceTexts;
 	 
-	public RequestNewOrderThread(String url) {
-        
-		url = NetUtil.validateURL(url);
-		
-		if(!url.endsWith("/")) {
-			url = url + "/";
-		}
-		
-		String storeName = BarOption.getBillHeadInfo();
-    	int p = storeName.indexOf(":");
-    	if(p > 0) {
-    		storeName = storeName.substring(0, p).trim();
-    	}
-    	
-		this.url =  url + storeName + "/requestNewOrders";
-		jsonStr = BarFrame.prepareLicenceJSONString();
-	}
-	
     @Override
     public void run() {
+    	
+    	reInitURLString();
+		jsonStr = BarFrame.prepareLicenceJSONString();
+		
     	while(true) {
     		try {
     			Thread.sleep(20000);
     		}catch(Exception e) {
     			//do nothing.
     		}
-    		new HttpRequestClient(url, "POST", jsonStr, this).start();
+    		if(url != null && url.trim().length() > 1 && !"null".equals(url.trim().toLowerCase())) {
+    			new HttpRequestClient(url, "POST", jsonStr, this).start();
+    		}
     	}
     }
+
+    
+	public static void reInitURLString() {
+		url = NetUtil.validateURL(BarOption.getServerHost());	//if not valid, the url will be return directly.
+		if(url != null && url.trim().length() > 1 && !"null".equals(url.trim().toLowerCase())) {	//so need to check again. 
+			if(!url.endsWith("/")) {
+				url = url + "/";
+			}
+			
+			String storeName = BarOption.getBillHeadInfo();
+	    	int p = storeName.indexOf(":");
+	    	if(p > 0) {
+	    		storeName = storeName.substring(0, p).trim();
+	    	}
+	    	
+			url =  url + storeName + "/requestNewOrders";
+		}
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -241,14 +248,15 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		int row = idx / 10 + 1;
 		int col = idx % 10;
 		
-		StringBuilder sql = new StringBuilder("INSERT INTO DINING_TABLE (name, posX, posY, width, height, type, status) VALUES ('")
+		StringBuilder sql = new StringBuilder("INSERT INTO DINING_TABLE (name, posX, posY, width, height, type, status, openTime) VALUES ('")
 			.append(table).append("', ")	//name
 			.append(col * 90 + CustOpts.HOR_GAP).append(", ")	//posX
 			.append(row * 90 + CustOpts.VER_GAP).append(", ")	//posY
 			.append(90).append(", ")	//width
 			.append(90).append(", ")	//height
 			.append(1).append(", ")		//type
-			.append(1).append(")");		//status
+			.append(1).append(", '")
+			.append(BarOption.df.format(new Date())).append("')");		//status
 		
 		try {
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
@@ -284,7 +292,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		HashMap<String, String> titleMap = new HashMap<>(); 
 		for(TextContent textContent : menus) {
 			if(textContent.getCategoryIdx() == idx) {
-				textContent.getTitle(titleMap);
+				textContent.putTitle(titleMap);
 			}
 		}
         StringBuilder sql = new StringBuilder("INSERT INTO Category(LANG1, LANG2, LANG3, DSP_INDEX) VALUES('")
@@ -304,8 +312,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	private Dish makeSureDishExist(String category, String location, int menuIdx, String portionName, int price, String menFu) {
 		//ID, CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, STORE,  COST, BRAND, CATEGORY, CONTENT, UNIT, PRODUCAREA, INDEX
 		StringBuilder sql = new StringBuilder("select * from product where deleted != true and CODE = '")
-				.append(portionName).append("' and price = ").append(price)
-				.append(" and category = '").append(category).append("'");
+				.append(portionName).append("' and category = '").append(category).append("'");
 
         try {
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -315,12 +322,56 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
             if(tmpPos == 0) {
             	return createNewDish(location, price, menFu, category);
             }else {
+            	//check if the properties are all same, if not, update local to make sure local are same with server.
+        		menFu = synchronizeLocalProduct(location, price, menFu, rs);
             	return new Dish(rs.getInt("id"), category, portionName, rs.getString("MNEMONIC"), rs.getString("SUBJECT"), menFu);
             }
         } catch (SQLException e) {
             ErrorUtil.write(e);
         }
         return null;
+	}
+
+	private String synchronizeLocalProduct(String location, int price, String menFu, ResultSet rs) throws SQLException {
+		StringBuilder sql;
+		HashMap<String, String> contentMap = new HashMap<>(); 
+		for(TextContent textContent : serviceTexts) {
+			String posInPage = textContent.posInPage;
+			if(posInPage.contains(location)) {
+				if(posInPage.endsWith("_description")) {	//if it's name of dish.
+					contentMap.put(posInPage, NetUtil.fetchProductName(textContent.content, BarOption.getMoneySign()));
+				}
+			}
+		}
+		//values in web
+		String name1 = contentMap.get("en_service_" + location + "_description");
+		String name2 = contentMap.get("fr_service_" + location + "_description");
+		String name3 = contentMap.get("zh_service_" + location + "_description");
+		name1 = name1 == null ? "" : name1;
+		name2 = name2 == null ? "" : name2;
+		name3 = name3 == null ? "" : name3;
+		menFu = convertPrinterIPtoIdx(menFu);
+		//values in local
+		String lName1 = rs.getString("CODE");
+		String lName2 = rs.getString("MNEMONIC");
+		String lName3 = rs.getString("SUBJECT");
+		int lPrice = rs.getInt("PRICE");
+		String lPrinter = rs.getString("BRAND");
+		int lIndex = rs.getInt("INDEX");
+		
+		if(!name1.equals(lName1) || !name2.equals(lName2) || !name3.equals(lName3) 
+				|| price != lPrice || !menFu.equals(lPrinter) 
+				|| Integer.valueOf(location.substring(location.lastIndexOf("_") + 1)) != lIndex) {
+			sql = new StringBuilder("Update Product set CODE = '").append(name1)
+					.append("', MNEMONIC = '").append(name2)
+					.append("', SUBJECT = '").append(name3)
+					.append("', PRICE = ").append(price)
+					.append(", BRAND = '").append(menFu)
+					.append("', INDEX = ").append(Integer.valueOf(location.substring(location.lastIndexOf("_") + 1)));
+		
+			PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+		}
+		return menFu;
 	}
 
 	//create the new dish in the given category.
@@ -331,7 +382,6 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 			String posInPage = textContent.posInPage;
 			if(posInPage.contains(location)) {
 				if(posInPage.endsWith("_description")) {	//if it's name of dish.
-					String[] strs = posInPage.split("_");
 					contentMap.put(posInPage, NetUtil.fetchProductName(textContent.content, BarOption.getMoneySign()));
 				}
 			}
@@ -340,6 +390,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		String name1 = contentMap.get("en_service_" + location + "_description");
 		String name2 = contentMap.get("fr_service_" + location + "_description");
 		String name3 = contentMap.get("zh_service_" + location + "_description");
+		seletedPrinterIdStr = convertPrinterIPtoIdx(seletedPrinterIdStr);
 		StringBuilder sql = new StringBuilder(
                  "INSERT INTO Product(CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, store, Cost,  BRAND, CATEGORY, INDEX, CONTENT, Unit, PRODUCAREA) VALUES ('")
                  .append(name1).append("', '")//CODE
@@ -364,7 +415,53 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
             rs.next();
             return new Dish(rs.getInt("id"), category, name1, name2, name3, seletedPrinterIdStr);
         }catch(Exception exp) {
+        	L.e("RequestNewOrders", "exception when creating new Dish.", exp);
         }
         return null;
+	}
+
+	private String convertPrinterIPtoIdx(String seletedPrinterIdStr) {
+		
+		String[] ipAryFromWeb = seletedPrinterIdStr.split(",");
+		if(ipAryFromWeb.length < 1) {
+			return seletedPrinterIdStr;
+		}
+		
+		for(int i = 0; i < ipAryFromWeb.length; i++) {
+			for (int iPrinter = 0; iPrinter < BarFrame.menuPanel.printers.length; iPrinter++) {
+				Printer localPrinter  = BarFrame.menuPanel.printers[iPrinter];
+				if(ipAryFromWeb[i].equals(localPrinter.getIp())) {
+					ipAryFromWeb[i] = String.valueOf(iPrinter);
+					break;
+				}
+			}
+			//if reach here means no local printer has this ip. then create a new printer record.
+			crateLocalPrinter("P"+BarFrame.menuPanel.printers.length + 1, 0, 0, ipAryFromWeb[i], 0, 0);
+			BarFrame.menuPanel.initPrinters();
+			ipAryFromWeb[i] = String.valueOf(BarFrame.menuPanel.printers.length);
+		}
+		
+		StringBuilder sb = new StringBuilder(ipAryFromWeb[0]);
+		for (int i = 1; i < ipAryFromWeb.length; i++) {
+			if(ipAryFromWeb[i].length() > 0) {
+				sb.append(",").append(ipAryFromWeb[i]);
+			}
+		}
+		return sb.toString();
+	}
+
+	private void crateLocalPrinter(String name, int category, int langType, String ip, int style, int status) {
+		StringBuilder sql = new StringBuilder("INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('")
+				.append(name).append("', ")
+				.append(category).append(", ")
+				.append(langType).append(", '")
+				.append(ip).append("', ")
+				.append(style).append(", ")
+				.append(status).append(")");	//打印机，全打
+		try {
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
+		}catch(Exception e) {
+			L.e("RequestNewOrders", "exception when creating an Printer record", e);
+		}
 	}
 }

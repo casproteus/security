@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.text.SimpleDateFormat;
 
+import org.cas.client.platform.bar.net.RequestNewOrderThread;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.L;
 
@@ -308,6 +309,7 @@ public class BarOption {
 
     public static void setServerHost(String serverHost) {
     	CustOpts.custOps.setKeyAndValue("serverHost", serverHost);
+    	RequestNewOrderThread.reInitURLString();	//a loop in thread is using a modified copy of this value.
     }
     public static String getServerHost() {
     	return CustOpts.custOps.getValue("serverHost") == null ? 

@@ -387,7 +387,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 
     	sepH1.setBounds(CustOpts.HOR_GAP * 4, 
     			lblPrinterMinReachTime.getY() + lblPrinterMinReachTime.getHeight() + CustOpts.VER_GAP * 2,
-    			BarFrame.instance.menuPanel.getX() - CustOpts.HOR_GAP * 7 ,
+    			BarFrame.menuPanel.getX() - CustOpts.HOR_GAP * 7 ,
     			sepH1.getPreferredSize().height);
     	
         //cbx------------------------------------
@@ -409,7 +409,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 //        		cbxIsPrintBillWhenPay.getPreferredSize().width, CustOpts.BTN_HEIGHT);
     	sepH2.setBounds(CustOpts.HOR_GAP * 4, 
     			cbxShowCustomerFrame.getY() + cbxShowCustomerFrame.getHeight() + CustOpts.VER_GAP * 2,
-    			BarFrame.instance.menuPanel.getX() - CustOpts.HOR_GAP * 7 ,
+    			BarFrame.menuPanel.getX() - CustOpts.HOR_GAP * 7 ,
     			sepH2.getPreferredSize().height);
     	
     	//------------------------------------------------
@@ -419,16 +419,16 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
          		200, CustOpts.BTN_HEIGHT);
         
         //==========================================================
-    	sepV.setBounds(BarFrame.instance.menuPanel.getX() - sepV.getPreferredSize().width - CustOpts.HOR_GAP, 
+    	sepV.setBounds(BarFrame.menuPanel.getX() - sepV.getPreferredSize().width - CustOpts.HOR_GAP, 
     			BarFrame.menuPanel.getY(),
     			sepV.getPreferredSize().width, 
     			BarFrame.menuPanel.getHeight() + CustOpts.BTN_HEIGHT * 2 + CustOpts.VER_GAP);
     	
         //menu area----------
-		if(BarFrame.instance != null && BarFrame.instance.menuPanel != null) {
-			BarFrame.instance.menuPanel.reLayout();
+		if(BarFrame.instance != null && BarFrame.menuPanel != null) {
+			BarFrame.menuPanel.reLayout();
 		}
-        lblCategoryRow.setBounds(BarFrame.instance.menuPanel.getX(), BarFrame.menuPanel.getY() + BarFrame.menuPanel.getHeight() + CustOpts.HOR_GAP,
+        lblCategoryRow.setBounds(BarFrame.menuPanel.getX(), BarFrame.menuPanel.getY() + BarFrame.menuPanel.getHeight() + CustOpts.HOR_GAP,
         		lblCategoryRow.getPreferredSize().width, lblCategoryRow.getPreferredSize().height);
         tfdCategoryRow.setBounds(lblCategoryRow.getX() + lblCategoryRow.getWidth() + CustOpts.HOR_GAP, lblCategoryRow.getY(),
         		20, CustOpts.BTN_HEIGHT);

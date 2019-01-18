@@ -39,7 +39,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
-	private String VERSION = "V0.118-20190116";
+	private String VERSION = "V0.119-20190118";
     public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
@@ -73,12 +73,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         }else {
         	instance.setVisible(true);
         }
-        
-        String hostStr = BarOption.getServerHost();
-        if(hostStr != null && hostStr.trim().length() > 1 && !"null".equals(hostStr.trim().toLowerCase())) {
-        	//this thread will start a request thread every 20 seconds to fetch new order from server..
-        	new RequestNewOrderThread(hostStr).start();
-        }
+      
+        //this thread will start a request thread every 20 seconds to fetch new order from server..
+        new RequestNewOrderThread().start();
         
         if(BarOption.isShowCustomerFrame()) {
             GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();

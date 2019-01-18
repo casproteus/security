@@ -21,7 +21,7 @@ public class TextContent {
 		
 		return Integer.valueOf(locationStrAry[3]);
 	}
-	public void getTitle(HashMap<String, String> titleMap) {
+	public void putTitle(HashMap<String, String> titleMap) {
 		if(locationStrAry == null) {
 			locationStrAry = posInPage.split("_");
 		}

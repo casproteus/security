@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.cas.client.platform.bar.uibeans.MenuButton;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
 public class MenuPanel extends JPanel implements ActionListener {
@@ -82,7 +84,7 @@ public class MenuPanel extends JPanel implements ActionListener {
         btnPageDownMenu.addActionListener(this);
         
         setLayout(null);
-        
+        initPrinters();
 		initCategoryAndDishes();
 		reLayout();
 		validate();
@@ -154,12 +156,21 @@ public class MenuPanel extends JPanel implements ActionListener {
                 tmpPos++;
             }
             productRS.close();// 关闭
-            
-            //load all printers--------------------------
-			String sql = "select * from hardware where category = 0 order by id";
-			ResultSet rs = statement.executeQuery(sql);
+			
+        } catch (Exception e) {
+            ErrorUtil.write(e);
+        }
+        curMenuPage = 0;
+        reInitCategoryAndMenuBtns();
+    }
 
-			ResultSetMetaData rd = rs.getMetaData(); // 得到结果集相关信息
+	public void initPrinters() {
+		
+		int tmpPos;
+		//load all printers--------------------------
+		String sql = "select * from hardware where category = 0 order by id";
+		try {
+			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
 			rs.afterLast();
 			rs.relative(-1);
 			tmpPos = rs.getRow();
@@ -176,17 +187,15 @@ public class MenuPanel extends JPanel implements ActionListener {
 				tmpPos++;
 			}
 			rs.close();
+			
 			// rearrange into map
 			for(Printer printer:printers){
-	            PrintService.ipPrinterMap.put(printer.getIp(),printer);
-	        }
-			
-        } catch (Exception e) {
-            ErrorUtil.write(e);
-        }
-        curMenuPage = 0;
-        reInitCategoryAndMenuBtns();
-    }
+			    PrintService.ipPrinterMap.put(printer.getIp(),printer);
+			}
+		}catch(Exception e) {
+			L.e("MenuPanel", "exception when initPrinters", e);
+		}
+	}
 
     // menu and category buttons must be init after initContent---------
     private void reInitCategoryAndMenuBtns() {
