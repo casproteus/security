@@ -18,6 +18,7 @@ import org.cas.client.platform.bar.net.bean.Material;
 import org.cas.client.platform.bar.net.bean.TextContent;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
+import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -115,7 +116,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	            int billId = rs.getInt("id");
 	            //because the qt (4X) will stands for 4 material, so need to merge it before creating output. 
 	            HashMap<String, Integer> qtMap = conbineMainOrders(materials);
-	            List<Dish> dishes = new ArrayList();;
+	            List<Dish> dishes = new ArrayList<Dish>();
 	            //create output record for each materials of this mainOrder. @materials has been cleaned.
 	            for (int j = 0; j < materials.size(); j++) {
 	            	Material material = materials.get(j);
@@ -236,14 +237,19 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 
 	//create a new opened table
 	private void createNewOpenedTable(String table) {
+		int idx = Integer.valueOf(table);
+		int row = idx / 10 + 1;
+		int col = idx % 10;
+		
 		StringBuilder sql = new StringBuilder("INSERT INTO DINING_TABLE (name, posX, posY, width, height, type, status) VALUES ('")
 			.append(table).append("', ")	//name
-			.append(10).append(", ")	//posX
-			.append(10).append(", ")	//posY
-			.append(50).append(", ")	//width
-			.append(50).append(", ")	//height
+			.append(col * 90 + CustOpts.HOR_GAP).append(", ")	//posX
+			.append(row * 90 + CustOpts.VER_GAP).append(", ")	//posY
+			.append(90).append(", ")	//width
+			.append(90).append(", ")	//height
 			.append(1).append(", ")		//type
 			.append(1).append(")");		//status
+		
 		try {
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 		}catch(Exception exp) {
