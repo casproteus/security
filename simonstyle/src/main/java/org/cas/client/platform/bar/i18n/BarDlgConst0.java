@@ -218,15 +218,17 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String BillPageCol() {return "Columns of Bills:";}
     @Override
-	public String CategoryRow() {return "Rows of Category Button:";}
+	public String RowsofCategoryButton() {return "Rows of Category Button:";}
     @Override
-	public String CategoryCol() {return "Columns of Category Button:";}
+	public String ColumnsofCategoryButton() {return "Columns of Category Button:";}
     @Override
-	public String DishRow() {return "Rows of Dish Button:";}
+	public String RowsofDishButton() {return "Rows of Dish Button:";}
     @Override
-	public String DishCol() {return "Columns of Dish Button:";}
+	public String ColumnsofDishButton() {return "Columns of Dish Button:";}
     @Override
-	public String CategoryAreaPortion() {return "Category Area Portion";}
+	public String PortionofCategoryArea() {return "Portion of Category Area:";}
+    @Override
+	public String PortionofMenuArea() {return "Portion of Menu Area:";}
     @Override
 	public String IsSingleUser() {return "Is single user mode";}
     @Override

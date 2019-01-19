@@ -268,6 +268,14 @@ public class BarOption {
     	CustOpts.custOps.setKeyAndValue("CategoryAreaPortion", col);
     }
     
+    public static float getMenuAreaPortion() {
+    	return CustOpts.custOps.getValue("MenuAreaPortion") == null ? 
+    			0.6f : Float.valueOf((String)CustOpts.custOps.getValue("MenuAreaPortion"));
+    }
+    public static void setMenuAreaPortion(String col) {
+    	CustOpts.custOps.setKeyAndValue("MenuAreaPortion", col);
+    }
+    
     public static boolean isSingleUser() {
     	return "true".equals(CustOpts.custOps.getValue("SingleUserMode"));
     }

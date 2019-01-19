@@ -218,15 +218,17 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String BillPageCol() {return "账单分布列数:";}
     @Override
-	public String CategoryRow() {return "类别按钮行数:";}
+	public String RowsofCategoryButton() {return "类别按钮行数:";}
     @Override
-	public String CategoryCol() {return "类别按钮列数:";}
+	public String ColumnsofCategoryButton() {return "类别按钮列数:";}
     @Override
-	public String DishRow() {return "菜单按钮行数:";}
+	public String RowsofDishButton() {return "菜单按钮行数:";}
     @Override
-	public String DishCol() {return "菜单按钮列数:";}
+	public String ColumnsofDishButton() {return "菜单按钮列数:";}
     @Override
-	public String CategoryAreaPortion() {return "类别区域所占比例";}
+	public String PortionofCategoryArea() {return "类别区域所占比例:";}
+    @Override
+	public String PortionofMenuArea() {return "菜单区域所占比例:";}
     @Override
 	public String IsSingleUser() {return "单人操作模式";}
     @Override

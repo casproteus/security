@@ -269,6 +269,21 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     		}
     		BarOption.setCategoryAreaPortion(tfdCategoryAreaPortion.getText());
     		BarFrame.menuPanel.initComponent();
+    	}else if(o == tfdMenuAreaPortion) {
+    		Float num;
+    		try {
+    			num = Float.valueOf(tfdMenuAreaPortion.getText());
+    		}catch(Exception exp) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+				return;
+    		}
+    		if(num < 0 || num > 1) {
+    			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+				return;
+    		}
+    		BarOption.setMenuAreaPortion(tfdMenuAreaPortion.getText());
+    		((SalesPanel)BarFrame.instance.panels[2]).initComponent();
+    		reLayout();
     	}
     }
 
@@ -429,7 +444,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 			BarFrame.menuPanel.reLayout();
 		}
         lblCategoryRow.setBounds(BarFrame.menuPanel.getX(), BarFrame.menuPanel.getY() + BarFrame.menuPanel.getHeight() + CustOpts.HOR_GAP,
-        		lblCategoryRow.getPreferredSize().width, lblCategoryRow.getPreferredSize().height);
+        		lblCategoryRow.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdCategoryRow.setBounds(lblCategoryRow.getX() + lblCategoryRow.getWidth() + CustOpts.HOR_GAP, lblCategoryRow.getY(),
         		20, CustOpts.BTN_HEIGHT);
         lblCategoryCol.setBounds(tfdCategoryRow.getX() + tfdCategoryRow.getWidth() + CustOpts.HOR_GAP, lblCategoryRow.getY(),
@@ -437,16 +452,22 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tfdCategoryCol.setBounds(lblCategoryCol.getX() + lblCategoryCol.getWidth() + CustOpts.HOR_GAP, lblCategoryRow.getY(),
         		20, CustOpts.BTN_HEIGHT);
         lblDishRow.setBounds(lblCategoryRow.getX(), lblCategoryRow.getY() + lblCategoryRow.getHeight() + CustOpts.HOR_GAP,
-        		lblDishRow.getPreferredSize().width, lblDishRow.getPreferredSize().height);
+        		lblDishRow.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdDishRow.setBounds(tfdCategoryRow.getX(), lblDishRow.getY(),
         		20, CustOpts.BTN_HEIGHT);
         lblDishCol.setBounds(lblCategoryCol.getX(), lblDishRow.getY(),
         		lblDishCol.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdDishCol.setBounds(tfdCategoryCol.getX(), lblDishRow.getY(),
         		20, CustOpts.BTN_HEIGHT);
-        lblCategoryAreaPortion.setBounds(tfdCategoryCol.getX() + tfdCategoryCol.getWidth() + CustOpts.HOR_GAP * 4, tfdCategoryCol.getY(),
+        lblCategoryAreaPortion.setBounds(BarFrame.menuPanel.getX() + BarFrame.menuPanel.getWidth() - 40 - CustOpts.HOR_GAP - lblCategoryAreaPortion.getPreferredSize().width, 
+        		tfdCategoryCol.getY(),
         		lblCategoryAreaPortion.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        tfdCategoryAreaPortion.setBounds(lblCategoryAreaPortion.getX() + lblCategoryAreaPortion.getWidth() + CustOpts.HOR_GAP, lblCategoryAreaPortion.getY(),
+        tfdCategoryAreaPortion.setBounds(lblCategoryAreaPortion.getX() + lblCategoryAreaPortion.getWidth() + CustOpts.HOR_GAP,
+        		lblCategoryAreaPortion.getY(),
+        		40, CustOpts.BTN_HEIGHT);
+        lblMenuAreaPortion.setBounds(lblCategoryAreaPortion.getX(), tfdDishCol.getY(),
+        		lblMenuAreaPortion.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdMenuAreaPortion.setBounds(tfdCategoryAreaPortion.getX(), lblMenuAreaPortion.getY(),
         		40, CustOpts.BTN_HEIGHT);
     }
 
@@ -483,16 +504,18 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tfdServerHost = new JTextField(String.valueOf(BarOption.getServerHost()));
         
         //compomnents for setting category and menus
-        lblCategoryRow = new JLabel(BarFrame.consts.CategoryRow());
+        lblCategoryRow = new JLabel(BarFrame.consts.RowsofCategoryButton());
         tfdCategoryRow = new JTextField(String.valueOf(BarOption.getCategoryRow()));
-        lblCategoryCol = new JLabel(BarFrame.consts.CategoryCol());
+        lblCategoryCol = new JLabel(BarFrame.consts.ColumnsofCategoryButton());
         tfdCategoryCol = new JTextField(String.valueOf(BarOption.getCategoryCol()));
-        lblDishRow = new JLabel(BarFrame.consts.DishRow());
+        lblDishRow = new JLabel(BarFrame.consts.RowsofDishButton());
         tfdDishRow = new JTextField(String.valueOf(BarOption.getDishRow()));
-        lblDishCol = new JLabel(BarFrame.consts.DishCol());
+        lblDishCol = new JLabel(BarFrame.consts.ColumnsofDishButton());
         tfdDishCol = new JTextField(String.valueOf(BarOption.getDishCol()));
-        lblCategoryAreaPortion = new JLabel(BarFrame.consts.CategoryAreaPortion());
+        lblCategoryAreaPortion = new JLabel(BarFrame.consts.PortionofCategoryArea());
         tfdCategoryAreaPortion = new JTextField(String.valueOf(BarOption.getCategoryAreaPortion()));
+        lblMenuAreaPortion = new JLabel(BarFrame.consts.PortionofMenuArea());
+        tfdMenuAreaPortion = new JTextField(String.valueOf(BarOption.getMenuAreaPortion()));
         
         btnLine_2_1 = new FunctionButton(BarFrame.consts.RETURN());
         btnLine_2_2 = new FunctionButton(BarFrame.consts.TABLE());
@@ -546,6 +569,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tfdDishRow.addFocusListener(this);
         tfdDishCol.addFocusListener(this);
         tfdCategoryAreaPortion.addFocusListener(this);
+        lblMenuAreaPortion.addFocusListener(this);
+        tfdMenuAreaPortion.addFocusListener(this);
         
         // 因为考虑到条码经常由扫描仪输入，不一定是靠键盘，所以专门为他加了DocumentListener，通过监视内容变化来自动识别输入完成，光标跳转。
         // tfdProdNumber.getDocument().addDocumentListener(this); // 而其它组件如实收金额框不这样做为了节约（一个KeyListener接口全搞定）
@@ -601,7 +626,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 		add(tfdDishCol);
 		add(lblCategoryAreaPortion);
 		add(tfdCategoryAreaPortion);
-		
+		add(lblMenuAreaPortion);
+		add(tfdMenuAreaPortion);
 	}
 	
 	private void addOtherComponentes() {
@@ -677,7 +703,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     JTextField tfdDishCol;
     JLabel lblCategoryAreaPortion;
     JTextField tfdCategoryAreaPortion;
-
+    JLabel lblMenuAreaPortion;
+    JTextField tfdMenuAreaPortion;
+    
 	JSeparator sepH1;
 	JSeparator sepH2;
 	JSeparator sepV;

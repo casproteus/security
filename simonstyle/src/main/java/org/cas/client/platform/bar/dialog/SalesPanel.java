@@ -575,11 +575,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         // TOP part============================
         int topAreaHeight = btnLine_1_1.getY() - 3 * CustOpts.VER_GAP;
 
-        Double tableWidth = (Double) CustOpts.custOps.hash2.get("TableWidth");
-        tableWidth = (tableWidth == null || tableWidth < 0.2) ? 0.4 : tableWidth;
-        
         billPanel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
-                (int) (getWidth() * tableWidth), topAreaHeight);
+                (int) (getWidth() * (1 - BarOption.getMenuAreaPortion())), topAreaHeight);
         
         // menu area--------------
         int xMenuArea = billPanel.getX() + billPanel.getWidth() + CustOpts.HOR_GAP;

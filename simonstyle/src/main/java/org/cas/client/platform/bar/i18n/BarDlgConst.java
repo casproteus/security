@@ -118,11 +118,12 @@ public interface BarDlgConst {
 
     String BillPageRow();
     String BillPageCol();
-    String CategoryRow();
-    String CategoryCol();
-    String DishRow();
-    String DishCol();
-    String CategoryAreaPortion();
+    String RowsofCategoryButton();
+    String ColumnsofCategoryButton();
+    String RowsofDishButton();
+    String ColumnsofDishButton();
+    String PortionofCategoryArea();
+	String PortionofMenuArea();
     String IsSingleUser();
     String IsTaxNotAllowDiscount();
     String IsBuffetMode();
