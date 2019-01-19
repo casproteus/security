@@ -4,8 +4,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -448,10 +446,12 @@ public class MenuPanel extends JPanel implements ActionListener {
                    tgbActiveCategory = categoryToggle;
                    initCategoryAndDishes();	//fill menu buttons with menus belong to this category.
                    reLayout();
-               } else if (LoginDlg.USERTYPE == LoginDlg.ADMIN_STATUS) {
+                } else if (getParent() == BarFrame.instance.panels[3]) {
                    CategoryDlg categoryDlg = new CategoryDlg(BarFrame.instance);
                    categoryDlg.setIndex(categoryToggle.getIndex());
                    categoryDlg.setVisible(true);
+                } else {
+                	((CategoryToggleButton) o).setSelected(true);
                 }
             }
         }
@@ -460,7 +460,7 @@ public class MenuPanel extends JPanel implements ActionListener {
             MenuButton menuButton = (MenuButton) o;
             String text = menuButton.getText();
             if (text == null || text.length() == 0) { // check if it's empty
-                if (LoginDlg.USERTYPE == LoginDlg.ADMIN_STATUS) { // and it's admin mode, add a Category.
+                if (getParent() == BarFrame.instance.panels[3]) { // and it's setting panel, add a Category.
                 	if(tgbActiveCategory == null || tgbActiveCategory.getText() == null || tgbActiveCategory.getText().length() < 1) {
     					JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.SetCatogoryFirst());
     					return;
@@ -470,7 +470,7 @@ public class MenuPanel extends JPanel implements ActionListener {
                     BarFrame.instance.switchMode(3);
                 }
             } else { // if it's not empty
-                if (LoginDlg.USERTYPE == LoginDlg.ADMIN_STATUS) {
+                if (getParent() == BarFrame.instance.panels[3]) {
                     new DishDlg(BarFrame.instance, menuButton.getDish()).setVisible(true);
                 } else {
                     // add into table.
