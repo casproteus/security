@@ -32,6 +32,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	String jsonStr;
 	List<MainOrder> mainOrders;
 	List<Material> materials;
+	HashMap<String, Integer> qtMap;
 	List<TextContent> menus;
 	List<TextContent> serviceTexts;
 	 
@@ -75,24 +76,28 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		List<String> tList = new JSONDeserializer<List<String>>()
 				.use(null, ArrayList.class).use("values", String.class).deserialize(e.getActionCommand());
-	
+		//reinit the four instance properties with new received json string.
 	    mainOrders = new JSONDeserializer<List<MainOrder>>()
 	    		.use(null, ArrayList.class).use("values", MainOrder.class).deserialize(tList.get(0));
 
 	    materials = new JSONDeserializer<List<Material>>().use(null, ArrayList.class)
 	            .use("values", Material.class).deserialize(tList.get(1));
 
+
+        //because the qt (4X) will stands for 4 material, so need to merge it before creating output. 
+        qtMap = conbineMainOrders(materials);
+        
 	    menus = new JSONDeserializer<List<TextContent>>().use(null, ArrayList.class)
 	            .use("values", TextContent.class).deserialize(tList.get(2));
 	    
 	    serviceTexts = new JSONDeserializer<List<TextContent>>().use(null, ArrayList.class)
 	            .use("values", TextContent.class).deserialize(tList.get(3));
-	    
+
+        String createtime = BarOption.df.format(new Date());
 
 	    for (int i = 0; i < mainOrders.size(); i++) {
 	        MainOrder mainOrder = mainOrders.get(i);
-	        //create a bill
-	        String createtime = BarOption.df.format(new Date());
+	        //prepare tableID and billIndex
 	        String tableID = mainOrder.sizeTable;
 	        String billIndex = "1";			//@default value, will change if tableID contains "_".
 	        int p = tableID.indexOf("_");
@@ -100,87 +105,96 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	        	billIndex = tableID.substring(p+1);
 	        	tableID = tableID.substring(0, p);
 	        }
-	        String total = mainOrder.payCondition;
-			StringBuilder sql = new StringBuilder(
-		            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
-					.append(createtime).append("', '")			//createtime
-		            .append(tableID).append("', '")				//tableID
-		            .append(billIndex).append("', ")			//BillIndex
-		            .append(total == null ? 0 : (int)(Float.parseFloat(total.substring(1)) * 100)).append(", ")	 //remove the $ ahead.
-		            .append(0).append(", ")	//discount
-		            .append(0).append(", ")	//tip
-		            .append(0).append(", ")	//otherreceived
-		            .append(0).append(", ")	//cashback
+	        //generate bills
+	        int billId = generateBill(createtime, tableID, billIndex, mainOrder.payCondition);
+            if(billId < 0) {
+            	L.e("Request new orders", "Failed to create a bill with createtime:" + createtime + " tableID:" + tableID + " billIndex:" + " price:" + mainOrder.payCondition, null);
+            	return;
+            }
+            // generate outputs
+            List<Dish> dishes = generateOutputs(mainOrder, createtime, tableID, billIndex, billId, materials);
+            //send these output to kitchen.
+            PrintService.exePrintOrderList(dishes, tableID, billIndex, "customer", false);
+            //send request to update the status to be 50.
+        	new HttpRequestClient(prepareUpdateOrderStatusURL(BarOption.getServerHost(), mainOrder.id, 50), "POST", BarFrame.prepareLicenceJSONString(), null).start();
+	    }
+	}
+
+	public int generateBill(String createtime, String tableID, String billIndex, String total) {
+		//create a bill
+		StringBuilder sql = new StringBuilder(
+		        "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
+				.append(createtime).append("', '")			//createtime
+		        .append(tableID).append("', '")				//tableID
+		        .append(billIndex).append("', ")			//BillIndex
+		        .append(total == null ? 0 : (int)(Float.parseFloat(total.substring(1)) * 100)).append(", ")	 //remove the $ ahead.
+		        .append(0).append(", ")	//discount
+		        .append(0).append(", ")	//tip
+		        .append(0).append(", ")	//otherreceived
+		        .append(0).append(", ")	//cashback
+		        .append(LoginDlg.USERID).append(", '")		//emoployid
+		        .append("").append("', '")					//Comment
+		        .append(createtime).append("')");				//opentime
+		try {
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
+		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime).append("' and billIndex = ").append(billIndex);
+		    ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+		    rs.beforeFirst();
+		    rs.next();
+
+			return rs.getInt("id");
+		 }catch(Exception exp) {
+			ErrorUtil.write(exp);
+			return -1;
+		 }
+	}
+
+	public List<Dish> generateOutputs(MainOrder mainOrder, String createtime, String tableID, String billIndex,
+			int billId, List<Material> materials) {
+		
+		List<Dish> dishes = new ArrayList<Dish>();
+		//create output record for each materials of this mainOrder. @materials has been cleaned.
+		for (int j = 0; j < materials.size(); j++) {
+			Material material = materials.get(j);
+			if(material.mainOrder.id == mainOrder.id) {	//I prefer this way rather than generate a clean materials list as parameter, because faster and more stable.
+		    	String location = material.location;
+		    	String portionName = material.portionName;	//dish name
+		    	int num = qtMap.get(material.portionName + material.remark);	//@NOTE we supposed the dish name should not duplicate.
+		    	int price = material.dencity == null ? 0 : (int)(Float.valueOf(material.dencity.substring(1).trim()) * 100);
+		    	
+		    	//make sure product exist.
+		    	Dish dish = synchronizeToLocalDB(tableID, location, portionName, price, material.menFu);
+		    	
+		    	dish.setNum(num);
+		    	dish.setModification(material.remark);
+				createOutputRecord(createtime, tableID, billIndex, billId, dishes, material, num, price, dish);
+			}
+		}
+		return dishes;
+	}
+
+	public void createOutputRecord(String createtime, String tableID, String billIndex, int billId,
+			List<Dish> dishes, Material material, int num, int price, Dish dish) {
+		StringBuilder sql;
+		Statement smt = PIMDBModel.getStatement();
+		try {
+			sql = new StringBuilder(
+		    	"INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME, category) VALUES ('")
+					.append(tableID).append("', ")	//subject ->table id
+		            .append(billIndex).append(", ")			//contactID ->bill id
+		            .append(dish.getId()).append(", ")	//product id
+		            .append(num).append(", ")	//amount
+		            .append(price).append(", ")	//totalprice int
+		            .append(0).append(", '")	//discount
+		            .append(material.remark).append("', ")				//content
 		            .append(LoginDlg.USERID).append(", '")		//emoployid
-		            .append("").append("', '")					//Comment
-		            .append(createtime).append("')");				//opentime
-			try {
-				PIMDBModel.getStatement().executeUpdate(sql.toString());
-			   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime).append("' and billIndex = ").append(billIndex);
-	            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-	            rs.beforeFirst();
-	            rs.next();
-	            int billId = rs.getInt("id");
-	            //because the qt (4X) will stands for 4 material, so need to merge it before creating output. 
-	            HashMap<String, Integer> qtMap = conbineMainOrders(materials);
-	            List<Dish> dishes = new ArrayList<Dish>();
-	            //create output record for each materials of this mainOrder. @materials has been cleaned.
-	            for (int j = 0; j < materials.size(); j++) {
-	            	Material material = materials.get(j);
-	            	if(material.mainOrder.id == mainOrder.id) {
-	                	String location = material.location;
-	                	String portionName = material.portionName;	//dish name
-	                	int num = qtMap.get(material.portionName + material.remark);	//@NOTE we supposed the dish name should not duplicate.
-	                	int price = material.dencity == null ? 0 : (int)(Float.valueOf(material.dencity.substring(1).trim()) * 100);
-	                	//make sure product exist.
-	                	Dish dish = synchronizeToLocalDB(tableID, location, portionName, price, material.menFu);
-	                	dish.setNum(num);
-	                	dish.setModification(material.remark);
-	            		Statement smt = PIMDBModel.getStatement();
-	            		try {
-	            			sql = new StringBuilder(
-	            		    	"INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME, category) VALUES ('")
-	            					.append(tableID).append("', ")	//subject ->table id
-	            		            .append(billIndex).append(", ")			//contactID ->bill id
-	            		            .append(dish.getId()).append(", ")	//product id
-	            		            .append(num).append(", ")	//amount
-	            		            .append(price).append(", ")	//totalprice int
-	            		            .append(0).append(", '")	//discount
-	            		            .append(material.remark).append("', ")				//content
-	            		            .append(LoginDlg.USERID).append(", '")		//emoployid
-	            		            .append(createtime).append("', ")	//opentime
-	            		            .append(billId).append(")");	//category ->billId
-	            			smt.executeUpdate(sql.toString());
-	            			dishes.add(dish);
-	            		} catch (Exception exp) {
-	            			ErrorUtil.write(exp);
-	            		}
-	            	}
-	            }
-	            //send these output to kitchen.
-	            PrintService.exePrintOrderList(dishes, tableID, billIndex, "customer", false);
-	            //send request to updat the status.
-	        	new HttpRequestClient(prepareUpdateOrderStatusURL(BarOption.getServerHost(), mainOrder.id, 50), "POST", BarFrame.prepareLicenceJSONString(), null).start();
-			 }catch(Exception exp) {
-				ErrorUtil.write(exp);
-			 }
-			
-			
-			
-	//        String loginName = instance.getContactPerson().getLoginname();
-	//        instance.setContactPerson(userMap.get(loginName));
-	//        mainOrderMap.put(instance.getId(), instance);
-	//        instance.setPerson(person);
-	    }
-	    
-	
-	    for (int i = 0; i < materials.size(); i++) {
-	        System.out.println(i);
-	        Material material = materials.get(i);
-	//        instance.setMainOrder(mainOrderMap.get(instance.getMainOrder().getId()));
-	//        instance.setPerson(person);
-	    }
-    
+		            .append(createtime).append("', ")	//opentime
+		            .append(billId).append(")");	//category ->billId
+			smt.executeUpdate(sql.toString());
+			dishes.add(dish);
+		} catch (Exception exp) {
+			ErrorUtil.write(exp);
+		}
 	}
 	
 	private String prepareUpdateOrderStatusURL(String url, long mainOrderId, int targetStatus) {
@@ -213,9 +227,9 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	//check the category and dish, make sure they exist.
 	private Dish synchronizeToLocalDB(String table, String location, String portionName, int price, String menFu) {
 		String[] strAry = location.split("_");
-		int idx = Integer.parseInt(strAry[1]);
+		
 		makeSureTableExistsAndOpened(table);
-		String category = makeSureCategoryExist(idx);
+		String category = makeSureCategoryExist(location, Integer.parseInt(strAry[1]));
 		return makeSureDishExist(category, location, Integer.parseInt(strAry[3]), portionName, price, menFu);
 	}
 
@@ -265,8 +279,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		}
 	}
 
-	//@NOTE: here we don not do update, if web/pos changed text, we should do a menu/automatic synchronization.
-	private String makeSureCategoryExist(int idx) {
+	private String makeSureCategoryExist(String location, int idx) {
 		//if less than category exist, then add category to 3.
         String sql = "select ID, LANG1, LANG2, LANG3, DSP_INDEX from CATEGORY where DSP_INDEX = " + idx;
         try {
@@ -279,13 +292,44 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
             if(tmpPos == 0) {
             	return createNewCategory(idx);
             }else {
-            	return rs.getString("LANG1");
+            	return synchronizeLocalCategory(location, rs);
             }
         } catch (SQLException e) {
             ErrorUtil.write(e);
         }
         return "";
 	}
+
+	private String synchronizeLocalCategory(String location, ResultSet rs) throws SQLException {
+		HashMap<String, String> contentMap = new HashMap<>(); 
+		for(TextContent textContent : serviceTexts) {
+			String posInPage = textContent.posInPage;
+			if(posInPage.endsWith("_menu_" + location)) {
+				contentMap.put(posInPage, textContent.content);
+			}
+		}
+		//values in web
+		String name1 = contentMap.get("en_menu_" + location);
+		String name2 = contentMap.get("fr_menu_" + location);
+		String name3 = contentMap.get("zh_menu_" + location);
+		name1 = name1 == null ? "" : name1;
+		name2 = name2 == null ? "" : name2;
+		name3 = name3 == null ? "" : name3;
+		//values in local
+		String lName1 = rs.getString("LANG1");
+		String lName2 = rs.getString("LANG2");
+		String lName3 = rs.getString("LANG3");
+		
+		if(!name1.equals(lName1) || !name2.equals(lName2) || !name3.equals(lName3)) {
+			StringBuilder sql = new StringBuilder("Update category set LANG1 = '").append(name1)
+					.append("', LANG2 = '").append(name2)
+					.append("', LANG3 = '").append(name3).append("')");
+		
+			PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+		}
+		return name1;
+	}
+
 
 	//create the No. idx category
 	private String createNewCategory(int idx) {
@@ -333,7 +377,6 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	}
 
 	private String synchronizeLocalProduct(String location, int price, String menFu, ResultSet rs) throws SQLException {
-		StringBuilder sql;
 		HashMap<String, String> contentMap = new HashMap<>(); 
 		for(TextContent textContent : serviceTexts) {
 			String posInPage = textContent.posInPage;
@@ -362,7 +405,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		if(!name1.equals(lName1) || !name2.equals(lName2) || !name3.equals(lName3) 
 				|| price != lPrice || !menFu.equals(lPrinter) 
 				|| Integer.valueOf(location.substring(location.lastIndexOf("_") + 1)) != lIndex) {
-			sql = new StringBuilder("Update Product set CODE = '").append(name1)
+			StringBuilder sql = new StringBuilder("Update Product set CODE = '").append(name1)
 					.append("', MNEMONIC = '").append(name2)
 					.append("', SUBJECT = '").append(name3)
 					.append("', PRICE = ").append(price)
