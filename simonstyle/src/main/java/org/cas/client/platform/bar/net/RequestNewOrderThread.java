@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
+import org.cas.client.platform.bar.dialog.TablesPanel;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.model.Printer;
 import org.cas.client.platform.bar.net.bean.MainOrder;
@@ -73,7 +74,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public synchronized void actionPerformed(ActionEvent e) {
 		List<String> tList = new JSONDeserializer<List<String>>()
 				.use(null, ArrayList.class).use("values", String.class).deserialize(e.getActionCommand());
 		//reinit the four instance properties with new received json string.
@@ -93,7 +94,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	    serviceTexts = new JSONDeserializer<List<TextContent>>().use(null, ArrayList.class)
 	            .use("values", TextContent.class).deserialize(tList.get(3));
 
-        String createtime = BarOption.df.format(new Date());
+        String openTime = BarOption.df.format(new Date());
 
 	    for (int i = 0; i < mainOrders.size(); i++) {
 	        MainOrder mainOrder = mainOrders.get(i);
@@ -105,16 +106,22 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	        	billIndex = tableID.substring(p+1);
 	        	tableID = tableID.substring(0, p);
 	        }
-	        //generate bills
-	        int billId = generateBill(createtime, tableID, billIndex, mainOrder.payCondition);
+	        //table
+	        makeSureTableExistsAndOpened(tableID, openTime);
+	        
+	        //bills
+	        int billId = generateBill(openTime, tableID, billIndex, mainOrder.payCondition);
             if(billId < 0) {
-            	L.e("Request new orders", "Failed to create a bill with createtime:" + createtime + " tableID:" + tableID + " billIndex:" + " price:" + mainOrder.payCondition, null);
+            	L.e("Request new orders", "Failed to create a bill with createtime:" + openTime + " tableID:" + tableID + " billIndex:" + " price:" + mainOrder.payCondition, null);
             	return;
             }
-            // generate outputs
-            List<Dish> dishes = generateOutputs(mainOrder, createtime, tableID, billIndex, billId, materials);
+            
+            //outputs
+            List<Dish> dishes = generateOutputs(mainOrder, openTime, tableID, billIndex, billId, materials);
+            
             //send these output to kitchen.
             PrintService.exePrintOrderList(dishes, tableID, billIndex, "customer", false);
+            
             //send request to update the status to be 50.
         	new HttpRequestClient(prepareUpdateOrderStatusURL(BarOption.getServerHost(), mainOrder.id, 50), "POST", BarFrame.prepareLicenceJSONString(), null).start();
 	    }
@@ -159,11 +166,11 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 			if(material.mainOrder.id == mainOrder.id) {	//I prefer this way rather than generate a clean materials list as parameter, because faster and more stable.
 		    	String location = material.location;
 		    	String portionName = material.portionName;	//dish name
-		    	int num = qtMap.get(material.portionName + material.remark);	//@NOTE we supposed the dish name should not duplicate.
+		    	Integer num = qtMap.get(material.portionName + (material.remark == null ? "" : material.remark));	//@NOTE we supposed the dish name should not duplicate.
 		    	int price = material.dencity == null ? 0 : (int)(Float.valueOf(material.dencity.substring(1).trim()) * 100);
 		    	
 		    	//make sure product exist.
-		    	Dish dish = synchronizeToLocalDB(tableID, location, portionName, price, material.menFu);
+		    	Dish dish = synchronizeToLocalDB(location, portionName, price, convertPrinterIPtoIdx(material.menFu));
 		    	
 		    	dish.setNum(num);
 		    	dish.setModification(material.remark);
@@ -186,7 +193,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		            .append(num).append(", ")	//amount
 		            .append(price).append(", ")	//totalprice int
 		            .append(0).append(", '")	//discount
-		            .append(material.remark).append("', ")				//content
+		            .append(material.remark == null ? "" : material.remark).append("', ")				//content
 		            .append(LoginDlg.USERID).append(", '")		//emoployid
 		            .append(createtime).append("', ")	//opentime
 		            .append(billId).append(")");	//category ->billId
@@ -213,7 +220,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		HashMap<String, Integer> qtMap = new HashMap<String, Integer>();
 		for(int i = materials.size() - 1; i >= 0; i--) {
 			Material material = materials.get(i);
-			String key = material.portionName + material.remark;
+			String key = material.portionName + (material.remark == null ? "" : material.remark);
 			if(qtMap.containsKey(key)) {
 				qtMap.put(key, qtMap.get(key) + 1);//increase the qt.
 				materials.remove(i);			//remove the none-first one from list.
@@ -225,16 +232,15 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	}
 
 	//check the category and dish, make sure they exist.
-	private Dish synchronizeToLocalDB(String table, String location, String portionName, int price, String menFu) {
+	private Dish synchronizeToLocalDB(String location, String portionName, int price, String menFu) {
 		String[] strAry = location.split("_");
 		
-		makeSureTableExistsAndOpened(table);
-		String category = makeSureCategoryExist(location, Integer.parseInt(strAry[1]));
+		String category = makeSureCategoryExist(location, Integer.parseInt(strAry[0]), Integer.parseInt(strAry[1]));
 		return makeSureDishExist(category, location, Integer.parseInt(strAry[3]), portionName, price, menFu);
 	}
 
 	//creata a table record if it's not exist yet. and make it opened. @NOTE: is the status is already opened, then report error.
-	private void makeSureTableExistsAndOpened(String table) {
+	private void makeSureTableExistsAndOpened(String table, String openTime) {
 		StringBuilder sql = new StringBuilder("select status from dining_Table where name = '")
 				.append(table).append("'");
 		try {
@@ -246,11 +252,12 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	        	createNewOpenedTable(table);
 	        }else {
 	        	if(rs.getInt("status") != 1) {//if already exist, make the status to be 1;
-	        		sql = new StringBuilder("update dining_Table set status = 1 where name = ")
-	        				.append(table).append("'");
+	        		sql = new StringBuilder("update dining_Table set status = 1, opentime = '").append(openTime)
+	        				.append("' where name = '").append(table).append("'");
 	        		PIMDBModel.getStatement().executeUpdate(sql.toString());
 	        	}
 	        }
+	        ((TablesPanel)BarFrame.instance.panels[0]).initContent();
 		}catch(Exception exp) {
 			L.e("downloading new orders", "makeSureTableExistsAndOpened", exp);
 		}
@@ -279,20 +286,18 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		}
 	}
 
-	private String makeSureCategoryExist(String location, int idx) {
+	private String makeSureCategoryExist(String location, int menuIdx, int idx) {
 		//if less than category exist, then add category to 3.
         String sql = "select ID, LANG1, LANG2, LANG3, DSP_INDEX from CATEGORY where DSP_INDEX = " + idx;
         try {
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
-            
-
             rs.afterLast();
             rs.relative(-1);
             int tmpPos = rs.getRow();
             if(tmpPos == 0) {
             	return createNewCategory(idx);
             }else {
-            	return synchronizeLocalCategory(location, rs);
+            	return synchronizeLocalCategory(menuIdx, idx, rs);
             }
         } catch (SQLException e) {
             ErrorUtil.write(e);
@@ -300,12 +305,14 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
         return "";
 	}
 
-	private String synchronizeLocalCategory(String location, ResultSet rs) throws SQLException {
+	//location's format is supposed to be like "3_1_0_1"
+	private String synchronizeLocalCategory(int menuIdx, int subMenuIdx, ResultSet rs) throws SQLException {
+		String location = menuIdx + "_" + subMenuIdx;
 		HashMap<String, String> contentMap = new HashMap<>(); 
-		for(TextContent textContent : serviceTexts) {
-			String posInPage = textContent.posInPage;
+		for(TextContent menu : menus) {
+			String posInPage = menu.posInPage;
 			if(posInPage.endsWith("_menu_" + location)) {
-				contentMap.put(posInPage, textContent.content);
+				contentMap.put(posInPage, menu.content);
 			}
 		}
 		//values in web
@@ -323,9 +330,10 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		if(!name1.equals(lName1) || !name2.equals(lName2) || !name3.equals(lName3)) {
 			StringBuilder sql = new StringBuilder("Update category set LANG1 = '").append(name1)
 					.append("', LANG2 = '").append(name2)
-					.append("', LANG3 = '").append(name3).append("')");
+					.append("', LANG3 = '").append(name3).append("' where dsp_Index = ").append(subMenuIdx);
 		
 			PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+			BarFrame.menuPanel.initComponent();
 		}
 		return name1;
 	}
@@ -346,6 +354,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
             		.append(idx).append(")");
         try {
 	        PIMDBModel.getStatement().executeUpdate(sql.toString());
+	        BarFrame.menuPanel.initComponent();
 	        return titleMap.get("en");
         }catch(Exception exp) {
         	return "";
@@ -355,8 +364,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	//the dencity must be a null or $1
 	private Dish makeSureDishExist(String category, String location, int menuIdx, String portionName, int price, String menFu) {
 		//ID, CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, STORE,  COST, BRAND, CATEGORY, CONTENT, UNIT, PRODUCAREA, INDEX
-		StringBuilder sql = new StringBuilder("select * from product where deleted != true and CODE = '")
-				.append(portionName).append("' and category = '").append(category).append("'");
+		StringBuilder sql = new StringBuilder("select * from product where deleted != true and index = ").append(menuIdx).append(" and category = '").append(category).append("'");
 
         try {
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -393,26 +401,25 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		name1 = name1 == null ? "" : name1;
 		name2 = name2 == null ? "" : name2;
 		name3 = name3 == null ? "" : name3;
-		menFu = convertPrinterIPtoIdx(menFu);
+		
 		//values in local
 		String lName1 = rs.getString("CODE");
 		String lName2 = rs.getString("MNEMONIC");
 		String lName3 = rs.getString("SUBJECT");
 		int lPrice = rs.getInt("PRICE");
 		String lPrinter = rs.getString("BRAND");
-		int lIndex = rs.getInt("INDEX");
 		
 		if(!name1.equals(lName1) || !name2.equals(lName2) || !name3.equals(lName3) 
-				|| price != lPrice || !menFu.equals(lPrinter) 
-				|| Integer.valueOf(location.substring(location.lastIndexOf("_") + 1)) != lIndex) {
+				|| price != lPrice || !menFu.equals(lPrinter)) {
 			StringBuilder sql = new StringBuilder("Update Product set CODE = '").append(name1)
 					.append("', MNEMONIC = '").append(name2)
 					.append("', SUBJECT = '").append(name3)
 					.append("', PRICE = ").append(price)
 					.append(", BRAND = '").append(menFu)
-					.append("', INDEX = ").append(Integer.valueOf(location.substring(location.lastIndexOf("_") + 1)));
+					.append("' where deleted != true and index = ").append(rs.getInt("INDEX")).append(" and category = '").append(rs.getString("CATEGORY")).append("'");
 		
 			PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+			BarFrame.menuPanel.initComponent();
 		}
 		return menFu;
 	}
@@ -451,6 +458,8 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
                  .append("false").append("')");//PRODUCAREA---cbxModifyPomp
         try {
 	        PIMDBModel.getStatement().executeUpdate(sql.toString());
+	        BarFrame.menuPanel.initComponent();
+	        
 	        sql = new StringBuilder("Select id from product where CODE = '")
 	        		.append(name1).append("' and category = '").append(category).append("'");
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -469,19 +478,39 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		if(ipAryFromWeb.length < 1) {
 			return seletedPrinterIdStr;
 		}
+		int realLenth = BarFrame.menuPanel.getPrinters().length;
+		int idxOfFirstEmpty = 0;
+		for (int i = BarFrame.menuPanel.getPrinters().length - 1; i >= 0; i--) {
+			Printer printer = BarFrame.menuPanel.getPrinters()[i];
+			if(printer.getIp() == null || printer.getIp().length() == 0) {
+				realLenth--;
+				idxOfFirstEmpty = i;
+			}
+		}
 		
 		for(int i = 0; i < ipAryFromWeb.length; i++) {
-			for (int iPrinter = 0; iPrinter < BarFrame.menuPanel.printers.length; iPrinter++) {
-				Printer localPrinter  = BarFrame.menuPanel.printers[iPrinter];
-				if(ipAryFromWeb[i].equals(localPrinter.getIp())) {
-					ipAryFromWeb[i] = String.valueOf(iPrinter);
-					break;
+			if(ipAryFromWeb[i].length() > 0) {	// some are just "", ignore this kind of element.
+				boolean findedMatching = false;
+				for (int idxOfLocalPrinter = 0; idxOfLocalPrinter < BarFrame.menuPanel.getPrinters().length; idxOfLocalPrinter++) {	
+					Printer localPrinter  = BarFrame.menuPanel.getPrinters()[idxOfLocalPrinter];
+					if(ipAryFromWeb[i].equals(localPrinter.getIp())) {
+						ipAryFromWeb[i] = String.valueOf(idxOfLocalPrinter);
+						findedMatching = true;
+						break;
+					}
+				}
+				if(!findedMatching) {
+					if(realLenth < 6) {
+						updateLocalPrinter("P"+(idxOfFirstEmpty + 1), 0, 0, ipAryFromWeb[i], 0, 0, idxOfFirstEmpty);
+						BarFrame.menuPanel.initPrinters();
+						ipAryFromWeb[i] = String.valueOf(BarFrame.menuPanel.getPrinters().length);
+					}else {
+						ipAryFromWeb[i] = String.valueOf(1);
+						BarFrame.setStatusMes("Error! Web printer ip do not match any of local 6 printer ip! Printed on main printer temperally.");
+						L.e("requestNewOrders", "web printer ip do not match any of local 6 printer IP.", null);
+					}
 				}
 			}
-			//if reach here means no local printer has this ip. then create a new printer record.
-			crateLocalPrinter("P"+BarFrame.menuPanel.printers.length + 1, 0, 0, ipAryFromWeb[i], 0, 0);
-			BarFrame.menuPanel.initPrinters();
-			ipAryFromWeb[i] = String.valueOf(BarFrame.menuPanel.printers.length);
 		}
 		
 		StringBuilder sb = new StringBuilder(ipAryFromWeb[0]);
@@ -493,14 +522,11 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		return sb.toString();
 	}
 
-	private void crateLocalPrinter(String name, int category, int langType, String ip, int style, int status) {
-		StringBuilder sql = new StringBuilder("INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('")
-				.append(name).append("', ")
-				.append(category).append(", ")
-				.append(langType).append(", '")
-				.append(ip).append("', ")
-				.append(style).append(", ")
-				.append(status).append(")");	//打印机，全打
+	private void updateLocalPrinter(String name, int category, int langType, String ip, int style, int status, int id) {
+		StringBuilder sql = new StringBuilder("Update Hardware set name = '").append(name)
+				.append("', category = ").append(category).append(", langType = ").append(langType)
+				.append(", ip = '").append(ip).append("', style = ").append(style).append(", status = ").append(status)
+				.append(" where id = ").append(id);
 		try {
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 		}catch(Exception e) {

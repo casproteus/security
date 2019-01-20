@@ -47,7 +47,7 @@ public class MenuPanel extends JPanel implements ActionListener {
     String[][] classifiedDishNameMetrix;// it's sub set of all menuNameMetrix
     private ArrayList<ArrayList<MenuButton>> onSrcMenuBtnMatrix = new ArrayList<ArrayList<MenuButton>>();
 
-    public Printer[] printers;
+    private Printer[] printers;
     private Dish[] dishAry;
     private List<Dish> classifiedDishAry;
     ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
@@ -55,7 +55,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		initComponent();
 	}
 
-	void initComponent() {
+	public void initComponent() {
 	    categoryRow = BarOption.getCategoryRow();
 	    categoryColumn = BarOption.getCategoryCol();
 	    menuRow = BarOption.getDishRow();
@@ -172,23 +172,25 @@ public class MenuPanel extends JPanel implements ActionListener {
 			rs.afterLast();
 			rs.relative(-1);
 			tmpPos = rs.getRow();
-			printers = new Printer[tmpPos];
+			setPrinters(new Printer[tmpPos]);
 			rs.beforeFirst();
 			tmpPos = 0;
 			while (rs.next()) {
-				printers[tmpPos] = new Printer();
-				printers[tmpPos].setId(rs.getInt("id"));
-				printers[tmpPos].setPname(rs.getString("name"));
-				printers[tmpPos].setIp(rs.getString("ip"));
-				printers[tmpPos].setFirstPrint(rs.getInt("style")); // index p1, p2.....
-				printers[tmpPos].setType(rs.getInt("langType"));
+				getPrinters()[tmpPos] = new Printer();
+				getPrinters()[tmpPos].setId(rs.getInt("id"));
+				getPrinters()[tmpPos].setPname(rs.getString("name"));
+				getPrinters()[tmpPos].setIp(rs.getString("ip"));
+				getPrinters()[tmpPos].setFirstPrint(rs.getInt("style")); // index p1, p2.....
+				getPrinters()[tmpPos].setType(rs.getInt("langType"));
 				tmpPos++;
 			}
 			rs.close();
 			
 			// rearrange into map
-			for(Printer printer:printers){
-			    PrintService.ipPrinterMap.put(printer.getIp(),printer);
+			for(Printer printer:getPrinters()){
+				if(printer.getIp().trim().length() > 0) {
+					PrintService.ipPrinterMap.put(printer.getIp().trim(),printer);
+				}
 			}
 		}catch(Exception e) {
 			L.e("MenuPanel", "exception when initPrinters", e);
@@ -480,7 +482,15 @@ public class MenuPanel extends JPanel implements ActionListener {
         } 
 	}
 
-    private ArrowButton btnPageUpCategory;
+    public Printer[] getPrinters() {
+		return printers;
+	}
+
+	public void setPrinters(Printer[] printers) {
+		this.printers = printers;
+	}
+
+	private ArrowButton btnPageUpCategory;
     private ArrowButton btnPageDownCategory;
     private ArrowButton btnPageUpMenu;
     private ArrowButton btnPageDownMenu;

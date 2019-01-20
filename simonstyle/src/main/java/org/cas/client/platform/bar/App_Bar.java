@@ -193,7 +193,7 @@ public class App_Bar extends AbstractApp {
             //To occupy the record id of "0".
             sql = "INSERT INTO Bill (total) VALUES (0)";	//just to ocupy the bill record which id is 0, so we can always ignore the bill if the id is 0. 
             stm.executeUpdate(sql);
-            sql = "INSERT INTO output(SUBJECT) VALUES ('T1')";	//just to ocupy the output record which id is 0, so we can always ignore the bill if the id is 0. 
+            sql = "INSERT INTO output(SUBJECT) VALUES ('1')";	//just to ocupy the output record which id is 0, so we can always ignore the bill if the id is 0. 
             stm.executeUpdate(sql);
             //Add default employ categories
             sql = "INSERT INTO Category (LANG1, LANG2, LANG3, DSP_INDEX) VALUES ('Manager','Directeur', '领班', -1)";

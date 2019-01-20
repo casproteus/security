@@ -97,7 +97,7 @@ public class PrintService{
     	flushIpContent();
         reInitPrintRelatedMaps();
         
-        String printerIP = BarFrame.menuPanel.printers[0].getIp();
+        String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
@@ -110,7 +110,7 @@ public class PrintService{
         flushIpContent();
         reInitPrintRelatedMaps();
 
-        String printerIP = BarFrame.menuPanel.printers[0].getIp();
+        String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
@@ -123,7 +123,7 @@ public class PrintService{
         flushIpContent();
         reInitPrintRelatedMaps();
 
-        String printerIP = BarFrame.menuPanel.printers[0].getIp();
+        String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
@@ -136,7 +136,7 @@ public class PrintService{
     	flushIpContent();
         reInitPrintRelatedMaps();
       
-        String printerIP = BarFrame.menuPanel.printers[0].getIp();
+        String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
@@ -146,7 +146,7 @@ public class PrintService{
     
     public static void exePrintOrderList(List<Dish> selectdDishAry, String curTable, String curBill, String waiterName, boolean isCancelled){
 
-		Printer[] printers = BarFrame.menuPanel.printers;
+		Printer[] printers = BarFrame.menuPanel.getPrinters();
 
 		//ErrorUtil.(TAG,"start to translate selection into ipContent for printing.");
         if(!isIpContentMapEmpty()){
@@ -295,7 +295,7 @@ public class PrintService{
     }
 
 	public static boolean openDrawer(){
-		String key = BarFrame.menuPanel.printers[0].getIp();
+		String key = BarFrame.menuPanel.getPrinters()[0].getIp();
 		if(key.equalsIgnoreCase("mev")) {
 			try{
 				printThroughOSdriver(getMevCommandFilePath("mevOpenCashierCommand.xml", Command.OPEN_CASHIER), new HashPrintRequestAttributeSet(), false);
@@ -314,7 +314,7 @@ public class PrintService{
 			}
 		}else {	//TODO: not tested yet. worked around year 2005
 	    	try{
-				Socket socket = new Socket(key != null ? key : BarFrame.menuPanel.printers[0].getIp(), 9100);
+				Socket socket = new Socket(key != null ? key : BarFrame.menuPanel.getPrinters()[0].getIp(), 9100);
 				OutputStream outputStream = socket.getOutputStream();
 				outputStream.write(Command.DLE_DC4);
 		

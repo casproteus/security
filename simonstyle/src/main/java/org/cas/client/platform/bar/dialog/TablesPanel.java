@@ -292,7 +292,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     }
 
     // menu and category buttons must be init after initContent---------
-	void initContent() {
+	public void initContent() {
 		//clean existing btns
 		for (int i = btnTables.size() - 1; i >=0; i--) {
 			TableButton tableToggleButton = btnTables.get(i);
