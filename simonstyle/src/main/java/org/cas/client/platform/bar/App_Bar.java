@@ -200,6 +200,9 @@ public class App_Bar extends AbstractApp {
             stm.executeUpdate(sql);
             sql = "INSERT INTO Category (LANG1, LANG2, LANG3, DSP_INDEX) VALUES ('Waiter', 'Serveur', '店员', -1)";
             stm.executeUpdate(sql);
+            //Add default employee to occupy the id 0.
+            sql = "INSERT INTO EMPLOYEE (FNAME, NNAME, CATEGORY, PASSWORD) VALUES ('ROBOT','ROBOT', 'Waiter', 'asdf')";
+            stm.executeUpdate(sql);
 
             stm.close();
         } catch (Exception e) {
