@@ -127,7 +127,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 	}
 	
     private static void authenticate(String inputedSN) {
-        if (inputedSN.length() != 6) {
+        if (inputedSN == null || inputedSN.length() != 6) {
             JOptionPane.showMessageDialog(null,"Please input correct license code");
             return;
         }
