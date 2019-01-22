@@ -170,7 +170,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		    	int price = material.dencity == null ? 0 : (int)(Float.valueOf(material.dencity.substring(1).trim()) * 100);
 		    	
 		    	//make sure product exist.
-		    	Dish dish = synchronizeToLocalDB(location, portionName, price, convertPrinterIPtoIdx(material.menFu));
+		    	Dish dish = synchronizeToLocalDB(location, portionName, price, material.menFu);
 		    	
 		    	dish.setNum(num);
 		    	dish.setModification(material.remark);
@@ -338,7 +338,6 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		return name1;
 	}
 
-
 	//create the No. idx category
 	private String createNewCategory(int idx) {
 		HashMap<String, String> titleMap = new HashMap<>(); 
@@ -375,8 +374,8 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
             	return createNewDish(location, price, menFu, category);
             }else {
             	//check if the properties are all same, if not, update local to make sure local are same with server.
-        		menFu = synchronizeLocalProduct(location, price, menFu, rs);
-            	return new Dish(rs.getInt("id"), category, portionName, rs.getString("MNEMONIC"), rs.getString("SUBJECT"), menFu);
+        		String localPrinterIdx = synchronizeLocalProduct(location, price, menFu, rs);
+            	return new Dish(rs.getInt("id"), category, portionName, rs.getString("MNEMONIC"), rs.getString("SUBJECT"), localPrinterIdx);
             }
         } catch (SQLException e) {
             ErrorUtil.write(e);
@@ -478,12 +477,12 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		if(ipAryFromWeb.length < 1) {
 			return seletedPrinterIdStr;
 		}
-		int realLenth = BarFrame.menuPanel.getPrinters().length;
+		int nonEmptyQt = BarFrame.menuPanel.getPrinters().length;
 		int idxOfFirstEmpty = 0;
 		for (int i = BarFrame.menuPanel.getPrinters().length - 1; i >= 0; i--) {
 			Printer printer = BarFrame.menuPanel.getPrinters()[i];
 			if(printer.getIp() == null || printer.getIp().length() == 0) {
-				realLenth--;
+				nonEmptyQt--;
 				idxOfFirstEmpty = i;
 			}
 		}
@@ -491,7 +490,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		for(int i = 0; i < ipAryFromWeb.length; i++) {
 			if(ipAryFromWeb[i].length() > 0) {	// some are just "", ignore this kind of element.
 				boolean findedMatching = false;
-				for (int idxOfLocalPrinter = 0; idxOfLocalPrinter < BarFrame.menuPanel.getPrinters().length; idxOfLocalPrinter++) {	
+				for (int idxOfLocalPrinter = 0; idxOfLocalPrinter < 6; idxOfLocalPrinter++) {	
 					Printer localPrinter  = BarFrame.menuPanel.getPrinters()[idxOfLocalPrinter];
 					if(ipAryFromWeb[i].equals(localPrinter.getIp())) {
 						ipAryFromWeb[i] = String.valueOf(idxOfLocalPrinter);
@@ -500,10 +499,10 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 					}
 				}
 				if(!findedMatching) {
-					if(realLenth < 6) {
+					if(nonEmptyQt < 6) {
 						updateLocalPrinter("P"+(idxOfFirstEmpty + 1), 0, 0, ipAryFromWeb[i], 0, 0, idxOfFirstEmpty);
 						BarFrame.menuPanel.initPrinters();
-						ipAryFromWeb[i] = String.valueOf(BarFrame.menuPanel.getPrinters().length);
+						ipAryFromWeb[i] = String.valueOf(idxOfFirstEmpty + 1);
 					}else {
 						ipAryFromWeb[i] = String.valueOf(1);
 						BarFrame.setStatusMes("Error! Web printer ip do not match any of local 6 printer ip! Printed on main printer temperally.");
@@ -523,6 +522,10 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	}
 
 	private void updateLocalPrinter(String name, int category, int langType, String ip, int style, int status, int id) {
+		String[] numStrs = ip.split("\\.");
+		if(numStrs.length != 4) {
+			L.e("updating localprinters", "non-ip parameter found", null);
+		}
 		StringBuilder sql = new StringBuilder("Update Hardware set name = '").append(name)
 				.append("', category = ").append(category).append(", langType = ").append(langType)
 				.append(", ip = '").append(ip).append("', style = ").append(style).append(", status = ").append(status)

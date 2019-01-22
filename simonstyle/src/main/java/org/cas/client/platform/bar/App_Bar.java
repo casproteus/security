@@ -165,17 +165,17 @@ public class App_Bar extends AbstractApp {
                     .concat(" category INTEGER, langType INTEGER,  ip VARCHAR(255), style INTEGER, status INTEGER);");
             stm.executeUpdate(sql);
 
-            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P1', 0, 0, '192.168.1.86', 1, 0)";	//打印机，全打
+            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P1', 0, 0, 'mev', 1, 0)";	//打印机，全打
             stm.executeUpdate(sql);
-            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P2', 0, 0, '192.168.1.87', 0, 0)";
+            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P2', 0, 0, '192.168.1.88', 0, 0)";
             stm.executeUpdate(sql);
-            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P3', 0, 0, '192.168.1.88', 0, 0)";
+            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P3', 0, 0, '', 0, 0)";
             stm.executeUpdate(sql);
-            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P4', 0, 0, '192.168.1.89', 0, 0)";
+            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P4', 0, 0, '', 0, 0)";
             stm.executeUpdate(sql);
-            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P5', 0, 0, '192.168.1.90', 0, 0)";
+            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P5', 0, 0, '', 0, 0)";
             stm.executeUpdate(sql);
-            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P6', 0, 0, '192.168.1.91', 0, 0)";
+            sql = "INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('P6', 0, 0, '', 0, 0)";
             stm.executeUpdate(sql);
          
             // 增建一个雇员绩效考评表。
