@@ -293,7 +293,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
             ActionEvent e) {
         Object o = e.getSource();
         if (o instanceof FunctionButton) {
-        	if(o == btnLine_2_1) {
+        	if(o == btnLine_2_1) {	//return;
         		LoginDlg.USERTYPE = -1;
         		BarFrame.instance.switchMode(0);
         		if(BarOption.isSingleUser()) {
@@ -306,22 +306,22 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 	                }
     			}
         		
-        	}else if(o == btnLine_2_2) {
-        		new TabbleSettingDlg(BarFrame.instance).setVisible(true);
+        	}else if(o == btnLine_2_2) {	//employee
+        		new EmployeeListDlg(BarFrame.instance).setVisible(true);
 //        	}else if(o == btnLine_2_3) {
 //        		//addMenuRelatedComps();
         	}else if(o == btnLine_2_4) {
-        		new AddModificationDialog(BarFrame.instance, "").setVisible(true);
-        	}else if(o == btnLine_2_5) {
         		new SettingPrinterDlg(BarFrame.instance).setVisible(true);
+        	}else if(o == btnLine_2_5) {
+        		new TabbleSettingDlg(BarFrame.instance).setVisible(true);
         	}else if(o == btnLine_2_6) {
         		new BillFootDialog(BarFrame.instance, BarOption.getBillFootInfo()).setVisible(true);
         	}else if(o == btnLine_2_7) {
-        		new EmployeeListDlg(BarFrame.instance).setVisible(true);
+        		new AddModificationDialog(BarFrame.instance, "").setVisible(true);
         	}else if(o == btnLine_2_8) {
-        		new CheckInOutListDlg(BarFrame.instance).setVisible(true);
-        	}else if(o == btnLine_2_9) {
         		new SettingColorDlg(BarFrame.instance).setVisible(true);
+        	}else if(o == btnLine_2_9) {
+        		new CheckInOutListDlg(BarFrame.instance).setVisible(true);
         	}
         }
         //JToggleButton-------------------------------------------------------------------------------------
@@ -518,14 +518,14 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tfdMenuAreaPortion = new JTextField(String.valueOf(BarOption.getMenuAreaPortion()));
         
         btnLine_2_1 = new FunctionButton(BarFrame.consts.RETURN());
-        btnLine_2_2 = new FunctionButton(BarFrame.consts.TABLE());
+        btnLine_2_2 = new FunctionButton(BarFrame.consts.Operator());
         //btnLine_2_3 = new FunctionButton("TBD");
-        btnLine_2_4 = new FunctionButton(BarFrame.consts.Modify());
-        btnLine_2_5 = new FunctionButton(BarFrame.consts.PRINTER());
+        btnLine_2_4 = new FunctionButton( BarFrame.consts.PRINTER());
+        btnLine_2_5 = new FunctionButton(BarFrame.consts.TABLE());
         btnLine_2_6 = new FunctionButton(BarFrame.consts.BillInfo());
-        btnLine_2_7 = new FunctionButton(BarFrame.consts.Operator());
-        btnLine_2_8 = new FunctionButton(BarFrame.consts.CheckInOut());
-        btnLine_2_9 = new FunctionButton(BarFrame.consts.Color().toUpperCase());
+        btnLine_2_7 = new FunctionButton(BarFrame.consts.Modify());
+        btnLine_2_8 = new FunctionButton(BarFrame.consts.Color().toUpperCase());
+        btnLine_2_9 = new FunctionButton(BarFrame.consts.CheckInOut());
 
         // properties
         Color bg = BarOption.getBK("Setting");

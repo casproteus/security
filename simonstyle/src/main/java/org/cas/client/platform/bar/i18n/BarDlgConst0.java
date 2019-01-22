@@ -154,7 +154,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String InvalidInput() {return "The input content is invalid for this function";}
     @Override
-	public String ADMIN_MODE() {return "System is in setting mode! Click logout button back to use mode";}
+	public String ADMIN_MODE() {return "System is in setting mode! Click RETURN button to exit.";}
     @Override
 	public String USE_MODE() {return "System is in operating mode!";}
     @Override
