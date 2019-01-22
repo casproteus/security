@@ -105,6 +105,7 @@ public interface BarDlgConst {
     String COMFIRMLOSTACTION();
     String ConfirmPayAgain();
     String ClosedBillCantVoid();
+    String ConvertVoidBillBack();
     String SetCatogoryFirst();
     String SendItemCanNotModify();
     String reCeivedMoneyNotEnough();

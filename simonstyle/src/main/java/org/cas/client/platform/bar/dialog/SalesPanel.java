@@ -91,7 +91,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         if (o instanceof FunctionButton) {
         	if(o == btnLine_1_1 || o == btnLine_1_2 || o == btnLine_1_3 || o == btnLine_2_3) { //pay
         		outputStatusCheck();
-    			billStatusCheck();
+    			billPricesUpdate();
         		
         		//if it's already paid, show comfirmDialog.
         		if(billPanel.status >= 100)
@@ -135,7 +135,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		}
         		
         		outputStatusCheck();
-    			billStatusCheck();
+    			billPricesUpdate();
         		BarFrame.instance.switchMode(1);
         		
         	} else if (o == btnLine_1_5) {	//remove item.
@@ -171,7 +171,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		billPanel.updateTotleArea();
              		
              		outputStatusCheck();
-             		billStatusCheck();
+             		billPricesUpdate();
              		
              	}catch(Exception exp) {
                  	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
@@ -179,8 +179,23 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              	}
         		
         	}else if (o == btnLine_1_10) { // print bill
-        		outputStatusCheck();
-        		billStatusCheck();
+            	//check bill status
+            	if(billPanel.status == 100) {//check if there's an item selected.
+            		if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertVoidBillBack(), BarFrame.consts.Operator(),
+                            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
+                        return;
+            		}else {
+            			//convert the status of the bill;
+            			String sql = "update bill set status = 0 where id = "+ billPanel.billID;
+            			try {
+            				PIMDBModel.getReadOnlyStatement().executeQuery(sql);
+            			}catch(Exception exp) {
+            				L.e("SalesPane", "Exception happenned when converting bill's status to 0", exp);
+            			}
+            		}
+         		}
+        		outputStatusCheck();		//will send new added(not printed yet) dishes to kitchen.
+        		billPricesUpdate();
         		billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.getCurBillIndex(), BarFrame.instance.valStartTime.getText());
         		billPanel.initContent();
         		
@@ -331,7 +346,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		billPanel.updateTotleArea();
              		
              		outputStatusCheck();
-             		billStatusCheck();
+             		billPricesUpdate();
              		
              	}catch(Exception exp) {
                  	JOptionPane.showMessageDialog(BarFrame.discountDlg, DlgConst.FORMATERROR);
@@ -418,7 +433,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	
             } else if (o == btnLine_2_10) {//send
         		outputStatusCheck();
-        		billStatusCheck();
+        		billPricesUpdate();
             	if(BarOption.isFastFoodMode()) {
     		    	BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
     		    	billPanel.initContent();
@@ -465,9 +480,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     }
 
     //and make sure new added dish will be updated with new information.
-	private void billStatusCheck() {
+	private void billPricesUpdate() {
 		//if there's new dish added, or discount, service fee changed.... update the total value of bill record.
-		updateBillRecord(billPanel.getBillId());		//in case if added service fee or discout of bill.
+		updateBillRecordPrices(billPanel.getBillId());		//in case if added service fee or discout of bill.
 		billPanel.initContent();	//always need to initContent, to make sure dish has new price. e.g. when adding a dish to a printed bill,
 	}								//and click print bill immediatly, will need the initContent. 
 
@@ -495,14 +510,14 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			//clean from screen.
 			billPanel.removeFromSelection(billPanel.tblBillPanel.getSelectedRow());
 			//update bill info, must be after the screen update, because will get total from screen.
-			updateBillRecord(BillListPanel.curDish.getBillID());
+			updateBillRecordPrices(BillListPanel.curDish.getBillID());
 		}else {
 			//only do clean from screen, because the output not generated yet, and will not affect the toltal in bill.
 			billPanel.removeFromSelection(billPanel.tblBillPanel.getSelectedRow());
 		}
 	}
 
-	private void updateBillRecord(int billId) {
+	private void updateBillRecordPrices(int billId) {
 		try {
 			PayDlg.updateBill(billId, "total", (int)(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
 			PayDlg.updateBill(billId, "discount", billPanel.discount);
