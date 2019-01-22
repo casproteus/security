@@ -403,7 +403,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			        }catch(Exception exp) {
 			        	ErrorUtil.write(exp);
 			        }
-			        
+			        BillListPanel.curDish = null;
 			        initContent();
 				}
 			}
@@ -427,7 +427,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			}else if(o == btnCombineAll) {//@note should consider the time, incase there'ss some bill not paid before, while was calculated into current client.
 		        String sql =
 		                "update output set contactID = 1 where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
-		                + "' and time = '" + BarFrame.instance.valStartTime.getText() + "' and DELETED != true";
+		                + "' and time = '" + BarFrame.instance.valStartTime.getText() + "' and DELETED != true or deleted is null";
 		        try {
 		        	PIMDBModel.getStatement().executeUpdate(sql);
 		        }catch(Exception exp) {
