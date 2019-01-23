@@ -178,6 +178,7 @@ public interface BarDlgConst {
     
     String PrinterSupport();
     
+    String SaleReport();
     String SaleRecs();
     String FROM();
     String TO();

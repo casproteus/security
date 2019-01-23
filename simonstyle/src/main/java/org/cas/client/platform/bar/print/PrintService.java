@@ -131,16 +131,14 @@ public class PrintService{
         printContents();
     }
     
-    public static void exePrintReport(List<Bill> bills, String startTime, String endTime){
+    public static void exePrintReport(String printerIP, List<String> formatedContent){
     	L.d("PrintService", "inside exePrint");
     	flushIpContent();
         reInitPrintRelatedMaps();
       
-        String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
-        ipContentMap.get(printerIP).addAll(
-        		formatContentForReport(bills, printerIP, startTime, endTime));
+        ipContentMap.get(printerIP).addAll(formatedContent);
         printContents();
     }
     
@@ -887,7 +885,7 @@ public class PrintService{
         return strAryFR;
     }
     
-    private static ArrayList<String> formatContentForReport(List<Bill> list, String curPrintIp, String startTime, String endTime){
+    public static ArrayList<String> formatContentForReport(List<Bill> list, String curPrintIp, String startTime, String endTime){
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	int tWidth = BarUtil.getPreferedWidth();
         
