@@ -340,7 +340,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
      				if(curContent == null || curContent.length() == 0)
      					return;
              		float discount = BarFrame.discountDlg.isPercentage ? 
-             				Float.valueOf(billPanel.valTotlePrice.getText()) * Float.valueOf(curContent)
+             				//Float.valueOf(billPanel.valTotlePrice.getText()) * Float.valueOf(curContent)
+             				(billPanel.subTotal - billPanel.discount)/100f * Float.valueOf(curContent)
              				: Float.valueOf(curContent);
              		billPanel.discount = (int)(discount * 100);
              		billPanel.updateTotleArea();
@@ -479,9 +480,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         }
     }
 
-    //and make sure new added dish will be updated with new information.
+	//and make sure new added dish will be updated with new information.
 	private void billPricesUpdate() {
-		//if there's new dish added, or discount, service fee changed.... update the total value of bill record.
+		//if there's new dish added, or discount, service fee changed.... update the total value field of bill record.
 		updateBillRecordPrices(billPanel.getBillId());		//in case if added service fee or discout of bill.
 		billPanel.initContent();	//always need to initContent, to make sure dish has new price. e.g. when adding a dish to a printed bill,
 	}								//and click print bill immediatly, will need the initContent. 
