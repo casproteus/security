@@ -341,9 +341,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
      					return;
              		float discount = BarFrame.discountDlg.isPercentage ? 
              				//Float.valueOf(billPanel.valTotlePrice.getText()) * Float.valueOf(curContent)
-             				(billPanel.subTotal - billPanel.discount)/100f * Float.valueOf(curContent)
+             				(billPanel.subTotal + billPanel.discount)/100f * Float.valueOf(curContent)
              				: Float.valueOf(curContent);
-             		billPanel.discount = (int)(discount * 100);
+             		billPanel.discount = Math.round(discount * 100);
              		billPanel.updateTotleArea();
              		
              		outputStatusCheck();
