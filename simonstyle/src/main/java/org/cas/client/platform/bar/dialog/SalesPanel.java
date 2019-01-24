@@ -222,7 +222,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	    			rs.beforeFirst();
 	    			rs.next();
 
-					BarFrame.instance.valCurBill.setText(String.valueOf(rs.getInt("contaD") + 1));
+					BarFrame.instance.valCurBill.setText(String.valueOf(rs.getInt("contactID") + 1));
             	}catch(Exception exp) {
             		L.e("Add Bill function",
             				"SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
