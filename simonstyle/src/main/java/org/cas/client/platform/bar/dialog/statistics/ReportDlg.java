@@ -193,7 +193,7 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
     }
 
     private void initDialog() {
-        setTitle(BarFrame.consts.SaleRecs());
+        setTitle(BarFrame.consts.SaleReport());
         setResizable(false);
         setModal(false);
 
