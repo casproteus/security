@@ -7,22 +7,33 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
@@ -36,8 +47,13 @@ import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 
-public class ReportDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, ListSelectionListener {
+public class ReportDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, ListSelectionListener, ChangeListener {
 	
+	private List<String> formattedString;
+	private StringBuilder startTime;
+	private StringBuilder endTime;
+	private ArrayList<Bill> bills;
+	private String printerIP;
 	/**
      * Creates a new instance of ContactDialog
      * 
@@ -54,15 +70,9 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
      */
     @Override
     public void reLayout() {
-        panel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 
-        		getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP * 2, 
-                getHeight() - CustOpts.SIZE_TITLE - CustOpts.SIZE_EDGE - CustOpts.VER_GAP * 3
-                - CustOpts.BTN_WIDTH_NUM);
-        
-        int startX = (getWidth() - 360 - CustOpts.HOR_GAP * 8 - lblFrom.getPreferredSize().width - lblTo.getPreferredSize().width) / 2;
-        lblFrom.setBounds(startX, panel.getY() + panel.getHeight() + CustOpts.VER_GAP * 2 + lblYearFrom.getPreferredSize().height,
+        lblFrom.setBounds(CustOpts.HOR_GAP,  CustOpts.VER_GAP,
         		lblFrom.getPreferredSize().width, lblFrom.getPreferredSize().height);
-        lblYearFrom.setBounds(lblFrom.getX() + lblFrom.getWidth() + CustOpts.HOR_GAP, panel.getY() + panel.getHeight() + CustOpts.VER_GAP,
+        lblYearFrom.setBounds(lblFrom.getX() + lblFrom.getWidth() + CustOpts.HOR_GAP, lblFrom.getY(),
         		60, lblYearFrom.getPreferredSize().height);
         tfdYearFrom.setBounds(lblYearFrom.getX(), lblYearFrom.getY() + lblYearFrom.getHeight() + CustOpts.VER_GAP, 
         		lblYearFrom.getWidth(), 30);
@@ -93,6 +103,8 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         btnPrint.setBounds(tfdDayTo.getX() + tfdDayTo.getWidth() + CustOpts.HOR_GAP, lblDayTo.getY(),
                 btnWidth, tfdDayTo.getHeight() + lblDayTo.getHeight() + CustOpts.VER_GAP);
         
+        scrPane.setBounds(lblFrom.getX(), tfdDayTo.getY() + tfdDayTo.getHeight() + CustOpts.VER_GAP * 2,
+        		btnPrint.getX() + btnPrint.getWidth(), 500);
         validate();
     }
 
@@ -140,48 +152,52 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
     public void componentHidden(ComponentEvent e) {};
 
     @Override
-    public void actionPerformed(
-            ActionEvent e) {
-        Object o = e.getSource();
-        if (o == btnPrint) {
-        	StringBuilder startTime = new StringBuilder();
-        	startTime.append(tfdYearFrom.getText());
-        	startTime.append("-");
-        	startTime.append(tfdMonthFrom.getText());
-        	startTime.append("-");
-        	startTime.append(tfdDayFrom.getText());
-        	String startDate = startTime.toString();
-        	startTime.append(" 00:00:00");
-
-        	StringBuilder endTime = new StringBuilder();
-        	endTime.append(tfdYearTo.getText());
-        	endTime.append("-");
-        	endTime.append(tfdMonthTo.getText());
-        	endTime.append("-");
-        	endTime.append(tfdDayTo.getText());
-        	String endDate = endTime.toString();
-        	endTime.append(" 23:59:59");
-        	ArrayList<Bill> bills = queryBillList(startTime.toString(), endTime.toString());
-        	PrintService.exePrintReport(bills, startTime.toString(), endTime.toString());
-        }
+    public void actionPerformed(ActionEvent e) {
+    	PrintService.exePrintReport(printerIP, formattedString);
     }
     
 	@Override
-	public void valueChanged(ListSelectionEvent e) {
+	public void valueChanged(ListSelectionEvent e) {}
+
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		startTime = new StringBuilder();
+    	startTime.append(tfdYearFrom.getText());
+    	startTime.append("-");
+    	startTime.append(tfdMonthFrom.getText());
+    	startTime.append("-");
+    	startTime.append(tfdDayFrom.getText());
+    	String startDate = startTime.toString();
+    	startTime.append(" 00:00:00");
+
+    	endTime = new StringBuilder();
+    	endTime.append(tfdYearTo.getText());
+    	endTime.append("-");
+    	endTime.append(tfdMonthTo.getText());
+    	endTime.append("-");
+    	endTime.append(tfdDayTo.getText());
+    	String endDate = endTime.toString();
+    	endTime.append(" 23:59:59");
+    	bills = queryBillList(startTime.toString(), endTime.toString());
+    	
+		printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
+		formattedString = PrintService.formatContentForReport(bills, printerIP, startTime.toString(), endTime.toString());
+		for (String content : formattedString) {
+			txpPreview.append(content);
+		}
 	}
-    
+	
     @Override
     public Container getContainer() {
         return getContentPane();
     }
 
     private void initDialog() {
-        setTitle(BarFrame.consts.SaleRecs());
+        setTitle(BarFrame.consts.SaleReport());
+        setResizable(false);
         setModal(false);
 
         // 初始化－－－－－－－－－－－－－－－－
-        panel = new JPanel();
-
         lblFrom = new JLabel(BarFrame.consts.FROM());
         lblTo = new JLabel(BarFrame.consts.TO());
         lblYearFrom = new JLabel("YYYY");
@@ -197,6 +213,8 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         tfdMonthTo = new JTextField();
         tfdDayTo = new JTextField();
         btnPrint = new JButton(BarFrame.consts.PRINT());
+        txpPreview = new JTextArea();
+        scrPane = new JScrollPane(txpPreview);
         // properties
         btnPrint.setMnemonic('F');
         btnPrint.setMargin(new Insets(0, 0, 0, 0));
@@ -213,13 +231,13 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         JLabel tLbl = new JLabel();
         tLbl.setOpaque(true);
         tLbl.setBackground(Color.GRAY);
-
+        txpPreview.setEditable(false);
+        
         // 布局---------------
-        setBounds((CustOpts.SCRWIDTH - 780) / 2, (CustOpts.SCRHEIGHT - 500) / 2, 550, 120); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 780) / 2, (CustOpts.SCRHEIGHT - 620) / 2, 500, 620); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
 
         // 搭建－－－－－－－－－－－－－
-        getContentPane().add(panel);
         getContentPane().add(lblFrom);
         getContentPane().add(lblTo);
         getContentPane().add(lblYearFrom);
@@ -235,9 +253,16 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         getContentPane().add(tfdMonthTo);
         getContentPane().add(tfdDayTo);
         getContentPane().add(btnPrint);
+        getContentPane().add(scrPane);
 
         // 加监听器－－－－－－－－
         btnPrint.addActionListener(this);
+        addChangeListener(tfdYearFrom, this);
+        addChangeListener(tfdMonthFrom,this);
+        addChangeListener(tfdDayFrom,this);
+        addChangeListener(tfdYearTo,this);
+        addChangeListener(tfdMonthTo,this);
+        addChangeListener(tfdDayTo,this);
         getContentPane().addComponentListener(this);
         
         //initContent
@@ -315,8 +340,6 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
     int[] prodIdAry;
     String[] prodNameAry;
     
-    JPanel panel;
-    
     JLabel lblFrom;
     JLabel lblTo;
     JLabel lblYearFrom;
@@ -331,5 +354,60 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
     JTextField tfdYearTo;
     JTextField tfdMonthTo;
     JTextField tfdDayTo;
+    JTextArea txpPreview;
+    JScrollPane scrPane;
     private JButton btnPrint;
+	
+	/**
+	 * Installs a listener to receive notification when the text of any
+	 * {@code JTextComponent} is changed. Internally, it installs a
+	 * {@link DocumentListener} on the text component's {@link Document},
+	 * and a {@link PropertyChangeListener} on the text component to detect
+	 * if the {@code Document} itself is replaced.
+	 * 
+	 * @param text any text component, such as a {@link JTextField}
+	 *        or {@link JTextArea}
+	 * @param changeListener a listener to receieve {@link ChangeEvent}s
+	 *        when the text is changed; the source object for the events
+	 *        will be the text component
+	 * @throws NullPointerException if either parameter is null
+	 */
+	public static void addChangeListener(JTextComponent text, ChangeListener changeListener) {
+	    Objects.requireNonNull(text);
+	    Objects.requireNonNull(changeListener);
+	    DocumentListener dl = new DocumentListener() {
+	        private int lastChange = 0, lastNotifiedChange = 0;
+
+	        @Override
+	        public void insertUpdate(DocumentEvent e) {
+	            changedUpdate(e);
+	        }
+
+	        @Override
+	        public void removeUpdate(DocumentEvent e) {
+	            changedUpdate(e);
+	        }
+
+	        @Override
+	        public void changedUpdate(DocumentEvent e) {
+	            lastChange++;
+	            SwingUtilities.invokeLater(() -> {
+	                if (lastNotifiedChange != lastChange) {
+	                    lastNotifiedChange = lastChange;
+	                    changeListener.stateChanged(new ChangeEvent(text));
+	                }
+	            });
+	        }
+	    };
+	    text.addPropertyChangeListener("document", (PropertyChangeEvent e) -> {
+	        Document d1 = (Document)e.getOldValue();
+	        Document d2 = (Document)e.getNewValue();
+	        if (d1 != null) d1.removeDocumentListener(dl);
+	        if (d2 != null) d2.addDocumentListener(dl);
+	        dl.changedUpdate(null);
+	    });
+	    Document d = text.getDocument();
+	    if (d != null) d.addDocumentListener(dl);
+	}
+
 }

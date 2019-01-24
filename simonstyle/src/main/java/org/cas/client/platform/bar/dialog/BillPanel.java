@@ -61,6 +61,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     //Bill property (not for specific item).the info should be retrieved from bill record if have.
     int billID;
     int discount;
+	int subTotal;
     int tip;
     int serviceFee;
     
@@ -489,7 +490,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	float qstRate = tvq == null ? 9.975f : Float.valueOf((String)tvq);
     	float totalGst = 0;
     	float totalQst = 0;
-    	int subTotal = 0;
+    	subTotal = 0;
     	
     	for(Dish dish: orderedDishAry) {
     		//get out the num.

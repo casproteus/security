@@ -328,7 +328,9 @@ public class BarDlgConst0 implements BarDlgConst{
     
     @Override
 	public String PrinterSupport() {return "Printer Support";}
-    
+
+    @Override
+    public String SaleReport() {return "Sales Report";}
     @Override
 	public String SaleRecs() {return "Bill Record";}
     @Override

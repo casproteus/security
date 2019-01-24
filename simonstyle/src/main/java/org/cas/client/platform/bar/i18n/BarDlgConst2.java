@@ -328,7 +328,9 @@ public class BarDlgConst2 implements BarDlgConst{
     
     @Override
 	public String PrinterSupport() {return "打印支持";}
-    
+
+    @Override
+    public String SaleReport() {return "销售报告";}
     @Override
 	public String SaleRecs() {return "单据记录";}
     @Override
