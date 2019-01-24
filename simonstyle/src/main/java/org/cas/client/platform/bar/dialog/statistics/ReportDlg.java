@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -104,7 +105,7 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
                 btnWidth, tfdDayTo.getHeight() + lblDayTo.getHeight() + CustOpts.VER_GAP);
         
         scrPane.setBounds(lblFrom.getX(), tfdDayTo.getY() + tfdDayTo.getHeight() + CustOpts.VER_GAP * 2,
-        		btnPrint.getX() + btnPrint.getWidth(), 500);
+        		btnPrint.getX() + btnPrint.getWidth(), 540);
         validate();
     }
 
@@ -182,9 +183,12 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
     	
 		printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
 		formattedString = PrintService.formatContentForReport(bills, printerIP, startTime.toString(), endTime.toString());
+
+		StringBuilder wholeContent = new StringBuilder();
 		for (String content : formattedString) {
-			txpPreview.append(content);
+			wholeContent.append(content);
 		}
+		txpPreview.setText(wholeContent.substring(0, wholeContent.length() - 9));
 	}
 	
     @Override
@@ -234,7 +238,7 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         txpPreview.setEditable(false);
         
         // 布局---------------
-        setBounds((CustOpts.SCRWIDTH - 780) / 2, (CustOpts.SCRHEIGHT - 620) / 2, 500, 620); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 780) / 2, (CustOpts.SCRHEIGHT - 660) / 2, 500, 660); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
 
         // 搭建－－－－－－－－－－－－－
@@ -334,7 +338,6 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         return bills;
     }
     
-
     int[] employIdAry;
     String[] employNameAry;
     int[] prodIdAry;
