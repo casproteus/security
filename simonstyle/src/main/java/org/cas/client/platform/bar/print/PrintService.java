@@ -380,7 +380,7 @@ public class PrintService{
         	ErrorUtil.write(e);
         }
 
-		isSuccess = printThroughOSdriver(path, new HashPrintRequestAttributeSet(), true);
+		isSuccess = printThroughOSdriver(path, new HashPrintRequestAttributeSet(), !BarOption.isDebugMode());
 		
 		//do cut paper.
 		if(isSuccess) {

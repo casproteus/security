@@ -43,7 +43,7 @@ public class BarOption {
     }
     
     public static boolean isDebugMode() {
-		return CustOpts.custOps.getValue("debug") == null ? true : 
+		return CustOpts.custOps.getValue("debug") == null ? false : 
 			"true".equals(CustOpts.custOps.getValue("debug"));
 	}
     
