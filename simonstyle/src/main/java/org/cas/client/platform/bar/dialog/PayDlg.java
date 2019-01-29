@@ -227,14 +227,18 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	//check if left moeny is 0. 
         	int left = (int)(Float.valueOf(valLeft.getText()) * 100);
         	if( left > 0) {
-	        	if(JOptionPane.showConfirmDialog(this, BarFrame.consts.reCeivedMoneyNotEnough(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
-	        		//user selected to close the bill. update the bill to closed
-	        		billClosed = closeCurrentBill();
-	        		//if selected yes, then update the table status.
-	        		if(SalesPanel.isLastBillOfCurTable()) {
-	        			SalesPanel.resetCurTableDBStatus();
-	        		}
-	        	}
+//	        	if(JOptionPane.showConfirmDialog(this, BarFrame.consts.reCeivedMoneyNotEnough(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
+//	        		//user selected to close the bill. update the bill to closed
+//	        		billClosed = closeCurrentBill();
+//	        		//if selected yes, then update the table status.
+//	        		if(SalesPanel.isLastBillOfCurTable()) {
+//	        			SalesPanel.resetCurTableDBStatus();
+//	        		}
+//	        	}
+	        	JOptionPane.showMessageDialog(this, BarFrame.consts.Left() + " : "  + BarOption.getMoneySign()
+        				+ new DecimalFormat("#0.00").format(left/100f));
+	        	//new ChangeDlg(BarFrame.instance, BarFrame.consts.Due() + BarOption.getMoneySign()
+        		//		+ new DecimalFormat("#0.00").format(left/100f)).setVisible(true); //it's a non-modal dialog.
         	}else if(left <= 0) {
         		billClosed = closeCurrentBill();
             	this.setVisible(false);
