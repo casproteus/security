@@ -447,7 +447,15 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         Dish newDish = dish.clone();		//@NOTE: incase the cloned dish contains outpurID properties.
         newDish.setOutputID(-1);
         newDish.setNum(1);
-        newDish.setTotalPrice(dish.getPrice() * 1);
+        int price = dish.getPrice();
+        if("true".equals(dish.getPrompPrice()) && BarOption.isTreatPricePromtAsTaxInclude()) {
+        	Object tvq = BarOption.getGST();
+        	Object tps = BarOption.getQST();
+        	float gstRate = tps == null ? 5f : Float.valueOf((String)tps);
+        	float qstRate = tvq == null ? 9.975f : Float.valueOf((String)tvq);
+        	price = Math.round(price * (100f - gstRate - qstRate)/100);
+        }
+        newDish.setTotalPrice(price * 1);
         newDish.setOpenTime(BarFrame.instance.valStartTime.getText());
         newDish.setBillIndex(BarFrame.instance.valCurBill.getText());
         newDish.setBillID(billID);
@@ -458,7 +466,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         tblBillPanel.setValueAt("", tValidRowCount, 0); // set the count.
         tblBillPanel.setValueAt(dish.getLanguage(CustOpts.custOps.getUserLang()), tValidRowCount, 1);// set the Name.
         tblBillPanel.setValueAt(dish.getSize() > 1 ? dish.getSize() : "", tValidRowCount, 2); // set the count.
-        tblBillPanel.setValueAt(BarOption.getMoneySign() + new DecimalFormat("#0.00").format(dish.getPrice()/100f), tValidRowCount, 3); // set the price.
+        tblBillPanel.setValueAt(BarOption.getMoneySign() + new DecimalFormat("#0.00").format(price/100f), tValidRowCount, 3); // set the price.
         
         updateTotleArea();								//because value change will not be used to remove the record.
         SwingUtilities.invokeLater(new Runnable() {
@@ -468,6 +476,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		        tblBillPanel.setSelectedRow(orderedDishAry.size() - 1);
 		        if("true".equals(newDish.getPrompMofify())) {
 		        	new AddModificationDialog(BarFrame.instance, BillListPanel.curDish.getModification()).setVisible(true);
+		        }
+		        if("true".equals(newDish.getPrompPrice()) && !BarOption.isTreatPricePromtAsTaxInclude()) {
+		        	salesPanel.btnLine_1_8.setSelected(true);
+		        	salesPanel.showPriceChangeDlg();
 		        }
 			}
 		});
@@ -766,7 +778,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		lblTVQ.setBounds(lblTPS.getX() + lblTPS.getWidth() + CustOpts.HOR_GAP, lblTPS.getY(), lblTPS.getWidth(), lblTPS.getHeight());
 		lblTotlePrice.setBounds(lblSubTotle.getX(), lblTVQ.getY(), lblTotlePrice.getPreferredSize().width, lblTVQ.getHeight());
 		valTotlePrice.setBounds(lblTotlePrice.getX() + lblTotlePrice.getWidth(), lblTotlePrice.getY(),
-				120 - lblTotlePrice.getWidth() - CustOpts.HOR_GAP, lblTVQ.getHeight());
+				120 - lblTotlePrice.getWidth(), lblTotlePrice.getHeight() + CustOpts.VER_GAP);
     }
     
     void initComponent() {
@@ -802,6 +814,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         tCellRender.setOpaque(true);
         tCellRender.setBackground(Color.LIGHT_GRAY);
         tblBillPanel.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
+        valTotlePrice.setFont(BarOption.lessBigFont);
         //@do_not_work! valTotlePrice.setHorizontalAlignment(SwingConstants.RIGHT);
         //@work! valTotlePrice.setAlignmentX(Component.RIGHT_ALIGNMENT);
       //@do_not_work!valTotlePrice.setBackground(Color.RED);

@@ -346,4 +346,12 @@ public class BarOption {
 	public static void setQST(String qst) {
 		CustOpts.custOps.setKeyAndValue(BarFrame.consts.QST(), qst);
 	}
+	
+	public static boolean isTreatPricePromtAsTaxInclude() {
+		return CustOpts.custOps.getValue("TreatPricePromtAsTaxInClude") == null ? 
+    			false : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("TreatPricePromtAsTaxInClude"));
+	}
+	public static void setTreatPricePromtAsTaxInclude(boolean treatPricePromtAsTaxInClude) {
+    	CustOpts.custOps.setKeyAndValue("TreatPricePromtAsTaxInClude", String.valueOf(treatPricePromtAsTaxInClude));
+	}
 }

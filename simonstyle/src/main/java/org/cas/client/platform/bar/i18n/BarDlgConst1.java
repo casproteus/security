@@ -526,5 +526,7 @@ public class BarDlgConst1 implements BarDlgConst{
 	@Override
 	public String IsDisplayBillInKitchen() {return "Display Bill Index In Kitchen Print";}
 	@Override
+	public String TreatPricePromtAsTaxInclude() {return "Treat Price Prom As Tax Include";};
+	@Override
 	public String IsShowCustomerFrame() {return "Show Customer Frame";}
 }

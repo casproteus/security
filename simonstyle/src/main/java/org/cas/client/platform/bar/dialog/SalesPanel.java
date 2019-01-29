@@ -466,19 +466,23 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
           			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
           			return;
           		}
-         		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.CHANGEPRICE());
-         		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.ChangePriceNotice());
-            	BarFrame.numberPanelDlg.setBtnSource(btnLine_1_8);//pomp up a numberPanelDlg
-         		BarFrame.numberPanelDlg.setFloatSupport(true);
-         		BarFrame.numberPanelDlg.setPercentSupport(false);
-         		BarFrame.numberPanelDlg.setModal(false);
-         		//should no record selected, select the last one.
-         		BarFrame.numberPanelDlg.setVisible(btnLine_1_8.isSelected());	//@NOTE: it's not model mode.
-         		BarFrame.numberPanelDlg.setAction(new UpdateItemPriceAction(btnLine_1_8, billPanel));
-        		
+         		showPriceChangeDlg();
         	}
         }
     }
+
+	public void showPriceChangeDlg() {
+		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.CHANGEPRICE());
+		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.ChangePriceNotice());
+		BarFrame.numberPanelDlg.setBtnSource(btnLine_1_8);//pomp up a numberPanelDlg
+		BarFrame.numberPanelDlg.setFloatSupport(true);
+		BarFrame.numberPanelDlg.setPercentSupport(false);
+		BarFrame.numberPanelDlg.setModal(false);
+		//should no record selected, select the last one.
+		btnLine_1_8.setSelected(true);
+		BarFrame.numberPanelDlg.setVisible(btnLine_1_8.isSelected());	//@NOTE: it's not model mode.
+		BarFrame.numberPanelDlg.setAction(new UpdateItemPriceAction(btnLine_1_8, billPanel));
+	}
 
 	//and make sure new added dish will be updated with new information.
 	private void billPricesUpdate() {
@@ -699,7 +703,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private FunctionButton btnLine_1_5;
     private FunctionButton btnLine_1_6;
     public JToggleButton btnLine_1_7;
-    private JToggleButton btnLine_1_8;
+    JToggleButton btnLine_1_8;
     private FunctionButton btnLine_1_9;
     private FunctionButton btnLine_1_10;
 
