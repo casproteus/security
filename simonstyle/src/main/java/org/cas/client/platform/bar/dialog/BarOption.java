@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import org.cas.client.platform.bar.net.RequestNewOrderThread;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.L;
+import org.cas.client.platform.casutil.TaoEncrypt;
 
 public class BarOption {
 	public static final int MaxQTY = 10000;
@@ -346,7 +347,38 @@ public class BarOption {
 	public static void setQST(String qst) {
 		CustOpts.custOps.setKeyAndValue(BarFrame.consts.QST(), qst);
 	}
-	
+
+	public static String getGSTAccount() {
+		Object valueInConfig = CustOpts.custOps.getValue("ningmeng");
+    	if(valueInConfig == null)
+    		return "";
+    	else{
+    		try {
+    			return TaoEncrypt.decrypt((String)valueInConfig, "dmfsJiaJdwz=", 1);
+    		}catch(Exception e) {
+        		return "";
+    		}
+    	}
+	}
+	public static void setGSTAccount(String gst) {
+		CustOpts.custOps.setKeyAndValue("ningmeng", gst);
+	}
+	public static String getQSTAccount() {
+		Object valueInConfig = CustOpts.custOps.getValue("aika");
+    	if(valueInConfig == null)
+    		return "";
+    	else{
+    		try {
+    			return TaoEncrypt.decrypt((String)valueInConfig, "dmfsJiaJdwz=", 1);
+    		}catch(Exception e) {
+        		return "";
+    		}
+    	}
+	}
+	public static void setQSTAccount(String qst) {
+		CustOpts.custOps.setKeyAndValue("aika", qst);
+	}
+
 	public static boolean isTreatPricePromtAsTaxInclude() {
 		return CustOpts.custOps.getValue("TreatPricePromtAsTaxInClude") == null ? 
     			false : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("TreatPricePromtAsTaxInClude"));
@@ -354,4 +386,5 @@ public class BarOption {
 	public static void setTreatPricePromtAsTaxInclude(boolean treatPricePromtAsTaxInClude) {
     	CustOpts.custOps.setKeyAndValue("TreatPricePromtAsTaxInClude", String.valueOf(treatPricePromtAsTaxInClude));
 	}
+
 }

@@ -39,7 +39,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
-	private String VERSION = "V0.123-20190123";
+	private String VERSION = "V0.124-20190128";
     public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
@@ -147,8 +147,18 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 							if (time > 0) {// if success
 								BarOption.setActivateTimeLeft(String.valueOf(time * 24 * 3600 * 1000));
 								BarOption.setLastSuccessStr(String.valueOf(new Date().getTime()));
-		
-								BarOption.setBillHeadInfo(responseString.substring(p + 1));
+								
+								String billHeadInfo = responseString.substring(p + 1);
+								p = billHeadInfo.indexOf("_");
+								BarOption.setBillHeadInfo(billHeadInfo.substring(0, p > 0 ? p : billHeadInfo.length()));
+								if(p > 0) {
+									String GST = billHeadInfo.substring(p+1);
+									p = GST.indexOf("_");
+									BarOption.setGSTAccount(GST.substring(0, p > 0 ? p : GST.length()));
+									if(p > 0) {
+										BarOption.setQSTAccount(GST.substring(p + 1));
+									}
+								}
 								//@NOTE: can not use JOptionPane.showMessageDialog, because it will be hided by LoginDlg, and stuck there.
 								BarFrame.setStatusMes("Application is activated successfully!");
 							} else {
