@@ -524,7 +524,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
 	private void updateBillRecordPrices(int billId) {
 		try {
-			PayDlg.updateBill(billId, "total", (int)(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
+			PayDlg.updateBill(billId, "total", Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
 			PayDlg.updateBill(billId, "discount", billPanel.discount);
 			PayDlg.updateBill(billId, "otherReceived", billPanel.serviceFee);
 		}catch(Exception exp) {

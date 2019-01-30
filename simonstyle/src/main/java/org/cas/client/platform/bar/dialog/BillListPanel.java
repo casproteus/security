@@ -310,7 +310,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 					if(billId > 0) {
 						try {
 							StringBuilder sql = new StringBuilder("update bill set total = ")
-							.append((int)(Float.valueOf(panel.valTotlePrice.getText()) * 100)/num).append(" where id = ").append(billId);
+							.append(Math.round(Float.valueOf(panel.valTotlePrice.getText()) * 100)/num).append(" where id = ").append(billId);
 							PIMDBModel.getStatement().executeUpdate(sql.toString());
 							
 							panel.discount /= num;

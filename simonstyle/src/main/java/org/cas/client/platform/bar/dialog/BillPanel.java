@@ -92,7 +92,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			//update the total price of the target bill, 
 			//---beause when add dish into the billPane, bill in db will not get updated.
 			StringBuilder sql = new StringBuilder("update bill set total = ")
-					.append((int)(Float.valueOf(valTotlePrice.getText()) * 100))
+					.append(Math.round(Float.valueOf(valTotlePrice.getText()) * 100))
 					.append(", discount = ").append(discount)
 					.append(", otherReceived = ").append(serviceFee)
 					.append(" where id = ").append(targetBillId);
@@ -122,7 +122,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				.append(createtime).append("', '")
 	            .append(tableID).append("', '")	//table
 	            .append(billIndex).append("', ")			//bill
-	            .append((int)(Float.valueOf(valTotlePrice.getText()) * 100)/num).append(", ")	//total
+	            .append(Math.round(Float.valueOf(valTotlePrice.getText()) * 100)/num).append(", ")	//total
 	            .append(discount).append(", ")
 	            .append(tip).append(", ")
 	            .append(serviceFee).append(", ")
