@@ -27,22 +27,42 @@ public class BarOption {
     }
     
     public static String getLimitation(){
-    	return (String)CustOpts.custOps.getValue("limitation");
+    	String limitation = (String)CustOpts.custOps.getValue("limitation");
+    	if(limitation != null) {
+    		try {
+    			qstAccount = TaoEncrypt.decrypt(qstAccount, 1);
+    		}catch(Exception e) {
+    		}
+    	}
+    	return limitation;
     }
 
     public static long getActivateTimeLeft(){
-    	Object o = CustOpts.custOps.getValue("activateTimeLeft");
-    	return o == null ? -1 : Long.valueOf((String)o);
+    	String activateTimeLeft = (String)CustOpts.custOps.getValue("activateTimeLeft");
+    	if(activateTimeLeft != null) {
+    		try {
+    			activateTimeLeft = TaoEncrypt.decrypt(activateTimeLeft, 1);
+    		}catch(Exception e) {
+    		}
+    	}
+    	return activateTimeLeft == null ? -1 : Long.valueOf(activateTimeLeft);
     }
     public static void setActivateTimeLeft(String activateTimeLeft){
-    	CustOpts.custOps.setKeyAndValue("activateTimeLeft", activateTimeLeft);
+    	CustOpts.custOps.setKeyAndValue("activateTimeLeft", TaoEncrypt.encryptPassword(activateTimeLeft));
     }
 
     public static String getLastSuccessStr() {
-    	return (String)CustOpts.custOps.getValue("lastsuccessStr");
+    	String lastsuccessStr = (String)CustOpts.custOps.getValue("lastsuccessStr");
+    	if(lastsuccessStr != null) {
+    		try {
+    			lastsuccessStr = TaoEncrypt.decrypt(lastsuccessStr, 1);
+    		}catch(Exception e) {
+    		}
+    	}
+    	return lastsuccessStr;
     }
     public static void setLastSuccessStr(String lastsuccessStr) {
-    	CustOpts.custOps.setKeyAndValue("lastsuccessStr", lastsuccessStr);
+    	CustOpts.custOps.setKeyAndValue("lastsuccessStr", TaoEncrypt.encryptPassword(lastsuccessStr));
     }
     
     public static boolean isDebugMode() {
@@ -93,7 +113,7 @@ public class BarOption {
     	
     	if(!billHeadInfo.endsWith("\n"))
     		billHeadInfo += "\n";
-    	CustOpts.custOps.setKeyAndValue("jingqi", billHeadInfo);
+    	CustOpts.custOps.setKeyAndValue("jingqi", TaoEncrypt.encryptPassword(billHeadInfo));
     }
     
     public static String getBillFootInfo(){
@@ -372,7 +392,7 @@ public class BarOption {
     	return gstAccount;
 	}
 	public static void setGSTAccount(String gst) {
-		CustOpts.custOps.setKeyAndValue("ningmeng", gst);
+		CustOpts.custOps.setKeyAndValue("ningmeng", TaoEncrypt.encryptPassword(gst));
 	}
 	public static String getQSTAccount() {
     	if(qstAccount == null) {
@@ -387,7 +407,7 @@ public class BarOption {
     	return qstAccount;
 	}
 	public static void setQSTAccount(String qst) {
-		CustOpts.custOps.setKeyAndValue("aika", qst);
+		CustOpts.custOps.setKeyAndValue("aika", TaoEncrypt.encryptPassword(qst));
 	}
 
 	public static boolean isTreatPricePromtAsTaxInclude() {
