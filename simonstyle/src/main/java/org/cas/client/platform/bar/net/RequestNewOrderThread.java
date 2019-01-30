@@ -167,7 +167,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		    	String location = material.location;
 		    	String portionName = material.portionName;	//dish name
 		    	Integer num = qtMap.get(material.portionName + (material.remark == null ? "" : material.remark));	//@NOTE we supposed the dish name should not duplicate.
-		    	int price = material.dencity == null ? 0 : (int)(Float.valueOf(material.dencity.substring(1).trim()) * 100);
+		    	int price = material.dencity == null ? 0 : Math.round(Float.valueOf(material.dencity.substring(1).trim()) * 100);
 		    	
 		    	//make sure product exist.
 		    	Dish dish = synchronizeToLocalDB(location, portionName, price, material.menFu);

@@ -86,7 +86,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     
     public static void exactMoney(int billId, String pay) {
     	StringBuilder sb = new StringBuilder("update bill set " + pay + "Received = ")
-    	.append((int)(Float.valueOf(valTotal.getText()) * 100))
+    	.append(Math.round(Float.valueOf(valTotal.getText()) * 100))
     	//.append(", DebitReceived = 0, VisaReceived = 0, MasterReceived = 0")
     	.append(", status = -1 where id = ").append(billId);
    		try {
@@ -115,7 +115,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             Float masterReceived = Float.valueOf((float) (rs.getInt("masterReceived") / 100.0));
             valMasterReceived.setText(masterReceived.toString());
             
-            float left = ((int)((total * 100 - cashReceived * 100 - debitReceived * 100 - visaReceived * 100 - masterReceived * 100))) / 100f;
+            float left = Math.round(total * 100 - cashReceived * 100 - debitReceived * 100 - visaReceived * 100 - masterReceived * 100) / 100f;
             valLeft.setText(String.valueOf(left));
             
 //            if(BarFrame.consts.EnterCashPayment.equals(getTitle())) {
@@ -225,7 +225,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	int billId = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
         	boolean billClosed = false;
         	//check if left moeny is 0. 
-        	int left = (int)(Float.valueOf(valLeft.getText()) * 100);
+        	int left = Math.round(Float.valueOf(valLeft.getText()) * 100);
         	if( left > 0) {
 //	        	if(JOptionPane.showConfirmDialog(this, BarFrame.consts.reCeivedMoneyNotEnough(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
 //	        		//user selected to close the bill. update the bill to closed

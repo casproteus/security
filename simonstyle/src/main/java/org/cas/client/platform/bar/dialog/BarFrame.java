@@ -193,8 +193,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         	activateTimeLeft = activateTimeLeft - Math.abs(timepassed);    L.d("timeLeft - timePassed:", activateTimeLeft);
 
             //update the number and lastsuccess into local cache.
-        	CustOpts.custOps.setKeyAndValue("lastsuccessStr", String.valueOf(new Date().getTime()));
-        	CustOpts.custOps.setKeyAndValue("activateTimeLeft", String.valueOf(activateTimeLeft));  L.d("update new number with:", activateTimeLeft);
+        	BarOption.setLastSuccessStr(String.valueOf(new Date().getTime()));
+        	BarOption.setActivateTimeLeft(String.valueOf(activateTimeLeft));  L.d("update new number with:", activateTimeLeft);
         }catch(Exception e){
             L.e("MainActivity", "the left time number can not be pasered into a long", e);
         }

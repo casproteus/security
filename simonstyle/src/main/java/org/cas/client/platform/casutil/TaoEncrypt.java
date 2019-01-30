@@ -117,6 +117,11 @@ public class TaoEncrypt {
         }
     }
 
+    public static String decrypt(
+            final String value,
+            final int iterationsCount) throws Exception {
+    	return decrypt(value, "dmfsJiaJdwz=", iterationsCount);
+    }
     /**
      * Decrypt the provided <code>value</code>
      * <p>
