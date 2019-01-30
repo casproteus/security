@@ -13,6 +13,9 @@ public class BarOption {
 	public static final int MaxQTY = 10000;
 	public static Font bigFont = new Font("Arial", Font.PLAIN, 48);
 	public static Font lessBigFont = new Font("Arial", Font.PLAIN, 24);
+	private static String qstAccount;
+	private static String gstAccount;
+	private static String billHeadInfo;
 	
 	public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -71,23 +74,31 @@ public class BarOption {
 	}
 
     public static String getBillHeadInfo() {
-    	return (String)CustOpts.custOps.getValue("BillHeadInfo");
+    	if(billHeadInfo == null) {
+	    	billHeadInfo = (String)CustOpts.custOps.getValue("jingqi");
+	    	if(billHeadInfo != null) {
+	    		try {
+	    			billHeadInfo = TaoEncrypt.decrypt(billHeadInfo, 1);
+	    		}catch(Exception e) {
+	    		}
+	    	}
+    	}
+    	return billHeadInfo;
     }
     public static void setBillHeadInfo(String billHeadInfo) {
     	if(billHeadInfo == null) {
-    		CustOpts.custOps.setKeyAndValue("BillHeadInfo", "");
+    		CustOpts.custOps.setKeyAndValue("jingqi", "");
     		return;
     	}
     	
     	if(!billHeadInfo.endsWith("\n"))
     		billHeadInfo += "\n";
-    	CustOpts.custOps.setKeyAndValue("BillHeadInfo", billHeadInfo);
+    	CustOpts.custOps.setKeyAndValue("jingqi", billHeadInfo);
     }
     
     public static String getBillFootInfo(){
        	return (String)CustOpts.custOps.getValue("BillFootInfo");
     }
-    
     public static void setBillFootInfo(String billFootInfo) {
     	if(billFootInfo == null) {
     		L.e("setting BillFoot", "trying to set null to bill foot info.", null);
@@ -349,31 +360,31 @@ public class BarOption {
 	}
 
 	public static String getGSTAccount() {
-		Object valueInConfig = CustOpts.custOps.getValue("ningmeng");
-    	if(valueInConfig == null)
-    		return "";
-    	else{
-    		try {
-    			return TaoEncrypt.decrypt((String)valueInConfig, "dmfsJiaJdwz=", 1);
-    		}catch(Exception e) {
-        		return "";
-    		}
+    	if(gstAccount == null) {
+    		gstAccount = (String)CustOpts.custOps.getValue("ningmeng");
+	    	if(gstAccount != null) {
+	    		try {
+	    			gstAccount = TaoEncrypt.decrypt(gstAccount, 1);
+	    		}catch(Exception e) {
+	    		}
+	    	}
     	}
+    	return gstAccount;
 	}
 	public static void setGSTAccount(String gst) {
 		CustOpts.custOps.setKeyAndValue("ningmeng", gst);
 	}
 	public static String getQSTAccount() {
-		Object valueInConfig = CustOpts.custOps.getValue("aika");
-    	if(valueInConfig == null)
-    		return "";
-    	else{
-    		try {
-    			return TaoEncrypt.decrypt((String)valueInConfig, "dmfsJiaJdwz=", 1);
-    		}catch(Exception e) {
-        		return "";
-    		}
+    	if(qstAccount == null) {
+    		qstAccount = (String)CustOpts.custOps.getValue("aika");
+	    	if(qstAccount != null) {
+	    		try {
+	    			qstAccount = TaoEncrypt.decrypt(qstAccount, 1);
+	    		}catch(Exception e) {
+	    		}
+	    	}
     	}
+    	return qstAccount;
 	}
 	public static void setQSTAccount(String qst) {
 		CustOpts.custOps.setKeyAndValue("aika", qst);
