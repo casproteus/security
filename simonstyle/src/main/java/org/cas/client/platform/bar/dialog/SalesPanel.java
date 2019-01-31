@@ -210,8 +210,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	
             	//add new bill with a new billID and billIdx.
             	try {
-	    			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
-	    					+ "' and (deleted is null or deleted = 0) and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID DESC");
+            		StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
+            				.append("' and (deleted is null or deleted = ").append(DBConsts.original)
+            				.append(") and time = '").append(BarFrame.instance.valStartTime.getText()).append("' order by contactID DESC");
+	    			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 	    			rs.beforeFirst();
 	    			rs.next();
 
@@ -222,7 +224,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	}catch(Exception exp) {
             		L.e("Add Bill function",
             				"SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
-    					+ "' and (deleted is null or deleted = 0) and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID DESC", exp);
+    					+ "' and (deleted is null or deleted = " + DBConsts.original + ") and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID DESC", exp);
             	}
     			
 				BarFrame.instance.switchMode(2);
@@ -488,9 +490,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
 	public void reOpenOutput() {
 		//convert the status of relevant output.
-		String sql = "update output set deleted = 0 where deleted = 10 and category = "+ billPanel.billID;
+		StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.original)
+				.append(" where deleted = ").append(DBConsts.voided)
+				.append(" and category = ").append(billPanel.billID);
 		try {
-			PIMDBModel.getReadOnlyStatement().executeQuery(sql);
+			PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 		}catch(Exception exp) {
 			L.e("SalesPane", "Exception happenned when converting output's status to 0", exp);
 		}
@@ -572,7 +576,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	int num = 0;
     	try {
 			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
-					.append("' and (deleted is null or deleted = 0) and time = '").append(BarFrame.instance.valStartTime.getText())
+					.append("' and (deleted is null or deleted = ").append(DBConsts.original)
+					.append(") and time = '").append(BarFrame.instance.valStartTime.getText())
 					.append("' order by contactID DESC");
 //@ There could be not closed bill left during the splitting bill
 //			ResultSet rs = smt.executeQuery("SELECT * from bill where tableID = '"

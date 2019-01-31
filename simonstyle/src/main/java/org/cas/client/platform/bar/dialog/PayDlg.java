@@ -96,7 +96,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	   	    	.append(" where id = ").append(billId);
 			PIMDBModel.getStatement().executeUpdate(sb.toString());
 			//update the status of relevant outputs.
-			sb = new StringBuilder("update output set deleted = -1 where (deleted = 0 or deleted is null) and category = ").append(billId);
+			sb = new StringBuilder("update output set deleted = ").append(DBConsts.paid)
+					.append(" where (deleted = ").append(DBConsts.original)
+					.append(" or deleted is null) and category = ").append(billId);
 			PIMDBModel.getStatement().executeUpdate(sb.toString());
    		}catch(Exception e) {
 			ErrorUtil.write(e);
@@ -365,7 +367,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	private boolean closeCurrentBill() {
 		int billID = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
 		try {
-			//@NOTE: deleted = 10 dosen't mean it's deleted, while it means it's completed.
 			StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.completed)
 					.append(" where category = ").append(billID);
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
