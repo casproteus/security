@@ -90,6 +90,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         //FunctionButton------------------------------------------------------------------------------------------------
         if (o instanceof FunctionButton) {
         	if(o == btnLine_1_1 || o == btnLine_1_2 || o == btnLine_1_3 || o == btnLine_2_3) { //pay
+        		if(!checkBillStatus()) {
+            		return;
+            	}
         		outputStatusCheck();
     			billPricesUpdate();
         		
@@ -180,20 +183,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		
         	}else if (o == btnLine_1_10) { // print bill
             	//check bill status
-            	if(billPanel.status == 100) {//check if there's an item selected.
-            		if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertVoidBillBack(), BarFrame.consts.Operator(),
-                            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
-                        return;
-            		}else {
-            			//convert the status of the bill;
-            			String sql = "update bill set status = 0 where id = "+ billPanel.billID;
-            			try {
-            				PIMDBModel.getReadOnlyStatement().executeQuery(sql);
-            			}catch(Exception exp) {
-            				L.e("SalesPane", "Exception happenned when converting bill's status to 0", exp);
-            			}
-            		}
-         		}
+            	if(!checkBillStatus()) {
+            		return;
+            	}
         		outputStatusCheck();		//will send new added(not printed yet) dishes to kitchen.
         		billPricesUpdate();
         		billPanel.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.getCurBillIndex(), BarFrame.instance.valStartTime.getText());
@@ -470,6 +462,24 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         	}
         }
     }
+
+	private boolean checkBillStatus() {
+		if(billPanel.status == 100) {//check if there's an item selected.
+			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertVoidBillBack(), BarFrame.consts.Operator(),
+		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
+		        return false;
+			}else {
+				//convert the status of the bill;
+				String sql = "update bill set status = 0 where id = "+ billPanel.billID;
+				try {
+					PIMDBModel.getReadOnlyStatement().executeQuery(sql);
+				}catch(Exception exp) {
+					L.e("SalesPane", "Exception happenned when converting bill's status to 0", exp);
+				}
+			}
+		}
+		return true;
+	}
 
 	public void showPriceChangeDlg() {
 		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.CHANGEPRICE());
