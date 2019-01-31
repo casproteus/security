@@ -78,6 +78,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	public BillPanel(BillListPanel billListPanel, JToggleButton billButton) {
 		this.billListPanel = billListPanel;
 		this.billButton = billButton;
+		initComponent();
 	}
 	
 	public void printBill(String tableID, String billIndex, String opentime) {

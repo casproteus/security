@@ -529,4 +529,6 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String TreatPricePromtAsTaxInclude() {return "特价被选中时作为税后价处理";};
 	@Override
 	public String IsShowCustomerFrame() {return "双屏时显示客人窗口";}
+	@Override
+	public String confirmCombineOthers() {return "有的账单已经关闭,您确定要合并剩余的账单吗?";};
 }

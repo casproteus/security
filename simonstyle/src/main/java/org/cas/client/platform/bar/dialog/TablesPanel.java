@@ -108,56 +108,29 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 	            	return;
 	            }
 			}
-
-        	if(tableToggle.getBackground() != colorSelected){	//if before is not selected, then update the status
-        		o.setBackground(colorSelected);
-        		String openTime = BarOption.df.format(new Date());
-        		tableToggle.setOpenTime(openTime);
-    			
-        		try {
-        			Statement smt = PIMDBModel.getStatement();
-        			smt.executeUpdate("update dining_Table set status = 1, opentime = '"
-        			+ openTime + "' WHERE name = '" + tableToggle.getText() + "'");
-        			
-        			//create a bill for it. in case there will be something like order fee in future.
-        			String createtime = BarOption.df.format(new Date());
-        			StringBuilder sql = new StringBuilder(
-        		            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
-        					.append(createtime).append("', '")
-        		            .append(tableToggle.getText()).append("', '")	//table
-        		            .append("1").append("', ")			//bill
-        		            .append(0).append(", ")	//total
-        		            .append(0).append(", ")
-        		            .append(0).append(", ")
-        		            .append(0).append(", ")
-        		            .append(0).append(", ")	//discount
-        		            .append(LoginDlg.USERID).append(", '")		//emoployid
-        		            .append(0).append("', '")
-        		            .append(tableToggle.getOpenTime()).append("')");				//content
-        			smt.executeUpdate(sql.toString());
-        		}catch(Exception exp) {
-        			ErrorUtil.write(exp);
-        		}
+			//if before is not selected, then update the status
+        	if(tableToggle.getBackground() != colorSelected){
+        		openATable(tableToggle);
 			}
-
-        	BarFrame.instance.valStartTime.setText(tableToggle.getOpenTime());	//update ui's time field.
+        	//update ui's time field.
+        	BarFrame.instance.valStartTime.setText(tableToggle.getOpenTime());
 			try {
-	        	
+	        	//including the output of closed bill.
 				Statement smt = PIMDBModel.getReadOnlyStatement();
 				ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
 						+ tableToggle.getText() + "' and (deleted is null or deleted = 0) and time = '" + tableToggle.getOpenTime() + "' order by contactID");
 				rs.afterLast();
 				rs.relative(-1);
 				int num = rs.getRow();
-
-				if (num == 0) { // check if it's empty
+				
+				if (num == 0) {// if it's empty, switch to sales panel
 					BarFrame.instance.valCurBill.setText("");
 					BarFrame.instance.switchMode(2);
-				} else { // if it's not empty, display a dialog to show all the bills.
-					if(num == 1 && CustOpts.custOps.getValue("FrobiddenQuickEnter") == null) {
+				} else { // if it's not empty
+					if(num == 1 && CustOpts.custOps.getValue("FrobiddenQuickEnter") == null) {	// display the only bill
 						BarFrame.instance.valCurBill.setText(rs.getString("contactID"));
 						BarFrame.instance.switchMode(2);
-					}else {
+					}else { //or switch to the bill panel to show all the bills.
 						BarFrame.instance.switchMode(1);
 					}
 				}
@@ -218,6 +191,37 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 //        	}
 //        }
     }
+
+	public void openATable(TableButton tableToggle) {
+		tableToggle.setBackground(colorSelected);
+		String openTime = BarOption.df.format(new Date());
+		tableToggle.setOpenTime(openTime);
+		
+		try {
+			Statement smt = PIMDBModel.getStatement();
+			smt.executeUpdate("update dining_Table set status = 1, opentime = '"
+			+ openTime + "' WHERE name = '" + tableToggle.getText() + "'");
+			
+			//create a bill for it. in case there will be something like order fee in future.
+			String createtime = BarOption.df.format(new Date());
+			StringBuilder sql = new StringBuilder(
+		            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
+					.append(createtime).append("', '")
+		            .append(tableToggle.getText()).append("', '")	//table
+		            .append("1").append("', ")			//bill
+		            .append(0).append(", ")	//total
+		            .append(0).append(", ")
+		            .append(0).append(", ")
+		            .append(0).append(", ")
+		            .append(0).append(", ")	//discount
+		            .append(LoginDlg.USERID).append(", '")		//emoployid
+		            .append(0).append("', '")
+		            .append(tableToggle.getOpenTime()).append("')");				//content
+			smt.executeUpdate(sql.toString());
+		}catch(Exception exp) {
+			ErrorUtil.write(exp);
+		}
+	}
 
     void reLayout() {
         int panelWidth = getWidth();

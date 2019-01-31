@@ -22,6 +22,7 @@ import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
+import org.cas.client.resource.international.DlgConst;
 import org.hsqldb.lib.HashMap;
 
 public class BillListPanel extends  JPanel  implements ActionListener, ComponentListener{
@@ -100,7 +101,9 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		billPanels.clear();
 		onScrBills.clear();
 		
-		// load all the unclosed outputs under this table with ---------------------------
+		// load all the unclosed outputs under this table with content inside.---------------------------
+		//output will be set as deleted=true only when click a "-" button. when bill closed, the output will not be set as deleted = true! 
+		//so closed bill of this table will also be counted. but will displayed in different color.
 		try {
 			Statement smt = PIMDBModel.getReadOnlyStatement();
 			ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
@@ -113,6 +116,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				billButton.setMargin(new Insets(0, 0, 0, 0));
 				
 				BillPanel billPanel = new BillPanel(this, billButton);
+				billPanel.initContent();
 				billPanels.add(billPanel);
 			}
 
@@ -122,12 +126,10 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			
 			int billNum = getANewBillNumber();
 			for(int i = 0; i < row * col; i++) {
-				if(row * col * curPageNum + i < billPanels.size()) {
-					billPanels.get(row * col * curPageNum + i).initComponent();
-					billPanels.get(row * col * curPageNum + i).initContent();
+				if(row * col * curPageNum + i < billPanels.size()) {	//some panel is using the panel in billPanels list.
 					onScrBills.add(billPanels.get(row * col * curPageNum + i));
 					btnRight.setEnabled(true);
-				}else {
+				}else {													//others are temperally newed BillPanel.
 					BillPanel panel = new BillPanel(this, new JToggleButton(String.valueOf(billNum)));	//have to give a number to construct valid sql.
 					panel.initComponent();
 					panel.initContent();
@@ -425,11 +427,29 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				}
 				
 			}else if(o == btnCombineAll) {//@note should consider the time, incase there'ss some bill not paid before, while was calculated into current client.
-		        String sql =
-		                "update output set contactID = 1 where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
-		                + "' and time = '" + BarFrame.instance.valStartTime.getText() + "' and DELETED != true or deleted is null";
+				//check if all bills are not closed
+				String firstUnclosedBillIdx = null;
+				int firstUnclosedBillId = -1;
+				for (BillPanel billPanel : billPanels) {
+					if(billPanel.status < 0) {
+						if (JOptionPane.showConfirmDialog(this, BarFrame.consts.confirmCombineOthers(),
+		                        DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
+		                    return;
+						break;
+					}else if(firstUnclosedBillIdx == null){
+						firstUnclosedBillIdx = billPanel.billButton.getText();
+						firstUnclosedBillId = billPanel.billID;
+					}
+				}
+				
+				//update all related output to belongs to first Bill, deleted and completed output will not be modified.
+				StringBuilder sql = new StringBuilder("update output set contactID = ").append(firstUnclosedBillIdx)
+						.append("category = ").append(firstUnclosedBillId)
+						.append(" where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
+						.append("' and time = '").append(BarFrame.instance.valStartTime.getText())
+						.append("' and deleted is null or DELETED < 10");
 		        try {
-		        	PIMDBModel.getStatement().executeUpdate(sql);
+		        	PIMDBModel.getStatement().executeUpdate(sql.toString());
 		        }catch(Exception exp) {
 		        	ErrorUtil.write(exp);
 		        }
@@ -437,9 +457,10 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 //				一轮遍历过之后，可以确定消灭了二次分单的存在。但是一次分单的情况仍然存在。所以有必要再进行一遍，用来把pS也去掉。
 //				两遍目前是足够的。但程序上应该写成说只要发现“pkOrPsFoundFlag”没有被打上，就表示合并结束（没分单过的是否合并是个问题，因为有的菜点了多次，但每个菜可能给了不同的折扣）
 	        	combineOutputs(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valStartTime.getText(), 1);
-//TODO：hasbug	        	combineOutputs(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valStartTime.getText(), 1);
-
+	        	//Note: we don't deleted combined bills now, because might be used again. we clean the bill when closing a bill. we check if it the last non-empty bill.
+	        	
 		        initContent();
+		        
 			}else if( o == btnSuspendAll) {
 		        try {
 		        	Statement smt = PIMDBModel.getStatement();

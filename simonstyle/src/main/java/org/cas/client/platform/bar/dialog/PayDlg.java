@@ -357,11 +357,11 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	private boolean closeCurrentBill() {
 		int billID = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
 		try {
-			//do not modify the status of output. because it's a normal output, shouldn't be deleted.
-			//String sql ="update output set deleted = 100 where category = " + billID;
-			//PIMDBModel.getStatement().executeUpdate(sql);
+			//@NOTE: deleted = 10 dosen't mean it's deleted, while it means it's completed.
+			String sql ="update output set deleted = 10 where category = " + billID;
+			PIMDBModel.getStatement().executeUpdate(sql);
 			
-			String sql = "update bill set status = -1 where id = " + billID;
+			sql = "update bill set status = -1 where id = " + billID;
 			PIMDBModel.getStatement().executeUpdate(sql);
 			return true;
 		}catch(Exception exp) {

@@ -285,4 +285,5 @@ public interface BarDlgConst {
 	String IsDisplayBillInKitchen();
 	String TreatPricePromtAsTaxInclude();
 	String IsShowCustomerFrame();
+	String confirmCombineOthers();
 }

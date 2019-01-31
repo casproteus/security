@@ -529,4 +529,6 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String TreatPricePromtAsTaxInclude() {return "Treat Price Prom As Tax Include";};
 	@Override
 	public String IsShowCustomerFrame() {return "Show Customer Frame";};
+	@Override
+	public String confirmCombineOthers() {return "Some bill is already paid, are you sure to combine all unclosed bills?";};
 }
