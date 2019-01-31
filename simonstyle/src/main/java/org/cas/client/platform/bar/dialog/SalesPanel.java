@@ -476,6 +476,14 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 				}catch(Exception exp) {
 					L.e("SalesPane", "Exception happenned when converting bill's status to 0", exp);
 				}
+				
+				//convert the status of relevant output.
+				sql = "update output set deleted = 0 where deleted = 10 and category = "+ billPanel.billID;
+				try {
+					PIMDBModel.getReadOnlyStatement().executeQuery(sql);
+				}catch(Exception exp) {
+					L.e("SalesPane", "Exception happenned when converting output's status to 0", exp);
+				}
 			}
 		}
 		return true;
