@@ -28,6 +28,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -360,16 +361,16 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
                 tValues[tmpPos][7] = new DecimalFormat("#0.00").format(rs.getInt("cashback") / 100.0);
                 int status = rs.getInt("status");
                 switch (status) {
-				case -1:
+				case DBConsts.paid:
 					tValues[tmpPos][8] = "paid";
 					break;
-				case 0:
+				case DBConsts.to_pay:
 					tValues[tmpPos][8] = "to pay";
 					break;
-				case 50:
+				case DBConsts.suspended:
 					tValues[tmpPos][8] = "suspended";
 					break;
-				case 100:
+				case DBConsts.voided:
 					tValues[tmpPos][8] = "void";
 					break;
 				default:

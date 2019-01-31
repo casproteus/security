@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
 import org.cas.client.platform.bar.i18n.BarDlgConst;
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -113,12 +114,12 @@ public class BillFootDialog extends JDialog implements ActionListener, Component
     }
     
     private ArrayList<String> getAllModification() {
-        String sql = "SELECT * FROM modification where status = 0";
+        StringBuilder sql = new StringBuilder("SELECT * FROM modification where status = ").append(DBConsts.original);
         ArrayList<String> nameVec = new ArrayList<String>();
         try {
 
             Statement smt = PIMDBModel.getReadOnlyStatement();
-            ResultSet rs = smt.executeQuery(sql);
+            ResultSet rs = smt.executeQuery(sql.toString());
             while (rs.next()) {
             	StringBuilder sb = new StringBuilder(rs.getString("lang1")).append(BarDlgConst.semicolon);
             	sb.append(rs.getString("lang2")).append(BarDlgConst.semicolon);

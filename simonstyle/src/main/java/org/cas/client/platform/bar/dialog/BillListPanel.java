@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.uibeans.ArrowButton;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
@@ -465,14 +466,22 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		        try {
 		        	Statement smt = PIMDBModel.getStatement();
 		        	String tableID = BarFrame.instance.valCurTable.getText();
-					String sql =
-			                "update output set deleted = 100 where SUBJECT = '" + tableID
-			                + "' and time > '" + BarFrame.instance.valStartTime.getText() + "' and DELETED != 1";
-					smt.executeUpdate(sql);
+		        	//update outputs
+					StringBuilder sql =
+			                new StringBuilder("update output set deleted = 50 where SUBJECT = '").append(tableID)
+			                .append("' and time = '").append(BarFrame.instance.valStartTime.getText())
+			                .append("' and (DELETED == 0 or deleted is null)");
+					smt.executeUpdate(sql.toString());
 					
-					smt.executeUpdate("update bill set status = 50 where openTime = '" + BarFrame.instance.valStartTime.getText() + "'");
+					//update bills
+					sql = new StringBuilder("update bill set status = ").append(DBConsts.suspended)
+							.append(" where openTime = '").append(BarFrame.instance.valStartTime.getText()).append("'");
+					smt.executeUpdate(sql.toString());
+					
 		        	//update the tabel status
-		        	smt.executeUpdate("update dining_Table set status = 0 WHERE name = '" + tableID + "'");
+					sql = new StringBuilder("update dining_Table set status = ").append(DBConsts.original)
+							.append(" WHERE name = '").append(tableID).append("'");
+		        	smt.executeUpdate(sql.toString());
 		        }catch(Exception exp) {
 		        	ErrorUtil.write(exp);
 		        }
@@ -539,11 +548,11 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
         	String key = "pk:" + pK + "ps:" + pS + "num:" + num + "dish:" + dish.getId() + String.valueOf(dish.getModification());
     		if(map.containsKey(key)) {//如果发现map中已经有这个key了，
     			//那么删掉这个output，
-    			sql = new StringBuilder("update output set deleted = 10 where id = ").append(dish.getOutputID()).toString();
+    			sql = new StringBuilder("update output set deleted = -1 where id = ").append(dish.getOutputID()).toString();
     			try {
     				PIMDBModel.getStatement().executeUpdate(sql.toString());
     			}catch(Exception e) {
-    				L.e("combineOutputs", "update output set deleted = 10 where id = " + dish.getOutputID(), e);
+    				L.e("combineOutputs", "update output set deleted = -1 where id = " + dish.getOutputID(), e);
     			}
     			dishes.remove(i);
     			
@@ -566,7 +575,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
         			try {
         				PIMDBModel.getStatement().executeUpdate(sql.toString());
         			}catch(Exception e) {
-        				L.e("combineOutputs", "update output set deleted = 10 where id = " + dish.getOutputID(), e);
+        				L.e("combineOutputs", "update output set amount = " + newNum + " where id = " + dish.getOutputID(), e);
         			}
     			}
     		}else {//如果发现map中没有这个key，那么创建一个key存入map。PK为value，如果PK不存在，或者为1，或者为0，那么用PS为value。

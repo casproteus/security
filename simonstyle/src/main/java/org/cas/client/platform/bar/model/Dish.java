@@ -158,9 +158,10 @@ public class Dish {
 			return;
 		}
 		
-		Statement smt = PIMDBModel.getStatement();
 		try {
-			smt.executeUpdate("update output set deleted = 100 where id = " + dish.getOutputID());
+			StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.deleted)
+					.append(" where id = ").append(dish.getOutputID());
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
 		} catch (Exception exp) {
 			ErrorUtil.write(exp);
 		}

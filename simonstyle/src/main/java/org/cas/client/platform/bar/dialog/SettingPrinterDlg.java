@@ -17,7 +17,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import org.cas.client.platform.bar.i18n.BarDlgConst;
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -196,9 +196,10 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
     }
 
     private void initContent() {
-    	 String sql = "select * from hardware where category = 0 and status = 0 order by id"; // 是否存在上没有名字的产品？
+    	 StringBuilder sql = new StringBuilder("select * from hardware where category = 0 and status = ").append(DBConsts.original)
+    			 .append(" order by id"); // 是否存在上没有名字的产品？
          try {
-             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
+             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
              rs.afterLast();
              rs.relative(-1);
              int tRowCount = rs.getRow();

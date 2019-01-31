@@ -30,6 +30,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.bar.uibeans.ArrowButton;
@@ -68,7 +69,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     int received;
     int cashback;
     String comment = "";
-    int status = 0;
+    int status = DBConsts.original;
     
 	public BillPanel(SalesPanel salesPanel) {
 		this.salesPanel = salesPanel;
@@ -670,7 +671,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         received = 0;
         cashback = 0;
         comment = "";
-        status = 0;
+        status = DBConsts.original;
     }
     
     void resetColWidth(int tableWidth) {

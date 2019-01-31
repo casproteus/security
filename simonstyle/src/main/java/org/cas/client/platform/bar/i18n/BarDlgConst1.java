@@ -531,4 +531,6 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String IsShowCustomerFrame() {return "Show Customer Frame";}
 	@Override
 	public String confirmCombineOthers() {return "Some bill is already paid, are you sure to combine all unclosed bills?";};
+	@Override
+	public Object nonEmptyBillFound() {return "Are you sure to close this table, there's still non empty bill to close first, or they will be deleted automatically.";};
 }

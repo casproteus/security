@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import org.cas.client.platform.bar.dialog.statistics.BillRecordListDlg;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.bar.uibeans.TableButton;
@@ -116,9 +117,11 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         	BarFrame.instance.valStartTime.setText(tableToggle.getOpenTime());
 			try {
 	        	//including the output of closed bill.
-				Statement smt = PIMDBModel.getReadOnlyStatement();
-				ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
-						+ tableToggle.getText() + "' and (deleted is null or deleted = 0) and time = '" + tableToggle.getOpenTime() + "' order by contactID");
+				StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableToggle.getText())
+						.append("' and (deleted is null or deleted = ").append(DBConsts.original)
+						.append(") and time = '").append(tableToggle.getOpenTime())
+						.append("' order by contactID");
+				ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 				rs.afterLast();
 				rs.relative(-1);
 				int num = rs.getRow();

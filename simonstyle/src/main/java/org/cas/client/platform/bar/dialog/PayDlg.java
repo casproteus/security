@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -84,18 +85,25 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		return String.valueOf((int)(existingMoney * 100 + newAddedMoney * 100));
 	}
     
+	//it's public because there's a menu on salesPane is calling this method.
     public static void exactMoney(int billId, String pay) {
-    	StringBuilder sb = new StringBuilder("update bill set " + pay + "Received = ")
-    	.append(Math.round(Float.valueOf(valTotal.getText()) * 100))
-    	//.append(", DebitReceived = 0, VisaReceived = 0, MasterReceived = 0")
-    	.append(", status = -1 where id = ").append(billId);
    		try {
+   			//NOTE: should consider might been paid with card, so the new received should be the left not the total..
+   	    	StringBuilder sb = new StringBuilder("update bill set ").append(pay).append("Received = ")
+	   	    	.append(Math.round(Float.valueOf(valLeft.getText()) * 100))
+	   	    	//.append(", DebitReceived = 0, VisaReceived = 0, MasterReceived = 0")
+	   	    	.append(", status = ").append(DBConsts.paid)
+	   	    	.append(" where id = ").append(billId);
 			PIMDBModel.getStatement().executeUpdate(sb.toString());
-		}catch(Exception e) {
+			//update the status of relevant outputs.
+			sb = new StringBuilder("update output set deleted = -1 where (deleted = 0 or deleted is null) and category = ").append(billId);
+			PIMDBModel.getStatement().executeUpdate(sb.toString());
+   		}catch(Exception e) {
 			ErrorUtil.write(e);
 		}
-   		if(SalesPanel.isLastBillOfCurTable())
-			SalesPanel.resetCurTableDBStatus();
+   		if(SalesPanel.isNoMoreNonEmptyBillOfCurTable()) {
+			SalesPanel.resetCurTable();
+   		}
     }
     
 	public void initContent(BillPanel billPanel) {
@@ -252,8 +260,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
                 		updateBill(billId, "TIP", 0 - left);	//otherwise, tread as tip.
             		}
             	}
-        		if(SalesPanel.isLastBillOfCurTable()) {
-        			SalesPanel.resetCurTableDBStatus();
+        		if(SalesPanel.isNoMoreNonEmptyBillOfCurTable()) {
+        			SalesPanel.resetCurTable();
         		}
         	}
         	//no matter it's closed or not, we need to update the pay info of the bill.
@@ -358,11 +366,13 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		int billID = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
 		try {
 			//@NOTE: deleted = 10 dosen't mean it's deleted, while it means it's completed.
-			String sql ="update output set deleted = 10 where category = " + billID;
-			PIMDBModel.getStatement().executeUpdate(sql);
+			StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.completed)
+					.append(" where category = ").append(billID);
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
 			
-			sql = "update bill set status = -1 where id = " + billID;
-			PIMDBModel.getStatement().executeUpdate(sql);
+			sql = new StringBuilder("update bill set status = ").append(DBConsts.completed)
+					.append(" where id = ").append(billID);
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
 			return true;
 		}catch(Exception exp) {
 			L.e("PayDlg", "unexpected error occured whenn updating bill status.", exp);
@@ -615,7 +625,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     private JLabel lblTotal;
     public static JLabel valTotal;
     private JLabel lblLeft;
-    public JLabel valLeft;
+    public static JLabel valLeft;
 
 	@Override
 	public void windowOpened(WindowEvent e) {}

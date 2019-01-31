@@ -4,12 +4,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Enumeration;
 
 import javax.swing.JOptionPane;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -153,9 +153,10 @@ public class BarUtil {
     
 	public static boolean isCurBillSplited() {
 		try {
-			Statement smt = PIMDBModel.getReadOnlyStatement();
-			ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
-					+ BarFrame.instance.valCurTable.getText() + "' and (deleted is null or deleted = 0) and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID");
+			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
+					.append("' and (deleted is null or deleted = ").append(DBConsts.original)
+					.append(" and time = '").append(BarFrame.instance.valStartTime.getText()).append("' order by contactID");
+			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
 			rs.relative(-1);
 			int num = rs.getRow();

@@ -286,4 +286,5 @@ public interface BarDlgConst {
 	String TreatPricePromtAsTaxInclude();
 	String IsShowCustomerFrame();
 	String confirmCombineOthers();
+	Object nonEmptyBillFound();
 }

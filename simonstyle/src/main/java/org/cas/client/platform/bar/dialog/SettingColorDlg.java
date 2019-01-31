@@ -17,6 +17,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 
 import org.cas.client.platform.bar.i18n.BarDlgConst;
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.uibeans.ColorChooserButton;
 import org.cas.client.platform.bar.uibeans.ColorChooserButton.ColorChangedListener;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -277,12 +278,12 @@ public class SettingColorDlg extends JDialog implements ActionListener, Componen
     }
 
     private ArrayList<String> getAllModification() {
-        String sql = "SELECT * FROM modification where status = 0";
+        StringBuilder sql = new StringBuilder("SELECT * FROM modification where status = ").append(DBConsts.original);
         ArrayList<String> nameVec = new ArrayList<String>();
         try {
 
             Statement smt = PIMDBModel.getReadOnlyStatement();
-            ResultSet rs = smt.executeQuery(sql);
+            ResultSet rs = smt.executeQuery(sql.toString());
             while (rs.next()) {
             	StringBuilder sb = new StringBuilder(rs.getString("lang1")).append(BarDlgConst.semicolon);
             	sb.append(rs.getString("lang2")).append(BarDlgConst.semicolon);

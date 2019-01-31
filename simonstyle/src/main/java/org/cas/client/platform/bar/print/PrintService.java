@@ -43,6 +43,7 @@ import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.Bill;
 import org.cas.client.platform.bar.model.Category;
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.model.Printer;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -900,9 +901,9 @@ public class PrintService{
     	
   		for (Bill bill : list) {
   			int status = bill.getStatus();
-  			if(status < -1) {//means has refund)
+  			if(status < DBConsts.original) {//means has refund)
   				refundCount++;
-  				status = 0 - status;
+  				status = -1 * status;
   				refoundAmount += status;
   				salesGrossAmount -= status;
   			}
@@ -1357,8 +1358,9 @@ public class PrintService{
 		content.append("Time        Table  Dish         Qt   Sales").append("\n");
 		content.append(getSeperatorLine(0, width)).append("\n");
 
-		StringBuilder sql = new StringBuilder("Select * from Output, product, bill where bill.status = 100 and time >= '")
-				.append(startDateStr).append("' and time <= '").append(endDateStr).append("' and output.productID = product.id and output.category = bill.id");
+		StringBuilder sql = new StringBuilder("Select * from Output, product, bill where bill.status = ").append(DBConsts.voided)
+				.append(" and time >= '").append(startDateStr).append("' and time <= '").append(endDateStr)
+				.append("' and output.productID = product.id and output.category = bill.id");
         if(LoginDlg.USERTYPE < 2) {
         	sql.append(" and employeeId = ").append(LoginDlg.USERID);
         }
