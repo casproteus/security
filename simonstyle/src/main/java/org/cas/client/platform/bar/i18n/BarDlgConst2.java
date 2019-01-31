@@ -194,7 +194,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String ClosedBillCantVoid() {return "该账单已经关闭了，不可以再进行取消。";}
     @Override
-    public String ConvertVoidBillBack() {return "该账单已经被清空，您确定希望将其转为正常状态吗？";}
+    public String ConvertVoidBillBack() {return "该账单已经被清空，您确定希望将其重新打开吗？";}
     @Override
 	public String SetCatogoryFirst() {return "请先进行类别设置，然后再添加菜单";}
     @Override

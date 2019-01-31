@@ -13,8 +13,8 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<eclipsePluginVersion>2.8</eclipsePluginVersion>
 		<staging.dir>${project.build.directory}/staging</staging.dir>
-		<project.build.finalName>stgo-security-service-installer-${project.version}</project.build.finalName>
-		<jar.finalName>stgo-security-service-installer-${project.version}</jar.finalName>
+		<project.build.finalName>stgo-service-installer-${project.version}</project.build.finalName>
+		<jar.finalName>stgo-service-installer-${project.version}</jar.finalName>
 		<izpack.version>4.3.5</izpack.version>
 		<izpack.staging>${staging.dir}</izpack.staging>
 		<izpack-standalone.version>4.3.5</izpack-standalone.version>
