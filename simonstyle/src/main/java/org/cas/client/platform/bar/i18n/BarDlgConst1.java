@@ -533,4 +533,8 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String confirmCombineOthers() {return "Some bill is already paid, are you sure to combine all unpaid bills?";};
 	@Override
 	public Object nonEmptyBillFound() {return "Are you sure to close this table, there's still non empty bill to close first, or they will be deleted automatically.";};
+	@Override
+	public String FONTSIZE() {return "Font Size";}
+	@Override
+	public String WIDTH() {return "Width";}
 }

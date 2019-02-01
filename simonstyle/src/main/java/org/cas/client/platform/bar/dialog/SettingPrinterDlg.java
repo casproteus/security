@@ -17,7 +17,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -47,16 +46,18 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
         lblIP.setBounds(lblName.getX() + lblName.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 120, CustOpts.BTN_HEIGHT);
         lblCategory.setBounds(lblIP.getX() + lblIP.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 110, CustOpts.BTN_HEIGHT);
         lblLanguage.setBounds(lblCategory.getX() + lblCategory.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 65, CustOpts.BTN_HEIGHT);
+        lblWidth.setBounds(lblLanguage.getX() + lblLanguage.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 65, CustOpts.BTN_HEIGHT);
         
         for(int i = 0; i < 6; i++) {
         	tfdName[i].setBounds(lblName.getX(), lblName.getY() + (lblName.getHeight() + CustOpts.VER_GAP * 2) * (1 + i), lblName.getWidth(),CustOpts.BTN_HEIGHT);
         	tfdIP[i].setBounds(lblIP.getX(), tfdName[i].getY(), lblIP.getWidth(),CustOpts.BTN_HEIGHT);
-        	cmbCategory[i].setBounds(lblCategory.getX(), tfdIP[i].getY(), lblCategory.getWidth(),CustOpts.BTN_HEIGHT);
+        	cmbStyle[i].setBounds(lblCategory.getX(), tfdIP[i].getY(), lblCategory.getWidth(),CustOpts.BTN_HEIGHT);
         	cmbLanguage[i].setBounds(lblLanguage.getX(), tfdIP[i].getY(), lblLanguage.getWidth(),CustOpts.BTN_HEIGHT);
+        	tfdWidth[i].setBounds(lblWidth.getX(), tfdIP[i].getY(), lblWidth.getWidth(), CustOpts.BTN_HEIGHT);
         }
         
         ok.setBounds(getWidth() / 2 - CustOpts.HOR_GAP - CustOpts.BTN_WIDTH,
-        		cmbCategory[5].getY() + cmbCategory[5].getHeight() + CustOpts.VER_GAP * 3, CustOpts.BTN_WIDTH,
+        		cmbStyle[5].getY() + cmbStyle[5].getHeight() + CustOpts.VER_GAP * 3, CustOpts.BTN_WIDTH,
                 CustOpts.BTN_HEIGHT);
         cancel.setBounds(ok.getWidth() + ok.getX() + CustOpts.HOR_GAP * 2, ok.getY(), CustOpts.BTN_WIDTH,
                 CustOpts.BTN_HEIGHT);
@@ -114,12 +115,14 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
         if (o == ok) {
             //@TODO:check inputs
         	for(int i = 0; i < 6; i++) {
-        		String sql = 
-					"Update Hardware set name = '" + tfdName[i].getText() 
-					+ "', ip = '" + tfdIP[i].getText() + "', style = " + cmbCategory[i].getSelectedIndex()
-					+ ", langtype = " + cmbLanguage[i].getSelectedIndex() + " where id = " + ids[i];
+        		StringBuilder sql = new StringBuilder("Update Hardware set name = '").append(tfdName[i].getText())
+					.append("', ip = '").append(tfdIP[i].getText())
+					.append("', style = ").append(cmbStyle[i].getSelectedIndex())
+					.append(", langtype = ").append(cmbLanguage[i].getSelectedIndex())
+					.append(", status = ").append(tfdWidth[i].getText())
+					.append(" where id = ").append(ids[i]);
 	        	try {
-	        		PIMDBModel.getStatement().execute(sql);
+	        		PIMDBModel.getStatement().execute(sql.toString());
 	        	}catch(Exception exp) {
 	        		ErrorUtil.write(exp);
 	        	}
@@ -145,10 +148,13 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
         lblIP = new JLabel(BarFrame.consts.IPAddress());
         lblCategory = new JLabel(BarFrame.consts.Categary());
         lblLanguage = new JLabel(BarFrame.consts.DISPLAYAS());
+        lblWidth = new JLabel(BarFrame.consts.WIDTH());
+        
         tfdName = new JTextField[6];
         tfdIP = new JTextField[6];
-        cmbCategory = new JComboBox[6];
+        cmbStyle = new JComboBox[6];
         cmbLanguage = new JComboBox[6];
+		tfdWidth = new JTextField[6];
         typeAry = new String[2];
         typeAry[0] = "Separate";
         typeAry[1] = "All";
@@ -165,18 +171,21 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
         getContentPane().add(lblIP);
         getContentPane().add(lblCategory);
         getContentPane().add(lblLanguage);
+        getContentPane().add(lblWidth);
+        
         for(int i = 0; i < 6; i++) {
         	tfdName[i] = new JTextField();
         	getContentPane().add(tfdName[i]);
         	tfdIP[i] = new JTextField();
         	getContentPane().add(tfdIP[i]);
-        	cmbCategory[i] = new JComboBox();
-        	cmbCategory[i].setModel(new DefaultComboBoxModel(typeAry));
-        	getContentPane().add(cmbCategory[i]);
+        	cmbStyle[i] = new JComboBox();
+        	cmbStyle[i].setModel(new DefaultComboBoxModel(typeAry));
+        	getContentPane().add(cmbStyle[i]);
         	cmbLanguage[i] = new JComboBox();
         	cmbLanguage[i].setModel(new DefaultComboBoxModel(BarFrame.consts.langs()));
         	getContentPane().add(cmbLanguage[i]);
-        	
+    		tfdWidth[i] = new JTextField();
+    		getContentPane().add(tfdWidth[i]);
         }
 
         getContentPane().add(cancel);
@@ -187,7 +196,7 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
         cancel.addActionListener(this);
         addComponentListener(this);
         
-        setBounds((CustOpts.SCRWIDTH - 400) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 400, 320); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 475) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 475, 320); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
         getRootPane().setDefaultButton(ok);
 
@@ -196,8 +205,7 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
     }
 
     private void initContent() {
-    	 StringBuilder sql = new StringBuilder("select * from hardware where category = 0 and status = ").append(DBConsts.original)
-    			 .append(" order by id"); // 是否存在上没有名字的产品？
+    	 StringBuilder sql = new StringBuilder("select * from hardware where category = 0 order by id");
          try {
              ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
              rs.afterLast();
@@ -210,8 +218,9 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
                 	 ids[tIdx] = rs.getInt("id");
                      tfdName[tIdx].setText(rs.getString("name"));
                      tfdIP[tIdx].setText(rs.getString("ip"));
-                     cmbCategory[tIdx].setSelectedIndex(rs.getInt("style"));
+                     cmbStyle[tIdx].setSelectedIndex(rs.getInt("style"));
                      cmbLanguage[tIdx].setSelectedIndex(rs.getInt("langtype"));
+             		 tfdWidth[tIdx].setText(String.valueOf(rs.getInt("status")));
                      tIdx++;
                  }
              }
@@ -224,10 +233,12 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
     private JLabel lblIP;
     private JLabel lblCategory;
     private JLabel lblLanguage;
+    private JLabel lblWidth;
     private JTextField[] tfdName;
     private JTextField[] tfdIP;
-    private JComboBox<String>[] cmbCategory;
+    private JComboBox<String>[] cmbStyle;
     private JComboBox<String>[] cmbLanguage;
+    private JTextField[] tfdWidth;
     String[] typeAry = new String[2];
     
     int[] ids = new int[6];

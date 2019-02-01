@@ -315,7 +315,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                 	//update output
                 	sql = new StringBuilder("update output set deleted = ").append(DBConsts.voided)
                 			.append(" where contactID = ").append("".equals(curBill) ? 1 : curBill)
-                			.append(" and openTime = '").append(BarFrame.instance.valStartTime.getText()).append("'");
+                			.append(" and time = '").append(BarFrame.instance.valStartTime.getText()).append("'");
                     PIMDBModel.getStatement().executeQuery(sql.toString());
         		}catch(Exception exp) {
         			L.e("void all", "failed when setting bill status = " + DBConsts.voided + " aftetr void all command", exp);

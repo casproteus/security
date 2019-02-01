@@ -182,6 +182,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 				getPrinters()[tmpPos].setIp(rs.getString("ip"));
 				getPrinters()[tmpPos].setFirstPrint(rs.getInt("style")); // index p1, p2.....
 				getPrinters()[tmpPos].setType(rs.getInt("langType"));
+				getPrinters()[tmpPos].setState(rs.getInt("status"));
 				tmpPos++;
 			}
 			rs.close();

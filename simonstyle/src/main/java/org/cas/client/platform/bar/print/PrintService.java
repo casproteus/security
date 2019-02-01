@@ -1453,13 +1453,10 @@ public class PrintService{
         }
         
         int tWidth = BarUtil.getPreferedWidth();
-        String w = (String)CustOpts.custOps.getValue(curPrintIp + "width");
-        try {
-        	tWidth = Integer.valueOf(w);
-        }catch(Exception e){
-        	//do nothing, if no with property set, width will keep default value.
+        Integer w = ipPrinterMap.get(curPrintIp).getState();
+        if(w != null) {
+        	tWidth = w.intValue();
         }
-        
         StringBuilder content = new StringBuilder("\n\n");
         if(isCancelled) {
         	content.append(BarUtil.generateString((tWidth - 4)/2, " ")).append("STOP");

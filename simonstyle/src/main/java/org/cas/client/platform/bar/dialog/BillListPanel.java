@@ -107,8 +107,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		//so closed bill of this table will also be counted. but will displayed in different color.
 		try {
 			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
-					.append("' and (deleted is null or deleted = ").append(DBConsts.original)
-					.append("or deleted = ").append(DBConsts.completed)
+					.append("' and (deleted is null or deleted < ").append(DBConsts.deleted)
 					.append(") and time = '").append(BarFrame.instance.valStartTime.getText()).append("' order by contactID");
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.beforeFirst();

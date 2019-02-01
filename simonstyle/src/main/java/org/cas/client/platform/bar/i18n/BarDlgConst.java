@@ -287,4 +287,6 @@ public interface BarDlgConst {
 	String IsShowCustomerFrame();
 	String confirmCombineOthers();
 	Object nonEmptyBillFound();
+	String FONTSIZE();
+	String WIDTH();
 }
