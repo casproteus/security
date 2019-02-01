@@ -566,7 +566,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			StringBuilder sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
 					.append(BarFrame.instance.valCurTable.getText())
 					.append("' and CONTACTID = ").append(billIndex)
-					.append(" and (deleted is null or deleted = ").append(DBConsts.original)
+					.append(" and (deleted is null or deleted < ").append(DBConsts.voided)
 					.append(") AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
 					.append(BarFrame.instance.valStartTime.getText()).append("'");
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -641,7 +641,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				    tip = rs.getInt("tip");
 				    serviceFee = rs.getInt("otherreceived");
 				    status = rs.getInt("status");
-				    setBackground(status < 0 ? Color.gray : null);
+				    setBackground(status >= DBConsts.completed ? Color.gray : null);
 				}
 			}else if(BarFrame.instance.valCurTable.getText().length() > 0 && BarFrame.instance.valStartTime.getText().length() > 0) {
 				sql = new StringBuilder("Select id from bill where tableID = '").append(BarFrame.instance.valCurTable.getText())

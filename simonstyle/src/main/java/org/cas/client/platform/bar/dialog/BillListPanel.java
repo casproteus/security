@@ -447,8 +447,8 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				
 				//update all related output to belongs to first Bill, deleted and completed output will not be modified.
 				StringBuilder sql = new StringBuilder("update output set contactID = ").append(firstUnclosedBillIdx)
-						.append("category = ").append(firstUnclosedBillId)
-						.append(" where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
+						.append(", category = '").append(firstUnclosedBillId)
+						.append("' where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
 						.append("' and time = '").append(BarFrame.instance.valStartTime.getText())
 						.append("' and deleted is null or DELETED = ").append(DBConsts.original);
 		        try {

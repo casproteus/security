@@ -602,7 +602,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     				.append(BarFrame.instance.valCurTable.getText())
     				.append("' and bill.opentime = '").append(BarFrame.instance.valStartTime.getText())
     				.append("' and (bill.status is null or bill.status = ").append(DBConsts.original)
-    				.append(" and (output.deleted is null or output.deleted = ").append(DBConsts.original).append(")");
+    				.append(") and (output.deleted is null or output.deleted = ").append(DBConsts.original).append(")");
     		ResultSet rs = smt.executeQuery(sql.toString());
     		rs.afterLast();
             rs.relative(-1);
