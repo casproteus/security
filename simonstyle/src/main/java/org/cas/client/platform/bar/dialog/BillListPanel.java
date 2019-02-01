@@ -106,9 +106,11 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		//output will be set as deleted=true only when click a "-" button. when bill closed, the output will not be set as deleted = true! 
 		//so closed bill of this table will also be counted. but will displayed in different color.
 		try {
-			Statement smt = PIMDBModel.getReadOnlyStatement();
-			ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
-					+ "' and (deleted is null or deleted = 0) and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID");
+			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
+					.append("' and (deleted is null or deleted = ").append(DBConsts.original)
+					.append("or deleted = ").append(DBConsts.completed)
+					.append(") and time = '").append(BarFrame.instance.valStartTime.getText()).append("' order by contactID");
+			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.beforeFirst();
 
 			while (rs.next()) {
@@ -432,7 +434,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				String firstUnclosedBillIdx = null;
 				int firstUnclosedBillId = -1;
 				for (BillPanel billPanel : billPanels) {
-					if(billPanel.status < 0) {
+					if(billPanel.status == DBConsts.completed) {
 						if (JOptionPane.showConfirmDialog(this, BarFrame.consts.confirmCombineOthers(),
 		                        DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
 		                    return;
@@ -448,7 +450,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 						.append("category = ").append(firstUnclosedBillId)
 						.append(" where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
 						.append("' and time = '").append(BarFrame.instance.valStartTime.getText())
-						.append("' and deleted is null or DELETED < 10");
+						.append("' and deleted is null or DELETED = ").append(DBConsts.original);
 		        try {
 		        	PIMDBModel.getStatement().executeUpdate(sql.toString());
 		        }catch(Exception exp) {
@@ -458,7 +460,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 //				一轮遍历过之后，可以确定消灭了二次分单的存在。但是一次分单的情况仍然存在。所以有必要再进行一遍，用来把pS也去掉。
 //				两遍目前是足够的。但程序上应该写成说只要发现“pkOrPsFoundFlag”没有被打上，就表示合并结束（没分单过的是否合并是个问题，因为有的菜点了多次，但每个菜可能给了不同的折扣）
 	        	combineOutputs(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valStartTime.getText(), 1);
-	        	//Note: we don't deleted combined bills now, because might be used again. we clean the bill when closing a bill. we check if it the last non-empty bill.
+	        	//Note: we don't deleted combined bills now, because might be used again later. we will clean the bill when reset the table. we check if it the last non-empty bill.
 	        	
 		        initContent();
 		        
@@ -468,7 +470,8 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		        	String tableID = BarFrame.instance.valCurTable.getText();
 		        	//update outputs
 					StringBuilder sql =
-			                new StringBuilder("update output set deleted = 50 where SUBJECT = '").append(tableID)
+			                new StringBuilder("update output set deleted = ").append(DBConsts.suspended)
+			                .append(" where SUBJECT = '").append(tableID)
 			                .append("' and time = '").append(BarFrame.instance.valStartTime.getText())
 			                .append("' and (DELETED == 0 or deleted is null)");
 					smt.executeUpdate(sql.toString());
@@ -500,17 +503,17 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	}
 	
 	//if in same table same openTime same billIndex, we should combine the outputs.
-	//quy, total price, discount, otherReceived
+	//qty, total price, discount, otherReceived
     private void combineOutputs(String tableName, String startTime, int tableIndex) {
     	
     	//target the items which can be combined.
     	List<Dish> dishes = new ArrayList<Dish>();
     	
-    	String sql =
-                "select * from output where SUBJECT = '" + tableName
-                + "' and time = '" + startTime + "' and contactID = " + tableIndex + " and (deleted is null or deleted = 0) order by id";
+    	StringBuilder sql = new StringBuilder("select * from output where SUBJECT = '").append(tableName)
+        	.append("' and time = '").append(startTime)
+        	.append("' and contactID = ").append(tableIndex)
+        	.append(" and (deleted is null or deleted = ").append(DBConsts.original).append(") order by id");
         try {
-        	PIMDBModel.getReadOnlyStatement().executeQuery(sql);
         	ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.beforeFirst();
 			while (rs.next()) {
@@ -545,14 +548,16 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
     			num = num % BarOption.MaxQTY;
     		}
     		
-        	String key = "pk:" + pK + "ps:" + pS + "num:" + num + "dish:" + dish.getId() + String.valueOf(dish.getModification());
+        	String key = new StringBuilder("pk:").append(pK).append("ps:").append(pS).append("num:").append(num)
+        		.append("dish:").append(dish.getId()).append(String.valueOf(dish.getModification())).toString();
     		if(map.containsKey(key)) {//如果发现map中已经有这个key了，
     			//那么删掉这个output，
-    			sql = new StringBuilder("update output set deleted = -1 where id = ").append(dish.getOutputID()).toString();
+    			sql = new StringBuilder("update output set deleted = ").append(DBConsts.deleted)
+    					.append(" where id = ").append(dish.getOutputID());
     			try {
     				PIMDBModel.getStatement().executeUpdate(sql.toString());
     			}catch(Exception e) {
-    				L.e("combineOutputs", "update output set deleted = -1 where id = " + dish.getOutputID(), e);
+    				L.e("combineOutputs", "update output set deleted = " + DBConsts.deleted + " where id = " + dish.getOutputID(), e);
     			}
     			dishes.remove(i);
     			
@@ -571,7 +576,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
     				sql = new StringBuilder("update output set AMOUNT = ").append(newNum)
     						.append(", discount = ").append(tD.getDiscount())
     						.append(", TOLTALPRICE = ").append(tD.getTotalPrice())
-    						.append(" where id = ").append(tD.getOutputID()).toString();
+    						.append(" where id = ").append(tD.getOutputID());
         			try {
         				PIMDBModel.getStatement().executeUpdate(sql.toString());
         			}catch(Exception e) {
@@ -588,11 +593,12 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	public static int getANewBillNumber(){
     	int num = 0;
     	try {
-			Statement smt = PIMDBModel.getReadOnlyStatement();
-            ResultSet rs = smt.executeQuery("SELECT DISTINCT contactID from output where SUBJECT = '"
-                    + BarFrame.instance.valCurTable.getText()
-                    + "' and (deleted is null or deleted = 0) and time = '" + BarFrame.instance.valStartTime.getText()
-                    + "' order by contactID");
+			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
+					.append("' and (deleted is null or deleted = ").append(DBConsts.original)
+					.append(" or deleted = ").append(DBConsts.completed)
+					.append(" or deleted = ").append(DBConsts.suspended)
+					.append(") and time = '").append(BarFrame.instance.valStartTime.getText()).append("' order by contactID");
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
 			rs.relative(-1);
 			num = rs.getInt("contactID");

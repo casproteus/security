@@ -92,11 +92,11 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
    	    	StringBuilder sb = new StringBuilder("update bill set ").append(pay).append("Received = ")
 	   	    	.append(Math.round(Float.valueOf(valLeft.getText()) * 100))
 	   	    	//.append(", DebitReceived = 0, VisaReceived = 0, MasterReceived = 0")
-	   	    	.append(", status = ").append(DBConsts.paid)
+	   	    	.append(", status = ").append(DBConsts.completed)
 	   	    	.append(" where id = ").append(billId);
 			PIMDBModel.getStatement().executeUpdate(sb.toString());
 			//update the status of relevant outputs.
-			sb = new StringBuilder("update output set deleted = ").append(DBConsts.paid)
+			sb = new StringBuilder("update output set deleted = ").append(DBConsts.completed)
 					.append(" where (deleted = ").append(DBConsts.original)
 					.append(" or deleted is null) and category = ").append(billId);
 			PIMDBModel.getStatement().executeUpdate(sb.toString());
