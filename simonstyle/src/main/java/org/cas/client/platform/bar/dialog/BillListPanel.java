@@ -358,20 +358,27 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 					// unselect: if here reached, there must be curDish.
 					// remove the bill where the curDish is. @because sometimes that bill might be
 					// unselected.
-					List<BillPanel> panels = getSelectedBillPannels();
-					for (BillPanel billPanel : panels) { // remove the original panel from the list.
+					List<BillPanel> selectedPanels = getSelectedBillPannels();
+					for (BillPanel billPanel : selectedPanels) { // remove the original panel from the list.
 						if (billPanel.billButton.getText().equals(curDish.getBillIndex())) {
-							panels.remove(billPanel);
+							selectedPanels.remove(billPanel);
 							break;
 						}
 					}
-					if(panels.size() == 0) {
+					if(selectedPanels.size() == 0) {
 						JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.NoBillSeleted());
 						return;
 					}
-					Dish.splitOutput(curDish, panels.size() + 1, null); // update the num and totalprice of curDish
-					for (BillPanel billPanel : panels) { // insert new output with other billID
-						Dish.splitOutput(curDish.clone(), panels.size() + 1, billPanel.billButton.getText());
+					Dish.splitOutput(curDish, selectedPanels.size() + 1, null); // update the num and totalprice of curDish
+					for (BillPanel billPanel : selectedPanels) { // insert new output with other billID
+						int billIndex = BillListPanel.getANewBillNumber();
+						//generate a bill for each new occupied panel, incase there's discount info need to set into it.
+						//@Note, when the initContent of the panel called, the bill ID will be set into the dish instance in memory.
+						//and eventually, if the bill id is not 0, will calculate the service fee and discount into Total.
+						int id = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), String.valueOf(billIndex), BarFrame.instance.valStartTime.getText());
+						Dish dish = curDish.clone();
+						dish.setBillID(id);
+						Dish.splitOutput(dish, selectedPanels.size() + 1, billPanel.billButton.getText());
 					}
 
 					curDish = null;
