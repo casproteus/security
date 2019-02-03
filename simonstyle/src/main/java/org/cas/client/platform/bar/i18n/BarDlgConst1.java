@@ -93,7 +93,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String SPLIT_BILL() {return "<html><center>SPLIT<br>BILL</center></html>";}
     @Override
-	public String Modify() {return "MODIFY";}
+	public String Modify() {return "Modify";}
     @Override
 	public String BillInfo() {return "<html><center>Bill<br>FOOT INFO</center></html>";}
     @Override

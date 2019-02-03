@@ -113,7 +113,9 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         btnAdd.setBounds(srpContent.getX(), btnClose.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
         btnDelete.setBounds(btnAdd.getX() + btnAdd.getWidth() + CustOpts.HOR_GAP, btnAdd.getY(), CustOpts.BTN_WIDTH,
                 CustOpts.BTN_HEIGHT);
-
+        btnModify.setBounds(btnDelete.getX() + btnDelete.getWidth() + CustOpts.HOR_GAP, btnDelete.getY(), CustOpts.BTN_WIDTH,
+                CustOpts.BTN_HEIGHT);
+        
         IPIMTableColumnModel tTCM = tblContent.getColumnModel();
         tTCM.getColumn(0).setPreferredWidth(40);
         tTCM.getColumn(1).setPreferredWidth(80);
@@ -171,6 +173,7 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         btnClose.removeActionListener(this);
         btnAdd.removeActionListener(this);
         btnDelete.removeActionListener(this);
+        btnModify.removeActionListener(this);
         dispose();// 对于对话盒，如果不加这句话，就很难释放掉。
         System.gc();// @TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
     }
@@ -228,6 +231,8 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
             } catch (SQLException exp) {
                 exp.printStackTrace();
             }
+        } else if(o == btnModify) {
+        	modifyEmployee();
         }
     }
 
@@ -235,37 +240,32 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
     public void mouseClicked(
             MouseEvent e) {
         if (e.getClickCount() > 1) {
-            if (LoginDlg.USERTYPE > 0) {// 如果当前登陆用户是个普通员工，则显示普通登陆对话盒。等待再次登陆
-                new LoginDlg(PosFrame.instance).setVisible(true);// 结果不会被保存到ini
-                if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-                	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
-                    if (LoginDlg.USERTYPE >= 2) {// 进一步判断，如果新登陆是经理，弹出对话盒
-                        int tRow = tblContent.getSelectedRow();
-                        PIMRecord tRec =
-                                CASControl.ctrl.getModel().selectRecord(
-                                        CustOpts.custOps.APPNameVec.indexOf("Employee"),
-                                        ((Integer) tableModel[tRow][20]).intValue(), 5002); // to select
-                                                                                                            // a record
-                                                                                                            // from DB.
-                        // 不合适重用OpenAction。因为OpenAction的结果是调用View系统的更新机制。而这里需要的是更新list对话盒。
-                        new EmployeeDlg(this, new UpdateContactAction(), tRec).setVisible(true);
-                        initTable();
-                        reLayout();
-                    }
-                }
-            } else {
-                int tRow = tblContent.getSelectedRow();
-                PIMRecord tRec =
-                        CASControl.ctrl.getModel().selectRecord(CustOpts.custOps.APPNameVec.indexOf("Employee"),
-                                ((Integer) tblContent.getValueAt(tRow, IDCOLUM)).intValue(), 5002); // to select a
-                                                                                                    // record from DB.
-                // 不合适重用OpenAction。因为OpenAction的结果是调用View系统的更新机制。而这里需要的是更新list对话盒。
-                new EmployeeDlg(this, new UpdateContactAction(), tRec).setVisible(true);
-                initTable();
-                reLayout();
-            }
+            modifyEmployee();
         }
     }
+
+	public void modifyEmployee() {
+	    new LoginDlg(PosFrame.instance).setVisible(true);// 结果不会被保存到ini
+	    if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+	    	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
+	        if (LoginDlg.USERTYPE >= 2) {// 进一步判断，如果新登陆是经理，弹出对话盒
+	            int tRow = tblContent.getSelectedRow();
+	            if(tRow < tableModel.length && tRow >= 0) {
+		            PIMRecord tRec =
+		                    CASControl.ctrl.getModel().selectRecord(CustOpts.custOps.APPNameVec.indexOf("Employee"),
+		                            ((Integer) tableModel[tRow][20]).intValue(), 5002); // to select
+		                                                                                                // a record
+		                                                                                                // from DB.
+		            // 不合适重用OpenAction。因为OpenAction的结果是调用View系统的更新机制。而这里需要的是更新list对话盒。
+		            new EmployeeDlg(this, new UpdateContactAction(), tRec).setVisible(true);
+		            initTable();
+		            reLayout();
+	            }else {
+		        	JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
+		        }
+	        }
+	    }
+	}
 
     @Override
     public void mousePressed(
@@ -301,7 +301,8 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         btnClose = new JButton(BarFrame.consts.Close());
         btnAdd = new JButton(BarFrame.consts.Add());//NewUser());
         btnDelete = new JButton(BarFrame.consts.Delete());
-
+        btnModify = new JButton(BarFrame.consts.Modify());
+        
         // properties
         btnClose.setMnemonic('o');
         btnClose.setMargin(new Insets(0, 0, 0, 0));
@@ -309,6 +310,8 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         btnAdd.setMargin(btnClose.getMargin());
         btnDelete.setMnemonic('D');
         btnDelete.setMargin(btnClose.getMargin());
+        btnModify.setMnemonic('M');
+        btnModify.setMargin(btnClose.getMargin());
 
         tblContent.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         tblContent.setAutoscrolls(true);
@@ -331,11 +334,13 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
         getContentPane().add(btnClose);
         getContentPane().add(btnAdd);
         getContentPane().add(btnDelete);
+        getContentPane().add(btnModify);
 
         // 加监听器－－－－－－－－
         btnClose.addActionListener(this);
         btnAdd.addActionListener(this);
         btnDelete.addActionListener(this);
+        btnModify.addActionListener(this);
         btnClose.addKeyListener(this);
         btnAdd.addKeyListener(this);
         btnDelete.addKeyListener(this);
@@ -425,5 +430,6 @@ public class EmployeeListDlg extends JDialog implements ICASDialog, ActionListen
     PIMScrollPane srpContent;
     private JButton btnAdd;
     private JButton btnDelete;
+    private JButton btnModify;
     private JButton btnClose;
 }

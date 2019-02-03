@@ -698,7 +698,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_1_3 = new FunctionButton(BarFrame.consts.VISA());
         btnLine_1_4 = new FunctionButton(BarFrame.consts.SPLIT_BILL());
         btnLine_1_5 = new FunctionButton(BarFrame.consts.REMOVEITEM());
-        btnLine_1_6 = new FunctionButton(BarFrame.consts.Modify());
+        btnLine_1_6 = new FunctionButton(BarFrame.consts.MODIFY());
         btnLine_1_7 = new JToggleButton(BarFrame.consts.DISC_ITEM());
         btnLine_1_8 = new JToggleButton(BarFrame.consts.ChangePrice());
         btnLine_1_9 = new FunctionButton(BarFrame.consts.SERVICEFEE());
