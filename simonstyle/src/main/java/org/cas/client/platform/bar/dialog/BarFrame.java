@@ -94,7 +94,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     	if(BarOption.getBillHeadInfo() == null || BarOption.getBillHeadInfo().trim().length() == 0 ) {
     		
     		if(activateCode == null)
-    			activateCode = JOptionPane.showInputDialog(null, "Activate Code:");
+    			activateCode = JOptionPane.showInputDialog(null, BarFrame.consts.activeCode());
     		if("asdfas".equals(activateCode)) {
     			if(BarOption.getBillHeadInfo() == null) {
             		BarOption.setBillHeadInfo("AikaPos");
@@ -324,6 +324,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 	
     public int switchMode(int i) {
     	BillListPanel.curDish = null;
+    	setStatusMes("");
 		if (i == 3) {		//setting
 			if (!adminAuthentication()) 
 				return -1;

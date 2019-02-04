@@ -429,8 +429,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			initContent();
 		}else {
 			if(o == btnAddUser){
-				BarFrame.instance.valCurBill.setText("");
-				BarFrame.instance.switchMode(2);
+				((SalesPanel)BarFrame.instance.panels[2]).addNewBill();
 			}else if(o == btnPrintAll) {
 				for (BillPanel billPanel : billPanels) {
 					billPanel.printBill(BarFrame.instance.valCurTable.getText(), billPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
@@ -442,7 +441,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				int firstUnclosedBillId = -1;
 				for (BillPanel billPanel : billPanels) {
 					if(billPanel.status == DBConsts.completed) {
-						if (JOptionPane.showConfirmDialog(this, BarFrame.consts.confirmCombineOthers(),
+						if (JOptionPane.showConfirmDialog(this, BarFrame.consts.workOnOnlyUnclosedBills(),
 		                        DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
 		                    return;
 						break;
@@ -472,20 +471,31 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		        initContent();
 		        
 			}else if( o == btnSuspendAll) {
+				//check if all bills are not closed
+				for (BillPanel billPanel : billPanels) {
+					if(billPanel.status == DBConsts.completed) {
+						if (JOptionPane.showConfirmDialog(this, BarFrame.consts.workOnOnlyUnclosedBills(),
+		                        DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+		                    return;
+						}
+						break;
+					}
+				}
+				
 		        try {
 		        	Statement smt = PIMDBModel.getStatement();
 		        	String tableID = BarFrame.instance.valCurTable.getText();
 		        	//update outputs
-					StringBuilder sql =
-			                new StringBuilder("update output set deleted = ").append(DBConsts.suspended)
+					StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.suspended)
 			                .append(" where SUBJECT = '").append(tableID)
 			                .append("' and time = '").append(BarFrame.instance.valStartTime.getText())
-			                .append("' and (DELETED == 0 or deleted is null)");
+			                .append("' and deleted is null or deleted = ").append(DBConsts.original);
 					smt.executeUpdate(sql.toString());
 					
 					//update bills
 					sql = new StringBuilder("update bill set status = ").append(DBConsts.suspended)
-							.append(" where openTime = '").append(BarFrame.instance.valStartTime.getText()).append("'");
+							.append(" where openTime = '").append(BarFrame.instance.valStartTime.getText())
+							.append("' and deleted is null or deleted = ").append(DBConsts.original);
 					smt.executeUpdate(sql.toString());
 					
 		        	//update the tabel status

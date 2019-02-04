@@ -285,8 +285,11 @@ public interface BarDlgConst {
 	String IsDisplayBillInKitchen();
 	String TreatPricePromtAsTaxInclude();
 	String IsShowCustomerFrame();
-	String confirmCombineOthers();
+	String workOnOnlyUnclosedBills();
 	Object nonEmptyBillFound();
 	String FONTSIZE();
 	String WIDTH();
+	String COUPON();
+	String activeCode();
+	String couponCode();
 }

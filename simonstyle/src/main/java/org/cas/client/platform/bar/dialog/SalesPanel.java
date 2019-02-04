@@ -207,28 +207,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             } else if(o == btnLine_2_2) {		//Add bill
             	//save unsaved output
             	outputStatusCheck();
-            	
-            	//add new bill with a new billID and billIdx.
-            	try {
-            		StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
-            				.append("' and (deleted is null or deleted = ").append(DBConsts.original)
-            				.append(") and time = '").append(BarFrame.instance.valStartTime.getText()).append("' order by contactID DESC");
-	    			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-	    			rs.beforeFirst();
-	    			rs.next();
-
-					BarFrame.instance.valCurBill.setText(String.valueOf(rs.getInt("contactID") + 1));
-					//
-					int billId = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
-					billPanel.billID = billId;
-            	}catch(Exception exp) {
-            		L.e("Add Bill function",
-            				"SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
-    					+ "' and (deleted is null or deleted = " + DBConsts.original + ") and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID DESC", exp);
-            	}
-    			
-				BarFrame.instance.switchMode(2);
-				
+            	addNewBill();
         	} else if (o == btnLine_2_4) { // cancel all
             	if(billPanel.orderedDishAry.size() > 0) {
             		int lastSavedRow = billPanel.orderedDishAry.size() - 1 - billPanel.getNewDishes().size();
@@ -474,6 +453,28 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         	}
         }
     }
+
+	public void addNewBill() {
+		//add new bill with a new billID and billIdx.
+		try {
+			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
+					.append("' and (deleted is null or deleted = ").append(DBConsts.original)
+					.append(") and time = '").append(BarFrame.instance.valStartTime.getText()).append("' order by contactID DESC");
+			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+			rs.beforeFirst();
+			rs.next();
+
+			BarFrame.instance.valCurBill.setText(String.valueOf(rs.getInt("contactID") + 1));
+			//
+			int billId = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
+			billPanel.billID = billId;
+		}catch(Exception exp) {
+			L.e("Add Bill function",
+					"SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.valCurTable.getText()
+				+ "' and (deleted is null or deleted = " + DBConsts.original + ") and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID DESC", exp);
+		}
+		BarFrame.instance.switchMode(2);
+	}
 
 	private boolean checkBillStatus() {
 		if(billPanel.status == 100) {//check if there's an item selected.

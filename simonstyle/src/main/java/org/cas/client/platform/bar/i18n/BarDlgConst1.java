@@ -530,11 +530,17 @@ public class BarDlgConst1 implements BarDlgConst{
 	@Override
 	public String IsShowCustomerFrame() {return "Show Customer Frame";}
 	@Override
-	public String confirmCombineOthers() {return "Some bill is already paid, are you sure to combine all unpaid bills?";};
+	public String workOnOnlyUnclosedBills() {return "Some bill already closed, do you want to do the action on unclosed bills.";};
 	@Override
 	public Object nonEmptyBillFound() {return "Are you sure to close this table, there's still non empty bill to close first, or they will be deleted automatically.";};
 	@Override
 	public String FONTSIZE() {return "Font Size";}
 	@Override
 	public String WIDTH() {return "Width";}
+	@Override
+	public String COUPON() {return "COUPON";}
+	@Override
+	public String activeCode() {return "Activate Code:";}
+	@Override
+	public String couponCode() {return "Coupon Code";}
 }

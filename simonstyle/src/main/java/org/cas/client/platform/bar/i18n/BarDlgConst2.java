@@ -530,11 +530,17 @@ public class BarDlgConst2 implements BarDlgConst{
 	@Override
 	public String IsShowCustomerFrame() {return "双屏时显示客人窗口";}
 	@Override
-	public String confirmCombineOthers() {return "有的账单已经关闭,您确定要合并剩余的账单吗?";};
+	public String workOnOnlyUnclosedBills() {return "有的账单已经关闭,您确定要合并剩余的账单吗?";};
 	@Override
 	public Object nonEmptyBillFound() {return "发现该台还有没有付钱的账单！您确定要翻台吗？为清空的账单将被清除.";};
 	@Override
 	public String FONTSIZE() {return "字体大小";}
 	@Override
 	public String WIDTH() {return "打印宽度";}
+	@Override
+	public String COUPON() {return "优惠券";}
+	@Override
+	public String activeCode() {return "激活码:";}
+	@Override
+	public String couponCode() {return "请输入优惠券号码:";}
 }

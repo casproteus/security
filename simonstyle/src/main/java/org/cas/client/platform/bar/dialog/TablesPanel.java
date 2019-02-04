@@ -218,7 +218,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 		            .append(0).append(", ")
 		            .append(0).append(", ")	//discount
 		            .append(LoginDlg.USERID).append(", '")		//emoployid
-		            .append(0).append("', '")
+		            .append("").append("', '")
 		            .append(tableToggle.getOpenTime()).append("')");				//content
 			smt.executeUpdate(sql.toString());
 		}catch(Exception exp) {
