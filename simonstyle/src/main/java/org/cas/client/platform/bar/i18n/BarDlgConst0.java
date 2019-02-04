@@ -542,5 +542,5 @@ public class BarDlgConst0 implements BarDlgConst{
 	@Override
 	public String activeCode() {return "Activate Code:";}
 	@Override
-	public String couponCode() {return "Please input coupon code";}
+	public String couponCode() {return "Coupon Code";}
 }

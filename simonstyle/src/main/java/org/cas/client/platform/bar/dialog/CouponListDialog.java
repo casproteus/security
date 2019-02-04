@@ -167,9 +167,7 @@ MouseListener {
 		    dispose();
 		} else if (o == btnAdd) {
 		    // 创建一个空记录，赋予正确的path值，然后再传给对话盒显示。以确保saveContentAction保存后，记录能显示到正确的地方。
-		    PIMRecord tRec = new PIMRecord();
-		    tRec.setFieldValue(PIMPool.pool.getKey(EmployeeDefaultViews.FOLDERID), Integer.valueOf(5002));
-		    EmployeeDlg tDlg = new EmployeeDlg(this, new SaveContentsAction(), tRec);
+			CouponDlg tDlg = new CouponDlg(this);
 		    tDlg.setForOneTimeAddition();
 		    tDlg.setVisible(true);
 		    initTable();

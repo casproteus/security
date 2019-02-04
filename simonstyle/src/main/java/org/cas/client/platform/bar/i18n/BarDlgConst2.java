@@ -542,5 +542,5 @@ public class BarDlgConst2 implements BarDlgConst{
 	@Override
 	public String activeCode() {return "激活码:";}
 	@Override
-	public String couponCode() {return "请输入优惠券号码:";}
+	public String couponCode() {return "优惠券号码";}
 }
