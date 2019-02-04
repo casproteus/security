@@ -32,13 +32,10 @@ import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
-import org.cas.client.platform.cascontrol.menuaction.SaveContentsAction;
 import org.cas.client.platform.cascontrol.menuaction.UpdateContactAction;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
-import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.platform.contact.ContactDefaultViews;
-import org.cas.client.platform.employee.EmployeeDefaultViews;
 import org.cas.client.platform.employee.dialog.EmployeeDlg;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
@@ -166,9 +163,7 @@ MouseListener {
 		if (o == btnClose) {
 		    dispose();
 		} else if (o == btnAdd) {
-		    // 创建一个空记录，赋予正确的path值，然后再传给对话盒显示。以确保saveContentAction保存后，记录能显示到正确的地方。
-			CouponDlg tDlg = new CouponDlg(this);
-		    tDlg.setForOneTimeAddition();
+		    CouponDlg tDlg = new CouponDlg(this);
 		    tDlg.setVisible(true);
 		    initTable();
 		    reLayout();
@@ -177,7 +172,8 @@ MouseListener {
 		            JOptionPane.YES_NO_OPTION) != 0)// 确定删除吗？
 		        return;
 		    int tSeleRow = tblContent.getSelectedRow();
-		    String sql = "delete from Employee where ID = " + tblContent.getValueAt(tSeleRow, IDCOLUM);
+		    StringBuilder sql = new StringBuilder("update hardware set status = ").append(DBConsts.deleted)
+		    	.append(" where ID = ").append(tblContent.getValueAt(tSeleRow, IDCOLUM));
 		    try {
 		        Statement smt = PIMDBModel.getStatement();
 		        smt.executeUpdate(sql.toString());
