@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.sql.ResultSet;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -12,11 +13,13 @@ import javax.swing.JOptionPane;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.bar.i18n.BarDlgConst1;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
 public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocusListener{
@@ -78,10 +81,44 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 
     	} else if (o == btnCoupon) {
     		String couponCode  = JOptionPane.showInputDialog(null, BarFrame.consts.couponCode());
-    		PayDlg.exactMoney(barGeneralPanel.billPanel.getBillId(), "cash");
-        	this.setVisible(false);
-        	PrintService.openDrawer();
-        	BarFrame.instance.switchMode(0);
+    		StringBuilder sql = new StringBuilder("SELECT * from hardware where name = '").append(couponCode)
+    				.append("' and category = 1 and (status is null or status = 0)");
+    		try {
+    			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+    			rs.afterLast();
+                rs.relative(-1);
+                int tmpPos = rs.getRow();
+                if(tmpPos == 0) {
+                	JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidCoupon());
+                }else {
+                	 rs.beforeFirst();
+                     tmpPos = 0;
+                     rs.next();
+                     int id = rs.getInt("id");
+                     int category = rs.getInt("Type");
+                     String productCode = rs.getString("IP");
+                     int price = rs.getInt("langType");
+                     
+                     sql = new StringBuilder("update hardware set ");
+                    		 //.append(
+                	//check the price
+                	int value = 0;
+                	//if not enought
+                	if(value < price) {
+                		sql.append("status = 1").append(" where id = ").append(id);
+                		
+                	}else {              	//if enought
+	                	PayDlg.exactMoney(barGeneralPanel.billPanel.getBillId(), "cash");
+	                	
+	                	this.setVisible(false);
+	                	PrintService.openDrawer();
+	                	BarFrame.instance.switchMode(0);
+                	}
+                }
+    		}catch(Exception exp) {
+    			L.e("", "", exp);
+    		}
+    		
         	
         } else if (o == btnLine_3_3) {
     		BarFrame.consts = new BarDlgConst0();

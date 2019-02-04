@@ -66,30 +66,19 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
     }
 
     @Override
-    public PIMRecord getContents() {
-        return null;
-    }
+    public PIMRecord getContents() { return null;}
 
     @Override
-    public boolean setContents(
-            PIMRecord prmRecord) {
-        return true;
-    }
+    public boolean setContents(PIMRecord prmRecord) {return true;}
 
     @Override
-    public void makeBestUseOfTime() {
-    }
+    public void makeBestUseOfTime() {}
 
     @Override
-    public void addAttach(
-            File[] file,
-            Vector actualAttachFiles) {
-    }
+    public void addAttach(File[] file,  Vector actualAttachFiles) {}
 
     @Override
-    public PIMTextPane getTextPane() {
-        return null;
-    }
+    public PIMTextPane getTextPane() { return null;}
 
     @Override
     public void release() {

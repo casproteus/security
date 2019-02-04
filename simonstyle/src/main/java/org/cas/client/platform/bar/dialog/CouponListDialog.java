@@ -15,6 +15,7 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -29,14 +30,13 @@ import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
 import org.cas.client.platform.bar.model.DBConsts;
+import org.cas.client.platform.bar.net.bean.Coupon;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
-import org.cas.client.platform.cascontrol.menuaction.UpdateContactAction;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.contact.ContactDefaultViews;
-import org.cas.client.platform.employee.dialog.EmployeeDlg;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
@@ -49,7 +49,7 @@ public class CouponListDialog  extends JDialog implements ICASDialog, ActionList
 MouseListener {
 	final int IDCOLUM = 0; //with column id field stays.
 	
-	private Object[][] tableModel = null;
+	private String[][] tableModel = null;
 	
 	/**
 	* Creates a new instance of ContactDialog
@@ -198,24 +198,31 @@ MouseListener {
 	}
 	
 	public void modifyCoupon() {
-		new LoginDlg(PosFrame.instance).setVisible(true);// 结果不会被保存到ini
-		if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-			BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
-		    if (LoginDlg.USERTYPE >= 2) {// 进一步判断，如果新登陆是经理，弹出对话盒
+//		new LoginDlg(PosFrame.instance).setVisible(true);// 结果不会被保存到ini
+//		if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+//			BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
+//		    if (LoginDlg.USERTYPE >= 2) {// 进一步判断，如果新登陆是经理，弹出对话盒
 		        int tRow = tblContent.getSelectedRow();
 		        if(tRow < tableModel.length && tRow >= 0) {
-		            PIMRecord tRec =
-		                    CASControl.ctrl.getModel().selectRecord(CustOpts.custOps.APPNameVec.indexOf("Employee"),
-		                            ((Integer) tableModel[tRow][20]).intValue(), 5002); // to select a record from DB.
 		            // 不合适重用OpenAction。因为OpenAction的结果是调用View系统的更新机制。而这里需要的是更新list对话盒。
-		            new EmployeeDlg(this, new UpdateContactAction(), tRec).setVisible(true);
+		        	Coupon coupon = new Coupon();
+		        	coupon.setId(tableModel[tRow][0]);
+		        	coupon.setCouponCode(tableModel[tRow][1]);
+		        	coupon.setProductCode(tableModel[tRow][2]);
+		        	coupon.setPrice(tableModel[tRow][3]);
+		        	coupon.setCategory(tableModel[tRow][4]);
+		        	coupon.setStatus(tableModel[tRow][5]);
+		        	
+		        	CouponDlg couponDlg = new CouponDlg(this);
+		        	couponDlg.initContent(coupon);
+		        	couponDlg.setVisible(true);
 		            initTable();
 		            reLayout();
 		        }else {
 		        	JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
 		        }
-		    }
-		}
+//		    }
+//		}
 	}
 	
 	@Override
@@ -304,16 +311,16 @@ MouseListener {
 		    rs.afterLast();
 		    rs.relative(-1);
 		    int tmpPos = rs.getRow();
-		    tableModel = new Object[tmpPos][6];
+		    tableModel = new String[tmpPos][6];
 		    rs.beforeFirst();
 		    tmpPos = 0;
 		    while (rs.next()) {
 		        tableModel[tmpPos][0] = rs.getString("ID");
 		        tableModel[tmpPos][1] = rs.getString("NAME");
 		        tableModel[tmpPos][2] = rs.getString("IP");
-		        tableModel[tmpPos][3] = rs.getString("LANGTYPE");
-		        tableModel[tmpPos][4] = rs.getString("STYLE");
-		        tableModel[tmpPos][5] = rs.getString("STATUS");
+		        tableModel[tmpPos][3] = new DecimalFormat("#0.00").format(rs.getInt("LANGTYPE") / 100.0);
+		        tableModel[tmpPos][4] = rs.getInt("STYLE") == 1 ? "%" : BarOption.getMoneySign();
+		        tableModel[tmpPos][5] = rs.getInt("STATUS") == 1 ? "Y" : "";
 		        tmpPos++;
 		    }
 		    rs.close();// 关闭

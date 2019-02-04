@@ -543,4 +543,8 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String activeCode() {return "激活码:";}
 	@Override
 	public String couponCode() {return "优惠券号码";}
+	@Override
+	public String isRedeemed() {return "是否已赎回";}
+	@Override
+	public String InvalidCoupon() {return "发现无效优惠券号码!";}
 }
