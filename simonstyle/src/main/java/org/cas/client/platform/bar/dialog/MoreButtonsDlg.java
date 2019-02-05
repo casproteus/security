@@ -188,12 +188,12 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 			boolean matched = false;
 	    	for(int i = 0; i < BarFrame.menuPanel.categoryNameMetrix[0].length; i++) {
 	    		//check 3 languages
-    			if(codes[m].equalsIgnoreCase(BarFrame.menuPanel.categoryNameMetrix[0][i])
-    					||codes[m].equalsIgnoreCase(BarFrame.menuPanel.categoryNameMetrix[1][i])
-    					|| codes[m].equalsIgnoreCase(BarFrame.menuPanel.categoryNameMetrix[2][i])) {
+    			if(codes[m].trim().equalsIgnoreCase(BarFrame.menuPanel.categoryNameMetrix[0][i].trim())
+    					|| codes[m].trim().equalsIgnoreCase(BarFrame.menuPanel.categoryNameMetrix[1][i].trim())
+    					|| codes[m].trim().equalsIgnoreCase(BarFrame.menuPanel.categoryNameMetrix[2][i].trim())) {
     				//add all relavant dishes
     		        for (int j = 0; j < dishAry.length; j++) {
-    					if(dishAry[j].getCATEGORY().equals(BarFrame.menuPanel.categoryNameMetrix[0][i])) {
+    					if(dishAry[j].getCATEGORY().trim().equals(BarFrame.menuPanel.categoryNameMetrix[0][i].trim())) {
     						appliableDishes.add(dishAry[j].getLanguage(langIdx));
     					}
     		        }
@@ -205,9 +205,9 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 	    	//didn't match any category, then it's a menu name, add the lang0 into the list directly.
 	    	if(!matched) {
 	    		for (int j = 0; j < dishAry.length; j++) {
-					if(codes[m].equalsIgnoreCase(dishAry[j].getLanguage(0))
-						|| codes[m].equalsIgnoreCase(dishAry[j].getLanguage(1))
-						|| codes[m].equalsIgnoreCase(dishAry[j].getLanguage(2))){
+					if(codes[m].trim().equalsIgnoreCase(dishAry[j].getLanguage(0).trim())
+						|| codes[m].trim().equalsIgnoreCase(dishAry[j].getLanguage(1).trim())
+						|| codes[m].trim().equalsIgnoreCase(dishAry[j].getLanguage(2).trim())){
 						appliableDishes.add(dishAry[j].getLanguage(langIdx));
 					}
 		        }

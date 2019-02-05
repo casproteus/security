@@ -368,7 +368,7 @@ MouseListener {
 	    BarFrame.consts.Product(), // "Product Code"
 	    BarFrame.consts.Price(), // "Price"
 	    BarFrame.consts.Categary(), // "Category" 0-discount price/1-discount percentage/2-discount to price/3-discount to price
-	    BarFrame.consts.Status() // "Status"; 0-ready for deam/10-deamed/50-suspended/1000-deleted
+	    BarFrame.consts.isRedeemed() // "Status"; 0-ready for deam/10-deamed/50-suspended/1000-deleted
 	};
 	
 	PIMTable tblContent;

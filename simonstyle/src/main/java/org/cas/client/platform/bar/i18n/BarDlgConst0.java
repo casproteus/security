@@ -550,5 +550,5 @@ public class BarDlgConst0 implements BarDlgConst{
 	@Override
 	public String Copy() {return "Copy";}
 	@Override
-	public String couponNotApplyToBill() {return "Current bill doesn't contain any item this coupon can redeem!";}
+	public String couponNotApplyToBill() {return "Current bill doesn't contain any item for this coupon to redeem!";}
 }
