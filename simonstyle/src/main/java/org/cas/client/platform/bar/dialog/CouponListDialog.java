@@ -28,14 +28,13 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import org.cas.client.platform.CASControl;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.net.bean.Coupon;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
-import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.contact.ContactDefaultViews;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
@@ -43,7 +42,6 @@ import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.IPIMTableColumnModel;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
-import org.cas.client.platform.pos.dialog.PosFrame;
 
 public class CouponListDialog  extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener,
 MouseListener {
@@ -103,10 +101,9 @@ MouseListener {
 		        CustOpts.BTN_WIDTH, 
 		        CustOpts.BTN_HEIGHT);// 关闭
 		btnAdd.setBounds(srpContent.getX(), btnClose.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
-		btnDelete.setBounds(btnAdd.getX() + btnAdd.getWidth() + CustOpts.HOR_GAP, btnAdd.getY(), CustOpts.BTN_WIDTH,
-		        CustOpts.BTN_HEIGHT);
-		btnModify.setBounds(btnDelete.getX() + btnDelete.getWidth() + CustOpts.HOR_GAP, btnDelete.getY(), CustOpts.BTN_WIDTH,
-		        CustOpts.BTN_HEIGHT);
+		btnModify.setBounds(btnAdd.getX() + btnAdd.getWidth() + CustOpts.HOR_GAP, btnAdd.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+		btnCopy.setBounds(btnModify.getX() + btnModify.getWidth() + CustOpts.HOR_GAP, btnModify.getY(), CustOpts.BTN_WIDTH,	CustOpts.BTN_HEIGHT);
+		btnDelete.setBounds(btnCopy.getX() + btnCopy.getWidth() + CustOpts.HOR_GAP, btnCopy.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
 		
 		IPIMTableColumnModel tTCM = tblContent.getColumnModel();
 		tTCM.getColumn(0).setPreferredWidth(40);
@@ -139,6 +136,7 @@ MouseListener {
 		btnAdd.removeActionListener(this);
 		btnDelete.removeActionListener(this);
 		btnModify.removeActionListener(this);
+		btnCopy.removeActionListener(this);
 		dispose();// 对于对话盒，如果不加这句话，就很难释放掉。
 		System.gc();// @TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
 	}
@@ -167,10 +165,36 @@ MouseListener {
 		    tDlg.setVisible(true);
 		    initTable();
 		    reLayout();
+		} else if(o == btnModify) {
+			modifyCoupon();
+		} else if(o == btnCopy) {
+			int tRow = tblContent.getSelectedRow();
+	        if(tRow < 0 || tRow >= tableModel.length) {
+	        	JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
+	        	return;
+	        }
+	        StringBuilder sql = new StringBuilder("INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('")
+	        	.append(tableModel[tRow][1]).append("', 1, ").append(Math.round(Float.valueOf(tableModel[tRow][3]) * 100)).append(", '")
+	        	.append(tableModel[tRow][2]).append("', ").append("%".equals(tableModel[tRow][4]) ? 1 : 0).append(", 0)");
+	        try {
+		        Statement smt = PIMDBModel.getStatement();
+		        smt.executeUpdate(sql.toString());
+	        } catch (SQLException exp) {
+		        L.e("copy coupon", "Exception when copying a coupon: " + sql, exp);
+		    }
+	        initTable();
+	        reLayout();
 		} else if (o == btnDelete) {
-		    if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION2(), BarFrame.consts.Operator(),
-		            JOptionPane.YES_NO_OPTION) != 0)// 确定删除吗？
+			int tRow = tblContent.getSelectedRow();
+	        if(tRow < 0 || tRow >= tableModel.length) {
+	        	JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
+	        	return;
+	        }
+	        
+		    if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION2(), BarFrame.consts.Operator(), JOptionPane.YES_NO_OPTION) != 0) {// 确定删除吗？
 		        return;
+		    }
+		    
 		    int tSeleRow = tblContent.getSelectedRow();
 		    StringBuilder sql = new StringBuilder("update hardware set status = ").append(DBConsts.deleted)
 		    	.append(" where ID = ").append(tblContent.getValueAt(tSeleRow, IDCOLUM));
@@ -183,10 +207,8 @@ MouseListener {
 		        initTable();
 		        reLayout();
 		    } catch (SQLException exp) {
-		        exp.printStackTrace();
+		        L.e("copy coupon", "Exception when deleting a coupon: " + sql, exp);
 		    }
-		} else if(o == btnModify) {
-			modifyCoupon();
 		}
 	}
 	
@@ -248,18 +270,20 @@ MouseListener {
 		srpContent = new PIMScrollPane(tblContent);
 		btnClose = new JButton(BarFrame.consts.Close());
 		btnAdd = new JButton(BarFrame.consts.Add());//NewUser());
-		btnDelete = new JButton(BarFrame.consts.Delete());
 		btnModify = new JButton(BarFrame.consts.Modify());
-		
+		btnCopy = new JButton(BarFrame.consts.Copy());
+		btnDelete = new JButton(BarFrame.consts.Delete());
 		// properties
 		btnClose.setMnemonic('o');
 		btnClose.setMargin(new Insets(0, 0, 0, 0));
 		btnAdd.setMnemonic('A');
 		btnAdd.setMargin(btnClose.getMargin());
-		btnDelete.setMnemonic('D');
-		btnDelete.setMargin(btnClose.getMargin());
 		btnModify.setMnemonic('M');
 		btnModify.setMargin(btnClose.getMargin());
+		btnCopy.setMnemonic('C');
+		btnCopy.setMargin(btnClose.getMargin());
+		btnDelete.setMnemonic('D');
+		btnDelete.setMargin(btnClose.getMargin());
 		
 		tblContent.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tblContent.setAutoscrolls(true);
@@ -281,14 +305,16 @@ MouseListener {
 		getContentPane().add(srpContent);
 		getContentPane().add(btnClose);
 		getContentPane().add(btnAdd);
-		getContentPane().add(btnDelete);
 		getContentPane().add(btnModify);
+		getContentPane().add(btnCopy);
+		getContentPane().add(btnDelete);
 		
 		// 加监听器－－－－－－－－
 		btnClose.addActionListener(this);
 		btnAdd.addActionListener(this);
-		btnDelete.addActionListener(this);
 		btnModify.addActionListener(this);
+		btnCopy.addActionListener(this);
+		btnDelete.addActionListener(this);
 		btnClose.addKeyListener(this);
 		btnAdd.addKeyListener(this);
 		btnDelete.addKeyListener(this);
@@ -304,7 +330,8 @@ MouseListener {
 	}
 	
 	private void initTable() {
-		StringBuilder sql = new StringBuilder("select * from hardware where category = 1 and status != ").append(DBConsts.deleted);
+		StringBuilder sql = new StringBuilder("select * from hardware where category = 1 and status != ")
+				.append(DBConsts.deleted).append(" order by name");
 		
 		try {
 		    ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -347,7 +374,8 @@ MouseListener {
 	PIMTable tblContent;
 	PIMScrollPane srpContent;
 	private JButton btnAdd;
-	private JButton btnDelete;
 	private JButton btnModify;
+	private JButton btnCopy;
+	private JButton btnDelete;
 	private JButton btnClose;
 }

@@ -547,4 +547,8 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String isRedeemed() {return "Redeemed";}
 	@Override
 	public String InvalidCoupon() {return "Invalid coupon code found!";}
+	@Override
+	public String Copy() {return "Copy";}
+	@Override
+	public String couponNotApplyToBill() {return "Current bill doesn't contain any item this coupon can redeem!";}
 }

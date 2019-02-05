@@ -495,4 +495,8 @@ public class MenuPanel extends JPanel implements ActionListener {
     private ArrowButton btnPageDownCategory;
     private ArrowButton btnPageUpMenu;
     private ArrowButton btnPageDownMenu;
+	
+    public Dish[] getDishAry() {
+		return dishAry;
+	}
 }

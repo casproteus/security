@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -13,7 +14,7 @@ import javax.swing.JOptionPane;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.bar.i18n.BarDlgConst1;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
-import org.cas.client.platform.bar.model.DBConsts;
+import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -80,33 +81,48 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 //    		BarFrame.instance.numberPanelDlg.setContents(obj.toString());
 
     	} else if (o == btnCoupon) {
+    		
     		String couponCode  = JOptionPane.showInputDialog(null, BarFrame.consts.couponCode());
-    		StringBuilder sql = new StringBuilder("SELECT * from hardware where name = '").append(couponCode)
-    				.append("' and category = 1 and (status is null or status = 0)");
+    		
+    		StringBuilder sql = new StringBuilder("SELECT * from hardware where category = 1 and name = '").append(couponCode)
+    				.append("' and (status is null or status = 0)");
     		try {
     			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
     			rs.afterLast();
                 rs.relative(-1);
                 int tmpPos = rs.getRow();
-                if(tmpPos == 0) {
+                if(tmpPos == 0) {	//if there's no this coupon number in database, then warning and return.
                 	JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidCoupon());
-                }else {
-                	 rs.beforeFirst();
-                     tmpPos = 0;
-                     rs.next();
-                     int id = rs.getInt("id");
-                     int category = rs.getInt("Type");
-                     String productCode = rs.getString("IP");
-                     int price = rs.getInt("langType");
-                     
-                     sql = new StringBuilder("update hardware set ");
-                    		 //.append(
+                	return;
+                }else {			//if the number is OK.
+                	//get out every field of first matching record.
+                	rs.beforeFirst();
+                    tmpPos = 0;
+                    rs.next();
+                    int id = rs.getInt("id");
+                    int category = rs.getInt("style");
+                    String productCode = rs.getString("IP");
+                    int price = rs.getInt("langType");
+                    
+                    //check if the coupon can be applied on current bill
+                    int langIdx = CustOpts.custOps.getUserLang();
+                    ArrayList<String> nameAry = getAppliableDishNames(productCode, langIdx); //if nameAry is null, mean apply to whole bill.
+                    ArrayList<Dish> dishesOnBill = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.orderedDishAry;
+                    ArrayList<Dish> matchedDishesOnBill = getMatchedItem(dishesOnBill, nameAry, langIdx);
+                    //@NOTE: if nameAry and matchedDishesOnBill are null, mean apply to whole bill.
+                    if(matchedDishesOnBill != null && matchedDishesOnBill.size() == 0) {
+                    	JOptionPane.showMessageDialog(this, BarFrame.consts.couponNotApplyToBill());
+                    	return;
+                    }
+                    
+                    //not returned, measn can apply to current bill, then recalculate the price
                 	//check the price
+                    if(category == 0) {}//mean the price is absolute price, not persentage.
+                    
                 	int value = 0;
                 	//if not enought
                 	if(value < price) {
-                		sql.append("status = 1").append(" where id = ").append(id);
-                		
+                		//category
                 	}else {              	//if enought
 	                	PayDlg.exactMoney(barGeneralPanel.billPanel.getBillId(), "cash");
 	                	
@@ -114,9 +130,13 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 	                	PrintService.openDrawer();
 	                	BarFrame.instance.switchMode(0);
                 	}
+                	
+                	//update the status of the coupon.
+                	sql = new StringBuilder("update hardware set status = 1 where id = ").append(id);
+                	PIMDBModel.getStatement().executeUpdate(sql.toString());
                 }
     		}catch(Exception exp) {
-    			L.e("", "", exp);
+    			L.e("Redeem Coupon", "exception happend when redeem coupon: " + sql, exp);
     		}
     		
         	
@@ -139,7 +159,64 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 //        }
     }
     
-    private void updateInterface(String sb) {
+    //find out which dishes in current bill can be apply on the coupon.
+    private ArrayList<Dish> getMatchedItem(ArrayList<Dish> dishesOnBill, ArrayList<String> nameAry, int langIdx) {
+    	if(nameAry == null) {
+    		return null;
+    	}
+    	ArrayList<Dish> appliableDishes = new ArrayList<Dish>();
+    	for (Dish dish : dishesOnBill) {
+			if(nameAry.contains(dish.getLanguage(langIdx))) {
+				appliableDishes.add(dish);
+			}
+		}
+		return appliableDishes;
+	}
+
+	private ArrayList<String> getAppliableDishNames(String productCode, int langIdx) {
+    	ArrayList<String> appliableDishes = new ArrayList<String>();
+    	if(productCode == null || productCode.trim().length() == 0) {
+    		return null;
+    	}
+    	//if it's a category
+    	String[] codes = productCode.split(",");
+        Dish[] dishAry = BarFrame.menuPanel.getDishAry();
+    	for(int m = 0; m < codes.length; m++) {
+			if(codes[m].length() == 0) {
+				continue;
+			}
+			boolean matched = false;
+	    	for(int i = 0; i < BarFrame.menuPanel.categoryNameMetrix[0].length; i++) {
+	    		//check 3 languages
+    			if(codes[m].equalsIgnoreCase(BarFrame.menuPanel.categoryNameMetrix[0][i])
+    					||codes[m].equalsIgnoreCase(BarFrame.menuPanel.categoryNameMetrix[1][i])
+    					|| codes[m].equalsIgnoreCase(BarFrame.menuPanel.categoryNameMetrix[2][i])) {
+    				//add all relavant dishes
+    		        for (int j = 0; j < dishAry.length; j++) {
+    					if(dishAry[j].getCATEGORY().equals(BarFrame.menuPanel.categoryNameMetrix[0][i])) {
+    						appliableDishes.add(dishAry[j].getLanguage(langIdx));
+    					}
+    		        }
+    				matched = true;
+    				break;
+    			}
+	    	}
+	    	
+	    	//didn't match any category, then it's a menu name, add the lang0 into the list directly.
+	    	if(!matched) {
+	    		for (int j = 0; j < dishAry.length; j++) {
+					if(codes[m].equalsIgnoreCase(dishAry[j].getLanguage(0))
+						|| codes[m].equalsIgnoreCase(dishAry[j].getLanguage(1))
+						|| codes[m].equalsIgnoreCase(dishAry[j].getLanguage(2))){
+						appliableDishes.add(dishAry[j].getLanguage(langIdx));
+					}
+		        }
+	    	}
+    	}
+		return appliableDishes;
+	}
+
+	private void updateInterface(String sb) {
     	try {
     		PIMDBModel.getStatement().executeUpdate(sb);
     		this.setVisible(false);

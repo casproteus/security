@@ -547,4 +547,8 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String isRedeemed() {return "是否已赎回";}
 	@Override
 	public String InvalidCoupon() {return "发现无效优惠券号码!";}
+	@Override
+	public String Copy() {return "复制";}
+	@Override
+	public String couponNotApplyToBill() {return "本账单不包含可以使用该优惠券的内容！";}
 }

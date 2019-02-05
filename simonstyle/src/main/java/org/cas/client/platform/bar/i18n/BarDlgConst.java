@@ -293,5 +293,7 @@ public interface BarDlgConst {
 	String activeCode();
 	String couponCode();
 	String isRedeemed();
-	Object InvalidCoupon();
+	String InvalidCoupon();
+	String Copy();
+	String couponNotApplyToBill();
 }
