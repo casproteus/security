@@ -416,7 +416,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				String firstUnclosedBillIdx = null;
 				int firstUnclosedBillId = -1;
 				boolean hasNoticedClosedBillExist = false;
-				ArrayList<BillPanel> billPanelsToCombine = new ArrayList<BillPanel>();
+				ArrayList<BillPanel> billPanelsToCombine = new ArrayList<BillPanel>();	//add all panel to be combined, for calculating the service fee and dicount in it.
 				for (BillPanel billPanel : billPanels) {
 					if(billPanel.status == DBConsts.completed) {
 						if(!hasNoticedClosedBillExist) {

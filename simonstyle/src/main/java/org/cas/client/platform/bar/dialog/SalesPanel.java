@@ -237,76 +237,81 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	}
             	
             } else if (o == btnLine_2_5) { // void order include saved ones
+            	//if there's no outputs at all (including deleted outputs), delete the bill directly
             	int dishLength = billPanel.orderedDishAry.size();
-            	int billID = dishLength > 0 ? billPanel.orderedDishAry.get(0).getBillID() : -1;
-            	if(billID > 0) {//if already paid
-            		try {
-        				String sql = "select * from bill where id = " + billID;
-                        ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
-                        rs.beforeFirst();
-                        rs.next();
-                        if(rs.getInt("status") >= DBConsts.completed) {
-                        	JOptionPane.showMessageDialog(this, BarFrame.consts.ClosedBillCantVoid());
-                        	return;
-                        }
-        			}catch(Exception exp) {
-        				L.e("Refund function", "error happend when searching for bill with ID:"+billID, exp);
-        			}
-            	}
-            	
-            	if(billPanel.getNewDishes().size() < dishLength) {	//not all new
-	        		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
-	        				BarFrame.consts.COMFIRMDELETEACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
-		                 return;	
-		            }
-	            }else {			//all new
-	            	if(JOptionPane.showConfirmDialog(BarFrame.instance, 
-	        				BarFrame.consts.COMFIRMLOSTACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
-		                 return;	
-		            }
-	            }
-        	
-        		for(int i = billPanel.orderedDishAry.size() - 1; i >= 0; i--) {
-	        		if(billPanel.orderedDishAry.get(i).getOutputID() <= 0) {
-	        			billPanel.orderedDishAry.remove(i);
-	            	}
-        		}
-            	//update array second.
-        		
-        		
-    	        //update db, update status of relevant bills to 100.
-            	for (Dish dish : billPanel.orderedDishAry) {
-            		dish.setCanceled(true);	// to make it printed in special format(so it's know as a cancelled dish)
-            		//Dish.deleteRelevantOutput(dish);
-				}
-            	if(billPanel.orderedDishAry.size() > 0) {
-            		billPanel.sendDishesToKitchen(billPanel.orderedDishAry, true);
-            	}
-            	//we need to process cur bill, give it a special status, so we can see the voided bills
-            	//in check order dialog. and have to process it to be not null, better to be a negative. 
-            	//so will not be considered as there's still non closed bill, when checking in isLastBill()
-            	String curBill = BarFrame.instance.valCurBill.getText();
+            	int billID = billPanel.billID;
+                
         		try {
-        			//update bill
-        			StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.voided)
-        					.append(" where billIndex = ").append("".equals(curBill) ? 1 : curBill)
-        					.append(" and openTime = '").append(BarFrame.instance.valStartTime.getText()).append("'");
-                	PIMDBModel.getStatement().executeQuery(sql.toString());
-                	//update output
-                	sql = new StringBuilder("update output set deleted = ").append(DBConsts.voided)
-                			.append(" where contactID = ").append("".equals(curBill) ? 1 : curBill)
-                			.append(" and time = '").append(BarFrame.instance.valStartTime.getText()).append("'");
-                    PIMDBModel.getStatement().executeQuery(sql.toString());
-        		}catch(Exception exp) {
-        			L.e("void all", "failed when setting bill status = " + DBConsts.voided + " aftetr void all command", exp);
-        		}
-            	
-            	//if the bill amount is 1, cancel the selected status of the table.
+        			//check if it's a mistake opening table action or adding bill action by check if there's any output on it already. 
+        			StringBuilder sql = new StringBuilder("select * from output where category = ").append(billID);
+                	ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+                	rs.afterLast();
+                    rs.relative(-1);
+                    if(rs.getRow() > 0) { //already has output.
+	                    //check if bill is already closed.
+	    				sql = new StringBuilder("select * from bill where id = ").append(billID);
+	                    rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+	                    rs.beforeFirst();
+	                    rs.next();
+	                    if(rs.getInt("status") >= DBConsts.completed) {
+	                    	JOptionPane.showMessageDialog(this, BarFrame.consts.ClosedBillCantVoid());
+	                    	return;
+	                    }
+	                    
+	                    //check if there's already send dish, give different warning message and remove them from panel.
+	                    if(billPanel.getNewDishes().size() < dishLength) {	//not all new
+	    	        		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+	    	        				BarFrame.consts.COMFIRMDELETEACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+	    		                 return;	
+	    		            }
+	    	            }else {			//all new
+	    	            	if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+	    	        				BarFrame.consts.COMFIRMLOSTACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+	    		                 return;	
+	    		            }
+	    	            }
+	            		for(int i = billPanel.orderedDishAry.size() - 1; i >= 0; i--) {
+	    	        		if(billPanel.orderedDishAry.get(i).getOutputID() <= 0) {
+	    	        			billPanel.orderedDishAry.remove(i);
+	    	            	}
+	            		}
+	
+	        	        //set a flag to each already send dish. and send to kitchen to print warning.
+	                	for (Dish dish : billPanel.orderedDishAry) {
+	                		dish.setCanceled(true);	// to make it printed in special format(so it's know as a cancelled dish)
+	    				}
+	                	if(billPanel.orderedDishAry.size() > 0) {
+	                		billPanel.sendDishesToKitchen(billPanel.orderedDishAry, true);
+	                	}
+	                	
+	                	//we need to process cur bill, give it a special status, so we can see the voided bills
+	                	//in check order dialog. and have to process it to be not null, better to be a negative. 
+	                	//so will not be considered as there's still non closed bill, when checking in isLastBill()
+	                	String curBill = BarFrame.instance.valCurBill.getText();
+	                	//update bill
+	        			sql = new StringBuilder("update bill set status = ").append(DBConsts.voided)
+	        					.append(" where billIndex = ").append("".equals(curBill) ? 1 : curBill)
+	        					.append(" and openTime = '").append(BarFrame.instance.valStartTime.getText()).append("'");
+	                	PIMDBModel.getStatement().executeQuery(sql.toString());
+	                	//update output
+	                	sql = new StringBuilder("update output set deleted = ").append(DBConsts.voided)
+	                			.append(" where contactID = ").append("".equals(curBill) ? 1 : curBill)
+	                			.append(" and time = '").append(BarFrame.instance.valStartTime.getText()).append("'");
+	                    PIMDBModel.getStatement().executeQuery(sql.toString());
+	                    
+                    }else {			//if still empty, no related output, then don't record this bill at all.
+	                	sql = new StringBuilder("delete from bill where id = ").append(billID);
+	                	PIMDBModel.getStatement().executeUpdate(sql.toString());
+                    }
+    			}catch(Exception exp) {
+    				L.e("void order", "error happend when voiding a bill with ID:"+ billID, exp);
+    			}
+        		
+                //if the bill amount is 1, cancel the selected status of the table.
         		if(isNoMoreNonEmptyBillOfCurTable()) {
         			resetCurTable();
         		}
             	BarFrame.instance.switchMode(0);
-            	
             } else if (o == btnLine_2_6) {		//open drawer
             	PrintService.openDrawer();
             	
