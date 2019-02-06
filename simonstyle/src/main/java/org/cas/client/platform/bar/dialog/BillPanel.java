@@ -97,6 +97,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					.append(Math.round(Float.valueOf(valTotlePrice.getText()) * 100))
 					.append(", discount = ").append(discount)
 					.append(", otherReceived = ").append(serviceFee)
+					.append(", status = ").append(DBConsts.billPrinted)//so the invoice can be saved.
 					.append(" where id = ").append(targetBillId);
 			try {
 				PIMDBModel.getStatement().executeUpdate(sql.toString());
@@ -487,7 +488,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		});
     }
 
-	public void sendNewDishesToKitchen(List<Dish> dishes) {
+	public void sendNewOrdersToKitchenAndDB(List<Dish> dishes) {
 		//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
 		if(dishes.size() == orderedDishAry.size()) {
 		    BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));

@@ -15,7 +15,6 @@ import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.bar.i18n.BarDlgConst1;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
 import org.cas.client.platform.bar.model.Dish;
-import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -24,6 +23,7 @@ import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
 public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocusListener{
+	
 	SalesPanel barGeneralPanel;
 
     public MoreButtonsDlg(SalesPanel general) {
@@ -102,12 +102,13 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
                     int id = rs.getInt("id");
                     int category = rs.getInt("style");
                     String productCode = rs.getString("IP");
-                    int price = rs.getInt("langType");
+                    int value = rs.getInt("langType");
                     
                     //check if the coupon can be applied on current bill
+                    SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
                     int langIdx = CustOpts.custOps.getUserLang();
                     ArrayList<String> nameAry = getAppliableDishNames(productCode, langIdx); //if nameAry is null, mean apply to whole bill.
-                    ArrayList<Dish> dishesOnBill = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.orderedDishAry;
+                    ArrayList<Dish> dishesOnBill = salesPanel.billPanel.orderedDishAry;
                     ArrayList<Dish> matchedDishesOnBill = getMatchedItem(dishesOnBill, nameAry, langIdx);
                     //@NOTE: if nameAry and matchedDishesOnBill are null, mean apply to whole bill.
                     if(matchedDishesOnBill != null && matchedDishesOnBill.size() == 0) {
@@ -115,22 +116,30 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
                     	return;
                     }
                     
-                    //not returned, measn can apply to current bill, then recalculate the price
-                	//check the price
-                    if(category == 0) {}//mean the price is absolute price, not persentage.
+                    //if matchedDishesOnBill is null, then apply the coupon to the whle bill.
+                    if(matchedDishesOnBill == null) {	
+	                    if(category == 0) {//mean the price is absolute price, not persentage.
+	                    	salesPanel.discountBill(value);
+	                    }else {
+	                    	value = Math.round((salesPanel.billPanel.subTotal + salesPanel.billPanel.discount) * (Float.valueOf(value) / 100f));
+	                    	salesPanel.discountBill(value);
+	                    }
+                    } else {//apply the coupon only to the dish item.
+	                	//find out the most expensive dish
+                    	Dish mostExpensiveDish = null;
+                    	for (Dish dish : matchedDishesOnBill) {
+                    		mostExpensiveDish = mostExpensiveDish.getPrice() < dish.getPrice() ? dish : mostExpensiveDish;
+						}
+                    	//calculate coupon value:
+                    	if(category == 0) {//mean the price is absolute price, not persentage.
+                    		value = value > mostExpensiveDish.getPrice() ? mostExpensiveDish.getPrice() : value;
+	                    }else {
+	                    	value = Math.round(mostExpensiveDish.getPrice() * (Float.valueOf(value) / 100f));
+	                    }
+                    	
+                    	salesPanel.discountADish(value, mostExpensiveDish);
+                    }
                     
-                	int value = 0;
-                	//if not enought
-                	if(value < price) {
-                		//category
-                	}else {              	//if enought
-	                	PayDlg.exactMoney(barGeneralPanel.billPanel.getBillId(), "cash");
-	                	
-	                	this.setVisible(false);
-	                	PrintService.openDrawer();
-	                	BarFrame.instance.switchMode(0);
-                	}
-                	
                 	//update the status of the coupon.
                 	sql = new StringBuilder("update hardware set status = 1 where id = ").append(id);
                 	PIMDBModel.getStatement().executeUpdate(sql.toString());
@@ -150,13 +159,6 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
     		BarFrame.consts = new BarDlgConst2();
         	updateInterface("update employee set subject = 'CN' where id = " + LoginDlg.USERID);
         }
-//        else if (o == btnLine_3_7) {
-//        	
-//        } else if (o == btnLine_3_8) {
-//        	
-//        } else if (o == btnLine_3_9) {
-//        	
-//        }
     }
     
     //find out which dishes in current bill can be apply on the coupon.
@@ -225,6 +227,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
     		ErrorUtil.write(exp);
     	}
     }
+	
 	public void show(FunctionButton btnMore) {
 		reLayout(btnMore);
 		this.setVisible(true);
@@ -302,25 +305,18 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		
 		this.addWindowFocusListener(this);
 	}
+	
 	private FunctionButton btnLine_3_1;
-	//private JToggleButton btnLine_3_2;
 	private FunctionButton btnCoupon;
 	private FunctionButton btnLine_3_3;
 	private FunctionButton btnLine_3_4;
 	private FunctionButton btnLine_3_5;
-//	private FunctionButton btnLine_3_7;
-//	private FunctionButton btnLine_3_8;
-//	private FunctionButton btnLine_3_9;
 
 	@Override
-	public void windowGainedFocus(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void windowGainedFocus(WindowEvent e) {}
 
 	@Override
 	public void windowLostFocus(WindowEvent e) {
-		// TODO Auto-generated method stub
 		dispose();
 	}
 }

@@ -233,7 +233,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	}
         	
         	int billId = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
-        	boolean billClosed = false;
+        	int billOldStatus = getBillStatus(billId);
         	//check if left moeny is 0. 
         	int left = Math.round(Float.valueOf(valLeft.getText()) * 100);
         	if( left > 0) {
@@ -250,7 +250,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	        	//new ChangeDlg(BarFrame.instance, BarFrame.consts.Due() + BarOption.getMoneySign()
         		//		+ new DecimalFormat("#0.00").format(left/100f)).setVisible(true); //it's a non-modal dialog.
         	}else if(left <= 0) {
-        		billClosed = closeCurrentBill();
+        		closeCurrentBill();
             	this.setVisible(false);
             	if(left < 0) {	//if it's equal to 0, then do not display the change dialog.
             		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign()
@@ -273,10 +273,13 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 
         	PrintService.openDrawer();
         	//let's qa decide if we should go back to table interface.
-        	if(left <= 0 || billClosed) {
-        		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
-        		PrintService.exePrintInvoice(bp, bp.orderedDishAry, getTitle().equals(BarFrame.consts.EnterCashPayment()));
+        	if(left <= 0) {
+        		if(billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled()) {
+	        		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
+	        		PrintService.exePrintInvoice(bp, bp.orderedDishAry, getTitle().equals(BarFrame.consts.EnterCashPayment()));
+        		}
         		BarFrame.instance.switchMode(0);
+        		
         	}
         	
         } else if(o == btnExact) {//update bill and display change 0.00;
@@ -292,12 +295,18 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment())) {
     			strPay = "master";
     		}
-        	exactMoney(((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId(), strPay);
+    		
+    		int billId = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
+    		int billOldStatus = getBillStatus(billId);
+    		
+        	exactMoney(billId, strPay);
         	resetContent();
         	this.setVisible(false);
 
-    		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
-    		PrintService.exePrintInvoice(bp, bp.orderedDishAry, true);
+    		if(billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled()) {
+        		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
+        		PrintService.exePrintInvoice(bp, bp.orderedDishAry, true);
+    		}
     		PrintService.openDrawer();
         	BarFrame.instance.switchMode(0);
         	
@@ -364,7 +373,20 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		}
 	}
 
-	private boolean closeCurrentBill() {
+	private int getBillStatus(int billId) {
+		StringBuilder sb = new StringBuilder("select * from bill where id = ").append(billId);
+		try {
+			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sb.toString());
+			if(rs.next()) {
+				return rs.getInt("status");
+			}
+		}catch(Exception e) {
+			ErrorUtil.write(e);
+		}
+		return -1;
+	}
+	
+	private void closeCurrentBill() {
 		int billID = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
 		try {
 			StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.completed)
@@ -374,11 +396,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 			sql = new StringBuilder("update bill set status = ").append(DBConsts.completed)
 					.append(" where id = ").append(billID);
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
-			return true;
 		}catch(Exception exp) {
 			L.e("PayDlg", "unexpected error occured whenn updating bill status.", exp);
 		}
-		return false;
 	}
     
     private void increaseReceived(int amount) {

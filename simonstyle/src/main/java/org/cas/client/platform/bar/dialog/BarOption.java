@@ -418,4 +418,11 @@ public class BarOption {
     	CustOpts.custOps.setKeyAndValue("TreatPricePromtAsTaxInClude", String.valueOf(treatPricePromtAsTaxInClude));
 	}
 
+	public static boolean isSavePrintInvoiceWhenBilled() {
+		return CustOpts.custOps.getValue("isSavePrintInvoiceWhenBilled") == null ? 
+    			false : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("isSavePrintInvoiceWhenBilled"));
+	}
+	public static void setSavePrintInvoiceWhenBilled(boolean isSavePrintInvoiceWhenBilled) {
+		CustOpts.custOps.setKeyAndValue("isSavePrintInvoiceWhenBilled", String.valueOf(isSavePrintInvoiceWhenBilled));
+	}
 }

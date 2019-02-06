@@ -236,9 +236,9 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String IsTaxNotAllowDiscount() {return "Tax should not be affected by discount of dish";}
     @Override
-	public String IsBuffetMode() {return "Buffet Mode";}
+	public String IsBuffetMode() {return "Buffet mode";}
     @Override
-	public String IsFastFoodMode() {return "Fast Food Mode";}
+	public String IsFastFoodMode() {return "Fast food mode";}
     @Override
 	public String IsPrintBillWhenPay() {return "automatic print bill when pay";}
     @Override
@@ -510,7 +510,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String DishBtnBK(){return "Dish button Back Ground";}
     @Override
-	public String FunctionBtnBK(){return "Function button Back Ground";}
+	public String FunctionBtnBK(){return "Function Button Back Ground";}
     @Override
 	public String TableBtnBK(){return "Table Button Back Ground";}
     @Override
@@ -522,13 +522,15 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String Color() {return "Color";}
 	@Override
-	public String IsHideRecordFromOtherWaiter() {return "Hide Records From Other Waiter";}
+	public String IsHideRecordFromOtherWaiter() {return "Hide records from other employee";}
 	@Override
-	public String IsDisplayBillInKitchen() {return "Display Bill Index In Kitchen Print";}
+	public String IsDisplayBillInKitchen() {return "Display bill index in kitchen print";}
 	@Override
-	public String TreatPricePromtAsTaxInclude() {return "Treat Price Prom As Tax Include";};
+	public String IsSavePrintInvoiceWhenBilled() {return "Print no invoice when billed."; }
 	@Override
-	public String IsShowCustomerFrame() {return "Show Customer Frame";}
+	public String TreatPricePromtAsTaxInclude() {return "Treat price prom as tax include";};
+	@Override
+	public String IsShowCustomerFrame() {return "Show customer frame";}
 	@Override
 	public String workOnOnlyUnclosedBills() {return "Some bill already closed, do you want to do the action on unclosed bills.";};
 	@Override

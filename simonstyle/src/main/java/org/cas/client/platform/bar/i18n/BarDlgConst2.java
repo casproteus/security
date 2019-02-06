@@ -526,6 +526,8 @@ public class BarDlgConst2 implements BarDlgConst{
 	@Override
 	public String IsDisplayBillInKitchen() {return "厨房打印单上显示客人位置编号";}
 	@Override
+	public String IsSavePrintInvoiceWhenBilled() {return "当打印了账单时，不再打印收据"; }
+	@Override
 	public String TreatPricePromtAsTaxInclude() {return "特价被选中时作为税后价处理";};
 	@Override
 	public String IsShowCustomerFrame() {return "双屏时显示客人窗口";}

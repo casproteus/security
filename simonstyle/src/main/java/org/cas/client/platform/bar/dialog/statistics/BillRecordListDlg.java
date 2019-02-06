@@ -364,8 +364,11 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
 				case DBConsts.completed:
 					tValues[tmpPos][8] = "paid";
 					break;
-				case DBConsts.to_pay:
+				case DBConsts.original:
 					tValues[tmpPos][8] = "to pay";
+					break;
+				case DBConsts.billPrinted:
+					tValues[tmpPos][8] = "billed";
 					break;
 				case DBConsts.suspended:
 					tValues[tmpPos][8] = "suspended";

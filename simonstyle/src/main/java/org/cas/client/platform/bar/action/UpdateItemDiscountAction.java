@@ -32,8 +32,7 @@ public class UpdateItemDiscountAction implements ActionListener{
             	if(curContent.endsWith("%")) {
             		BarFrame.discountDlg.isPercentage = true;	//NOTE：maybe ok's action not called yet, so the percentage flag not set yet.
                 	String tContent = curContent.substring(0, curContent.length() - 1);
-            		Float f = Float.valueOf(tContent);
-            		curContent = String.valueOf(f/100f);
+            		curContent = String.valueOf(Float.valueOf(tContent)/100f);
             	}else {
             		BarFrame.discountDlg.isPercentage = false;
             		Float.valueOf(curContent);

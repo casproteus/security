@@ -8,6 +8,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -98,7 +99,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     			billPricesUpdate();
         		
         		//if it's already paid, show comfirmDialog.
-        		if(billPanel.status >= 100)
+        		if(billPanel.status >= DBConsts.completed)
         			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.ConfirmPayAgain(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
             			return;
         		
@@ -323,14 +324,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
      				if(curContent == null || curContent.length() == 0)
      					return;
              		float discount = BarFrame.discountDlg.isPercentage ? 
-             				//Float.valueOf(billPanel.valTotlePrice.getText()) * Float.valueOf(curContent)
-             				(billPanel.subTotal + billPanel.discount)/100f * Float.valueOf(curContent)
+             				(billPanel.subTotal + billPanel.discount) * (Float.valueOf(curContent)/100f)
              				: Float.valueOf(curContent);
-             		billPanel.discount = Math.round(discount * 100);
-             		billPanel.updateTotleArea();
-             		
-             		outputStatusCheck();
-             		billPricesUpdate();
+             		discountBill(Math.round(discount * 100));
              		
              	}catch(Exception exp) {
                  	JOptionPane.showMessageDialog(BarFrame.discountDlg, DlgConst.FORMATERROR);
@@ -454,6 +450,14 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         }
     }
 
+	public void discountBill(int discount) {
+		billPanel.discount = discount;
+		billPanel.updateTotleArea();
+		
+		outputStatusCheck();
+		billPricesUpdate();
+	}
+
 	public void addNewBill() {
 		//add new bill with a new billID and billIdx.
 		try {
@@ -477,7 +481,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	}
 
 	private boolean checkBillStatus() {
-		if(billPanel.status == 100) {//check if there's an item selected.
+		if(billPanel.status == DBConsts.voided) {//check if the bill is .
 			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertVoidBillBack(), BarFrame.consts.Operator(),
 		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
 		        return false;
@@ -536,10 +540,25 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		//if there's any new bill, send it to kitchen first, and this also made the output generated.
 		List<Dish> dishes = billPanel.getNewDishes();
 		if (dishes != null && dishes.size() > 0) {
-			billPanel.sendNewDishesToKitchen(dishes);
+			billPanel.sendNewOrdersToKitchenAndDB(dishes);
 		}
 	}
 
+	public void discountADish(int value, Dish mostExpensiveDish) throws SQLException {
+		
+		int outputID = mostExpensiveDish.getOutputID();
+		if(outputID >= 0) {
+			StringBuilder sql = new StringBuilder("update output set discount = ").append(value)
+					.append(", toltalprice = ").append(Math.round(mostExpensiveDish.getTotalPrice() - value))
+					.append(" where id = ").append(outputID);
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
+		}
+		
+		billPanel.updateTotleArea();
+		outputStatusCheck();
+		billPricesUpdate();
+	}
+	
 	void removeItem() {
 		if(BillListPanel.curDish == null) {//check if there's an item selected.
 			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());

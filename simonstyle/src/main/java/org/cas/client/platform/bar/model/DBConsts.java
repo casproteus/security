@@ -6,10 +6,10 @@ package org.cas.client.platform.bar.model;
  *
  */
 public interface DBConsts {
-	int to_pay = 0;
 	int original = 0;
+	int billPrinted = 5;
+	int suspended = 8;
 	int completed = 10;
-	int suspended = 50;
 	int voided = 100;	//voided bull, removed output.
 	int deleted = 1000;
 }

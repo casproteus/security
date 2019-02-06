@@ -296,4 +296,5 @@ public interface BarDlgConst {
 	String InvalidCoupon();
 	String Copy();
 	String couponNotApplyToBill();
+	String IsSavePrintInvoiceWhenBilled();
 }

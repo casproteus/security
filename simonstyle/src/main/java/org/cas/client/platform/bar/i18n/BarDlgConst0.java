@@ -54,7 +54,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String DISCOUNT_BILL() {return "DISCOUNT BILL";}
     @Override
-	public String VolumnDiscountNotice() {return "will discount from the whole bill";}
+	public String VolumnDiscountNotice() {return "will discount from whole bill";}
     
     @Override
 	public String WaiterReport() {return "<html><center>SERVER<br>REPORT</center></html>";}
@@ -95,15 +95,15 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String Modify() {return "Modify";}
     @Override
-	public String BillInfo() {return "<html><center>BILL<br>FOOT INFO</center></html>";}
+	public String BillInfo() {return "<html><center>Bill<br>FOOT INFO</center></html>";}
     @Override
 	public String BillFootInfo() {return "Bill Foot Info";}
     @Override
 	public String ChangePrice() {return "<html><center>CHANGE<br>PRICE</center></html>";}
     @Override
-	public String CHANGEPRICE() {return "CHANGE PRICE";}
-    @Override
 	public String ChangePriceNotice() {return "Please input a different price";}
+    @Override
+	public String CHANGEPRICE() {return "CHANGE PRICE";}
     @Override
 	public String QTY() {return "QTY";}
     @Override
@@ -154,7 +154,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String InvalidInput() {return "The input content is invalid for this function";}
     @Override
-	public String ADMIN_MODE() {return "System is in setting mode! Click RETURN button to exit.";}
+	public String ADMIN_MODE() {return "System is in setting mode! Click logout button back to use mode";}
     @Override
 	public String USE_MODE() {return "System is in operating mode!";}
     @Override
@@ -236,9 +236,9 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String IsTaxNotAllowDiscount() {return "Tax should not be affected by discount of dish";}
     @Override
-	public String IsBuffetMode() {return "Buffet Mode";}
+	public String IsBuffetMode() {return "Buffet mode";}
     @Override
-	public String IsFastFoodMode() {return "Fast Food Mode";}
+	public String IsFastFoodMode() {return "Fast food mode";}
     @Override
 	public String IsPrintBillWhenPay() {return "automatic print bill when pay";}
     @Override
@@ -510,7 +510,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String DishBtnBK(){return "Dish button Back Ground";}
     @Override
-	public String FunctionBtnBK(){return "Function button Back Ground";}
+	public String FunctionBtnBK(){return "Function Button Back Ground";}
     @Override
 	public String TableBtnBK(){return "Table Button Back Ground";}
     @Override
@@ -522,17 +522,19 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String Color() {return "Color";}
 	@Override
-	public String IsHideRecordFromOtherWaiter() {return "Hide Records From Other Waiter";};
+	public String IsHideRecordFromOtherWaiter() {return "Hide records from other employee";}
 	@Override
-	public String IsDisplayBillInKitchen() {return "Display Bill Index In Kitchen Print";}
+	public String IsDisplayBillInKitchen() {return "Display bill index in kitchen print";}
 	@Override
-	public String TreatPricePromtAsTaxInclude() {return "Treat Price Prom As Tax Include";};
+	public String IsSavePrintInvoiceWhenBilled() {return "Print no invoice when billed."; }
 	@Override
-	public String IsShowCustomerFrame() {return "Show Customer Frame";};
+	public String TreatPricePromtAsTaxInclude() {return "Treat price prom as tax include";};
+	@Override
+	public String IsShowCustomerFrame() {return "Show customer frame";}
 	@Override
 	public String workOnOnlyUnclosedBills() {return "Some bill already closed, do you want to do the action on unclosed bills.";};
 	@Override
-	public Object nonEmptyBillFound() {return "Are you sure to close this table, there's still non empty bill to close first, or they will be deleted automatically.";}
+	public Object nonEmptyBillFound() {return "Are you sure to close this table, there's still non empty bill to close first, or they will be deleted automatically.";};
 	@Override
 	public String FONTSIZE() {return "Font Size";}
 	@Override
