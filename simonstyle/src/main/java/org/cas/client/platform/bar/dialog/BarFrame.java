@@ -39,7 +39,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
-	private String VERSION = "V0.128-20190206";
+	private String VERSION = "V0.129-20190206";
     public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
@@ -401,7 +401,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         
         // status---------
         lblStatus.setBounds(CustOpts.HOR_GAP, getContainer().getHeight() - CustOpts.LBL_HEIGHT - CustOpts.VER_GAP, 
-        		getContainer().getWidth() - CustOpts.HOR_GAP * 2 - 100 -  - CustOpts.HOR_GAP, CustOpts.LBL_HEIGHT);
+        		getContainer().getWidth() - CustOpts.HOR_GAP * 2 - 120 -  - CustOpts.HOR_GAP, CustOpts.LBL_HEIGHT);
         lblVersion.setBounds(lblStatus.getX() + lblStatus.getWidth() + CustOpts.VER_GAP, lblStatus.getY(), 100, lblStatus.getHeight());
         for (JPanel panel : panels) {
         	panel.setBounds(0, lblOperator.getY() + lblOperator.getHeight(), 
