@@ -308,23 +308,19 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 						return;
 					}
 					//split into {num} bills. each dish's number and price will be divided by {num}.
-					Dish.splitOutputList(panel.orderedDishAry, num, null);//the third para is null, means update existing outputs
+					Dish.splitOutputList(panel.orderedDishAry, num, null);//the third parameter is null, means update existing outputs
 					//update existing bill.
-					int billId = panel.orderedDishAry.get(0).getBillID();
-					if(billId > 0) {
+					int curBillId = panel.orderedDishAry.get(0).getBillID();
+					if(curBillId > 0) {
 						try {
-							StringBuilder sql = new StringBuilder("update bill set total = ")
-							.append(Math.round(Float.valueOf(panel.valTotlePrice.getText()) * 100)/num).append(" where id = ").append(billId);
+							StringBuilder sql = new StringBuilder("update bill set total = ").append(Math.round(Float.valueOf(panel.valTotlePrice.getText()) * 100)/num)
+									.append(", discount = discount/").append(num)
+									.append(", otherReceived = otherReceived/").append(num)
+							.append(" where id = ").append(curBillId);
 							PIMDBModel.getStatement().executeUpdate(sql.toString());
 							
 							panel.discount /= num;
-							sql = new StringBuilder("update bill set discount = discount/" + num).append(" where id = ").append(billId);
-							PIMDBModel.getStatement().executeUpdate(sql.toString());
-
 							panel.serviceFee /= num;
-							sql = new StringBuilder("update bill set otherReceived = otherReceived/" + num).append(" where id = ").append(billId);
-							PIMDBModel.getStatement().executeUpdate(sql.toString());
-
 						}catch(Exception exp) {
 							L.e("SalesPanel", "unexpected error when updating the totalvalue of bill.", exp);
 						}
@@ -396,28 +392,8 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 					btnMoveItem.setSelected(false);
 					return;
 				}
-				BarFrame.numberPanelDlg.setBtnSource(btnMoveItem);
-				BarFrame.numberPanelDlg.setFloatSupport(false);
-				BarFrame.numberPanelDlg.setPercentSupport(false);
-				BarFrame.numberPanelDlg.setModal(true);
-				BarFrame.numberPanelDlg.reLayout();
-				BarFrame.numberPanelDlg.setVisible(btnMoveItem.isSelected());
-				if(NumberPanelDlg.confirmed) {
-					int num = Integer.valueOf(NumberPanelDlg.curContent);
-					if(num < 1) {
-						JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
-						return;
-					}
-					// the selecteed output to this bill.
-					String sql = "update output set contactID = " + num + " where id = " + curDish.getOutputID();
-			        try {
-			        	PIMDBModel.getStatement().executeUpdate(sql);
-			        }catch(Exception exp) {
-			        	ErrorUtil.write(exp);
-			        }
-			        BillListPanel.curDish = null;
-			        initContent();
-				}
+				
+				moveItemAction();
 			}
 		}else if(o instanceof ArrowButton){
 			if(o == btnLeft) {
@@ -435,22 +411,33 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 					billPanel.printBill(BarFrame.instance.valCurTable.getText(), billPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
 				}
 				
-			}else if(o == btnCombineAll) {//@note should consider the time, incase there'ss some bill not paid before, while was calculated into current client.
+			}else if(o == btnCombineAll) {//@note should consider the time, incase there's some bill not paid before, while was calculated into current client.
 				//check if all bills are not closed
 				String firstUnclosedBillIdx = null;
 				int firstUnclosedBillId = -1;
+				boolean hasNoticedClosedBillExist = false;
+				ArrayList<BillPanel> billPanelsToCombine = new ArrayList<BillPanel>();
 				for (BillPanel billPanel : billPanels) {
 					if(billPanel.status == DBConsts.completed) {
-						if (JOptionPane.showConfirmDialog(this, BarFrame.consts.workOnOnlyUnclosedBills(),
-		                        DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
-		                    return;
-						break;
-					}else if(firstUnclosedBillIdx == null){
-						firstUnclosedBillIdx = billPanel.billButton.getText();
-						firstUnclosedBillId = billPanel.billID;
+						if(!hasNoticedClosedBillExist) {
+							if (JOptionPane.showConfirmDialog(this, BarFrame.consts.workOnOnlyUnclosedBills(),
+			                        DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+			                    return;
+							}else {
+								hasNoticedClosedBillExist = true;
+							}
+						}
+					}else {
+						billPanelsToCombine.add(billPanel);
+						
+						if(firstUnclosedBillIdx == null){
+							firstUnclosedBillIdx = billPanel.billButton.getText();
+							firstUnclosedBillId = billPanel.billID;
+						}
 					}
 				}
 				
+				//combine outputs--------------------------------------------------------------------------------------------
 				//update all related output to belongs to first Bill, deleted and completed output will not be modified.
 				StringBuilder sql = new StringBuilder("update output set contactID = ").append(firstUnclosedBillIdx)
 						.append(", category = '").append(firstUnclosedBillId)
@@ -460,16 +447,36 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		        try {
 		        	PIMDBModel.getStatement().executeUpdate(sql.toString());
 		        }catch(Exception exp) {
-		        	ErrorUtil.write(exp);
+		        	L.e("Combine All", "exception when updating output with "+ sql, exp);
 		        }
 		        
 //				一轮遍历过之后，可以确定消灭了二次分单的存在。但是一次分单的情况仍然存在。所以有必要再进行一遍，用来把pS也去掉。
 //				两遍目前是足够的。但程序上应该写成说只要发现“pkOrPsFoundFlag”没有被打上，就表示合并结束（没分单过的是否合并是个问题，因为有的菜点了多次，但每个菜可能给了不同的折扣）
-	        	combineOutputs(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valStartTime.getText(), 1);
-	        	//Note: we don't deleted combined bills now, because might be used again later. we will clean the bill when reset the table. we check if it the last non-empty bill.
+	        	combineOutputs(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valStartTime.getText(), Integer.valueOf(firstUnclosedBillIdx));
 	        	
+	        	//combine bills discount and services fees---------------------------------------------------------------------
+	        	//TODO: combine the discount, service fee, of all the none-empty bills.
+	        	//Note: we don't deleted combined bills now, because might be used again later. 
+	        	//when we reset the table. we check if it the last non-empty bill and clean all the empty bill .
+	        	int combinedDiscount = 0;
+	        	int combinedServiceFee = 0;
+	        	for (BillPanel billPanel : billPanelsToCombine) {
+	        		combinedDiscount += billPanel.discount;
+	        		combinedServiceFee += billPanel.serviceFee;
+				}
+	        	
+	        	sql = new StringBuilder("update bill set discount = ").append(combinedDiscount)
+						.append(", otherReceived = ").append(combinedServiceFee)
+						.append(" where id = ").append(firstUnclosedBillId);
+				
+				try {
+		        	PIMDBModel.getStatement().executeUpdate(sql.toString());
+		        }catch(Exception exp) {
+		        	L.e("Combine All", "exception when updating bill with "+ sql, exp);
+		        }
+				
+				//reinit the display----------------------------------------------------------------------------------------------
 		        initContent();
-		        
 			}else if( o == btnSuspendAll) {
 				//check if all bills are not closed
 				for (BillPanel billPanel : billPanels) {
@@ -518,17 +525,42 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			//set the table as unselected.
 		}
 	}
+
+	private void moveItemAction() {
+		BarFrame.numberPanelDlg.setBtnSource(btnMoveItem);
+		BarFrame.numberPanelDlg.setFloatSupport(false);
+		BarFrame.numberPanelDlg.setPercentSupport(false);
+		BarFrame.numberPanelDlg.setModal(true);
+		BarFrame.numberPanelDlg.reLayout();
+		BarFrame.numberPanelDlg.setVisible(btnMoveItem.isSelected());
+		if(NumberPanelDlg.confirmed) {
+			int num = Integer.valueOf(NumberPanelDlg.curContent);
+			if(num < 1) {
+				JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+			}else {
+				// the selecteed output to this bill.
+				String sql = "update output set contactID = " + num + " where id = " + curDish.getOutputID();
+		        try {
+		        	PIMDBModel.getStatement().executeUpdate(sql);
+		        }catch(Exception exp) {
+		        	ErrorUtil.write(exp);
+		        }
+		        BillListPanel.curDish = null;
+		        initContent();
+			}
+		}
+	}
 	
 	//if in same table same openTime same billIndex, we should combine the outputs.
 	//qty, total price, discount, otherReceived
-    private void combineOutputs(String tableName, String startTime, int tableIndex) {
+    private void combineOutputs(String tableName, String startTime, int billIdx) {
     	
     	//target the items which can be combined.
     	List<Dish> dishes = new ArrayList<Dish>();
     	
     	StringBuilder sql = new StringBuilder("select * from output where SUBJECT = '").append(tableName)
         	.append("' and time = '").append(startTime)
-        	.append("' and contactID = ").append(tableIndex)
+        	.append("' and contactID = ").append(billIdx)
         	.append(" and (deleted is null or deleted = ").append(DBConsts.original).append(") order by id");
         try {
         	ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());

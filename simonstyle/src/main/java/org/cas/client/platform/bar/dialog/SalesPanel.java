@@ -245,7 +245,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                         ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                         rs.beforeFirst();
                         rs.next();
-                        if(rs.getInt("status") != 0) {
+                        if(rs.getInt("status") >= DBConsts.completed) {
                         	JOptionPane.showMessageDialog(this, BarFrame.consts.ClosedBillCantVoid());
                         	return;
                         }

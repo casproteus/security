@@ -216,21 +216,21 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String EXACT() {return "EXACT";}
 
     @Override
-	public String BillPageRow() {return "Rows of Bills:";}
+	public String BillPageRow() {return "Bills layout row:";}
     @Override
-	public String BillPageCol() {return "Columns of Bills:";}
+	public String BillPageCol() {return "Bills layout column:";}
     @Override
-	public String RowsofCategoryButton() {return "Rows of Category Button:";}
+	public String RowsofCategoryButton() {return "Category buttons layout row:";}
     @Override
-	public String ColumnsofCategoryButton() {return "Columns of Category Button:";}
+	public String ColumnsofCategoryButton() {return "Category buttons layout column:";}
     @Override
-	public String RowsofDishButton() {return "Rows of Dish Button:";}
+	public String RowsofDishButton() {return "Menu buttons layout row:";}
     @Override
-	public String ColumnsofDishButton() {return "Columns of Dish Button:";}
+	public String ColumnsofDishButton() {return "Menu buttons layout column:";}
     @Override
-	public String PortionofCategoryArea() {return "Portion of Category Area:";}
+	public String PortionofCategoryArea() {return "Area ratio of categorys:";}
     @Override
-	public String PortionofMenuArea() {return "Portion of Menu Area:";}
+	public String PortionofMenuArea() {return "Area ratio of menus:";}
     @Override
 	public String IsSingleUser() {return "Is single user mode";}
     @Override
@@ -242,11 +242,11 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String IsPrintBillWhenPay() {return "automatic print bill when pay";}
     @Override
-	public String StartTimeOfDay() {return "Start Time of The Day";}
+	public String StartTimeOfDay() {return "Start time of the day";}
     @Override
-	public String PrinterMinReachTime() {return "Printer Min Reach Time";}
+	public String PrinterMinReachTime() {return "Printing max waiting time";}
     @Override
-	public String ServerHost() {return "Server Host";}
+	public String ServerHost() {return "Server host";}
     @Override
 	public String PrinterError() {return "WARNING! Error occured when printing in back end, please check printer and try again";}
     

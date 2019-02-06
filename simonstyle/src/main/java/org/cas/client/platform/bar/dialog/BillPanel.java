@@ -629,8 +629,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				tblBillPanel.setSelectedRow(tmpPos - 1);
 			//rs.close();
 			
-			//update the dicount and servicefee, and tip info, and (don't forget the billID).
-			//if has output, then get hte billID from any output, if has no output, then search related bill from db.
+			//update the discount and service fee, and tip info, and (don't forget the billID).
+			//if has output, then get the billID from any output, if has no output, then search related bill from db.
 			//@NOTE could be an non-first but empty bill, so must consider the bill ID if it's not empty string.
 			if(orderedDishAry.size() > 0 && orderedDishAry.get(0).getBillID() > 0) {
 				billID = orderedDishAry.get(0).getBillID();
