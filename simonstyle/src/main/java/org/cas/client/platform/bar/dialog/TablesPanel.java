@@ -127,11 +127,11 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 				int num = rs.getRow();
 				
 				if (num == 0) {// if it's empty, switch to sales panel
-					BarFrame.instance.valCurBill.setText("");
+					BarFrame.instance.valCurBillIdx.setText("");
 					BarFrame.instance.switchMode(2);
 				} else { // if it's not empty
 					if(num == 1 && CustOpts.custOps.getValue("FrobiddenQuickEnter") == null) {	// display the only bill
-						BarFrame.instance.valCurBill.setText(rs.getString("contactID"));
+						BarFrame.instance.valCurBillIdx.setText(rs.getString("contactID"));
 						BarFrame.instance.switchMode(2);
 					}else { //or switch to the bill panel to show all the bills.
 						BarFrame.instance.switchMode(1);

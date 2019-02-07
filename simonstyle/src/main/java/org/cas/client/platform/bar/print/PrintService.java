@@ -162,21 +162,21 @@ public class PrintService{
             if(printerStr == null) {
             	continue;
             }
-            String[] ids = printerStr.split(",");
-            String[] ips = new String[ids.length];
-            for(int i = 0; i < ids.length; i++) {
-            	if(ids[i].length() > 0) {	//some dish might has no printer set.
-            		if(ids[i].lastIndexOf(".") > ids[i].indexOf(".")) {
-            			ips[i] = ids[i];
+            String[] printerIdx = printerStr.split(",");
+            String[] ips = new String[printerIdx.length];
+            for(int i = 0; i < printerIdx.length; i++) {
+            	if(printerIdx[i].length() > 0) {	//some dish might has no printer set.
+            		if(printerIdx[i].lastIndexOf(".") > printerIdx[i].indexOf(".")) {
+            			ips[i] = printerIdx[i];
             		}else {
-            			ips[i] = mapToIP(printers, Integer.valueOf(ids[i]));
+            			ips[i] = mapToIP(printers, Integer.valueOf(printerIdx[i]));
             		}
             	}
             }
             for(String ip: ips) {
                 Printer printer = ipPrinterMap.get(ip);
                 if(printer == null) {                   //should never happen, just in case someone changed db.
-                    ErrorUtil.write("Selected dish not connected with any printer yet.");
+                    L.e("Printing to Kitchen", "Selected dish not connected with any printer yet.", null);
                     continue;
                 }
                 ipSelectionsMap.get(ip).add(dish);
@@ -969,7 +969,7 @@ public class PrintService{
         if(!BarUtil.isCurBillSplited()) {
         	content.append(" ");
         }else {
-        	content.append(billPanel.billButton == null ? BarFrame.instance.valCurBill.getText() : billPanel.billButton.getText());
+        	content.append(billPanel.billButton == null ? BarFrame.instance.valCurBillIdx.getText() : billPanel.billButton.getText());
         }
         //waiter
         content.append(" ").append(BarFrame.instance.valOperator.getText()).append(" ");

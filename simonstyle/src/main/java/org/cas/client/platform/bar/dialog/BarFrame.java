@@ -39,7 +39,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
-	private String VERSION = "V0.129-20190206";
+	private String VERSION = "V0.130-20190207";
     public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
@@ -270,8 +270,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         valOperator = new JLabel();
         lblCurTable = new JLabel(BarFrame.consts.TABLE().concat(" #"));
         valCurTable = new JLabel();
-        lblCurBill = new JLabel(BarFrame.consts.BILL().concat(" #"));
-        valCurBill = new JLabel();
+        lblCurBillIdx = new JLabel(BarFrame.consts.BILL().concat(" #"));
+        valCurBillIdx = new JLabel();
         lblStartTime = new JLabel(BarFrame.consts.OPENTIME().concat(BarFrame.consts.Colon()));
         valStartTime = new JLabel();
         
@@ -290,8 +290,8 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         add(valOperator);
         add(lblCurTable);
         add(valCurTable);
-        add(lblCurBill);
-        add(valCurBill);
+        add(lblCurBillIdx);
+        add(valCurBillIdx);
         add(lblStartTime);
         add(valStartTime);
 
@@ -359,7 +359,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 			valOperator.setText("");
 		}
 		valCurTable.setText("");
-		valCurBill.setText("");
+		valCurBillIdx.setText("");
 		valStartTime.setText("");
 	}
     
@@ -385,10 +385,10 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         		lblCurTable.getPreferredSize().height);
         valCurTable.setBounds(lblCurTable.getX() + lblCurTable.getWidth(), CustOpts.VER_GAP, 180 - lblCurTable.getWidth(),
         		lblCurTable.getPreferredSize().height);
-        lblCurBill.setBounds(valCurTable.getX() + valCurTable.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCurBill.getPreferredSize().width,
-        		lblCurBill.getPreferredSize().height);
-        valCurBill.setBounds(lblCurBill.getX() + lblCurBill.getWidth(), CustOpts.VER_GAP, 180 - lblCurBill.getWidth(),
-        		lblCurBill.getPreferredSize().height);
+        lblCurBillIdx.setBounds(valCurTable.getX() + valCurTable.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCurBillIdx.getPreferredSize().width,
+        		lblCurBillIdx.getPreferredSize().height);
+        valCurBillIdx.setBounds(lblCurBillIdx.getX() + lblCurBillIdx.getWidth(), CustOpts.VER_GAP, 180 - lblCurBillIdx.getWidth(),
+        		lblCurBillIdx.getPreferredSize().height);
         
         lblStartTime.setBounds(getWidth() - lblStartTime.getPreferredSize().width - 200 - CustOpts.HOR_GAP*2 - CustOpts.SIZE_EDGE * 2,
         		 CustOpts.VER_GAP, lblStartTime.getPreferredSize().width, lblOperator.getPreferredSize().height);
@@ -516,12 +516,12 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     boolean hasClose; // 标志对话框是否已关闭
 
     private JLabel lblCurTable;
-    private JLabel lblCurBill;
+    private JLabel lblCurBillIdx;
     private JLabel lblOperator;
     private JLabel lblStartTime;
     
     public JLabel valCurTable;
-    public JLabel valCurBill;
+    public JLabel valCurBillIdx;
     public JLabel valOperator;
     public JLabel valStartTime;
 
@@ -533,7 +533,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     private JLabel lblVersion;
 
 	public String getCurBillIndex() {
-		String curBillIndex = valCurBill.getText();
+		String curBillIndex = valCurBillIdx.getText();
 		if(curBillIndex == null || curBillIndex.trim().length() == 0 || "0".equals(curBillIndex))
 			return "1";
 		else

@@ -179,7 +179,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
 		//prepare the printing String and do printing
 		String curTable = BarFrame.instance.valCurTable.getText();
-		String curCustomerIdx = BarFrame.instance.valCurBill.getText();
+		String curCustomerIdx = BarFrame.instance.valCurBillIdx.getText();
 		String waiterName = BarFrame.instance.valOperator.getText();
 		PrintService.exePrintOrderList(dishes, curTable, curCustomerIdx, waiterName, isCancelled);
 	}
@@ -279,7 +279,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         		return;
         	}
         	
-    		BarFrame.instance.valCurBill.setText(((JToggleButton)o).getText());
+    		BarFrame.instance.valCurBillIdx.setText(((JToggleButton)o).getText());
             BarFrame.instance.switchMode(2);
 		}
 		
@@ -460,7 +460,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         }
         newDish.setTotalPrice(price * 1);
         newDish.setOpenTime(BarFrame.instance.valStartTime.getText());
-        newDish.setBillIndex(BarFrame.instance.valCurBill.getText());
+        newDish.setBillIndex(BarFrame.instance.valCurBillIdx.getText());
         newDish.setBillID(billID);
         orderedDishAry.add(newDish);				//valueChanged process. not being cleared immediately-----while now dosn't matter
         BillListPanel.curDish = newDish;
@@ -490,8 +490,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
 	public void sendNewOrdersToKitchenAndDB(List<Dish> dishes) {
 		//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
-		if(dishes.size() == orderedDishAry.size()) {
-		    BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
+		if(dishes.size() == orderedDishAry.size()) {	//didn't set the idx when bill created, because don't wanto display idx if there's only 1 bill.
+		    BarFrame.instance.valCurBillIdx.setText(String.valueOf(BillListPanel.getANewBillIdx()));
 		}
 		sendDishesToKitchen(dishes, false);
 		persistDishesToOutput(dishes);
@@ -656,8 +656,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			}else if(BarFrame.instance.valCurTable.getText().length() > 0 && BarFrame.instance.valStartTime.getText().length() > 0) {
 				sql = new StringBuilder("Select id from bill where tableID = '").append(BarFrame.instance.valCurTable.getText())
 						.append("' and opentime = '").append(BarFrame.instance.valStartTime.getText()).append("'");
-				if(BarFrame.instance.valCurBill.getText().length() > 0) {
-					sql.append(" and billIndex = ").append(BarFrame.instance.valCurBill.getText());
+				if(BarFrame.instance.valCurBillIdx.getText().length() > 0) {
+					sql.append(" and billIndex = ").append(BarFrame.instance.valCurBillIdx.getText());
 				}
                 ResultSet resultSet = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
                 resultSet.beforeFirst();

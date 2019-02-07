@@ -235,7 +235,7 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
     	//swith to sales panel.
     	
     	BarFrame.instance.valCurTable.setText(String.valueOf(tblContent.getValueAt(selectedRow, 1)));
-    	BarFrame.instance.valCurBill.setText(String.valueOf(tblContent.getValueAt(selectedRow, 2)));
+    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(tblContent.getValueAt(selectedRow, 2)));
     	BarFrame.instance.valOperator.setText(String.valueOf(tblContent.getValueAt(selectedRow, 9)));
     	BarFrame.instance.valStartTime.setText(String.valueOf(tblContent.getValueAt(selectedRow, 11)));
     	BarFrame.instance.switchMode(2);

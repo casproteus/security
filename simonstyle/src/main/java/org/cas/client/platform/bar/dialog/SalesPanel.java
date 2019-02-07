@@ -287,7 +287,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	                	//we need to process cur bill, give it a special status, so we can see the voided bills
 	                	//in check order dialog. and have to process it to be not null, better to be a negative. 
 	                	//so will not be considered as there's still non closed bill, when checking in isLastBill()
-	                	String curBill = BarFrame.instance.valCurBill.getText();
+	                	String curBill = BarFrame.instance.valCurBillIdx.getText();
 	                	//update bill
 	        			sql = new StringBuilder("update bill set status = ").append(DBConsts.voided)
 	        					.append(" where billIndex = ").append("".equals(curBill) ? 1 : curBill)
@@ -420,7 +420,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		outputStatusCheck();
         		billPricesUpdate();
             	if(BarOption.isFastFoodMode()) {
-    		    	BarFrame.instance.valCurBill.setText(String.valueOf(BillListPanel.getANewBillNumber()));
+    		    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(BillListPanel.getANewBillIdx()));
     		    	billPanel.initContent();
     		    }else {
     		    	BarFrame.instance.switchMode(0);
@@ -473,9 +473,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			rs.beforeFirst();
 			rs.next();
 
-			BarFrame.instance.valCurBill.setText(String.valueOf(rs.getInt("contactID") + 1));
+			BarFrame.instance.valCurBillIdx.setText(String.valueOf(rs.getInt("contactID") + 1));
 			//
-			int billId = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
+			int billId = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBillIdx.getText(), BarFrame.instance.valStartTime.getText());
 			billPanel.billID = billId;
 		}catch(Exception exp) {
 			L.e("Add Bill function",

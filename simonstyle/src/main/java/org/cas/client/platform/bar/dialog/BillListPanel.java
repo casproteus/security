@@ -126,7 +126,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 			int col = BarOption.getBillPageCol();
 			int row = BarOption.getBillPageRow();
 			
-			int billNum = getANewBillNumber();
+			int billNum = getANewBillIdx();
 			for(int i = 0; i < row * col; i++) {
 				if(row * col * curPageNum + i < billPanels.size()) {	//some panel is using the panel in billPanels list.
 					onScrBills.add(billPanels.get(row * col * curPageNum + i));
@@ -327,7 +327,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 					}
 											
 					for (int i = 1; i < num; i++) {				//generate output for splited ones.
-						int billIndex = BillListPanel.getANewBillNumber();
+						int billIndex = BillListPanel.getANewBillIdx();
 						
 						//generate a bill for each new occupied panel, incase there's discount info need to set into it.
 						//@Note, when the initContent of the panel called, the bill ID will be set into the dish instance in memory.
@@ -367,7 +367,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 					}
 					Dish.splitOutput(curDish, selectedPanels.size() + 1, null); // update the num and totalprice of curDish
 					for (BillPanel billPanel : selectedPanels) { // insert new output with other billID
-						int billIndex = BillListPanel.getANewBillNumber();
+						int billIndex = BillListPanel.getANewBillIdx();
 						//generate a bill for each new occupied panel, incase there's discount info need to set into it.
 						//@Note, when the initContent of the panel called, the bill ID will be set into the dish instance in memory.
 						//and eventually, if the bill id is not 0, will calculate the service fee and discount into Total.
@@ -513,11 +513,11 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		        	ErrorUtil.write(exp);
 		        }
 		        
-				BarFrame.instance.valCurBill.setText("");
+				BarFrame.instance.valCurBillIdx.setText("");
 				BarFrame.instance.switchMode(0);
 				
 			}else if(o == btnReturn) {
-				BarFrame.instance.valCurBill.setText("");
+				BarFrame.instance.valCurBillIdx.setText("");
 				BarFrame.instance.switchMode(0);
 			}
 
@@ -639,7 +639,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		}
 	}
 
-	public static int getANewBillNumber(){
+	public static int getANewBillIdx(){
     	int num = 0;
     	try {
 			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
