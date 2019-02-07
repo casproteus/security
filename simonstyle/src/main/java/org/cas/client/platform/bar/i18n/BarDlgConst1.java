@@ -236,6 +236,8 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String IsTaxNotAllowDiscount() {return "Tax should not be affected by discount of dish";}
     @Override
+    public String IsServiceFeeAffectTax() {return "service fee will affect tax";}
+    @Override
 	public String IsBuffetMode() {return "Buffet mode";}
     @Override
 	public String IsFastFoodMode() {return "Fast food mode";}

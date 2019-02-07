@@ -330,9 +330,11 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         else if(o instanceof JToggleButton) {
         	if(o == cbxIsSingleUser) {
         		BarOption.setSingleUser(cbxIsSingleUser.isSelected() ? "true" : "false");
-        	}else if(o == cbxIsDiscBeforeTax) {
-        		BarOption.setIsDisCountBeforeTax(cbxIsDiscBeforeTax.isSelected() ? true : false);
-        	}else if(o == cbxIsBuffetMode) {
+        	}else if(o == cbxIsDiscoutAffectTax) {
+        		BarOption.setIsDisCountBeforeTax(cbxIsDiscoutAffectTax.isSelected() ? true : false);
+        	}else if(o == cbxIsServiceFeeAffectTax) {
+        		BarOption.setIsServiceFeeAffectTax(cbxIsServiceFeeAffectTax.isSelected() ? true : false);
+        	}else  if(o == cbxIsBuffetMode) {
         		BarOption.setIsBuffetMode(cbxIsBuffetMode.isSelected() ? true : false);
         	}else if(o == cbxIsFastFoodMode) {
         		BarOption.setFastFoodMode(cbxIsFastFoodMode.isSelected() ? true : false);
@@ -414,9 +416,11 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         //cbx------------------------------------
         cbxIsSingleUser.setBounds(lblServerHost.getX(), sepH1.getY() + sepH1.getHeight() + CustOpts.VER_GAP * 2,
         		cbxIsSingleUser.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        cbxIsDiscBeforeTax.setBounds(cbxIsSingleUser.getX(), cbxIsSingleUser.getY() + cbxIsSingleUser.getHeight() + CustOpts.VER_GAP,
-        		cbxIsDiscBeforeTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        cbxIsBuffetMode.setBounds(cbxIsDiscBeforeTax.getX(), cbxIsDiscBeforeTax.getY() + cbxIsDiscBeforeTax.getHeight() + CustOpts.VER_GAP,
+        cbxIsDiscoutAffectTax.setBounds(cbxIsSingleUser.getX(), cbxIsSingleUser.getY() + cbxIsSingleUser.getHeight() + CustOpts.VER_GAP,
+        		cbxIsDiscoutAffectTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxIsServiceFeeAffectTax.setBounds(cbxIsDiscoutAffectTax.getX(), cbxIsDiscoutAffectTax.getY() + cbxIsDiscoutAffectTax.getHeight() + CustOpts.VER_GAP,
+        		cbxIsServiceFeeAffectTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxIsBuffetMode.setBounds(cbxIsServiceFeeAffectTax.getX(), cbxIsServiceFeeAffectTax.getY() + cbxIsServiceFeeAffectTax.getHeight() + CustOpts.VER_GAP,
         		cbxIsBuffetMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsFastFoodMode.setBounds(cbxIsBuffetMode.getX(), cbxIsBuffetMode.getY() + cbxIsBuffetMode.getHeight() + CustOpts.VER_GAP,
         		cbxIsFastFoodMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
@@ -497,7 +501,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tfdBillPageCol = new JTextField(String.valueOf(BarOption.getBillPageCol()));
 
         cbxIsSingleUser = new JCheckBox(BarFrame.consts.IsSingleUser());
-        cbxIsDiscBeforeTax = new JCheckBox(BarFrame.consts.IsTaxNotAllowDiscount());
+        cbxIsDiscoutAffectTax = new JCheckBox(BarFrame.consts.IsTaxNotAllowDiscount());
+        cbxIsServiceFeeAffectTax = new JCheckBox(BarFrame.consts.IsServiceFeeAffectTax());
         cbxIsBuffetMode = new JCheckBox(BarFrame.consts.IsBuffetMode());
         cbxIsFastFoodMode = new JCheckBox(BarFrame.consts.IsFastFoodMode());
         cbxIsHideRecordFromOtherWaiter = new JCheckBox(BarFrame.consts.IsHideRecordFromOtherWaiter());
@@ -551,7 +556,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         Font tFont = PIMPool.pool.getFont((String) CustOpts.custOps.hash2.get(PaneConsts.DFT_FONT), Font.PLAIN, 40);
         
         cbxIsSingleUser.setBackground(null);
-        cbxIsDiscBeforeTax.setBackground(null);
+        cbxIsDiscoutAffectTax.setBackground(null);
+        cbxIsServiceFeeAffectTax.setBackground(null);
         cbxIsBuffetMode.setBackground(null);
         cbxIsFastFoodMode.setBackground(null);
         cbxIsHideRecordFromOtherWaiter.setBackground(null);
@@ -561,7 +567,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxShowCustomerFrame.setBackground(null);
         
         cbxIsSingleUser.setSelected(BarOption.isSingleUser());
-        cbxIsDiscBeforeTax.setSelected(BarOption.isTaxNotAllowDiscount());
+        cbxIsDiscoutAffectTax.setSelected(BarOption.isDiscountAffectTax());
+        cbxIsServiceFeeAffectTax.setSelected(BarOption.isServiceFeeAffectTax());
         cbxIsBuffetMode.setSelected(BarOption.isBuffetMode());
         cbxIsFastFoodMode.setSelected(BarOption.isFastFoodMode());
         cbxIsHideRecordFromOtherWaiter.setSelected(BarOption.isHideRecordFromOtherWaiter());
@@ -602,7 +609,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tfdBillPageRow.addFocusListener(this);
         tfdBillPageCol.addFocusListener(this);
         cbxIsSingleUser.addActionListener(this);
-        cbxIsDiscBeforeTax.addActionListener(this);
+        cbxIsDiscoutAffectTax.addActionListener(this);
+        cbxIsServiceFeeAffectTax.addActionListener(this);
         cbxIsBuffetMode.addActionListener(this);
         cbxIsFastFoodMode.addActionListener(this);
         cbxIsHideRecordFromOtherWaiter.addActionListener(this);
@@ -668,7 +676,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(tfdServerHost);
         
         add(cbxIsSingleUser);
-        add(cbxIsDiscBeforeTax);
+        add(cbxIsDiscoutAffectTax);
+        add(cbxIsServiceFeeAffectTax);
         add(cbxIsBuffetMode);
         add(cbxIsFastFoodMode);
         add(cbxIsHideRecordFromOtherWaiter);
@@ -700,7 +709,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     JTextField tfdServerHost;
     
     JCheckBox cbxIsSingleUser;
-    JCheckBox cbxIsDiscBeforeTax;
+    JCheckBox cbxIsDiscoutAffectTax;
+    JCheckBox cbxIsServiceFeeAffectTax;
     JCheckBox cbxIsBuffetMode;
     JCheckBox cbxIsFastFoodMode;
     JCheckBox cbxIsHideRecordFromOtherWaiter;

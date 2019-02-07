@@ -179,9 +179,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
 		//prepare the printing String and do printing
 		String curTable = BarFrame.instance.valCurTable.getText();
-		String curBill = BarFrame.instance.valCurBill.getText();
+		String curCustomerIdx = BarFrame.instance.valCurBill.getText();
 		String waiterName = BarFrame.instance.valOperator.getText();
-		PrintService.exePrintOrderList(dishes, curTable, curBill, waiterName, isCancelled);
+		PrintService.exePrintOrderList(dishes, curTable, curCustomerIdx, waiterName, isCancelled);
 	}
 	
 	//save to db output
@@ -523,7 +523,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		int gst = Math.round(totalPrice * (dish.getGst() * gstRate / 100f));	//an item could have a different tax rate.
     		int qst = Math.round(totalPrice * (dish.getQst() * qstRate / 100f));
     		
-    		if(BarOption.isTaxNotAllowDiscount()) {
+    		if(BarOption.isDiscountAffectTax()) {
     			gst += dish.getDiscount() * (dish.getGst() * gstRate / 100f);
     			qst += dish.getDiscount() * (dish.getQst() * gstRate / 100f);
     		}
@@ -544,9 +544,18 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		totalGst += gst;
     		totalQst += qst;
     	}
-    	subTotal -= discount;	//deduct the total discount.
-    	if(BarOption.isTaxNotAllowDiscount()) {
-    		//@TODO: I am not sure if it's correct to do like this, we don't know what tax rate is good for the bill discount.
+    	
+    	subTotal -= discount;
+		subTotal += serviceFee;
+		
+    	if(BarOption.isDiscountAffectTax()) {
+    		totalGst -= Math.round(discount * gstRate / 100f);
+    		totalQst -= Math.round(discount * qstRate / 100f);
+    	}
+    	
+    	if(BarOption.isServiceFeeAffectTax()) {
+    		totalGst += Math.round(serviceFee * gstRate / 100f);
+    		totalQst += Math.round(serviceFee * qstRate / 100f);
     	}
 
         lblDiscount.setText(discount > 0 ? BarFrame.consts.Discount() + " : -" + BarOption.getMoneySign() + new DecimalFormat("#0.00").format((discount)/100f) : "");
@@ -554,7 +563,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	lblSubTotle.setText(BarFrame.consts.Subtotal() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(subTotal/100f));
         lblTPS.setText(BarFrame.consts.QST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(((int)totalGst)/100f));
         lblTVQ.setText(BarFrame.consts.GST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(((int)totalQst)/100f));
-        int total = (int) (subTotal + totalGst + totalQst + serviceFee);
+        int total = (int) (subTotal + totalGst + totalQst);
         valTotlePrice.setText(new DecimalFormat("#0.00").format((total)/100f));
     }
     

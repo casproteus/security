@@ -127,6 +127,7 @@ public interface BarDlgConst {
 	String PortionofMenuArea();
     String IsSingleUser();
     String IsTaxNotAllowDiscount();
+    String IsServiceFeeAffectTax();
     String IsBuffetMode();
     String IsFastFoodMode();
     String IsPrintBillWhenPay();
