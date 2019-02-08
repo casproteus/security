@@ -107,6 +107,42 @@ public class PrintService{
     }
     
     //The start time and end time are long format, need to be translate for print.
+    public static void exePrintBills(List<BillPanel> unclosedBillPanels){
+    	flushIpContent();
+        reInitPrintRelatedMaps();
+        
+        String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
+        if(ipContentMap.get(printerIP) == null)
+        	ipContentMap.put(printerIP,new ArrayList<String>());
+        
+        List<String> contentList = ipContentMap.get(printerIP);
+        float totalPrice = 0.0f;
+        //for (List<Dish> saleRecords : saleRecordsList) {
+        for (BillPanel billPanel : unclosedBillPanels) {
+        	List<String> contents = formatContentForBill(billPanel.orderedDishAry, printerIP, billPanel);
+        	//fetch out total price in content.
+        	totalPrice += fetchOutTotalPricce(contents);
+        	contents.remove(7);	//remove "cut"
+        	contents.remove(6);	//remove "/n/n/n/n/n"
+        	contentList.addAll(contents);
+		}
+        contentList.add("BigFont");
+        contentList.add("\n\n               Total:" + totalPrice);
+        contentList.add("NormalFont");
+        contentList.add("\n\n\n\n\n");
+        contentList.add("cut");
+        
+        printContents();
+    }
+    
+    private static float fetchOutTotalPricce(List<String> contents) {
+		String line = contents.get(3);
+		int start = line.indexOf(":") + 1;
+		int end = line.indexOf("\n");
+		return Float.valueOf(line.substring(start, end).trim());
+	}
+
+	//The start time and end time are long format, need to be translate for print.
     public static void exePrintInvoice(BillPanel billPanel, List<Dish> saleRecords, boolean isCashBack){
         flushIpContent();
         reInitPrintRelatedMaps();
