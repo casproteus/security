@@ -294,6 +294,8 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String AddUser() {return "ADD BILL";}
     @Override
 	public String PrintAll() {return "PRINT ALL";}
+    @Override
+	public String PrintOneBill() {return "PRINT ONE BILL";}
 
     @Override
 	public String EqualBill() {return "EQUAL BILL";}

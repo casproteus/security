@@ -43,7 +43,8 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	    btnRight = new ArrowButton(">>");
 		btnAddUser = new FunctionButton(BarFrame.consts.AddUser());
 		btnPrintAll = new FunctionButton(BarFrame.consts.PrintAll());
-
+		btnPrintInOneBill = new FunctionButton(BarFrame.consts.PrintOneBill());
+		btnPrintInOneBill.setEnabled(false);
 		btnEqualBill = new JToggleButton(BarFrame.consts.EqualBill());
 		btnSplitItem = new JToggleButton(BarFrame.consts.SplitItem());
 		btnMoveItem = new JToggleButton(BarFrame.consts.MoveItem());
@@ -58,6 +59,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnRight.setMargin(new Insets(0, 0, 0, 0));
 		btnAddUser.setMargin(new Insets(0, 0, 0, 0));
 		btnPrintAll.setMargin(btnAddUser.getMargin());
+		btnPrintInOneBill.setMargin(btnAddUser.getMargin());
 		btnEqualBill.setMargin(btnAddUser.getMargin());
 		btnCombineAll.setMargin(btnAddUser.getMargin());
 		btnSplitItem.setMargin(btnAddUser.getMargin());
@@ -72,6 +74,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		add(btnAddUser);
 		add(separator);
 		add(btnPrintAll);
+		add(btnPrintInOneBill);
 		add(btnEqualBill);
 		add(btnCombineAll);
 		add(btnSplitItem);
@@ -84,6 +87,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnRight.addActionListener(this);
 		btnAddUser.addActionListener(this);
 		btnPrintAll.addActionListener(this);
+		btnPrintInOneBill.addActionListener(this);
 		btnEqualBill.addActionListener(this);
 		btnCombineAll.addActionListener(this);
 		btnSplitItem.addActionListener(this);
@@ -150,7 +154,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 9) / 8;
+        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 10) / 9;
         int tBtnHeight = panelHeight / 10;
 
 
@@ -162,15 +166,17 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 		btnPrintAll.setBounds(btnAddUser.getX() + btnAddUser.getWidth() + CustOpts.HOR_GAP, 
 				panelHeight - tBtnHeight - CustOpts.VER_GAP,
 				tBtnWidht, tBtnHeight);
-		
-		btnEqualBill.setBounds(btnPrintAll.getX() + btnPrintAll.getWidth() + CustOpts.HOR_GAP, 
+		btnPrintInOneBill.setBounds(btnPrintAll.getX() + btnPrintAll.getWidth() + CustOpts.HOR_GAP, 
 				btnPrintAll.getY(),
+				tBtnWidht, tBtnHeight);
+		btnEqualBill.setBounds(btnPrintInOneBill.getX() + btnPrintInOneBill.getWidth() + CustOpts.HOR_GAP, 
+				btnPrintInOneBill.getY(),
 				tBtnWidht, tBtnHeight);
 		btnCombineAll.setBounds(btnEqualBill.getX() + btnEqualBill.getWidth() + CustOpts.HOR_GAP, 
-				btnPrintAll.getY(),
+				btnEqualBill.getY(),
 				tBtnWidht, tBtnHeight);
 		btnSplitItem.setBounds(btnCombineAll.getX() + btnCombineAll.getWidth() + CustOpts.HOR_GAP, 
-				btnPrintAll.getY(),
+				btnCombineAll.getY(),
 				tBtnWidht, tBtnHeight);
 		btnMoveItem.setBounds(btnSplitItem.getX() + btnSplitItem.getWidth() + CustOpts.HOR_GAP, 
 				btnSplitItem.getY(),
@@ -410,6 +416,9 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 				for (BillPanel billPanel : billPanels) {
 					billPanel.printBill(BarFrame.instance.valCurTable.getText(), billPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
 				}
+				
+			}else if(o == btnPrintInOneBill) {
+				//TODO: print into one bill with client sub total
 				
 			}else if(o == btnCombineAll) {//@note should consider the time, incase there's some bill not paid before, while was calculated into current client.
 				//check if all bills are not closed
@@ -684,6 +693,7 @@ public class BillListPanel extends  JPanel  implements ActionListener, Component
 	FunctionButton btnAddUser;
 	JSeparator separator;
 	FunctionButton btnPrintAll;
+	FunctionButton btnPrintInOneBill;
 	JToggleButton btnEqualBill;
 	JToggleButton btnSplitItem;
 	JToggleButton btnMoveItem;

@@ -294,6 +294,8 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String AddUser() {return "添加账单";}
     @Override
 	public String PrintAll() {return "全部打印";}
+    @Override
+	public String PrintOneBill() {return "打印到一张单";}
 
     @Override
 	public String EqualBill() {return "整单平分";}

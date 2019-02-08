@@ -195,7 +195,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 //        }
     }
 
-	public void openATable(TableButton tableToggle) {
+	private void openATable(TableButton tableToggle) {
 		tableToggle.setBackground(colorSelected);
 		String openTime = BarOption.df.format(new Date());
 		tableToggle.setOpenTime(openTime);
