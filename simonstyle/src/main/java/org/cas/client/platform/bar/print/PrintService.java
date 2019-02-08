@@ -401,7 +401,7 @@ public class PrintService{
     		sndMsg.remove(4);
     		sndMsg.remove(2);
 			break;
-		case "REPORT"://reprinted receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice.".
+		case "REPORT"://report //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice.".
     		sndMsg.remove(5);
     		sndMsg.remove(4);
 			break;
@@ -437,9 +437,9 @@ public class PrintService{
 	private static String checkTransType(List<String> sndMsg) {
 		if(sndMsg.size() == 6) {	//currently if it's REPORT, sndMsg has 6 element. 
 			return "REPORT";
-		}else if(sndMsg.size() == 8) {	//currently if it's ADDI, sndMsg has 8 element. 
+		}else if(sndMsg.size() == 8) {	//currently if it's /check, sndMsg has 8 element. 
 			return "ADDI";
-		}else if (sndMsg.size() == 9) {	//currently if it's receipt, sndMsg has 9 element. 
+		}else if (sndMsg.size() == 9) {	//currently if it's bill, sndMsg has 9 element. 
 			return "RFER";
 		}else if (sndMsg.size() == 10) {	//currently if it's receipt, sndMsg has 10 element. 
 			return "R_RFER";

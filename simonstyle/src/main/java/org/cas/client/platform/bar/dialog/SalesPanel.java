@@ -467,7 +467,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		//add new bill with a new billID and billIdx.
 		try {
 			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
-					.append("' and (deleted is null or deleted = ").append(DBConsts.original)
+					.append("' and (deleted is null or deleted < ").append(DBConsts.voided)
 					.append(") and time = '").append(BarFrame.instance.valStartTime.getText()).append("' order by contactID DESC");
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.beforeFirst();

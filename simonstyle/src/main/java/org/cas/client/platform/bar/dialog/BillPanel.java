@@ -683,6 +683,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         cashback = 0;
         comment = "";
         status = DBConsts.original;
+        setBackground(null);
     }
     
     void resetColWidth(int tableWidth) {
