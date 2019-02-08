@@ -374,32 +374,45 @@ public class PrintService{
     	//check the msg (it's a bill/check(6 item inside)  or a receipt/invoice (7 item inside)
     	String transType = checkTransType(sndMsg);
     	switch (transType) {
-		case "ADDI"://check
-			for(int i = 8 - 1; i > 3; i--) {
+    	case "ADDI"://check
+			for(int i = 9 - 1; i > 4; i--) {
     			sndMsg.remove(i);
     		}
 			sndMsg.remove(2);
-			String total = sndMsg.get(2);
+			String total = sndMsg.get(3);
 			int p = total.indexOf(":");
 			//NOTE:there's a \n at the end of total, use PreferedWidth() - (total.length() - 1)
 			total = total.substring(0, p + 1) + BarUtil.generateString(BarUtil.getPreferedWidth() - (total.length() - 1), " ") + total.substring(p+1);
-			sndMsg.remove(2);
+			sndMsg.remove(3);
 			sndMsg.add(total);
 			break;
 			
+    	case "ONE_ADDI"://combine to one check.
+			for(int i = 1; i < 7; i++) {
+    			sndMsg.remove(13 - i);
+    		}
+			sndMsg.remove(2);
+			String combinedTotal = sndMsg.get(3);
+			int location = combinedTotal.indexOf(":");
+			//NOTE:there's a \n at the end of total, use PreferedWidth() - (total.length() - 1)
+			combinedTotal = combinedTotal.substring(0, location + 1) + BarUtil.generateString(BarUtil.getPreferedWidth() - (combinedTotal.length() - 1), " ") + combinedTotal.substring(location+1);
+			sndMsg.remove(2);
+			sndMsg.add(combinedTotal);
+			break;
+			
 		case "RFER"://receipt
-			sndMsg.remove(8);
-    		sndMsg.remove(7);
-    		sndMsg.remove(4);
-    		sndMsg.remove(2);
+			sndMsg.remove(9);
+    		sndMsg.remove(8);
+    		sndMsg.remove(5);
+    		sndMsg.remove(3);
 			break;
 			
 		case "R_RFER"://reprinted receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice.".
+			sndMsg.remove(10);
 			sndMsg.remove(9);
-			sndMsg.remove(8);
-    		sndMsg.remove(7);
-    		sndMsg.remove(4);
-    		sndMsg.remove(2);
+    		sndMsg.remove(8);
+    		sndMsg.remove(5);
+    		sndMsg.remove(3);
 			break;
 		case "REPORT"://report //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice.".
     		sndMsg.remove(5);
@@ -437,12 +450,14 @@ public class PrintService{
 	private static String checkTransType(List<String> sndMsg) {
 		if(sndMsg.size() == 6) {	//currently if it's REPORT, sndMsg has 6 element. 
 			return "REPORT";
-		}else if(sndMsg.size() == 8) {	//currently if it's /check, sndMsg has 8 element. 
+		}else if(sndMsg.size() == 9) {	//currently if it's bill/check, sndMsg has 8 element. 
 			return "ADDI";
-		}else if (sndMsg.size() == 9) {	//currently if it's bill, sndMsg has 9 element. 
+		}else if (sndMsg.size() == 10) {	//currently if it's receipt/invoice, sndMsg has 9 element. 
 			return "RFER";
-		}else if (sndMsg.size() == 10) {	//currently if it's receipt, sndMsg has 10 element. 
+		}else if (sndMsg.size() == 11) {	//currently if it's receipt, sndMsg has 10 element. 
 			return "R_RFER";
+		}else if (sndMsg.size() == 13) {	//currently if it's receipt, sndMsg has 10 element. 
+			return "ONE_ADDI";
 		}
 		return "";
 	}
