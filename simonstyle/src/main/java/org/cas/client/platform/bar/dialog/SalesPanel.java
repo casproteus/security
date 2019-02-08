@@ -169,10 +169,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
      				String curContent = BarFrame.numberPanelDlg.curContent;
      				if(curContent == null || curContent.length() == 0)
      					return;
-             		float serviceFee = BarFrame.numberPanelDlg.isPercentage ? 
-             				Float.valueOf(billPanel.valTotlePrice.getText()) * Float.valueOf(curContent)
-             				: Float.valueOf(curContent);
-             		billPanel.serviceFee = (int)(serviceFee * 100);
+     				billPanel.serviceFee  = BarFrame.numberPanelDlg.isPercentage ? 
+             				Math.round(Float.valueOf((billPanel.subTotal - billPanel.serviceFee + billPanel.discount) * Float.valueOf(curContent)))
+             				: Math.round(Float.valueOf(curContent) * 100);
+             				
              		billPanel.updateTotleArea();
              		
              		outputStatusCheck();

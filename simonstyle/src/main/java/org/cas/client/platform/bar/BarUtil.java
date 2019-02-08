@@ -151,7 +151,7 @@ public class BarUtil {
         return realWidth;
     }
     
-	public static boolean isCurBillSplited() {
+	public static boolean isMoreThanOneBill() {
 		try {
 			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
 					.append("' and (deleted is null or deleted = ").append(DBConsts.original)

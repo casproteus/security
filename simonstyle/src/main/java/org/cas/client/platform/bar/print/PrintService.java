@@ -122,8 +122,15 @@ public class PrintService{
         	List<String> contents = formatContentForBill(billPanel.orderedDishAry, printerIP, billPanel);
         	//fetch out total price in content.
         	totalPrice += fetchOutTotalPricce(contents);
-        	contents.remove(7);	//remove "cut"
-        	contents.remove(6);	//remove "/n/n/n/n/n"
+        	contents.remove(8);	//remove "cut"
+        	contents.remove(7);	//remove "/n/n/n/n/n"
+    		contents.remove(5);	//remove NORMALFONT
+    		contents.remove(3);	//remove BIGFONT
+        	if(billPanel != unclosedBillPanels.get(0)) {
+        		contents.remove(1);
+        		contents.remove(0);
+        	}
+        	
         	contentList.addAll(contents);
 		}
         contentList.add("BigFont");
@@ -136,7 +143,7 @@ public class PrintService{
     }
     
     private static float fetchOutTotalPricce(List<String> contents) {
-		String line = contents.get(3);
+		String line = contents.get(4);
 		int start = line.indexOf(":") + 1;
 		int end = line.indexOf("\n");
 		return Float.valueOf(line.substring(start, end).trim());
@@ -428,13 +435,13 @@ public class PrintService{
 	}
 
 	private static String checkTransType(List<String> sndMsg) {
-		if(sndMsg.size() == 6) {	//currently if it's check, sndMsg has 8 element. 
+		if(sndMsg.size() == 6) {	//currently if it's REPORT, sndMsg has 6 element. 
 			return "REPORT";
-		}else if(sndMsg.size() == 8) {	//currently if it's check, sndMsg has 8 element. 
+		}else if(sndMsg.size() == 8) {	//currently if it's ADDI, sndMsg has 8 element. 
 			return "ADDI";
 		}else if (sndMsg.size() == 9) {	//currently if it's receipt, sndMsg has 9 element. 
 			return "RFER";
-		}else if (sndMsg.size() == 10) {	//currently if it's receipt, sndMsg has 9 element. 
+		}else if (sndMsg.size() == 10) {	//currently if it's receipt, sndMsg has 10 element. 
 			return "R_RFER";
 		}
 		return "";
@@ -877,6 +884,12 @@ public class PrintService{
         int tWidth = BarUtil.getPreferedWidth();
 	            
 	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(list.get(0).getBillID()));
+	    String tableIdx = BarFrame.instance.valCurTable.getText();
+	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
+	    if(billPanel.billButton != null) {
+	    	startTimeStr.append("(").append(billPanel.billButton.getText()).append(")");
+	    }
+	    pushWaiterAndTime(strAryFR, tWidth, tableIdx, startTimeStr.toString(), "");
         pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
         pushTotal(billPanel, strAryFR);
         
@@ -951,7 +964,7 @@ public class PrintService{
   		//
       		
 	    //pushBillHeadInfo(strAryFR, tWidth, null);
-	    pushWaiterAndTime(strAryFR, list, tWidth, startTime, endTime);
+	    pushWaiterAndTime(strAryFR, tWidth, null, startTime, endTime);
         pushSalesSummary(strAryFR, list, tWidth,
         		String.valueOf(salesGrossCount), String.valueOf(refundCount), 
         		new DecimalFormat("#0.00").format(salesGrossAmount/100.0),
@@ -976,19 +989,29 @@ public class PrintService{
         strAryFR.add(content.toString());
 	}
 	
-	private static void pushWaiterAndTime(ArrayList<String> strAryFR, List<Bill> list, 
-			int tWidth, String startDateStr, String endDateStr) {
+	private static void pushWaiterAndTime(ArrayList<String> strAryFR, int tWidth, String tableIdx, String sartTimeStr, String endTimeStr) {
 		StringBuilder content = new StringBuilder();
+		//table
+		if(tableIdx != null && tableIdx.trim().length() > 0) {
+			content.append("(").append(tableIdx).append(")");
+		}
+        //bill index
+        if(!BarUtil.isMoreThanOneBill()) {
+        	content.append(" ");
+        }else {
+        	content.append(sartTimeStr);
+        }
+        
         //waiter
         content.append(" ").append(LoginDlg.USERNAME).append(" ");
         //space
-        int lengthOfSpaceBeforeTime = tWidth - content.length() - startDateStr.length() - endDateStr.length() - 3;
+        int lengthOfSpaceBeforeTime = tWidth - content.length() - sartTimeStr.length() - endTimeStr.length() - 3;
         if(lengthOfSpaceBeforeTime > 0) {
         	String spaceStr = BarUtil.generateString(lengthOfSpaceBeforeTime, " ");
-        	content.append(spaceStr).append(startDateStr).append("   ").append(endDateStr);
+        	content.append(spaceStr).append(sartTimeStr).append("   ").append(endTimeStr);;
         }else {
-        	String spaceStr = BarUtil.generateString(tWidth - startDateStr.length() - endDateStr.length() - 3, " ");
-        	content.append("\n").append(spaceStr).append(startDateStr).append("   ").append(endDateStr);
+        	String spaceStr = BarUtil.generateString(tWidth - sartTimeStr.length() - endTimeStr.length() - 3, " ");
+        	content.append("\n").append(spaceStr).append(sartTimeStr).append("   ").append(endTimeStr);
         }
         content.append("\n");
         strAryFR.add(content.toString());
@@ -997,29 +1020,6 @@ public class PrintService{
 	private static void pushServiceDetail(List<Dish> list, String curPrintIp, BillPanel billPanel,
 			ArrayList<String> strAryFR, int tWidth) {
 		StringBuilder content = new StringBuilder();
-		//table
-        content.append("(").append(BarFrame.instance.valCurTable.getText()).append(")");
-        //bill index
-        if(!BarUtil.isCurBillSplited()) {
-        	content.append(" ");
-        }else {
-        	content.append(billPanel.billButton == null ? BarFrame.instance.valCurBillIdx.getText() : billPanel.billButton.getText());
-        }
-        //waiter
-        content.append(" ").append(BarFrame.instance.valOperator.getText()).append(" ");
-        //time
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String dateStr = df.format(new Date());
-        //space
-        int lengthOfSpaceBeforeTime = tWidth - content.length() - dateStr.length();
-        if(lengthOfSpaceBeforeTime > 0) {
-        	String spaceStr = BarUtil.generateString(lengthOfSpaceBeforeTime, " ");
-        	content.append(spaceStr).append(dateStr);
-        }else {
-        	String spaceStr = BarUtil.generateString(tWidth - dateStr.length(), " ");
-        	content.append("\n").append(spaceStr).append(dateStr);
-        }
-        content.append("\n");
         //seperator
         String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
         if(sep_str1 == null || sep_str1.length() == 0){
