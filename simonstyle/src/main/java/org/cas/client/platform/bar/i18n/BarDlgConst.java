@@ -285,6 +285,7 @@ public interface BarDlgConst {
     String Color();
 	String IsHideRecordFromOtherWaiter();
 	String IsDisplayBillInKitchen();
+	String IsDisplayWaiterInKitchen();
 	String TreatPricePromtAsTaxInclude();
 	String IsShowCustomerFrame();
 	String workOnOnlyUnclosedBills();
@@ -299,4 +300,6 @@ public interface BarDlgConst {
 	String Copy();
 	String couponNotApplyToBill();
 	String IsSavePrintInvoiceWhenBilled();
+	String AtLeastOneShouldBeSelected();
+	String printing();
 }

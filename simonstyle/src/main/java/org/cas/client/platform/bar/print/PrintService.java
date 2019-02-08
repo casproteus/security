@@ -262,7 +262,7 @@ public class PrintService{
     }
   
     private static int printContents() {
-    	BarFrame.setStatusMes("PRINTED...");
+    	BarFrame.setStatusMes(BarFrame.consts.printing());
     	int errorsAmount = 0;
         for(Entry<String,List<String>> entry : ipContentMap.entrySet()) {
         	List<String> sndMsg = entry.getValue();
@@ -752,8 +752,6 @@ public class PrintService{
 	        		Short.valueOf(ipAry[2]).byteValue(), Short.valueOf(ipAry[3]).byteValue()});  
 	        if(!inet.isReachable(BarOption.getPrinterMinWaiTime())) {
 	        	L.e("printer slow. ip is: ", ip, null);
-                JOptionPane.showMessageDialog(BarFrame.instance, 
-                		"Content NOT printed!!! printer response too slow. Please check printer and try again. --ip: "+ip);
 	        	return false;
 	        }
 	        

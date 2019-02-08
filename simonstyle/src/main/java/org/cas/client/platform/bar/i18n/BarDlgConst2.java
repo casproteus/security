@@ -530,6 +530,8 @@ public class BarDlgConst2 implements BarDlgConst{
 	@Override
 	public String IsDisplayBillInKitchen() {return "厨房打印单上显示客人位置编号";}
 	@Override
+	public String IsDisplayWaiterInKitchen() {return "厨房打印单上显示服务员信息";}
+	@Override
 	public String IsSavePrintInvoiceWhenBilled() {return "当打印了账单时，不再打印收据"; }
 	@Override
 	public String TreatPricePromtAsTaxInclude() {return "特价被选中时作为税后价处理";};
@@ -557,4 +559,8 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String Copy() {return "复制";}
 	@Override
 	public String couponNotApplyToBill() {return "本账单不包含可以使用该优惠券的内容！";}
+	@Override
+	public String AtLeastOneShouldBeSelected() {return "至少需要有一项被选中才能执行该命令！";}
+	@Override
+	public String printing() { return "打印中.....";}
 }

@@ -165,6 +165,9 @@ MouseListener {
 		    tDlg.setVisible(true);
 		    initTable();
 		    reLayout();
+		    int rows = tblContent.getRowCount();
+		    tblContent.setSelectedRow(rows - 1);
+		    tblContent.scrollToRect(rows - 1, 0);
 		} else if(o == btnModify) {
 			modifyCoupon();
 		} else if(o == btnCopy) {
@@ -184,10 +187,12 @@ MouseListener {
 		    }
 	        initTable();
 	        reLayout();
+	        tblContent.setSelectedRow(tRow);
+		    tblContent.scrollToRect(tblContent.getRowCount() - 1, 0);
 		} else if (o == btnDelete) {
-			int tRow = tblContent.getSelectedRow();
-	        if(tRow < 0 || tRow >= tableModel.length) {
-	        	JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
+			int[] tRow = tblContent.getSelectedRows();
+	        if(tRow.length == 0) {
+	        	JOptionPane.showMessageDialog(this, BarFrame.consts.AtLeastOneShouldBeSelected());
 	        	return;
 	        }
 	        
@@ -195,19 +200,17 @@ MouseListener {
 		        return;
 		    }
 		    
-		    int tSeleRow = tblContent.getSelectedRow();
-		    StringBuilder sql = new StringBuilder("update hardware set status = ").append(DBConsts.deleted)
-		    	.append(" where ID = ").append(tblContent.getValueAt(tSeleRow, IDCOLUM));
 		    try {
-		        Statement smt = PIMDBModel.getStatement();
-		        smt.executeUpdate(sql.toString());
-		        smt.close();
-		        smt = null;
+		    	for (int i : tRow) {
+				    StringBuilder sql = new StringBuilder("update hardware set status = ").append(DBConsts.deleted)
+					    	.append(" where ID = ").append(tblContent.getValueAt(i, IDCOLUM));
+			        PIMDBModel.getStatement().executeUpdate(sql.toString());
+				}
 		
 		        initTable();
 		        reLayout();
 		    } catch (SQLException exp) {
-		        L.e("copy coupon", "Exception when deleting a coupon: " + sql, exp);
+		        L.e("copy coupon", "Exception when deleting a coupon: ", exp);
 		    }
 		}
 	}
@@ -331,7 +334,7 @@ MouseListener {
 	
 	private void initTable() {
 		StringBuilder sql = new StringBuilder("select * from hardware where category = 1 and status != ")
-				.append(DBConsts.deleted).append(" order by name");
+				.append(DBConsts.deleted);//.append(" order by name");
 		
 		try {
 		    ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());

@@ -342,6 +342,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		BarOption.setHideRecordFromOtherWaiter(cbxIsHideRecordFromOtherWaiter.isSelected() ? true : false);
         	}else if(o == cbxIsDisplayBillInKitchen) {
         		BarOption.setIsDisplayBillInKitchen(cbxIsDisplayBillInKitchen.isSelected() ? true : false);
+        	}else if(o == cbxIsDisplayWaiterInKitchen) {
+        		BarOption.setIsDisplayWaiterInKitchen(cbxIsDisplayWaiterInKitchen.isSelected() ? true : false);
         	}else if(o == cbxSavePrintInvoiceWhenBilled) {
         		BarOption.setSavePrintInvoiceWhenBilled(cbxSavePrintInvoiceWhenBilled.isSelected() ? true : false);
         	}else if(o == cbxTreatPricePromtAsTaxInclude) {
@@ -428,7 +430,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		cbxIsHideRecordFromOtherWaiter.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsDisplayBillInKitchen.setBounds(cbxIsHideRecordFromOtherWaiter.getX(), cbxIsHideRecordFromOtherWaiter.getY() + cbxIsHideRecordFromOtherWaiter.getHeight() + CustOpts.VER_GAP,
         		cbxIsDisplayBillInKitchen.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        cbxSavePrintInvoiceWhenBilled.setBounds(cbxIsDisplayBillInKitchen.getX(), cbxIsDisplayBillInKitchen.getY() + cbxIsDisplayBillInKitchen.getHeight() + CustOpts.VER_GAP,
+        cbxIsDisplayWaiterInKitchen.setBounds(cbxIsDisplayBillInKitchen.getX(), cbxIsDisplayBillInKitchen.getY() + cbxIsDisplayBillInKitchen.getHeight() + CustOpts.VER_GAP,
+        		cbxIsDisplayWaiterInKitchen.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxSavePrintInvoiceWhenBilled.setBounds(cbxIsDisplayWaiterInKitchen.getX(), cbxIsDisplayWaiterInKitchen.getY() + cbxIsDisplayWaiterInKitchen.getHeight() + CustOpts.VER_GAP,
         		cbxSavePrintInvoiceWhenBilled.getPreferredSize().width, CustOpts.BTN_HEIGHT);
 		cbxTreatPricePromtAsTaxInclude.setBounds(cbxSavePrintInvoiceWhenBilled.getX(), cbxSavePrintInvoiceWhenBilled.getY() + cbxSavePrintInvoiceWhenBilled.getHeight() + CustOpts.VER_GAP,
         		cbxTreatPricePromtAsTaxInclude.getPreferredSize().width, CustOpts.BTN_HEIGHT);		
@@ -507,6 +511,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsFastFoodMode = new JCheckBox(BarFrame.consts.IsFastFoodMode());
         cbxIsHideRecordFromOtherWaiter = new JCheckBox(BarFrame.consts.IsHideRecordFromOtherWaiter());
         cbxIsDisplayBillInKitchen = new JCheckBox(BarFrame.consts.IsDisplayBillInKitchen());
+        cbxIsDisplayWaiterInKitchen = new JCheckBox(BarFrame.consts.IsDisplayWaiterInKitchen());
         cbxSavePrintInvoiceWhenBilled = new JCheckBox(BarFrame.consts.IsSavePrintInvoiceWhenBilled());
         cbxTreatPricePromtAsTaxInclude = new JCheckBox(BarFrame.consts.TreatPricePromtAsTaxInclude());
         cbxShowCustomerFrame = new JCheckBox(BarFrame.consts.IsShowCustomerFrame());
@@ -562,6 +567,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsFastFoodMode.setBackground(null);
         cbxIsHideRecordFromOtherWaiter.setBackground(null);
         cbxIsDisplayBillInKitchen.setBackground(null);
+        cbxIsDisplayWaiterInKitchen.setBackground(null);
         cbxSavePrintInvoiceWhenBilled.setBackground(null);
         cbxTreatPricePromtAsTaxInclude.setBackground(null);
         cbxShowCustomerFrame.setBackground(null);
@@ -573,6 +579,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsFastFoodMode.setSelected(BarOption.isFastFoodMode());
         cbxIsHideRecordFromOtherWaiter.setSelected(BarOption.isHideRecordFromOtherWaiter());
         cbxIsDisplayBillInKitchen.setSelected(BarOption.isDisplayBillInKitchen());
+        cbxIsDisplayWaiterInKitchen.setSelected(BarOption.isDisplayWaiterInKitchen());
         cbxSavePrintInvoiceWhenBilled.setSelected(BarOption.isSavePrintInvoiceWhenBilled());
         cbxTreatPricePromtAsTaxInclude.setSelected(BarOption.isTreatPricePromtAsTaxInclude());
         cbxShowCustomerFrame.setSelected(BarOption.isShowCustomerFrame());
@@ -615,6 +622,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsFastFoodMode.addActionListener(this);
         cbxIsHideRecordFromOtherWaiter.addActionListener(this);
         cbxIsDisplayBillInKitchen.addActionListener(this);
+        cbxIsDisplayWaiterInKitchen.addActionListener(this);
         cbxSavePrintInvoiceWhenBilled.addActionListener(this);
         cbxTreatPricePromtAsTaxInclude.addActionListener(this);
         cbxShowCustomerFrame.addActionListener(this);
@@ -682,6 +690,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(cbxIsFastFoodMode);
         add(cbxIsHideRecordFromOtherWaiter);
         add(cbxIsDisplayBillInKitchen);
+        add(cbxIsDisplayWaiterInKitchen);
         add(cbxSavePrintInvoiceWhenBilled);
         add(cbxTreatPricePromtAsTaxInclude);
         add(cbxShowCustomerFrame);
@@ -715,6 +724,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     JCheckBox cbxIsFastFoodMode;
     JCheckBox cbxIsHideRecordFromOtherWaiter;
     JCheckBox cbxIsDisplayBillInKitchen;
+    JCheckBox cbxIsDisplayWaiterInKitchen;
     JCheckBox cbxSavePrintInvoiceWhenBilled;
     JCheckBox cbxTreatPricePromtAsTaxInclude;
     JCheckBox cbxShowCustomerFrame;

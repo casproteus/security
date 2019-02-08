@@ -530,6 +530,8 @@ public class BarDlgConst0 implements BarDlgConst{
 	@Override
 	public String IsDisplayBillInKitchen() {return "Display bill index in kitchen print";}
 	@Override
+	public String IsDisplayWaiterInKitchen() {return "Display waiter in kitchen print";}
+	@Override
 	public String IsSavePrintInvoiceWhenBilled() {return "Print no invoice when billed."; }
 	@Override
 	public String TreatPricePromtAsTaxInclude() {return "Treat price prom as tax include";};
@@ -557,4 +559,8 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String Copy() {return "Copy";}
 	@Override
 	public String couponNotApplyToBill() {return "Current bill doesn't contain any item for this coupon to redeem!";}
+	@Override
+	public String AtLeastOneShouldBeSelected() {return "At least one item should be selected to perform this action!";}
+	@Override
+	public String printing() { return "Printing.....";}
 }
