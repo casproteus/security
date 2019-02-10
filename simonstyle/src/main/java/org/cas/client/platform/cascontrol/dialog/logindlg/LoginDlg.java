@@ -203,7 +203,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                     LoginDlg.failTime = 0;
                     USERTYPE = 2;// 无论姓名选的是什么，只要密码和超级密码相符，则级别就是经理人（或者更高）。
                     USERNAME = "System";// 无论姓名选的是什么，只要密码和超级密码相符，则级别就是经理人（或者更高）。
-                    MODETRANS = "F";
+                    MODETRANS = "F";	//if logged in with internal user account, the mev will be set int training mode.
                     setVisible(false);
                     
                     return;

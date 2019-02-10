@@ -374,53 +374,53 @@ public class PrintService{
     	//check the msg (it's a bill/check(6 item inside)  or a receipt/invoice (7 item inside)
     	String transType = checkTransType(sndMsg);
     	switch (transType) {
-    	case "ADDI"://check
-			for(int i = 9 - 1; i > 4; i--) {
-    			sndMsg.remove(i);
-    		}
-			sndMsg.remove(2);
-			String total = sndMsg.get(3);
-			int p = total.indexOf(":");
-			//NOTE:there's a \n at the end of total, use PreferedWidth() - (total.length() - 1)
-			total = total.substring(0, p + 1) + BarUtil.generateString(BarUtil.getPreferedWidth() - (total.length() - 1), " ") + total.substring(p+1);
-			sndMsg.remove(3);
-			sndMsg.add(total);
-			break;
-			
-    	case "ONE_ADDI"://combine to one check.
-			for(int i = 1; i < 7; i++) {
-    			sndMsg.remove(13 - i);
-    		}
-			sndMsg.remove(2);
-			String combinedTotal = sndMsg.get(3);
-			int location = combinedTotal.indexOf(":");
-			//NOTE:there's a \n at the end of total, use PreferedWidth() - (total.length() - 1)
-			combinedTotal = combinedTotal.substring(0, location + 1) + BarUtil.generateString(BarUtil.getPreferedWidth() - (combinedTotal.length() - 1), " ") + combinedTotal.substring(location+1);
-			sndMsg.remove(2);
-			sndMsg.add(combinedTotal);
-			break;
-			
-		case "RFER"://receipt
-			sndMsg.remove(9);
-    		sndMsg.remove(8);
-    		sndMsg.remove(5);
-    		sndMsg.remove(3);
-			break;
-			
-		case "R_RFER"://reprinted receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice.".
-			sndMsg.remove(10);
-			sndMsg.remove(9);
-    		sndMsg.remove(8);
-    		sndMsg.remove(5);
-    		sndMsg.remove(3);
-			break;
-		case "REPORT"://report //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice.".
-    		sndMsg.remove(5);
-    		sndMsg.remove(4);
-			break;
-			
-		default:
-			break;
+	    	case "ADDI"://check
+				for(int i = 9 - 1; i > 4; i--) {
+	    			sndMsg.remove(i);
+	    		}
+				sndMsg.remove(3);
+				String total = sndMsg.get(3);
+				int p = total.indexOf(":");
+				//NOTE:there's a \n at the end of total, use PreferedWidth() - (total.length() - 1)
+				total = total.substring(0, p + 1) + BarUtil.generateString(BarUtil.getPreferedWidth() - (total.length() - 1), " ") + total.substring(p+1);
+				sndMsg.remove(3);
+				sndMsg.add(total);
+				break;
+				
+	    	case "ONE_ADDI"://combine to one check.
+				for(int i = 1; i < 7; i++) {
+	    			sndMsg.remove(13 - i);
+	    		}
+				sndMsg.remove(3);
+				String combinedTotal = sndMsg.get(3);
+				int location = combinedTotal.indexOf(":");
+				//NOTE:there's a \n at the end of total, use PreferedWidth() - (total.length() - 1)
+				combinedTotal = combinedTotal.substring(0, location + 1) + BarUtil.generateString(BarUtil.getPreferedWidth() - (combinedTotal.length() - 1), " ") + combinedTotal.substring(location+1);
+				sndMsg.remove(2);
+				sndMsg.add(combinedTotal);
+				break;
+				
+			case "RFER"://receipt
+				sndMsg.remove(9);
+	    		sndMsg.remove(8);
+	    		sndMsg.remove(5);
+	    		sndMsg.remove(3);
+				break;
+				
+			case "R_RFER"://reprinted receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice.".
+				sndMsg.remove(10);
+				sndMsg.remove(9);
+	    		sndMsg.remove(8);
+	    		sndMsg.remove(5);
+	    		sndMsg.remove(3);
+				break;
+			case "REPORT"://report //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice.".
+	    		sndMsg.remove(5);
+	    		sndMsg.remove(4);
+				break;
+				
+			default:
+				break;
 		}
 
     	// print the file
@@ -529,14 +529,16 @@ public class PrintService{
 	private static byte[] buildMevFormatContent(List<String> sndMsg, String transType) {
 		//the contents could be composed by :1/Command.BEEP 2/BigFont 3/NormalFont 4/cut 5/content.
 		//while when sending to mev device, the sndMsg could only be content. and length will always be 1.
-		//we will make the content into 
-		byte[] formattedContent = null;
 		
-		String etatDoc = "I";//whether the contents of the <doc> tag are present and if they must be printed.
-			//• A (Absent and not to be printed)  • I (present and to be Printed)		• N (present but Not to be printed)
+		byte[] formattedContent = null;//the byte ary we will make the content into 
+		
+		String etatDoc = "I";	//Whether the contents of the <doc> tag are present and if they must be printed.
+		 						//• A (Absent and not to be printed)  • I (present and to be Printed)		• N (present but Not to be printed)
 		String modeTrans = LoginDlg.MODETRANS;// the mode in which	transactions are recorded in an SRS. • O (Operational)	• F (Training)
+		
 		String duplicata = "N";// whether this is a copy for the operator’s own needs.1 There are two possible values: • O (Yes) • N (No)
-		//mev = "<reqMEV><trans noVersionTrans=\"v02.00\" etatDoc=\"I\" modeTrans=\"O\" duplicata=\"N\"><doc><texte><![CDATA[";
+		
+		//mev1 = "<reqMEV><trans noVersionTrans="v0%s.00" etatDoc="%s" modeTrans="%s" duplicata="%s"><doc><texte><![CDATA[";
 		StringBuilder printContent = new StringBuilder(String.format(mev1, 2, etatDoc, modeTrans, duplicata));	
 		
 		String paiementTrans = "SOB";
@@ -546,13 +548,13 @@ public class PrintService{
 		String tableTrans = "";
 		String serveurTrans = "";
 		String dateTrans = "00000000000000";	//20090128084800
-		String mtTransAvTaxes = "+000000.00";//+000021.85
-		String TPSTrans = "+000000.00";//+000001.09
-		String TVQTrans = "+000000.00";//+000001.72
-		String mtTransApTaxes = "+000000.00";//+000024.66
+		String mtTransAvTaxes = "+000000.00";	//+000021.85
+		String TPSTrans = "+000000.00";		//+000001.09
+		String TVQTrans = "+000000.00";		//+000001.72
+		String mtTransApTaxes = "+000000.00";	//+000024.66
 		for (int i = 0; i < sndMsg.size(); i++) {
 			String tText = sndMsg.get(i);
-			tText = tText.trim();
+			
 			while(tText.startsWith("\n")) {
 				tText = tText.substring(1);
 			}
@@ -572,8 +574,8 @@ public class PrintService{
 					}
 				}
 				
-				if(ary[1].length() > 0) {	//user is configurable, so the ary.length could be 3.
-					serveurTrans = ary[1]; 
+				if(ary[2].length() > 0) {	//user is configurable, so the ary.length could be 3.
+					serveurTrans = ary[2]; 
 				}
 				String time =  ary[ary.length - 1];
 				String date =  ary[ary.length - 2];
@@ -586,7 +588,7 @@ public class PrintService{
 					dateTrans  = dateTrans.concat("00");
 				}
 				
-				//money
+			}else if(i == 2) {	//money
 				String tContent = tText.substring(tText.lastIndexOf("-") + 2); //there's a "\n".
 				String[] a = tContent.split("\n");
 				if(a.length == 3) {
@@ -599,9 +601,9 @@ public class PrintService{
 					Float total = Float.valueOf(strAvT) +  Float.valueOf(strTPS) +  Float.valueOf(strTVQ);
 					mtTransApTaxes = formatMoneyForMev(new DecimalFormat("#0.00").format(total));
 				}
-			}else if(i == 2) {//find out the total
+			}else if(i == 3) {//find out the total
 				mtTransApTaxes = formatMoneyForMev(tText.substring(tText.indexOf(":") + 1));
-			}else if(i == 3) { // find out the payment.
+			}else if(i == 4) { // find out the payment.
 				String[] a = tText.split("\n");
 				if(a.length == 2) {		//we use I, because there's a line of "change" or "tip".
 					paiementTrans = getMatechPaytrans(a[0]);
