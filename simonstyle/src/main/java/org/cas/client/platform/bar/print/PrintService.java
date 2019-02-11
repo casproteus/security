@@ -95,14 +95,46 @@ public class PrintService{
     
     //The start time and end time are long format, need to be translate for print.
     public static void exePrintBill(BillPanel billPanel, List<Dish> saleRecords){
+    	//init status
     	flushIpContent();
         reInitPrintRelatedMaps();
         
         String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
-        ipContentMap.get(printerIP).addAll(
-        		formatContentForBill(saleRecords, printerIP, billPanel));
+        
+        int tWidth = BarUtil.getPreferedWidth();
+        
+        //push head info
+	    pushBillHeadInfo(ipContentMap.get(printerIP), tWidth, String.valueOf(saleRecords.get(0).getBillID()));
+	    
+	    //push table, bill waiter and time
+	    String tableIdx = BarFrame.instance.valCurTable.getText();
+	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
+	    if(billPanel.billButton != null) {
+	    	startTimeStr.append("(").append(billPanel.billButton.getText()).append(")");
+	    }
+	    pushWaiterAndTime(ipContentMap.get(printerIP), tWidth, tableIdx, startTimeStr.toString(), "");
+	    
+	    //push content and total
+	    String content = formatContentForBill(saleRecords, printerIP, billPanel, tWidth).toString();
+	    
+	    int pEnd = content.lastIndexOf("\n");
+	    int pStart = content.substring(0, pEnd).lastIndexOf("\n");//ignore the "\n" at the end
+	    String lastRow = content.substring(pStart, pEnd);
+	    
+	    ipContentMap.get(printerIP).add(content.substring(0, pStart + 1));
+	    ipContentMap.get(printerIP).add("BigFont");	    //push bigger font. while it will not work for mev.
+	    ipContentMap.get(printerIP).add(lastRow);
+	    ipContentMap.get(printerIP).add("NormalFont");     //push normal font
+        
+        //push end message
+        pushEndMessage(ipContentMap.get(printerIP));
+        
+        //push cut
+        ipContentMap.get(printerIP).add("\n\n\n\n\n");
+        ipContentMap.get(printerIP).add("cut");
+        
         printContents();
     }
     
@@ -115,24 +147,25 @@ public class PrintService{
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         
+        int tWidth = BarUtil.getPreferedWidth();
+        
+        pushBillHeadInfo(ipContentMap.get(printerIP), tWidth, String.valueOf(unclosedBillPanels.get(0).getBillId()));
+	    String tableIdx = BarFrame.instance.valCurTable.getText();
+	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
+	    if(unclosedBillPanels.get(0).billButton != null) {
+	    	startTimeStr.append("(").append(unclosedBillPanels.get(0).billButton.getText()).append(")");
+	    }
+	    pushWaiterAndTime(ipContentMap.get(printerIP), tWidth, tableIdx, startTimeStr.toString(), "");
+	    
         List<String> contentList = ipContentMap.get(printerIP);
         float totalPrice = 0.0f;
-        //for (List<Dish> saleRecords : saleRecordsList) {
+        StringBuilder content = new StringBuilder();
         for (BillPanel billPanel : unclosedBillPanels) {
-        	List<String> contents = formatContentForBill(billPanel.orderedDishAry, printerIP, billPanel);
+        	content.append(formatContentForBill(billPanel.orderedDishAry, printerIP, billPanel, tWidth));
         	//fetch out total price in content.
-        	totalPrice += fetchOutTotalPricce(contents);
-        	contents.remove(8);	//remove "cut"
-        	contents.remove(7);	//remove "/n/n/n/n/n"
-    		contents.remove(5);	//remove NORMALFONT
-    		contents.remove(3);	//remove BIGFONT
-        	if(billPanel != unclosedBillPanels.get(0)) {
-        		contents.remove(1);
-        		contents.remove(0);
-        	}
-        	
-        	contentList.addAll(contents);
+        	totalPrice += fetchOutTotalPricce(content);
 		}
+        contentList.add(content.toString());
         contentList.add("BigFont");
         contentList.add("\n\n               Total:" + totalPrice);
         contentList.add("NormalFont");
@@ -142,11 +175,13 @@ public class PrintService{
         printContents();
     }
     
-    private static float fetchOutTotalPricce(List<String> contents) {
-		String line = contents.get(4);
-		int start = line.indexOf(":") + 1;
-		int end = line.indexOf("\n");
-		return Float.valueOf(line.substring(start, end).trim());
+    private static float fetchOutTotalPricce(StringBuilder contents) {
+    	int pEnd = contents.lastIndexOf("\n");//ignore the "\n" at the end
+    	int pStart = contents.substring(0, pEnd).lastIndexOf("\n");
+ 	    String lastRow = contents.substring(pStart + 1, pEnd);
+ 	    
+		int start = lastRow.indexOf(":") + 1;
+		return Float.valueOf(lastRow.substring(start).trim());
 	}
 
 	//The start time and end time are long format, need to be translate for print.
@@ -387,18 +422,23 @@ public class PrintService{
 				sndMsg.add(total);
 				break;
 				
-	    	case "ONE_ADDI"://combine to one check.
-				for(int i = 1; i < 7; i++) {
-	    			sndMsg.remove(13 - i);
-	    		}
-				sndMsg.remove(3);
-				String combinedTotal = sndMsg.get(3);
-				int location = combinedTotal.indexOf(":");
-				//NOTE:there's a \n at the end of total, use PreferedWidth() - (total.length() - 1)
-				combinedTotal = combinedTotal.substring(0, location + 1) + BarUtil.generateString(BarUtil.getPreferedWidth() - (combinedTotal.length() - 1), " ") + combinedTotal.substring(location+1);
-				sndMsg.remove(2);
-				sndMsg.add(combinedTotal);
-				break;
+//	    	case "ONE_ADDI"://combine to one check. @NOTE: it not fixed that how many rows there will be.
+//				int lastRow = sndMsg.size();
+//	    		for(int i = 1; i < 4; i++) {	//use this way to locate the last a few lines to remove.
+//	    			sndMsg.remove(lastRow - i);
+//	    		}
+//				sndMsg.remove(sndMsg.size() - 2);
+//				String combinedTotal = sndMsg.get(sndMsg.size() - 1);
+//				
+//				//NOTE:there's a \n at the biginning of total
+//				while(combinedTotal.startsWith("\n")){
+//					combinedTotal = combinedTotal.substring(2);
+//				}
+//				int location = combinedTotal.indexOf(":");
+//				combinedTotal = combinedTotal.substring(0, location + 1) + BarUtil.generateString(BarUtil.getPreferedWidth() - (combinedTotal.length() - 1), " ") + combinedTotal.substring(location+1);
+//				sndMsg.remove(sndMsg.size() - 1);
+//				sndMsg.add(combinedTotal);
+//				break;
 				
 			case "RFER"://receipt
 				sndMsg.remove(9);
@@ -456,8 +496,6 @@ public class PrintService{
 			return "RFER";
 		}else if (sndMsg.size() == 11) {	//currently if it's receipt, sndMsg has 10 element. 
 			return "R_RFER";
-		}else if (sndMsg.size() == 13) {	//currently if it's receipt, sndMsg has 10 element. 
-			return "ONE_ADDI";
 		}
 		return "";
 	}
@@ -896,24 +934,8 @@ public class PrintService{
 		outputStream.flush();
 	}
     
-    private static ArrayList<String> formatContentForBill(List<Dish> list, String curPrintIp, BillPanel billPanel){
-    	ArrayList<String> strAryFR = new ArrayList<String>();
-        int tWidth = BarUtil.getPreferedWidth();
-	            
-	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(list.get(0).getBillID()));
-	    String tableIdx = BarFrame.instance.valCurTable.getText();
-	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
-	    if(billPanel.billButton != null) {
-	    	startTimeStr.append("(").append(billPanel.billButton.getText()).append(")");
-	    }
-	    pushWaiterAndTime(strAryFR, tWidth, tableIdx, startTimeStr.toString(), "");
-        pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
-        pushTotal(billPanel, strAryFR);
-        
-        pushEndMessage(strAryFR);
-        strAryFR.add("\n\n\n\n\n");
-        strAryFR.add("cut");
-        return strAryFR;
+    private static StringBuilder formatContentForBill(List<Dish> list, String curPrintIp, BillPanel billPanel, int tWidth){
+    	return getServiceDetailContent(list, curPrintIp, billPanel, tWidth).append(getTotalContent(billPanel));
     }
 
     private static ArrayList<String> formatContentForInvoice(
@@ -922,8 +944,16 @@ public class PrintService{
     	int tWidth = BarUtil.getPreferedWidth();
     	
 	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
-        pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
-        pushTotal(billPanel, strAryFR);
+	    String content = getServiceDetailContent(list, curPrintIp, billPanel, tWidth).append(getTotalContent(billPanel)).toString();
+	    
+	    int pEnd = content.lastIndexOf("\n");
+	    int pStart = content.substring(0, pEnd).lastIndexOf("\n");//ignore the "\n" at the end
+	    String lastRow = content.substring(pStart, pEnd);
+	    strAryFR.add(content.substring(0, pStart + 1));
+        strAryFR.add("BigFont");	    //push bigger font. while it will not work for mev.
+        strAryFR.add(lastRow);
+        strAryFR.add("NormalFont");     //push normal font
+        
         
         pushPayInfo(billPanel, strAryFR, tWidth, isCashBack);
         
@@ -940,7 +970,7 @@ public class PrintService{
     	
     	strAryFR.add("\n##REFUND##\n\n");
 	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
-        pushServiceDetail(list, curPrintIp, billPanel, strAryFR, tWidth);
+	    strAryFR.add(getServiceDetailContent(list, curPrintIp, billPanel, tWidth).toString());
         pushNewTotal(billPanel, strAryFR, refundAmount, tWidth);
         
         pushEndMessage(strAryFR);
@@ -999,14 +1029,14 @@ public class PrintService{
         return strAryFR;
     }
     
-	private static void pushBillHeadInfo(ArrayList<String> strAryFR, int tWidth, String billID) {
+	private static void pushBillHeadInfo(List<String> strAryFR, int tWidth, String billID) {
 		StringBuilder content = getFormattedBillHeader(tWidth, billID);
         content.append("\n");
         //push bill header
         strAryFR.add(content.toString());
 	}
 	
-	private static void pushWaiterAndTime(ArrayList<String> strAryFR, int tWidth, String tableIdx, String sartTimeStr, String endTimeStr) {
+	private static void pushWaiterAndTime(List<String> strAryFR, int tWidth, String tableIdx, String sartTimeStr, String endTimeStr) {
 		StringBuilder content = new StringBuilder();
 		//table
 		if(tableIdx != null && tableIdx.trim().length() > 0) {
@@ -1034,8 +1064,7 @@ public class PrintService{
         strAryFR.add(content.toString());
 	}
 	
-	private static void pushServiceDetail(List<Dish> list, String curPrintIp, BillPanel billPanel,
-			ArrayList<String> strAryFR, int tWidth) {
+	private static StringBuilder getServiceDetailContent(List<Dish> list, String curPrintIp, BillPanel billPanel, int tWidth) {
 		StringBuilder content = new StringBuilder();
         //seperator
         String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
@@ -1113,23 +1142,18 @@ public class PrintService{
             	.append(dicount).append("\n");
         }
         
-        //do a push
-        strAryFR.add(content.toString());
-        content.delete(0, content.length());
+        return content;
 	}
 
-	private static void pushTotal(BillPanel billPanel, ArrayList<String> strAryFR) {
+	private static StringBuilder getTotalContent(BillPanel billPanel) {
 		StringBuilder content = new StringBuilder();
-		//push bigger font. while it will not work for mev.
-        strAryFR.add("BigFont");
+        
         //push total
         String strTotal = billPanel.valTotlePrice.getText();
-        content.append("Total").append(" : ")
-			//.append(BarUtil.generateString(tWidth - strTotal.length() - Total.length() - 3 - 1, " "))
+        content.append("Total").append(" : ")//.append(BarUtil.generateString(tWidth - strTotal.length() - Total.length() - 3 - 1, " "))
 			.append(strTotal).append("\n");
-        strAryFR.add(content.toString());
-        //push normal font
-        strAryFR.add("NormalFont");
+        
+        return content;
 	}
 
 	private static void pushRound(BillPanel billPanel, ArrayList<String> strAryFR, int tWidth) {
@@ -1231,7 +1255,7 @@ public class PrintService{
 		strAryFR.add(content.toString());
 	}
 	
-	private static void pushEndMessage(ArrayList<String> strAryFR) {
+	private static void pushEndMessage(List<String> strAryFR) {
 		 StringBuilder content = new StringBuilder();
 		//push end message.
         String endMes = BarOption.getBillFootInfo();

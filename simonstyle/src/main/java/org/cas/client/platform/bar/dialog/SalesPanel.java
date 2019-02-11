@@ -366,7 +366,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	BarFrame.numberPanelDlg.setBtnSource(null);
          		BarFrame.numberPanelDlg.setFloatSupport(true);
          		BarFrame.numberPanelDlg.setPercentSupport(false);
-         		
+         		BarFrame.numberPanelDlg.reLayout();
          		BarFrame.numberPanelDlg.setModal(true);
          		BarFrame.numberPanelDlg.setVisible(true);
          		
