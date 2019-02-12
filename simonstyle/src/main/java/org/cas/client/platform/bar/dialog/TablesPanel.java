@@ -20,7 +20,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.cas.client.platform.bar.dialog.statistics.BillRecordListDlg;
+import org.cas.client.platform.bar.dialog.statistics.CheckBillDlg;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
 import org.cas.client.platform.bar.model.DBConsts;
@@ -162,7 +162,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         		String endNow = BarOption.df.format(new Date());
         		int p = endNow.indexOf(" ");
         		String startTime = endNow.substring(0, p + 1) + BarOption.getStartTime();
-        		BillRecordListDlg dlg = new BillRecordListDlg(BarFrame.instance);
+        		CheckBillDlg dlg = new CheckBillDlg(BarFrame.instance);
         		dlg.initContent(startTime, endNow);
         		dlg.setVisible(true);
         	} else if (o == btnOpenDrawer) {	//open drawer.

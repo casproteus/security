@@ -43,13 +43,13 @@ import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.IPIMTableColumnModel;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 
-public class BillRecordListDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener, ListSelectionListener {
+public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener, ListSelectionListener {
     /**
      * Creates a new instance of ContactDialog
      * 
      * @called by PasteAction 为Copy邮件到联系人应用。
      */
-    public BillRecordListDlg(JFrame pParent) {
+    public CheckBillDlg(JFrame pParent) {
         super(pParent, true);
         initDialog();
     }
