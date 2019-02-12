@@ -12,6 +12,7 @@ import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -29,6 +30,9 @@ import org.cas.client.resource.international.DlgConst;
  */
 public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
 
+    String[] typeAry = new String[2];
+    int[] ids = new int[6];
+    
     public SettingPrinterDlg(BarFrame pFrame) {
     	super(pFrame);
         initDialog();
@@ -56,8 +60,15 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
         	tfdWidth[i].setBounds(lblWidth.getX(), tfdIP[i].getY(), lblWidth.getWidth(), CustOpts.BTN_HEIGHT);
         }
         
+        cbxIsDisplayBillInKitchen.setBounds(tfdName[5].getX(), tfdName[5].getY() + tfdName[5].getHeight() + CustOpts.VER_GAP,
+        		cbxIsDisplayBillInKitchen.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxIsDisplayWaiterInKitchen.setBounds(cbxIsDisplayBillInKitchen.getX(), cbxIsDisplayBillInKitchen.getY() + cbxIsDisplayBillInKitchen.getHeight() + CustOpts.VER_GAP,
+        		cbxIsDisplayWaiterInKitchen.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxSavePrintInvoiceWhenBilled.setBounds(cbxIsDisplayWaiterInKitchen.getX(), cbxIsDisplayWaiterInKitchen.getY() + cbxIsDisplayWaiterInKitchen.getHeight() + CustOpts.VER_GAP,
+        		cbxSavePrintInvoiceWhenBilled.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+
         ok.setBounds(getWidth() / 2 - CustOpts.HOR_GAP - CustOpts.BTN_WIDTH,
-        		cmbStyle[5].getY() + cmbStyle[5].getHeight() + CustOpts.VER_GAP * 3, CustOpts.BTN_WIDTH,
+        		cbxSavePrintInvoiceWhenBilled.getY() + cbxSavePrintInvoiceWhenBilled.getHeight() + CustOpts.VER_GAP * 3, CustOpts.BTN_WIDTH,
                 CustOpts.BTN_HEIGHT);
         cancel.setBounds(ok.getWidth() + ok.getX() + CustOpts.HOR_GAP * 2, ok.getY(), CustOpts.BTN_WIDTH,
                 CustOpts.BTN_HEIGHT);
@@ -119,7 +130,13 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
         	dispose();
         } else if (o == cancel) {
             dispose();
-        }
+        } else if(o == cbxIsDisplayBillInKitchen) {
+    		BarOption.setIsDisplayBillInKitchen(cbxIsDisplayBillInKitchen.isSelected() ? true : false);
+    	} else if(o == cbxIsDisplayWaiterInKitchen) {
+    		BarOption.setIsDisplayWaiterInKitchen(cbxIsDisplayWaiterInKitchen.isSelected() ? true : false);
+    	} else if(o == cbxSavePrintInvoiceWhenBilled) {
+    		BarOption.setSavePrintInvoiceWhenBilled(cbxSavePrintInvoiceWhenBilled.isSelected() ? true : false);
+    	}
     }
 
 
@@ -148,10 +165,18 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
         typeAry[0] = "Separate";
         typeAry[1] = "All";
         
+        cbxIsDisplayBillInKitchen = new JCheckBox(BarFrame.consts.IsDisplayBillInKitchen());
+        cbxIsDisplayWaiterInKitchen = new JCheckBox(BarFrame.consts.IsDisplayWaiterInKitchen());
+        cbxSavePrintInvoiceWhenBilled = new JCheckBox(BarFrame.consts.IsSavePrintInvoiceWhenBilled());
+        
         ok = new JButton(DlgConst.OK);
         cancel = new JButton(DlgConst.CANCEL);
 
         // 属性设置－－－－－－－－－－－－－－
+        cbxIsDisplayBillInKitchen.setBackground(null);
+        cbxIsDisplayWaiterInKitchen.setBackground(null);
+        cbxSavePrintInvoiceWhenBilled.setBackground(null);
+        
         ok.setMnemonic('o');
         ok.setMargin(new Insets(0, 0, 0, 0));
 
@@ -177,15 +202,21 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
     		getContentPane().add(tfdWidth[i]);
         }
 
+        getContentPane().add(cbxIsDisplayBillInKitchen);
+        getContentPane().add(cbxIsDisplayWaiterInKitchen);
+        getContentPane().add(cbxSavePrintInvoiceWhenBilled);
         getContentPane().add(cancel);
         getContentPane().add(ok);
 
         // 加监听器－－－－－－－－
+        cbxIsDisplayBillInKitchen.addActionListener(this);
+        cbxIsDisplayWaiterInKitchen.addActionListener(this);
+        cbxSavePrintInvoiceWhenBilled.addActionListener(this);
         ok.addActionListener(this);
         cancel.addActionListener(this);
         addComponentListener(this);
         
-        setBounds((CustOpts.SCRWIDTH - 475) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 475, 320); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 475) / 2, (CustOpts.SCRHEIGHT - 390) / 2, 475, 390); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
         getRootPane().setDefaultButton(ok);
 
@@ -216,6 +247,10 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
          }catch(Exception exp) {
         	 ErrorUtil.write(exp);
          }
+         
+         cbxIsDisplayBillInKitchen.setSelected(BarOption.isDisplayBillInKitchen());
+         cbxIsDisplayWaiterInKitchen.setSelected(BarOption.isDisplayWaiterInKitchen());
+         cbxSavePrintInvoiceWhenBilled.setSelected(BarOption.isSavePrintInvoiceWhenBilled());
     }
 
     private JLabel lblName;
@@ -228,9 +263,10 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
     private JComboBox<String>[] cmbStyle;
     private JComboBox<String>[] cmbLanguage;
     private JTextField[] tfdWidth;
-    String[] typeAry = new String[2];
-    
-    int[] ids = new int[6];
+
+    JCheckBox cbxIsDisplayBillInKitchen;
+    JCheckBox cbxIsDisplayWaiterInKitchen;
+    JCheckBox cbxSavePrintInvoiceWhenBilled;
     
     private JButton ok;
     private JButton cancel;
@@ -238,24 +274,14 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
 	@Override
 	public void componentResized(ComponentEvent e) {
 		reLayout();
-		
 	}
 
 	@Override
-	public void componentMoved(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void componentMoved(ComponentEvent e) {}
 
 	@Override
-	public void componentShown(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void componentShown(ComponentEvent e) {}
 
 	@Override
-	public void componentHidden(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void componentHidden(ComponentEvent e) {}
 }
