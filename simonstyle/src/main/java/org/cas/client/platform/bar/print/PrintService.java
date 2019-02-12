@@ -465,7 +465,7 @@ public class PrintService{
 	    		sndMsg.remove(3);
 				break;
 				
-			case "R_RFER"://reprinted receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice.".
+			case "R_RFER"://reprinted receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice".
 				sndMsg.remove(10);
 				sndMsg.remove(9);
 	    		sndMsg.remove(8);
@@ -959,6 +959,10 @@ public class PrintService{
     private static ArrayList<String> formatContentForInvoice(String curPrintIp, BillPanel billPanel, boolean isCashBack){
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	int tWidth = BarUtil.getPreferedWidth();
+    	
+    	if(billPanel.status >= DBConsts.completed) {
+        	strAryFR.add("*re-printed invoice*\n\n");
+    	}
     	
     	//push head info
 	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));

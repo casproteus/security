@@ -69,7 +69,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     int received;
     int cashback;
     String comment = "";
-    int status = DBConsts.original;
+    public int status = DBConsts.original;
     
 	public BillPanel(SalesPanel salesPanel) {
 		this.salesPanel = salesPanel;
