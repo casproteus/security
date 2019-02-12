@@ -227,8 +227,9 @@ public class PrintService{
         String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
-        ipContentMap.get(printerIP).addAll(
-        		formatContentForInvoice(billPanel.orderedDishAry, printerIP, billPanel, isCashBack));
+        
+        ipContentMap.get(printerIP).addAll(formatContentForInvoice(printerIP, billPanel, isCashBack));
+        
         printContents();
     }
     
@@ -375,7 +376,9 @@ public class PrintService{
     }
   
     private static int printContents() {
+    	
     	BarFrame.setStatusMes(BarFrame.consts.printing());
+    	
     	int errorsAmount = 0;
         for(Entry<String,List<String>> entry : ipContentMap.entrySet()) {
         	List<String> sndMsg = entry.getValue();
@@ -953,10 +956,10 @@ public class PrintService{
     	return getServiceDetailContent(list, curPrintIp, billPanel, tWidth).append(getTotalContent(billPanel));
     }
 
-    private static ArrayList<String> formatContentForInvoice(
-    		List<Dish> list, String curPrintIp, BillPanel billPanel, boolean isCashBack){
+    private static ArrayList<String> formatContentForInvoice(String curPrintIp, BillPanel billPanel, boolean isCashBack){
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	int tWidth = BarUtil.getPreferedWidth();
+    	
     	//push head info
 	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
 	    
@@ -968,8 +971,8 @@ public class PrintService{
 	    }
 	    pushWaiterAndTime(strAryFR, tWidth, tableIdx, startTimeStr.toString(), "");
 	    
-	    String content = getServiceDetailContent(list, curPrintIp, billPanel, tWidth).append(getTotalContent(billPanel)).toString();
-	    
+	    //service details
+	    String content = getServiceDetailContent(billPanel.orderedDishAry, curPrintIp, billPanel, tWidth).append(getTotalContent(billPanel)).toString();
 	    int pEnd = content.lastIndexOf("\n");
 	    int pStart = content.substring(0, pEnd).lastIndexOf("\n");//ignore the "\n" at the end
 	    String lastRow = content.substring(pStart, pEnd);
@@ -978,9 +981,10 @@ public class PrintService{
         strAryFR.add(lastRow);
         strAryFR.add("NormalFont");     //push normal font
         
-        
+        //payInfo
         pushPayInfo(billPanel, strAryFR, tWidth, isCashBack);
         
+        //end message
         pushEndMessage(strAryFR);
         strAryFR.add("\n\n\n\n\n");
         strAryFR.add("cut");
