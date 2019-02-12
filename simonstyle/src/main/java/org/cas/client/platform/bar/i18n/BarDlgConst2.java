@@ -563,4 +563,8 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String AtLeastOneShouldBeSelected() {return "至少需要有一项被选中才能执行该命令！";}
 	@Override
 	public String printing() { return "打印中.....";}
+	@Override
+	public String isWaiterAllowedToDiscount() {return "员工可以自主打折";}
+	@Override
+	public String isWaiterAllowedToChangePrice() {return "员工可以改变价格";}
 }

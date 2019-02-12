@@ -328,8 +328,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         }
         //JToggleButton-------------------------------------------------------------------------------------
         else if(o instanceof JToggleButton) {
-        	if(o == cbxIsSingleUser) {
-        		BarOption.setSingleUser(cbxIsSingleUser.isSelected() ? "true" : "false");
+        	if(o == cbxIsSingleUserMode) {
+        		BarOption.setSingleUser(cbxIsSingleUserMode.isSelected() ? "true" : "false");
         	}else if(o == cbxIsDiscoutAffectTax) {
         		BarOption.setIsDisCountBeforeTax(cbxIsDiscoutAffectTax.isSelected() ? true : false);
         	}else if(o == cbxIsServiceFeeAffectTax) {
@@ -340,6 +340,10 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		BarOption.setFastFoodMode(cbxIsFastFoodMode.isSelected() ? true : false);
         	}else if(o == cbxIsHideRecordFromOtherWaiter) {
         		BarOption.setHideRecordFromOtherWaiter(cbxIsHideRecordFromOtherWaiter.isSelected() ? true : false);
+        	}else if(o == cbxIsWaiterAllowedToDiscount) {
+        		BarOption.setIsWaiterAllowedToDiscount(cbxIsWaiterAllowedToDiscount.isSelected() ? true : false);
+        	}else if(o == cbxIsWaiterAllowedToChangePrice) {
+        		BarOption.setIsWaiterAllowedToChangePrice(cbxIsWaiterAllowedToChangePrice.isSelected() ? true : false);
         	}else if(o == cbxIsDisplayBillInKitchen) {
         		BarOption.setIsDisplayBillInKitchen(cbxIsDisplayBillInKitchen.isSelected() ? true : false);
         	}else if(o == cbxIsDisplayWaiterInKitchen) {
@@ -416,19 +420,23 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     			sepH1.getPreferredSize().height);
     	
         //cbx------------------------------------
-        cbxIsSingleUser.setBounds(lblServerHost.getX(), sepH1.getY() + sepH1.getHeight() + CustOpts.VER_GAP * 2,
-        		cbxIsSingleUser.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        cbxIsDiscoutAffectTax.setBounds(cbxIsSingleUser.getX(), cbxIsSingleUser.getY() + cbxIsSingleUser.getHeight() + CustOpts.VER_GAP,
-        		cbxIsDiscoutAffectTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        cbxIsServiceFeeAffectTax.setBounds(cbxIsDiscoutAffectTax.getX(), cbxIsDiscoutAffectTax.getY() + cbxIsDiscoutAffectTax.getHeight() + CustOpts.VER_GAP,
-        		cbxIsServiceFeeAffectTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        cbxIsBuffetMode.setBounds(cbxIsServiceFeeAffectTax.getX(), cbxIsServiceFeeAffectTax.getY() + cbxIsServiceFeeAffectTax.getHeight() + CustOpts.VER_GAP,
+        cbxIsSingleUserMode.setBounds(lblServerHost.getX(), sepH1.getY() + sepH1.getHeight() + CustOpts.VER_GAP * 2,
+        		cbxIsSingleUserMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxIsBuffetMode.setBounds(cbxIsSingleUserMode.getX(), cbxIsSingleUserMode.getY() + cbxIsSingleUserMode.getHeight() + CustOpts.VER_GAP,
         		cbxIsBuffetMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsFastFoodMode.setBounds(cbxIsBuffetMode.getX(), cbxIsBuffetMode.getY() + cbxIsBuffetMode.getHeight() + CustOpts.VER_GAP,
         		cbxIsFastFoodMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        cbxIsHideRecordFromOtherWaiter.setBounds(cbxIsFastFoodMode.getX(), cbxIsFastFoodMode.getY() + cbxIsFastFoodMode.getHeight() + CustOpts.VER_GAP,
+        cbxIsDiscoutAffectTax.setBounds(cbxIsFastFoodMode.getX(), cbxIsFastFoodMode.getY() + cbxIsFastFoodMode.getHeight() + CustOpts.VER_GAP,
+        		cbxIsDiscoutAffectTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxIsServiceFeeAffectTax.setBounds(cbxIsDiscoutAffectTax.getX(), cbxIsDiscoutAffectTax.getY() + cbxIsDiscoutAffectTax.getHeight() + CustOpts.VER_GAP,
+        		cbxIsServiceFeeAffectTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxIsHideRecordFromOtherWaiter.setBounds(cbxIsServiceFeeAffectTax.getX(), cbxIsServiceFeeAffectTax.getY() + cbxIsServiceFeeAffectTax.getHeight() + CustOpts.VER_GAP,
         		cbxIsHideRecordFromOtherWaiter.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        cbxIsDisplayBillInKitchen.setBounds(cbxIsHideRecordFromOtherWaiter.getX(), cbxIsHideRecordFromOtherWaiter.getY() + cbxIsHideRecordFromOtherWaiter.getHeight() + CustOpts.VER_GAP,
+        cbxIsWaiterAllowedToDiscount.setBounds(cbxIsHideRecordFromOtherWaiter.getX(), cbxIsHideRecordFromOtherWaiter.getY() + cbxIsHideRecordFromOtherWaiter.getHeight() + CustOpts.VER_GAP,
+        		cbxIsWaiterAllowedToDiscount.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxIsWaiterAllowedToChangePrice.setBounds(cbxIsWaiterAllowedToDiscount.getX(), cbxIsWaiterAllowedToDiscount.getY() + cbxIsWaiterAllowedToDiscount.getHeight() + CustOpts.VER_GAP,
+        		cbxIsWaiterAllowedToChangePrice.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxIsDisplayBillInKitchen.setBounds(cbxIsWaiterAllowedToChangePrice.getX(), cbxIsWaiterAllowedToChangePrice.getY() + cbxIsWaiterAllowedToChangePrice.getHeight() + CustOpts.VER_GAP,
         		cbxIsDisplayBillInKitchen.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsDisplayWaiterInKitchen.setBounds(cbxIsDisplayBillInKitchen.getX(), cbxIsDisplayBillInKitchen.getY() + cbxIsDisplayBillInKitchen.getHeight() + CustOpts.VER_GAP,
         		cbxIsDisplayWaiterInKitchen.getPreferredSize().width, CustOpts.BTN_HEIGHT);
@@ -504,12 +512,15 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         lblBillPageCol = new JLabel(BarFrame.consts.BillPageCol());
         tfdBillPageCol = new JTextField(String.valueOf(BarOption.getBillPageCol()));
 
-        cbxIsSingleUser = new JCheckBox(BarFrame.consts.IsSingleUser());
+        cbxIsSingleUserMode = new JCheckBox(BarFrame.consts.IsSingleUser());
         cbxIsDiscoutAffectTax = new JCheckBox(BarFrame.consts.IsTaxNotAllowDiscount());
         cbxIsServiceFeeAffectTax = new JCheckBox(BarFrame.consts.IsServiceFeeAffectTax());
         cbxIsBuffetMode = new JCheckBox(BarFrame.consts.IsBuffetMode());
         cbxIsFastFoodMode = new JCheckBox(BarFrame.consts.IsFastFoodMode());
         cbxIsHideRecordFromOtherWaiter = new JCheckBox(BarFrame.consts.IsHideRecordFromOtherWaiter());
+        cbxIsWaiterAllowedToDiscount = new JCheckBox(BarFrame.consts.isWaiterAllowedToDiscount());
+        cbxIsWaiterAllowedToChangePrice = new JCheckBox(BarFrame.consts.isWaiterAllowedToChangePrice());
+        
         cbxIsDisplayBillInKitchen = new JCheckBox(BarFrame.consts.IsDisplayBillInKitchen());
         cbxIsDisplayWaiterInKitchen = new JCheckBox(BarFrame.consts.IsDisplayWaiterInKitchen());
         cbxSavePrintInvoiceWhenBilled = new JCheckBox(BarFrame.consts.IsSavePrintInvoiceWhenBilled());
@@ -560,24 +571,29 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tLbl.setBackground(Color.GRAY);
         Font tFont = PIMPool.pool.getFont((String) CustOpts.custOps.hash2.get(PaneConsts.DFT_FONT), Font.PLAIN, 40);
         
-        cbxIsSingleUser.setBackground(null);
+        cbxIsSingleUserMode.setBackground(null);
         cbxIsDiscoutAffectTax.setBackground(null);
         cbxIsServiceFeeAffectTax.setBackground(null);
         cbxIsBuffetMode.setBackground(null);
         cbxIsFastFoodMode.setBackground(null);
         cbxIsHideRecordFromOtherWaiter.setBackground(null);
+        cbxIsWaiterAllowedToDiscount.setBackground(null);
+        cbxIsWaiterAllowedToChangePrice.setBackground(null);
+        
         cbxIsDisplayBillInKitchen.setBackground(null);
         cbxIsDisplayWaiterInKitchen.setBackground(null);
         cbxSavePrintInvoiceWhenBilled.setBackground(null);
         cbxTreatPricePromtAsTaxInclude.setBackground(null);
         cbxShowCustomerFrame.setBackground(null);
         
-        cbxIsSingleUser.setSelected(BarOption.isSingleUser());
+        cbxIsSingleUserMode.setSelected(BarOption.isSingleUser());
         cbxIsDiscoutAffectTax.setSelected(BarOption.isDiscountAffectTax());
         cbxIsServiceFeeAffectTax.setSelected(BarOption.isServiceFeeAffectTax());
         cbxIsBuffetMode.setSelected(BarOption.isBuffetMode());
         cbxIsFastFoodMode.setSelected(BarOption.isFastFoodMode());
         cbxIsHideRecordFromOtherWaiter.setSelected(BarOption.isHideRecordFromOtherWaiter());
+        cbxIsWaiterAllowedToDiscount.setSelected(BarOption.isWaiterAllowedToDiscount());
+        cbxIsWaiterAllowedToChangePrice.setSelected(BarOption.isWaiterAllowedToChangePrice());
         cbxIsDisplayBillInKitchen.setSelected(BarOption.isDisplayBillInKitchen());
         cbxIsDisplayWaiterInKitchen.setSelected(BarOption.isDisplayWaiterInKitchen());
         cbxSavePrintInvoiceWhenBilled.setSelected(BarOption.isSavePrintInvoiceWhenBilled());
@@ -615,12 +631,14 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tfdQST.addFocusListener(this);
         tfdBillPageRow.addFocusListener(this);
         tfdBillPageCol.addFocusListener(this);
-        cbxIsSingleUser.addActionListener(this);
+        cbxIsSingleUserMode.addActionListener(this);
         cbxIsDiscoutAffectTax.addActionListener(this);
         cbxIsServiceFeeAffectTax.addActionListener(this);
         cbxIsBuffetMode.addActionListener(this);
         cbxIsFastFoodMode.addActionListener(this);
         cbxIsHideRecordFromOtherWaiter.addActionListener(this);
+        cbxIsWaiterAllowedToDiscount.addActionListener(this);
+        cbxIsWaiterAllowedToChangePrice.addActionListener(this);
         cbxIsDisplayBillInKitchen.addActionListener(this);
         cbxIsDisplayWaiterInKitchen.addActionListener(this);
         cbxSavePrintInvoiceWhenBilled.addActionListener(this);
@@ -683,12 +701,14 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(lblServerHost);
         add(tfdServerHost);
         
-        add(cbxIsSingleUser);
+        add(cbxIsSingleUserMode);
         add(cbxIsDiscoutAffectTax);
         add(cbxIsServiceFeeAffectTax);
         add(cbxIsBuffetMode);
         add(cbxIsFastFoodMode);
         add(cbxIsHideRecordFromOtherWaiter);
+        add(cbxIsWaiterAllowedToDiscount);
+        add(cbxIsWaiterAllowedToChangePrice);
         add(cbxIsDisplayBillInKitchen);
         add(cbxIsDisplayWaiterInKitchen);
         add(cbxSavePrintInvoiceWhenBilled);
@@ -717,16 +737,22 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     JLabel lblServerHost;
     JTextField tfdServerHost;
     
-    JCheckBox cbxIsSingleUser;
-    JCheckBox cbxIsDiscoutAffectTax;
-    JCheckBox cbxIsServiceFeeAffectTax;
+    JCheckBox cbxIsSingleUserMode;
     JCheckBox cbxIsBuffetMode;
     JCheckBox cbxIsFastFoodMode;
+    
+    JCheckBox cbxIsDiscoutAffectTax;
+    JCheckBox cbxIsServiceFeeAffectTax;
     JCheckBox cbxIsHideRecordFromOtherWaiter;
+    JCheckBox cbxIsWaiterAllowedToDiscount;
+    JCheckBox cbxIsWaiterAllowedToChangePrice;
+    
     JCheckBox cbxIsDisplayBillInKitchen;
     JCheckBox cbxIsDisplayWaiterInKitchen;
     JCheckBox cbxSavePrintInvoiceWhenBilled;
+    
     JCheckBox cbxTreatPricePromtAsTaxInclude;
+    
     JCheckBox cbxShowCustomerFrame;
     
     //component for setting category and menus

@@ -363,7 +363,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 		valStartTime.setText("");
 	}
     
-    private boolean adminAuthentication() {
+    public boolean adminAuthentication() {
         new LoginDlg(null).setVisible(true);
         if (LoginDlg.PASSED == true && LoginDlg.USERTYPE == LoginDlg.ADMIN_STATUS) { // 如果用户选择了确定按钮。
         	valOperator.setText(LoginDlg.USERNAME);

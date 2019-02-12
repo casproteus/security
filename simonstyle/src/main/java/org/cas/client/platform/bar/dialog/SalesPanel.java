@@ -316,6 +316,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	PrintService.openDrawer();
             	
             } else if (o == btnLine_2_7) {//disc bill
+            	
+            	if(!BarOption.isWaiterAllowedToDiscount()) {
+            		if (!BarFrame.instance.adminAuthentication()) 
+        				return;
+            	}
+            	
          		BarFrame.discountDlg.setTitle(BarFrame.consts.DISCOUNT_BILL());
          		BarFrame.discountDlg.setNotice(BarFrame.consts.VolumnDiscountNotice());
          		BarFrame.discountDlg.setBtnSource(null);
@@ -434,7 +440,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
          			return;
          		}
-
+         		
+         		if(!BarOption.isWaiterAllowedToDiscount()) {
+            		if (!BarFrame.instance.adminAuthentication()) 
+        				return;
+            	}
+         		
          		BarFrame.discountDlg.setTitle(BarFrame.consts.DISCITEM());
          		BarFrame.discountDlg.setNotice(BarFrame.consts.DISC_ITEMNotice());
          		BarFrame.discountDlg.setBtnSource(btnLine_1_7);//pomp up a discountDlg
@@ -450,6 +461,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
           			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
           			return;
           		}
+            	if(!BarOption.isWaiterAllowedToChangePrice()) {
+            		if (!BarFrame.instance.adminAuthentication()) 
+        				return;
+            	}
          		showPriceChangeDlg();
         	}
         }

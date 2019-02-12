@@ -433,4 +433,20 @@ public class BarOption {
 	public static void setSavePrintInvoiceWhenBilled(boolean isSavePrintInvoiceWhenBilled) {
 		CustOpts.custOps.setKeyAndValue("isSavePrintInvoiceWhenBilled", String.valueOf(isSavePrintInvoiceWhenBilled));
 	}
+	
+	public static boolean isWaiterAllowedToDiscount() {
+		return CustOpts.custOps.getValue("isWaiterAllowedToDiscount") == null ? 
+    			false : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("isWaiterAllowedToDiscount"));
+	}
+	public static void setIsWaiterAllowedToDiscount(boolean isWaiterAllowedToDiscount) {
+		CustOpts.custOps.setKeyAndValue("isWaiterAllowedToDiscount", String.valueOf(isWaiterAllowedToDiscount));
+	}
+
+	public static boolean isWaiterAllowedToChangePrice() {
+		return CustOpts.custOps.getValue("isWaiterAllowedToChangePrice") == null ? 
+    			false : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("isWaiterAllowedToChangePrice"));
+	}
+	public static void setIsWaiterAllowedToChangePrice(boolean isWaiterAllowedToChangePrice) {
+		CustOpts.custOps.setKeyAndValue("isWaiterAllowedToChangePrice", String.valueOf(isWaiterAllowedToChangePrice));
+	}
 }
