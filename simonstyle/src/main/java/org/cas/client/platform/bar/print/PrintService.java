@@ -73,6 +73,10 @@ public class PrintService{
     private static String SEP_STR1 = "=";
     private static String SEP_STR2 = "-";
 
+    private static String SOUSTOTAL = "SOUS-TOTAL";
+    private static String TPS = "TPS";
+    private static String TVQ = "TVQ";
+    
     private boolean printerConnectedFlag;
     private boolean contentReadyForPrintFlag;
     
@@ -152,38 +156,69 @@ public class PrintService{
         pushBillHeadInfo(ipContentMap.get(printerIP), tWidth, String.valueOf(unclosedBillPanels.get(0).getBillId()));
 	    String tableIdx = BarFrame.instance.valCurTable.getText();
 	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
-	    if(unclosedBillPanels.get(0).billButton != null) {
-	    	startTimeStr.append("(").append(unclosedBillPanels.get(0).billButton.getText()).append(")");
-	    }
 	    pushWaiterAndTime(ipContentMap.get(printerIP), tWidth, tableIdx, startTimeStr.toString(), "");
 	    
         List<String> contentList = ipContentMap.get(printerIP);
+        float totalSubTotal = 0.0f;
+        float totalTPS = 0.0f;
+        float totalTVQ = 0.0f;
         float totalPrice = 0.0f;
         StringBuilder content = new StringBuilder();
         for (BillPanel billPanel : unclosedBillPanels) {
         	content.append(formatContentForBill(billPanel.orderedDishAry, printerIP, billPanel, tWidth));
         	//fetch out total price in content.
-        	totalPrice += fetchOutTotalPricce(content);
+        	String tContent = content.substring(content.lastIndexOf("-") + 2); //there's a "\n".
+			String[] a = tContent.split("\n");
+			if(a.length >= 3) {
+				String strAvT = a[0].substring(a[0].indexOf(":") + 1);
+				totalSubTotal += Float.valueOf(strAvT.trim());
+				String strTPS = a[1].substring(a[1].indexOf(":") + 1);
+				totalTPS += Float.valueOf(strTPS.trim());//+000001.09
+				String strTVQ = a[2].substring(a[2].indexOf(":") + 1);
+				totalTVQ += Float.valueOf(strTVQ.trim());//+000001.72
+				
+	    		String strTotal = a[3].substring(a[3].indexOf(":") + 1);
+	    		totalPrice += Float.valueOf(strTotal.trim());
+			}
 		}
+
+        //seperator
+        String sep_str2 = (String)CustOpts.custOps.getValue("sep_str2");
+        if(sep_str2 == null || sep_str2.length() == 0){
+            sep_str2 = SEP_STR2;
+        }
+        content.append(BarUtil.generateString(tWidth, sep_str2)).append("\n");
+        //subtotal, tps, tvq
+        StringBuilder subTotal = new StringBuilder(SOUSTOTAL).append(":").append(new DecimalFormat("#0.00").format(totalSubTotal));
+        int lengthOfSpaceBeforeTime = tWidth - subTotal.length();
+        if(lengthOfSpaceBeforeTime > 0) 
+        	content.append(BarUtil.generateString(lengthOfSpaceBeforeTime, " "));        	
+        content.append(subTotal).append("\n");
+        
+        StringBuilder tps = new StringBuilder(TPS).append(":").append(new DecimalFormat("#0.00").format(totalTPS));
+        lengthOfSpaceBeforeTime = tWidth - tps.length();
+        if(lengthOfSpaceBeforeTime > 0) 
+        	content.append(BarUtil.generateString(lengthOfSpaceBeforeTime, " "));
+        content.append(tps).append("\n");
+        
+        StringBuilder tvq = new StringBuilder(TVQ).append(":").append(new DecimalFormat("#0.00").format(totalTVQ));
+        lengthOfSpaceBeforeTime = tWidth - tvq.length();
+        if(lengthOfSpaceBeforeTime > 0) 
+        	content.append(BarUtil.generateString(lengthOfSpaceBeforeTime, " "));
+        content.append(tvq).append("\n");
+        
         contentList.add(content.toString());
+        //total
         contentList.add("BigFont");
         contentList.add("\n\n               Total:" + totalPrice);
         contentList.add("NormalFont");
+        pushEndMessage(contentList);
         contentList.add("\n\n\n\n\n");
         contentList.add("cut");
         
         printContents();
     }
     
-    private static float fetchOutTotalPricce(StringBuilder contents) {
-    	int pEnd = contents.lastIndexOf("\n");//ignore the "\n" at the end
-    	int pStart = contents.substring(0, pEnd).lastIndexOf("\n");
- 	    String lastRow = contents.substring(pStart + 1, pEnd);
- 	    
-		int start = lastRow.indexOf(":") + 1;
-		return Float.valueOf(lastRow.substring(start).trim());
-	}
-
 	//The start time and end time are long format, need to be translate for print.
     public static void exePrintInvoice(BillPanel billPanel, List<Dish> saleRecords, boolean isCashBack){
         flushIpContent();
@@ -422,24 +457,6 @@ public class PrintService{
 				sndMsg.add(total);
 				break;
 				
-//	    	case "ONE_ADDI"://combine to one check. @NOTE: it not fixed that how many rows there will be.
-//				int lastRow = sndMsg.size();
-//	    		for(int i = 1; i < 4; i++) {	//use this way to locate the last a few lines to remove.
-//	    			sndMsg.remove(lastRow - i);
-//	    		}
-//				sndMsg.remove(sndMsg.size() - 2);
-//				String combinedTotal = sndMsg.get(sndMsg.size() - 1);
-//				
-//				//NOTE:there's a \n at the biginning of total
-//				while(combinedTotal.startsWith("\n")){
-//					combinedTotal = combinedTotal.substring(2);
-//				}
-//				int location = combinedTotal.indexOf(":");
-//				combinedTotal = combinedTotal.substring(0, location + 1) + BarUtil.generateString(BarUtil.getPreferedWidth() - (combinedTotal.length() - 1), " ") + combinedTotal.substring(location+1);
-//				sndMsg.remove(sndMsg.size() - 1);
-//				sndMsg.add(combinedTotal);
-//				break;
-				
 			case "RFER"://receipt
 				sndMsg.remove(9);
 	    		sndMsg.remove(8);
@@ -629,7 +646,7 @@ public class PrintService{
 			}else if(i == 2) {	//money
 				String tContent = tText.substring(tText.lastIndexOf("-") + 2); //there's a "\n".
 				String[] a = tContent.split("\n");
-				if(a.length == 3) {
+				if(a.length >= 3) {
 					String strAvT = a[0].substring(a[0].indexOf(":") + 1);
 					mtTransAvTaxes = formatMoneyForMev(strAvT);//+000021.85
 					String strTPS = a[1].substring(a[1].indexOf(":") + 1);
@@ -942,8 +959,17 @@ public class PrintService{
     		List<Dish> list, String curPrintIp, BillPanel billPanel, boolean isCashBack){
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	int tWidth = BarUtil.getPreferedWidth();
-    	
+    	//push head info
 	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
+	    
+	    //push table, bill waiter and time
+	    String tableIdx = BarFrame.instance.valCurTable.getText();
+	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
+	    if(billPanel.billButton != null) {
+	    	startTimeStr.append("(").append(billPanel.billButton.getText()).append(")");
+	    }
+	    pushWaiterAndTime(strAryFR, tWidth, tableIdx, startTimeStr.toString(), "");
+	    
 	    String content = getServiceDetailContent(list, curPrintIp, billPanel, tWidth).append(getTotalContent(billPanel)).toString();
 	    
 	    int pEnd = content.lastIndexOf("\n");
@@ -1051,7 +1077,8 @@ public class PrintService{
         
         //waiter
         content.append(" ").append(LoginDlg.USERNAME).append(" ");
-        //space
+        
+        //space and times
         int lengthOfSpaceBeforeTime = tWidth - content.length() - sartTimeStr.length() - endTimeStr.length() - 3;
         if(lengthOfSpaceBeforeTime > 0) {
         	String spaceStr = BarUtil.generateString(lengthOfSpaceBeforeTime, " ");
@@ -1106,16 +1133,13 @@ public class PrintService{
         content.append(BarUtil.generateString(tWidth, sep_str2)).append("\n");
         
         //totals
-        String SubTotal = "SOUS-TOTAL";
-        String TPS = "TPS";
-        String TVQ = "TVQ";
         String ServiceFee = "Service Fee";
         String Discount = "Discount";
         
         String[] strs = billPanel.lblSubTotle.getText().split(":");
         String subtotal = strs[1].trim().substring(1);
-        content.append(SubTotal).append(" : ")
-        	.append(BarUtil.generateString(tWidth - subtotal.length() - SubTotal.length() - 3, " "))
+        content.append(SOUSTOTAL).append(" : ")
+        	.append(BarUtil.generateString(tWidth - subtotal.length() - SOUSTOTAL.length() - 3, " "))
         	.append(subtotal).append("\n");
         strs = billPanel.lblTPS.getText().split(":");
         String tps = strs[1].trim().substring(1);
