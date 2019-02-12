@@ -28,7 +28,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.model.DBConsts;
+import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -53,9 +55,7 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
     }
 
     @Override
-    public void keyTyped(
-            KeyEvent e) {
-    }
+    public void keyTyped(KeyEvent e) {}
 
     @Override
     public void keyPressed(
@@ -80,9 +80,7 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
     }
 
     @Override
-    public void keyReleased(
-            KeyEvent e) {
-    }
+    public void keyReleased(KeyEvent e) {}
 
     /*
      * 对话盒的布局独立出来，为了在对话盒尺寸发生改变后，界面各元素能够重新布局， 使整体保持美观。尤其在Linux系列的操作系统上，所有的对话盒都必须准备好应对用户的拖拉改变尺寸。
@@ -128,6 +126,8 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
         int btnWidth = 80;
         btnChangeDate.setBounds(tfdDayTo.getX() + tfdDayTo.getWidth() + CustOpts.HOR_GAP, lblDayTo.getY(),
                 btnWidth, tfdDayTo.getHeight() + lblDayTo.getHeight() + CustOpts.VER_GAP);
+        btnPrintInvoice.setBounds(btnChangeDate.getX() + btnChangeDate.getWidth() + CustOpts.HOR_GAP, btnChangeDate.getY(),
+                btnWidth, tfdDayTo.getHeight() + lblDayTo.getHeight() + CustOpts.VER_GAP);
         
         IPIMTableColumnModel tTCM = tblContent.getColumnModel();
         tTCM.getColumn(0).setPreferredWidth(130);	//BarFrame.consts.TIME
@@ -146,14 +146,10 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
     }
 
     @Override
-    public PIMRecord getContents() {
-        return null;
-    }
+    public PIMRecord getContents() {return null;}
 
     @Override
-    public boolean setContents( PIMRecord prmRecord) {
-        return true;
-    }
+    public boolean setContents( PIMRecord prmRecord) {return true;}
 
     @Override
     public void makeBestUseOfTime() {}
@@ -162,20 +158,18 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
     public void addAttach(File[] file, Vector actualAttachFiles) {}
 
     @Override
-    public PIMTextPane getTextPane() {
-        return null;
-    }
+    public PIMTextPane getTextPane() {return null;}
 
     @Override
     public void release() {
         btnChangeDate.removeActionListener(this);
+        btnPrintInvoice.removeActionListener(this);
         dispose();// 对于对话盒，如果不加这句话，就很难释放掉。
         System.gc();// @TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
     }
 
     @Override
-    public void componentResized(
-            ComponentEvent e) {
+    public void componentResized(ComponentEvent e) {
         reLayout();
     };
 
@@ -211,12 +205,11 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
         	
         	initContent(startTime.toString(), endTime.toString());
         	reLayout();
+        }else if(o == btnPrintInvoice) {
+        	if(showInSalesPanel()) {
+        		PrintService.exePrintInvoice(((SalesPanel)BarFrame.instance.panels[2]).billPanel, false);
+        	}
         }
-//		else if(o == btnPrintBill) {
-//        	showInSalesPanel();
-//        	((SalesPanel)BarFrame.instance.panels[BarFrame.instance.curPanel]).billPanel
-//        	.printBill(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valCurBill.getText(), BarFrame.instance.valStartTime.getText());
-//        }
     }
     
 	@Override
@@ -224,13 +217,13 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
 		showInSalesPanel();
 	}
 	
-    private void showInSalesPanel() {
+    private boolean showInSalesPanel() {
     	int selectedRow = tblContent.getSelectedRow();
     	int tValidRowCount = getUsedRowCount();
     	if(selectedRow < 0 || selectedRow > tValidRowCount - 1) {
     		JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
     		ErrorUtil.write("Unexpected row number when calling removeAtSelection : " + selectedRow);
-    		return;
+    		return false;
     	}
     	//swith to sales panel.
     	
@@ -239,6 +232,7 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
     	BarFrame.instance.valOperator.setText(String.valueOf(tblContent.getValueAt(selectedRow, 9)));
     	BarFrame.instance.valStartTime.setText(String.valueOf(tblContent.getValueAt(selectedRow, 11)));
     	BarFrame.instance.switchMode(2);
+    	return true;
     }
     
     private int getUsedRowCount() {
@@ -276,10 +270,12 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
         tfdMonthTo = new JTextField();
         tfdDayTo = new JTextField();
         btnChangeDate = new JButton(BarFrame.consts.Apply());
-        
+        btnPrintInvoice = new JButton(BarFrame.consts.PRINT());
         // properties
-        btnChangeDate.setMnemonic('F');
+        btnChangeDate.setMnemonic('A');
         btnChangeDate.setMargin(new Insets(0, 0, 0, 0));
+        btnPrintInvoice.setMnemonic('P');
+        btnPrintInvoice.setMargin(new Insets(0, 0, 0, 0));
         lblTo.setHorizontalTextPosition(SwingConstants.CENTER);
         lblYearFrom.setHorizontalTextPosition(SwingConstants.CENTER);
         lblMonthFrom.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -320,11 +316,13 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
         getContentPane().add(tfdMonthTo);
         getContentPane().add(tfdDayTo);
         getContentPane().add(btnChangeDate);
-
+        getContentPane().add(btnPrintInvoice);
         // 加监听器－－－－－－－－
         tblContent.getSelectionModel().addListSelectionListener(this);
         btnChangeDate.addActionListener(this);
         btnChangeDate.addKeyListener(this);
+        btnPrintInvoice.addActionListener(this);
+        btnPrintInvoice.addKeyListener(this);
         getContentPane().addComponentListener(this);
     }
 
@@ -501,4 +499,6 @@ public class BillRecordListDlg extends JDialog implements ICASDialog, ActionList
     JTextField tfdMonthTo;
     JTextField tfdDayTo;
     private JButton btnChangeDate;
+    private JButton btnPrintInvoice;
+    
 }

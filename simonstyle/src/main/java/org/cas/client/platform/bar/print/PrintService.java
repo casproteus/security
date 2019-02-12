@@ -220,7 +220,7 @@ public class PrintService{
     }
     
 	//The start time and end time are long format, need to be translate for print.
-    public static void exePrintInvoice(BillPanel billPanel, List<Dish> saleRecords, boolean isCashBack){
+    public static void exePrintInvoice(BillPanel billPanel, boolean isCashBack){
         flushIpContent();
         reInitPrintRelatedMaps();
 
@@ -228,7 +228,7 @@ public class PrintService{
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
-        		formatContentForInvoice(saleRecords, printerIP, billPanel, isCashBack));
+        		formatContentForInvoice(billPanel.orderedDishAry, printerIP, billPanel, isCashBack));
         printContents();
     }
     

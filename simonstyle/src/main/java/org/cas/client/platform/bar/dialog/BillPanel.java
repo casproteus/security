@@ -428,6 +428,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			isDragging = true;
 		}
 	}
+	
 	@Override
 	public void mouseMoved(MouseEvent e) {}
 	
