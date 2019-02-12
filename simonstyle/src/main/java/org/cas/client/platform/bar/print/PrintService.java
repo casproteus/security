@@ -173,9 +173,9 @@ public class PrintService{
 				String strAvT = a[0].substring(a[0].indexOf(":") + 1);
 				totalSubTotal += Float.valueOf(strAvT.trim());
 				String strTPS = a[1].substring(a[1].indexOf(":") + 1);
-				totalTPS += Float.valueOf(strTPS.trim());//+000001.09
+				totalTPS += Float.valueOf(strTPS.trim());
 				String strTVQ = a[2].substring(a[2].indexOf(":") + 1);
-				totalTVQ += Float.valueOf(strTVQ.trim());//+000001.72
+				totalTVQ += Float.valueOf(strTVQ.trim());
 				
 	    		String strTotal = a[3].substring(a[3].indexOf(":") + 1);
 	    		totalPrice += Float.valueOf(strTotal.trim());
@@ -388,9 +388,7 @@ public class PrintService{
              		printSuccessful = doMevPrint(sndMsg);
              	} else if("serial".equalsIgnoreCase(printerID)) { 
             		printSuccessful = doSerialPrint(sndMsg);
-            	} 
-             	//if it's not connected to the serial port.
-             	else {
+            	} else {//if it's not connected to the serial port.
             		printSuccessful = doWebSocketPrint(printerID, sndMsg);
             	}
             	
@@ -507,7 +505,7 @@ public class PrintService{
 	private static String checkTransType(List<String> sndMsg) {
 		if(sndMsg.size() == 6) {	//currently if it's REPORT, sndMsg has 6 element. 
 			return "REPORT";
-		}else if(sndMsg.size() == 9) {	//currently if it's bill/check, sndMsg has 8 element. 
+		}else if(sndMsg.size() == 9) {		//currently if it's bill/check, sndMsg has 8 element. 
 			return "ADDI";
 		}else if (sndMsg.size() == 10) {	//currently if it's receipt/invoice, sndMsg has 9 element. 
 			return "RFER";

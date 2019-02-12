@@ -279,7 +279,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	        		PrintService.exePrintInvoice(bp, bp.orderedDishAry, getTitle().equals(BarFrame.consts.EnterCashPayment()));
         		}
         		BarFrame.instance.switchMode(0);
-        		
         	}
         	
         } else if(o == btnExact) {//update bill and display change 0.00;
