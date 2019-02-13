@@ -604,8 +604,8 @@ public class PrintService{
 		
 		String etatDoc = "I";	//Whether the contents of the <doc> tag are present and if they must be printed.
 		 						//• A (Absent and not to be printed)  • I (present and to be Printed)		• N (present but Not to be printed)
-		String modeTrans = LoginDlg.MODETRANS;// the mode in which	transactions are recorded in an SRS. • O (Operational)	• F (Training)
-		
+		String modeTrans = LoginDlg.MODETRANS;	// the mode in which	transactions are recorded in an SRS. • O (Operational)	• F (Training)
+												// when user login with system user, it' will be change to "F". if use notmal user, it will be "O"....
 		String duplicata = "N";// whether this is a copy for the operator’s own needs.1 There are two possible values: • O (Yes) • N (No)
 		if("*re-printed invoice*".equals(sndMsg.get(0).trim())) {	//if the first element is "*re-printed invoice*\n\n" then set to be duplicated.
 			transType = transType.substring(2);
@@ -620,6 +620,8 @@ public class PrintService{
 				duplicata = "N";
 				map.put("reimpression", "O");	//set reprint flag.
 			}
+		}else {
+			map.put("reimpression", "N");
 		}
 		
 		//mev1 = "<reqMEV><trans noVersionTrans="v0%s.00" etatDoc="%s" modeTrans="%s" duplicata="%s"><doc><texte><![CDATA[";
