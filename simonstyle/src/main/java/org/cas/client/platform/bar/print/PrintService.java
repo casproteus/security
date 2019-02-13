@@ -220,7 +220,7 @@ public class PrintService{
     }
     
 	//The start time and end time are long format, need to be translate for print.
-    public static void exePrintInvoice(BillPanel billPanel, boolean isCashBack){
+    public static void exePrintInvoice(BillPanel billPanel, boolean isCashBack, boolean isToCustomer){
         flushIpContent();
         reInitPrintRelatedMaps();
 
@@ -228,7 +228,7 @@ public class PrintService{
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         
-        ipContentMap.get(printerIP).addAll(formatContentForInvoice(printerIP, billPanel, isCashBack));
+        ipContentMap.get(printerIP).addAll(formatContentForInvoice(printerIP, billPanel, isCashBack, isToCustomer));
         
         printContents();
     }
@@ -465,13 +465,22 @@ public class PrintService{
 	    		sndMsg.remove(3);
 				break;
 				
-			case "R_RFER"://reprinted receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice".
+			case "D_RFER"://reprinted receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice".
 				sndMsg.remove(10);
 				sndMsg.remove(9);
 	    		sndMsg.remove(8);
-	    		sndMsg.remove(5);
-	    		sndMsg.remove(3);
+	    		sndMsg.remove(6);
+	    		sndMsg.remove(4);
 				break;
+				
+			case "R_RFER"://reprinted receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice".
+				sndMsg.remove(11);
+				sndMsg.remove(10);
+	    		sndMsg.remove(9);
+	    		sndMsg.remove(7);
+	    		sndMsg.remove(5);
+				break;
+				
 			case "REPORT"://report //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice.".
 	    		sndMsg.remove(5);
 	    		sndMsg.remove(4);
@@ -513,6 +522,8 @@ public class PrintService{
 		}else if (sndMsg.size() == 10) {	//currently if it's receipt/invoice, sndMsg has 9 element. 
 			return "RFER";
 		}else if (sndMsg.size() == 11) {	//currently if it's receipt, sndMsg has 10 element. 
+			return "D_RFER";
+		}else if (sndMsg.size() == 12) {	//currently if it's receipt, sndMsg has 10 element. 
 			return "R_RFER";
 		}
 		return "";
@@ -583,16 +594,33 @@ public class PrintService{
 	}
 	
 	private static byte[] buildMevFormatContent(List<String> sndMsg, String transType) {
+		
 		//the contents could be composed by :1/Command.BEEP 2/BigFont 3/NormalFont 4/cut 5/content.
 		//while when sending to mev device, the sndMsg could only be content. and length will always be 1.
 		
 		byte[] formattedContent = null;//the byte ary we will make the content into 
+		
+		HashMap<String, String> map = new HashMap<String, String>();
 		
 		String etatDoc = "I";	//Whether the contents of the <doc> tag are present and if they must be printed.
 		 						//• A (Absent and not to be printed)  • I (present and to be Printed)		• N (present but Not to be printed)
 		String modeTrans = LoginDlg.MODETRANS;// the mode in which	transactions are recorded in an SRS. • O (Operational)	• F (Training)
 		
 		String duplicata = "N";// whether this is a copy for the operator’s own needs.1 There are two possible values: • O (Yes) • N (No)
+		if("*re-printed invoice*".equals(sndMsg.get(0).trim())) {	//if the first element is "*re-printed invoice*\n\n" then set to be duplicated.
+			transType = transType.substring(2);
+			sndMsg.remove(0);
+			
+			duplicata = "O";
+			map.put("reimpression", "N");	//set reprint flag.
+			
+			if("*re-printed invoice*".equals(sndMsg.get(0).trim())) {	//if two elements was added, measn it's re impression.
+				sndMsg.remove(0);
+				
+				duplicata = "N";
+				map.put("reimpression", "O");	//set reprint flag.
+			}
+		}
 		
 		//mev1 = "<reqMEV><trans noVersionTrans="v0%s.00" etatDoc="%s" modeTrans="%s" duplicata="%s"><doc><texte><![CDATA[";
 		StringBuilder printContent = new StringBuilder(String.format(mev1, 2, etatDoc, modeTrans, duplicata));	
@@ -671,14 +699,6 @@ public class PrintService{
 		}
 		
 		printContent.append(mev2);
-		
-		HashMap<String, String> map = new HashMap<String, String>();
-		
-		if(transType.startsWith("R_")) {	// whether this is a complete copy of a transaction to remit to the client.
-			transType = transType.substring(2);
-			map.put("reimpression", "O");
-		}
-		map.put("reimpression", "N");
 		
 		map.put("typeTrans", transType);	//ADDI--ADDItion (Check)    RFER--Reçu de FERmeture (Closing receipt)
 		//When a previously generated bill needs to be reprinted. The date and time displayed, must be exactly the same.
@@ -956,12 +976,15 @@ public class PrintService{
     	return getServiceDetailContent(list, curPrintIp, billPanel, tWidth).append(getTotalContent(billPanel));
     }
 
-    private static ArrayList<String> formatContentForInvoice(String curPrintIp, BillPanel billPanel, boolean isCashBack){
+    private static ArrayList<String> formatContentForInvoice(String curPrintIp, BillPanel billPanel, boolean isCashBack, boolean isToCustomer){
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	int tWidth = BarUtil.getPreferedWidth();
     	
     	if(billPanel.status >= DBConsts.completed) {
-        	strAryFR.add("*re-printed invoice*\n\n");
+        	strAryFR.add("*re-printed invoice*");
+        	if(isToCustomer) {
+        		strAryFR.add("*re-printed invoice*\n\n");
+        	}
     	}
     	
     	//push head info

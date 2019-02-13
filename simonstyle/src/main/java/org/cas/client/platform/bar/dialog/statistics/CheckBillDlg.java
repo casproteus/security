@@ -16,6 +16,7 @@ import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -93,7 +94,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
                 getHeight() - CustOpts.SIZE_TITLE - CustOpts.SIZE_EDGE - CustOpts.VER_GAP * 3
                 - CustOpts.BTN_WIDTH_NUM);
         
-        int startX = (getWidth() - 360 - CustOpts.HOR_GAP * 8 - lblFrom.getPreferredSize().width - lblTo.getPreferredSize().width) / 2;
+        int startX = (getWidth() - 490 - CustOpts.HOR_GAP * 8 - lblFrom.getPreferredSize().width - lblTo.getPreferredSize().width) / 2;
         lblFrom.setBounds(startX, srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP * 2 + lblYearFrom.getPreferredSize().height,
         		lblFrom.getPreferredSize().width, lblFrom.getPreferredSize().height);
         lblYearFrom.setBounds(lblFrom.getX() + lblFrom.getWidth() + CustOpts.HOR_GAP, srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP,
@@ -128,6 +129,8 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
                 btnWidth, tfdDayTo.getHeight() + lblDayTo.getHeight() + CustOpts.VER_GAP);
         btnPrintInvoice.setBounds(btnChangeDate.getX() + btnChangeDate.getWidth() + CustOpts.HOR_GAP, btnChangeDate.getY(),
                 btnWidth, tfdDayTo.getHeight() + lblDayTo.getHeight() + CustOpts.VER_GAP);
+        ckxIsToCustomer.setBounds(btnPrintInvoice.getX() + btnPrintInvoice.getWidth() + CustOpts.HOR_GAP, tfdDayTo.getY(),
+        		ckxIsToCustomer.getPreferredSize().width, ckxIsToCustomer.getPreferredSize().height);
         
         IPIMTableColumnModel tTCM = tblContent.getColumnModel();
         tTCM.getColumn(0).setPreferredWidth(130);	//BarFrame.consts.TIME
@@ -207,7 +210,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         	reLayout();
         }else if(o == btnPrintInvoice) {
         	if(showInSalesPanel()) {
-        		PrintService.exePrintInvoice(((SalesPanel)BarFrame.instance.panels[2]).billPanel, false);
+        		PrintService.exePrintInvoice(((SalesPanel)BarFrame.instance.panels[2]).billPanel, false, ckxIsToCustomer.isSelected());
         	}
         }
     }
@@ -271,11 +274,13 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         tfdDayTo = new JTextField();
         btnChangeDate = new JButton(BarFrame.consts.Apply());
         btnPrintInvoice = new JButton(BarFrame.consts.PRINT());
+        ckxIsToCustomer = new JCheckBox(BarFrame.consts.isToCustomer());
         // properties
         btnChangeDate.setMnemonic('A');
         btnChangeDate.setMargin(new Insets(0, 0, 0, 0));
         btnPrintInvoice.setMnemonic('P');
         btnPrintInvoice.setMargin(new Insets(0, 0, 0, 0));
+        ckxIsToCustomer.setBackground(null);
         lblTo.setHorizontalTextPosition(SwingConstants.CENTER);
         lblYearFrom.setHorizontalTextPosition(SwingConstants.CENTER);
         lblMonthFrom.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -317,6 +322,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         getContentPane().add(tfdDayTo);
         getContentPane().add(btnChangeDate);
         getContentPane().add(btnPrintInvoice);
+        getContentPane().add(ckxIsToCustomer);
         // 加监听器－－－－－－－－
         tblContent.getSelectionModel().addListSelectionListener(this);
         btnChangeDate.addActionListener(this);
@@ -500,5 +506,5 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
     JTextField tfdDayTo;
     private JButton btnChangeDate;
     private JButton btnPrintInvoice;
-    
+    private JCheckBox ckxIsToCustomer;
 }

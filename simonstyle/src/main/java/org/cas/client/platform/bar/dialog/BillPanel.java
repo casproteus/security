@@ -643,11 +643,15 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			//if has output, then get the billID from any output, if has no output, then search related bill from db.
 			//@NOTE could be an non-first but empty bill, so must consider the bill ID if it's not empty string.
 			if(orderedDishAry.size() > 0 && orderedDishAry.get(0).getBillID() > 0) {
-				billID = orderedDishAry.get(0).getBillID();
-				sql = new StringBuilder("select * from Bill where id = ").append(billID);
+				sql = new StringBuilder("select * from Bill where createtime = '")
+						.append(BarFrame.instance.valStartTime.getText())
+						.append("' and billIndex = ").append(billIndex)
+						.append(" and tableID = '").append(BarFrame.instance.valCurTable.getText()).append("'");
+				  
 				rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 				rs.beforeFirst();
 				if(rs.next()) {
+					billID = rs.getInt("id");	//@NOTE: do not use orderedDishAry.get(0).getBillID() to get billID, because when combine all we don't modify bill id in output and dish (for undo use)
 				    discount = rs.getInt("discount");
 				    tip = rs.getInt("tip");
 				    serviceFee = rs.getInt("otherreceived");

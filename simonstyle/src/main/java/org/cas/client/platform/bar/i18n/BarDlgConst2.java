@@ -567,4 +567,6 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String isWaiterAllowedToDiscount() {return "员工可以自主打折";}
 	@Override
 	public String isWaiterAllowedToChangePrice() {return "员工可以改变价格";}
+	@Override
+	public String isToCustomer() {return "顾客单据";}
 }
