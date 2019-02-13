@@ -145,6 +145,11 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         tTCM.getColumn(9).setPreferredWidth(60);	//BarFrame.consts.Operator
         tTCM.getColumn(10).setPreferredWidth(srpContent.getWidth() - 635);	//BarFrame.consts.comment
         tTCM.getColumn(11).setPreferredWidth(0);	//table open time, invisible.
+        tTCM.getColumn(12).setPreferredWidth(60);	//cash received.
+        tTCM.getColumn(13).setPreferredWidth(60);	//debit received..
+        tTCM.getColumn(14).setPreferredWidth(60);	//visa received..
+        tTCM.getColumn(15).setPreferredWidth(60);	//master received..
+        tTCM.getColumn(16).setPreferredWidth(60);	//otehr received.
         validate();
     }
 
@@ -356,11 +361,9 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
                 tValues[tmpPos][2] = rs.getString("billIndex");
                 tValues[tmpPos][3] = new DecimalFormat("#0.00").format(rs.getInt("total") / 100.0);
                 tValues[tmpPos][4] = new DecimalFormat("#0.00").format(rs.getInt("discount") / 100.0);
-                int received = rs.getInt("cashReceived");
-                received += rs.getInt("debitReceived");
-                received += rs.getInt("visaReceived");
-                received += rs.getInt("masterReceived"); 
-                tValues[tmpPos][5] = received / 100.0;
+                int received = rs.getInt("cashReceived") + rs.getInt("debitReceived")
+                + rs.getInt("visaReceived") + rs.getInt("masterReceived") + rs.getInt("otherreceived"); 
+                tValues[tmpPos][5] = new DecimalFormat("#0.00").format(received / 100.0);
                 tValues[tmpPos][6] = new DecimalFormat("#0.00").format(rs.getInt("tip") / 100.0);
                 tValues[tmpPos][7] = new DecimalFormat("#0.00").format(rs.getInt("cashback") / 100.0);
                 int status = rs.getInt("status");
@@ -387,6 +390,12 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
                 tValues[tmpPos][9] = rs.getString("employee.nName");
                 tValues[tmpPos][10] = rs.getString("Comment");
                 tValues[tmpPos][11] = rs.getString("OpenTime");
+                tValues[tmpPos][12] = new DecimalFormat("#0.00").format(rs.getInt("cashReceived") / 100.0);
+                tValues[tmpPos][13] = new DecimalFormat("#0.00").format(rs.getInt("debitReceived") / 100.0);
+                tValues[tmpPos][14] = new DecimalFormat("#0.00").format(rs.getInt("visaReceived") / 100.0);
+                tValues[tmpPos][15] = new DecimalFormat("#0.00").format(rs.getInt("masterReceived") / 100.0);
+                tValues[tmpPos][16] = new DecimalFormat("#0.00").format(rs.getInt("otherreceived") / 100.0);
+                
                 tmpPos++;
             }
             rs.close();// 关闭
@@ -480,7 +489,13 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
     		BarFrame.consts.Status(),
     		BarFrame.consts.Operator(), // "操作员"
     		BarFrame.consts.comment(),
-    		BarFrame.consts.OpenTime()};
+    		BarFrame.consts.OpenTime(),
+    		BarFrame.consts.CASH(),
+    		BarFrame.consts.DEBIT(),
+    		BarFrame.consts.VISA(),
+    		BarFrame.consts.MASTER(),
+    		BarFrame.consts.Other()
+    };
 
     int[] employIdAry;
     String[] employNameAry;
