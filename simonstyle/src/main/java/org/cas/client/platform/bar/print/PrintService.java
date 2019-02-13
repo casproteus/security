@@ -1252,7 +1252,7 @@ public class PrintService{
             String str = new DecimalFormat("#0.00").format(cashReceived/100f);
             if(cashReceived > 0) {
     			content.append("ARGENT").append(" : ")
-    			.append(BarUtil.generateString(width - 7 - str.length(), " "))
+    			.append(BarUtil.generateString(width - 9 - str.length(), " "))
     			.append(str).append("\n");
     		}
             int debitReceived = rs.getInt("debitReceived");

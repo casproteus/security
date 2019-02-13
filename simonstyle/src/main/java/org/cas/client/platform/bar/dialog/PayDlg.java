@@ -304,7 +304,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 
     		if(billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled()) {
         		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
-        		PrintService.exePrintInvoice(bp, true, true);
+        		PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true);
     		}
     		PrintService.openDrawer();
         	BarFrame.instance.switchMode(0);
