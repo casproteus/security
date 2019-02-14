@@ -13,6 +13,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -316,11 +317,10 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         
         SwingUtilities.invokeLater(new Runnable() {
             @Override
-            public void run() {
-            	switchMode(0);
+            public void run() {//call it later, because it will trigger BarFrame.instance.cmbCurTable.setModel(); 
+                switchMode(0);	//while BarFrame.instance is still null if don't put it in the later.
             }
         });
-        
         reLayout();
     }
     
@@ -485,8 +485,6 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
                 	 return;
                  }
                  
-				 closeATable(oldTable);//close old table
- 	       	 
 	 	       	 //@TODO:if the target is not opened
 	 	       	 //if the target table is already opened, then should update all current output and bill with target table name and opentime?
 	 	       	 //first why people merge table??? maybe they are friends met in restaurant???.
@@ -530,10 +528,45 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
             	 }catch(Exception exp) {
             		 L.e("change table", "exception when changing table for bill list:" + sql, exp);
             	 }
+            	 
+            	 closeATable(oldTable);//close old table
                  break;
 		}
 	}
+	
+	public void openATable(String tableName, String openTime) {
+		StringBuilder sql = new StringBuilder("update dining_Table set status = 1, opentime = '").append(openTime)
+				.append("' WHERE name = '").append(tableName).append("'");
+		try {
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
+		}catch(Exception exp) {
+			L.e("openATable", "exception when openning a table: " + sql, exp);
+		}
+	}
 
+	public void createABill(String tableName, String openTime){
+		//create a bill for it. in case there will be something like order fee in future.
+		String createtime = BarOption.df.format(new Date());
+		StringBuilder sql = new StringBuilder(
+		        "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
+				.append(createtime).append("', '")
+		        .append(tableName).append("', '")	//table
+		        .append("1").append("', ")			//bill
+		        .append(0).append(", ")	//total
+		        .append(0).append(", ")
+		        .append(0).append(", ")
+		        .append(0).append(", ")
+		        .append(0).append(", ")	//discount
+		        .append(LoginDlg.USERID).append(", '")		//emoployid
+		        .append("").append("', '")
+		        .append(openTime).append("')");				//content
+		try {
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
+		}catch(Exception exp) {
+			L.e("createABill", "exception when creating a bill: " + sql, exp);
+		}
+	}
+	
 	public void closeATable(String tableName) {
 		if(tableName == null) {
 			tableName = cmbCurTable.getSelectedItem().toString();

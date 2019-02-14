@@ -252,9 +252,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	        	createNewOpenedTable(table);
 	        }else {
 	        	if(rs.getInt("status") != 1) {//if already exist, make the status to be 1;
-	        		sql = new StringBuilder("update dining_Table set status = 1, opentime = '").append(openTime)
-	        				.append("' where name = '").append(table).append("'");
-	        		PIMDBModel.getStatement().executeUpdate(sql.toString());
+	        		BarFrame.instance.openATable(table, openTime);
 	        	}
 	        }
 	        ((TablesPanel)BarFrame.instance.panels[0]).initContent();

@@ -68,30 +68,30 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
         // bounds--------
         sptBounds.setBounds(sptName.getX(), tfdName.getY() + tfdName.getHeight() + CustOpts.VER_GAP,
                 sptName.getWidth(), CustOpts.SEP_HEIGHT + 2);
-        lblLocations[0].setBounds(CustOpts.HOR_GAP * 2, sptBounds.getY() + sptBounds.getHeight() + CustOpts.VER_GAP,
-                lblLocations[0].getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        tfdLocations[0].setBounds(lblLocations[0].getX() + lblLocations[0].getWidth() + CustOpts.HOR_GAP,
-                lblLocations[0].getY(), 
-                sptName.getWidth()/2 - lblLocations[0].getWidth() - CustOpts.HOR_GAP * 2 - 40,
-                CustOpts.BTN_HEIGHT);
+//        lblLocations[0].setBounds(CustOpts.HOR_GAP * 2, sptBounds.getY() + sptBounds.getHeight() + CustOpts.VER_GAP,
+//                lblLocations[0].getPreferredSize().width, CustOpts.BTN_HEIGHT);
+//        tfdX.setBounds(lblLocations[0].getX() + lblLocations[0].getWidth() + CustOpts.HOR_GAP,
+//                lblLocations[0].getY(), 
+//                sptName.getWidth()/2 - lblLocations[0].getWidth() - CustOpts.HOR_GAP * 2 - 40,
+//                CustOpts.BTN_HEIGHT);
+//
+//        lblLocations[1].setBounds(lblLocations[0].getX(), lblLocations[0].getY() + lblLocations[0].getHeight()
+//                + CustOpts.VER_GAP, lblLocations[1].getPreferredSize().width, CustOpts.BTN_HEIGHT);
+//        tfdY.setBounds(lblLocations[1].getX() + lblLocations[1].getWidth() + CustOpts.HOR_GAP,
+//                lblLocations[1].getY(), tfdX.getWidth(), CustOpts.BTN_HEIGHT);
 
-        lblLocations[1].setBounds(lblLocations[0].getX(), lblLocations[0].getY() + lblLocations[0].getHeight()
-                + CustOpts.VER_GAP, lblLocations[1].getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        tfdLocations[1].setBounds(lblLocations[1].getX() + lblLocations[1].getWidth() + CustOpts.HOR_GAP,
-                lblLocations[1].getY(), tfdLocations[0].getWidth(), CustOpts.BTN_HEIGHT);
-
-        lblLocations[2].setBounds(tfdLocations[0].getX() + tfdLocations[0].getWidth() + CustOpts.HOR_GAP,
-        		lblLocations[0].getY(), lblLocations[2].getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        tfdLocations[2].setBounds(lblLocations[2].getX() + lblLocations[2].getWidth() + CustOpts.HOR_GAP,
-                lblLocations[2].getY(), sptName.getWidth()/2 - lblLocations[2].getWidth() - CustOpts.HOR_GAP, CustOpts.BTN_HEIGHT);
+        lblWidth.setBounds(CustOpts.HOR_GAP * 2, sptBounds.getY() + sptBounds.getHeight() + CustOpts.VER_GAP,
+        		lblWidth.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdWidth.setBounds(lblWidth.getX() + lblWidth.getWidth() + CustOpts.HOR_GAP,
+        		lblWidth.getY(), sptName.getWidth()/2 - lblWidth.getWidth() - CustOpts.HOR_GAP * 2, CustOpts.BTN_HEIGHT);
         
-        lblLocations[3].setBounds(lblLocations[2].getX(), lblLocations[2].getY() + lblLocations[2].getHeight()
-                + CustOpts.VER_GAP, lblLocations[3].getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        tfdLocations[3].setBounds(lblLocations[3].getX() + lblLocations[3].getWidth() + CustOpts.HOR_GAP,
-                lblLocations[3].getY(), sptName.getWidth()/2 - lblLocations[3].getWidth() - CustOpts.HOR_GAP, CustOpts.BTN_HEIGHT);
+        lblHeight.setBounds(tfdWidth.getX() + tfdWidth.getWidth() + CustOpts.HOR_GAP, lblWidth.getY(), 
+        		lblHeight.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdHeight.setBounds(lblHeight.getX() + lblHeight.getWidth() + CustOpts.HOR_GAP, lblHeight.getY(), 
+        		sptName.getWidth()/2 - lblHeight.getWidth() - CustOpts.HOR_GAP * 2, CustOpts.BTN_HEIGHT);
         
         // other-----------
-        sptType.setBounds(sptBounds.getX(), tfdLocations[3].getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
+        sptType.setBounds(sptBounds.getX(), lblWidth.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
         		sptBounds.getWidth(), CustOpts.SEP_HEIGHT + 2);
         lblCategory.setBounds(sptType.getX() + CustOpts.HOR_GAP, sptType.getY() + sptType.getHeight()
                 + CustOpts.VER_GAP, lblCategory.getPreferredSize().width, CustOpts.BTN_HEIGHT);
@@ -158,60 +158,32 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
             ActionEvent e) {
         Object o = e.getSource();
         if (o == ok) {
-            //check inputs
+            //check name
         	String name = tfdName.getText();
         	if(name.length() < 1 ) {
         		JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
         		tfdName.grabFocus();
 				return;
-        	}else {
-        		if(tfdLocations[0].getText().length() < 1) {
-	        		JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
-	        		tfdLocations[0].grabFocus();
-					return;
-	        	}else if(tfdLocations[1].getText().length() < 1) {
-	        		JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
-	        		tfdLocations[1].grabFocus();
-					return;
-	        	}else if(tfdLocations[2].getText().length() < 1) {
-	        		JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
-	        		tfdLocations[2].grabFocus();
-					return;
-	        	}else if(tfdLocations[3].getText().length() < 1) {
-	        		JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
-	        		tfdLocations[3].grabFocus();
-					return;
-	        	}else {
-	        		try {
-	        			int i = Integer.valueOf(tfdLocations[0].getText());
-	        		}catch(Exception exp) {
-	        			JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
-		        		tfdLocations[0].grabFocus();
-						return;
-	        		}
-	        		try {
-	        			int i = Integer.valueOf(tfdLocations[1].getText());
-	        		}catch(Exception exp) {
-	        			JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
-		        		tfdLocations[1].grabFocus();
-						return;
-	        		}
-	        		try {
-	        			int i = Integer.valueOf(tfdLocations[2].getText());
-	        		}catch(Exception exp) {
-	        			JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
-		        		tfdLocations[2].grabFocus();
-						return;
-	        		}
-	        		try {
-	        			int i = Integer.valueOf(tfdLocations[3].getText());
-	        		}catch(Exception exp) {
-	        			JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
-		        		tfdLocations[3].grabFocus();
-						return;
-	        		}
-	        	}
         	}
+        	
+        	//check width
+    		try {
+    			int i = Integer.valueOf(tfdWidth.getText());
+    		}catch(Exception exp) {
+    			JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
+        		tfdWidth.grabFocus();
+				return;
+    		}
+    		
+    		//check height
+    		try {
+    			int i = Integer.valueOf(tfdHeight.getText());
+    		}catch(Exception exp) {
+    			JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
+        		tfdHeight.grabFocus();
+				return;
+    		}
+        	
         	
         	StringBuilder sql = new StringBuilder();
     		if(btnTable.getId() == -1) {	//if has no index means it's new table/
@@ -220,15 +192,15 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
     				type += 100;
     			}
     			sql.append("INSERT INTO DINING_TABLE (name, posX, posY, width, height, type) VALUES ('")
-    			.append(name).append("', ").append(tfdLocations[0].getText()).append(", ")
-    			.append(tfdLocations[1].getText()).append(", ").append(tfdLocations[2].getText())
-    			.append(", ").append(tfdLocations[3].getText()).append(", ")
+    			.append(name).append("', ").append(tfdX.getText()).append(", ")
+    			.append(tfdY.getText()).append(", ").append(tfdWidth.getText())
+    			.append(", ").append(tfdHeight.getText()).append(", ")
     			.append(type).append(")");
     		}else {
     			sql.append("Update DINING_TABLE set name = '").append(name).append("', posX = ")
-    			.append(tfdLocations[0].getText()).append(", posY = ").append(tfdLocations[1].getText())
-    			.append(", width = ").append(tfdLocations[2].getText()).append(", height = ")
-    			.append(tfdLocations[3].getText()).append(", type = ").append(cmbCategory.getSelectedIndex())
+    			.append(tfdX.getText()).append(", posY = ").append(tfdY.getText())
+    			.append(", width = ").append(tfdWidth.getText()).append(", height = ")
+    			.append(tfdHeight.getText()).append(", type = ").append(cmbCategory.getSelectedIndex())
     			.append(" where id = ").append(btnTable.getId());
     		}
         		
@@ -240,7 +212,7 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
                 else
                 	((TablesPanel)BarFrame.instance.panels[0]).initContent();
         	}catch(Exception exp) {
-        		ErrorUtil.write(exp);
+        		JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
         	}
         } else if (o == cancel) {
             dispose();
@@ -263,16 +235,12 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
         tfdName = new JTextField(btnTable.getText());
 
         sptBounds = new PIMSeparator(BarFrame.consts.Size());
-        lblLocations = new JLabel[4];
-        tfdLocations = new JTextField[4];
-        lblLocations[0] = new JLabel("X");
-        tfdLocations[0] = new JTextField();
-        lblLocations[1] = new JLabel("Y");
-        tfdLocations[1] = new JTextField();
-        lblLocations[2] = new JLabel("Width");
-        tfdLocations[2] = new JTextField();
-        lblLocations[3] = new JLabel("Height");
-        tfdLocations[3] = new JTextField();
+        tfdX = new JTextField();
+        tfdY = new JTextField();
+        lblWidth = new JLabel("Width");
+        tfdWidth = new JTextField();
+        lblHeight = new JLabel("Height");
+        tfdHeight = new JTextField();
 
         sptType = new PIMSeparator(OptionDlgConst.OPTION_OTHER);
         lblCategory = new JLabel(BarFrame.consts.Categary());
@@ -284,15 +252,15 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
         // 属性设置－－－－－－－－－－－－－－
 
         if(btnTable.getText().length() > 0) {
-	        tfdLocations[0].setText(String.valueOf(btnTable.getX()));
-	        tfdLocations[1].setText(String.valueOf(btnTable.getY()));
-	        tfdLocations[2].setText(String.valueOf(btnTable.getWidth()));
-	        tfdLocations[3].setText(String.valueOf(btnTable.getHeight()));
+	        tfdX.setText(String.valueOf(btnTable.getX()));
+	        tfdY.setText(String.valueOf(btnTable.getY()));
+	        tfdWidth.setText(String.valueOf(btnTable.getWidth()));
+	        tfdHeight.setText(String.valueOf(btnTable.getHeight()));
         }else {
-	        tfdLocations[0].setText("200");
-	        tfdLocations[1].setText("400");
-	        tfdLocations[2].setText("120");
-	        tfdLocations[3].setText("60");
+	        tfdX.setText("200");
+	        tfdY.setText("400");
+	        tfdWidth.setText("60");
+	        tfdHeight.setText("60");
         }
         String[] typeAry = new String[]{"2", "2H", "4", "4H", "4R", "6", "6H", "8", "8H", "8R", "10", "10H"};
         cmbCategory.setModel(new DefaultComboBoxModel(typeAry));
@@ -308,14 +276,10 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
 
         // 搭建－－－－－－－－－－－－－
         getContentPane().add(sptName);
-        getContentPane().add(lblLocations[0]);
-        getContentPane().add(tfdLocations[0]);
-        getContentPane().add(lblLocations[1]);
-        getContentPane().add(tfdLocations[1]);
-        getContentPane().add(lblLocations[2]);
-        getContentPane().add(tfdLocations[2]);
-        getContentPane().add(lblLocations[3]);
-        getContentPane().add(tfdLocations[3]);
+        getContentPane().add(lblWidth);
+        getContentPane().add(tfdWidth);
+        getContentPane().add(lblHeight);
+        getContentPane().add(tfdHeight);
 
         getContentPane().add(sptBounds);
 
@@ -337,8 +301,12 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
 
 
     private PIMSeparator sptName;
-    private JLabel[] lblLocations;
-    private JTextField[] tfdLocations;
+    private JLabel lblWidth;
+    private JTextField tfdWidth;
+    private JLabel lblHeight;
+    private JTextField tfdHeight;
+    private JTextField tfdX;
+    private JTextField tfdY;
 
     private PIMSeparator sptBounds;
 

@@ -126,7 +126,7 @@ public class App_Bar extends AbstractApp {
         	
         	// 增建一个dining_Table表。select ID, Name, posX, posY, width, height, type from Tables order by DSP_INDEX"
             sql =
-                    "CREATE CACHED TABLE DINING_TABLE (ID INTEGER IDENTITY PRIMARY KEY, name VARCHAR(255),"
+                    "CREATE CACHED TABLE DINING_TABLE (ID INTEGER IDENTITY PRIMARY KEY, name VARCHAR(255) UNIQUE,"
                     .concat(" DSP_INDEX INTEGER, posX INTEGER, posY INTEGER, width INTEGER, height INTEGER, type INTEGER, opentime VARCHAR(255), status INTEGER);");
             stm.executeUpdate(sql);
             

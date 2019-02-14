@@ -203,30 +203,8 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 		String openTime = BarOption.df.format(new Date());
 		tableToggle.setOpenTime(openTime);
 		
-		try {
-			Statement smt = PIMDBModel.getStatement();
-			smt.executeUpdate("update dining_Table set status = 1, opentime = '"
-			+ openTime + "' WHERE name = '" + tableToggle.getText() + "'");
-			
-			//create a bill for it. in case there will be something like order fee in future.
-			String createtime = BarOption.df.format(new Date());
-			StringBuilder sql = new StringBuilder(
-		            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
-					.append(createtime).append("', '")
-		            .append(tableToggle.getText()).append("', '")	//table
-		            .append("1").append("', ")			//bill
-		            .append(0).append(", ")	//total
-		            .append(0).append(", ")
-		            .append(0).append(", ")
-		            .append(0).append(", ")
-		            .append(0).append(", ")	//discount
-		            .append(LoginDlg.USERID).append(", '")		//emoployid
-		            .append("").append("', '")
-		            .append(tableToggle.getOpenTime()).append("')");				//content
-			smt.executeUpdate(sql.toString());
-		}catch(Exception exp) {
-			ErrorUtil.write(exp);
-		}
+		BarFrame.instance.openATable(tableToggle.getText(), openTime);
+		BarFrame.instance.createABill(tableToggle.getText(), openTime);
 	}
 
     void reLayout() {
