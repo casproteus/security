@@ -153,7 +153,7 @@ public class BarUtil {
     
 	public static boolean isMoreThanOneBill() {
 		try {
-			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
+			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
 					.append("' and (deleted is null or deleted = ").append(DBConsts.original)
 					.append(" and time = '").append(BarFrame.instance.valStartTime.getText()).append("' order by contactID");
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());

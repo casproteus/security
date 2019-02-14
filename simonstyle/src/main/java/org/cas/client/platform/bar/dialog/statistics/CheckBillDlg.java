@@ -235,8 +235,9 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
     		return false;
     	}
     	//swith to sales panel.
-    	
-    	BarFrame.instance.valCurTable.setText(String.valueOf(tblContent.getValueAt(selectedRow, 1)));
+
+        BarFrame.instance.ignoreItemChange = true;
+    	BarFrame.instance.cmbCurTable.setSelectedItem(String.valueOf(tblContent.getValueAt(selectedRow, 1)));
     	BarFrame.instance.valCurBillIdx.setText(String.valueOf(tblContent.getValueAt(selectedRow, 2)));
     	BarFrame.instance.valOperator.setText(String.valueOf(tblContent.getValueAt(selectedRow, 9)));
     	BarFrame.instance.valStartTime.setText(String.valueOf(tblContent.getValueAt(selectedRow, 11)));

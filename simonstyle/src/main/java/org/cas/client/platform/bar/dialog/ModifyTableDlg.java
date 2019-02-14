@@ -238,7 +238,7 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
                 if(settingTabbleDlg != null)
                 	settingTabbleDlg.initContent();
                 else
-                	((TablesPanel)BarFrame.instance.panels[BarFrame.instance.curPanel]).initContent();
+                	((TablesPanel)BarFrame.instance.panels[0]).initContent();
         	}catch(Exception exp) {
         		ErrorUtil.write(exp);
         	}

@@ -136,7 +136,7 @@ public class Dish {
 		try {
 			StringBuilder sql = new StringBuilder(
 		            "INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME, category) VALUES ('")
-		            .append(BarFrame.instance.valCurTable.getText()).append("', ")	//subject ->table id
+		            .append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("', ")	//subject ->table id
 		            .append(billIndex).append(", ")			//contactID ->bill id
 		            .append(dish.getId()).append(", ")	//productid
 		            .append(dish.getNum()).append(", ")	//amount

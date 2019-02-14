@@ -111,7 +111,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		//output will be set as deleted=true only when click a "-" button. when bill closed, the output will not be set as deleted = true! 
 		//so closed bill of this table will also be counted. but will displayed in different color.
 		try {
-			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
+			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
 					.append("' and (deleted is null or deleted < ").append(DBConsts.deleted)
 					.append(") and time = '").append(BarFrame.instance.valStartTime.getText()).append("' order by contactID");
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -254,7 +254,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 						.append(" where id = ").append(targetBillId);
 				PIMDBModel.getStatement().executeUpdate(sql.toString());
 			}else {
-				targetBillId = targetBillPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), targetBillPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
+				targetBillId = targetBillPanel.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(), targetBillPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
 				sql = new StringBuilder("update bill set total = ")
 						.append(outputTotalPrice)
 						.append(" where id = ").append(targetBillId);
@@ -339,7 +339,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 						//generate a bill for each new occupied panel, incase there's discount info need to set into it.
 						//@Note, when the initContent of the panel called, the bill ID will be set into the dish instance in memory.
 						//and eventually, if the bill id is not 0, will calculate the service fee and discount into Total.
-						int id = panel.generateBillRecord(BarFrame.instance.valCurTable.getText(), String.valueOf(billIndex), BarFrame.instance.valStartTime.getText(), num);
+						int id = panel.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(), String.valueOf(billIndex), BarFrame.instance.valStartTime.getText(), num);
 
 						ArrayList<Dish> tDishAry = new ArrayList<Dish>();
 						for (Dish dish : panel.orderedDishAry) {
@@ -378,7 +378,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 						//generate a bill for each new occupied panel, incase there's discount info need to set into it.
 						//@Note, when the initContent of the panel called, the bill ID will be set into the dish instance in memory.
 						//and eventually, if the bill id is not 0, will calculate the service fee and discount into Total.
-						int id = billPanel.generateBillRecord(BarFrame.instance.valCurTable.getText(), String.valueOf(billIndex), BarFrame.instance.valStartTime.getText());
+						int id = billPanel.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(), String.valueOf(billIndex), BarFrame.instance.valStartTime.getText());
 						Dish dish = curDish.clone();
 						dish.setBillID(id);
 						Dish.splitOutput(dish, selectedPanels.size() + 1, billPanel.billButton.getText());
@@ -415,7 +415,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				((SalesPanel)BarFrame.instance.panels[2]).addNewBill();
 			}else if(o == btnPrintAll) {
 				for (BillPanel billPanel : billPanels) {
-					billPanel.printBill(BarFrame.instance.valCurTable.getText(), billPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
+					billPanel.printBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(), billPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
 				}
 			}else if(o == btnPrintInOneBill) {    //Print into one bill with client sub total
 				if(!checkColosedBill()) {
@@ -446,7 +446,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				
 		        try {
 		        	Statement smt = PIMDBModel.getStatement();
-		        	String tableID = BarFrame.instance.valCurTable.getText();
+		        	String tableID = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		        	//update outputs
 					StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.suspended)
 			                .append(" where SUBJECT = '").append(tableID)
@@ -487,7 +487,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		//update all related output to belongs to first Bill, deleted and completed output will not be modified.
 		StringBuilder sql = new StringBuilder("update output set contactID = ").append(firstUnclosedBillIdx)
 				.append(", category = '").append(firstUnclosedBillId)
-				.append("' where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
+				.append("' where SUBJECT = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
 				.append("' and time = '").append(BarFrame.instance.valStartTime.getText())
 				.append("' and deleted is null or DELETED = ").append(DBConsts.original);
 		try {
@@ -498,7 +498,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		
 //				一轮遍历过之后，可以确定消灭了二次分单的存在。但是一次分单的情况仍然存在。所以有必要再进行一遍，用来把pS也去掉。
 //				两遍目前是足够的。但程序上应该写成说只要发现“pkOrPsFoundFlag”没有被打上，就表示合并结束（没分单过的是否合并是个问题，因为有的菜点了多次，但每个菜可能给了不同的折扣）
-		combineOutputs(BarFrame.instance.valCurTable.getText(), BarFrame.instance.valStartTime.getText(), Integer.valueOf(firstUnclosedBillIdx));
+		combineOutputs(BarFrame.instance.cmbCurTable.getSelectedItem().toString(), BarFrame.instance.valStartTime.getText(), Integer.valueOf(firstUnclosedBillIdx));
 		
 		//combine bills discount and services fees---------------------------------------------------------------------
 		//combine the discount, service fee, of all the none-empty bills.
@@ -665,7 +665,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	public static int getANewBillIdx(){
     	int num = 0;
     	try {
-			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.valCurTable.getText())
+			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
 					.append("' and (deleted is null or deleted = ").append(DBConsts.original)
 					.append(" or deleted = ").append(DBConsts.completed)
 					.append(" or deleted = ").append(DBConsts.suspended)

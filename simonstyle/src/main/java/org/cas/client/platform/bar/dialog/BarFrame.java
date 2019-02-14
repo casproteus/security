@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -16,6 +18,8 @@ import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -25,6 +29,7 @@ import javax.swing.SwingUtilities;
 import org.cas.client.platform.CASControl;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.net.HttpRequestClient;
 import org.cas.client.platform.bar.net.RequestNewOrderThread;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
@@ -38,11 +43,12 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
-public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener {
-	private String VERSION = "V0.135-20190213";
+public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener, ItemListener {
+	private String VERSION = "V0.137-20190214";
     public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
+	public DefaultComboBoxModel<String> tableNames = new DefaultComboBoxModel<String>(new String[] {""});
     public static NumberPanelDlg numberPanelDlg; 
     public static DiscountDlg discountDlg; 
     public static PayDlg payDlg;
@@ -269,7 +275,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         lblOperator = new JLabel(BarFrame.consts.Operator().concat(BarFrame.consts.Colon()));
         valOperator = new JLabel();
         lblCurTable = new JLabel(BarFrame.consts.TABLE().concat(" #"));
-        valCurTable = new JLabel();
+        cmbCurTable = new JComboBox<String>(tableNames);
         lblCurBillIdx = new JLabel(BarFrame.consts.BILL().concat(" #"));
         valCurBillIdx = new JLabel();
         lblStartTime = new JLabel(BarFrame.consts.OPENTIME().concat(BarFrame.consts.Colon()));
@@ -289,7 +295,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         add(lblOperator);
         add(valOperator);
         add(lblCurTable);
-        add(valCurTable);
+        add(cmbCurTable);
         add(lblCurBillIdx);
         add(valCurBillIdx);
         add(lblStartTime);
@@ -306,14 +312,16 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         // 加监听器－－－－－－－－
         addWindowListener(this);
         getContentPane().addComponentListener(this);
+        cmbCurTable.addActionListener(this);
+        cmbCurTable.addItemListener(this);
+        
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                // general.tfdProdNumber.grabFocus();
+            	switchMode(0);
             }
         });
-
-        switchMode(0);
+        
         reLayout();
     }
     
@@ -335,6 +343,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 			if(secondScreen != null) {
 				secondScreen.setFullScreenWindow(customerFrame);
 			}
+			cmbCurTable.setEnabled(((SalesPanel)panels[i]).billPanel.status < DBConsts.completed);
 		}else if(i == 1) {	//bill
 			((BillListPanel)panels[i]).initContent();
 		}else if(i == 0) {	//table
@@ -358,7 +367,10 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 		if (!BarOption.isSingleUser()) {
 			valOperator.setText("");
 		}
-		valCurTable.setText("");
+		//tableNames must be always non-empty. the first one must be empty string"";
+		ignoreItemChange = true;
+		cmbCurTable.setSelectedItem("");
+		
 		valCurBillIdx.setText("");
 		valStartTime.setText("");
 	}
@@ -383,9 +395,9 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     public void reLayout() {
         lblCurTable.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCurTable.getPreferredSize().width,
         		lblCurTable.getPreferredSize().height);
-        valCurTable.setBounds(lblCurTable.getX() + lblCurTable.getWidth(), CustOpts.VER_GAP, 180 - lblCurTable.getWidth(),
+        cmbCurTable.setBounds(lblCurTable.getX() + lblCurTable.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 60,
         		lblCurTable.getPreferredSize().height);
-        lblCurBillIdx.setBounds(valCurTable.getX() + valCurTable.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCurBillIdx.getPreferredSize().width,
+        lblCurBillIdx.setBounds(cmbCurTable.getX() + 180, CustOpts.VER_GAP, lblCurBillIdx.getPreferredSize().width,
         		lblCurBillIdx.getPreferredSize().height);
         valCurBillIdx.setBounds(lblCurBillIdx.getX() + lblCurBillIdx.getWidth(), CustOpts.VER_GAP, 180 - lblCurBillIdx.getWidth(),
         		lblCurBillIdx.getPreferredSize().height);
@@ -520,7 +532,7 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     private JLabel lblOperator;
     private JLabel lblStartTime;
     
-    public JLabel valCurTable;
+    public JComboBox<String> cmbCurTable;
     public JLabel valCurBillIdx;
     public JLabel valOperator;
     public JLabel valStartTime;
@@ -538,5 +550,85 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 			return "1";
 		else
 			return curBillIndex;
+	}
+
+	String oldTable;
+	public boolean ignoreItemChange;
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+
+		switch (e.getStateChange()){
+	        case ItemEvent.DESELECTED:
+	       		oldTable = e.getItem().toString();
+	            break;
+            case ItemEvent.SELECTED: 
+            	//ignore check
+        		 if(ignoreItemChange) {	//@NOTE:have to put it back when the second time even triggered.
+        			ignoreItemChange=false;
+        			return;
+        		 }
+        		 
+                //nochange check
+        		 String newTable = e.getItem().toString();
+                 if ("".equals(newTable) || oldTable.equals(newTable)) {
+                	 return;
+                 }
+                 
+                 //close old table
+                 StringBuilder sql = new StringBuilder("update dining_Table set status = ").append(DBConsts.original)
+ 					.append(" WHERE name = '").append(oldTable).append("'");
+	 	       	 try {
+	 	       		 
+	 	       		 PIMDBModel.getStatement().executeUpdate(sql.toString());
+	 	       	 }catch(Exception exp) {
+	 	       		 L.e("change table", "exception when recover table:" + sql, exp);
+	 	       	 }
+ 	       	 
+	 	       	 //@TODO:if the target is not opened
+	 	       	 //if the target table is already opened, then should update all current output and bill with target table name and opentime?
+	 	       	 //first why people merge table??? maybe they are friends met in restaurant???.
+	 	       	 //they shouldn't share same bill number for sure, becau they might AA when pay the bill.
+                 //open new table
+                 sql = new StringBuilder("update dining_Table set status = 1, opentime = '")
+                	.append(valStartTime.getText()).append("' WHERE name = '").append(newTable).append("'");
+             	 try {
+             		 PIMDBModel.getStatement().executeUpdate(sql.toString());
+             	 }catch(Exception exp) {
+             		 L.e("change table", "exception when open a table:" + sql, exp);
+             	 }
+                 	 
+             	 //update all relavent output.
+                 if(curPanel == 1) {	//modify all un closed bills
+                	 sql = new StringBuilder("update output set SUBJECT = '").append(newTable)
+                			 .append("' where (deleted is null or deleted < ").append(DBConsts.completed)
+                			 .append(") and time = '").append(valStartTime.getText()).append("'");
+                	 try {
+                		 PIMDBModel.getStatement().executeUpdate(sql.toString());
+                	 }catch(Exception exp) {
+                		 L.e("change table", "exception when changing table for bill list:" + sql, exp);
+                	 }
+                 }else if(curPanel == 2) { //modify only one bill
+                	 sql = new StringBuilder("update output set SUBJECT = '").append(newTable)
+                			 .append("' where CONTACTID = ").append(getCurBillIndex())
+                			 .append(" and (deleted is null or deleted < ").append(DBConsts.deleted)
+                			 .append(") and time = '").append(valStartTime.getText()).append("'");
+                	 try {
+                		 PIMDBModel.getStatement().executeUpdate(sql.toString());
+                	 }catch(Exception exp) {
+                		 L.e("change table", "exception when changing table:" + sql, exp);
+                	 }
+                 }
+                 
+                 //update all relavent bill.
+                 sql = new StringBuilder("update bill set tableID = '").append(newTable)
+            			 .append("' where (status is null or status < ").append(DBConsts.completed)
+            			 .append(") and opentime = '").append(valStartTime.getText()).append("'");
+            	 try {
+            		 PIMDBModel.getStatement().executeUpdate(sql.toString());
+            	 }catch(Exception exp) {
+            		 L.e("change table", "exception when changing table for bill list:" + sql, exp);
+            	 }
+                 break;
+		}
 	}
 }

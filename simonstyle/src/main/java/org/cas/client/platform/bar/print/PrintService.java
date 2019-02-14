@@ -113,7 +113,7 @@ public class PrintService{
 	    pushBillHeadInfo(ipContentMap.get(printerIP), tWidth, String.valueOf(saleRecords.get(0).getBillID()));
 	    
 	    //push table, bill waiter and time
-	    String tableIdx = BarFrame.instance.valCurTable.getText();
+	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
 	    if(billPanel.billButton != null) {
 	    	startTimeStr.append("(").append(billPanel.billButton.getText()).append(")");
@@ -154,7 +154,7 @@ public class PrintService{
         int tWidth = BarUtil.getPreferedWidth();
         
         pushBillHeadInfo(ipContentMap.get(printerIP), tWidth, String.valueOf(unclosedBillPanels.get(0).getBillId()));
-	    String tableIdx = BarFrame.instance.valCurTable.getText();
+	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
 	    pushWaiterAndTime(ipContentMap.get(printerIP), tWidth, tableIdx, startTimeStr.toString(), "");
 	    
@@ -993,7 +993,7 @@ public class PrintService{
 	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
 	    
 	    //push table, bill waiter and time
-	    String tableIdx = BarFrame.instance.valCurTable.getText();
+	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
 	    if(billPanel.billButton != null) {
 	    	startTimeStr.append("(").append(billPanel.billButton.getText()).append(")");

@@ -16,6 +16,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -30,6 +31,7 @@ import org.cas.client.platform.bar.uibeans.TableButton;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
 //Identity表应该和Employ表合并。
@@ -96,7 +98,8 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         		return;	//do nothing.
         	}
             TableButton tableToggle = (TableButton) o;
-        	BarFrame.instance.valCurTable.setText(tableToggle.getText());
+            BarFrame.instance.ignoreItemChange = true;
+        	BarFrame.instance.cmbCurTable.setSelectedItem(tableToggle.getText());
         	
 			if(!BarOption.isSingleUser()) {	//if it's multi user, then login every time open table.
 				new LoginDlg(null).setVisible(true);
@@ -306,6 +309,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 			btnTables.remove(i);
 			remove(tableToggleButton);
 		}
+		//btnTables.clear();
 		//renite buttons.
 		try {
             Statement smt = PIMDBModel.getReadOnlyStatement();
@@ -345,11 +349,13 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     			add(tableToggleButton);
             	btnTables.add(tableToggleButton);
             }
+            //update the model of the table combobox on BarFrame.
+            initCmbCurTable();
             
             rs.close();// 关闭
             smt.close();
 		}catch(Exception e) {
-			ErrorUtil.write("Unexpected exception when init the tables from db." + e);
+			L.e("init tables", "Unexpected exception when init the tables from db.", e);
 		}
 		invalidate();
 		revalidate();
@@ -357,6 +363,15 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 		repaint();
 	}
 
+	private void initCmbCurTable() {
+		String[] tableNames = new String[btnTables.size() + 1];
+		tableNames[0] = "";
+		for (int i = 0; i < btnTables.size(); i++) {
+			tableNames[i + 1] = btnTables.get(i).getText();
+		}
+		BarFrame.instance.cmbCurTable.setModel(new DefaultComboBoxModel<String>(tableNames));
+	}
+	
     //private JToggleButton btnChangeMode;
 	private FunctionButton btnAddTable;
 	private FunctionButton btnOrderManage;

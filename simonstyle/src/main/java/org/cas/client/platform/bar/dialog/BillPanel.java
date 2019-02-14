@@ -178,7 +178,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	//send to printer
 	void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
 		//prepare the printing String and do printing
-		String curTable = BarFrame.instance.valCurTable.getText();
+		String curTable = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String curCustomerIdx = BarFrame.instance.valCurBillIdx.getText();
 		String waiterName = BarFrame.instance.valOperator.getText();
 		PrintService.exePrintOrderList(dishes, curTable, curCustomerIdx, waiterName, isCancelled);
@@ -192,7 +192,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		    	Dish.createOutput(dish, curBillIndex);	//at this moment, the num should have not been soplitted.
 		        //in case some store need to stay in the interface after clicking the send button. 
                 StringBuilder sql = new StringBuilder("Select id from output where SUBJECT = '")
-                    .append(BarFrame.instance.valCurTable.getText()).append("' and CONTACTID = ")
+                    .append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("' and CONTACTID = ")
                     .append(curBillIndex).append(" and PRODUCTID = ")
                     .append(dish.getId()).append(" and AMOUNT = ")
                     .append(dish.getNum()).append(" and TOLTALPRICE = ")
@@ -575,7 +575,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			String billIndex = billButton == null ? BarFrame.instance.getCurBillIndex() : billButton.getText();
 			//used deleted <= 1, means both uncompleted and normally completed will be displayed, unnormally delted recored will be delted = 100
 			StringBuilder sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
-					.append(BarFrame.instance.valCurTable.getText())
+					.append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
 					.append("' and CONTACTID = ").append(billIndex)
 					.append(" and (deleted is null or deleted < ").append(DBConsts.deleted)
 					.append(") AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
@@ -646,7 +646,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				sql = new StringBuilder("select * from Bill where createtime = '")
 						.append(BarFrame.instance.valStartTime.getText())
 						.append("' and billIndex = ").append(billIndex)
-						.append(" and tableID = '").append(BarFrame.instance.valCurTable.getText()).append("'");
+						.append(" and tableID = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("'");
 				  
 				rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 				rs.beforeFirst();
@@ -658,8 +658,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				    status = rs.getInt("status");
 				    setBackground(status >= DBConsts.completed ? Color.gray : null);
 				}
-			}else if(BarFrame.instance.valCurTable.getText().length() > 0 && BarFrame.instance.valStartTime.getText().length() > 0) {
-				sql = new StringBuilder("Select id from bill where tableID = '").append(BarFrame.instance.valCurTable.getText())
+			}else if(BarFrame.instance.cmbCurTable.getSelectedItem().toString().length() > 0 && BarFrame.instance.valStartTime.getText().length() > 0) {
+				sql = new StringBuilder("Select id from bill where tableID = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
 						.append("' and opentime = '").append(BarFrame.instance.valStartTime.getText()).append("'");
 				if(BarFrame.instance.valCurBillIdx.getText().length() > 0) {
 					sql.append(" and billIndex = ").append(BarFrame.instance.valCurBillIdx.getText());
