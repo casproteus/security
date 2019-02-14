@@ -671,10 +671,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     				.append("' and OPENTIME = '").append(BarFrame.instance.valStartTime.getText())
     				.append("' and status IS NULL OR status = ").append(DBConsts.original);
             smt.executeUpdate(sql.toString());
-            //update table
-            sql = new StringBuilder("update dining_Table set status = ").append(DBConsts.original)
-            		.append(" WHERE name = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("'");
-            smt.executeUpdate(sql.toString());
+            //close table
+            BarFrame.instance.closeATable(null);
     	}catch(Exception exp) {
     		ErrorUtil.write(exp);
     	}

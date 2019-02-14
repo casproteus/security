@@ -162,16 +162,6 @@ public class BarOption {
 		return "H4L 3E8";
 	}
 
-	private static Object getCityAndProvince() {
-		// TODO Auto-generated method stub
-		return "Montreal, Quebec";
-	}
-
-	private static Object getAddress() {
-		// TODO Auto-generated method stub
-		return "75 cardinal";
-	}
-
 	public static String getShopName() {
 		String headInfo = getBillHeadInfo();;
 		if (headInfo != null) {

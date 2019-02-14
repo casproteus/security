@@ -461,9 +461,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 					smt.executeUpdate(sql.toString());
 					
 		        	//update the tabel status
-					sql = new StringBuilder("update dining_Table set status = ").append(DBConsts.original)
-							.append(" WHERE name = '").append(tableID).append("'");
-		        	smt.executeUpdate(sql.toString());
+					BarFrame.instance.closeATable(tableID);
 		        }catch(Exception exp) {
 		        	ErrorUtil.write(exp);
 		        }

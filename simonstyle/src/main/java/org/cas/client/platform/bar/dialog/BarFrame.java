@@ -43,8 +43,8 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
-public class BarFrame extends JFrame implements ICASDialog, ActionListener, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.137-20190214";
+public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
+	private String VERSION = "V0.138-20190214";
     public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
@@ -312,7 +312,6 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
         // 加监听器－－－－－－－－
         addWindowListener(this);
         getContentPane().addComponentListener(this);
-        cmbCurTable.addActionListener(this);
         cmbCurTable.addItemListener(this);
         
         SwingUtilities.invokeLater(new Runnable() {
@@ -423,30 +422,19 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     }
 
     @Override
-    public PIMRecord getContents() {
-        return null;
-    }
+    public PIMRecord getContents() {return null;}
 
     @Override
-    public boolean setContents(
-            PIMRecord prmRecord) {
-        return true;
-    }
+    public boolean setContents(PIMRecord prmRecord) {return true;}
 
     @Override
-    public void makeBestUseOfTime() {
-    }
+    public void makeBestUseOfTime() {}
 
     @Override
-    public void addAttach(
-            File[] file,
-            Vector actualAttachFiles) {
-    }
+    public void addAttach(File[] file, Vector actualAttachFiles) {}
 
     @Override
-    public PIMTextPane getTextPane() {
-        return null;
-    }
+    public PIMTextPane getTextPane() {return null;}
 
     @Override
     public void release() {
@@ -477,17 +465,89 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
     @Override
     public void componentHidden(ComponentEvent e) {};
 
-    /**
-     * Invoked when an action occurs. NOTE:PIM的绝大多数用于新建和编辑的对话盒，对于确定事件的处理，采用如下规则：
-     * 即：先出发监听器事件，监听器根据IPIMDialog接口的方法getContent（）取出对话盒中的 记录。监听器负责将记录存入Model，监听器最后负责将对话盒释放。
-     * 目的是让所有对话盒只认识一个叫Record的东西，不认识别的。
-     * 
-     * @param e
-     *            动作事件
-     */
-    @Override
-    public void actionPerformed(ActionEvent e) {}
+    String oldTable;
+	public boolean ignoreItemChange;
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		switch (e.getStateChange()){
+	        case ItemEvent.DESELECTED:
+	       		oldTable = e.getItem().toString();	//for de-selected event, only remember the de-selected table name.
+	            break;
+            case ItemEvent.SELECTED: 
+        		 if(ignoreItemChange) {		//if it's triggered by application, not person, then don't do anything.
+        			ignoreItemChange=false;	//@NOTE:we put it here, because it's the second time even triggered.
+        			return;					//if set ignoreItemChange back too early, when the second event comes, will have no flag to use.
+        		 }
+        		 
+                //no-changes check
+        		 String newTable = e.getItem().toString();
+                 if ("".equals(newTable) || oldTable.equals(newTable)) {
+                	 return;
+                 }
+                 
+				 closeATable(oldTable);//close old table
+ 	       	 
+	 	       	 //@TODO:if the target is not opened
+	 	       	 //if the target table is already opened, then should update all current output and bill with target table name and opentime?
+	 	       	 //first why people merge table??? maybe they are friends met in restaurant???.
+	 	       	 //they shouldn't share same bill number for sure, becau they might AA when pay the bill.
+				 StringBuilder sql = new StringBuilder("update dining_Table set status = 1, opentime = '")
+                	.append(valStartTime.getText()).append("' WHERE name = '").append(newTable).append("'");
+             	 try {
+             		 PIMDBModel.getStatement().executeUpdate(sql.toString());
+             	 }catch(Exception exp) {
+             		 L.e("change table", "exception when open a table:" + sql, exp);
+             	 }
+                 	 
+             	 //update all relavent output.
+                 if(curPanel == 1) {	//modify all un closed bills
+                	 sql = new StringBuilder("update output set SUBJECT = '").append(newTable)
+                			 .append("' where (deleted is null or deleted < ").append(DBConsts.completed)
+                			 .append(") and time = '").append(valStartTime.getText()).append("'");
+                	 try {
+                		 PIMDBModel.getStatement().executeUpdate(sql.toString());
+                	 }catch(Exception exp) {
+                		 L.e("change table", "exception when changing table for bill list:" + sql, exp);
+                	 }
+                 }else if(curPanel == 2) { //modify only one bill
+                	 sql = new StringBuilder("update output set SUBJECT = '").append(newTable)
+                			 .append("' where CONTACTID = ").append(getCurBillIndex())
+                			 .append(" and (deleted is null or deleted < ").append(DBConsts.deleted)
+                			 .append(") and time = '").append(valStartTime.getText()).append("'");
+                	 try {
+                		 PIMDBModel.getStatement().executeUpdate(sql.toString());
+                	 }catch(Exception exp) {
+                		 L.e("change table", "exception when changing table:" + sql, exp);
+                	 }
+                 }
+                 
+                 //update all relavent bill.
+                 sql = new StringBuilder("update bill set tableID = '").append(newTable)
+            			 .append("' where (status is null or status < ").append(DBConsts.completed)
+            			 .append(") and opentime = '").append(valStartTime.getText()).append("'");
+            	 try {
+            		 PIMDBModel.getStatement().executeUpdate(sql.toString());
+            	 }catch(Exception exp) {
+            		 L.e("change table", "exception when changing table for bill list:" + sql, exp);
+            	 }
+                 break;
+		}
+	}
 
+	public void closeATable(String tableName) {
+		if(tableName == null) {
+			tableName = cmbCurTable.getSelectedItem().toString();
+		}
+		
+		StringBuilder sql = new StringBuilder("update dining_Table set status = ").append(DBConsts.original)
+			.append(" WHERE name = '").append(tableName).append("'");
+		 try {
+			 PIMDBModel.getStatement().executeUpdate(sql.toString());
+		 }catch(Exception exp) {
+			 L.e("change table", "exception when recover table:" + sql, exp);
+		 }
+	}
+	
     @Override
     public void windowActivated(WindowEvent e) {}
 
@@ -552,83 +612,4 @@ public class BarFrame extends JFrame implements ICASDialog, ActionListener, Wind
 			return curBillIndex;
 	}
 
-	String oldTable;
-	public boolean ignoreItemChange;
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-
-		switch (e.getStateChange()){
-	        case ItemEvent.DESELECTED:
-	       		oldTable = e.getItem().toString();
-	            break;
-            case ItemEvent.SELECTED: 
-            	//ignore check
-        		 if(ignoreItemChange) {	//@NOTE:have to put it back when the second time even triggered.
-        			ignoreItemChange=false;
-        			return;
-        		 }
-        		 
-                //nochange check
-        		 String newTable = e.getItem().toString();
-                 if ("".equals(newTable) || oldTable.equals(newTable)) {
-                	 return;
-                 }
-                 
-                 //close old table
-                 StringBuilder sql = new StringBuilder("update dining_Table set status = ").append(DBConsts.original)
- 					.append(" WHERE name = '").append(oldTable).append("'");
-	 	       	 try {
-	 	       		 
-	 	       		 PIMDBModel.getStatement().executeUpdate(sql.toString());
-	 	       	 }catch(Exception exp) {
-	 	       		 L.e("change table", "exception when recover table:" + sql, exp);
-	 	       	 }
- 	       	 
-	 	       	 //@TODO:if the target is not opened
-	 	       	 //if the target table is already opened, then should update all current output and bill with target table name and opentime?
-	 	       	 //first why people merge table??? maybe they are friends met in restaurant???.
-	 	       	 //they shouldn't share same bill number for sure, becau they might AA when pay the bill.
-                 //open new table
-                 sql = new StringBuilder("update dining_Table set status = 1, opentime = '")
-                	.append(valStartTime.getText()).append("' WHERE name = '").append(newTable).append("'");
-             	 try {
-             		 PIMDBModel.getStatement().executeUpdate(sql.toString());
-             	 }catch(Exception exp) {
-             		 L.e("change table", "exception when open a table:" + sql, exp);
-             	 }
-                 	 
-             	 //update all relavent output.
-                 if(curPanel == 1) {	//modify all un closed bills
-                	 sql = new StringBuilder("update output set SUBJECT = '").append(newTable)
-                			 .append("' where (deleted is null or deleted < ").append(DBConsts.completed)
-                			 .append(") and time = '").append(valStartTime.getText()).append("'");
-                	 try {
-                		 PIMDBModel.getStatement().executeUpdate(sql.toString());
-                	 }catch(Exception exp) {
-                		 L.e("change table", "exception when changing table for bill list:" + sql, exp);
-                	 }
-                 }else if(curPanel == 2) { //modify only one bill
-                	 sql = new StringBuilder("update output set SUBJECT = '").append(newTable)
-                			 .append("' where CONTACTID = ").append(getCurBillIndex())
-                			 .append(" and (deleted is null or deleted < ").append(DBConsts.deleted)
-                			 .append(") and time = '").append(valStartTime.getText()).append("'");
-                	 try {
-                		 PIMDBModel.getStatement().executeUpdate(sql.toString());
-                	 }catch(Exception exp) {
-                		 L.e("change table", "exception when changing table:" + sql, exp);
-                	 }
-                 }
-                 
-                 //update all relavent bill.
-                 sql = new StringBuilder("update bill set tableID = '").append(newTable)
-            			 .append("' where (status is null or status < ").append(DBConsts.completed)
-            			 .append(") and opentime = '").append(valStartTime.getText()).append("'");
-            	 try {
-            		 PIMDBModel.getStatement().executeUpdate(sql.toString());
-            	 }catch(Exception exp) {
-            		 L.e("change table", "exception when changing table for bill list:" + sql, exp);
-            	 }
-                 break;
-		}
-	}
 }
