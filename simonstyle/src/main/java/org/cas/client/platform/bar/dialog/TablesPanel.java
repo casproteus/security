@@ -159,7 +159,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     	            	return;
     	            }
         		}
-    			new ModifyTableDlg(null, null).setVisible(true);
+    			new TableDlg(null, null).setVisible(true);
     			initContent();
         	}else if(o == btnOrderManage) {	//bill management
         		String endNow = BarOption.df.format(new Date());

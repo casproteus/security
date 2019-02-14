@@ -35,11 +35,11 @@ import org.cas.client.resource.international.OptionDlgConst;
  * CATEGORY VARCHAR(255) // prompmenu UNIT VARCHAR(255) // prompprice CONTENT VARCHAR(255) // promp mofify PRODUCAREA
  * VARCHAR(255)
  */
-public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
+public class TableDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
 
 	TableButton btnTable;
 	TabbleSettingDlg settingTabbleDlg;
-    public ModifyTableDlg(TabbleSettingDlg pFrame, TableButton button) {
+    public TableDlg(TabbleSettingDlg pFrame, TableButton button) {
     	super(pFrame);
     	settingTabbleDlg = pFrame;
     	if(button == null) {
@@ -63,22 +63,13 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
 
         lblName.setBounds(CustOpts.HOR_GAP * 2, sptName.getY() + sptName.getHeight() + CustOpts.VER_GAP,
                 lblName.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        tfdName.setBounds(lblName.getX() + lblName.getWidth() + CustOpts.HOR_GAP, lblName.getY(), 80,  CustOpts.BTN_HEIGHT);
+        tfdName.setBounds(lblName.getX() + lblName.getWidth() + CustOpts.HOR_GAP, lblName.getY(), 
+        		sptName.getWidth() - lblName.getWidth() - CustOpts.HOR_GAP * 2,  CustOpts.BTN_HEIGHT);
      
+        int otherAreaHeight = btnTable.getText().length() > 0 ? 0 : 200;
         // bounds--------
-        sptBounds.setBounds(sptName.getX(), tfdName.getY() + tfdName.getHeight() + CustOpts.VER_GAP,
+        sptBounds.setBounds(sptName.getX(), tfdName.getY() + tfdName.getHeight() + CustOpts.VER_GAP + otherAreaHeight,
                 sptName.getWidth(), CustOpts.SEP_HEIGHT + 2);
-//        lblLocations[0].setBounds(CustOpts.HOR_GAP * 2, sptBounds.getY() + sptBounds.getHeight() + CustOpts.VER_GAP,
-//                lblLocations[0].getPreferredSize().width, CustOpts.BTN_HEIGHT);
-//        tfdX.setBounds(lblLocations[0].getX() + lblLocations[0].getWidth() + CustOpts.HOR_GAP,
-//                lblLocations[0].getY(), 
-//                sptName.getWidth()/2 - lblLocations[0].getWidth() - CustOpts.HOR_GAP * 2 - 40,
-//                CustOpts.BTN_HEIGHT);
-//
-//        lblLocations[1].setBounds(lblLocations[0].getX(), lblLocations[0].getY() + lblLocations[0].getHeight()
-//                + CustOpts.VER_GAP, lblLocations[1].getPreferredSize().width, CustOpts.BTN_HEIGHT);
-//        tfdY.setBounds(lblLocations[1].getX() + lblLocations[1].getWidth() + CustOpts.HOR_GAP,
-//                lblLocations[1].getY(), tfdX.getWidth(), CustOpts.BTN_HEIGHT);
 
         lblWidth.setBounds(CustOpts.HOR_GAP * 2, sptBounds.getY() + sptBounds.getHeight() + CustOpts.VER_GAP,
         		lblWidth.getPreferredSize().width, CustOpts.BTN_HEIGHT);
@@ -99,9 +90,9 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
                 sptName.getWidth() - lblCategory.getWidth() - lblName.getPreferredSize().width - CustOpts.HOR_GAP
                         * 4 - 40, CustOpts.BTN_HEIGHT);
 
-
         ok.setBounds(getWidth() / 2 - CustOpts.HOR_GAP - CustOpts.BTN_WIDTH,
-        		cmbCategory.getY() + cmbCategory.getHeight() + CustOpts.VER_GAP * 3, CustOpts.BTN_WIDTH,
+        		getHeight() - CustOpts.SIZE_EDGE * 2 - CustOpts.BTN_HEIGHT - CustOpts.VER_GAP * 2 - 20,
+        		CustOpts.BTN_WIDTH,
                 CustOpts.BTN_HEIGHT);
         cancel.setBounds(ok.getWidth() + ok.getX() + CustOpts.HOR_GAP * 2, ok.getY(), CustOpts.BTN_WIDTH,
                 CustOpts.BTN_HEIGHT);
@@ -110,30 +101,19 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
     }
 
     @Override
-    public PIMRecord getContents() {
-        return null;
-    }
+    public PIMRecord getContents() {return null;}
 
     @Override
-    public boolean setContents(
-            PIMRecord prmRecord) {
-        return true;
-    }
+    public boolean setContents(PIMRecord prmRecord) {return true;}
 
     @Override
-    public void makeBestUseOfTime() {
-    }
+    public void makeBestUseOfTime() {}
 
     @Override
-    public void addAttach(
-            File[] file,
-            Vector actualAttachFiles) {
-    }
+    public void addAttach(File[] file, Vector actualAttachFiles) {}
 
     @Override
-    public PIMTextPane getTextPane() {
-        return null;
-    }
+    public PIMTextPane getTextPane() {return null;}
 
     @Override
     public void release() {
@@ -221,13 +201,11 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
 
 
     @Override
-    public Container getContainer() {
-        return getContentPane();
-    }
+    public Container getContainer() { return getContentPane(); }
 
     private void initDialog() {
     	setModal(true);
-        setTitle(btnTable.getText());
+        setTitle(btnTable.getText().length() > 0 ? btnTable.getText() : BarFrame.consts.TABLE());
         setResizable(false);
         // 初始化－－－－－－－－－－－－－－－－
         sptName = new PIMSeparator(BarFrame.consts.Name());
@@ -262,7 +240,7 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
 	        tfdWidth.setText("60");
 	        tfdHeight.setText("60");
         }
-        String[] typeAry = new String[]{"2", "2H", "4", "4H", "4R", "6", "6H", "8", "8H", "8R", "10", "10H"};
+        String[] typeAry = new String[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"};
         cmbCategory.setModel(new DefaultComboBoxModel(typeAry));
         cmbCategory.setSelectedIndex(btnTable.getType());
     
@@ -270,7 +248,7 @@ public class ModifyTableDlg extends JDialog implements ICASDialog, ActionListene
         ok.setMnemonic('o');
         ok.setMargin(new Insets(0, 0, 0, 0));
 
-        setBounds((CustOpts.SCRWIDTH - 280) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 280, 250); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 280) / 2, (CustOpts.SCRHEIGHT - 220) / 2, 280, btnTable.getText().length() > 0 ? 220 : 120); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
         getRootPane().setDefaultButton(ok);
 

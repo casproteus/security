@@ -130,7 +130,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
 				}
         		//if no table selected, then Add a new table();
         		if(!isAnyTableButtonSelected) {
-        			new ModifyTableDlg(this, new TableButton()).setVisible(true);
+        			new TableDlg(this, new TableButton()).setVisible(true);
         		}
         		initContent();
         	}else if(o == btnLess) {
@@ -150,7 +150,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
         	}else if (o ==btnModify) {
         		for (TableButton tableButton : btnTables) {
 					if (tableButton.getBackground().equals(bg)) {
-						new ModifyTableDlg(this, tableButton).setVisible(true);
+						new TableDlg(this, tableButton).setVisible(true);
 						return;
 					}
         		}
