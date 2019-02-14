@@ -667,8 +667,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             
             //no need to be complex, all ortiginal status bills of this table should be cleaned.
             sql = new StringBuilder("update bill set status = ").append(DBConsts.deleted)
-            		.append(" WHERE tableID = ").append(BarFrame.instance.valCurTable.getText())
-    				.append(" and OPENTIME = '").append(BarFrame.instance.valStartTime.getText())
+            		.append(" WHERE tableID = '").append(BarFrame.instance.valCurTable.getText())
+    				.append("' and OPENTIME = '").append(BarFrame.instance.valStartTime.getText())
     				.append("' and status IS NULL OR status = ").append(DBConsts.original);
             smt.executeUpdate(sql.toString());
             //update table

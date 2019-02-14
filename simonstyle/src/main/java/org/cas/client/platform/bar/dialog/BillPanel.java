@@ -500,8 +500,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	}
 
     public void updateTotleArea() {
-    	Object tvq = BarOption.getGST();
-    	Object tps = BarOption.getQST();
+    	Object tvq = BarOption.getQST();
+    	Object tps = BarOption.getGST();
     	float gstRate = tps == null ? 5f : Float.valueOf((String)tps);
     	float qstRate = tvq == null ? 9.975f : Float.valueOf((String)tvq);
     	float totalGst = 0;
@@ -562,8 +562,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         lblDiscount.setText(discount > 0 ? BarFrame.consts.Discount() + " : -" + BarOption.getMoneySign() + new DecimalFormat("#0.00").format((discount)/100f) : "");
         lblServiceFee.setText(serviceFee > 0 ? BarFrame.consts.ServiceFee() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format((serviceFee)/100f) : "");
     	lblSubTotle.setText(BarFrame.consts.Subtotal() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(subTotal/100f));
-        lblTPS.setText(BarFrame.consts.QST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(((int)totalGst)/100f));
-        lblTVQ.setText(BarFrame.consts.GST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(((int)totalQst)/100f));
+        lblTPS.setText(BarFrame.consts.GST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(((int)totalGst)/100f));
+        lblTVQ.setText(BarFrame.consts.QST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(((int)totalQst)/100f));
         int total = (int) (subTotal + totalGst + totalQst);
         valTotlePrice.setText(new DecimalFormat("#0.00").format((total)/100f));
     }
@@ -807,8 +807,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         lblDiscount = new JLabel();
         lblServiceFee = new JLabel();
         lblSubTotle = new JLabel(BarFrame.consts.Subtotal());
-        lblTPS = new JLabel(BarFrame.consts.QST());
-        lblTVQ = new JLabel(BarFrame.consts.GST());
+        lblTPS = new JLabel(BarFrame.consts.GST());
+        lblTVQ = new JLabel(BarFrame.consts.QST());
         lblTotlePrice = new JLabel(BarFrame.consts.Total() + " : " + BarOption.getMoneySign());
         valTotlePrice = new JLabel();
         btnMore = new ArrowButton("<html><h1 style='text-align: center; padding-bottom: 5px; color:#18F507;'>+</h1></html>");
