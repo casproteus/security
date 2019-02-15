@@ -574,12 +574,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		try {
 			String billIndex = billButton == null ? BarFrame.instance.getCurBillIndex() : billButton.getText();
 			//used deleted <= 1, means both uncompleted and normally completed will be displayed, unnormally delted recored will be delted = 100
+			String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
+			String openTime = BarFrame.instance.valStartTime.getText();
 			StringBuilder sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
-					.append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
+					.append(tableName)
 					.append("' and CONTACTID = ").append(billIndex)
 					.append(" and (deleted is null or deleted < ").append(DBConsts.deleted)
 					.append(") AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
-					.append(BarFrame.instance.valStartTime.getText()).append("'");
+					.append(openTime).append("'");
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
 			rs.relative(-1);
@@ -640,13 +642,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			//rs.close();
 			
 			//update the discount and service fee, and tip info, and (don't forget the billID).
-			//if has output, then get the billID from any output, if has no output, then search related bill from db.
-			//@NOTE could be an non-first but empty bill, so must consider the bill ID if it's not empty string.
+			//if has output, then get the billID from any output, 
 			if(orderedDishAry.size() > 0 && orderedDishAry.get(0).getBillID() > 0) {
-				sql = new StringBuilder("select * from Bill where createtime = '")
-						.append(BarFrame.instance.valStartTime.getText())
+				sql = new StringBuilder("select * from Bill where opentime = '").append(openTime)
 						.append("' and billIndex = ").append(billIndex)
-						.append(" and tableID = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("'");
+						.append(" and tableID = '").append(tableName).append("'");
 				  
 				rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 				rs.beforeFirst();
@@ -658,9 +658,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				    status = rs.getInt("status");
 				    setBackground(status >= DBConsts.completed ? Color.gray : null);
 				}
-			}else if(BarFrame.instance.cmbCurTable.getSelectedItem().toString().length() > 0 && BarFrame.instance.valStartTime.getText().length() > 0) {
-				sql = new StringBuilder("Select id from bill where tableID = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
-						.append("' and opentime = '").append(BarFrame.instance.valStartTime.getText()).append("'");
+			}
+			//if has no output, then search related bill from db. ---could be an non-first but empty bill, 
+			//so must consider the bill ID if it's not empty string.
+			else if(tableName.length() > 0 && openTime.length() > 0) {
+				sql = new StringBuilder("Select id from bill where tableID = '").append(tableName)
+						.append("' and opentime = '").append(openTime).append("'");
 				if(BarFrame.instance.valCurBillIdx.getText().length() > 0) {
 					sql.append(" and billIndex = ").append(BarFrame.instance.valCurBillIdx.getText());
 				}

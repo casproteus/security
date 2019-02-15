@@ -101,6 +101,8 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	}
 	
 	void initContent() {
+		BarFrame.instance.cmbCurTable.setEnabled(true);
+		
 		for(int i = onScrBills.size() - 1; i >= 0; i--) {
 			remove(onScrBills.get(i));
 		}

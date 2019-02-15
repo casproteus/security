@@ -96,6 +96,8 @@ public class PrintService{
     public static final int POS_SUCCESS=1000;		//success
     public static final int ERR_PROCESSING = 1001;	//processing error
     public static final int ERR_PARAM = 1002;		//parameter error
+
+	private static final String CASH = "ARGENT";
     
     //The start time and end time are long format, need to be translate for print.
     public static void exePrintBill(BillPanel billPanel, List<Dish> saleRecords){
@@ -531,8 +533,8 @@ public class PrintService{
 
 	private static boolean printThroughOSdriver(Path path, PrintRequestAttributeSet pras,
 			boolean deleteCommandFile) {
-		DocPrintJob job = defaultService.createPrintJob();
 		try {
+			DocPrintJob job = defaultService.createPrintJob();
 	    	FileInputStream stream = new FileInputStream(path.toFile());
 			job.print(new SimpleDoc(stream,  DocFlavor.INPUT_STREAM.AUTOSENSE, new HashDocAttributeSet()), pras);
 			if(deleteCommandFile) {
@@ -540,9 +542,9 @@ public class PrintService{
 			}
 			return true;
 		} catch (PrintException e) {
-			ErrorUtil.write(e);
+			L.e("PrintService", ": Print through OS", e);
 		} catch(IOException ioe) {
-			ErrorUtil.write(ioe);
+			L.e("PrintService", ": Print through OS", ioe);
 		}
 		return false;
 	}
@@ -747,7 +749,7 @@ public class PrintService{
 			return "SOB";
 		}else {
 			switch (string.substring(0, string.indexOf(":")).trim()) {
-			case "CASH":
+			case CASH:
 				return "ARG";
 			case "DEBIT":
 				return "DEB";
@@ -1253,7 +1255,7 @@ public class PrintService{
             int cashReceived = rs.getInt("cashReceived");
             String str = new DecimalFormat("#0.00").format(cashReceived/100f);
             if(cashReceived > 0) {
-    			content.append("ARGENT").append(" : ")
+    			content.append(CASH).append(" : ")
     			.append(BarUtil.generateString(width - 9 - str.length(), " "))
     			.append(str).append("\n");
     		}
