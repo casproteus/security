@@ -9,7 +9,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +28,6 @@ import org.cas.client.platform.bar.uibeans.CategoryToggleButton;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.bar.uibeans.MenuButton;
 import org.cas.client.platform.cascustomize.CustOpts;
-import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
@@ -190,25 +188,24 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	}
         		outputStatusCheck();		//will send new added(not printed yet) dishes to kitchen.
         		billPricesUpdate();
-        		billPanel.printBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(), BarFrame.instance.getCurBillIndex(), BarFrame.instance.valStartTime.getText());
+        		billPanel.printBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
+        				BarFrame.instance.getCurBillIndex(),
+        				BarFrame.instance.valStartTime.getText());
         		billPanel.initContent();
         		
             } else if (o == btnLine_2_1) { // return
-            	if(billPanel.orderedDishAry.size() > 0) {
-	            	Dish dish = billPanel.orderedDishAry.get(billPanel.orderedDishAry.size() - 1);
-	            	if(dish.getId() < 0) {	//has new record.
-	            		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
-	            				BarFrame.consts.COMFIRMLOSTACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
-	    	                 return;	
-	    	            }
-	            	}
+            	if(billPanel.getNewDishes().size() > 0) {
+            		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+            				BarFrame.consts.COMFIRMLOSTACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+    	                 return;	
+    	            }
             	}
             	BarFrame.instance.switchMode(0);
             	
             } else if(o == btnLine_2_2) {		//Add bill
             	//save unsaved output
             	outputStatusCheck();
-            	addNewBill();
+            	addNewBill(null, null);
         	} else if (o == btnLine_2_4) { // cancel all
             	if(billPanel.orderedDishAry.size() > 0) {
             		int lastSavedRow = billPanel.orderedDishAry.size() - 1 - billPanel.getNewDishes().size();
@@ -229,9 +226,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		billPanel.tblBillPanel.setSelectedRow(tValues.length - 1);
             		billPanel.updateTotleArea();
             	}else {
-            		//update db.
-            		if(isNoMoreNonEmptyBillOfCurTable()) {
-            			resetCurTable();
+            		//update bill and dining_table in db.
+            		if(BarFrame.isTableEmpty(null, null)) {
+            			BarFrame.instance.closeATable(null, null);
             		}
             		BarFrame.instance.switchMode(0);
             	}
@@ -308,8 +305,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     			}
         		
                 //if the bill amount is 1, cancel the selected status of the table.
-        		if(isNoMoreNonEmptyBillOfCurTable()) {
-        			resetCurTable();
+        		if(BarFrame.isTableEmpty(null, null)) {
+        			BarFrame.instance.closeATable(null, null);
         		}
             	BarFrame.instance.switchMode(0);
             } else if (o == btnLine_2_6) {		//open drawer
@@ -478,26 +475,38 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		billPricesUpdate();
 	}
 
-	public void addNewBill() {
-		//add new bill with a new billID and billIdx.
+	//add new bill with a new billID and billIdx.
+	public void addNewBill(String tableName, String openTime) {
+		if(tableName == null) {
+			tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
+		}
+		if(openTime == null) {
+			openTime = BarFrame.instance.valStartTime.getText();
+		}
+		
+		int existingBillQT = getExistingBillQt(tableName, openTime);
+		String newBillIdx = String.valueOf(existingBillQT + 1);
+		
+		int billId = billPanel.generateBillRecord(tableName, newBillIdx, openTime);
+		billPanel.billID = billId;
+		BarFrame.instance.valCurBillIdx.setText(newBillIdx);
+		BarFrame.instance.switchMode(2);
+	}
+
+	public int getExistingBillQt(String tableName, String openTime) {
+		StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableName)
+				.append("' and (deleted is null or deleted < ").append(DBConsts.voided)
+				.append(") and time = '").append(openTime).append("' order by contactID DESC");
 		try {
-			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
-					.append("' and (deleted is null or deleted < ").append(DBConsts.voided)
-					.append(") and time = '").append(BarFrame.instance.valStartTime.getText()).append("' order by contactID DESC");
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.beforeFirst();
 			rs.next();
-
-			BarFrame.instance.valCurBillIdx.setText(String.valueOf(rs.getInt("contactID") + 1));
-			//
-			int billId = billPanel.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(), BarFrame.instance.valCurBillIdx.getText(), BarFrame.instance.valStartTime.getText());
-			billPanel.billID = billId;
+			return rs.getInt("contactID");
+			
 		}catch(Exception exp) {
-			L.e("Add Bill function",
-					"SELECT DISTINCT contactID from output where SUBJECT = '" + BarFrame.instance.cmbCurTable.getSelectedItem().toString()
-				+ "' and (deleted is null or deleted = " + DBConsts.original + ") and time = '" + BarFrame.instance.valStartTime.getText() + "' order by contactID DESC", exp);
+			L.e("Add Bill function", " Exception when finding existing billIdx numbers:" + sql, exp);
 		}
-		BarFrame.instance.switchMode(2);
+		return -1;
 	}
 
 	private boolean checkBillStatus() {
@@ -611,72 +620,28 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			L.e("SalesPanel", "unexpected error when updating the totalvalue of bill.", exp);
 		}
 	}
-
-    public static boolean isNoMoreNonEmptyBillOfCurTable(){
-    	int num = 0;
-    	try {
-			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
-					.append("' and (deleted is null or deleted = ").append(DBConsts.original)
-					.append(") and time = '").append(BarFrame.instance.valStartTime.getText())
-					.append("' order by contactID DESC");
-//@ There could be not closed bill left during the splitting bill
-//			ResultSet rs = smt.executeQuery("SELECT * from bill where tableID = '"
-//                    + BarFrame.instance.valCurTable.getText() + "' and opentime = '"
-//            		+ BarFrame.instance.valStartTime.getText() + "' and status is null");
-			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-			rs.afterLast();
-			rs.relative(-1);
-			num = rs.getRow();
-		} catch (Exception exp) {
-			ErrorUtil.write(exp);
-		}
-    	return num == 0;
-    }
     
-    public static void resetCurTable(){
-    	try {
-    		Statement smt =  PIMDBModel.getReadOnlyStatement();
-    		//check if there's any non empty bill (with output connect to it)
-    		StringBuilder sql = new StringBuilder(
-    				"Select * from bill, output where output.category = bill.id and bill.tableID = '")
-    				.append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
-    				.append("' and bill.opentime = '").append(BarFrame.instance.valStartTime.getText())
-    				.append("' and (bill.status is null or bill.status = ").append(DBConsts.original)
-    				.append(") and (output.deleted is null or output.deleted = ").append(DBConsts.original).append(")");
-    		ResultSet rs = smt.executeQuery(sql.toString());
-    		rs.afterLast();
-            rs.relative(-1);
-            int tmpPos = rs.getRow();
-            if(tmpPos > 0) {
-            	if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.nonEmptyBillFound(),
-            			DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
-            		return;
-            	}
-            }
-            
-            //clean all empty bill (match table id and opentime, status is null, while doesn't exist in any output.).
-            //if there's an output was deleted from this bill, this bill is still considered as empty.
-            //if there's an output was completed 10
-//            sql = new StringBuilder("update bill set status = ").append(DBConsts.deleted)
-//            		.append(" WHERE bill.id IN ( SELECT id FROM bill WHERE tableID = ").append(BarFrame.instance.valCurTable.getText())
-//    				.append(" and OPENTIME = '").append(BarFrame.instance.valStartTime.getText())
-//    				.append("' and status IS NULL OR status = ").append(DBConsts.original)
-//    				.append(") AND NOT EXISTS (SELECT category FROM OUTPUT WHERE (deleted IS null or deleted = ").append(DBConsts.completed)
-//    				.append(" AND time = '").append(BarFrame.instance.valStartTime.getText())
-//    				.append("' and SUBJECT = '").append(BarFrame.instance.valCurTable.getText()).append("')");
-            
-            //no need to be complex, all ortiginal status bills of this table should be cleaned.
-            sql = new StringBuilder("update bill set status = ").append(DBConsts.deleted)
-            		.append(" WHERE tableID = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
-    				.append("' and OPENTIME = '").append(BarFrame.instance.valStartTime.getText())
-    				.append("' and status IS NULL OR status = ").append(DBConsts.original);
-            smt.executeUpdate(sql.toString());
-            //close table
-            BarFrame.instance.closeATable(null);
-    	}catch(Exception exp) {
-    		ErrorUtil.write(exp);
-    	}
-    }
+//    public static void resetCurTable(){
+//    	try {
+//            //clean all empty bill (match table id and opentime, status is null, while doesn't exist in any output.).
+//            //if there's an output was deleted from this bill, this bill is still considered as empty.
+//            //if there's an output was completed 10
+////            sql = new StringBuilder("update bill set status = ").append(DBConsts.deleted)
+////            		.append(" WHERE bill.id IN ( SELECT id FROM bill WHERE tableID = ").append(BarFrame.instance.valCurTable.getText())
+////    				.append(" and OPENTIME = '").append(BarFrame.instance.valStartTime.getText())
+////    				.append("' and status IS NULL OR status = ").append(DBConsts.original)
+////    				.append(") AND NOT EXISTS (SELECT category FROM OUTPUT WHERE (deleted IS null or deleted = ").append(DBConsts.completed)
+////    				.append(" AND time = '").append(BarFrame.instance.valStartTime.getText())
+////    				.append("' and SUBJECT = '").append(BarFrame.instance.valCurTable.getText()).append("')");
+//            
+//            //no need to be complex, all ortiginal status bills of this table should be cleaned.
+//            //close table
+//            BarFrame.instance.closeATable(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
+//            		BarFrame.instance.valStartTime.getText());
+//    	}catch(Exception exp) {
+//    		ErrorUtil.write(exp);
+//    	}
+//    }
     
     void reLayout() {
         int panelHeight = getHeight();

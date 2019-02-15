@@ -103,8 +103,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
    		}catch(Exception e) {
 			ErrorUtil.write(e);
 		}
-   		if(SalesPanel.isNoMoreNonEmptyBillOfCurTable()) {
-			SalesPanel.resetCurTable();
+   		if(BarFrame.isTableEmpty(null, null)) {
+			BarFrame.instance.closeATable(null, null);
    		}
     }
     
@@ -262,8 +262,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
                 		updateBill(billId, "TIP", 0 - left);	//otherwise, tread as tip.
             		}
             	}
-        		if(SalesPanel.isNoMoreNonEmptyBillOfCurTable()) {
-        			SalesPanel.resetCurTable();
+        		if(BarFrame.isTableEmpty(null, null)) {
+        			BarFrame.instance.closeATable(null, null);
         		}
         	}
         	//no matter it's closed or not, we need to update the pay info of the bill.

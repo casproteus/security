@@ -161,29 +161,21 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 
 		btnReturn.setBounds(CustOpts.SIZE_EDGE, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
 		
-		btnAddUser.setBounds(btnReturn.getX() + btnReturn.getWidth() + CustOpts.HOR_GAP,
-				btnReturn.getY(), tBtnWidht, tBtnHeight);
-		
-		btnPrintAll.setBounds(btnAddUser.getX() + btnAddUser.getWidth() + CustOpts.HOR_GAP, 
-				panelHeight - tBtnHeight - CustOpts.VER_GAP,
+		btnAddUser.setBounds(btnReturn.getX() + btnReturn.getWidth() + CustOpts.HOR_GAP, btnReturn.getY(), 
 				tBtnWidht, tBtnHeight);
-		btnPrintInOneBill.setBounds(btnPrintAll.getX() + btnPrintAll.getWidth() + CustOpts.HOR_GAP, 
-				btnPrintAll.getY(),
+		btnPrintAll.setBounds(btnAddUser.getX() + btnAddUser.getWidth() + CustOpts.HOR_GAP, btnReturn.getY(),
 				tBtnWidht, tBtnHeight);
-		btnEqualBill.setBounds(btnPrintInOneBill.getX() + btnPrintInOneBill.getWidth() + CustOpts.HOR_GAP, 
-				btnPrintInOneBill.getY(),
+		btnPrintInOneBill.setBounds(btnPrintAll.getX() + btnPrintAll.getWidth() + CustOpts.HOR_GAP, btnPrintAll.getY(),
 				tBtnWidht, tBtnHeight);
-		btnCombineAll.setBounds(btnEqualBill.getX() + btnEqualBill.getWidth() + CustOpts.HOR_GAP, 
-				btnEqualBill.getY(),
+		btnEqualBill.setBounds(btnPrintInOneBill.getX() + btnPrintInOneBill.getWidth() + CustOpts.HOR_GAP, btnPrintInOneBill.getY(),
 				tBtnWidht, tBtnHeight);
-		btnSplitItem.setBounds(btnCombineAll.getX() + btnCombineAll.getWidth() + CustOpts.HOR_GAP, 
-				btnCombineAll.getY(),
+		btnCombineAll.setBounds(btnEqualBill.getX() + btnEqualBill.getWidth() + CustOpts.HOR_GAP, btnEqualBill.getY(),
 				tBtnWidht, tBtnHeight);
-		btnMoveItem.setBounds(btnSplitItem.getX() + btnSplitItem.getWidth() + CustOpts.HOR_GAP, 
-				btnSplitItem.getY(),
+		btnSplitItem.setBounds(btnCombineAll.getX() + btnCombineAll.getWidth() + CustOpts.HOR_GAP, btnCombineAll.getY(),
 				tBtnWidht, tBtnHeight);
-		btnSuspendAll.setBounds(btnMoveItem.getX() + btnMoveItem.getWidth() + CustOpts.HOR_GAP, 
-				btnMoveItem.getY(),
+		btnMoveItem.setBounds(btnSplitItem.getX() + btnSplitItem.getWidth() + CustOpts.HOR_GAP, btnSplitItem.getY(),
+				tBtnWidht, tBtnHeight);
+		btnSuspendAll.setBounds(btnMoveItem.getX() + btnMoveItem.getWidth() + CustOpts.HOR_GAP, btnMoveItem.getY(),
 				tBtnWidht, tBtnHeight);
 		
 		separator.setBounds(CustOpts.HOR_GAP, 
@@ -412,7 +404,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 			initContent();
 		}else {
 			if(o == btnAddUser){
-				((SalesPanel)BarFrame.instance.panels[2]).addNewBill();
+				((SalesPanel)BarFrame.instance.panels[2]).addNewBill(null, null);
 			}else if(o == btnPrintAll) {
 				for (BillPanel billPanel : billPanels) {
 					billPanel.printBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(), billPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
@@ -461,7 +453,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 					smt.executeUpdate(sql.toString());
 					
 		        	//update the tabel status
-					BarFrame.instance.closeATable(tableID);
+					BarFrame.instance.closeATable(tableID, null);
 		        }catch(Exception exp) {
 		        	ErrorUtil.write(exp);
 		        }
