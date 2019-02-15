@@ -538,13 +538,10 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	}
 
 	// @NOTE we don't check the bills here, because it's OK there could be bills (an empty bill, or none-closed bills generated during the splitting bill) 
-    public static boolean isTableEmpty(String tableName, String openTime){
-    	if(tableName == null) {
-    		tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
-    	}
-    	if(openTime == null) {
-    		openTime = BarFrame.instance.valStartTime.getText();
-    	}
+    public boolean isTableEmpty(String tableName, String openTime){
+		//validate parameters
+		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
+		openTime = openTime == null ? BarFrame.instance.valStartTime.getText() : openTime;
     	
     	try {
 			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableName)
@@ -613,13 +610,18 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	}
 
 	public void createABill(String tableName, String openTime){
+		//validate parameters
+		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
+		openTime = openTime == null ? BarFrame.instance.valStartTime.getText() : openTime;
+		
+		int newBillIdx = ((SalesPanel)panels[2]).getExistingBillQt(tableName, openTime) + 1;
 		//create a bill for it. in case there will be something like order fee in future.
 		String createtime = BarOption.df.format(new Date());
 		StringBuilder sql = new StringBuilder(
 		        "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
 				.append(createtime).append("', '")
 		        .append(tableName).append("', '")	//table
-		        .append("1").append("', ")			//bill
+		        .append(newBillIdx).append("', ")			//bill
 		        .append(0).append(", ")	//total
 		        .append(0).append(", ")
 		        .append(0).append(", ")
@@ -636,13 +638,9 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	}
 	
 	public void closeATable(String tableName, String openTime) {
-		if(tableName == null) {
-			tableName = cmbCurTable.getSelectedItem().toString();
-		}
-		
-		if(openTime == null) {
-			openTime = BarFrame.instance.valStartTime.getText();
-		}
+		//validate parameters
+		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
+		openTime = openTime == null ? BarFrame.instance.valStartTime.getText() : openTime;
 		
 		StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.deleted)
         		.append(" WHERE tableID = '").append(tableName)

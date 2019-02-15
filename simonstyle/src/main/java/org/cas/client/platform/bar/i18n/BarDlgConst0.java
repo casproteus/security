@@ -232,6 +232,8 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String PortionofMenuArea() {return "Area ratio of menus:";}
     @Override
+   	public String IsTrainingMode() {return "Is training mode";}
+    @Override
 	public String IsSingleUser() {return "Is single user mode";}
     @Override
 	public String IsTaxNotAllowDiscount() {return "discount of bill will affect tax";}

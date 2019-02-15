@@ -227,7 +227,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		billPanel.updateTotleArea();
             	}else {
             		//update bill and dining_table in db.
-            		if(BarFrame.isTableEmpty(null, null)) {
+            		if(BarFrame.instance.isTableEmpty(null, null)) {
             			BarFrame.instance.closeATable(null, null);
             		}
             		BarFrame.instance.switchMode(0);
@@ -305,7 +305,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     			}
         		
                 //if the bill amount is 1, cancel the selected status of the table.
-        		if(BarFrame.isTableEmpty(null, null)) {
+        		if(BarFrame.instance.isTableEmpty(null, null)) {
         			BarFrame.instance.closeATable(null, null);
         		}
             	BarFrame.instance.switchMode(0);
@@ -424,6 +424,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		billPricesUpdate();
             	if(BarOption.isFastFoodMode()) {
     		    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(BillListPanel.getANewBillIdx()));
+    		    	BarFrame.instance.createABill(null, null);//create new bill;
     		    	billPanel.initContent();
     		    }else {
     		    	BarFrame.instance.switchMode(0);

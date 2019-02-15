@@ -328,7 +328,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         }
         //JToggleButton-------------------------------------------------------------------------------------
         else if(o instanceof JToggleButton) {
-        	if(o == cbxIsSingleUserMode) {
+        	if(o == cbxIsTrainingMode) {
+        		LoginDlg.MODETRANS = "F";
+        	}else if(o == cbxIsSingleUserMode) {
         		BarOption.setSingleUser(cbxIsSingleUserMode.isSelected() ? "true" : "false");
         	}else if(o == cbxIsDiscoutAffectTax) {
         		BarOption.setIsDisCountBeforeTax(cbxIsDiscoutAffectTax.isSelected() ? true : false);
@@ -414,7 +416,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     			sepH1.getPreferredSize().height);
     	
         //cbx------------------------------------
-        cbxIsSingleUserMode.setBounds(lblServerHost.getX(), sepH1.getY() + sepH1.getHeight() + CustOpts.VER_GAP * 2,
+    	cbxIsTrainingMode.setBounds(lblServerHost.getX(), sepH1.getY() + sepH1.getHeight() + CustOpts.VER_GAP * 2,
+    			cbxIsTrainingMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxIsSingleUserMode.setBounds(cbxIsTrainingMode.getX(), cbxIsTrainingMode.getY() + cbxIsTrainingMode.getHeight() + CustOpts.VER_GAP * 2,
         		cbxIsSingleUserMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsBuffetMode.setBounds(cbxIsSingleUserMode.getX(), cbxIsSingleUserMode.getY() + cbxIsSingleUserMode.getHeight() + CustOpts.VER_GAP,
         		cbxIsBuffetMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
@@ -500,6 +504,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         lblBillPageCol = new JLabel(BarFrame.consts.BillPageCol());
         tfdBillPageCol = new JTextField(String.valueOf(BarOption.getBillPageCol()));
 
+        cbxIsTrainingMode = new JCheckBox(BarFrame.consts.IsTrainingMode());
         cbxIsSingleUserMode = new JCheckBox(BarFrame.consts.IsSingleUser());
         cbxIsDiscoutAffectTax = new JCheckBox(BarFrame.consts.IsTaxNotAllowDiscount());
         cbxIsServiceFeeAffectTax = new JCheckBox(BarFrame.consts.IsServiceFeeAffectTax());
@@ -556,6 +561,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tLbl.setBackground(Color.GRAY);
         Font tFont = PIMPool.pool.getFont((String) CustOpts.custOps.hash2.get(PaneConsts.DFT_FONT), Font.PLAIN, 40);
         
+        cbxIsTrainingMode.setBackground(null);
         cbxIsSingleUserMode.setBackground(null);
         cbxIsDiscoutAffectTax.setBackground(null);
         cbxIsServiceFeeAffectTax.setBackground(null);
@@ -611,6 +617,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tfdQST.addFocusListener(this);
         tfdBillPageRow.addFocusListener(this);
         tfdBillPageCol.addFocusListener(this);
+        cbxIsTrainingMode.addActionListener(this);
         cbxIsSingleUserMode.addActionListener(this);
         cbxIsDiscoutAffectTax.addActionListener(this);
         cbxIsServiceFeeAffectTax.addActionListener(this);
@@ -679,6 +686,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(lblServerHost);
         add(tfdServerHost);
         
+        add(cbxIsTrainingMode);
         add(cbxIsSingleUserMode);
         add(cbxIsDiscoutAffectTax);
         add(cbxIsServiceFeeAffectTax);
@@ -711,7 +719,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     JTextField tfdPrinterMinReachTime;
     JLabel lblServerHost;
     JTextField tfdServerHost;
-    
+
+    JCheckBox cbxIsTrainingMode;
     JCheckBox cbxIsSingleUserMode;
     JCheckBox cbxIsBuffetMode;
     JCheckBox cbxIsFastFoodMode;

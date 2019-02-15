@@ -103,7 +103,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
    		}catch(Exception e) {
 			ErrorUtil.write(e);
 		}
-   		if(BarFrame.isTableEmpty(null, null)) {
+   		if(BarFrame.instance.isTableEmpty(null, null)) {
 			BarFrame.instance.closeATable(null, null);
    		}
     }
@@ -262,7 +262,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
                 		updateBill(billId, "TIP", 0 - left);	//otherwise, tread as tip.
             		}
             	}
-        		if(BarFrame.isTableEmpty(null, null)) {
+        		if(BarFrame.instance.isTableEmpty(null, null)) {
         			BarFrame.instance.closeATable(null, null);
         		}
         	}
