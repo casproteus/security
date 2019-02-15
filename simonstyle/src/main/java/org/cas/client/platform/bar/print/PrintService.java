@@ -630,7 +630,7 @@ public class PrintService{
 		StringBuilder printContent = new StringBuilder(String.format(mev1, 2, etatDoc, modeTrans, duplicata));	
 		
 		String paiementTrans = "SOB";
-		String comptoir = "O";
+		String comptoir = BarOption.isFastFoodMode() ? "O" : "N";
 		String autreCompte = "S";
 		String numeroTrans = "";
 		String tableTrans = "";

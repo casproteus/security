@@ -37,6 +37,7 @@ import org.cas.client.platform.bar.uibeans.ArrowButton;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
@@ -571,12 +572,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     void initContent() {
     	resetStatus();
     	//get outputs of current table and bill id.
+    	StringBuilder sql = null;
 		try {
 			String billIndex = billButton == null ? BarFrame.instance.getCurBillIndex() : billButton.getText();
 			//used deleted <= 1, means both uncompleted and normally completed will be displayed, unnormally delted recored will be delted = 100
 			String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 			String openTime = BarFrame.instance.valStartTime.getText();
-			StringBuilder sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
+			sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
 					.append(tableName)
 					.append("' and CONTACTID = ").append(billIndex)
 					.append(" and (deleted is null or deleted < ").append(DBConsts.deleted)
@@ -674,7 +676,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			}
 			rs.close();
 		} catch (Exception e) {
-			ErrorUtil.write(e);
+			L.e("BillPanel", " exception when initContent()" + sql, e);
 		}
 
 		resetColWidth(scrContent.getWidth());
