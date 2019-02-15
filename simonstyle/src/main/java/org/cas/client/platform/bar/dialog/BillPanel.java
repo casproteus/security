@@ -454,11 +454,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         newDish.setNum(1);
         int price = dish.getPrice();
         if("true".equals(dish.getPrompPrice()) && BarOption.isTreatPricePromtAsTaxInclude()) {
-        	Object tvq = BarOption.getGST();
-        	Object tps = BarOption.getQST();
+        	Object tps = BarOption.getGST();
+        	Object tvq = BarOption.getQST();
         	float gstRate = tps == null ? 5f : Float.valueOf((String)tps);
         	float qstRate = tvq == null ? 9.975f : Float.valueOf((String)tvq);
-        	price = Math.round(price * (100f - gstRate - qstRate)/100);
+        	price = Math.round(price * (100f - gstRate - qstRate) / 100);
         }
         newDish.setTotalPrice(price * 1);
         newDish.setOpenTime(BarFrame.instance.valStartTime.getText());
@@ -565,7 +565,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	lblSubTotle.setText(BarFrame.consts.Subtotal() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(subTotal/100f));
         lblTPS.setText(BarFrame.consts.GST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(totalGst/100f));
         lblTVQ.setText(BarFrame.consts.QST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(totalQst/100f));
-        int total = (int) (subTotal + totalGst + totalQst);
+        int total = Math.round(subTotal + totalGst + totalQst);
         valTotlePrice.setText(new DecimalFormat("#0.00").format((total)/100f));
     }
     
