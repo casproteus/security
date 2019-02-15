@@ -521,8 +521,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		}
     		
     		int totalPrice = dish.getTotalPrice();
-    		int gst = Math.round(totalPrice * (dish.getGst() * gstRate / 100f));	//an item could have a different tax rate.
-    		int qst = Math.round(totalPrice * (dish.getQst() * qstRate / 100f));
+    		float gst = totalPrice * (dish.getGst() * gstRate / 100f);	//an item could have a different tax rate.
+    		float qst = totalPrice * (dish.getQst() * qstRate / 100f);
     		
     		if(BarOption.isDiscountAffectTax()) {
     			gst += dish.getDiscount() * (dish.getGst() * gstRate / 100f);
@@ -562,8 +562,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         lblDiscount.setText(discount > 0 ? BarFrame.consts.Discount() + " : -" + BarOption.getMoneySign() + new DecimalFormat("#0.00").format((discount)/100f) : "");
         lblServiceFee.setText(serviceFee > 0 ? BarFrame.consts.ServiceFee() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format((serviceFee)/100f) : "");
     	lblSubTotle.setText(BarFrame.consts.Subtotal() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(subTotal/100f));
-        lblTPS.setText(BarFrame.consts.GST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(((int)totalGst)/100f));
-        lblTVQ.setText(BarFrame.consts.QST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(((int)totalQst)/100f));
+        lblTPS.setText(BarFrame.consts.GST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(totalGst/100f));
+        lblTVQ.setText(BarFrame.consts.QST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(totalQst/100f));
         int total = (int) (subTotal + totalGst + totalQst);
         valTotlePrice.setText(new DecimalFormat("#0.00").format((total)/100f));
     }
