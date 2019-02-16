@@ -477,10 +477,12 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		String firstUnclosedBillIdx = unclosedBillPanels.get(0).billButton.getText();
 		int firstUnclosedBillId = unclosedBillPanels.get(0).billID;
 		//update all related output to belongs to first Bill, deleted and completed output will not be modified.
+		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
+		String openTime = BarFrame.instance.valStartTime.getText();
 		StringBuilder sql = new StringBuilder("update output set contactID = ").append(firstUnclosedBillIdx)
 				.append(", category = '").append(firstUnclosedBillId)
-				.append("' where SUBJECT = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
-				.append("' and time = '").append(BarFrame.instance.valStartTime.getText())
+				.append("' where SUBJECT = '").append(tableName)
+				.append("' and time = '").append(openTime)
 				.append("' and deleted is null or DELETED = ").append(DBConsts.original);
 		try {
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
@@ -490,7 +492,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		
 //				一轮遍历过之后，可以确定消灭了二次分单的存在。但是一次分单的情况仍然存在。所以有必要再进行一遍，用来把pS也去掉。
 //				两遍目前是足够的。但程序上应该写成说只要发现“pkOrPsFoundFlag”没有被打上，就表示合并结束（没分单过的是否合并是个问题，因为有的菜点了多次，但每个菜可能给了不同的折扣）
-		combineOutputs(BarFrame.instance.cmbCurTable.getSelectedItem().toString(), BarFrame.instance.valStartTime.getText(), Integer.valueOf(firstUnclosedBillIdx));
+		combineOutputs(tableName, openTime, Integer.valueOf(firstUnclosedBillIdx));
 		
 		//combine bills discount and services fees---------------------------------------------------------------------
 		//combine the discount, service fee, of all the none-empty bills.

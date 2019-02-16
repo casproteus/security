@@ -507,7 +507,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		}catch(Exception exp) {
 			L.e("Add Bill function", " Exception when finding existing billIdx numbers:" + sql, exp);
 		}
-		return -1;
+		return 0;
 	}
 
 	private boolean checkBillStatus() {
