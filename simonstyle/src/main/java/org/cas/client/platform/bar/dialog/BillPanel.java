@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -89,25 +88,20 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
             return;
         }
         
-        int targetBillId = orderedDishAry != null && orderedDishAry.size() > 0? 
-				orderedDishAry.get(0).getBillID() : 0;
-		if(targetBillId > 0) {
-			//update the total price of the target bill, 
-			//---beause when add dish into the billPane, bill in db will not get updated.
-			StringBuilder sql = new StringBuilder("update bill set total = ")
-					.append(Math.round(Float.valueOf(valTotlePrice.getText()) * 100))
-					.append(", discount = ").append(discount)
-					.append(", otherReceived = ").append(serviceFee)
-					.append(", status = ").append(DBConsts.billPrinted)//so the invoice can be saved.
-					.append(" where id = ").append(targetBillId);
-			try {
-				PIMDBModel.getStatement().executeUpdate(sql.toString());
-			}catch(Exception e) {
-				ErrorUtil.write(e);
-			}
-		}else {
-			int newBillID = generateBillRecord(tableID, billIndex, opentime);
-			updateOutputRecords(newBillID);
+		//update the total price of the target bill, 
+		//---beause when add dish into the billPane, bill in db will not get updated.
+		StringBuilder sql = new StringBuilder("update bill set total = ")
+				.append(Math.round(Float.valueOf(valTotlePrice.getText()) * 100))
+				.append(", discount = ").append(discount)
+				.append(", otherReceived = ").append(serviceFee)
+				.append(", status = ").append(DBConsts.billPrinted)//so the invoice can be saved.
+				.append(" where tableID = '").append(tableID).append("'")
+				.append(" and BillIndex = '").append(billIndex).append("'")
+				.append(" and openTime = '").append(opentime).append("'");
+		try {
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
+		}catch(Exception e) {
+			L.e("BillPane", "Excepioint in print bill:" + sql, e);
 		}
 		
         //send to printer @NOTE: run it behind saving to db, so the bill has an id to use.
@@ -147,27 +141,21 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		 }
 	}
 	
-	public void updateOutputRecords(int newBillID) {
+	private void updateOutputBillId(int newBillID) {
 		if(newBillID < 0) {
 			return;
 		}
 		
-		String sql;
-		Statement stm = PIMDBModel.getStatement();
-		try {
-		   	sql = new StringBuilder("update output set category = '").append(newBillID).append("' where id = ").toString();
-			for (Dish dish : orderedDishAry) {
-				if(dish.getOutputID() > 0) {
-					try {
-						stm.executeUpdate(sql + dish.getOutputID());
-					}catch(Exception exp) {
-						ErrorUtil.write(exp);
-					}
+		for (Dish dish : orderedDishAry) {
+			if(dish.getOutputID() > 0) {
+				StringBuilder sql = new StringBuilder("update output set category = '").append(newBillID).append("' where id = ");
+				try {
+					PIMDBModel.getStatement().executeUpdate(sql.append(dish.getOutputID()).toString());
+				}catch(Exception exp) {
+					L.e("BillPanel ", "exception when updateOutputBillID" + sql, exp);
 				}
 			}
-	   }catch(Exception e) {
-			ErrorUtil.write(e);
-	   }
+		}
 	}
 
 	void sendDishToKitchen(Dish dish, boolean isCancelled) {
@@ -410,11 +398,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					billButton.setSelected(!billButton.isSelected());
 					return;
 				}
-				
-	 			if(billListPanel.curDish != null && billListPanel.getCurBillPanel() != this) {
+				//if not in split item mode (split item button not pressed.)
+	 			if(BillListPanel.curDish != null && billListPanel.getCurBillPanel() != this) {	//this there's already an item ready for move.
 					billListPanel.moveDishToBill(this);
-					billListPanel.curDish = null;
-				}else {
+					BillListPanel.curDish = null;
+				}else {	//no current item ready for split, then just select the. 
 					billButton.setSelected(!billButton.isSelected());
 				}
 			}

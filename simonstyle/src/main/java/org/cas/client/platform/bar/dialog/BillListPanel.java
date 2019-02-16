@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,24 +102,62 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	}
 	
 	void initContent() {
-		BarFrame.instance.cmbCurTable.setEnabled(true);
+		BarFrame.instance.cmbCurTable.setEnabled(true);	//if can reach to the view, mean there un completed bills for sure, so the change table combobox is ennabled.
 		
-		for(int i = onScrBills.size() - 1; i >= 0; i--) {
-			remove(onScrBills.get(i));
-		}
-		billPanels.clear();
-		onScrBills.clear();
+		cleanInterface();
 		
 		// load all the unclosed outputs under this table with content inside.---------------------------
 		//output will be set as deleted=true only when click a "-" button. when bill closed, the output will not be set as deleted = true! 
 		//so closed bill of this table will also be counted. but will displayed in different color.
+		
+		reInitBillPanels();
+		
+		reInitOnscreenBills();
+		
+		allowUnCombineCheck();
+		
+		reLayout();
+	}
+
+	public void allowUnCombineCheck() {
+		int unclosedNum = 0;
+		for (BillPanel billPanel : billPanels) {
+			if(billPanel.status < DBConsts.completed) {
+				unclosedNum ++;
+			}
+		}
+		if(unclosedNum == 1) {
+			String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
+			String openTime = BarFrame.instance.valStartTime.getText();
+			StringBuilder sql =  new StringBuilder("SELECT DISTINCT category from output where SUBJECT = '").append(tableName)
+					.append("' and (deleted is null or deleted < ").append(DBConsts.completed)
+					.append(") and time = '").append(openTime).append("'");
+			try {
+				ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+				rs.afterLast();
+	            rs.relative(-1);
+	            if (rs.getRow() > 1) {
+	            	btnCombineAll.setText(BarFrame.consts.UnCombine());
+	            }
+			} catch (SQLException e) {
+	            ErrorUtil.write(e);
+	        }
+		}else {
+			btnCombineAll.setText(BarFrame.consts.CombineAll());
+		}
+	}
+
+	private void reInitBillPanels(){
+		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
+		String openTime = BarFrame.instance.valStartTime.getText();
+		StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableName)
+				.append("' and (deleted is null or deleted < ").append(DBConsts.deleted)
+				.append(") and time = '").append(openTime).append("' order by contactID");
+		
 		try {
-			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
-					.append("' and (deleted is null or deleted < ").append(DBConsts.deleted)
-					.append(") and time = '").append(BarFrame.instance.valStartTime.getText()).append("' order by contactID");
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.beforeFirst();
-
+		
 			while (rs.next()) {
 				JToggleButton billButton = new JToggleButton();
 				billButton.setText(String.valueOf(rs.getInt("contactID")));
@@ -128,29 +167,39 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				billPanel.initContent();
 				billPanels.add(billPanel);
 			}
-
-			//do it outside the above loop, because there's another qb query inside.
-			int col = BarOption.getBillPageCol();
-			int row = BarOption.getBillPageRow();
 			
-			int billNum = getANewBillIdx();
-			for(int i = 0; i < row * col; i++) {
-				if(row * col * curPageNum + i < billPanels.size()) {	//some panel is using the panel in billPanels list.
-					onScrBills.add(billPanels.get(row * col * curPageNum + i));
-					btnRight.setEnabled(true);
-				}else {													//others are temperally newed BillPanel.
-					BillPanel panel = new BillPanel(this, new JToggleButton(String.valueOf(billNum)));	//have to give a number to construct valid sql.
-					panel.initComponent();
-					panel.initContent();
-					onScrBills.add(panel);
-					btnRight.setEnabled(false);
-					billNum++;
-				}
-			}
 		} catch (Exception e) {
- 			ErrorUtil.write("Unexpected exception when init the tables from db." + e);
- 		}
-		reLayout();
+			L.e("BillListPane", "Unexpected exception when init the bill panels." + sql, e);
+		}
+	}
+
+	private void reInitOnscreenBills() {
+		//do it outside the above loop, because there's another qb query inside.
+		int col = BarOption.getBillPageCol();
+		int row = BarOption.getBillPageRow();
+		
+		int billNum = getANewBillIdx();
+		for(int i = 0; i < row * col; i++) {
+			if(row * col * curPageNum + i < billPanels.size()) {	//some panel is using the panel in billPanels list.
+				onScrBills.add(billPanels.get(row * col * curPageNum + i));
+				btnRight.setEnabled(true);
+			}else {													//others are temperally newed BillPanel.
+				BillPanel panel = new BillPanel(this, new JToggleButton(String.valueOf(billNum)));	//have to give a number to construct valid sql.
+				panel.initComponent();
+				panel.initContent();
+				onScrBills.add(panel);
+				btnRight.setEnabled(false);
+				billNum++;
+			}
+		}
+	}
+
+	public void cleanInterface() {
+		for(int i = onScrBills.size() - 1; i >= 0; i--) {
+			remove(onScrBills.get(i));
+		}
+		billPanels.clear();
+		onScrBills.clear();
 	}
 	
 	private void reLayout() {
@@ -257,8 +306,8 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 			curDish.setBillID(targetBillId);	//might not necessary, just in case the billPanel will not updated before it's used anywhere.
 			
 			// Update the output to belongs to the new ContactID (contactID is bill Index,not  bill id)
-			sql = new StringBuilder("update output set CONTACTID = ")
-					.append(targetBillPanel.billButton.getText()).append(", category = " + targetBillId)
+			sql = new StringBuilder("update output set CONTACTID = ").append(targetBillPanel.billButton.getText())
+					.append(", category = " + targetBillId)
 					.append(" where id = ").append(curDish.getOutputID());
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 
@@ -424,15 +473,44 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				//combine bills--------------------------------------------------------------------------------------------
 				combineBills(unclosedBillPanels);
 
-			}else if(o == btnCombineAll) {//@note should consider the time, incase there's some bill not paid before, while was calculated into current client.
-				if(!checkColosedBill()) {
-					return;
+			}else if(o == btnCombineAll) {	//@note should consider the time, incase there's some bill not paid before, while was calculated into current client.
+				if(btnCombineAll.getText().equals(BarFrame.consts.CombineAll())) {
+					if(!checkColosedBill()) {
+						return;
+					}
+					
+					//check if all bills are not closed
+					ArrayList<BillPanel> unclosedBillPanels = gatherAllUnclosedBillPanels();
+					combineBills(unclosedBillPanels);
 				}
 				
-				//check if all bills are not closed
-				ArrayList<BillPanel> unclosedBillPanels = gatherAllUnclosedBillPanels();
-				
-				combineBills(unclosedBillPanels);
+				//for uncombine action.
+				else {
+					HashMap tValues = new HashMap();
+					StringBuilder sql = new StringBuilder("select * from bill where tableId = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("'")
+							.append(" and time = '").append(BarFrame.instance.valStartTime.getText()).append("'")
+							.append(" and status is null or status < ").append(DBConsts.completed);
+					try {
+						ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+			            rs.beforeFirst();
+			            while (rs.next()) {
+			                tValues.put(rs.getInt("id"), rs.getInt("billIndex"));
+			            }
+					}catch(Exception exp) {
+						
+					}
+					
+					//get the unclosed billPane.
+					for (BillPanel billPanel : billPanels) {
+						if(billPanel.status < DBConsts.completed) {
+							//billPanel.selec
+							break;
+						}
+					}
+//					sql = new StringBuilder("update output set contactId = ")
+//							.append(" where Subject = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("'")
+//							.append(" and time = '").append(BarFrame.instance.valStartTime.getText()).append("'");
+				}
 			}else if( o == btnSuspendAll) {
 				if(!checkColosedBill()) {
 					return;
@@ -481,7 +559,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String openTime = BarFrame.instance.valStartTime.getText();
 		StringBuilder sql = new StringBuilder("update output set contactID = ").append(firstUnclosedBillIdx)
-				//.append(", category = '").append(firstUnclosedBillId).append("'")
+				//@NOTE we don't change the billID when combinAll(to support undo) .append(", category = '").append(firstUnclosedBillId).append("'")
 				.append(" where SUBJECT = '").append(tableName)
 				.append("' and time = '").append(openTime)
 				.append("' and deleted is null or DELETED = ").append(DBConsts.original);
@@ -556,10 +634,27 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 			if(num < 1) {
 				JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
 			}else {
-				// the selecteed output to this bill.
-				String sql = "update output set contactID = " + num + " where id = " + curDish.getOutputID();
+				int billId = 0;
+				//check if the bill exist
+				StringBuilder sql = new StringBuilder("Select id from Bill where billIndex = ").append(num)
+				.append(" and tableId = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("'")
+				.append(" and opentime = '").append(BarFrame.instance.valStartTime.getText()).append("'")
+				.append(" and status < ").append(DBConsts.completed);
+				try {
+					ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+		        	rs.next();
+		            billId = rs.getInt("id");
+		        }catch(Exception exp) {
+		        	JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+		        	return;
+		        }
+				
+				// the selected output to this bill.
+				sql = new StringBuilder("update output set contactID = ").append(num)
+						.append(", category = ").append(billId)
+						.append(" where id = ").append(curDish.getOutputID());
 		        try {
-		        	PIMDBModel.getStatement().executeUpdate(sql);
+		        	PIMDBModel.getStatement().executeUpdate(sql.toString());
 		        }catch(Exception exp) {
 		        	ErrorUtil.write(exp);
 		        }

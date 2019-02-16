@@ -308,6 +308,8 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String CombineAll() {return "COMBINE ALL";}
     @Override
+	public String UnCombine() {return "UNDO COMBINE";}
+    @Override
 	public String Refund() {return "REFUND";}
     @Override
 	public String RefundNotice() {return "Please input how much to refund";}

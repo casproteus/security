@@ -308,6 +308,8 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String CombineAll() {return "全部合并";}
     @Override
+	public String UnCombine() {return "取消合并";}
+    @Override
 	public String Refund() {return "退款";}
     @Override
 	public String RefundNotice() {return "请输入退款金额";}
