@@ -477,11 +477,12 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		String firstUnclosedBillIdx = unclosedBillPanels.get(0).billButton.getText();
 		int firstUnclosedBillId = unclosedBillPanels.get(0).billID;
 		//update all related output to belongs to first Bill, deleted and completed output will not be modified.
+		//the billId will not be modified, so when waiter want to do a undo, can use the billID to undo combine all.
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String openTime = BarFrame.instance.valStartTime.getText();
 		StringBuilder sql = new StringBuilder("update output set contactID = ").append(firstUnclosedBillIdx)
-				.append(", category = '").append(firstUnclosedBillId)
-				.append("' where SUBJECT = '").append(tableName)
+				//.append(", category = '").append(firstUnclosedBillId).append("'")
+				.append(" where SUBJECT = '").append(tableName)
 				.append("' and time = '").append(openTime)
 				.append("' and deleted is null or DELETED = ").append(DBConsts.original);
 		try {
