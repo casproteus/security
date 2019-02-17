@@ -486,30 +486,42 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				
 				//for uncombine action.
 				else {
-					HashMap tValues = new HashMap();
+					HashMap idxMap = new HashMap();
 					StringBuilder sql = new StringBuilder("select * from bill where tableId = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("'")
-							.append(" and time = '").append(BarFrame.instance.valStartTime.getText()).append("'")
-							.append(" and status is null or status < ").append(DBConsts.completed);
+							.append(" and opentime = '").append(BarFrame.instance.valStartTime.getText()).append("'")
+							.append(" and (status is null or status < ").append(DBConsts.completed).append(")");
 					try {
 						ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			            rs.beforeFirst();
 			            while (rs.next()) {
-			                tValues.put(rs.getInt("id"), rs.getInt("billIndex"));
+			                idxMap.put(rs.getInt("id"), rs.getInt("billIndex"));
 			            }
 					}catch(Exception exp) {
-						
+						L.e("BillListPanel", "exception when change output back to original bill" + sql, exp);
 					}
 					
 					//get the unclosed billPane.
+					ArrayList<Dish> orderedDishes = new ArrayList<Dish>();
 					for (BillPanel billPanel : billPanels) {
 						if(billPanel.status < DBConsts.completed) {
-							//billPanel.selec
+							orderedDishes = billPanel.orderedDishAry;
 							break;
 						}
 					}
-//					sql = new StringBuilder("update output set contactId = ")
-//							.append(" where Subject = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("'")
-//							.append(" and time = '").append(BarFrame.instance.valStartTime.getText()).append("'");
+					
+					for (Dish dish : orderedDishes) {
+						Object idx = idxMap.get(dish.getBillID());
+						if(idx != null) {
+							sql = new StringBuilder("update output set contactID = ").append(idx)
+									.append(" where id = ").append(dish.getOutputID());
+							try {
+								PIMDBModel.getStatement().execute(sql.toString());
+							}catch(Exception exp) {
+								L.e("BillListPanel", "exception when change output back to original bill" + sql, exp);
+							}
+						}
+					}
+					initContent();
 				}
 			}else if( o == btnSuspendAll) {
 				if(!checkColosedBill()) {
