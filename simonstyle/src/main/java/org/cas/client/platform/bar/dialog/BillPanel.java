@@ -647,7 +647,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				    tip = rs.getInt("tip");
 				    serviceFee = rs.getInt("otherreceived");
 				    status = rs.getInt("status");
-				    setBackground(status >= DBConsts.completed ? Color.gray : null);
+				    setBackground(status >= DBConsts.completed || status < 0 ? Color.gray : null);
 				}
 			}
 			//if has no output, then search related bill from db. ---could be an non-first but empty bill, 

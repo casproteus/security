@@ -98,6 +98,7 @@ public class PrintService{
     public static final int ERR_PARAM = 1002;		//parameter error
 
 	private static final String CASH = "ARGENT";
+	private static final String REFUND = "Refund : ";
     
     //The start time and end time are long format, need to be translate for print.
     public static void exePrintBill(BillPanel billPanel, List<Dish> saleRecords){
@@ -523,9 +524,9 @@ public class PrintService{
 			return "ADDI";
 		}else if (sndMsg.size() == 10) {	//currently if it's receipt/invoice, sndMsg has 9 element. 
 			return "RFER";
-		}else if (sndMsg.size() == 11) {	//currently if it's receipt, sndMsg has 10 element. 
+		}else if (sndMsg.size() == 11) {	//currently if it's duplicated receipt, sndMsg has 10 element. 
 			return "D_RFER";
-		}else if (sndMsg.size() == 12) {	//currently if it's receipt, sndMsg has 10 element. 
+		}else if (sndMsg.size() == 12) {	//currently if it's re-receipt, sndMsg has 12 element. 
 			return "R_RFER";
 		}
 		return "";
@@ -603,6 +604,7 @@ public class PrintService{
 		byte[] formattedContent = null;//the byte ary we will make the content into 
 		
 		HashMap<String, String> map = new HashMap<String, String>();
+		boolean isRefund = false;
 		
 		String etatDoc = "I";	//Whether the contents of the <doc> tag are present and if they must be printed.
 		 						//• A (Absent and not to be printed)  • I (present and to be Printed)		• N (present but Not to be printed)
@@ -622,6 +624,12 @@ public class PrintService{
 				duplicata = "N";
 				map.put("reimpression", "O");	//set reprint flag.
 			}
+		}else if(sndMsg.get(3).startsWith(REFUND)){	//if it's refund.
+			transType = transType.substring(2);
+			duplicata = "N";
+			map.put("reimpression", "O");
+			//modify the content to be negative.
+			isRefund = true;
 		}else {
 			map.put("reimpression", "N");
 		}
@@ -680,17 +688,37 @@ public class PrintService{
 				String tContent = tText.substring(tText.lastIndexOf("-") + 2); //there's a "\n".
 				String[] a = tContent.split("\n");
 				if(a.length >= 3) {
-					String strAvT = a[0].substring(a[0].indexOf(":") + 1);
-					mtTransAvTaxes = formatMoneyForMev(strAvT);//+000021.85
-					String strTPS = a[1].substring(a[1].indexOf(":") + 1);
-					TPSTrans = formatMoneyForMev(strTPS);//+000001.09
-					String strTVQ = a[2].substring(a[2].indexOf(":") + 1);
-					TVQTrans = formatMoneyForMev(strTVQ);//+000001.72
-					Float total = Float.valueOf(strAvT) +  Float.valueOf(strTPS) +  Float.valueOf(strTVQ);
-					mtTransApTaxes = formatMoneyForMev(new DecimalFormat("#0.00").format(total));
+					if(isRefund) {
+						Float refund = Float.valueOf(sndMsg.get(3).substring(REFUND.length()).trim());
+						int price = (int)(refund * 100);
+						Object tps = BarOption.getGST();
+			        	Object tvq = BarOption.getQST();
+			        	float gstRate = tps == null ? 5f : Float.valueOf((String)tps);
+			        	float qstRate = tvq == null ? 9.975f : Float.valueOf((String)tvq);
+			        	price = (int)Math.round(price / ((100 + gstRate + qstRate) / 100.0));
+			        	float floatPrice = (float)(price / 100.0);
+			        	
+						mtTransAvTaxes = formatMoneyForMev(new DecimalFormat("#0.00").format(floatPrice), isRefund);//+000021.85
+						TPSTrans = formatMoneyForMev(new DecimalFormat("#0.00").format(floatPrice * gstRate/100.0), isRefund);//+000001.09
+						TVQTrans = formatMoneyForMev(new DecimalFormat("#0.00").format(floatPrice * qstRate/100.0), isRefund);//+000001.72
+						mtTransApTaxes = formatMoneyForMev(new DecimalFormat("#0.00").format(refund), isRefund);
+					}else {
+						String strAvT = a[0].substring(a[0].indexOf(":") + 1);
+						mtTransAvTaxes = formatMoneyForMev(strAvT, isRefund);//+000021.85
+						String strTPS = a[1].substring(a[1].indexOf(":") + 1);
+						TPSTrans = formatMoneyForMev(strTPS, isRefund);//+000001.09
+						String strTVQ = a[2].substring(a[2].indexOf(":") + 1);
+						TVQTrans = formatMoneyForMev(strTVQ, isRefund);//+000001.72
+						Float total = Float.valueOf(strAvT) +  Float.valueOf(strTPS) +  Float.valueOf(strTVQ);
+						mtTransApTaxes = formatMoneyForMev(new DecimalFormat("#0.00").format(total), isRefund);
+					}
 				}
 			}else if(i == 3) {//find out the total
-				mtTransApTaxes = formatMoneyForMev(tText.substring(tText.indexOf(":") + 1));
+				String total = tText.substring(tText.indexOf(":") + 1).trim();
+				if(isRefund && total.startsWith("-")) {
+					total = total.substring(1);
+				}
+				mtTransApTaxes = formatMoneyForMev(total, isRefund);
 			}else if(i == 4) { // find out the payment.
 				String[] a = tText.split("\n");
 				if(a.length == 2) {		//we use I, because there's a line of "change" or "tip".
@@ -763,10 +791,13 @@ public class PrintService{
 		}
 	}
 
-	private static String formatMoneyForMev(String string) {
+	private static String formatMoneyForMev(String string, boolean isRefund) {
 		// TODO Auto-generated method stub
     	String cleanText = string.trim();
-    	StringBuilder stringFR = new StringBuilder("+");
+    	if(isRefund && string.startsWith("-")) {
+    		cleanText = cleanText.substring(1);
+    	}
+    	StringBuilder stringFR = new StringBuilder(isRefund ? "-" : "+");
     	for(int i = 1; i < 10 - cleanText.length(); i++) {
     		stringFR.append("0");
     	}
@@ -1027,8 +1058,11 @@ public class PrintService{
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	int tWidth = BarUtil.getPreferedWidth();
     	
-    	strAryFR.add("\n##REFUND##\n\n");
 	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
+	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
+	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
+	    pushWaiterAndTime(strAryFR, tWidth, tableIdx, startTimeStr.toString(), "");
+	    
 	    strAryFR.add(getServiceDetailContent(list, curPrintIp, billPanel, tWidth).toString());
         pushNewTotal(billPanel, strAryFR, refundAmount, tWidth);
         

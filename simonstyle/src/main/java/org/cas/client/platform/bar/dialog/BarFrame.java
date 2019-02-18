@@ -46,7 +46,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.146-20190218";
+	private String VERSION = "V0.147-20190218";
     public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
