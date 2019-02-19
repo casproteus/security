@@ -89,7 +89,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         Object o = e.getSource();
         //FunctionButton------------------------------------------------------------------------------------------------
         if (o instanceof FunctionButton) {
-        	if(o == btnLine_1_1 || o == btnLine_1_2 || o == btnLine_1_3 || o == btnLine_2_3) { //pay
+        	if(o == btnCASH || o == btnDEBIT || o == btnVISA || o == btnMASTER) { //pay
         		if(!checkBillStatus()) {
             		return;
             	}
@@ -107,13 +107,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		}
         		//show dialog-------------------------------------
          		BarFrame.payDlg.setFloatSupport(true);
-         		if(o == btnLine_1_1) {
+         		if(o == btnCASH) {
          			BarFrame.payDlg.setTitle(BarFrame.consts.EnterCashPayment());
-         		}else if(o == btnLine_1_2) {
+         		}else if(o == btnDEBIT) {
          			BarFrame.payDlg.setTitle(BarFrame.consts.EnterDebitPayment());
-         		}else if(o == btnLine_1_3) {
+         		}else if(o == btnVISA) {
          			BarFrame.payDlg.setTitle(BarFrame.consts.EnterVisaPayment());
-         		}else if(o == btnLine_2_3) {
+         		}else if(o == btnMASTER) {
          			BarFrame.payDlg.setTitle(BarFrame.consts.EnterMasterPayment());
          		}
          		BarFrame.payDlg.setVisible(true);
@@ -509,7 +509,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		return 0;
 	}
 
-	private boolean checkBillStatus() {
+	public boolean checkBillStatus() {
 		if(billPanel.status == DBConsts.voided) {//check if the bill is .
 			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertVoidBillBack(), BarFrame.consts.Operator(),
 		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
@@ -653,8 +653,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         // line 2
         btnLine_2_1.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
         btnLine_2_2.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_3.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_4.setBounds(btnLine_2_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnMASTER.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_2_4.setBounds(btnMASTER.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
         btnLine_2_5.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
         btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
         btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
@@ -662,16 +662,16 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_2_9.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
         btnLine_2_10.setBounds(btnLine_2_9.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
         // line 1
-        btnLine_1_1.setBounds(btnLine_2_1.getX(),  btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
-        btnLine_1_2.setBounds(btnLine_2_2.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_3.setBounds(btnLine_2_3.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_4.setBounds(btnLine_2_4.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_5.setBounds(btnLine_2_5.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_6.setBounds(btnLine_2_6.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_7.setBounds(btnLine_2_7.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_8.setBounds(btnLine_2_8.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_9.setBounds(btnLine_2_9.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_10.setBounds(btnLine_2_10.getX(), btnLine_1_1.getY(), tBtnWidht, tBtnHeight);
+        btnCASH.setBounds(btnLine_2_1.getX(),  btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
+        btnDEBIT.setBounds(btnLine_2_2.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnVISA.setBounds(btnMASTER.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_4.setBounds(btnLine_2_4.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_5.setBounds(btnLine_2_5.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_6.setBounds(btnLine_2_6.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_7.setBounds(btnLine_2_7.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_8.setBounds(btnLine_2_8.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_9.setBounds(btnLine_2_9.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_10.setBounds(btnLine_2_10.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
 
 //        btnLine_2_11.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_2.getY(), tBtnWidht, tBtnHeight);
 //        btnLine_2_12.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_14.getY(), tBtnWidht, tBtnHeight);
@@ -679,7 +679,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 //        btnLine_2_14.setBounds(CustOpts.HOR_GAP,, tBtnWidht, tBtnHeight);
         
         // TOP part============================
-        int topAreaHeight = btnLine_1_1.getY() - 3 * CustOpts.VER_GAP;
+        int topAreaHeight = btnCASH.getY() - 3 * CustOpts.VER_GAP;
 
         billPanel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
                 (int) (getWidth() * (1 - BarOption.getMenuAreaPortion())), topAreaHeight);
@@ -696,9 +696,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
     void initComponent() {
     	removeAll();	//when it's called by setting panel(changed colors...), it will be called to refresh.
-        btnLine_1_1 = new FunctionButton(BarFrame.consts.CASH());
-        btnLine_1_2 = new FunctionButton(BarFrame.consts.DEBIT());
-        btnLine_1_3 = new FunctionButton(BarFrame.consts.VISA());
+        btnCASH = new FunctionButton(BarFrame.consts.CASH());
+        btnDEBIT = new FunctionButton(BarFrame.consts.DEBIT());
+        btnVISA = new FunctionButton(BarFrame.consts.VISA());
         btnLine_1_4 = new FunctionButton(BarFrame.consts.SPLIT_BILL());
         btnLine_1_5 = new FunctionButton(BarFrame.consts.REMOVEITEM());
         btnLine_1_6 = new FunctionButton(BarFrame.consts.MODIFY());
@@ -709,7 +709,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
         btnLine_2_1 = new FunctionButton(BarFrame.consts.RETURN());
         btnLine_2_2 = new FunctionButton(BarFrame.consts.AddUser());
-        btnLine_2_3 = new FunctionButton(BarFrame.consts.MASTER());
+        btnMASTER = new FunctionButton(BarFrame.consts.MASTER());
         btnLine_2_4 = new FunctionButton(BarFrame.consts.CANCEL_ALL());
         btnLine_2_5 = new FunctionButton(BarFrame.consts.VOID_ORDER());
         btnLine_2_6 = new FunctionButton(BarFrame.consts.OpenDrawer());
@@ -728,9 +728,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         setLayout(null);
         
         // built
-        add(btnLine_1_1);
-        add(btnLine_1_2);
-        add(btnLine_1_3);
+        add(btnCASH);
+        add(btnDEBIT);
+        add(btnVISA);
         add(btnLine_1_4);
         add(btnLine_1_5);
         add(btnLine_1_6);
@@ -741,7 +741,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
         add(btnLine_2_1);
         add(btnLine_2_2);
-        add(btnLine_2_3);
+        add(btnMASTER);
         add(btnLine_2_4);
         add(btnLine_2_5);
         add(btnLine_2_6);
@@ -757,9 +757,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         // 因为考虑到条码经常由扫描仪输入，不一定是靠键盘，所以专门为他加了DocumentListener，通过监视内容变化来自动识别输入完成，光标跳转。
         // tfdProdNumber.getDocument().addDocumentListener(this); // 而其它组件如实收金额框不这样做为了节约（一个KeyListener接口全搞定）
 
-        btnLine_1_1.addActionListener(this);
-        btnLine_1_2.addActionListener(this);
-        btnLine_1_3.addActionListener(this);
+        btnCASH.addActionListener(this);
+        btnDEBIT.addActionListener(this);
+        btnVISA.addActionListener(this);
         btnLine_1_4.addActionListener(this);
         btnLine_1_5.addActionListener(this);
         btnLine_1_6.addActionListener(this);
@@ -770,7 +770,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
         btnLine_2_1.addActionListener(this);
         btnLine_2_2.addActionListener(this);
-        btnLine_2_3.addActionListener(this);
+        btnMASTER.addActionListener(this);
         btnLine_2_4.addActionListener(this);
         btnLine_2_5.addActionListener(this);
         btnLine_2_6.addActionListener(this);
@@ -782,9 +782,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		reLayout();
     }
 
-    private FunctionButton btnLine_1_1;
-    private FunctionButton btnLine_1_2;
-    private FunctionButton btnLine_1_3;
+    private FunctionButton btnCASH;
+    private FunctionButton btnDEBIT;
+    private FunctionButton btnVISA;
     private FunctionButton btnLine_1_4;
     private FunctionButton btnLine_1_5;
     private FunctionButton btnLine_1_6;
@@ -795,7 +795,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
     private FunctionButton btnLine_2_1;
     private FunctionButton btnLine_2_2;
-    private FunctionButton btnLine_2_3;
+    private FunctionButton btnMASTER;
     private FunctionButton btnLine_2_4;
     private FunctionButton btnLine_2_5;
     private FunctionButton btnLine_2_6;

@@ -147,21 +147,56 @@ public class PrintService{
     
     //The start time and end time are long format, need to be translate for print.
     public static void exePrintBills(List<BillPanel> unclosedBillPanels){
-    	flushIpContent();
+		flushIpContent();
         reInitPrintRelatedMaps();
         
         String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
+        List<String> contentList = ipContentMap.get(printerIP);
+        
+    	pushAllInOneBillContent(unclosedBillPanels, contentList, printerIP);
+    	
+        pushEndMessage(contentList);
+        contentList.add("\n\n\n\n\n");
+        contentList.add("cut");
+        
+        printContents();
+    }
+
+    //The start time and end time are long format, need to be translate for print.
+    public static void exePrintConbinedInvoice(List<BillPanel> unclosedBillPanels, boolean isCashBack){
+		flushIpContent();
+        reInitPrintRelatedMaps();
+        
+        String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
+        if(ipContentMap.get(printerIP) == null)
+        	ipContentMap.put(printerIP,new ArrayList<String>());
+        List<String> contentList = ipContentMap.get(printerIP);
+        
+    	pushAllInOneBillContent(unclosedBillPanels, contentList, printerIP);
+    	
+    	//payInfo
+        pushPayInfo(unclosedBillPanels.get(0), contentList,  BarUtil.getPreferedWidth(), isCashBack);
+        
+        //end message
+        pushEndMessage(contentList);
+        contentList.add("\n\n\n\n\n");
+        contentList.add("cut");
+        
+        printContents();
+    }
+    
+	public static void pushAllInOneBillContent(List<BillPanel> unclosedBillPanels, List<String> contentList, String printerIP) {
         
         int tWidth = BarUtil.getPreferedWidth();
         
-        pushBillHeadInfo(ipContentMap.get(printerIP), tWidth, String.valueOf(unclosedBillPanels.get(0).getBillId()));
+        pushBillHeadInfo(contentList, tWidth, String.valueOf(unclosedBillPanels.get(0).getBillId()));
+        
 	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
-	    pushWaiterAndTime(ipContentMap.get(printerIP), tWidth, tableIdx, startTimeStr.toString(), "");
-	    
-        List<String> contentList = ipContentMap.get(printerIP);
+	    pushWaiterAndTime(contentList, tWidth, tableIdx, startTimeStr.toString(), "");
+        
         float totalSubTotal = 0.0f;
         float totalTPS = 0.0f;
         float totalTVQ = 0.0f;
@@ -215,12 +250,8 @@ public class PrintService{
         contentList.add("BigFont");
         contentList.add("\n\n               Total:" + totalPrice);
         contentList.add("NormalFont");
-        pushEndMessage(contentList);
-        contentList.add("\n\n\n\n\n");
-        contentList.add("cut");
-        
-        printContents();
-    }
+		
+	}
     
 	//The start time and end time are long format, need to be translate for print.
     public static void exePrintInvoice(BillPanel billPanel, boolean isCashBack, boolean isToCustomer){
@@ -1276,7 +1307,7 @@ public class PrintService{
         strAryFR.add("NormalFont");
 	}
 	
-	private static void pushPayInfo(BillPanel billPanel, ArrayList<String> strAryFR, int width, boolean isCashBack) {
+	private static void pushPayInfo(BillPanel billPanel, List<String> strAryFR, int width, boolean isCashBack) {
 
 		StringBuilder content = new StringBuilder("\n");
 		int billId = billPanel.getBillId();

@@ -297,7 +297,9 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String PrintAll() {return "PRINT ALL";}
     @Override
-	public String PrintOneBill() {return "PRINT ONE BILL";}
+	public String PrintOneBill() {return "IN ONE BILL";}
+    @Override
+	public String PrintOneInvoice() {return "IN ONE RECEIPT";}
     
     @Override
 	public String EqualBill() {return "EQUAL BILL";}
