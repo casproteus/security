@@ -246,11 +246,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     rs.relative(-1);
                     if(rs.getRow() > 0) { //already has output.
 	                    //check if bill is already closed.
-	    				sql = new StringBuilder("select * from bill where id = ").append(billID);
-	                    rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-	                    rs.beforeFirst();
-	                    rs.next();
-	                    if(rs.getInt("status") >= DBConsts.completed) {
+	                    if(billPanel.status >= DBConsts.completed) {
 	                    	JOptionPane.showMessageDialog(this, BarFrame.consts.ClosedBillCantVoid());
 	                    	return;
 	                    }
@@ -277,7 +273,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	                	for (Dish dish : billPanel.orderedDishAry) {
 	                		dish.setCanceled(true);	// to make it printed in special format(so it's know as a cancelled dish)
 	    				}
-	                	if(billPanel.orderedDishAry.size() > 0) {
+	                	
+	                	//if bill printed, print a refund bill. otherwise, tell kitchen to stop preparing.
+	                	if(billPanel.status >= DBConsts.billPrinted) {
+	                		PrintService.exePrintRefund(billPanel, (int)(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
+	                	}else if(billPanel.orderedDishAry.size() > 0) {
 	                		billPanel.sendDishesToKitchen(billPanel.orderedDishAry, true);
 	                	}
 	                	
@@ -406,8 +406,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		PIMDBModel.getStatement().executeUpdate(sql);
              		
              		//print a bill, so let revenue know the store didn't receive the money.
-             		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
-            		PrintService.exePrintRefund(bp, bp.orderedDishAry, refundAmount);
+            		PrintService.exePrintRefund(billPanel, refundAmount);
             		BarFrame.instance.switchMode(0);
             		
              		PrintService.openDrawer();

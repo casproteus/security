@@ -237,7 +237,7 @@ public class PrintService{
     }
     
     //
-    public static void exePrintRefund(BillPanel billPanel, List<Dish> saleRecords, int refundAmount){
+    public static void exePrintRefund(BillPanel billPanel, int refundAmount){
         flushIpContent();
         reInitPrintRelatedMaps();
 
@@ -245,7 +245,7 @@ public class PrintService{
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
-        		formatContentForRefund(saleRecords, printerIP, billPanel, refundAmount));
+        		formatContentForRefund(billPanel.orderedDishAry, printerIP, billPanel, refundAmount));
         printContents();
     }
     

@@ -47,7 +47,7 @@ import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
 	private String VERSION = "V0.147-20190218";
-    public static BarFrame instance;
+	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
 	public DefaultComboBoxModel<String> tableNames = new DefaultComboBoxModel<String>(new String[] {""});
