@@ -609,12 +609,13 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		}
 	}
 
-	public void createABill(String tableName, String openTime){
+	public void createAnEmptyBill(String tableName, String openTime, int newBillIdx){
 		//validate parameters
 		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
 		openTime = openTime == null ? BarFrame.instance.valStartTime.getText() : openTime;
-		
-		int newBillIdx = ((SalesPanel)panels[2]).getExistingBillQt(tableName, openTime) + 1;
+		if(newBillIdx <= 0) {
+			newBillIdx = ((SalesPanel)panels[2]).getExistingBillQt(tableName, openTime) + 1;
+		}
 		//create a bill for it. in case there will be something like order fee in future.
 		String createtime = BarOption.df.format(new Date());
 		StringBuilder sql = new StringBuilder(
@@ -635,6 +636,35 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		}catch(Exception exp) {
 			L.e("createABill", "exception when creating a bill: " + sql, exp);
 		}
+	}
+	
+	public int generateBillRecord(String tableID, String billIndex, String opentime, int total, BillPanel billPanel) {
+		//generate a bill in db and update the output with the new bill id
+		String createtime = BarOption.df.format(new Date());
+		StringBuilder sql = new StringBuilder(
+	            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
+				.append(createtime).append("', '")
+	            .append(tableID).append("', '")	//table
+	            .append(billIndex).append("', ")			//bill
+	            .append(total)//Math.round(Float.valueOf(valTotlePrice.getText()) * 100)/num).append(", ")	//total
+	            .append(billPanel.discount).append(", ")
+	            .append(billPanel.tip).append(", ")
+	            .append(billPanel.serviceFee).append(", ")
+	            .append(billPanel.cashback).append(", ")	//discount
+	            .append(LoginDlg.USERID).append(", '")		//emoployid
+	            .append(billPanel.comment).append("', '")
+	            .append(opentime).append("')");				//content
+		try {
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
+		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime).append("' and billIndex = ").append(billIndex);
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+            rs.beforeFirst();
+            rs.next();
+            return rs.getInt("id");
+		 }catch(Exception e) {
+			ErrorUtil.write(e);
+			return -1;
+		 }
 	}
 	
 	public void closeATable(String tableName, String openTime) {

@@ -382,7 +382,11 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 						//generate a bill for each new occupied panel, incase there's discount info need to set into it.
 						//@Note, when the initContent of the panel called, the bill ID will be set into the dish instance in memory.
 						//and eventually, if the bill id is not 0, will calculate the service fee and discount into Total.
-						int id = panel.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(), String.valueOf(billIndex), BarFrame.instance.valStartTime.getText(), num);
+						int id = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
+								String.valueOf(billIndex),
+								BarFrame.instance.valStartTime.getText(),
+								Math.round(Float.valueOf(panel.valTotlePrice.getText()) * 100/num), 
+								panel);
 
 						ArrayList<Dish> tDishAry = new ArrayList<Dish>();
 						for (Dish dish : panel.orderedDishAry) {
@@ -635,6 +639,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	}
 
 	private void moveItemAction() {
+		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.BILL());
 		BarFrame.numberPanelDlg.setBtnSource(btnMoveItem);
 		BarFrame.numberPanelDlg.setFloatSupport(false);
 		BarFrame.numberPanelDlg.setPercentSupport(false);
@@ -646,6 +651,18 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 			if(num < 1) {
 				JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
 			}else {
+				BillPanel targetBillPane = null;
+				for (BillPanel billPanel : billPanels) {
+					if(billPanel.billButton.getText().equals(num)) {
+						targetBillPane = billPanel;
+						break;
+					}
+				}
+				if(targetBillPane == null) {
+					BarFrame.instance.createAnEmptyBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
+							BarFrame.instance.valStartTime.getText(), num);
+				}
+				
 				int billId = 0;
 				//check if the bill exist
 				StringBuilder sql = new StringBuilder("Select id from Bill where billIndex = ").append(num)

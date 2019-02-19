@@ -204,7 +204,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 		tableToggle.setOpenTime(openTime);
 		
 		BarFrame.instance.openATable(tableToggle.getText(), openTime);
-		BarFrame.instance.createABill(tableToggle.getText(), openTime);
+		BarFrame.instance.createAnEmptyBill(tableToggle.getText(), openTime, 0);
 	}
 
     void reLayout() {

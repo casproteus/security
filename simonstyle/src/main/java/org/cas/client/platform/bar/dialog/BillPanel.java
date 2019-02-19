@@ -109,36 +109,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	}
 
 	public int generateBillRecord(String tableID, String billIndex, String opentime) {
-		return generateBillRecord(tableID, billIndex, opentime, 1);
-	}
-	
-	public int generateBillRecord(String tableID, String billIndex, String opentime, int num) {
-		//generate a bill in db and update the output with the new bill id
-		String createtime = BarOption.df.format(new Date());
-		StringBuilder sql = new StringBuilder(
-	            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
-				.append(createtime).append("', '")
-	            .append(tableID).append("', '")	//table
-	            .append(billIndex).append("', ")			//bill
-	            .append(Math.round(Float.valueOf(valTotlePrice.getText()) * 100)/num).append(", ")	//total
-	            .append(discount).append(", ")
-	            .append(tip).append(", ")
-	            .append(serviceFee).append(", ")
-	            .append(cashback).append(", ")	//discount
-	            .append(LoginDlg.USERID).append(", '")		//emoployid
-	            .append(comment).append("', '")
-	            .append(opentime).append("')");				//content
-		try {
-			PIMDBModel.getStatement().executeUpdate(sql.toString());
-		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime).append("' and billIndex = ").append(billIndex);
-            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-            rs.beforeFirst();
-            rs.next();
-            return rs.getInt("id");
-		 }catch(Exception e) {
-			ErrorUtil.write(e);
-			return -1;
-		 }
+		return BarFrame.instance.generateBillRecord(tableID, billIndex, opentime, Math.round(Float.valueOf(valTotlePrice.getText()) * 100), this);
 	}
 	
 	private void updateOutputBillId(int newBillID) {

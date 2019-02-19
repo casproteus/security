@@ -423,7 +423,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		billPricesUpdate();
             	if(BarOption.isFastFoodMode()) {
     		    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(BillListPanel.getANewBillIdx()));
-    		    	BarFrame.instance.createABill(null, null);//create new bill;
+    		    	BarFrame.instance.createAnEmptyBill(null, null, 0);//create new bill;
     		    	billPanel.initContent();
     		    }else {
     		    	BarFrame.instance.switchMode(0);
