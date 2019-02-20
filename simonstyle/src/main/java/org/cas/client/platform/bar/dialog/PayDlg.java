@@ -435,7 +435,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		int billID = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
 		try {
 			StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.completed)
-					.append(" where category = ").append(billID);
+					.append(" where subject = '").append(BarFrame.instance.cmbCurTable.getSelectedItem())
+					.append("' and time = '").append(BarFrame.instance.valStartTime.getText()).append("'")
+					.append(" and contactID = ").append(BarFrame.instance.valCurBillIdx.getText());
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 			
 			sql = new StringBuilder("update bill set status = ").append(DBConsts.completed)

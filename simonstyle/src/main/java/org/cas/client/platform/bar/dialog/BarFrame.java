@@ -646,7 +646,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 				.append(createtime).append("', '")
 	            .append(tableID).append("', '")	//table
 	            .append(billIndex).append("', ")			//bill
-	            .append(total)//Math.round(Float.valueOf(valTotlePrice.getText()) * 100)/num).append(", ")	//total
+	            .append(total).append(", ")//Math.round(Float.valueOf(valTotlePrice.getText()) * 100)/num).append(", ")	//total
 	            .append(billPanel.discount).append(", ")
 	            .append(billPanel.tip).append(", ")
 	            .append(billPanel.serviceFee).append(", ")

@@ -76,6 +76,9 @@ public class PrintService{
     private static String SOUSTOTAL = "SOUS-TOTAL";
     private static String TPS = "TPS";
     private static String TVQ = "TVQ";
+
+    private static String SERVICE_FEE = "Service Fee";
+    private static String DISCOUNT = "Discount";
     
     private boolean printerConnectedFlag;
     private boolean contentReadyForPrintFlag;
@@ -324,7 +327,7 @@ public class PrintService{
             for(String ip: ips) {
                 Printer printer = ipPrinterMap.get(ip);
                 if(printer == null) {                   //should never happen, just in case someone changed db.
-                    L.e("Printing to Kitchen", "Selected dish not connected with any printer yet.", null);
+                    L.d("Printing to Kitchen", "Selected dish not connected with any printer yet.");
                     continue;
                 }
                 ipSelectionsMap.get(ip).add(dish);
@@ -1232,41 +1235,29 @@ public class PrintService{
             		fServiceeFee > 0 ? String.valueOf(fServiceeFee) : null,
             		fDiscount > 0 ? String.valueOf(fDiscount) : null);
         }else {
-        	int otherSubtotal = 0;
-        	int otherTPS = 0;
-        	int otherTVQ = 0;
+        	//@NOTE:in case the original bill was used again after combination, so the values of the bill record could changed.
+        	//so have to use the dish list to calculate every thing again,  while the service fee and discount will be problem.
+        	//to avoid the mismatch in bill, will average the service fee and discount.
 	        for (Entry<Integer, ArrayList<Dish>> entry : billDishesMap.entrySet()) {
-	        	int billID = entry.getKey();
-	        	if(billID != billPanel.getBillId()) {	//if not the combined bill, then need to accumulate the values.
-	        		BillPanel bp = new BillPanel(null);
-	        		bp.orderedDishAry = entry.getValue();
-	        		bp.updateTotleArea();
-	        		otherSubtotal += bp.subTotal;
-	        		otherTPS += bp.totalGst;
-	        		otherTVQ += bp.totalQst;
-	        		//dishes @NOTE: If there's more than one bill conbined, for the first bill, the value in bill need to - sum(other bills)
-	        		formatDishListContent(entry.getValue(), curPrintIp, tWidth, content,
-		            		new DecimalFormat("#0.00").format(bp.subTotal/100.0),
-		            		new DecimalFormat("#0.00").format(bp.totalGst/100.0),
-		            		new DecimalFormat("#0.00").format(bp.totalQst/100.0),
-		            		new DecimalFormat("#0.00").format(fServiceeFee/billDishesMap.size()),
-		            		new DecimalFormat("#0.00").format(fDiscount/billDishesMap.size()));
-	        	}
-	        	//@NOTE:in case the original bill was used again after combination, so the values of the bill record could changed.
-	        	//so have to use the dish list to calculate every thing again,  while the service fee and discount will be problem.
-	        	//to avoid the mismatch in bill, will average the service fee and discount.
+	        	//apply list into a new panel, and calculate the subtotal and taxes.
+        		BillPanel bp = new BillPanel(null);
+        		bp.orderedDishAry = entry.getValue();
+        		bp.updateTotleArea();
+        		
+        		formatDishListContent(entry.getValue(), curPrintIp, tWidth, content,
+	            		new DecimalFormat("#0.00").format(bp.subTotal/100.0),
+	            		new DecimalFormat("#0.00").format(bp.totalGst/100.0),
+	            		new DecimalFormat("#0.00").format(bp.totalQst/100.0),
+	            		new DecimalFormat("#0.00").format(fServiceeFee/billDishesMap.size()),
+	            		new DecimalFormat("#0.00").format(fDiscount/billDishesMap.size()));
 			}
 	        
-	        //add the content of combined bill
-    		formatDishListContent(billDishesMap.get(billPanel.billID), curPrintIp, tWidth, content,
-            		new DecimalFormat("#0.00").format(fSubTotal - otherSubtotal/100.0),
-            		new DecimalFormat("#0.00").format(fTPS - otherTPS/100.0),
-            		new DecimalFormat("#0.00").format(fTVQ - otherTVQ/100.0),
-            		new DecimalFormat("#0.00").format(fServiceeFee/billDishesMap.size()),
-            		new DecimalFormat("#0.00").format(fDiscount/billDishesMap.size()));
-        	//it's a combined bill, then need to add an extra total part.	
-	        String ServiceFee = "Service Fee";
-	        String Discount = "Discount";
+        	//it's a combined bill, so need to add an extra total part.	
+	        String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
+	        if(sep_str1 == null || sep_str1.length() == 0){
+	            sep_str1 = SEP_STR1;
+	        }
+	        content.append(BarUtil.generateString(tWidth, sep_str1)).append("\n\n");
 	        
 	        //add the tooooootal.
 	        String subtotal = String.valueOf(fSubTotal);
@@ -1286,22 +1277,23 @@ public class PrintService{
 	        
 	        if(fServiceeFee > 0) {
 	            String serviceFee = String.valueOf(fServiceeFee);
-	            content.append(ServiceFee).append(" : ")
-					.append(BarUtil.generateString(tWidth - serviceFee.length() - ServiceFee.length() - 3, " "))
+	            content.append(SERVICE_FEE).append(" : ")
+					.append(BarUtil.generateString(tWidth - serviceFee.length() - SERVICE_FEE.length() - 3, " "))
 	            	.append(serviceFee).append("\n");
 	        }
 	        if(fDiscount > 0) {
 	            String dicount = String.valueOf(fDiscount);
-	            content.append(Discount).append(" : ")
-					.append(BarUtil.generateString(tWidth - dicount.length() - Discount.length() - 3, " "))
+	            content.append(DISCOUNT).append(" : ")
+					.append(BarUtil.generateString(tWidth - dicount.length() - DISCOUNT.length() - 3, " "))
 	            	.append(dicount).append("\n");
 	        }
         }
         return content;
 	}
 
+	//generate an ===== items ----- subTotal taxes area 
 	private static void formatDishListContent(List<Dish> dishList, String curPrintIp, int tWidth,
-			StringBuilder content, String subTotal, String tps, String tvq, String serviceFee, String dicount) {
+			StringBuilder content, String subTotal, String tps, String tvq, String serviceFee, String discount) {
 		//seperator
         String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
         if(sep_str1 == null || sep_str1.length() == 0){
@@ -1343,8 +1335,6 @@ public class PrintService{
         
         //add total part.
         //totals
-        String ServiceFee = "Service Fee";
-        String Discount = "Discount";
         
         //String strSubtotal = new DecimalFormat("#0.00").format(subtotal/100f);
         content.append(SOUSTOTAL).append(" : ")
@@ -1359,15 +1349,15 @@ public class PrintService{
 			.append(BarUtil.generateString(tWidth - tvq.length() - TVQ.length() - 3, " "))
         	.append(tvq).append("\n");
         
-        if(serviceFee != null && serviceFee.length() > 0) {
-            content.append(ServiceFee).append(" : ")
-				.append(BarUtil.generateString(tWidth - serviceFee.length() - ServiceFee.length() - 3, " "))
+        if(serviceFee != null && serviceFee.length() > 0 && !"0.00".equals(serviceFee)) {
+            content.append(SERVICE_FEE).append(" : ")
+				.append(BarUtil.generateString(tWidth - serviceFee.length() - SERVICE_FEE.length() - 3, " "))
             	.append(serviceFee).append("\n");
         }
-        if(dicount != null && dicount.length() > 0) {
-            content.append(Discount).append(" : ")
-				.append(BarUtil.generateString(tWidth - dicount.length() - Discount.length() - 3, " "))
-            	.append(dicount).append("\n");
+        if(discount != null && discount.length() > 0 && !"0.00".equals(discount)) {
+            content.append(DISCOUNT).append(" : ")
+				.append(BarUtil.generateString(tWidth - discount.length() - DISCOUNT.length() - 3, " "))
+            	.append(discount).append("\n");
         }
 	}
 

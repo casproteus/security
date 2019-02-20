@@ -116,10 +116,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		}else if(o == btnMASTER) {
          			BarFrame.payDlg.setTitle(BarFrame.consts.EnterMasterPayment());
          		}
-         		BarFrame.payDlg.setVisible(true);
-         		
          		//init payDialog content base on bill.
          		BarFrame.payDlg.initContent(billPanel);
+         		BarFrame.payDlg.setVisible(true);
         		
         	} else if (o == btnLine_1_4) {		//split bill
         		//check if there unsaved dish, and give warning.
@@ -234,7 +233,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	}
             	
             } else if (o == btnLine_2_5) { // void order include saved ones
-            	//if there's no outputs at all (including deleted outputs), delete the bill directly
+            	//if there's no dish on it at all (including deleted outputs), delete the bill directly
             	int dishLength = billPanel.orderedDishAry.size();
             	int billID = billPanel.billID;
                 
@@ -296,7 +295,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	                			.append(" and time = '").append(BarFrame.instance.valStartTime.getText()).append("'");
 	                    PIMDBModel.getStatement().executeQuery(sql.toString());
 	                    
-                    }else {			//if still empty, no related output, then don't record this bill at all.
+                    }else {			//if still empty, no related output, then don't record this bill in db at all.
 	                	sql = new StringBuilder("delete from bill where id = ").append(billID);
 	                	PIMDBModel.getStatement().executeUpdate(sql.toString());
                     }
@@ -504,9 +503,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			return rs.getInt("contactID");
 			
 		}catch(Exception exp) {
-			L.e("Add Bill function", " Exception when finding existing billIdx numbers:" + sql, exp);
+			return 0;
 		}
-		return 0;
 	}
 
 	public boolean checkBillStatus() {
