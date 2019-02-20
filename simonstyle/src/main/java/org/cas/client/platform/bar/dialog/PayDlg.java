@@ -10,6 +10,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.ResultSet;
 import java.text.DecimalFormat;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -145,7 +146,52 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     		ErrorUtil.write(e);
     	}
     }
-    
+	
+	public void initContent(List<BillPanel> unclosedBillPanels) {
+		BillPanel billPanel = unclosedBillPanels.get(0);
+		
+		Float total = 0.0f;
+		for (BillPanel bP : unclosedBillPanels) {
+			total += Float.valueOf(bP.valTotlePrice.getText());
+		}
+		
+		int billId = billPanel.getBillId();
+    	StringBuilder sb = new StringBuilder("select * from bill where id = " + billId);
+    	try {
+    		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sb.toString());
+            rs.next();
+            
+        	valTotal.setText(total.toString());
+        	Float cashReceived = Float.valueOf((float) (rs.getInt("cashReceived") / 100.0));
+            valCashReceived.setText(cashReceived.toString());
+        	Float debitReceived = Float.valueOf((float) (rs.getInt("debitReceived") / 100.0));
+            valDebitReceived.setText(debitReceived.toString());
+            Float visaReceived = Float.valueOf((float) (rs.getInt("visaReceived") / 100.0));
+            valVisaReceived.setText(visaReceived.toString());
+            Float masterReceived = Float.valueOf((float) (rs.getInt("masterReceived") / 100.0));
+            valMasterReceived.setText(masterReceived.toString());
+            
+            float left = Math.round(total * 100 - cashReceived * 100 - debitReceived * 100 - visaReceived * 100 - masterReceived * 100) / 100f;
+            valLeft.setText(String.valueOf(left));
+            
+//            if(BarFrame.consts.EnterCashPayment.equals(getTitle())) {
+//                newReceived.setText(valCashReceived.getText());
+//                valCashReceived.setVisible(false);
+//            }else if(BarFrame.consts.EnterDebitPayment.equals(getTitle())) {
+//                newReceived.setText(valDebitReceived.getText());
+//                valDebitReceived.setVisible(false);
+//            }else if(BarFrame.consts.EnterVisaPayment.equals(getTitle())) {
+//                newReceived.setText(valVisaReceived.getText());
+//                valVisaReceived.setVisible(false);
+//            }else if(BarFrame.consts.EnterMasterPayment.equals(getTitle())) {
+//                newReceived.setText(valMasterReceived.getText());
+//                valMasterReceived.setVisible(false);
+//            }
+    	}catch(Exception e) {
+    		ErrorUtil.write(e);
+    	}
+    }
+	
     /*
      * 对话盒的布局独立出来，为了在对话盒尺寸发生改变后，界面各元素能够重新布局， 使整体保持美观。尤其在Linux系列的操作系统上，所有的对话盒都必须准备好应对用户的拖拉改变尺寸。
      * @NOTE:因为setBounds方法本身不会触发事件导致重新布局，所以本方法中设置Bounds之后调用了reLayout。
@@ -448,7 +494,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     	getContentPane().removeAll();
     	
         setResizable(false);
-        setModal(false);
+        setModal(true);
         //setAlwaysOnTop(true);
 
         // 初始化－－－－－－－－－－－－－－－－

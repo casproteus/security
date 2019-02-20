@@ -1189,9 +1189,120 @@ public class PrintService{
         strAryFR.add(content.toString());
 	}
 	
-	private static StringBuilder getServiceDetailContent(List<Dish> list, String curPrintIp, BillPanel billPanel, int tWidth) {
+	private static StringBuilder getServiceDetailContent(List<Dish> dishList, String curPrintIp, BillPanel billPanel, int tWidth) {
+        //bills---classify the dishes into different bill. in case the content of the bill is combined.
+        HashMap<Integer, ArrayList<Dish>> billDishesMap = new HashMap<Integer, ArrayList<Dish>>();
+        for(Dish dish:dishList){
+        	ArrayList<Dish> dishes = billDishesMap.get(dish.getBillID());
+        	if(dishes == null) {
+        		dishes = new ArrayList<Dish>();
+        		dishes.add(dish);
+        		billDishesMap.put(dish.getBillID(), dishes);
+        	}else {
+        		dishes.add(dish);
+        	}
+        }
+        
+        //get the value of current bill ready (current bill might be a combined bill.
+        String[] strs = billPanel.lblSubTotle.getText().split(":");
+        Float fSubTotal = Float.valueOf(strs[1].trim().substring(1));
+
+        strs = billPanel.lblTPS.getText().split(":");
+        Float fTPS = Float.valueOf(strs[1].trim().substring(1));
+
+        strs = billPanel.lblTVQ.getText().split(":");
+        Float fTVQ = Float.valueOf(strs[1].trim().substring(1));
+        
+        Float fServiceeFee = 0.0f;
+        if(billPanel.lblServiceFee.getText().length() > 0) {
+        	strs = billPanel.lblServiceFee.getText().split(":");
+        	fServiceeFee = Float.valueOf(strs[1].trim().substring(1));
+        }
+
+        Float fDiscount = 0.0f;
+        if(billPanel.lblDiscount.getText().length() > 0) {
+        	strs = billPanel.lblDiscount.getText().split(":");
+        	fDiscount = Float.valueOf(strs[1].trim().substring(2));  //@NOTE:an "-" is displayed before the number of discount on totalArea.
+        }
+
 		StringBuilder content = new StringBuilder();
-        //seperator
+        if(billDishesMap.size() == 1) {
+            formatDishListContent(dishList, curPrintIp, tWidth, content,
+            		String.valueOf(fSubTotal), String.valueOf(fTPS), String.valueOf(fTVQ),
+            		fServiceeFee > 0 ? String.valueOf(fServiceeFee) : null,
+            		fDiscount > 0 ? String.valueOf(fDiscount) : null);
+        }else {
+        	int otherSubtotal = 0;
+        	int otherTPS = 0;
+        	int otherTVQ = 0;
+	        for (Entry<Integer, ArrayList<Dish>> entry : billDishesMap.entrySet()) {
+	        	int billID = entry.getKey();
+	        	if(billID != billPanel.getBillId()) {	//if not the combined bill, then need to accumulate the values.
+	        		BillPanel bp = new BillPanel(null);
+	        		bp.orderedDishAry = entry.getValue();
+	        		BillPanel.updateTotleArea(bp);
+	        		otherSubtotal += bp.subTotal;
+	        		otherTPS += bp.totalGst;
+	        		otherTVQ += bp.totalQst;
+	        		//dishes @NOTE: If there's more than one bill conbined, for the first bill, the value in bill need to - sum(other bills)
+	        		formatDishListContent(entry.getValue(), curPrintIp, tWidth, content,
+		            		new DecimalFormat("#0.00").format(bp.subTotal/100.0),
+		            		new DecimalFormat("#0.00").format(bp.totalGst/100.0),
+		            		new DecimalFormat("#0.00").format(bp.totalQst/100.0),
+		            		new DecimalFormat("#0.00").format(fServiceeFee/billDishesMap.size()),
+		            		new DecimalFormat("#0.00").format(fDiscount/billDishesMap.size()));
+	        	}
+	        	//@NOTE:in case the original bill was used again after combination, so the values of the bill record could changed.
+	        	//so have to use the dish list to calculate every thing again,  while the service fee and discount will be problem.
+	        	//to avoid the mismatch in bill, will average the service fee and discount.
+			}
+	        
+	        //add the content of combined bill
+    		formatDishListContent(billDishesMap.get(billPanel.billID), curPrintIp, tWidth, content,
+            		new DecimalFormat("#0.00").format(fSubTotal - otherSubtotal/100.0),
+            		new DecimalFormat("#0.00").format(fTPS - otherTPS/100.0),
+            		new DecimalFormat("#0.00").format(fTVQ - otherTVQ/100.0),
+            		new DecimalFormat("#0.00").format(fServiceeFee/billDishesMap.size()),
+            		new DecimalFormat("#0.00").format(fDiscount/billDishesMap.size()));
+        	//it's a combined bill, then need to add an extra total part.	
+	        String ServiceFee = "Service Fee";
+	        String Discount = "Discount";
+	        
+	        //add the tooooootal.
+	        String subtotal = String.valueOf(fSubTotal);
+	        content.append(SOUSTOTAL).append(" : ")
+	        	.append(BarUtil.generateString(tWidth - subtotal.length() - SOUSTOTAL.length() - 3, " "))
+	        	.append(subtotal).append("\n");
+	        
+	        String tps = String.valueOf(fTPS);
+	        content.append(TPS).append(" : ")
+	    		.append(BarUtil.generateString(tWidth - tps.length() - TPS.length() - 3, " "))
+	        	.append(tps).append("\n");
+	        
+	        String tvq = String.valueOf(fTVQ);
+	        content.append(TVQ).append(" : ")
+				.append(BarUtil.generateString(tWidth - tvq.length() - TVQ.length() - 3, " "))
+	        	.append(tvq).append("\n");
+	        
+	        if(fServiceeFee > 0) {
+	            String serviceFee = String.valueOf(fServiceeFee);
+	            content.append(ServiceFee).append(" : ")
+					.append(BarUtil.generateString(tWidth - serviceFee.length() - ServiceFee.length() - 3, " "))
+	            	.append(serviceFee).append("\n");
+	        }
+	        if(fDiscount > 0) {
+	            String dicount = String.valueOf(fDiscount);
+	            content.append(Discount).append(" : ")
+					.append(BarUtil.generateString(tWidth - dicount.length() - Discount.length() - 3, " "))
+	            	.append(dicount).append("\n");
+	        }
+        }
+        return content;
+	}
+
+	private static void formatDishListContent(List<Dish> dishList, String curPrintIp, int tWidth,
+			StringBuilder content, String subTotal, String tps, String tvq, String serviceFee, String dicount) {
+		//seperator
         String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
         if(sep_str1 == null || sep_str1.length() == 0){
             sep_str1 = SEP_STR1;
@@ -1200,10 +1311,10 @@ public class PrintService{
         if(sep_str2 == null || sep_str2.length() == 0){
             sep_str2 = SEP_STR2;
         }
-        //dishes
-        content.append(BarUtil.generateString(tWidth, sep_str1)).append("\n\n");
+        
+		content.append(BarUtil.generateString(tWidth, sep_str1)).append("\n\n");
         int langIndex = ipPrinterMap.get(curPrintIp).getType();
-        for(Dish d:list){
+        for(Dish d:dishList){
             StringBuilder sb = new StringBuilder();
             
             if(BarOption.isDisDishIDInKitchen()) {
@@ -1230,41 +1341,34 @@ public class PrintService{
         //seperator
         content.append(BarUtil.generateString(tWidth, sep_str2)).append("\n");
         
+        //add total part.
         //totals
         String ServiceFee = "Service Fee";
         String Discount = "Discount";
         
-        String[] strs = billPanel.lblSubTotle.getText().split(":");
-        String subtotal = strs[1].trim().substring(1);
+        //String strSubtotal = new DecimalFormat("#0.00").format(subtotal/100f);
         content.append(SOUSTOTAL).append(" : ")
-        	.append(BarUtil.generateString(tWidth - subtotal.length() - SOUSTOTAL.length() - 3, " "))
-        	.append(subtotal).append("\n");
-        strs = billPanel.lblTPS.getText().split(":");
-        String tps = strs[1].trim().substring(1);
+        	.append(BarUtil.generateString(tWidth - subTotal.length() - SOUSTOTAL.length() - 3, " "))
+        	.append(subTotal).append("\n");
+        
         content.append(TPS).append(" : ")
     		.append(BarUtil.generateString(tWidth - tps.length() - TPS.length() - 3, " "))
         	.append(tps).append("\n");
-        strs = billPanel.lblTVQ.getText().split(":");
-        String tvq = strs[1].trim().substring(1);
+       
         content.append(TVQ).append(" : ")
 			.append(BarUtil.generateString(tWidth - tvq.length() - TVQ.length() - 3, " "))
         	.append(tvq).append("\n");
-        if(billPanel.lblServiceFee.getText().length() > 0) {
-            strs = billPanel.lblServiceFee.getText().split(":");
-            String serviceFee = strs[1].trim().substring(1);
+        
+        if(serviceFee != null && serviceFee.length() > 0) {
             content.append(ServiceFee).append(" : ")
 				.append(BarUtil.generateString(tWidth - serviceFee.length() - ServiceFee.length() - 3, " "))
             	.append(serviceFee).append("\n");
         }
-        if(billPanel.lblDiscount.getText().length() > 0) {
-            strs = billPanel.lblDiscount.getText().split(":");
-            String dicount = strs[1].trim().substring(2);
+        if(dicount != null && dicount.length() > 0) {
             content.append(Discount).append(" : ")
 				.append(BarUtil.generateString(tWidth - dicount.length() - Discount.length() - 3, " "))
             	.append(dicount).append("\n");
         }
-        
-        return content;
 	}
 
 	private static StringBuilder getTotalContent(BillPanel billPanel) {

@@ -171,7 +171,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              				Math.round(Float.valueOf((billPanel.subTotal - billPanel.serviceFee + billPanel.discount) * Float.valueOf(curContent)))
              				: Math.round(Float.valueOf(curContent) * 100);
              				
-             		billPanel.updateTotleArea();
+             		BillPanel.updateTotleArea(billPanel);
              		
              		outputStatusCheck();
              		billPricesUpdate();
@@ -224,7 +224,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		billPanel.tblBillPanel.setDataVector(tValues, billPanel.header);
             		billPanel.resetColWidth(billPanel.getWidth());
             		billPanel.tblBillPanel.setSelectedRow(tValues.length - 1);
-            		billPanel.updateTotleArea();
+            		BillPanel.updateTotleArea(billPanel);
             	}else {
             		//update bill and dining_table in db.
             		if(BarFrame.instance.isTableEmpty(null, null)) {
@@ -469,7 +469,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
 	public void discountBill(int discount) {
 		billPanel.discount = discount;
-		billPanel.updateTotleArea();
+		BillPanel.updateTotleArea(billPanel);
 		
 		outputStatusCheck();
 		billPricesUpdate();
@@ -583,7 +583,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 		}
 		
-		billPanel.updateTotleArea();
+		BillPanel.updateTotleArea(billPanel);
 		outputStatusCheck();
 		billPricesUpdate();
 	}

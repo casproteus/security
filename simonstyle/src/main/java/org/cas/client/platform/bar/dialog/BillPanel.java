@@ -13,7 +13,6 @@ import java.awt.event.MouseMotionListener;
 import java.sql.ResultSet;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -60,11 +59,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     public ArrayList<Dish> orderedDishAry = new ArrayList<Dish>();
     
     //Bill property (not for specific item).the info should be retrieved from bill record if have.
-    int billID;
-    int discount;
-	int subTotal;
-    int tip;
-    int serviceFee;
+    public int billID;
+    public int discount;
+    public int totalGst;
+	public int totalQst;
+	public int subTotal;
+	public int tip;
+	public int serviceFee;
     
     int received;
     int cashback;
@@ -206,7 +207,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					tblBillPanel.setValueAt(tQTY % BarOption.MaxQTY + "x", row, 0);
 					tblBillPanel.setValueAt(BarOption.getMoneySign() + new DecimalFormat("#0.00").format((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f), row, 3);
 				}
-				updateTotleArea();
+				updateTotleArea(this);
 				tblBillPanel.setSelectedRow(selectedRow);
 	        } else if (o == btnLess) {
 	    		int selectedRow =  tblBillPanel.getSelectedRow();
@@ -231,7 +232,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 						tblBillPanel.setValueAt(BarOption.getMoneySign() + new DecimalFormat("#0.00").format((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f), row, 3);
 					}
 				}
-				updateTotleArea();
+				updateTotleArea(this);
 	        }
         }else if(o == billButton){		//when bill button on top are clicked.
         	if(billListPanel != null && billListPanel.btnSplitItem.isSelected()) {
@@ -432,7 +433,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         tblBillPanel.setValueAt(dish.getSize() > 1 ? dish.getSize() : "", tValidRowCount, 2); // set the count.
         tblBillPanel.setValueAt(BarOption.getMoneySign() + new DecimalFormat("#0.00").format(price/100f), tValidRowCount, 3); // set the price.
         
-        updateTotleArea();								//because value change will not be used to remove the record.
+        updateTotleArea(this);								//because value change will not be used to remove the record.
         SwingUtilities.invokeLater(new Runnable() {
 			
 			@Override
@@ -459,16 +460,16 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		tblBillPanel.repaint();//to update the color of dishes, it's saved, so it's not red anymore.
 	}
 
-    public void updateTotleArea() {
+    public static void updateTotleArea(BillPanel billPanel) {
     	Object tvq = BarOption.getQST();
     	Object tps = BarOption.getGST();
     	float gstRate = tps == null ? 5f : Float.valueOf((String)tps);
     	float qstRate = tvq == null ? 9.975f : Float.valueOf((String)tvq);
-    	float totalGst = 0;
-    	float totalQst = 0;
-    	subTotal = 0;
+    	billPanel.totalGst = 0;
+    	billPanel.totalQst = 0;
+    	billPanel.subTotal = 0;
     	
-    	for(Dish dish: orderedDishAry) {
+    	for(Dish dish: billPanel.orderedDishAry) {
     		//get out the num.
     		int num = dish.getNum();
     		int pK = num /(BarOption.MaxQTY * 100);
@@ -501,32 +502,32 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 //    			qst /= pK;
 //    		}
     		
-    		subTotal += totalPrice;
-    		totalGst += gst;
-    		totalQst += qst;
+    		billPanel.subTotal += totalPrice;
+    		billPanel.totalGst += gst;
+    		billPanel.totalQst += qst;
     	}
     	
-    	subTotal -= discount;
-		subTotal += serviceFee;
+    	billPanel.subTotal -= billPanel.discount;
+    	billPanel.subTotal += billPanel.serviceFee;
 		
     	if(BarOption.isDiscountAffectTax()) {
-    		totalGst -= Math.round(discount * gstRate / 100f);
-    		totalQst -= Math.round(discount * qstRate / 100f);
+    		billPanel.totalGst -= Math.round(billPanel.discount * gstRate / 100f);
+    		billPanel.totalQst -= Math.round(billPanel.discount * qstRate / 100f);
     	}
     	
     	if(BarOption.isServiceFeeAffectTax()) {
-    		totalGst += Math.round(serviceFee * gstRate / 100f);
-    		totalQst += Math.round(serviceFee * qstRate / 100f);
+    		billPanel.totalGst += Math.round(billPanel.serviceFee * gstRate / 100f);
+    		billPanel.totalQst += Math.round(billPanel.serviceFee * qstRate / 100f);
     	}
-    	totalGst = Math.round(totalGst);
-    	totalQst = Math.round(totalQst);
-        lblDiscount.setText(discount > 0 ? BarFrame.consts.Discount() + " : -" + BarOption.getMoneySign() + new DecimalFormat("#0.00").format((discount)/100f) : "");
-        lblServiceFee.setText(serviceFee > 0 ? BarFrame.consts.ServiceFee() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format((serviceFee)/100f) : "");
-    	lblSubTotle.setText(BarFrame.consts.Subtotal() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(subTotal/100f));
-        lblTPS.setText(BarFrame.consts.GST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(totalGst/100f));
-        lblTVQ.setText(BarFrame.consts.QST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(totalQst/100f));
-        int total = Math.round(subTotal + totalGst + totalQst);
-        valTotlePrice.setText(new DecimalFormat("#0.00").format((total)/100f));
+    	billPanel.totalGst = Math.round(billPanel.totalGst);
+    	billPanel.totalQst = Math.round(billPanel.totalQst);
+    	billPanel.lblDiscount.setText(billPanel.discount > 0 ? BarFrame.consts.Discount() + " : -" + BarOption.getMoneySign() + new DecimalFormat("#0.00").format((billPanel.discount)/100f) : "");
+    	billPanel.lblServiceFee.setText(billPanel.serviceFee > 0 ? BarFrame.consts.ServiceFee() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format((billPanel.serviceFee)/100f) : "");
+    	billPanel.lblSubTotle.setText(BarFrame.consts.Subtotal() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(billPanel.subTotal/100f));
+    	billPanel.lblTPS.setText(BarFrame.consts.GST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(billPanel.totalGst/100f));
+    	billPanel.lblTVQ.setText(BarFrame.consts.QST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(billPanel.totalQst/100f));
+        int total = Math.round(billPanel.subTotal + billPanel.totalGst + billPanel.totalQst);
+        billPanel.valTotlePrice.setText(new DecimalFormat("#0.00").format((total)/100f));
     }
     
     void initContent() {
@@ -641,7 +642,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
 		resetColWidth(scrContent.getWidth());
 		
-		updateTotleArea();
+		updateTotleArea(this);
 	}
 
     private void resetStatus(){
@@ -706,7 +707,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		tblBillPanel.setDataVector(tValues, header);
 		resetColWidth(scrContent.getWidth());
 		tblBillPanel.setSelectedRow(tValues.length - 1); //@Note this will trigger a value change event, to set the curDish.
-		updateTotleArea();
+		updateTotleArea(this);
 	}
     
     private int getUsedRowCount() {

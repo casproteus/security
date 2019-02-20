@@ -61,7 +61,7 @@ public class UpdateItemDiscountAction implements ActionListener{
              	billPanel.orderedDishAry.get(row).setDiscount((int)(newDiscount * 100));
              	billPanel.orderedDishAry.get(row).setTotalPrice((int)((totalPrice) * 100));
              	
-             	billPanel.updateTotleArea();
+             	BillPanel.updateTotleArea(billPanel);
              	int outputID = billPanel.orderedDishAry.get(row).getOutputID();
              	if(outputID >= 0) {
              		String sql = "update output set discount = " + (int)(newDiscount * 100) + ", toltalprice = " + Math.round(totalPrice * 100) + " where id = " + outputID;

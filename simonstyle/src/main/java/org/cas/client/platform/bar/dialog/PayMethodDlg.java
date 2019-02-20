@@ -7,24 +7,16 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import org.cas.client.platform.bar.i18n.BarDlgConst0;
-import org.cas.client.platform.bar.i18n.BarDlgConst1;
-import org.cas.client.platform.bar.i18n.BarDlgConst2;
-import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
-import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
-import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
-import org.cas.client.resource.international.DlgConst;
 
 public class PayMethodDlg extends JFrame implements ActionListener, WindowFocusListener{
 	
@@ -56,8 +48,6 @@ public class PayMethodDlg extends JFrame implements ActionListener, WindowFocusL
 
      		//check if all bills are not closed, and find the first panel
 			ArrayList<BillPanel> unclosedBillPanels = billListPanel.gatherAllUnclosedBillPanels();            
-			//combine bills--------------------------------------------------------------------------------------------
-			billListPanel.combineBills(unclosedBillPanels);
 			
     		//check the pay dialog is already visible, if yes, then update bill received values.
     		if(BarFrame.payDlg.isVisible()) {
@@ -77,10 +67,11 @@ public class PayMethodDlg extends JFrame implements ActionListener, WindowFocusL
      		BarFrame.payDlg.setVisible(true);
      		
      		//init payDialog content base on bill.
-     		BarFrame.payDlg.initContent(unclosedBillPanels.get(0));
+     		BarFrame.payDlg.initContent(unclosedBillPanels);
      		
-     		PrintService.exePrintConbinedInvoice(unclosedBillPanels, getTitle().equals(BarFrame.consts.EnterCashPayment()));
-     		
+     		//combine bills--------------------------------------------------------------------------------------------
+			billListPanel.combineBills(unclosedBillPanels);
+			
     	} else if (o == btnCOUPON) {
     		
     		String couponCode  = JOptionPane.showInputDialog(null, BarFrame.consts.couponCode());
@@ -231,10 +222,10 @@ public class PayMethodDlg extends JFrame implements ActionListener, WindowFocusL
 		int height = btnMore.getHeight();
 		
 		btnCASH.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, width, height);
-		btnCOUPON.setBounds(btnCASH.getX(), btnCASH.getY() + btnCASH.getHeight() + CustOpts.VER_GAP, width, height);
-		btnDEBIT.setBounds(btnCASH.getX(), btnCOUPON.getY() + btnCASH.getHeight() + CustOpts.VER_GAP, width, height);
+		btnDEBIT.setBounds(btnCASH.getX(), btnCASH.getY() + btnCASH.getHeight() + CustOpts.VER_GAP, width, height);
 		btnVISA.setBounds(btnCASH.getX(), btnDEBIT.getY() + btnCASH.getHeight() + CustOpts.VER_GAP, width, height);
 		btnMASTER.setBounds(btnCASH.getX(), btnVISA.getY() + btnCASH.getHeight() + CustOpts.VER_GAP, width, height);
+		btnCOUPON.setBounds(btnCASH.getX(), btnMASTER.getY() + btnCASH.getHeight() + CustOpts.VER_GAP, width, height);
         
 		int panelHeight = height * 5 + CustOpts.VER_GAP * 6;
 		setBounds(x, y - panelHeight, 
@@ -245,43 +236,43 @@ public class PayMethodDlg extends JFrame implements ActionListener, WindowFocusL
 	private void initPanel() {
 		// 初始化－－－－－－－－－－－－－－－－
 		btnCASH = new FunctionButton(BarFrame.consts.CASH());
-        btnCOUPON = new FunctionButton(BarFrame.consts.COUPON());
 		btnDEBIT = new FunctionButton(BarFrame.consts.DEBIT());
 		btnVISA = new FunctionButton(BarFrame.consts.VISA());
 		btnMASTER = new FunctionButton(BarFrame.consts.MASTER());
+        btnCOUPON = new FunctionButton(BarFrame.consts.COUPON());
 
 		// 属性设置－－－－－－－－－－－－－－
 		btnCASH.setMargin(new Insets(0, 0, 0, 0));
-		btnCOUPON.setMargin(btnCASH.getMargin());
 		btnDEBIT.setMargin(btnCASH.getMargin());
 		btnVISA.setMargin(btnCASH.getMargin());
 		btnMASTER.setMargin(btnCASH.getMargin());
+		btnCOUPON.setMargin(btnCASH.getMargin());
 		
 		// 布局---------------
 		setLayout(null);
 		
 		// 搭建－－－－－－－－－－－－－
 		add(btnCASH);
-		add(btnCOUPON);
 		add(btnDEBIT);
 		add(btnVISA);
 		add(btnMASTER);
+		add(btnCOUPON);
 
 		// 加监听器－－－－－－－－
 		btnCASH.addActionListener(this);
-		btnCOUPON.addActionListener(this);
 		btnDEBIT.addActionListener(this);
 		btnVISA.addActionListener(this);
 		btnMASTER.addActionListener(this);
+		btnCOUPON.addActionListener(this);
 		
 		this.addWindowFocusListener(this);
 	}
 	
 	private FunctionButton btnCASH;
-	private FunctionButton btnCOUPON;
 	private FunctionButton btnDEBIT;
 	private FunctionButton btnVISA;
 	private FunctionButton btnMASTER;
+	private FunctionButton btnCOUPON;
 
 	@Override
 	public void windowGainedFocus(WindowEvent e) {}
