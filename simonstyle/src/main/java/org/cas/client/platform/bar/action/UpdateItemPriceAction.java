@@ -61,7 +61,7 @@ public class UpdateItemPriceAction implements ActionListener{
  	    			priceDSP /= pK;
  	    		
              	billPanel.tblBillPanel.setValueAt(BarOption.getMoneySign() + priceDSP/100f, row, 3);
-             	BillPanel.updateTotleArea(billPanel);
+             	billPanel.updateTotleArea();
              	int outputID = billPanel.orderedDishAry.get(row).getOutputID();
              	if(outputID >= 0) {
              		String sql = "update output set TOLTALPRICE = "

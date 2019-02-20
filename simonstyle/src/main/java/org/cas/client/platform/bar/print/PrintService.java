@@ -1240,7 +1240,7 @@ public class PrintService{
 	        	if(billID != billPanel.getBillId()) {	//if not the combined bill, then need to accumulate the values.
 	        		BillPanel bp = new BillPanel(null);
 	        		bp.orderedDishAry = entry.getValue();
-	        		BillPanel.updateTotleArea(bp);
+	        		bp.updateTotleArea();
 	        		otherSubtotal += bp.subTotal;
 	        		otherTPS += bp.totalGst;
 	        		otherTVQ += bp.totalQst;
