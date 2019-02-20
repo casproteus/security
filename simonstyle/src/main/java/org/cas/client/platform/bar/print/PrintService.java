@@ -713,7 +713,7 @@ public class PrintService{
 				String[] dAry = date.split("-");
 				dateTrans = new StringBuilder(dAry[0]).append(dAry[1]).append(dAry[2]).append(tAry[0]).append(tAry[1]).toString();
 				if(tAry.length == 3) {
-					dateTrans  = dateTrans.concat(tAry[2]);
+					dateTrans  = dateTrans.concat(tAry[2].endsWith(")") ? tAry[2].substring(0,  tAry[2].indexOf("(")) : tAry[2]);
 				}else {
 					dateTrans  = dateTrans.concat("00");
 				}
@@ -1208,32 +1208,40 @@ public class PrintService{
         
         //get the value of current bill ready (current bill might be a combined bill.
         String[] strs = billPanel.lblSubTotle.getText().split(":");
-        Float fSubTotal = Float.valueOf(strs[1].trim().substring(1));
+        String strSubTotal = strs[1].trim().substring(1);
+        Float fSubTotal = Float.valueOf(strSubTotal);
 
         strs = billPanel.lblTPS.getText().split(":");
-        Float fTPS = Float.valueOf(strs[1].trim().substring(1));
+        String strTPS = strs[1].trim().substring(1);
+        Float fTPS = Float.valueOf(strTPS);
 
         strs = billPanel.lblTVQ.getText().split(":");
-        Float fTVQ = Float.valueOf(strs[1].trim().substring(1));
+        String strTVQ = strs[1].trim().substring(1);
+        Float fTVQ = Float.valueOf(strTVQ);
         
-        Float fServiceeFee = 0.0f;
-        if(billPanel.lblServiceFee.getText().length() > 0) {
-        	strs = billPanel.lblServiceFee.getText().split(":");
-        	fServiceeFee = Float.valueOf(strs[1].trim().substring(1));
+        Float fServiceFee = 0.0f;
+        
+        String strServiceFee = billPanel.lblServiceFee.getText();
+		if(strServiceFee.length() > 0) {
+        	strs = strServiceFee.split(":");
+        	strServiceFee = strs[1].trim().substring(1);
+        	fServiceFee = Float.valueOf(strServiceFee);
         }
 
         Float fDiscount = 0.0f;
-        if(billPanel.lblDiscount.getText().length() > 0) {
-        	strs = billPanel.lblDiscount.getText().split(":");
-        	fDiscount = Float.valueOf(strs[1].trim().substring(2));  //@NOTE:an "-" is displayed before the number of discount on totalArea.
+        String strDiscount = billPanel.lblDiscount.getText();
+		if(strDiscount.length() > 0) {
+        	strs = strDiscount.split(":");
+        	strDiscount = strs[1].trim().substring(2);
+        	fDiscount = Float.valueOf(strDiscount);  //@NOTE:an "-" is displayed before the number of discount on totalArea.
         }
 
 		StringBuilder content = new StringBuilder();
         if(billDishesMap.size() == 1) {
             formatDishListContent(dishList, curPrintIp, tWidth, content,
-            		String.valueOf(fSubTotal), String.valueOf(fTPS), String.valueOf(fTVQ),
-            		fServiceeFee > 0 ? String.valueOf(fServiceeFee) : null,
-            		fDiscount > 0 ? String.valueOf(fDiscount) : null);
+            		strSubTotal, strTPS, strTVQ,
+            		fServiceFee > 0 ? strServiceFee : null,
+            		fDiscount > 0 ? strDiscount : null);
         }else {
         	//@NOTE:in case the original bill was used again after combination, so the values of the bill record could changed.
         	//so have to use the dish list to calculate every thing again,  while the service fee and discount will be problem.
@@ -1248,7 +1256,7 @@ public class PrintService{
 	            		new DecimalFormat("#0.00").format(bp.subTotal/100.0),
 	            		new DecimalFormat("#0.00").format(bp.totalGst/100.0),
 	            		new DecimalFormat("#0.00").format(bp.totalQst/100.0),
-	            		new DecimalFormat("#0.00").format(fServiceeFee/billDishesMap.size()),
+	            		new DecimalFormat("#0.00").format(fServiceFee/billDishesMap.size()),
 	            		new DecimalFormat("#0.00").format(fDiscount/billDishesMap.size()));
 			}
 	        
@@ -1275,8 +1283,8 @@ public class PrintService{
 				.append(BarUtil.generateString(tWidth - tvq.length() - TVQ.length() - 3, " "))
 	        	.append(tvq).append("\n");
 	        
-	        if(fServiceeFee > 0) {
-	            String serviceFee = String.valueOf(fServiceeFee);
+	        if(fServiceFee > 0) {
+	            String serviceFee = String.valueOf(fServiceFee);
 	            content.append(SERVICE_FEE).append(" : ")
 					.append(BarUtil.generateString(tWidth - serviceFee.length() - SERVICE_FEE.length() - 3, " "))
 	            	.append(serviceFee).append("\n");
