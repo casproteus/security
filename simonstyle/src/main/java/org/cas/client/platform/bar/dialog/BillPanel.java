@@ -820,7 +820,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         tblBillPanel.setShowGrid(false);
         // forcus-------------
         tblBillPanel.setFocusable(false);
-
+        btnMore.setFocusable(false);
+        btnLess.setFocusable(false);
+        
         // disables
         btnMore.setEnabled(false);
         btnLess.setEnabled(false);

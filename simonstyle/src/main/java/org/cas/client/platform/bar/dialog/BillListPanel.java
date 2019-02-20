@@ -78,8 +78,8 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		add(btnAddUser);
 		add(separator);
 		add(btnPrintAll);
-		add(btnPrintOneBill);
-		add(btnPrintOneInVoice);
+//		add(btnPrintOneBill);
+//		add(btnPrintOneInVoice);
 		add(btnEqualBill);
 		add(btnCombineAll);
 		add(btnSplitItem);
@@ -210,7 +210,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 11) / 10;
+        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 9) / 8;
         int tBtnHeight = panelHeight / 10;
 
 
@@ -224,7 +224,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				tBtnWidht, tBtnHeight);
 		btnPrintOneInVoice.setBounds(btnPrintOneBill.getX() + btnPrintOneBill.getWidth() + CustOpts.HOR_GAP, btnPrintOneBill.getY(),
 				tBtnWidht, tBtnHeight);
-		btnEqualBill.setBounds(btnPrintOneInVoice.getX() + btnPrintOneInVoice.getWidth() + CustOpts.HOR_GAP, btnPrintOneInVoice.getY(),
+		btnEqualBill.setBounds(btnPrintAll.getX() + btnPrintAll.getWidth() + CustOpts.HOR_GAP, btnPrintAll.getY(),
 				tBtnWidht, tBtnHeight);
 		btnCombineAll.setBounds(btnEqualBill.getX() + btnEqualBill.getWidth() + CustOpts.HOR_GAP, btnEqualBill.getY(),
 				tBtnWidht, tBtnHeight);
