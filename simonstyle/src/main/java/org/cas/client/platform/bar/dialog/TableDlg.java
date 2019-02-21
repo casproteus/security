@@ -21,6 +21,7 @@ import org.cas.client.platform.bar.uibeans.TableButton;
 import org.cas.client.platform.casbeans.PIMSeparator;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
+import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
@@ -65,7 +66,7 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         tfdName.setBounds(lblName.getX() + lblName.getWidth() + CustOpts.HOR_GAP, lblName.getY(), 
         		sptName.getWidth() - lblName.getWidth() - CustOpts.HOR_GAP * 2,  CustOpts.BTN_HEIGHT);
      
-        int otherAreaHeight = btnTable.getText().length() > 0 ? 0 : 200;
+        int otherAreaHeight = LoginDlg.USERTYPE >= 2 ? 0 : 200;
         // bounds--------
         sptBounds.setBounds(sptName.getX(), tfdName.getY() + tfdName.getHeight() + CustOpts.VER_GAP + otherAreaHeight,
                 sptName.getWidth(), CustOpts.SEP_HEIGHT + 2);
@@ -86,8 +87,7 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         lblCategory.setBounds(sptType.getX() + CustOpts.HOR_GAP, sptType.getY() + sptType.getHeight()
                 + CustOpts.VER_GAP, lblCategory.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cmbCategory.setBounds(lblCategory.getX() + lblCategory.getWidth() + CustOpts.HOR_GAP, lblCategory.getY(),
-                sptName.getWidth() - lblCategory.getWidth() - lblName.getPreferredSize().width - CustOpts.HOR_GAP
-                        * 4 - 40, CustOpts.BTN_HEIGHT);
+                sptName.getWidth() - lblCategory.getX() - lblCategory.getWidth() - CustOpts.HOR_GAP * 4 - 40, CustOpts.BTN_HEIGHT);
 
         ok.setBounds(getWidth() / 2 - CustOpts.HOR_GAP - CustOpts.BTN_WIDTH,
         		getHeight() - CustOpts.SIZE_EDGE * 2 - CustOpts.BTN_HEIGHT - CustOpts.VER_GAP * 2 - 20,
@@ -247,7 +247,8 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         ok.setMnemonic('o');
         ok.setMargin(new Insets(0, 0, 0, 0));
 
-        setBounds((CustOpts.SCRWIDTH - 280) / 2, (CustOpts.SCRHEIGHT - 220) / 2, 280, btnTable.getText().length() > 0 ? 220 : 120); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 280) / 2, (CustOpts.SCRHEIGHT - 220) / 2,
+        		280, LoginDlg.USERTYPE >= 2 ? 220 : 120); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
         getRootPane().setDefaultButton(ok);
 
