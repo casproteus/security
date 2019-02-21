@@ -1177,7 +1177,11 @@ public class PrintService{
         }
         
         //waiter
-        content.append(" ").append(LoginDlg.USERNAME).append(" ");
+        String waiterName = LoginDlg.USERNAME;
+        if(waiterName.length() > 10) {
+        	waiterName = waiterName.substring(0,8) + "..";
+        }
+        content.append(" ").append(waiterName).append(" ");
         
         //space and times
         int lengthOfSpaceBeforeTime = tWidth - content.length() - sartTimeStr.length() - endTimeStr.length() - 3;
