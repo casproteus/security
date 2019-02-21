@@ -177,6 +177,7 @@ public interface BarDlgConst {
     String Size();
     String[] Sizes();
     String Name();
+    String TableName();
     String IPAddress();
     String Categary();
     String TIME();

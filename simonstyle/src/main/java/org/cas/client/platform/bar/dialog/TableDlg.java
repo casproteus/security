@@ -22,7 +22,6 @@ import org.cas.client.platform.casbeans.PIMSeparator;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
-import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.resource.international.DlgConst;
@@ -209,7 +208,7 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         setResizable(false);
         // 初始化－－－－－－－－－－－－－－－－
         sptName = new PIMSeparator(BarFrame.consts.Name());
-        lblName = new JLabel(BarFrame.consts.Name());
+        lblName = new JLabel(BarFrame.consts.TableName());
         tfdName = new JTextField(btnTable.getText());
 
         sptBounds = new PIMSeparator(BarFrame.consts.Size());
@@ -279,20 +278,20 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
 
 
     private PIMSeparator sptName;
+    private JLabel lblName;
+    private JTextField tfdName;
+    
+    private PIMSeparator sptBounds;
     private JLabel lblWidth;
     private JTextField tfdWidth;
     private JLabel lblHeight;
     private JTextField tfdHeight;
     private JTextField tfdX;
     private JTextField tfdY;
-
-    private PIMSeparator sptBounds;
-
+    
     private PIMSeparator sptType;
     private JLabel lblCategory;
     private JComboBox<String> cmbCategory;
-    private JLabel lblName;
-    private JTextField tfdName;
 
     private JButton ok;
     private JButton cancel;

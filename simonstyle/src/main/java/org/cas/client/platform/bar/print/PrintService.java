@@ -673,7 +673,8 @@ public class PrintService{
 		
 		String paiementTrans = "SOB";
 		String comptoir = BarOption.isFastFoodMode() ? "O" : "N";
-		String autreCompte = "S";
+		String autreCompte = "S";	//Identifies any sales recorded in a system other than the SRS.• F(Package deal)• G(Group event)• S Sans objet (N/A)
+
 		String numeroTrans = "";
 		String tableTrans = "";
 		String serveurTrans = "";
@@ -693,6 +694,9 @@ public class PrintService{
 				int startPos = tText.indexOf("#");
 				if(startPos >= 0) {
 					numeroTrans = tText.substring(startPos + 1, tText.indexOf("\n", startPos));
+					if(numeroTrans.length() > 10) { //if bigger than 10, then use only the last 10 numbers.
+						numeroTrans = numeroTrans.substring(numeroTrans.length() - 10); 
+					}
 				}
 			}else if(i == 1) {//find out the table and client and time and sub total and tps tpq
 				String firstLine = tText.substring(0, tText.indexOf("\n"));
@@ -796,7 +800,22 @@ public class PrintService{
 		printContent.append(mev3);
 		//TODO: add verify.
 		printContent.append(mev4);
-				
+		//TODO: add ref.
+		//ref: This element is present for each transaction referenced by the current transaction.
+		//The reference indicates a link between the current transaction and one or more prior transactions.
+		//• Optional • Cardinality: 0 to N • This element is mandatory for all transactions (sale or credit) modifying a prior transaction. For more
+		//information on the applicable conditions, see section 4 of Part 3 – Development standards and section 1.2 of this document.
+
+		//numeroRef: Number of the referenced transaction. This attribute is an integral component of the unique identifier of each referenced transaction.
+		//• Mandatory • Format: Limited ASCII. See the validation J3-02149E_ MES in Appendix F – Validation tests and error messages for more details on the characters accepted.
+		//• See also details about this attribute in section 1.2.10 of this document.
+		
+		//dateRef: Date and time of the referenced transaction. This attribute is an integral component of the unique identifier of each referenced transaction.
+		//• Mandatory • Format: YYYYMMDDhhmmss • See also details about this attribute in section 1.2.11 of this document.
+
+		//mtRefAvTaxes: Total amount before taxes appearing on the referenced transaction.
+		//• Mandatory • Format: +/–999999.99 • The following 10 characters are mandatory:
+		
 		try {
 			formattedContent = printContent.toString().getBytes("ASCII");
 		}catch(UnsupportedEncodingException e) {

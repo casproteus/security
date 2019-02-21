@@ -330,6 +330,8 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String Name() {return "名字";}
     @Override
+    public String TableName() {return "桌号 (最多5位英文加数字)";}
+    @Override
 	public String IPAddress() {return "位置";}
     @Override
 	public String Categary() {return "类别";}
