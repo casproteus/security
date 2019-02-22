@@ -602,12 +602,12 @@ public class PrintService{
 		//we will make the content into 
 		byte[] formattedContent = null;
 		
-		StringBuilder printContent = new StringBuilder(mevDocAutre1);		
+		StringBuilder printContent = new StringBuilder(mevReportDocAutre1);		
 		for (int i = 0; i < sndMsg.size(); i++) {					
 			printContent.append(sndMsg.get(i));
 		}
 		
-		printContent.append(mevDocAutre2);
+		printContent.append(mevReportDocAutre2);
 		
 		try {
 			formattedContent = printContent.toString().getBytes("ASCII");
@@ -627,8 +627,8 @@ public class PrintService{
 		if(!file.exists()) {
 			//creata the file
 			try {
-				byte[] a = mevDocAutre1.getBytes("ASCII");
-				byte[] b = mevDocAutre2.getBytes("ASCII");
+				byte[] a = mevReportDocAutre1.getBytes("ASCII");
+				byte[] b = mevReportDocAutre2.getBytes("ASCII");
 				byte[] c = new byte[a.length + command.length + b.length];
 				System.arraycopy(a, 0, c, 0, a.length);
 				System.arraycopy(command, 0, c, a.length, command.length);
@@ -828,7 +828,6 @@ public class PrintService{
 
 		printContent.append(mev3);
 		//TODO: add verify.
-		printContent.append(mev4);
 		//TODO: add ref.
 		//ref: This element is present for each transaction referenced by the current transaction.
 		//The reference indicates a link between the current transaction and one or more prior transactions.
@@ -844,7 +843,8 @@ public class PrintService{
 
 		//mtRefAvTaxes: Total amount before taxes appearing on the referenced transaction.
 		//• Mandatory • Format: +/–999999.99 • The following 10 characters are mandatory:
-		
+
+		printContent.append(mev4);
 		try {
 			formattedContent = printContent.toString().getBytes("ASCII");
 		}catch(UnsupportedEncodingException e) {
@@ -1985,10 +1985,19 @@ public class PrintService{
 	
     final static String mev1 = "<reqMEV><trans noVersionTrans=\"v0%s.00\" etatDoc=\"%s\" modeTrans=\"%s\" duplicata=\"%s\"><doc><texte><![CDATA[";
     final static String mev2 = "]]></texte></doc>\r\n		<donneesTrans ";
-    final static String mev3 = "/></trans>\r\n";
+    final static String mev3 = "/>";
+
+    final static String mevRefAutre1 = "<ref numeroRef=";
+    final static String mevRefAutre2 = "dateRef=";//»AAAAMMJJhhmmss»
+    final static String mevRefAutre3 = "mtRefAvTaxes=";//»+/-999999.99»
+    final static String mevRefAutre4 = "/>";
+
+    //TODO add "verif" part. not necessary for now. 
     //.append("    <verif taille=\"4569\"/>\r\n")
-    final static String mev4 = "</reqMEV>";
     
-    final static String mevDocAutre1 = "<reqMEV><docAutre noVersionAutre=\"v01.00\"><![CDATA[";
-    final static String mevDocAutre2 = "]]></docAutre></reqMEV>";
+    final static String mev4 = "</trans>\r\n</reqMEV>";
+    
+    final static String mevReportDocAutre1 = "<reqMEV><docAutre noVersionAutre=\"v01.00\"><![CDATA[";
+    final static String mevReportDocAutre2 = "]]></docAutre></reqMEV>";
+
 }

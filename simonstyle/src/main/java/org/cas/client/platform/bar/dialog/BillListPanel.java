@@ -155,7 +155,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String openTime = BarFrame.instance.valStartTime.getText();
 		StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableName)
-				.append("' and (deleted is null or deleted < ").append(DBConsts.deleted)
+				.append("' and (deleted is null or deleted < ").append(DBConsts.dumpted)
 				.append(") and time = '").append(openTime).append("' order by contactID");
 		
 		try {
@@ -743,14 +743,15 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
     		
         	String key = new StringBuilder("pk:").append(pK).append("ps:").append(pS).append("num:").append(num)
         		.append("dish:").append(dish.getId()).append(String.valueOf(dish.getModification())).toString();
-    		if(map.containsKey(key)) {//如果发现map中已经有这个key了，
-    			//那么删掉这个output，
+        	
+    		if(map.containsKey(key)) {//if map already contains this key, then delete this output
+    			
     			sql = new StringBuilder("update output set deleted = ").append(DBConsts.deleted)
     					.append(" where id = ").append(dish.getOutputID());
     			try {
     				PIMDBModel.getStatement().executeUpdate(sql.toString());
     			}catch(Exception e) {
-    				L.e("combineOutputs", "update output set deleted = " + DBConsts.deleted + " where id = " + dish.getOutputID(), e);
+    				L.e("combineOutputs", " exception when change status of an ouput which already in map:" + sql, e);
     			}
     			dishes.remove(i);
     			
