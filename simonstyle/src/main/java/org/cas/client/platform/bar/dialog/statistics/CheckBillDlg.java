@@ -343,7 +343,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         Object[][] tValues = null;
         StringBuilder sql = new StringBuilder("select * from bill, employee where createTime >= '").append(startTime)
         		.append("' and createTime <= '").append(endTime)
-        		.append("' and bill.employeeId = employee.id and (bill.status is null or bill.status !=").append(DBConsts.deleted).append(")");
+        		.append("' and bill.employeeId = employee.id and (bill.status is null or bill.status < ").append(DBConsts.dumpted).append(")");
         //if configured, then do not show records of other waiter.
         if("true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("HideRecordFromOtherWaiter")))
         		&& LoginDlg.USERTYPE < 2) {
