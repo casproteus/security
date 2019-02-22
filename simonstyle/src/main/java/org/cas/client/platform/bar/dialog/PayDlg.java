@@ -9,7 +9,6 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.ResultSet;
-import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -20,6 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -292,15 +292,15 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 //	        		}
 //	        	}
 	        	JOptionPane.showMessageDialog(this, BarFrame.consts.Left() + " : "  + BarOption.getMoneySign()
-        				+ new DecimalFormat("#0.00").format(left/100f));
+        				+ BarUtil.formatMoney(left/100f));
 	        	//new ChangeDlg(BarFrame.instance, BarFrame.consts.Due() + BarOption.getMoneySign()
-        		//		+ new DecimalFormat("#0.00").format(left/100f)).setVisible(true); //it's a non-modal dialog.
+        		//		+ BarUtil.format(left/100f)).setVisible(true); //it's a non-modal dialog.
         	}else if(left <= 0) {
         		closeCurrentBill();
             	this.setVisible(false);
             	if(left < 0) {	//if it's equal to 0, then do not display the change dialog.
             		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign()
-            				+ new DecimalFormat("#0.00").format((0 - left)/100f)).setVisible(true); //it's a non-modal dialog.
+            				+ BarUtil.formatMoney((0 - left)/100f)).setVisible(true); //it's a non-modal dialog.
             		//if the last pay was with cash, then might need cash back (no change, paid with a "50" bill)
             		if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
             			updateBill(billId, "cashback", left);

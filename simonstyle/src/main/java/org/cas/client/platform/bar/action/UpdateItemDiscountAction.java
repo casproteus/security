@@ -2,12 +2,12 @@ package org.cas.client.platform.bar.action;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DecimalFormat;
 
 import javax.swing.AbstractButton;
 import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillPanel;
@@ -56,8 +56,8 @@ public class UpdateItemDiscountAction implements ActionListener{
  				}
  				
  				totalPrice = totalPrice + oldDiscount - newDiscount;
-             	billPanel.tblBillPanel.setValueAt("-"+ BarOption.getMoneySign() + new DecimalFormat("#0.00").format(newDiscount), row, 2);
-             	billPanel.tblBillPanel.setValueAt(BarOption.getMoneySign() + new DecimalFormat("#0.00").format(totalPrice), row, 3);
+             	billPanel.tblBillPanel.setValueAt("-"+ BarOption.getMoneySign() + BarUtil.formatMoney(newDiscount), row, 2);
+             	billPanel.tblBillPanel.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney(totalPrice), row, 3);
              	billPanel.orderedDishAry.get(row).setDiscount((int)(newDiscount * 100));
              	billPanel.orderedDishAry.get(row).setTotalPrice((int)((totalPrice) * 100));
              	

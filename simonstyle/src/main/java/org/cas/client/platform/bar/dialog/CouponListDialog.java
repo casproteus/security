@@ -15,7 +15,6 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -28,6 +27,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.net.bean.Coupon;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
@@ -348,7 +348,7 @@ MouseListener {
 		        tableModel[tmpPos][0] = rs.getString("ID");
 		        tableModel[tmpPos][1] = rs.getString("NAME");
 		        tableModel[tmpPos][2] = rs.getString("IP");
-		        tableModel[tmpPos][3] = new DecimalFormat("#0.00").format(rs.getInt("LANGTYPE") / 100.0);
+		        tableModel[tmpPos][3] = BarUtil.formatMoney(rs.getInt("LANGTYPE") / 100.0);
 		        tableModel[tmpPos][4] = rs.getInt("STYLE") == 1 ? "%" : BarOption.getMoneySign();
 		        tableModel[tmpPos][5] = rs.getInt("STATUS") == 1 ? "Y" : "";
 		        tmpPos++;

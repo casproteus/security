@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.Enumeration;
 
 import javax.swing.JOptionPane;
@@ -19,6 +20,8 @@ import gnu.io.ParallelPort;
 import gnu.io.PortInUseException;
 
 public class BarUtil {
+	
+    public static DecimalFormat formatter = new DecimalFormat("#0.00");
 	
 	//not sure the command still available. I am currently using Command.OPEN_CASHIER
 	public static void openMoneyBox() {
@@ -104,6 +107,10 @@ public class BarUtil {
         }
     }
 
+    public static String formatMoney(double number) {
+    	return formatter.format(number);
+    }
+    
     public static boolean isNumber(
             int pKeyCode) {
         return (pKeyCode >= 48 && pKeyCode <= 58) || (pKeyCode >= 96 && pKeyCode <= 106);

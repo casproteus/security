@@ -14,7 +14,6 @@ import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -231,19 +230,19 @@ public class PrintService{
         }
         content.append(BarUtil.generateString(tWidth, sep_str2)).append("\n");
         //subtotal, tps, tvq
-        StringBuilder subTotal = new StringBuilder(SOUSTOTAL).append(":").append(new DecimalFormat("#0.00").format(totalSubTotal));
+        StringBuilder subTotal = new StringBuilder(SOUSTOTAL).append(":").append(BarUtil.formatMoney(totalSubTotal));
         int lengthOfSpaceBeforeTime = tWidth - subTotal.length();
         if(lengthOfSpaceBeforeTime > 0) 
         	content.append(BarUtil.generateString(lengthOfSpaceBeforeTime, " "));        	
         content.append(subTotal).append("\n");
         
-        StringBuilder tps = new StringBuilder(TPS).append(":").append(new DecimalFormat("#0.00").format(totalTPS));
+        StringBuilder tps = new StringBuilder(TPS).append(":").append(BarUtil.formatMoney(totalTPS));
         lengthOfSpaceBeforeTime = tWidth - tps.length();
         if(lengthOfSpaceBeforeTime > 0) 
         	content.append(BarUtil.generateString(lengthOfSpaceBeforeTime, " "));
         content.append(tps).append("\n");
         
-        StringBuilder tvq = new StringBuilder(TVQ).append(":").append(new DecimalFormat("#0.00").format(totalTVQ));
+        StringBuilder tvq = new StringBuilder(TVQ).append(":").append(BarUtil.formatMoney(totalTVQ));
         lengthOfSpaceBeforeTime = tWidth - tvq.length();
         if(lengthOfSpaceBeforeTime > 0) 
         	content.append(BarUtil.generateString(lengthOfSpaceBeforeTime, " "));
@@ -758,10 +757,10 @@ public class PrintService{
 			        	price = (int)Math.round(price / ((100 + gstRate + qstRate) / 100.0));
 			        	float floatPrice = (float)(price / 100.0);
 			        	
-						mtTransAvTaxes = formatMoneyForMev(new DecimalFormat("#0.00").format(floatPrice), isRefund);//+000021.85
-						TPSTrans = formatMoneyForMev(new DecimalFormat("#0.00").format(floatPrice * gstRate/100.0), isRefund);//+000001.09
-						TVQTrans = formatMoneyForMev(new DecimalFormat("#0.00").format(floatPrice * qstRate/100.0), isRefund);//+000001.72
-						mtTransApTaxes = formatMoneyForMev(new DecimalFormat("#0.00").format(refund), isRefund);
+						mtTransAvTaxes = formatMoneyForMev(BarUtil.formatMoney(floatPrice), isRefund);//+000021.85
+						TPSTrans = formatMoneyForMev(BarUtil.formatMoney(floatPrice * gstRate/100.0), isRefund);//+000001.09
+						TVQTrans = formatMoneyForMev(BarUtil.formatMoney(floatPrice * qstRate/100.0), isRefund);//+000001.72
+						mtTransApTaxes = formatMoneyForMev(BarUtil.formatMoney(refund), isRefund);
 					} else if (isVoided) {
 						mtTransAvTaxes = formatMoneyForMev("0.00", false);//+000021.85
 						TPSTrans = formatMoneyForMev("0.00", false);//+000001.09
@@ -775,7 +774,7 @@ public class PrintService{
 						String strTVQ = a[2].substring(a[2].indexOf(":") + 1);
 						TVQTrans = formatMoneyForMev(strTVQ, isRefund);//+000001.72
 						Float total = Float.valueOf(strAvT) +  Float.valueOf(strTPS) +  Float.valueOf(strTVQ);
-						mtTransApTaxes = formatMoneyForMev(new DecimalFormat("#0.00").format(total), isRefund);
+						mtTransApTaxes = formatMoneyForMev(BarUtil.formatMoney(total), isRefund);
 					}
 				}
 			}else if(i == 3) {//find out the total
@@ -1207,11 +1206,11 @@ public class PrintService{
 	    pushWaiterAndTime(strAryFR, tWidth, null, startTime, endTime);
         pushSalesSummary(strAryFR, list, tWidth,
         		String.valueOf(salesGrossCount), String.valueOf(refundCount), 
-        		new DecimalFormat("#0.00").format(salesGrossAmount/100.0),
-        		new DecimalFormat("#0.00").format(refoundAmount / 100.0),
-        		new DecimalFormat("#0.00").format(net / 100.0),
-        		new DecimalFormat("#0.00").format(HST / 100.0),
-        		new DecimalFormat("#0.00").format((net + HST) / 100.0)
+        		BarUtil.formatMoney(salesGrossAmount/100.0),
+        		BarUtil.formatMoney(refoundAmount / 100.0),
+        		BarUtil.formatMoney(net / 100.0),
+        		BarUtil.formatMoney(HST / 100.0),
+        		BarUtil.formatMoney((net + HST) / 100.0)
         		);
         pushPaymentSummary(strAryFR, list, tWidth);
         pushSummaryByServiceType(strAryFR, list, tWidth);
@@ -1323,11 +1322,11 @@ public class PrintService{
         		bp.updateTotleArea();
         		
         		formatDishListContent(entry.getValue(), curPrintIp, tWidth, content,
-	            		new DecimalFormat("#0.00").format(bp.subTotal/100.0),
-	            		new DecimalFormat("#0.00").format(bp.totalGst/100.0),
-	            		new DecimalFormat("#0.00").format(bp.totalQst/100.0),
-	            		new DecimalFormat("#0.00").format(fServiceFee/billDishesMap.size()),
-	            		new DecimalFormat("#0.00").format(fDiscount/billDishesMap.size()));
+	            		BarUtil.formatMoney(bp.subTotal/100.0),
+	            		BarUtil.formatMoney(bp.totalGst/100.0),
+	            		BarUtil.formatMoney(bp.totalQst/100.0),
+	            		BarUtil.formatMoney(fServiceFee/billDishesMap.size()),
+	            		BarUtil.formatMoney(fDiscount/billDishesMap.size()));
 			}
 	        
         	//it's a combined bill, so need to add an extra total part.	
@@ -1338,7 +1337,7 @@ public class PrintService{
 	        content.append(BarUtil.generateString(tWidth, sep_str1)).append("\n\n");
 	        
 	        //add the tooooootal.
-	        String subtotal = String.valueOf(fSubTotal);
+	        String subtotal = BarUtil.formatMoney(fSubTotal);
 	        content.append(SOUSTOTAL).append(" : ")
 	        	.append(BarUtil.generateString(tWidth - subtotal.length() - SOUSTOTAL.length() - 3, " "))
 	        	.append(subtotal).append("\n");
@@ -1399,7 +1398,7 @@ public class PrintService{
             	sb.append(" ").append(Dish.getDisplayableNum(d.getNum()));
             }
             
-            String price = new DecimalFormat("#0.00").format(d.getTotalPrice()/100f);
+            String price = BarUtil.formatMoney(d.getTotalPrice()/100f);
             int occupiedLength = BarUtil.getLengthOfString(sb.toString());
             sb.append(BarUtil.generateString(tWidth - occupiedLength - (price.length()), " "));
             sb.append(price);
@@ -1414,7 +1413,7 @@ public class PrintService{
         //add total part.
         //totals
         
-        //String strSubtotal = new DecimalFormat("#0.00").format(subtotal/100f);
+        //String strSubtotal = BarUtil.format(subtotal/100f);
         content.append(SOUSTOTAL).append(" : ")
         	.append(BarUtil.generateString(tWidth - subTotal.length() - SOUSTOTAL.length() - 3, " "))
         	.append(subTotal).append("\n");
@@ -1478,7 +1477,7 @@ public class PrintService{
 	private static void pushRefundAndNewTotal(BillPanel billPanel, ArrayList<String> strAryFR, int refund, int tWidth) {
 		StringBuilder content = new StringBuilder();
 		//push refund into ary.
-		String refundStr = new DecimalFormat("#0.00").format(refund/100f);
+		String refundStr = BarUtil.formatMoney(refund/100f);
 	    content.append("Refund : ").append(BarUtil.generateString(tWidth - 9 - refundStr.length(), " ")).append(refundStr).append("\n");
 	    strAryFR.add(content.toString());    
 	    
@@ -1487,7 +1486,7 @@ public class PrintService{
         strAryFR.add("BigFont");
         //push NEW total
         String strTotal = billPanel.valTotlePrice.getText();
-        String newTotal = new DecimalFormat("#0.00").format(Float.valueOf(strTotal) + Float.valueOf(refundStr));
+        String newTotal = BarUtil.formatMoney(Float.valueOf(strTotal) + Float.valueOf(refundStr));
         content = new StringBuilder("Total : ").append(newTotal).append("\n");
         strAryFR.add(content.toString());
         //push normal font
@@ -1505,28 +1504,28 @@ public class PrintService{
             rs.next();
             float total = (float) (rs.getInt("total") / 100.0);
             int cashReceived = rs.getInt("cashReceived");
-            String str = new DecimalFormat("#0.00").format(cashReceived/100f);
+            String str = BarUtil.formatMoney(cashReceived/100f);
             if(cashReceived > 0) {
     			content.append(CASH).append(" : ")
     			.append(BarUtil.generateString(width - 9 - str.length(), " "))
     			.append(str).append("\n");
     		}
             int debitReceived = rs.getInt("debitReceived");
-            str = new DecimalFormat("#0.00").format(debitReceived/100f);
+            str = BarUtil.formatMoney(debitReceived/100f);
             if(debitReceived > 0) {
     			content.append("DEBIT").append(" : ")
     			.append(BarUtil.generateString(width - 8 - str.length(), " "))
     			.append(str).append("\n");
     		}
             int visaReceived = rs.getInt("visaReceived");
-            str = new DecimalFormat("#0.00").format(visaReceived/100f);
+            str = BarUtil.formatMoney(visaReceived/100f);
             if(visaReceived > 0) {
     			content.append("VISA").append(" : ")
     			.append(BarUtil.generateString(width - 7 - str.length(), " "))
     			.append(str).append("\n");
     		}
             int masterReceived = rs.getInt("masterReceived");
-            str = new DecimalFormat("#0.00").format(masterReceived/100f);
+            str = BarUtil.formatMoney(masterReceived/100f);
         	if(masterReceived > 0) {
     			content.append("MASTER").append(" : ")
     			.append(BarUtil.generateString(width - 9 - str.length(), " "))
@@ -1534,7 +1533,7 @@ public class PrintService{
     		}
             
             float left = -1 * ((int)((total * 100 - cashReceived - debitReceived - visaReceived - masterReceived)));
-            str = new DecimalFormat("#0.00").format(left/100f);
+            str = BarUtil.formatMoney(left/100f);
             String lblText;
             if(!isCashBack) {
             	lblText = "TIP : ";
@@ -1684,13 +1683,12 @@ public class PrintService{
 			}
   		}
 		
-		DecimalFormat formater = new DecimalFormat("#0.00");
-		String strcashTotal = formater.format(cashTotal / 100.0);
-		String strdebitSales = formater.format(debitSales / 100.0), strdebitTip = formater.format(debitTip / 100.0), strdebitTotal = formater.format(debitTotal / 100.0);
-		String strvisaSales = formater.format(visaSales / 100.0), strvisaTip = formater.format(visaTip / 100.0), strvisaTotal = formater.format(visaTotal / 100.0);
-		String strmasterSales = formater.format(masterSales / 100.0), strmasterTip = formater.format(masterTip / 100.0), strmasterTotal = formater.format(masterTotal / 100.0);
-		String strotherSales = formater.format(otherSales / 100.0), strotherTip = formater.format(otherTip / 100.0), strotherTotal = formater.format(otherTotal / 100.0);
-		String strtotalTip = formater.format((debitTip + visaTip + masterTip + otherTip) / 100.0);
+		String strcashTotal = BarUtil.formatMoney(cashTotal / 100.0);
+		String strdebitSales = BarUtil.formatMoney(debitSales / 100.0), strdebitTip = BarUtil.formatMoney(debitTip / 100.0), strdebitTotal = BarUtil.formatMoney(debitTotal / 100.0);
+		String strvisaSales = BarUtil.formatMoney(visaSales / 100.0), strvisaTip = BarUtil.formatMoney(visaTip / 100.0), strvisaTotal = BarUtil.formatMoney(visaTotal / 100.0);
+		String strmasterSales = BarUtil.formatMoney(masterSales / 100.0), strmasterTip = BarUtil.formatMoney(masterTip / 100.0), strmasterTotal = BarUtil.formatMoney(masterTotal / 100.0);
+		String strotherSales = BarUtil.formatMoney(otherSales / 100.0), strotherTip = BarUtil.formatMoney(otherTip / 100.0), strotherTotal = BarUtil.formatMoney(otherTotal / 100.0);
+		String strtotalTip = BarUtil.formatMoney((debitTip + visaTip + masterTip + otherTip) / 100.0);
 		//content.append("PayBy  Qt     Sales      Tip   
 		content.append("Cash   ").append(cashQt)
 		.append(BarUtil.generateString(width - 7 - getNumberStrLength(cashQt, strcashTotal), " "))
@@ -1771,13 +1769,13 @@ public class PrintService{
                 content.append(BarUtil.generateString(15 - product.length() - String.valueOf(displayableNum).length(), " ")).append(displayableNum);
                 
                 float f = Float.valueOf((float) (rs.getInt("Output.toltalPrice") / 100.0));
-                String money = new DecimalFormat("#0.00").format(f);
+                String money = BarUtil.formatMoney(f);
                 content.append(BarUtil.generateString(width - 34 - money.length(), " ")).append(money).append("\n");
                 totalSales += f;
             }
             
     		content.append(getSeperatorLine(1, width)).append("\n");
-    		String toltal = new DecimalFormat("#0.00").format(totalSales);
+    		String toltal = BarUtil.formatMoney(totalSales);
     		content.append(BarUtil.generateString(width - toltal.length(), " "))
     		.append(toltal).append("\n");
     		
@@ -1980,7 +1978,7 @@ public class PrintService{
     		last = 5;
     	else if(last == 8 || last == 9)
     		last = 10;
-    	return new DecimalFormat("#0.00").format((t/ 10 * 10 + last) / 100.0);
+    	return BarUtil.formatMoney((t/ 10 * 10 + last) / 100.0);
     }
 	
     final static String mev1 = "<reqMEV><trans noVersionTrans=\"v0%s.00\" etatDoc=\"%s\" modeTrans=\"%s\" duplicata=\"%s\"><doc><texte><![CDATA[";

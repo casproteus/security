@@ -9,7 +9,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.action.UpdateItemDiscountAction;
 import org.cas.client.platform.bar.action.UpdateItemPriceAction;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
@@ -338,7 +338,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     }
                     
             		new ChangeDlg(BarFrame.instance, 
-            				BarOption.getMoneySign() + new DecimalFormat("#0.00").format(refund)).setVisible(true); //it's a non-modal dialog.
+            				BarOption.getMoneySign() + BarUtil.formatMoney(refund)).setVisible(true); //it's a non-modal dialog.
 
              		sql = "update bill set status = " + refundAmount + " where id = " + billPanel.orderedDishAry.get(0).getBillID();
              		PIMDBModel.getStatement().executeUpdate(sql);

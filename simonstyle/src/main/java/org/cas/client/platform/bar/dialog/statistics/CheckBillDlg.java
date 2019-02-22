@@ -12,7 +12,6 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -28,6 +27,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.model.DBConsts;
@@ -361,13 +361,13 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
                 tValues[tmpPos][0] = rs.getString("createTime");;
                 tValues[tmpPos][1] = rs.getString("tableID");
                 tValues[tmpPos][2] = rs.getString("billIndex");
-                tValues[tmpPos][3] = new DecimalFormat("#0.00").format(rs.getInt("total") / 100.0);
-                tValues[tmpPos][4] = new DecimalFormat("#0.00").format(rs.getInt("discount") / 100.0);
+                tValues[tmpPos][3] = BarUtil.formatMoney(rs.getInt("total") / 100.0);
+                tValues[tmpPos][4] = BarUtil.formatMoney(rs.getInt("discount") / 100.0);
                 int received = rs.getInt("cashReceived") + rs.getInt("debitReceived")
                 + rs.getInt("visaReceived") + rs.getInt("masterReceived") + rs.getInt("otherreceived"); 
-                tValues[tmpPos][5] = new DecimalFormat("#0.00").format(received / 100.0);
-                tValues[tmpPos][6] = new DecimalFormat("#0.00").format(rs.getInt("tip") / 100.0);
-                tValues[tmpPos][7] = new DecimalFormat("#0.00").format(rs.getInt("cashback") / 100.0);
+                tValues[tmpPos][5] = BarUtil.formatMoney(received / 100.0);
+                tValues[tmpPos][6] = BarUtil.formatMoney(rs.getInt("tip") / 100.0);
+                tValues[tmpPos][7] = BarUtil.formatMoney(rs.getInt("cashback") / 100.0);
                 int status = rs.getInt("status");
                 switch (status) {
 				case DBConsts.completed:
@@ -386,17 +386,17 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
 					tValues[tmpPos][8] = "void";
 					break;
 				default:
-					tValues[tmpPos][8] = new DecimalFormat("#0.00").format(status / 100.0);
+					tValues[tmpPos][8] = BarUtil.formatMoney(status / 100.0);
 					break;
 				}
                 tValues[tmpPos][9] = rs.getString("employee.nName");
                 tValues[tmpPos][10] = rs.getString("Comment");
                 tValues[tmpPos][11] = rs.getString("OpenTime");
-                tValues[tmpPos][12] = new DecimalFormat("#0.00").format(rs.getInt("cashReceived") / 100.0);
-                tValues[tmpPos][13] = new DecimalFormat("#0.00").format(rs.getInt("debitReceived") / 100.0);
-                tValues[tmpPos][14] = new DecimalFormat("#0.00").format(rs.getInt("visaReceived") / 100.0);
-                tValues[tmpPos][15] = new DecimalFormat("#0.00").format(rs.getInt("masterReceived") / 100.0);
-                tValues[tmpPos][16] = new DecimalFormat("#0.00").format(rs.getInt("otherreceived") / 100.0);
+                tValues[tmpPos][12] = BarUtil.formatMoney(rs.getInt("cashReceived") / 100.0);
+                tValues[tmpPos][13] = BarUtil.formatMoney(rs.getInt("debitReceived") / 100.0);
+                tValues[tmpPos][14] = BarUtil.formatMoney(rs.getInt("visaReceived") / 100.0);
+                tValues[tmpPos][15] = BarUtil.formatMoney(rs.getInt("masterReceived") / 100.0);
+                tValues[tmpPos][16] = BarUtil.formatMoney(rs.getInt("otherreceived") / 100.0);
                 
                 tmpPos++;
             }

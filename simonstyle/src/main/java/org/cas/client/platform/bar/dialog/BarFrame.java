@@ -14,7 +14,6 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
@@ -46,7 +45,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.149-20190220";
+	private String VERSION = "V0.153-20190222";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
@@ -671,7 +670,8 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		//validate parameters
 		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
 		openTime = openTime == null ? BarFrame.instance.valStartTime.getText() : openTime;
-		
+		//all the bill should already completed when table closed except those was generated while has no output on it.
+		//this is the designed time to clean those bills.
 		StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.deleted)
         		.append(" WHERE tableID = '").append(tableName)
 				.append("' and OPENTIME = '").append(openTime)
@@ -737,8 +737,6 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     public JLabel valOperator;
     public JLabel valStartTime;
 
-    private DecimalFormat decimalFormat = new DecimalFormat("#0.00");
-    
     public JPanel[] panels = new JPanel[4];
     public static MenuPanel menuPanel;
     static JLabel lblStatus;

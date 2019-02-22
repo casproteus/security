@@ -13,7 +13,6 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Vector;
 
@@ -27,6 +26,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
@@ -203,7 +203,7 @@ public class CheckInOutListDlg  extends JDialog
 			tShoestring = Integer.parseInt((String)CustOpts.custOps.getValue(BarFrame.consts.Shoestring()));
 		}catch(Exception exp){
 		}
-		tfdMoneyCurrent = new JTextField(new DecimalFormat("#0.00").format(tShoestring/100.0));
+		tfdMoneyCurrent = new JTextField(BarUtil.formatMoney(tShoestring/100.0));
 		tfdMoneyLeft = new JTextField();
 		lblUnit = new JLabel(BarOption.getMoneySign());
 		lblUnit2 = new JLabel(BarOption.getMoneySign());
@@ -302,7 +302,7 @@ public class CheckInOutListDlg  extends JDialog
 			}catch(Exception exp){
 			}
 			Float tReceived = (Float)tblContent.getValueAt(tblContent.getRowCount() - 1, 4);
-			tfdMoneyLeft.setText(new DecimalFormat("#0.00").format(
+			tfdMoneyLeft.setText(BarUtil.formatMoney(
 					(tShoestring - tReceived.floatValue() * 100.0)/100.0));
 		}
 	}

@@ -5,12 +5,12 @@ import java.awt.Image;
 import java.awt.Label;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.text.DecimalFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.CASUtility;
 
@@ -131,7 +131,7 @@ public class CustomerFrame extends JDialog implements ComponentListener{
 		valChange.setText(BarOption.getMoneySign() + String.valueOf(left/100f));
 		
 		int totalprice = Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100);
-		valReceived.setText(BarOption.getMoneySign() + new DecimalFormat("#0.00").format((totalprice + left)/100f));
+		valReceived.setText(BarOption.getMoneySign() + BarUtil.formatMoney((totalprice + left)/100f));
 	}
 	
 }

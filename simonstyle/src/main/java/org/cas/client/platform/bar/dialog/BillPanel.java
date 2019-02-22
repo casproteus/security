@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.sql.ResultSet;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +25,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.DBConsts;
@@ -205,7 +205,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					dish.setTotalPrice((dish.getPrice() - dish.getDiscount()) * tQTY);
 					
 					tblBillPanel.setValueAt(tQTY % BarOption.MaxQTY + "x", row, 0);
-					tblBillPanel.setValueAt(BarOption.getMoneySign() + new DecimalFormat("#0.00").format((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f), row, 3);
+					tblBillPanel.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f), row, 3);
 				}
 				updateTotleArea();
 				tblBillPanel.setSelectedRow(selectedRow);
@@ -229,7 +229,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 						int row = tblBillPanel.getSelectedRow();
 						orderedDishAry.get(row).setNum(tQTY);
 						tblBillPanel.setValueAt(tQTY == 1 ? "" : tQTY + "x"  , row, 0);		
-						tblBillPanel.setValueAt(BarOption.getMoneySign() + new DecimalFormat("#0.00").format((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f), row, 3);
+						tblBillPanel.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f), row, 3);
 					}
 				}
 				updateTotleArea();
@@ -431,7 +431,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         tblBillPanel.setValueAt("", tValidRowCount, 0); // set the count.
         tblBillPanel.setValueAt(dish.getLanguage(CustOpts.custOps.getUserLang()), tValidRowCount, 1);// set the Name.
         tblBillPanel.setValueAt(dish.getSize() > 1 ? dish.getSize() : "", tValidRowCount, 2); // set the count.
-        tblBillPanel.setValueAt(BarOption.getMoneySign() + new DecimalFormat("#0.00").format(price/100f), tValidRowCount, 3); // set the price.
+        tblBillPanel.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney(price/100f), tValidRowCount, 3); // set the price.
         
         updateTotleArea();								//because value change will not be used to remove the record.
         SwingUtilities.invokeLater(new Runnable() {
@@ -521,13 +521,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	}
     	totalGst = Math.round(totalGst);
     	totalQst = Math.round(totalQst);
-    	lblDiscount.setText(discount > 0 ? BarFrame.consts.Discount() + " : -" + BarOption.getMoneySign() + new DecimalFormat("#0.00").format((discount)/100f) : "");
-    	lblServiceFee.setText(serviceFee > 0 ? BarFrame.consts.ServiceFee() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format((serviceFee)/100f) : "");
-    	lblSubTotle.setText(BarFrame.consts.Subtotal() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(subTotal/100f));
-    	lblTPS.setText(BarFrame.consts.GST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(totalGst/100f));
-    	lblTVQ.setText(BarFrame.consts.QST() + " : " + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(totalQst/100f));
+    	lblDiscount.setText(discount > 0 ? BarFrame.consts.Discount() + " : -" + BarOption.getMoneySign() + BarUtil.formatMoney((discount)/100f) : "");
+    	lblServiceFee.setText(serviceFee > 0 ? BarFrame.consts.ServiceFee() + " : " + BarOption.getMoneySign() + BarUtil.formatMoney((serviceFee)/100f) : "");
+    	lblSubTotle.setText(BarFrame.consts.Subtotal() + " : " + BarOption.getMoneySign() + BarUtil.formatMoney(subTotal/100f));
+    	lblTPS.setText(BarFrame.consts.GST() + " : " + BarOption.getMoneySign() + BarUtil.formatMoney(totalGst/100f));
+    	lblTVQ.setText(BarFrame.consts.QST() + " : " + BarOption.getMoneySign() + BarUtil.formatMoney(totalQst/100f));
         int total = Math.round(subTotal + totalGst + totalQst);
-        valTotlePrice.setText(new DecimalFormat("#0.00").format((total)/100f));
+        valTotlePrice.setText(BarUtil.formatMoney((total)/100f));
     }
     
     void initContent() {
@@ -591,7 +591,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				
 				tValues[tmpPos][2] = lang;
 				if(dish.getDiscount() > 0) {
-					tValues[tmpPos][2] = lang + "  -" + BarOption.getMoneySign() + new DecimalFormat("#0.00").format(dish.getDiscount()/100.0);
+					tValues[tmpPos][2] = lang + "  -" + BarOption.getMoneySign() + BarUtil.formatMoney(dish.getDiscount()/100.0);
 				}
 				
 				tValues[tmpPos][3] =  BarOption.getMoneySign() + dish.getTotalPrice() / 100f;
