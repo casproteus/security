@@ -6,23 +6,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
-import org.cas.client.platform.bar.i18n.BarDlgConst;
-import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.uibeans.ColorChooserButton;
 import org.cas.client.platform.bar.uibeans.ColorChooserButton.ColorChangedListener;
 import org.cas.client.platform.cascustomize.CustOpts;
-import org.cas.client.platform.casutil.ErrorUtil;
-import org.cas.client.platform.pimmodel.PIMDBModel;
 
 public class SettingColorDlg extends JDialog implements ActionListener, ComponentListener {
 
@@ -183,7 +174,7 @@ public class SettingColorDlg extends JDialog implements ActionListener, Componen
                  ((TablesPanel)BarFrame.instance.panels[0]).initComponent();
                  ((BillListPanel)BarFrame.instance.panels[1]).initComponent();
                  ((SalesPanel)BarFrame.instance.panels[2]).initComponent();
-                 initComponent();
+                 //this will cause the dialog can not recoginze the OK button.  initComponent();
                  add(BarFrame.menuPanel);
             }
         });
@@ -277,57 +268,6 @@ public class SettingColorDlg extends JDialog implements ActionListener, Componen
 				lblArrowBtnBackGround.getY(), 100, CustOpts.BTN_HEIGHT);
     }
 
-    private ArrayList<String> getAllModification() {
-        StringBuilder sql = new StringBuilder("SELECT * FROM modification where status = ").append(DBConsts.original);
-        ArrayList<String> nameVec = new ArrayList<String>();
-        try {
-
-            Statement smt = PIMDBModel.getReadOnlyStatement();
-            ResultSet rs = smt.executeQuery(sql.toString());
-            while (rs.next()) {
-            	StringBuilder sb = new StringBuilder(rs.getString("lang1")).append(BarDlgConst.semicolon);
-            	sb.append(rs.getString("lang2")).append(BarDlgConst.semicolon);
-            	sb.append(rs.getString("lang3")).append(BarDlgConst.semicolon);
-            	sb.append(rs.getString("lang4"));
-                nameVec.add(sb.toString());
-            }
-
-            // 关闭
-            smt.close();
-            smt = null;
-            rs.close();
-            rs = null;
-
-            return nameVec;
-            
-        } catch (SQLException e) {
-            ErrorUtil.write(e);
-            return null;
-        }
-    }
-    
-    /**
-     * 解析一个逗号分隔符处理的字符串 getTextAreaData
-     */
-    private String[] stringToArray( String string) {
-        if (string != null) {
-            // 构建字符串分隔器
-            StringTokenizer token = new StringTokenizer(string, BarDlgConst.delimiter);
-            int size = token.countTokens();
-            // 构建相应容量的字符串数组
-            String[] indexes = new String[size];
-            size = 0;
-            // 循环加入,去掉空格的
-            while (token.hasMoreTokens()) {
-                indexes[size] = token.nextToken().trim();
-                size++;
-            }
-            return indexes;
-        } else {
-            return null;
-        }
-    }
-
     /**
      * Invoked when an action occurs.
      * 
@@ -335,64 +275,13 @@ public class SettingColorDlg extends JDialog implements ActionListener, Componen
      *            动作事件
      */
     @Override
-	public void actionPerformed(
-            ActionEvent e) {
+	public void actionPerformed( ActionEvent e) {
          if (e.getSource() == btnOK) {
+        	this.setVisible(false);
             dispose();
         }
     }
 
-    private boolean insertModification( String modification) {
-        StringBuilder sql = new StringBuilder("INSERT INTO modification (lang1, lang2, lang3, lang4, status) VALUES( '");
-        String[] langs = modification.split(BarDlgConst.semicolon);
-        sql.append(langs.length > 0 ? langs[0] : "");
-        sql.append("', '");
-        sql.append(langs.length > 1 ? langs[1] : "");
-        sql.append("', '");
-        sql.append(langs.length > 2 ? langs[2] : "");
-        sql.append("', '");
-        sql.append(langs.length > 3 ? langs[3] : "");
-        sql.append("', 0);");
-
-        try {
-            Statement smt = PIMDBModel.getStatement();
-            int rows = smt.executeUpdate(sql.toString());
-
-            // 关闭
-            smt.close();
-            smt = null;
-
-            return rows != 0;
-        } catch (SQLException e) {
-        	ErrorUtil.write(e);
-            return false;
-        }
-    }
-    
-    private boolean updateToModification(String modification){
-        String[] langs = modification.split(BarDlgConst.semicolon);
-    	StringBuilder sql = new StringBuilder("update modification set lang2 = '");
-        sql.append(langs.length > 1 ? langs[1] : "");
-        sql.append("', lang3 = '");
-        sql.append(langs.length > 2 ? langs[2] : "");
-        sql.append("', lang4 = '");
-        sql.append(langs.length > 3 ? langs[3] : "");
-        sql.append("' where lang1 = '").append(langs[0]).append("';");
-
-        try {
-            Statement smt = PIMDBModel.getStatement();
-            int rows = smt.executeUpdate(sql.toString());
-            // 关闭
-            smt.close();
-            smt = null;
-
-            return rows != 0;
-        } catch (SQLException e) {
-        	ErrorUtil.write(e);
-            return false;
-        }
-    }
-    
     // 以下为本类的变量声明
     private JButton btnOK;
     JLabel lblLoginBackGround;
