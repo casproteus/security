@@ -111,6 +111,7 @@ public interface BarDlgConst {
     String reCeivedMoneyNotEnough();
     String LeftMoney();
     String UnSavedContentWillBeLost();
+    String NoNewSelectionToCancel();
     String Left();
     String OPENTIME();
     String EndTime();

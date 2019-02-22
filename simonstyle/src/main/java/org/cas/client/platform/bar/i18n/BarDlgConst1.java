@@ -206,6 +206,8 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String UnSavedContentWillBeLost() {return "The un saved content will be lost";}
     @Override
+	public String NoNewSelectionToCancel() {return "There's no new selection to cancel! Do you want to cancel the whole bill?";}
+    @Override
 	public String Left() {return "Left";}
     @Override
 	public String OPENTIME() {return "OPEN TIME";}

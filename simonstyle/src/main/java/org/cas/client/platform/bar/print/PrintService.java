@@ -102,6 +102,7 @@ public class PrintService{
 
 	private static final String CASH = "ARGENT";
 	private static final String REFUND = "Refund : ";
+	private static final String VOID = "*Voided*";
     
     //The start time and end time are long format, need to be translate for print.
     public static void exePrintBill(BillPanel billPanel, List<Dish> saleRecords){
@@ -270,6 +271,18 @@ public class PrintService{
         printContents();
     }
     
+    public static void exePrintVoid(BillPanel billPanel){
+    	 flushIpContent();
+         reInitPrintRelatedMaps();
+
+         String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
+         if(ipContentMap.get(printerIP) == null)
+         	ipContentMap.put(printerIP,new ArrayList<String>());
+         ipContentMap.get(printerIP).addAll(
+         		formatContentForVoid(printerIP, billPanel));
+         printContents();
+    }
+    
     //
     public static void exePrintRefund(BillPanel billPanel, int refundAmount){
         flushIpContent();
@@ -279,7 +292,7 @@ public class PrintService{
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
-        		formatContentForRefund(billPanel.orderedDishAry, printerIP, billPanel, refundAmount));
+        		formatContentForRefund(printerIP, billPanel, refundAmount));
         printContents();
     }
     
@@ -419,7 +432,6 @@ public class PrintService{
     	int errorsAmount = 0;
         for(Entry<String,List<String>> entry : ipContentMap.entrySet()) {
         	List<String> sndMsg = entry.getValue();
-        	//for(int i = contents.size() - 1; i >= 0 ; i--) {
         	if(sndMsg.size() > 0) {
         		boolean printSuccessful = false;
         		String printerID = entry.getKey();
@@ -502,7 +514,7 @@ public class PrintService{
 	    		sndMsg.remove(3);
 				break;
 				
-			case "D_RFER"://reprinted receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice".
+			case "V_RFER"://reprinted receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice".
 				sndMsg.remove(10);
 				sndMsg.remove(9);
 	    		sndMsg.remove(8);
@@ -558,8 +570,8 @@ public class PrintService{
 			return "ADDI";
 		}else if (sndMsg.size() == 10) {	//currently if it's receipt/invoice, sndMsg has 9 element. 
 			return "RFER";
-		}else if (sndMsg.size() == 11) {	//currently if it's duplicated receipt, sndMsg has 10 element. 
-			return "D_RFER";
+		}else if (sndMsg.size() == 11) {	//currently if it's void receipt, sndMsg has 11 element. 
+			return "V_RFER";
 		}else if (sndMsg.size() == 12) {	//currently if it's re-receipt, sndMsg has 12 element. 
 			return "R_RFER";
 		}
@@ -639,11 +651,13 @@ public class PrintService{
 		
 		HashMap<String, String> map = new HashMap<String, String>();
 		boolean isRefund = false;
+		boolean isVoided = false;
 		
 		String etatDoc = "I";	//Whether the contents of the <doc> tag are present and if they must be printed.
 		 						//• A (Absent and not to be printed)  • I (present and to be Printed)		• N (present but Not to be printed)
 		String modeTrans = LoginDlg.MODETRANS;	// the mode in which	transactions are recorded in an SRS. • O (Operational)	• F (Training)
 												// when user login with system user, it' will be change to "F". if use notmal user, it will be "O"....
+		//TODO: logic here need to be checked
 		String duplicata = "N";// whether this is a copy for the operator’s own needs.1 There are two possible values: • O (Yes) • N (No)
 		if("*re-printed invoice*".equals(sndMsg.get(0).trim())) {	//if the first element is "*re-printed invoice*\n\n" then set to be duplicated.
 			transType = transType.substring(2);
@@ -664,6 +678,12 @@ public class PrintService{
 			map.put("reimpression", "O");
 			//modify the content to be negative.
 			isRefund = true;
+		}else if(sndMsg.get(3).contains(VOID)){	//if it's Voided.
+			transType = transType.substring(2);
+			duplicata = "N";
+			map.put("reimpression", "N");
+			//modify the content to be 0.
+			isVoided = true;
 		}else {
 			map.put("reimpression", "N");
 		}
@@ -694,8 +714,10 @@ public class PrintService{
 				int startPos = tText.indexOf("#");
 				if(startPos >= 0) {
 					numeroTrans = tText.substring(startPos + 1, tText.indexOf("\n", startPos));
-					if(numeroTrans.length() > 10) { //if bigger than 10, then use only the last 10 numbers.
-						numeroTrans = numeroTrans.substring(numeroTrans.length() - 10); 
+					if(numeroTrans.length() >= 10) { //if bigger than 9, then use only the last 9 numbers.
+						numeroTrans = "S" + numeroTrans.substring(numeroTrans.length() - 9); 
+					}else {
+						numeroTrans = "S" + numeroTrans;
 					}
 				}
 			}else if(i == 1) {//find out the table and client and time and sub total and tps tpq
@@ -740,7 +762,12 @@ public class PrintService{
 						TPSTrans = formatMoneyForMev(new DecimalFormat("#0.00").format(floatPrice * gstRate/100.0), isRefund);//+000001.09
 						TVQTrans = formatMoneyForMev(new DecimalFormat("#0.00").format(floatPrice * qstRate/100.0), isRefund);//+000001.72
 						mtTransApTaxes = formatMoneyForMev(new DecimalFormat("#0.00").format(refund), isRefund);
-					}else {
+					} else if (isVoided) {
+						mtTransAvTaxes = formatMoneyForMev("0.00", false);//+000021.85
+						TPSTrans = formatMoneyForMev("0.00", false);//+000001.09
+						TVQTrans = formatMoneyForMev("0.00", false);//+000001.72
+						mtTransApTaxes = formatMoneyForMev("#0.00", false);
+					} else {
 						String strAvT = a[0].substring(a[0].indexOf(":") + 1);
 						mtTransAvTaxes = formatMoneyForMev(strAvT, isRefund);//+000021.85
 						String strTPS = a[1].substring(a[1].indexOf(":") + 1);
@@ -755,6 +782,8 @@ public class PrintService{
 				String total = tText.substring(tText.indexOf(":") + 1).trim();
 				if(isRefund && total.startsWith("-")) {
 					total = total.substring(1);
+				}else if(isVoided) {
+					total = "0.00";
 				}
 				mtTransApTaxes = formatMoneyForMev(total, isRefund);
 			}else if(i == 4) { // find out the payment.
@@ -1106,8 +1135,7 @@ public class PrintService{
         return strAryFR;
     }
     
-    private static ArrayList<String> formatContentForRefund(
-    		List<Dish> list, String curPrintIp, BillPanel billPanel, int refundAmount){
+    private static ArrayList<String> formatContentForVoid(String curPrintIp, BillPanel billPanel){
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	int tWidth = BarUtil.getPreferedWidth();
     	
@@ -1116,8 +1144,27 @@ public class PrintService{
 	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
 	    pushWaiterAndTime(strAryFR, tWidth, tableIdx, startTimeStr.toString(), "");
 	    
-	    strAryFR.add(getServiceDetailContent(list, curPrintIp, billPanel, tWidth).toString());
-        pushNewTotal(billPanel, strAryFR, refundAmount, tWidth);
+	    strAryFR.add(getServiceDetailContent(billPanel.orderedDishAry, curPrintIp, billPanel, tWidth).toString());
+        pushVoidedTotal(billPanel, strAryFR, tWidth);
+        
+        pushEndMessage(strAryFR);
+    	strAryFR.add("\n##REFUND##\n\n");
+        strAryFR.add("\n\n\n\n\n");
+        strAryFR.add("cut");
+        return strAryFR;
+    }
+    
+    private static ArrayList<String> formatContentForRefund(String curPrintIp, BillPanel billPanel, int refundAmount){
+    	ArrayList<String> strAryFR = new ArrayList<String>();
+    	int tWidth = BarUtil.getPreferedWidth();
+    	
+	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
+	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
+	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
+	    pushWaiterAndTime(strAryFR, tWidth, tableIdx, startTimeStr.toString(), "");
+	    
+	    strAryFR.add(getServiceDetailContent(billPanel.orderedDishAry, curPrintIp, billPanel, tWidth).toString());
+        pushRefundAndNewTotal(billPanel, strAryFR, refundAmount, tWidth);
         
         pushEndMessage(strAryFR);
     	strAryFR.add("\n##REFUND##\n\n");
@@ -1412,21 +1459,36 @@ public class PrintService{
         strAryFR.add(content.toString());
 	}
 	
-	private static void pushNewTotal(BillPanel billPanel, ArrayList<String> strAryFR, int refund, int tWidth) {
+	private static void pushVoidedTotal(BillPanel billPanel, ArrayList<String> strAryFR, int tWidth) {
 		StringBuilder content = new StringBuilder();
-		String refundStr = new DecimalFormat("#0.00").format(refund/100f);
-	    content.append("Refund : ")
-	    	.append(BarUtil.generateString(tWidth - 9 - refundStr.length(), " ")).append(refundStr)
-	        .append("\n");
+		//push refund into ary.
+	    content.append("          ****Voided****").append("\n");
 	    strAryFR.add(content.toString());    
+	    
+	    //push new totall
+		//push bigger font. while it will not work for mev.
+        strAryFR.add("BigFont");
+        //push NEW total
+        content = new StringBuilder("Total : 0.00").append("\n");
+        strAryFR.add(content.toString());
+        //push normal font
+        strAryFR.add("NormalFont");
+	}
+	
+	private static void pushRefundAndNewTotal(BillPanel billPanel, ArrayList<String> strAryFR, int refund, int tWidth) {
+		StringBuilder content = new StringBuilder();
+		//push refund into ary.
+		String refundStr = new DecimalFormat("#0.00").format(refund/100f);
+	    content.append("Refund : ").append(BarUtil.generateString(tWidth - 9 - refundStr.length(), " ")).append(refundStr).append("\n");
+	    strAryFR.add(content.toString());    
+	    
+	    //push new totall
 		//push bigger font. while it will not work for mev.
         strAryFR.add("BigFont");
         //push NEW total
         String strTotal = billPanel.valTotlePrice.getText();
         String newTotal = new DecimalFormat("#0.00").format(Float.valueOf(strTotal) + Float.valueOf(refundStr));
-        content = new StringBuilder("Total : ")
-			.append(newTotal).append("\n");
-       
+        content = new StringBuilder("Total : ").append(newTotal).append("\n");
         strAryFR.add(content.toString());
         //push normal font
         strAryFR.add("NormalFont");
