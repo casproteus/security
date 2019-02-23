@@ -216,7 +216,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         }else if(o == btnPrintInvoice) {
         	if(showInSalesPanel()) {
         		//use true as case back when re printing invoice. because no need to mention that restaurant receiced tips. 
-        		PrintService.exePrintInvoice(((SalesPanel)BarFrame.instance.panels[2]).billPanel, true, ckxIsToCustomer.isSelected());
+        		PrintService.exePrintInvoice(((SalesPanel)BarFrame.instance.panels[2]).billPanel, true, ckxIsToCustomer.isSelected(), true);
         	}
         }
     }
