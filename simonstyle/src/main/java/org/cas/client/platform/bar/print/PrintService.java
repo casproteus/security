@@ -79,6 +79,8 @@ public class PrintService{
     private static String SERVICE_FEE = "Service Fee";
     private static String DISCOUNT = "Discount";
     
+    private static String RFER = "RFER";
+    
     private boolean printerConnectedFlag;
     private boolean contentReadyForPrintFlag;
     
@@ -257,11 +259,16 @@ public class PrintService{
 	}
     
 	//The start time and end time are long format, need to be translate for print.
-    public static void exePrintInvoice(BillPanel billPanel, boolean isCashBack, boolean isToCustomer){
+	//needPrint: sometimes we dont need to print out content, while we always need to send mev a query.
+    public static void exePrintInvoice(BillPanel billPanel, boolean isCashBack, boolean isToCustomer, boolean needPrint){
         flushIpContent();
         reInitPrintRelatedMaps();
 
         String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
+        if(!"mev".equalsIgnoreCase(printerIP) && !needPrint) {
+        	return;
+        }
+        
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         
@@ -547,7 +554,7 @@ public class PrintService{
 		String filePath = CASUtility.getPIMDirPath().concat(new Date().getTime() + "transaction.xml");
 		Path path = Paths.get(filePath);
 		try {
-	    	Files.write(path, "REPORT".equals(transType) ? buildMevReportContent(sndMsg) : buildMevFormatContent(sndMsg, transType));
+	    	Files.write(path, "REPORT".equals(transType) ? buildMevReportContent(sndMsg) : transferToMevFormat(sndMsg, transType));
         } catch (IOException e) {
         	ErrorUtil.write(e);
         }
@@ -640,29 +647,26 @@ public class PrintService{
 
 		return path;
 	}
-	
-	private static byte[] buildMevFormatContent(List<String> sndMsg, String transType) {
-		
-		//the contents could be composed by :1/Command.BEEP 2/BigFont 3/NormalFont 4/cut 5/content.
-		//while when sending to mev device, the sndMsg could only be content. and length will always be 1.
+
+	//the contents could be composed by :1/Command.BEEP 2/BigFont 3/NormalFont 4/cut 5/content.
+	//while when sending to mev device, the sndMsg could only be content. and length will always be 1.
+	private static byte[] transferToMevFormat(List<String> sndMsg, String transType) {
 		
 		byte[] formattedContent = null;//the byte ary we will make the content into 
 		
-		HashMap<String, String> map = new HashMap<String, String>();
+		HashMap<String, String> map = new HashMap<String, String>();//use the map to save every properties for mev.
 		boolean isRefund = false;
 		boolean isVoided = false;
 		
-		String etatDoc = "I";	//Whether the contents of the <doc> tag are present and if they must be printed.
-		 						//• A (Absent and not to be printed)  • I (present and to be Printed)		• N (present but Not to be printed)
-		String modeTrans = LoginDlg.MODETRANS;	// the mode in which	transactions are recorded in an SRS. • O (Operational)	• F (Training)
-												// when user login with system user, it' will be change to "F". if use notmal user, it will be "O"....
-		//TODO: logic here need to be checked
-		String duplicata = "N";// whether this is a copy for the operator’s own needs.1 There are two possible values: • O (Yes) • N (No)
+		String modeTrans = LoginDlg.MODETRANS;	// the mode of transactions • O (Operational)	• F (Training)   when user login with system user, or set into
+												// "training mode" in setting view by manager. it' will be change to "F". until relogin with a normal user.
+		//By default, it's not a internal used bill.
+		String duplicata = "N";// whether this is for internal used.• O (Yes) • N (No)
 		if("*re-printed invoice*".equals(sndMsg.get(0).trim())) {	//if the first element is "*re-printed invoice*\n\n" then set to be duplicated.
 			transType = transType.substring(2);
 			sndMsg.remove(0);
 			
-			duplicata = "O";
+			duplicata = "O"; 				//means for internal use only.
 			map.put("reimpression", "N");	//set reprint flag.
 			
 			if("*re-printed invoice*".equals(sndMsg.get(0).trim())) {	//if two elements was added, measn it's re impression.
@@ -688,15 +692,17 @@ public class PrintService{
 		}
 		
 		//mev1 = "<reqMEV><trans noVersionTrans="v0%s.00" etatDoc="%s" modeTrans="%s" duplicata="%s"><doc><texte><![CDATA[";
+		String etatDoc = BarOption.isSavePrintInvoiceWhenBilled() && transType.equals(RFER) ? "I" : "N";	//Whether the contents of the <doc> tag are present and if they must be printed.
+			//• A (Absent and not to be printed)  • I (present and to be Printed)		• N (present but Not to be printed)
 		StringBuilder printContent = new StringBuilder(String.format(mev1, 2, etatDoc, modeTrans, duplicata));	
 		
 		String paiementTrans = "SOB";
 		String comptoir = BarOption.isFastFoodMode() ? "O" : "N";
 		String autreCompte = "S";	//Identifies any sales recorded in a system other than the SRS.• F(Package deal)• G(Group event)• S Sans objet (N/A)
 
-		String numeroTrans = "";
-		String tableTrans = "";
-		String serveurTrans = "";
+		String numeroTrans = "#1";
+		String tableTrans = "T1";
+		String serveurTrans = "Tao";
 		String dateTrans = "00000000000000";	//20090128084800
 		String mtTransAvTaxes = "+000000.00";	//+000021.85
 		String TPSTrans = "+000000.00";		//+000001.09
@@ -811,7 +817,7 @@ public class PrintService{
 		map.put("paiementTrans", paiementTrans); //method of payment for the transaction.ARG ARGent (cash) • AUT(other) • CRE(credit card)• DEB(debit card)• MIX(mixed payment) • SOB(N/A)
 		map.put("comptoir", comptoir);	//whether the operator uses  the SRS’ Counter service operating mode
 		
-		map.put("numeroTrans", (numeroTrans == null || numeroTrans.trim().length() == 0) ? "0" : numeroTrans);//Number of the current transaction. This number must match the one in the body of the bill ( in the <doc> tag).
+		map.put("numeroTrans", numeroTrans);//Number of the current transaction. This number must match the one in the body of the bill ( in the <doc> tag).
 		map.put("dateTrans", dateTrans);
 		map.put("mtTransAvTaxes", mtTransAvTaxes);
 		map.put("TPSTrans", TPSTrans);

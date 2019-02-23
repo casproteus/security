@@ -320,10 +320,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	PrintService.openDrawer();
         	//let's qa decide if we should go back to table interface.
         	if(left <= 0) {
-        		if(billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled()) {
-	        		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
-	        		PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true);
-        		}
+	        	BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
+        		boolean needToBePrinted = billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled();
+	        	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
         		BarFrame.instance.switchMode(0);
         	}
         	
@@ -348,10 +347,10 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	resetContent();
         	this.setVisible(false);
 
-    		if(billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled()) {
-        		BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
-        		PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true);
-    		}
+        	BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
+        	boolean needToBePrinted = billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled();
+        	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
+        	
     		PrintService.openDrawer();
         	BarFrame.instance.switchMode(0);
         	
