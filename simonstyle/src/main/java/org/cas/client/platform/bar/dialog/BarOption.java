@@ -439,4 +439,12 @@ public class BarOption {
 	public static void setIsWaiterAllowedToChangePrice(boolean isWaiterAllowedToChangePrice) {
 		CustOpts.custOps.setKeyAndValue("isWaiterAllowedToChangePrice", String.valueOf(isWaiterAllowedToChangePrice));
 	}
+	
+	public static String getBillNumberStartStr() {
+    	return CustOpts.custOps.getValue("BillNumberStartStr") == null ? 
+    			"#" : (String)CustOpts.custOps.getValue("BillNumberStartStr");
+	}
+	public static void setBillNumberStartStr(String BillNumberStartStr) {
+    	CustOpts.custOps.setKeyAndValue("BillNumberStartStr", BillNumberStartStr);
+	}
 }

@@ -79,6 +79,7 @@ public class PrintService{
     private static String SERVICE_FEE = "Service Fee";
     private static String DISCOUNT = "Discount";
     
+    private static String ADDI = "ADDI";
     private static String RFER = "RFER";
     
     private boolean printerConnectedFlag;
@@ -112,13 +113,15 @@ public class PrintService{
         reInitPrintRelatedMaps();
         
         String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
-        if(ipContentMap.get(printerIP) == null)
+        List<String> contents = ipContentMap.get(printerIP);
+		if(contents == null) {
         	ipContentMap.put(printerIP,new ArrayList<String>());
-        
+        	contents = ipContentMap.get(printerIP);
+		}
         int tWidth = BarUtil.getPreferedWidth();
         
         //push head info
-	    pushBillHeadInfo(ipContentMap.get(printerIP), tWidth, String.valueOf(saleRecords.get(0).getBillID()));
+	    pushBillHeadInfo(contents, tWidth, String.valueOf(saleRecords.get(0).getBillID()));
 	    
 	    //push table, bill waiter and time
 	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
@@ -126,7 +129,7 @@ public class PrintService{
 	    if(billPanel.billButton != null) {
 	    	startTimeStr.append("(").append(billPanel.billButton.getText()).append(")");
 	    }
-	    pushWaiterAndTime(ipContentMap.get(printerIP), tWidth, tableIdx, startTimeStr.toString(), "");
+	    pushWaiterAndTime(contents, tWidth, tableIdx, startTimeStr.toString(), "");
 	    
 	    //push content and total
 	    String content = formatContentForBill(saleRecords, printerIP, billPanel, tWidth).toString();
@@ -135,17 +138,17 @@ public class PrintService{
 	    int pStart = content.substring(0, pEnd).lastIndexOf("\n");//ignore the "\n" at the end
 	    String lastRow = content.substring(pStart, pEnd);
 	    
-	    ipContentMap.get(printerIP).add(content.substring(0, pStart + 1));
-	    ipContentMap.get(printerIP).add("BigFont");	    //push bigger font. while it will not work for mev.
-	    ipContentMap.get(printerIP).add(lastRow);
-	    ipContentMap.get(printerIP).add("NormalFont");     //push normal font
+	    contents.add(content.substring(0, pStart + 1));
+	    contents.add("BigFont");	    //push bigger font. while it will not work for mev.
+	    contents.add(lastRow);
+	    contents.add("NormalFont");     //push normal font
         
         //push end message
-        pushEndMessage(ipContentMap.get(printerIP));
+        pushEndMessage(contents);
         
         //push cut
-        ipContentMap.get(printerIP).add("\n\n\n\n\n");
-        ipContentMap.get(printerIP).add("cut");
+        contents.add("\n\n\n\n\n");
+        contents.add("cut");
         
         printContents();
     }
@@ -264,9 +267,10 @@ public class PrintService{
         flushIpContent();
         reInitPrintRelatedMaps();
 
+        //there's a case that we don't print invoice: when it's not mev print, and and bill printed, and set the flag of saving paper.
         String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
-        if(!"mev".equalsIgnoreCase(printerIP) && !needPrint) {
-        	return;
+        if(!"mev".equalsIgnoreCase(printerIP) && !needPrint) {	//needPrint == false means bill printed and saving paper flag is set.
+        	return;												//when called from Print button on checkListDlg, the needPrint is true.
         }
         
         if(ipContentMap.get(printerIP) == null)
@@ -289,7 +293,6 @@ public class PrintService{
          printContents();
     }
     
-    //
     public static void exePrintRefund(BillPanel billPanel, int refundAmount){
         flushIpContent();
         reInitPrintRelatedMaps();
@@ -442,7 +445,7 @@ public class PrintService{
         		boolean printSuccessful = false;
         		String printerID = entry.getKey();
         		//the first printer (P1) might be printer connected by serial port. and might be through a mev device.
-        		if("mev".equalsIgnoreCase(printerID)) {	// if it's for mev. then should be unique format, no command inside.
+        		if("mev".equalsIgnoreCase(printerID)) {	// if it's for mev. before print, should change to unique "mev-format", no command inside.
              		printSuccessful = doMevPrint(sndMsg);
              	} else if("serial".equalsIgnoreCase(printerID)) { 
             		printSuccessful = doSerialPrint(sndMsg);
@@ -498,7 +501,9 @@ public class PrintService{
     
     private static boolean doMevPrint(List<String> sndMsg) {
     	//check the msg (it's a bill/check(6 item inside)  or a receipt/invoice (7 item inside)
-    	String transType = checkTransType(sndMsg);
+    	String transType = checkTransType(sndMsg);	//we've added special content when prparing the content, in method:
+    	
+    	//base on different type cleaned useless part, to left only useful elements.
     	switch (transType) {
 	    	case "ADDI"://check
 				for(int i = 9 - 1; i > 4; i--) {
@@ -545,21 +550,21 @@ public class PrintService{
 				break;
 		}
 
-    	// print the file
+    	//check if mev device and printer has been installed?
     	checkPrinter(DocFlavor.INPUT_STREAM.AUTOSENSE, new HashPrintRequestAttributeSet());
 
-		boolean isSuccess = false;
-    	//modify the sndMesg
-		// save contents into a file.
+		//build the content, save contents into a file
 		String filePath = CASUtility.getPIMDirPath().concat(new Date().getTime() + "transaction.xml");
 		Path path = Paths.get(filePath);
+		//if it's report then do simple wrap, if it's not report (bill or check), then do a complex wrap.
 		try {
 	    	Files.write(path, "REPORT".equals(transType) ? buildMevReportContent(sndMsg) : transferToMevFormat(sndMsg, transType));
         } catch (IOException e) {
         	ErrorUtil.write(e);
         }
-
-		isSuccess = printThroughOSdriver(path, new HashPrintRequestAttributeSet(), !BarOption.isDebugMode());
+		
+		//print the file out.
+		boolean isSuccess = printThroughOSdriver(path, new HashPrintRequestAttributeSet(), !BarOption.isDebugMode());
 		
 		//do cut paper.
 		if(isSuccess) {
@@ -574,11 +579,11 @@ public class PrintService{
 			return "REPORT";
 		}else if(sndMsg.size() == 9) {		//currently if it's bill/check, sndMsg has 8 element. 
 			return "ADDI";
-		}else if (sndMsg.size() == 10) {	//currently if it's receipt/invoice, sndMsg has 9 element. 
+		}else if (sndMsg.size() == 10) {	//currently if it's original receipt/invoice, sndMsg has 9 element. 
 			return "RFER";
-		}else if (sndMsg.size() == 11) {	//currently if it's void receipt, sndMsg has 11 element. 
+		}else if (sndMsg.size() == 11) {	//currently if it's VOID receipt/invoice, sndMsg has 11 element. 
 			return "V_RFER";
-		}else if (sndMsg.size() == 12) {	//currently if it's re-receipt, sndMsg has 12 element. 
+		}else if (sndMsg.size() == 12) {	//currently if it's RE-receipt/invoice, sndMsg has 12 element. 
 			return "R_RFER";
 		}
 		return "";
@@ -654,26 +659,38 @@ public class PrintService{
 		
 		byte[] formattedContent = null;//the byte ary we will make the content into 
 		
-		HashMap<String, String> map = new HashMap<String, String>();//use the map to save every properties for mev.
+		HashMap<String, String> map = new HashMap<String, String>();//use this map to save every properties for mev.
 		boolean isRefund = false;
 		boolean isVoided = false;
+		boolean needReference = transType.endsWith("RFER");
 		
-		String modeTrans = LoginDlg.MODETRANS;	// the mode of transactions • O (Operational)	• F (Training)   when user login with system user, or set into
-												// "training mode" in setting view by manager. it' will be change to "F". until relogin with a normal user.
-		//By default, it's not a internal used bill.
-		String duplicata = "N";// whether this is for internal used.• O (Yes) • N (No)
-		if("*re-printed invoice*".equals(sndMsg.get(0).trim())) {	//if the first element is "*re-printed invoice*\n\n" then set to be duplicated.
+		//we don't care what type the message is, just go through every line of it. to get out all the information needed,
+		//the first round of check, check if it's a original? reprint? or duplicate print of invoice?
+		String duplicata = "N";// whether this is for internal used.• O (Yes) • N (No), By default, it's not a internal used bill, so duplicata = N
+		String numRef = null;	//the bill number of dumpted bill, @NOTE: when a bill printed, the numRef will be set, so the mev invoice can do only record, no print.
+		String oldsubtotal = null; 
+		if(sndMsg.get(0).trim().equals("*re-printed invoice*")) {	//if the first element is "*re-printed invoice*\n\n" then set to be duplicated.
 			transType = transType.substring(2);
 			sndMsg.remove(0);
 			
 			duplicata = "O"; 				//means for internal use only.
 			map.put("reimpression", "N");	//set reprint flag.
 			
-			if("*re-printed invoice*".equals(sndMsg.get(0).trim())) {	//if two elements was added, measn it's re impression.
+			if("*re-printed invoice*".equals(sndMsg.get(0).trim())) {	//if two elements was added, means it's re impression.
 				sndMsg.remove(0);
 				
 				duplicata = "N";
 				map.put("reimpression", "O");	//set reprint flag.
+			}
+		}else if(sndMsg.get(0).trim().startsWith("*ref to:")) {
+			//if there's a ref to, means we need to add a reference element at the end no matter it's a invoice of a bill.. 
+			needReference = true;
+			//get out the number ref, and the subtotal before.
+			numRef = sndMsg.get(0).trim().substring(8);
+			sndMsg.remove(0);
+			if(sndMsg.get(0).trim().startsWith("*old subtotal:")) {
+				oldsubtotal = sndMsg.get(0).substring(14);
+				sndMsg.remove(0);
 			}
 		}else if(sndMsg.get(3).startsWith(REFUND)){	//if it's refund.
 			transType = transType.substring(2);
@@ -691,23 +708,40 @@ public class PrintService{
 			map.put("reimpression", "N");
 		}
 		
+		//need to know if it's printed, if printed, the first row must be the number of the bill.
+		String etatDoc = BarOption.isSavePrintInvoiceWhenBilled() && transType.equals(RFER) && numRef != null ? "N" : "I";	//Whether the contents of the <doc> tag are present and if they must be printed.
+												//• A (Absent and not to be printed)  • I (present and to be Printed)		• N (present but Not to be printed)
+		
+		String modeTrans = LoginDlg.MODETRANS;	// the mode of transactions • O (Operational)	• F (Training)   when user login with system user, or set into
+												// "training mode" in setting view by manager. it' will be change to "F". until relogin with a normal user.
+		
+		//==========the first part=====================
 		//mev1 = "<reqMEV><trans noVersionTrans="v0%s.00" etatDoc="%s" modeTrans="%s" duplicata="%s"><doc><texte><![CDATA[";
-		String etatDoc = BarOption.isSavePrintInvoiceWhenBilled() && transType.equals(RFER) ? "I" : "N";	//Whether the contents of the <doc> tag are present and if they must be printed.
-			//• A (Absent and not to be printed)  • I (present and to be Printed)		• N (present but Not to be printed)
 		StringBuilder printContent = new StringBuilder(String.format(mev1, 2, etatDoc, modeTrans, duplicata));	
 		
+		//==========the second part====================
+		for (int i = 0; i < sndMsg.size(); i++) {
+			printContent.append(sndMsg.get(i));
+		}
+		printContent.append(mev2);
+		
+		//==========the third part (add verify)========
 		String paiementTrans = "SOB";
 		String comptoir = BarOption.isFastFoodMode() ? "O" : "N";
 		String autreCompte = "S";	//Identifies any sales recorded in a system other than the SRS.• F(Package deal)• G(Group event)• S Sans objet (N/A)
 
-		String numeroTrans = "#1";
-		String tableTrans = "T1";
-		String serveurTrans = "Tao";
-		String dateTrans = "00000000000000";	//20090128084800
-		String mtTransAvTaxes = "+000000.00";	//+000021.85
-		String TPSTrans = "+000000.00";		//+000001.09
-		String TVQTrans = "+000000.00";		//+000001.72
-		String mtTransApTaxes = "+000000.00";	//+000024.66
+		String numeroTrans = null;//"#1";
+		String numeroRef = null;//numeroTrans;
+		String tableTrans = null;//"T1";
+		String serveurTrans = null;//"Tao";
+		String dateTrans = null;//"00000000000000";	//20090128084800
+		//String dateRef = null;//dateTrans;		//should allways be same, so no need to give a new variable.
+		String mtTransAvTaxes = null;//"+000000.00";	//+000021.85
+		String mtRefAvTaxes = null;//mtTransAvTaxes;
+		String TPSTrans = null;//"+000000.00";		//+000001.09
+		String TVQTrans = null;//"+000000.00";		//+000001.72
+		String mtTransApTaxes = null;//"+000000.00";	//+000024.66
+		
 		for (int i = 0; i < sndMsg.size(); i++) {
 			String tText = sndMsg.get(i);
 			
@@ -718,11 +752,23 @@ public class PrintService{
 			if(i == 0) {							//find out the bill Number
 				int startPos = tText.indexOf("#");
 				if(startPos >= 0) {
+					//format the billNumber into a 9 digit string. eventually will add some other characters to make it 10 digit.
 					numeroTrans = tText.substring(startPos + 1, tText.indexOf("\n", startPos));
-					if(numeroTrans.length() >= 10) { //if bigger than 9, then use only the last 9 numbers.
-						numeroTrans = "S" + numeroTrans.substring(numeroTrans.length() - 9); 
-					}else {
-						numeroTrans = "S" + numeroTrans;
+					String billNumberStartStr = BarOption.getBillNumberStartStr();
+					
+					if(transType.equals(RFER)) {	//if it's invoice, then add a "F" at the end.
+						numeroRef = billNumberStartStr + numeroTrans;
+						numeroTrans = billNumberStartStr + numeroTrans + "F";
+					}else if(transType.equals(ADDI)){	//if it's check, then look into the comment field to see the references.
+						numeroTrans = billNumberStartStr + numeroTrans;
+						numeroRef = numRef;
+					}
+					
+					if(numeroTrans.length() > 10) {
+						numeroTrans = billNumberStartStr + numeroTrans.substring(billNumberStartStr.length() + numeroTrans.length() - 10); 
+					}
+					if(numeroRef.length() > 10) {
+						numeroRef = billNumberStartStr + numeroRef.substring(billNumberStartStr.length() + numeroRef.length() - 10); 
 					}
 				}
 			}else if(i == 1) {//find out the table and client and time and sub total and tps tpq
@@ -748,7 +794,7 @@ public class PrintService{
 				}else {
 					dateTrans  = dateTrans.concat("00");
 				}
-				
+				//dateRef = dateTrans;
 			}else if(i == 2) {	//money
 				String tContent = tText.substring(tText.lastIndexOf("-") + 2); //there's a "\n".
 				String[] a = tContent.split("\n");
@@ -799,10 +845,7 @@ public class PrintService{
 					paiementTrans = "MIX";
 				}
 			}
-			printContent.append(sndMsg.get(i));
 		}
-		
-		printContent.append(mev2);
 		
 		map.put("typeTrans", transType);	//ADDI--ADDItion (Check)    RFER--Reçu de FERmeture (Closing receipt)
 		//When a previously generated bill needs to be reprinted. The date and time displayed, must be exactly the same.
@@ -832,24 +875,33 @@ public class PrintService{
 		}
 
 		printContent.append(mev3);
-		//TODO: add verify.
-		//TODO: add ref.
-		//ref: This element is present for each transaction referenced by the current transaction.
-		//The reference indicates a link between the current transaction and one or more prior transactions.
-		//• Optional • Cardinality: 0 to N • This element is mandatory for all transactions (sale or credit) modifying a prior transaction. For more
-		//information on the applicable conditions, see section 4 of Part 3 – Development standards and section 1.2 of this document.
-
-		//numeroRef: Number of the referenced transaction. This attribute is an integral component of the unique identifier of each referenced transaction.
-		//• Mandatory • Format: Limited ASCII. See the validation J3-02149E_ MES in Appendix F – Validation tests and error messages for more details on the characters accepted.
-		//• See also details about this attribute in section 1.2.10 of this document.
 		
-		//dateRef: Date and time of the referenced transaction. This attribute is an integral component of the unique identifier of each referenced transaction.
-		//• Mandatory • Format: YYYYMMDDhhmmss • See also details about this attribute in section 1.2.11 of this document.
+		//=======================the fourth part==========
+		if(needReference) {
+			//ref: This element is present for each transaction referenced by the current transaction.
+			//The reference indicates a link between the current transaction and one or more prior transactions.
+			//• Optional • Cardinality: 0 to N • This element is mandatory for all transactions (sale or credit) modifying a prior transaction. For more
+			//information on the applicable conditions, see section 4 of Part 3 – Development standards and section 1.2 of this document.
+	
+			//numeroRef: Number of the referenced transaction. This attribute is an integral component of the unique identifier of each referenced transaction.
+			//• Mandatory • Format: Limited ASCII. See the validation J3-02149E_ MES in Appendix F – Validation tests and error messages for more details on the characters accepted.
+			//• See also details about this attribute in section 1.2.10 of this document.
+			
+			//dateRef: Date and time of the referenced transaction. This attribute is an integral component of the unique identifier of each referenced transaction.
+			//• Mandatory • Format: YYYYMMDDhhmmss • See also details about this attribute in section 1.2.11 of this document.
+	
+			//mtRefAvTaxes: Total amount before taxes appearing on the referenced transaction.
+			//• Mandatory • Format: +/–999999.99 • The following 10 characters are mandatory:
+			
+			//"<ref numeroRef=\"%s\" dateRef=\"%s\" mtRefAvTaxes=\"%s\"/>";//»AAAAMMJJhhmmss»//»+/-999999.99»
 
-		//mtRefAvTaxes: Total amount before taxes appearing on the referenced transaction.
-		//• Mandatory • Format: +/–999999.99 • The following 10 characters are mandatory:
-
-		printContent.append(mev4);
+			mtRefAvTaxes = oldsubtotal == null ? mtTransAvTaxes : oldsubtotal;
+			printContent.append(String.format(mevRef, numeroRef, dateTrans, mtRefAvTaxes));
+		}
+		
+		printContent.append(mevEnd);
+		
+		//=====================convert to ASCII and return========================
 		try {
 			formattedContent = printContent.toString().getBytes("ASCII");
 		}catch(UnsupportedEncodingException e) {
@@ -1095,17 +1147,20 @@ public class PrintService{
 	}
     
     private static StringBuilder formatContentForBill(List<Dish> list, String curPrintIp, BillPanel billPanel, int tWidth){
-    	return getServiceDetailContent(list, curPrintIp, billPanel, tWidth).append(getTotalContent(billPanel));
+    	StringBuilder contentFR = getServiceDetailContent(list, curPrintIp, billPanel, tWidth);
+    	contentFR.append(getTotalContent(billPanel));
+    	return contentFR;
     }
 
     private static ArrayList<String> formatContentForInvoice(String curPrintIp, BillPanel billPanel, boolean isCashBack, boolean isToCustomer){
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	int tWidth = BarUtil.getPreferedWidth();
-    	
+    	// when formatting invoice for different status of bill(original, printted, completed) will set different flag.
+    	// so when the message was fetched out from map, if it's to be print in mev format, we'll know how to process it.
     	if(billPanel.status >= DBConsts.completed) {
-        	strAryFR.add("*re-printed invoice*");
+        	strAryFR.add("*re-printed invoice*\n");	//??is it a good idea to hide information in number of "*re-printed invoice*"?
         	if(isToCustomer) {
-        		strAryFR.add("*re-printed invoice*\n\n");
+        		strAryFR.add("*re-printed invoice*\n");
         	}
     	}
     	
@@ -1733,6 +1788,7 @@ public class PrintService{
 	};
 	
 	private static void pushSummaryByServiceType(ArrayList<String> strAryFR, List<Bill> list, int width) {};
+	
 	private static void pushOtherSummary(List<Bill> list) {};
 	
 	private static void pushVoidItemSummary(ArrayList<String> strAryFR, int width, String startDateStr, String endDateStr) {
@@ -1990,16 +2046,9 @@ public class PrintService{
     final static String mev1 = "<reqMEV><trans noVersionTrans=\"v0%s.00\" etatDoc=\"%s\" modeTrans=\"%s\" duplicata=\"%s\"><doc><texte><![CDATA[";
     final static String mev2 = "]]></texte></doc>\r\n		<donneesTrans ";
     final static String mev3 = "/>";
-
-    final static String mevRefAutre1 = "<ref numeroRef=";
-    final static String mevRefAutre2 = "dateRef=";//»AAAAMMJJhhmmss»
-    final static String mevRefAutre3 = "mtRefAvTaxes=";//»+/-999999.99»
-    final static String mevRefAutre4 = "/>";
-
-    //TODO add "verif" part. not necessary for now. 
-    //.append("    <verif taille=\"4569\"/>\r\n")
-    
-    final static String mev4 = "</trans>\r\n</reqMEV>";
+    final static String mevRef = "<ref numeroRef=\"%s\" dateRef=\"%s\" mtRefAvTaxes=\"%s\"/>";//»AAAAMMJJhhmmss»//»+/-999999.99»
+    //TODO add "verif" part. not necessary for now.      .append("    <verif taille=\"4569\"/>\r\n")
+    final static String mevEnd = "</trans>\r\n</reqMEV>";
     
     final static String mevReportDocAutre1 = "<reqMEV><docAutre noVersionAutre=\"v01.00\"><![CDATA[";
     final static String mevReportDocAutre2 = "]]></docAutre></reqMEV>";
