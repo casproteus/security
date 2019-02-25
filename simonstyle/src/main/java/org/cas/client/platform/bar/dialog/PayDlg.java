@@ -24,7 +24,6 @@ import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
-import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
@@ -98,8 +97,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 			//update the status of relevant outputs.
 			sql = new StringBuilder("update output set deleted = ").append(DBConsts.completed)
-					.append(" where (deleted = ").append(DBConsts.original)
-					.append(" or deleted is null) and category = ").append(billId);
+					.append(" where ( deleted is null or deleted = ").append(DBConsts.original)
+					.append(") and time = '").append(BarFrame.instance.valStartTime.getText()).append("'")
+					.append(" and SUBJECT = '").append(BarFrame.instance.cmbCurTable.getSelectedItem()).append("'");
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
    		}catch(Exception e) {
 			ErrorUtil.write(e);
@@ -296,7 +296,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	        	//new ChangeDlg(BarFrame.instance, BarFrame.consts.Due() + BarOption.getMoneySign()
         		//		+ BarUtil.format(left/100f)).setVisible(true); //it's a non-modal dialog.
         	}else if(left <= 0) {
-        		closeCurrentBill();
+        		BarFrame.instance.closeCurrentBill();
             	this.setVisible(false);
             	if(left < 0) {	//if it's equal to 0, then do not display the change dialog.
             		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign()
@@ -428,23 +428,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 			ErrorUtil.write(e);
 		}
 		return -1;
-	}
-	
-	private void closeCurrentBill() {
-		int billID = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
-		try {
-			StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.completed)
-					.append(" where subject = '").append(BarFrame.instance.cmbCurTable.getSelectedItem())
-					.append("' and time = '").append(BarFrame.instance.valStartTime.getText()).append("'")
-					.append(" and contactID = ").append(BarFrame.instance.valCurBillIdx.getText());
-			PIMDBModel.getStatement().executeUpdate(sql.toString());
-			
-			sql = new StringBuilder("update bill set status = ").append(DBConsts.completed)
-					.append(" where id = ").append(billID);
-			PIMDBModel.getStatement().executeUpdate(sql.toString());
-		}catch(Exception exp) {
-			L.e("PayDlg", "unexpected error occured whenn updating bill status.", exp);
-		}
 	}
     
     private void increaseReceived(int amount) {

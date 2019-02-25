@@ -83,6 +83,8 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
     	} else if (o == btnCoupon) {
     		
     		String couponCode  = JOptionPane.showInputDialog(null, BarFrame.consts.couponCode());
+    		if(couponCode == null || couponCode.length() == 0)
+    			return;
     		
     		StringBuilder sql = new StringBuilder("SELECT * from hardware where category = 1 and name = '").append(couponCode)
     				.append("' and (status is null or status = 0)");
@@ -116,13 +118,23 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
                     	return;
                     }
                     
-                    //if matchedDishesOnBill is null, then apply the coupon to the whle bill.
+                    //if matchedDishesOnBill is null, then apply the coupon to the whole bill.
                     if(matchedDishesOnBill == null) {	
-	                    if(category == 0) {//mean the price is absolute price, not persentage.
+	                    if(category == 0) {//mean the price is absolute price, not percentage.
 	                    	salesPanel.discountBill(value);
 	                    }else {
 	                    	value = Math.round((salesPanel.billPanel.subTotal + salesPanel.billPanel.discount) * (Float.valueOf(value) / 100f));
 	                    	salesPanel.discountBill(value);
+	                    }
+	                    //if the total is 0, then close cur bill.
+	                    if("0.00".equals(salesPanel.billPanel.valTotlePrice.getText())) {
+	                    	BarFrame.instance.closeCurrentBill();
+		                	this.setVisible(false);
+		                	
+		            		if(BarFrame.instance.isTableEmpty(null, null)) {
+		            			BarFrame.instance.closeATable(null, null);
+		            		}
+		            		BarFrame.instance.switchMode(0);
 	                    }
                     } else {//apply the coupon only to the dish item.
 	                	//find out the most expensive dish

@@ -487,6 +487,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	}
 
 	public void discountBill(int discount) {
+		if (discount > billPanel.subTotal) {
+			discount = billPanel.subTotal;
+		}
 		billPanel.discount = discount;
 		billPanel.updateTotleArea();
 		
