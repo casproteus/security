@@ -60,10 +60,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     
     //Bill property (not for specific item).the info should be retrieved from bill record if have.
     public int billID;
-    public int discount;
-    public int totalGst;
-	public int totalQst;
-	public int subTotal;
+    public float discount;
+    public float totalGst;
+	public float totalQst;
+	public float subTotal;
 	public int tip;
 	public int serviceFee;
     

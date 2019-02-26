@@ -488,7 +488,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
 	public void discountBill(int discount) {
 		if (discount > billPanel.subTotal) {
-			discount = billPanel.subTotal;
+			discount = Math.round(billPanel.subTotal);
 		}
 		billPanel.discount = discount;
 		billPanel.updateTotleArea();
@@ -635,7 +635,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	private void updateBillRecordPrices(int billId) {
 		try {
 			PayDlg.updateBill(billId, "total", Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
-			PayDlg.updateBill(billId, "discount", billPanel.discount);
+			PayDlg.updateBill(billId, "discount", Math.round(billPanel.discount));
 			PayDlg.updateBill(billId, "otherReceived", billPanel.serviceFee);
 		}catch(Exception exp) {
 			L.e("SalesPanel", "unexpected error when updating the totalvalue of bill.", exp);

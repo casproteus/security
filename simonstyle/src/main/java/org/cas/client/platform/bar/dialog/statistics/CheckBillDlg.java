@@ -288,6 +288,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         btnPrintInvoice.setMnemonic('P');
         btnPrintInvoice.setMargin(new Insets(0, 0, 0, 0));
         ckxIsToCustomer.setBackground(null);
+        ckxIsToCustomer.setSelected(true);
         lblTo.setHorizontalTextPosition(SwingConstants.CENTER);
         lblYearFrom.setHorizontalTextPosition(SwingConstants.CENTER);
         lblMonthFrom.setHorizontalTextPosition(SwingConstants.CENTER);
