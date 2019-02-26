@@ -506,9 +506,9 @@ public class PrintService{
     	//base on different type cleaned useless part, to left only useful elements.
     	switch (transType) {
 	    	case "ADDI"://check
-				for(int i = 9 - 1; i > 4; i--) {
-	    			sndMsg.remove(i);
-	    		}
+				sndMsg.remove(8);
+	    		sndMsg.remove(7);
+	    		sndMsg.remove(5);
 				sndMsg.remove(3);
 				String total = sndMsg.get(3);
 				int p = total.indexOf(":");
@@ -581,7 +581,7 @@ public class PrintService{
 			return "ADDI";
 		}else if (sndMsg.size() == 10) {	//currently if it's original receipt/invoice, sndMsg has 9 element. 
 			return "RFER";
-		}else if (sndMsg.size() == 11) {	//currently if it's VOID receipt/invoice, sndMsg has 11 element. 
+		}else if(sndMsg.size() == 11) {	//currently if it's VOID receipt/invoice, sndMsg has 11 element. 
 			return "V_RFER";
 		}else if (sndMsg.size() == 12) {	//currently if it's RE-receipt/invoice, sndMsg has 12 element. 
 			return "R_RFER";
@@ -682,15 +682,16 @@ public class PrintService{
 				duplicata = "N";
 				map.put("reimpression", "O");	//set reprint flag.
 			}
-		}else if(sndMsg.get(0).trim().startsWith("*ref to:")) {
+		}else if(sndMsg.get(5).trim().startsWith("*ref to:")) {
 			//if there's a ref to, means we need to add a reference element at the end no matter it's a invoice of a bill.. 
 			needReference = true;
 			//get out the number ref, and the subtotal before.
-			numRef = sndMsg.get(0).trim().substring(8);
-			sndMsg.remove(0);
-			if(sndMsg.get(0).trim().startsWith("*old subtotal:")) {
-				oldsubtotal = sndMsg.get(0).substring(14);
-				sndMsg.remove(0);
+			numRef = sndMsg.get(5).trim().substring(8);
+			
+			int p = sndMsg.get(5).indexOf("*old subtotal:");
+			if(p > 0) {
+				oldsubtotal = numRef.substring(p + 14).trim();
+				numRef = numRef.substring(0, p).trim();
 			}
 		}else if(sndMsg.get(3).startsWith(REFUND)){	//if it's refund.
 			transType = transType.substring(2);
@@ -767,7 +768,7 @@ public class PrintService{
 					if(numeroTrans.length() > 10) {
 						numeroTrans = billNumberStartStr + numeroTrans.substring(billNumberStartStr.length() + numeroTrans.length() - 10); 
 					}
-					if(numeroRef.length() > 10) {
+					if(numeroRef != null && (numeroRef.length() > 10)) {
 						numeroRef = billNumberStartStr + numeroRef.substring(billNumberStartStr.length() + numeroRef.length() - 10); 
 					}
 				}
@@ -1157,11 +1158,14 @@ public class PrintService{
     	int tWidth = BarUtil.getPreferedWidth();
     	// when formatting invoice for different status of bill(original, printted, completed) will set different flag.
     	// so when the message was fetched out from map, if it's to be print in mev format, we'll know how to process it.
+    	boolean isBillPrinted = false;
     	if(billPanel.status >= DBConsts.completed) {
         	strAryFR.add("*re-printed invoice*\n");	//??is it a good idea to hide information in number of "*re-printed invoice*"?
         	if(isToCustomer) {
         		strAryFR.add("*re-printed invoice*\n");
         	}
+    	}else if(billPanel.status >= DBConsts.billPrinted) {
+    		isBillPrinted = true;
     	}
     	
     	//push head info
@@ -1188,8 +1192,13 @@ public class PrintService{
         //payInfo
         pushPayInfo(billPanel, strAryFR, tWidth, isCashBack);
         
-        //end message
-        pushEndMessage(strAryFR);
+        //if bill already printed, then don't put end message again, put ref info end message position instead, 
+        //so the invoice content ary will have same size than when there's no bill printed.
+        if(isBillPrinted) {
+    		strAryFR.add("*ref to:" + billPanel.billID);
+        }else {
+        	pushEndMessage(strAryFR);
+        }
         strAryFR.add("\n\n\n\n\n");
         strAryFR.add("cut");
         return strAryFR;
