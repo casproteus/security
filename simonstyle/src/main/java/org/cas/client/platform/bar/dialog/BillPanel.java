@@ -98,7 +98,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				.append(", discount = ").append(discount)
 				.append(", otherReceived = ").append(serviceFee)
 				.append(", status = ").append(DBConsts.billPrinted)//so the invoice can be saved.
-				.append(", comment = '").append("*ref to:").append(billID).append("'")
+				.append(", comment = '").append(PrintService.REF_TO).append(billID).append("'")
 				.append(" where tableID = '").append(tableID).append("'")
 				.append(" and BillIndex = '").append(billIndex).append("'")
 				.append(" and openTime = '").append(opentime).append("'");

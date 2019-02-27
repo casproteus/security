@@ -58,7 +58,7 @@ import gnu.io.SerialPort;
 //If the ip of a printer is "LPT1", then will actually user com interface to drive the printer.
 public class PrintService{
 
-    private static final String REF_TO = "*ref to:";
+    public static final String REF_TO = "*ref to:";
 
 	private static final String RE_PRINTED_INTERNAL_USE = "*re-printed* *internal use*\n";
 

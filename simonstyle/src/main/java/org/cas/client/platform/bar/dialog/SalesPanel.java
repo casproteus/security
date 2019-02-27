@@ -531,8 +531,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	}
 
 	public boolean checkBillStatus() {
-		if(billPanel.status == DBConsts.voided) {//check if the bill is .
-			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertVoidBillBack(), BarFrame.consts.Operator(),
+		if(billPanel.status >= DBConsts.completed) {//check if the bill is .
+			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertClosedBillBack(), BarFrame.consts.Operator(),
 		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
 		        return false;
 			}else {
