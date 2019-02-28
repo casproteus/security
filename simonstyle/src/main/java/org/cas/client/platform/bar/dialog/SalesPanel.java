@@ -321,11 +321,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              				: Float.valueOf(curContent);
              		
              		// get out existing status.
-             		String sql = "select * from bill where id = " + billPanel.orderedDishAry.get(0).getBillID();
-                    ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
-                    rs.beforeFirst();
-                    rs.next();
-                    int refundAmount = rs.getInt("status");
+             		int refundAmount = billPanel.status;
                     if(refundAmount < -1) {	//if already refund, then add into existing amount.
                     	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.AllreadyRefund() + BarOption.getMoneySign() + (0-refundAmount)/100.0, DlgConst.DlgTitle,
     		                    JOptionPane.YES_NO_OPTION) != 0) {// allready refunded, sure to refund again?
@@ -339,12 +335,25 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                     
             		new ChangeDlg(BarFrame.instance, 
             				BarOption.getMoneySign() + BarUtil.formatMoney(refund)).setVisible(true); //it's a non-modal dialog.
-
-             		sql = "update bill set status = " + refundAmount + " where id = " + billPanel.orderedDishAry.get(0).getBillID();
-             		PIMDBModel.getStatement().executeUpdate(sql);
+            		
+            		//dump the old bill and create a new bill
+            		StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.dumpted)
+             				.append(" where id = ").append(billPanel.billID);
+             		PIMDBModel.getStatement().executeUpdate(sql.toString());
              		
-             		//print a bill, so let revenue know the store didn't receive the money.
-            		PrintService.exePrintRefund(billPanel, refundAmount);
+             		//generat new bill with ref to dumpted bill everything else use the data on current billPane
+             		int newBillID = generateBillRecWithRef();//@NOTE:no need to generata new output. the output will be choosed by table and billIdx.
+
+             		//change something on cur billPane, then use it to print the refund bill, to let revenue know the store refund some money.
+             		billPanel.comment = PrintService.REF_TO + billPanel.billID + "F";
+             		billPanel.billID = newBillID;
+            		PrintService.exePrintRefund(billPanel, - (int)(refund * 100));
+            		
+            		//update the status with new refund amount for the new bill, so next time refund will base on new number.
+             		sql = new StringBuilder("update bill set status = ").append(refundAmount)
+             				.append(" where id = ").append(newBillID);
+             		PIMDBModel.getStatement().executeUpdate(sql.toString());
+            		
             		BarFrame.instance.switchMode(0);
             		
              		PrintService.openDrawer();
@@ -404,6 +413,18 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         	}
         }
     }
+
+	private int generateBillRecWithRef() {
+		String tmpBK = billPanel.comment;	//temperal bk, in case this property will be used before it's collected, so do a bk, and restore after setting a temperal comment. 
+		billPanel.comment = PrintService.REF_TO + billPanel.billID + "F";	//make sure 
+		int newBillID = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
+				String.valueOf(BarFrame.instance.valCurBillIdx.getText()),
+				BarFrame.instance.valStartTime.getText(),
+				Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100), 
+				billPanel);
+		billPanel.comment = tmpBK;
+		return newBillID;
+	}
 
 	public void voidCurrentOrder() {
 		int dishLength = billPanel.orderedDishAry.size();

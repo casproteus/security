@@ -69,7 +69,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     
     int received;
     int cashback;
-    String comment = "";
+    public String comment = "";
     public int status = DBConsts.original;
     
 	public BillPanel(SalesPanel salesPanel) {
@@ -620,6 +620,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				    tip = rs.getInt("tip");
 				    serviceFee = rs.getInt("otherreceived");
 				    status = rs.getInt("status");
+				    comment = rs.getString("comment");
 				    setBackground(status >= DBConsts.completed || status < 0 ? Color.gray : null);
 				}
 			}
