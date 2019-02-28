@@ -45,7 +45,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.155-20190226";
+	private String VERSION = "V0.157-20190228";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
@@ -655,7 +655,9 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	            .append(opentime).append("')");				//content
 		try {
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
-		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime).append("' and billIndex = ").append(billIndex);
+			
+		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime)
+		   			.append("' and billIndex = '").append(billIndex).append("'");
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
             rs.beforeFirst();
             rs.next();

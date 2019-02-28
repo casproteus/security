@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.model.DBConsts;
+import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -176,6 +177,15 @@ public class BarUtil {
 		}
 		catch(Exception e) {
 			return false;
+		}
+	}
+	
+	private void setRefInfoComment(int billId) {
+		StringBuilder sb = new StringBuilder("update bill set comment = '").append(PrintService.REF_TO + billId).append("' where id = ").append(billId);
+		try {
+			PIMDBModel.getStatement().executeUpdate(sb.toString());
+		}catch(Exception exp) {
+			ErrorUtil.write(exp);
 		}
 	}
 }
