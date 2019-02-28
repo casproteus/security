@@ -342,10 +342,15 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		PIMDBModel.getStatement().executeUpdate(sql.toString());
              		
              		//generat new bill with ref to dumpted bill everything else use the data on current billPane
-             		int newBillID = generateBillRecWithRef();//@NOTE:no need to generata new output. the output will be choosed by table and billIdx.
-
+             		//@NOTE:no need to generata new output. the output will be choosed by table and billIdx.
+            		billPanel.comment = PrintService.REF_TO + billPanel.billID + "F";
+             		int newBillID = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
+            				String.valueOf(BarFrame.instance.valCurBillIdx.getText()),
+            				BarFrame.instance.valStartTime.getText(),
+            				Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100), 
+            				billPanel);
+             		
              		//change something on cur billPane, then use it to print the refund bill, to let revenue know the store refund some money.
-             		billPanel.comment = PrintService.REF_TO + billPanel.billID + "F";
              		billPanel.billID = newBillID;
             		PrintService.exePrintRefund(billPanel, - (int)(refund * 100));
             		
@@ -355,7 +360,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		PIMDBModel.getStatement().executeUpdate(sql.toString());
             		
             		BarFrame.instance.switchMode(0);
-            		
              		PrintService.openDrawer();
              	}catch(Exception exp) {
                  	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
@@ -413,18 +417,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         	}
         }
     }
-
-	private int generateBillRecWithRef() {
-		String tmpBK = billPanel.comment;	//temperal bk, in case this property will be used before it's collected, so do a bk, and restore after setting a temperal comment. 
-		billPanel.comment = PrintService.REF_TO + billPanel.billID + "F";	//make sure 
-		int newBillID = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
-				String.valueOf(BarFrame.instance.valCurBillIdx.getText()),
-				BarFrame.instance.valStartTime.getText(),
-				Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100), 
-				billPanel);
-		billPanel.comment = tmpBK;
-		return newBillID;
-	}
 
 	public void voidCurrentOrder() {
 		int dishLength = billPanel.orderedDishAry.size();

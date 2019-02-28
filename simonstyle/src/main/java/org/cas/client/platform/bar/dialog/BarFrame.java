@@ -45,7 +45,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.157-20190228";
+	private String VERSION = "V0.158-20190228";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     public int curPanel;
@@ -56,8 +56,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	public static CustomerFrame customerFrame;
 	private static GraphicsDevice secondScreen;
     
-    public static void main(
-            String[] args) {
+    public static void main(String[] args) {
         CASControl.ctrl.initModel();
         CASControl.ctrl.setMainFrame(new CASMainFrame());
         menuPanel = new MenuPanel();	//have to be after initModel, before new BarFrame().
