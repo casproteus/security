@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -44,7 +46,7 @@ import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.IPIMTableColumnModel;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 
-public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener, ListSelectionListener {
+public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener, ListSelectionListener, FocusListener {
     /**
      * Creates a new instance of ContactDialog
      * 
@@ -131,6 +133,9 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
                 btnWidth, tfdDayTo.getHeight() + lblDayTo.getHeight() + CustOpts.VER_GAP);
         ckxIsToCustomer.setBounds(btnPrintInvoice.getX() + btnPrintInvoice.getWidth() + CustOpts.HOR_GAP, tfdDayTo.getY(),
         		ckxIsToCustomer.getPreferredSize().width, ckxIsToCustomer.getPreferredSize().height);
+        
+        lblBillID.setBounds(CustOpts.HOR_GAP, lblYearFrom.getY(), lblBillID.getPreferredSize().width, lblYearFrom.getHeight());
+        tfdBillID.setBounds(lblBillID.getX(), tfdYearFrom.getY(), 60, tfdYearFrom.getHeight());
         
         IPIMTableColumnModel tTCM = tblContent.getColumnModel();
         tTCM.getColumn(0).setPreferredWidth(130);	//BarFrame.consts.TIME
@@ -220,7 +225,17 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         	}
         }
     }
-    
+
+	@Override
+	public void focusGained(FocusEvent e) {}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		if(e.getSource() == tfdBillID) {
+			initContent(tfdBillID.getText());
+		}
+	}
+	
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		showInSalesPanel();
@@ -265,6 +280,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
 
+        lblBillID = new JLabel(BarFrame.consts.Bill());
         lblFrom = new JLabel(BarFrame.consts.FROM());
         lblTo = new JLabel(BarFrame.consts.TO());
         lblYearFrom = new JLabel("YYYY");
@@ -273,6 +289,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         lblYearTo = new JLabel("YYYY");
         lblMonthTo = new JLabel("MM");
         lblDayTo = new JLabel("DD");
+        tfdBillID = new JTextField();
         tfdYearFrom = new JTextField();
         tfdMonthFrom = new JTextField();
         tfdDayFrom = new JTextField();
@@ -314,6 +331,8 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
 
         // 搭建－－－－－－－－－－－－－
         getContentPane().add(srpContent);
+        
+        getContentPane().add(lblBillID);
         getContentPane().add(lblFrom);
         getContentPane().add(lblTo);
         getContentPane().add(lblYearFrom);
@@ -322,6 +341,8 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         getContentPane().add(lblYearTo);
         getContentPane().add(lblMonthTo);
         getContentPane().add(lblDayTo);
+
+        getContentPane().add(tfdBillID);
         getContentPane().add(tfdYearFrom);
         getContentPane().add(tfdMonthFrom);
         getContentPane().add(tfdDayFrom);
@@ -333,6 +354,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         getContentPane().add(ckxIsToCustomer);
         // 加监听器－－－－－－－－
         tblContent.getSelectionModel().addListSelectionListener(this);
+        tfdBillID.addFocusListener(this);
         btnChangeDate.addActionListener(this);
         btnChangeDate.addKeyListener(this);
         btnPrintInvoice.addActionListener(this);
@@ -341,7 +363,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
     }
 
     public void initContent(String startTime, String endTime) {
-        Object[][] tValues = null;
+        
         StringBuilder sql = new StringBuilder("select * from bill, employee where createTime >= '").append(startTime)
         		.append("' and createTime <= '").append(endTime)
         		.append("' and bill.employeeId = employee.id and (bill.status is null or bill.status < ").append(DBConsts.dumpted).append(")");
@@ -350,7 +372,44 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         		&& LoginDlg.USERTYPE < 2) {
         	sql.append(" and employee.id = ").append(LoginDlg.USERID);
         }
-        try {
+        fillTableAreaWithResultSet(sql);
+        
+        //fill the dataselection area
+        int p = startTime.indexOf(" ");
+        startTime = startTime.substring(0, p);
+        p = startTime.indexOf("-");
+        tfdYearFrom.setText(startTime.substring(0, p));
+        startTime = startTime.substring(p + 1);
+        p = startTime.indexOf("-");
+        tfdMonthFrom.setText(startTime.substring(0, p));
+        tfdDayFrom.setText(startTime.substring(p + 1));
+        
+        p = endTime.indexOf(" ");
+        endTime = endTime.substring(0, p);
+        p = endTime.indexOf("-");
+        tfdYearTo.setText(endTime.substring(0, p));
+        endTime = endTime.substring(p + 1);
+        p = endTime.indexOf("-");
+        tfdMonthTo.setText(endTime.substring(0, p));
+        tfdDayTo.setText(endTime.substring(p + 1));
+        
+    }
+    
+    public void initContent(String billID) {
+        StringBuilder sql = new StringBuilder("select * from bill, employee where id = ").append(billID)
+        		.append(" and bill.employeeId = employee.id");
+        //if configured, then do not show records of other waiter.
+        if("true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("HideRecordFromOtherWaiter")))
+        		&& LoginDlg.USERTYPE < 2) {
+        	sql.append(" and employee.id = ").append(LoginDlg.USERID);
+        }
+        fillTableAreaWithResultSet(sql);
+        reLayout();
+    }
+
+	private void fillTableAreaWithResultSet(StringBuilder sql) {
+		Object[][] tValues = null;
+		try {
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
             rs.afterLast();
             rs.relative(-1);
@@ -411,27 +470,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         tCellRender.setOpaque(true);
         tCellRender.setBackground(Color.LIGHT_GRAY);
         tblContent.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
-        
-        //fill the dataselection area
-        int p = startTime.indexOf(" ");
-        startTime = startTime.substring(0, p);
-        p = startTime.indexOf("-");
-        tfdYearFrom.setText(startTime.substring(0, p));
-        startTime = startTime.substring(p + 1);
-        p = startTime.indexOf("-");
-        tfdMonthFrom.setText(startTime.substring(0, p));
-        tfdDayFrom.setText(startTime.substring(p + 1));
-        
-        p = endTime.indexOf(" ");
-        endTime = endTime.substring(0, p);
-        p = endTime.indexOf("-");
-        tfdYearTo.setText(endTime.substring(0, p));
-        endTime = endTime.substring(p + 1);
-        p = endTime.indexOf("-");
-        tfdMonthTo.setText(endTime.substring(0, p));
-        tfdDayTo.setText(endTime.substring(p + 1));
-        
-    }
+	}
     
     private void initPordAndEmploy() {
         String sql = "select ID, UserName from UserIdentity";
@@ -507,7 +546,8 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
     
     PIMTable tblContent;
     PIMScrollPane srpContent;
-    
+
+    JLabel lblBillID;
     JLabel lblFrom;
     JLabel lblTo;
     JLabel lblYearFrom;
@@ -517,6 +557,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
     JLabel lblMonthTo;
     JLabel lblDayTo;
     JTextField tfdYearFrom;
+    JTextField tfdBillID;
     JTextField tfdMonthFrom;
     JTextField tfdDayFrom;
     JTextField tfdYearTo;
