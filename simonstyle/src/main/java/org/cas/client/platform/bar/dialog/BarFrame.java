@@ -585,11 +585,13 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		 }
 	}
 
+	//@NOTE didn't use current table as filter condition. because it have been changed.
 	public void moveOutputToTable(int billID, String newTable, int newBillIdx, String openTime) {
 		StringBuilder sql = new StringBuilder("update output set SUBJECT = '").append(newTable)
 					 .append("', CONTACTID = ").append(newBillIdx)
 					 .append(", time = '").append(openTime)
-					 .append("' where category = ").append(billID);
+					 .append("' where CONTACTID = ").append(valCurBillIdx.getText())
+					 .append(" and time = '").append(valStartTime.getText()).append("'");
 		 try {
 			 PIMDBModel.getStatement().executeUpdate(sql.toString());
 		 }catch(Exception exp) {
