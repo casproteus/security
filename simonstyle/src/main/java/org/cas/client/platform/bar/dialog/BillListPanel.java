@@ -155,7 +155,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String openTime = BarFrame.instance.valStartTime.getText();
 		StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableName)
-				.append("' and (deleted is null or deleted < ").append(DBConsts.dumpted)
+				.append("' and (deleted is null or deleted < ").append(DBConsts.expired)
 				.append(") and time = '").append(openTime).append("' order by contactID");
 		
 		try {

@@ -155,6 +155,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         tTCM.getColumn(14).setPreferredWidth(60);	//visa received..
         tTCM.getColumn(15).setPreferredWidth(60);	//master received..
         tTCM.getColumn(16).setPreferredWidth(60);	//otehr received.
+        tTCM.getColumn(17).setPreferredWidth(40);	//id.
         validate();
     }
 
@@ -256,6 +257,11 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
     	BarFrame.instance.valCurBillIdx.setText(String.valueOf(tblContent.getValueAt(selectedRow, 2)));
     	BarFrame.instance.valOperator.setText(String.valueOf(tblContent.getValueAt(selectedRow, 9)));
     	BarFrame.instance.valStartTime.setText(String.valueOf(tblContent.getValueAt(selectedRow, 11)));
+
+    	((SalesPanel)BarFrame.instance.panels[2]).billPanel.billID = Integer.valueOf(String.valueOf(tblContent.getValueAt(selectedRow, 17)));
+    	if("expired".equals(tblContent.getValueAt(selectedRow, 8))){
+    		((SalesPanel)BarFrame.instance.panels[2]).billPanel.status = DBConsts.expired;	//if this flag set, the initContent will choose ouput differently.
+    	}
     	BarFrame.instance.switchMode(2);
     	return true;
     }
@@ -366,7 +372,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         
         StringBuilder sql = new StringBuilder("select * from bill, employee where createTime >= '").append(startTime)
         		.append("' and createTime <= '").append(endTime)
-        		.append("' and bill.employeeId = employee.id and (bill.status is null or bill.status < ").append(DBConsts.dumpted).append(")");
+        		.append("' and bill.employeeId = employee.id and (bill.status is null or bill.status < ").append(DBConsts.expired).append(")");
         //if configured, then do not show records of other waiter.
         if("true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("HideRecordFromOtherWaiter")))
         		&& LoginDlg.USERTYPE < 2) {
@@ -430,9 +436,6 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
                 tValues[tmpPos][7] = BarUtil.formatMoney(rs.getInt("cashback") / 100.0);
                 int status = rs.getInt("status");
                 switch (status) {
-				case DBConsts.completed:
-					tValues[tmpPos][8] = "paid";
-					break;
 				case DBConsts.original:
 					tValues[tmpPos][8] = "to pay";
 					break;
@@ -442,8 +445,14 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
 				case DBConsts.suspended:
 					tValues[tmpPos][8] = "suspended";
 					break;
+				case DBConsts.completed:
+					tValues[tmpPos][8] = "paid";
+					break;
 				case DBConsts.voided:
 					tValues[tmpPos][8] = "void";
+					break;
+				case DBConsts.expired:
+					tValues[tmpPos][8] = "expired";
 					break;
 				default:
 					tValues[tmpPos][8] = BarUtil.formatMoney(status / 100.0);
@@ -457,6 +466,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
                 tValues[tmpPos][14] = BarUtil.formatMoney(rs.getInt("visaReceived") / 100.0);
                 tValues[tmpPos][15] = BarUtil.formatMoney(rs.getInt("masterReceived") / 100.0);
                 tValues[tmpPos][16] = BarUtil.formatMoney(rs.getInt("otherreceived") / 100.0);
+                tValues[tmpPos][17] = rs.getString("id");
                 
                 tmpPos++;
             }
@@ -536,7 +546,8 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
     		BarFrame.consts.DEBIT(),
     		BarFrame.consts.VISA(),
     		BarFrame.consts.MASTER(),
-    		BarFrame.consts.Other()
+    		BarFrame.consts.Other(),
+    		BarFrame.consts.BILL()
     };
 
     int[] employIdAry;

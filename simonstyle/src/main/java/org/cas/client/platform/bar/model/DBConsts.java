@@ -11,6 +11,6 @@ public interface DBConsts {
 	int suspended = 8;
 	int completed = 10;
 	int voided = 100;	//voided bull, removed output.
-	int dumpted = 500;	//put it here because it might be more closer to deleted. and may be we can choose to don't show it in check list.
+	int expired = 500;	//put it here because it might be more closer to deleted. and may be we can choose to don't show it in check list.
 	int deleted = 1000;
 }

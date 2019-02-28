@@ -93,7 +93,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		if(!checkBillStatus()) {
             		return;
             	}
-        		outputStatusCheck();
+        		createAndPrintNewOutput();
     			billPricesUpdate();
         		
         		//if it's already paid, show comfirmDialog.
@@ -136,7 +136,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 					}
         		}
         		
-        		outputStatusCheck();
+        		createAndPrintNewOutput();
     			billPricesUpdate();
         		BarFrame.instance.switchMode(1);
         		
@@ -172,7 +172,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              				
              		billPanel.updateTotleArea();
              		
-             		outputStatusCheck();
+             		createAndPrintNewOutput();
              		billPricesUpdate();
              		
              	}catch(Exception exp) {
@@ -185,7 +185,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	if(!checkBillStatus()) {
             		return;
             	}
-        		outputStatusCheck();		//will send new added(not printed yet) dishes to kitchen.
+        		createAndPrintNewOutput();		//will send new added(not printed yet) dishes to kitchen.
         		billPricesUpdate();
         		billPanel.printBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
         				BarFrame.instance.getCurBillIndex(),
@@ -203,7 +203,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	
             } else if(o == btnLine_2_2) {		//Add bill
             	//save unsaved output
-            	outputStatusCheck();
+            	createAndPrintNewOutput();
             	addNewBill(null, null);
         	} else if (o == btnLine_2_4) { // cancel all---- if bill is empty, then check if table is empty, if yes, close current table. yes or not, all back to table view.
             	if(billPanel.orderedDishAry.size() > 0) {	//if not empty, remove all new added items.
@@ -337,7 +337,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             				BarOption.getMoneySign() + BarUtil.formatMoney(refund)).setVisible(true); //it's a non-modal dialog.
             		
             		//dump the old bill and create a new bill
-            		StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.dumpted)
+            		StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.expired)
              				.append(" where id = ").append(billPanel.billID);
              		PIMDBModel.getStatement().executeUpdate(sql.toString());
              		
@@ -370,7 +370,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	new MoreButtonsDlg(this).show((FunctionButton)o);
             	
             } else if (o == btnLine_2_10) {//send
-        		outputStatusCheck();
+        		createAndPrintNewOutput();
         		billPricesUpdate();
             	if(BarOption.isFastFoodMode()) {
     		    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(BillListPanel.getANewBillIdx()));
@@ -424,6 +424,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		
 		try {
 			//check if it's a mistake-opening-table-action or adding bill action by check if there's any output on it already. 
+			//will be considered as non-empty as long as there's output connecting to the id, even the output is not currently displaying on this bill.
 			StringBuilder sql = new StringBuilder("select * from output where category = ").append(billID);
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
@@ -506,7 +507,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		billPanel.discount = discount;
 		billPanel.updateTotleArea();
 		
-		outputStatusCheck();
+		createAndPrintNewOutput();
 		billPricesUpdate();
 	}
 
@@ -544,19 +545,19 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	}
 
 	public boolean checkBillStatus() {
-		if(billPanel.status >= DBConsts.completed) {//check if the bill is .
+		if(billPanel.status >= DBConsts.completed || billPanel.status < 0) {//check if the bill is .
 			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertClosedBillBack(), BarFrame.consts.Operator(),
 		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
 		        return false;
 			}else {
-				reOpenBill();
-				reOpenOutput();
+				reopenBill();
 			}
 		}
 		return true;
 	}
 
-	public void reOpenOutput() {
+	//Todo: Maybe it's safe to delete this method, because I think no need to touch ouputs.
+	private void reopenOutput() {
 		//convert the status of relevant output.
 		StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.original)
 				.append(" where deleted = ").append(DBConsts.voided)
@@ -568,12 +569,39 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		}
 	}
 
-	public void reOpenBill() {
-		//convert the status of the bill; 
-		StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.original)
-				.append(" where id = ").append(billPanel.billID);
+	public void reopenBill() {
 		try {
-			PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+			//dump the old bill and create a new bill
+			StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.expired)
+	 				.append(" where id = ").append(billPanel.billID);
+	 		PIMDBModel.getStatement().executeUpdate(sql.toString());
+	 		
+	 		//generat new bill with ref to dumpted bill everything else use the data on current billPane
+	 		//@NOTE:no need to generata new output. because the output will be choosed by table and billIdx, so old output will goto new bill automatically.
+	 		//while, if user open the dumpted old bill, then the removed item will be dissappears and new added item will appear on old bill also.
+	 		//this will be a known bug. TDOO:we can make it better by searching output by billID when it's a dumpted bill. hope no one will need to check the dumpted bills.
+	 		//??what do we do when removing an saved item from billPanel?
+			billPanel.comment = new StringBuilder(PrintService.REF_TO).append(billPanel.billID).append("F").append("\n")
+					.append("Old Subtotal:").append(billPanel.subTotal).append("\n")
+					.append("Old GST:").append(billPanel.totalGst).append("\n")
+					.append("Old QST:").append(billPanel.totalQst).append("\n")
+					.append("Old Total:").append(billPanel.valTotlePrice.getText()).toString();
+	 		int newBillID = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
+					String.valueOf(BarFrame.instance.valCurBillIdx.getText()),
+					BarFrame.instance.valStartTime.getText(),
+					Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100), 
+					billPanel);
+	 		
+	 		//save the old money numbers
+	 		int oldStatus = billPanel.status;
+	 		//change something on cur billPane, then use it to print the refund bill, to let revenue know the store refund some money.
+	 		billPanel.billID = newBillID;
+	 		billPanel.status = DBConsts.original;
+	 		
+	 		//todo: waiting for operation, when print bill, will generate subtotal in endmessage, and eventually use the old subtotal to calculate the value for mev bill.
+	 		
+			
+	 		
 		}catch(Exception exp) {
 			L.e("SalesPane", "Exception happenned when converting bill's status to 0", exp);
 		}
@@ -599,7 +627,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		billPanel.initContent();	//always need to initContent, to make sure dish has new price. e.g. when adding a dish to a printed bill,
 	}								//and click print bill immediatly, will need the initContent. 
 
-	private void outputStatusCheck() {
+	private void createAndPrintNewOutput() {
 		//if there's any new bill, send it to kitchen first, and this also made the output generated.
 		List<Dish> dishes = billPanel.getNewDishes();
 		if (dishes != null && dishes.size() > 0) {
@@ -618,7 +646,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		}
 		
 		billPanel.updateTotleArea();
-		outputStatusCheck();
+		createAndPrintNewOutput();
 		billPricesUpdate();
 	}
 	
@@ -631,7 +659,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.COMFIRMDELETEACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
 				return;
 			//clean output from db.
-			Dish.deleteRelevantOutput(BillListPanel.curDish);
+			//No need to do it, will be called in method removeFromSelection() BillListPanel.curDish.changeOutputStatus(DBConsts.deleted);
 			//send cancel message to kitchen
 			BillListPanel.curDish.setCanceled(true);	//set the dish with cancelled flag, so when it's printout, will with "!!!!!".
 			billPanel.sendDishToKitchen(BillListPanel.curDish, true);

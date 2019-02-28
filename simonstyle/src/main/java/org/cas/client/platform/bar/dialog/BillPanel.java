@@ -532,7 +532,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     }
     
     void initContent() {
-    	resetStatus();
+    	resetProperties();
     	//get outputs of current table and bill id.
     	StringBuilder sql = null;
 		try {
@@ -540,12 +540,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			//used deleted <= 1, means both uncompleted and normally completed will be displayed, unnormally delted recored will be delted = 100
 			String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 			String openTime = BarFrame.instance.valStartTime.getText();
+			boolean isExpired = comment.contains("Old Subtotal:");
 			sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
-					.append(tableName)
-					.append("' and CONTACTID = ").append(billIndex)
-					.append(" and (deleted is null or deleted < ").append(DBConsts.deleted)
-					.append(") AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
-					.append(openTime).append("'");
+				.append(tableName)
+				.append("' and CONTACTID = ").append(billIndex)
+				.append(" and (deleted is null or deleted < ").append(isExpired ? DBConsts.deleted : DBConsts.expired)	//dumpted also should show.
+				.append(") AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
+				.append(openTime).append(isExpired ? "' and output.category = " + billID : "'");	//new added after dump should not display.
+			
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
 			rs.relative(-1);
@@ -610,7 +612,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			if(orderedDishAry.size() > 0 && orderedDishAry.get(0).getBillID() > 0) {
 				sql = new StringBuilder("select * from Bill where opentime = '").append(openTime)
 						.append("' and billIndex = ").append(billIndex)
-						.append(" and tableID = '").append(tableName).append("'");
+						.append(" and tableID = '").append(tableName).append("'")
+						.append(" and status = ").append(status);
 				  
 				rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 				rs.beforeFirst();
@@ -647,7 +650,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		updateTotleArea();
 	}
 
-    private void resetStatus(){
+    private void resetProperties(){
         orderedDishAry.clear();
         discount = 0;
         tip = 0;
@@ -690,7 +693,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	//update db first
     	Dish dish = orderedDishAry.get(selectedRow);
     	if(dish.getOutputID() > -1) {
-    		Dish.deleteRelevantOutput(dish);
+    		dish.changeOutputStatus(comment.contains("Old Subtotal:") ? DBConsts.expired : DBConsts.deleted);
     	}
     	//update array second.
 		orderedDishAry.remove(selectedRow);

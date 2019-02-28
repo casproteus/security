@@ -153,14 +153,14 @@ public class Dish {
 		}
 	}
 	
-	public static void deleteRelevantOutput(Dish dish) {
-		if(dish.getOutputID() < 0) {
+	public void changeOutputStatus(int status) {
+		if(getOutputID() < 0) {
 			return;
 		}
 		
 		try {
-			StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.deleted)
-					.append(" where id = ").append(dish.getOutputID());
+			StringBuilder sql = new StringBuilder("update output set deleted = ").append(status)
+					.append(" where id = ").append(getOutputID());
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 		} catch (Exception exp) {
 			ErrorUtil.write(exp);
