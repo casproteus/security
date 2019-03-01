@@ -259,9 +259,11 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
     	BarFrame.instance.valStartTime.setText(String.valueOf(tblContent.getValueAt(selectedRow, 11)));
 
     	((SalesPanel)BarFrame.instance.panels[2]).billPanel.billID = Integer.valueOf(String.valueOf(tblContent.getValueAt(selectedRow, 17)));
-    	if("expired".equals(tblContent.getValueAt(selectedRow, 8))){
-    		((SalesPanel)BarFrame.instance.panels[2]).billPanel.status = DBConsts.expired;	//if this flag set, the initContent will choose ouput differently.
-    	}
+    	
+    	//if this flag set, the initContent will choose outputs and bill differently.
+    	//NOTE: there's could be one final and several expired bills under same tableid and billIdx and opentime. we don't support more than one exipred bill.
+    	BarFrame.instance.showingExpiredBill = "expired".equals(tblContent.getValueAt(selectedRow, 8));
+    	BarFrame.instance.curBillID = Integer.valueOf(String.valueOf(tblContent.getValueAt(selectedRow, 17)));
     	BarFrame.instance.switchMode(2);
     	return true;
     }
@@ -378,6 +380,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         		&& LoginDlg.USERTYPE < 2) {
         	sql.append(" and employee.id = ").append(LoginDlg.USERID);
         }
+        sql.append(" order by createTime desc");
         fillTableAreaWithResultSet(sql);
         
         //fill the dataselection area

@@ -90,9 +90,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         //FunctionButton------------------------------------------------------------------------------------------------
         if (o instanceof FunctionButton) {
         	if(o == btnCASH || o == btnDEBIT || o == btnVISA || o == btnMASTER) { //pay
-        		if(!checkBillStatus()) {
-            		return;
-            	}
+
         		createAndPrintNewOutput();
     			billPricesUpdate();
         		
@@ -141,6 +139,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		BarFrame.instance.switchMode(1);
         		
         	} else if (o == btnLine_1_5) {	//remove item.
+        		if(!billPanel.checkStatus()) {
+            		return;
+            	}
         		removeItem();
         		
         	} else if(o == btnLine_1_6) {	//Modify
@@ -181,10 +182,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              	}
         		
         	}else if (o == btnLine_1_10) { // print bill
-            	//check bill status
-            	if(!checkBillStatus()) {
-            		return;
-            	}
         		createAndPrintNewOutput();		//will send new added(not printed yet) dishes to kitchen.
         		billPricesUpdate();
         		billPanel.printBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
@@ -544,68 +541,18 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		}
 	}
 
-	public boolean checkBillStatus() {
-		if(billPanel.status >= DBConsts.completed || billPanel.status < 0) {//check if the bill is .
-			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertClosedBillBack(), BarFrame.consts.Operator(),
-		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
-		        return false;
-			}else {
-				reopenBill();
-			}
-		}
-		return true;
-	}
-
 	//Todo: Maybe it's safe to delete this method, because I think no need to touch ouputs.
-	private void reopenOutput() {
-		//convert the status of relevant output.
-		StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.original)
-				.append(" where deleted = ").append(DBConsts.voided)
-				.append(" and category = ").append(billPanel.billID);
-		try {
-			PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-		}catch(Exception exp) {
-			L.e("SalesPane", "Exception happenned when converting output's status to 0", exp);
-		}
-	}
-
-	public void reopenBill() {
-		try {
-			//dump the old bill and create a new bill
-			StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.expired)
-	 				.append(" where id = ").append(billPanel.billID);
-	 		PIMDBModel.getStatement().executeUpdate(sql.toString());
-	 		
-	 		//generat new bill with ref to dumpted bill everything else use the data on current billPane
-	 		//@NOTE:no need to generata new output. because the output will be choosed by table and billIdx, so old output will goto new bill automatically.
-	 		//while, if user open the dumpted old bill, then the removed item will be dissappears and new added item will appear on old bill also.
-	 		//this will be a known bug. TDOO:we can make it better by searching output by billID when it's a dumpted bill. hope no one will need to check the dumpted bills.
-	 		//??what do we do when removing an saved item from billPanel?
-			billPanel.comment = new StringBuilder(PrintService.REF_TO).append(billPanel.billID).append("F").append("\n")
-					.append("Old Subtotal:").append(billPanel.subTotal).append("\n")
-					.append("Old GST:").append(billPanel.totalGst).append("\n")
-					.append("Old QST:").append(billPanel.totalQst).append("\n")
-					.append("Old Total:").append(billPanel.valTotlePrice.getText()).toString();
-	 		int newBillID = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
-					String.valueOf(BarFrame.instance.valCurBillIdx.getText()),
-					BarFrame.instance.valStartTime.getText(),
-					Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100), 
-					billPanel);
-	 		
-	 		//save the old money numbers
-	 		int oldStatus = billPanel.status;
-	 		//change something on cur billPane, then use it to print the refund bill, to let revenue know the store refund some money.
-	 		billPanel.billID = newBillID;
-	 		billPanel.status = DBConsts.original;
-	 		
-	 		//todo: waiting for operation, when print bill, will generate subtotal in endmessage, and eventually use the old subtotal to calculate the value for mev bill.
-	 		
-			
-	 		
-		}catch(Exception exp) {
-			L.e("SalesPane", "Exception happenned when converting bill's status to 0", exp);
-		}
-	}
+//	private void reopenOutput() {
+//		//convert the status of relevant output.
+//		StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.original)
+//				.append(" where deleted = ").append(DBConsts.voided)
+//				.append(" and category = ").append(billPanel.billID);
+//		try {
+//			PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+//		}catch(Exception exp) {
+//			L.e("SalesPane", "Exception happenned when converting output's status to 0", exp);
+//		}
+//	}
 
 	public void showPriceChangeDlg() {
 		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.CHANGEPRICE());

@@ -194,6 +194,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         Object o = e.getSource();
 		if(o instanceof ArrowButton) {
 	        if(o == btnMore) {
+            	if(!checkStatus()) {
+            		return;
+            	}
 	        	int selectedRow =  tblBillPanel.getSelectedRow();
 				if(orderedDishAry.get(selectedRow).getOutputID() >= 0) {	//already saved
 					BarFrame.setStatusMes(BarFrame.consts.SendItemCanNotModify());
@@ -211,6 +214,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				updateTotleArea();
 				tblBillPanel.setSelectedRow(selectedRow);
 	        } else if (o == btnLess) {
+	        	if(!checkStatus()) {
+            		return;
+            	}
 	    		int selectedRow =  tblBillPanel.getSelectedRow();
 	    		Dish dish = orderedDishAry.get(selectedRow);
 				if(dish.getOutputID() >= 0) {	//if it's already send, then do the removePanel.
@@ -540,13 +546,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			//used deleted <= 1, means both uncompleted and normally completed will be displayed, unnormally delted recored will be delted = 100
 			String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 			String openTime = BarFrame.instance.valStartTime.getText();
-			boolean isExpired = comment.contains("Old Subtotal:");
+			boolean isShowingExpiredBill = BarFrame.instance.showingExpiredBill;
 			sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
 				.append(tableName)
 				.append("' and CONTACTID = ").append(billIndex)
-				.append(" and (deleted is null or deleted < ").append(isExpired ? DBConsts.deleted : DBConsts.expired)	//dumpted also should show.
+				.append(" and (deleted is null or deleted < ").append(isShowingExpiredBill ? DBConsts.deleted : DBConsts.expired)	//dumpted also should show.
 				.append(") AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
-				.append(openTime).append(isExpired ? "' and output.category = " + billID : "'");	//new added after dump should not display.
+				.append(openTime).append(isShowingExpiredBill ? "' and output.category = " + billID : "'");	//new added after dump should not display.
 			
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
@@ -613,7 +619,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				sql = new StringBuilder("select * from Bill where opentime = '").append(openTime)
 						.append("' and billIndex = ").append(billIndex)
 						.append(" and tableID = '").append(tableName).append("'")
-						.append(" and status = ").append(status);
+						.append(" and (status is null or status ").append(isShowingExpiredBill ? "=" : "<").append(DBConsts.expired).append(")");
 				  
 				rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 				rs.beforeFirst();
@@ -648,6 +654,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		resetColWidth(scrContent.getWidth());
 		
 		updateTotleArea();
+		//reset the flag whichi is only used for showing expired bills.
+		BarFrame.instance.showingExpiredBill = false;
 	}
 
     private void resetProperties(){
@@ -657,9 +665,15 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         serviceFee = 0;
         received = 0;
         cashback = 0;
+        billID = 0;
         comment = "";
         status = DBConsts.original;
         setBackground(null);
+        
+        totalGst = 0;
+    	totalQst = 0;
+    	subTotal = 0;
+        
     }
     
     void resetColWidth(int tableWidth) {
@@ -693,7 +707,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	//update db first
     	Dish dish = orderedDishAry.get(selectedRow);
     	if(dish.getOutputID() > -1) {
-    		dish.changeOutputStatus(comment.contains("Old Subtotal:") ? DBConsts.expired : DBConsts.deleted);
+    		dish.changeOutputStatus(comment.contains(PrintService.OLD_SUBTOTAL) ? DBConsts.expired : DBConsts.deleted);
     	}
     	//update array second.
 		orderedDishAry.remove(selectedRow);
@@ -715,6 +729,53 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		updateTotleArea();
 	}
     
+	public boolean checkStatus() {
+		if(status >= DBConsts.completed || status < 0) {//check if the bill is .
+			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertClosedBillBack(), BarFrame.consts.Operator(),
+		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
+		        return false;
+			}else {
+				reopen();
+			}
+		}
+		return true;
+	}
+	
+	public void reopen() {
+		try {
+			//dump the old bill and create a new bill
+			StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.expired)
+	 				.append(" where id = ").append(billID);
+	 		PIMDBModel.getStatement().executeUpdate(sql.toString());
+	 		
+	 		//generat new bill with ref to dumpted bill everything else use the data on current billPane
+	 		//@NOTE:no need to generata new output. because the output will be choosed by table and billIdx, so old output will goto new bill automatically.
+	 		//while, if user open the dumpted old bill, then the removed item will be dissappears and new added item will appear on old bill also.
+	 		//this will be a known bug. TDOO:we can make it better by searching output by billID when it's a dumpted bill. hope no one will need to check the dumpted bills.
+	 		//??what do we do when removing an saved item from billPanel?
+			comment = new StringBuilder(PrintService.REF_TO).append(billID).append("F").append("\n")
+					.append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(subTotal/100.0)).append("\n")
+					.append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst/100.0)).append("\n")
+					.append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst/100.0)).append("\n")
+					.append(PrintService.OLD_TOTAL).append(valTotlePrice.getText()).toString();
+	 		int newBillID = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
+					String.valueOf(BarFrame.instance.valCurBillIdx.getText()),
+					BarFrame.instance.valStartTime.getText(),
+					Math.round(Float.valueOf(valTotlePrice.getText()) * 100), 
+					this);
+	 		
+	 		//Temporally change something on cur billPane.
+	 		billID = newBillID;			//will be used when adding new item into the bill
+	 		//save the old money numbers, case the old status is negative(means have returned some money.
+	 		status = status < 0 ? status : DBConsts.original;	//will be used when clicking button will not trigger warning.
+	 		
+	 		//waiting for operation, when print bill, will generate subtotal in endmessage, and eventually use the old subtotal to calculate the value for mev bill.
+	 		
+		}catch(Exception exp) {
+			L.e("SalesPane", "Exception happenned when converting bill's status to 0", exp);
+		}
+	}
+	
     private int getUsedRowCount() {
         for (int i = 0, len = tblBillPanel.getRowCount(); i < len; i++)
             if (tblBillPanel.getValueAt(i, 0) == null)

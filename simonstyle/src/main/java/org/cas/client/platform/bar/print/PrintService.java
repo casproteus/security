@@ -58,8 +58,11 @@ import gnu.io.SerialPort;
 //If the ip of a printer is "LPT1", then will actually user com interface to drive the printer.
 public class PrintService{
 
-    private static final String OLD_SUBTOTAL = "*old subtotal:";
-
+    public static final String OLD_SUBTOTAL = "*Old Subtotal:";
+    public static final String OLD_GST = "*Old GST:";
+    public static final String OLD_QST = "*Old QST:";
+    public static final String OLD_TOTAL = "*Old Total:";
+    
 	public static final String REF_TO = "*ref to:";
 
 	private static final String RE_PRINTED_INTERNAL_USE = "*re-printed* *internal use*\n";
@@ -152,7 +155,11 @@ public class PrintService{
 	    contents.add("NormalFont");     //push normal font
         
         //push end message
-        pushEndMessage(contents);
+	    if(billPanel.comment.length() >= 0) {
+	    	contents.add(billPanel.comment);	//has comment means bill printed(will be co-considered when saving paper flag is set) or invoice was reopened,
+        }else {
+            pushEndMessage(contents);
+        }
         
         //push cut
         contents.add("\n\n\n\n\n");
@@ -162,6 +169,7 @@ public class PrintService{
     }
     
     //The start time and end time are long format, need to be translate for print.
+    //@NOTE: not openned for now.
     public static void exePrintBills(List<BillPanel> unclosedBillPanels){
 		flushIpContent();
         reInitPrintRelatedMaps();
@@ -173,7 +181,7 @@ public class PrintService{
         
     	pushAllInOneBillContent(unclosedBillPanels, contentList, printerIP);
     	
-        pushEndMessage(contentList);
+        pushEndMessage(contentList);	//couldn't be an expired bill. so warry no about comment.
         contentList.add("\n\n\n\n\n");
         contentList.add("cut");
         
@@ -539,7 +547,7 @@ public class PrintService{
 				//NOTE:there's a \n at the end of total, use PreferedWidth() - (total.length() - 1)
 				total = total.substring(0, p + 1) + BarUtil.generateString(BarUtil.getPreferedWidth() - (total.length() - 1), " ") + total.substring(p+1);
 				sndMsg.remove(3);
-				sndMsg.add(total);
+				sndMsg.add(3, total);
 				
 				contentToWirteToFile = transferToMevFormat(sndMsg, ADDI);
 				break;
@@ -692,6 +700,9 @@ public class PrintService{
 
 		String numeroRef = null;//the bill number of dumpted/printed bill, @NOTE: when a bill printed, the numRef will be set, so the mev invoice can do only record, no print.
 		String oldsubtotal = null; 
+		String oldGST = null;
+		String oldQST = null;
+		String oldTotal = null;
 		
 		//find out the bill Number
 		String billNumberStartStr = BarOption.getBillNumberStartStr();
@@ -724,10 +735,25 @@ public class PrintService{
 			needReference = true;	//if there's a ref to, means we need to add a reference element at the end no matter it's a invoice of a bill.. 
 			
 			numeroRef = endMessage.substring(REF_TO.length());	//get out the number ref, and the subtotal before.
-			int p = endMessage.indexOf(OLD_SUBTOTAL);			//add another check to see if the oldSubtotal are different.
+			int p = numeroRef.indexOf(OLD_SUBTOTAL);			//add another check to see if the oldSubtotal are different.
 			if(p > 0) {
 				oldsubtotal = numeroRef.substring(p + OLD_SUBTOTAL.length()).trim();
 				numeroRef = numeroRef.substring(0, p).trim();
+				p = oldsubtotal.indexOf(OLD_GST);
+				if(p > 0) {
+					oldGST = oldsubtotal.substring(p + OLD_GST.length());
+					oldsubtotal = oldsubtotal.substring(0, p).trim();
+					p = oldGST.indexOf(OLD_QST);
+					if(p > 0) {
+						oldQST = oldGST.substring(p + OLD_QST.length());
+						oldGST = oldGST.substring(0, p);
+						p = oldQST.indexOf(OLD_TOTAL);
+						if(p > 0) {
+							oldTotal = oldQST.substring(p + OLD_TOTAL.length());
+							oldQST = oldQST.substring(0, p);
+						}
+					}
+				}
 			}
 			
 			if(sndMsg.get(3).startsWith(REFUND)){	//if it's refund.
@@ -739,6 +765,9 @@ public class PrintService{
 				transType = transType.substring(2);
 				isVoided = true;	//modify the content to be 0.
 				numeroTrans = billNumberStartStr + billID;
+				
+			}else if(oldsubtotal != null){
+				
 				
 			}else {
 				//NOTE: when bill printed, will put a ref to in the comment. and then it will go into the end message. and reach here.
@@ -826,24 +855,24 @@ public class PrintService{
 			        	price = (int)Math.round(price / ((100 + gstRate + qstRate) / 100.0));
 			        	float floatPrice = (float)(price / 100.0);
 			        	
-						mtTransAvTaxes = formatMoneyForMev(BarUtil.formatMoney(floatPrice), isRefund);//+000021.85
-						TPSTrans = formatMoneyForMev(BarUtil.formatMoney(floatPrice * gstRate/100.0), isRefund);//+000001.09
-						TVQTrans = formatMoneyForMev(BarUtil.formatMoney(floatPrice * qstRate/100.0), isRefund);//+000001.72
-						mtTransApTaxes = formatMoneyForMev(BarUtil.formatMoney(refund), isRefund);
+						mtTransAvTaxes = formatMoneyForMev(BarUtil.formatMoney(floatPrice), null, isRefund);//+000021.85
+						TPSTrans = formatMoneyForMev(BarUtil.formatMoney(floatPrice * gstRate/100.0), null, isRefund);//+000001.09
+						TVQTrans = formatMoneyForMev(BarUtil.formatMoney(floatPrice * qstRate/100.0), null, isRefund);//+000001.72
+						mtTransApTaxes = formatMoneyForMev(BarUtil.formatMoney(refund), null, isRefund);
 					} else if (isVoided) {
-						mtTransAvTaxes = formatMoneyForMev("0.00", false);//+000021.85
-						TPSTrans = formatMoneyForMev("0.00", false);//+000001.09
-						TVQTrans = formatMoneyForMev("0.00", false);//+000001.72
-						mtTransApTaxes = formatMoneyForMev("#0.00", false);
+						mtTransAvTaxes = formatMoneyForMev("0.00", null, false);//+000021.85
+						TPSTrans = formatMoneyForMev("0.00", null, false);//+000001.09
+						TVQTrans = formatMoneyForMev("0.00", null, false);//+000001.72
+						mtTransApTaxes = formatMoneyForMev("#0.00", null, false);
 					} else {
 						String strAvT = a[0].substring(a[0].indexOf(":") + 1);
-						mtTransAvTaxes = formatMoneyForMev(strAvT, isRefund);//+000021.85
+						mtTransAvTaxes = formatMoneyForMev(strAvT, oldsubtotal, isRefund);//+000021.85
 						String strTPS = a[1].substring(a[1].indexOf(":") + 1);
-						TPSTrans = formatMoneyForMev(strTPS, isRefund);//+000001.09
+						TPSTrans = formatMoneyForMev(strTPS, oldGST, isRefund);//+000001.09
 						String strTVQ = a[2].substring(a[2].indexOf(":") + 1);
-						TVQTrans = formatMoneyForMev(strTVQ, isRefund);//+000001.72
+						TVQTrans = formatMoneyForMev(strTVQ, oldQST, isRefund);//+000001.72
 						Float total = Float.valueOf(strAvT) +  Float.valueOf(strTPS) +  Float.valueOf(strTVQ);
-						mtTransApTaxes = formatMoneyForMev(BarUtil.formatMoney(total), isRefund);
+						mtTransApTaxes = formatMoneyForMev(BarUtil.formatMoney(total), oldTotal, isRefund);
 					}
 				}
 			}else if(i == 3) {//find out the total
@@ -853,7 +882,7 @@ public class PrintService{
 				}else if(isVoided) {
 					total = "0.00";
 				}
-				mtTransApTaxes = formatMoneyForMev(total, isRefund);
+				mtTransApTaxes = formatMoneyForMev(total, oldTotal, isRefund);
 			}else if(i == 4) { // find out the payment.
 				String[] a = tText.split("\n");
 				if(a.length == 2) {		//we use I, because there's a line of "change" or "tip".
@@ -950,13 +979,20 @@ public class PrintService{
 		}
 	}
 
-	private static String formatMoneyForMev(String string, boolean isRefund) {
-		// TODO Auto-generated method stub
-    	String cleanText = string.trim();
-    	if(isRefund && string.startsWith("-")) {
+	private static String formatMoneyForMev(String newValue, String oldValue, boolean isRefund) {
+		float finalValue = Float.valueOf(newValue) - (oldValue == null ? 0.0f : Float.valueOf(oldValue));
+		newValue = BarUtil.formatMoney(finalValue);
+		
+		StringBuilder stringFR = new StringBuilder();
+    	String cleanText = newValue.trim();
+    	
+    	if(newValue.startsWith("-")) {
     		cleanText = cleanText.substring(1);
+    		stringFR.append("-");
+    	}else {
+    		stringFR.append("+");
     	}
-    	StringBuilder stringFR = new StringBuilder(isRefund ? "-" : "+");
+    	
     	for(int i = 1; i < 10 - cleanText.length(); i++) {
     		stringFR.append("0");
     	}

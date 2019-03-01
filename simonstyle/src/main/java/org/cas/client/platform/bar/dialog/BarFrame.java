@@ -48,7 +48,12 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	private String VERSION = "V0.158-20190228";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
+    
     public int curPanel;
+    //curBillID is currently only used for displaying a expired bill, which is to say, when showingExpiredBill is set to true;
+	public int curBillID;	
+	public boolean showingExpiredBill;
+	
 	public DefaultComboBoxModel<String> tableNames = new DefaultComboBoxModel<String>(new String[] {""});
     public static NumberPanelDlg numberPanelDlg; 
     public static DiscountDlg discountDlg; 
@@ -338,8 +343,9 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 			resetStatus();
 		}else if(i == 2) {	//sale
 			((SalesPanel)panels[i]).billPanel.initContent();
-			customerFrame.initContent();
+			
 			if(secondScreen != null) {
+				customerFrame.initContent();
 				secondScreen.setFullScreenWindow(customerFrame);
 			}
 			cmbCurTable.setEnabled(((SalesPanel)panels[i]).billPanel.status < DBConsts.completed);

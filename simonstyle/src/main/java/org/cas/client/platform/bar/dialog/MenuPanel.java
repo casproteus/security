@@ -476,8 +476,12 @@ public class MenuPanel extends JPanel implements ActionListener {
                 if (getParent() == BarFrame.instance.panels[3]) {
                     new DishDlg(BarFrame.instance, menuButton.getDish()).setVisible(true);
                 } else {
+                	BillPanel billPanel = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
+                	if(!billPanel.checkStatus()) {
+                		return;
+                	}
                     // add into table.
-                	((SalesPanel)BarFrame.instance.panels[2]).billPanel.addContentToList(menuButton.getDish());
+                	billPanel.addContentToList(menuButton.getDish());
                 }
             }
         } 
