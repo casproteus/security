@@ -46,17 +46,17 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		String curTitle = getTitle();
 		//calculate the received of diffent kind
 		if(curTitle.equals(BarFrame.consts.EnterCashPayment())){
-			String cashReceived = reflectNewInput(valCashReceived.getText());
-			sb.append("update bill set cashReceived = ").append(cashReceived).append(" where id = ").append(billId);
+			int cashReceived = reflectNewInput(valCashReceived.getText());
+			sb.append("update bill set cashReceived = ").append(oldCashReceived + cashReceived - onSrcCashReceived).append(" where id = ").append(billId);
 		} else if(curTitle.equals(BarFrame.consts.EnterDebitPayment())) {
-			String debitReceived = reflectNewInput(valDebitReceived.getText());
-			sb.append("update bill set debitReceived = ").append(debitReceived).append(" where id = ").append(billId);
+			int debitReceived = reflectNewInput(valDebitReceived.getText());
+			sb.append("update bill set debitReceived = ").append(oldDebitReceived + debitReceived - onSrcDebitReceived).append(" where id = ").append(billId);
 		} else if(curTitle.equals(BarFrame.consts.EnterVisaPayment())) {
-			String visaReceived = reflectNewInput(valVisaReceived.getText());
-			sb.append("update bill set visaReceived = ").append(visaReceived).append(" where id = ").append(billId);
+			int visaReceived = reflectNewInput(valVisaReceived.getText());
+			sb.append("update bill set visaReceived = ").append(oldVisaReceived + visaReceived - onSrcVisaReceived).append(" where id = ").append(billId);
 		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment())) {
-			String masterReceived = reflectNewInput(valMasterReceived.getText());
-			sb.append("update bill set masterReceived = ").append(masterReceived).append(" where id = ").append(billId);
+			int masterReceived = reflectNewInput(valMasterReceived.getText());
+			sb.append("update bill set masterReceived = ").append(oldMasterReceived + masterReceived - onSrcMasterReceived).append(" where id = ").append(billId);
 		}
 		
 		try {
@@ -66,7 +66,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		}
     }
 
-	private String reflectNewInput(String existingAmount) {
+	private int reflectNewInput(String existingAmount) {
 		Float existingMoney = 0f;
 		Float newAddedMoney = 0f;
 		
@@ -82,7 +82,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 			//do nothing.
 		}
 		
-		return String.valueOf((int)(existingMoney * 100 + newAddedMoney * 100));
+		return (int)(existingMoney * 100 + newAddedMoney * 100);
 	}
     
 	//it's public because there's a menu on salesPane is calling this method.
@@ -111,41 +111,89 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     
 	public void initContent(BillPanel billPanel) {
 		int billId = billPanel.getBillId();
-    	StringBuilder sb = new StringBuilder("select * from bill where id = " + billId);
+    	initMoneyDisplay(billId);
+    }
+
+	int oldTotal = 0;
+	int oldCashReceived = 0;
+	int oldDebitReceived = 0;
+	int oldVisaReceived = 0;
+	int oldMasterReceived = 0;
+	
+	int onSrcCashReceived = 0;
+	int onSrcDebitReceived = 0;
+	int onSrcVisaReceived = 0;
+	int onSrcMasterReceived = 0;
+	
+	int oldCashback = 0;
+	int oldTip = 0;
+	private void initMoneyDisplay(int billId) {
+		StringBuilder sb = new StringBuilder("select * from bill where id = " + billId);
     	try {
     		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sb.toString());
             rs.next();
-            Float total = Float.valueOf((float) (rs.getInt("total") / 100.0));
-        	valTotal.setText(total.toString());
-        	Float cashReceived = Float.valueOf((float) (rs.getInt("cashReceived") / 100.0));
-            valCashReceived.setText(cashReceived.toString());
-        	Float debitReceived = Float.valueOf((float) (rs.getInt("debitReceived") / 100.0));
-            valDebitReceived.setText(debitReceived.toString());
-            Float visaReceived = Float.valueOf((float) (rs.getInt("visaReceived") / 100.0));
-            valVisaReceived.setText(visaReceived.toString());
-            Float masterReceived = Float.valueOf((float) (rs.getInt("masterReceived") / 100.0));
-            valMasterReceived.setText(masterReceived.toString());
+        	
+        	//save old values
+            oldTotal = rs.getInt("total");
+        	oldCashReceived =rs.getInt("cashReceived");
+        	oldDebitReceived = rs.getInt("debitReceived");
+        	oldVisaReceived = rs.getInt("visaReceived");
+        	oldMasterReceived = rs.getInt("masterReceived");
+        	
+        	oldCashback = rs.getInt("cashback"); //cash back is negative in db. so use "+" instead of "-"
+        	oldTip = rs.getInt("tip");
+        	
+        	//cashReceived
+        	onSrcCashReceived = oldCashReceived;
+        	onSrcCashReceived += oldCashback;
             
-            float left = Math.round(total * 100 - cashReceived * 100 - debitReceived * 100 - visaReceived * 100 - masterReceived * 100) / 100f;
-            valLeft.setText(String.valueOf(left));
+        	//debitReceived
+            onSrcDebitReceived = oldDebitReceived;
+            int tip = oldTip;
+        	if(oldDebitReceived > oldTip) {
+        		onSrcDebitReceived -= tip;
+        		tip = 0;
+        	}else {
+        		tip -= onSrcDebitReceived;
+        		onSrcDebitReceived = 0;
+        	}
             
-//            if(BarFrame.consts.EnterCashPayment.equals(getTitle())) {
-//                newReceived.setText(valCashReceived.getText());
-//                valCashReceived.setVisible(false);
-//            }else if(BarFrame.consts.EnterDebitPayment.equals(getTitle())) {
-//                newReceived.setText(valDebitReceived.getText());
-//                valDebitReceived.setVisible(false);
-//            }else if(BarFrame.consts.EnterVisaPayment.equals(getTitle())) {
-//                newReceived.setText(valVisaReceived.getText());
-//                valVisaReceived.setVisible(false);
-//            }else if(BarFrame.consts.EnterMasterPayment.equals(getTitle())) {
-//                newReceived.setText(valMasterReceived.getText());
-//                valMasterReceived.setVisible(false);
-//            }
+        	//visaReceived
+            onSrcVisaReceived = oldVisaReceived;
+            if(onSrcVisaReceived > tip) {
+            	onSrcVisaReceived -= tip;
+        		tip = 0;
+        	}else {
+        		tip -= onSrcVisaReceived;
+        		onSrcVisaReceived = 0;
+        	}
+            
+            //masterReceived
+            onSrcMasterReceived = oldMasterReceived;
+            if(onSrcMasterReceived > tip) {
+            	onSrcMasterReceived -= tip;
+        		tip = 0;
+        	}else {
+        		tip -= onSrcMasterReceived;
+        		onSrcMasterReceived = 0;
+        	}
+            //total
+            float total = oldTotal;
+            //left
+            float left = Math.round(total - onSrcCashReceived - onSrcDebitReceived - onSrcVisaReceived - onSrcMasterReceived) / 100f;
+            
+            //set the interface value.
+            valCashReceived.setText(BarUtil.formatMoney(onSrcCashReceived/100.0));
+            valDebitReceived.setText(BarUtil.formatMoney(onSrcDebitReceived/100.0));
+            valVisaReceived.setText(BarUtil.formatMoney(onSrcVisaReceived/100.0));
+            valMasterReceived.setText(BarUtil.formatMoney(onSrcMasterReceived/100.0));
+        	valTotal.setText(BarUtil.formatMoney(total/100.0));
+            valLeft.setText(BarUtil.formatMoney(left/100.0));
+            
     	}catch(Exception e) {
     		ErrorUtil.write(e);
     	}
-    }
+	}
 	
 	public void initContent(List<BillPanel> unclosedBillPanels) {
 		BillPanel billPanel = unclosedBillPanels.get(0);
@@ -156,40 +204,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		}
 		
 		int billId = billPanel.getBillId();
-    	StringBuilder sb = new StringBuilder("select * from bill where id = " + billId);
-    	try {
-    		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sb.toString());
-            rs.next();
-            
-        	valTotal.setText(total.toString());
-        	Float cashReceived = Float.valueOf((float) (rs.getInt("cashReceived") / 100.0));
-            valCashReceived.setText(cashReceived.toString());
-        	Float debitReceived = Float.valueOf((float) (rs.getInt("debitReceived") / 100.0));
-            valDebitReceived.setText(debitReceived.toString());
-            Float visaReceived = Float.valueOf((float) (rs.getInt("visaReceived") / 100.0));
-            valVisaReceived.setText(visaReceived.toString());
-            Float masterReceived = Float.valueOf((float) (rs.getInt("masterReceived") / 100.0));
-            valMasterReceived.setText(masterReceived.toString());
-            
-            float left = Math.round(total * 100 - cashReceived * 100 - debitReceived * 100 - visaReceived * 100 - masterReceived * 100) / 100f;
-            valLeft.setText(String.valueOf(left));
-            
-//            if(BarFrame.consts.EnterCashPayment.equals(getTitle())) {
-//                newReceived.setText(valCashReceived.getText());
-//                valCashReceived.setVisible(false);
-//            }else if(BarFrame.consts.EnterDebitPayment.equals(getTitle())) {
-//                newReceived.setText(valDebitReceived.getText());
-//                valDebitReceived.setVisible(false);
-//            }else if(BarFrame.consts.EnterVisaPayment.equals(getTitle())) {
-//                newReceived.setText(valVisaReceived.getText());
-//                valVisaReceived.setVisible(false);
-//            }else if(BarFrame.consts.EnterMasterPayment.equals(getTitle())) {
-//                newReceived.setText(valMasterReceived.getText());
-//                valMasterReceived.setVisible(false);
-//            }
-    	}catch(Exception e) {
-    		ErrorUtil.write(e);
-    	}
+    	initMoneyDisplay(billId);
     }
 	
     /*
@@ -303,9 +318,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             				+ BarUtil.formatMoney((0 - left)/100f)).setVisible(true); //it's a non-modal dialog.
             		//if the last pay was with cash, then might need cash back (no change, paid with a "50" bill)
             		if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
-            			updateBill(billId, "cashback", left);
+            			updateBill(billId, "cashback", oldCashback + left);
             		}else {
-                		updateBill(billId, "TIP", 0 - left);	//otherwise, tread as tip.
+                		updateBill(billId, "TIP", oldTip - left);	//otherwise, treated as tip. the tip in DB are positive, because it means we earned money.
             		}
             	}
         		if(BarFrame.instance.isTableEmpty(null, null)) {

@@ -156,7 +156,7 @@ public class PrintService{
         
         //push end message
 	    if(billPanel.comment.length() >= 0) {
-	    	contents.add(billPanel.comment);	//has comment means bill printed(will be co-considered when saving paper flag is set) or invoice was reopened,
+	    	contents.add("\n" + billPanel.comment);	//has comment means bill printed(will be co-considered when saving paper flag is set) or invoice was reopened,
         }else {
             pushEndMessage(contents);
         }
@@ -1244,7 +1244,7 @@ public class PrintService{
     		strAryFR.add(comment + billPanel.comment);	//@NOTE: no need to set ref number, should be same.
         	
     	}else if(billPanel.comment.length() >= 0) {
-    		strAryFR.add(billPanel.comment);	//has comment means bill printed(will be co-considered when saving paper flag is set) or invoice was reopened,
+    		strAryFR.add("\n" + billPanel.comment);	//has comment means bill printed(will be co-considered when saving paper flag is set) or invoice was reopened,
     		
     	}else {
         	pushEndMessage(strAryFR);	//only original bill print will display foot message.
