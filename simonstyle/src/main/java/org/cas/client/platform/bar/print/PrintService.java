@@ -877,9 +877,7 @@ public class PrintService{
 				}
 			}else if(i == 3) {//find out the total
 				String total = tText.substring(tText.indexOf(":") + 1).trim();
-				if(isRefund && total.startsWith("-")) {
-					total = total.substring(1);
-				}else if(isVoided) {
+				if(isVoided) {
 					total = "0.00";
 				}
 				mtTransApTaxes = formatMoneyForMev(total, oldTotal, isRefund);

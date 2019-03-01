@@ -45,7 +45,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.158-20190228";
+	private String VERSION = "V0.160-20190301";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     
@@ -645,27 +645,45 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	}
 	
 	public int generateBillRecord(String tableID, String billIndex, String opentime, int total, BillPanel billPanel) {
-		//generate a bill in db and update the output with the new bill id
-		String createtime = BarOption.df.format(new Date());
-		StringBuilder sql = new StringBuilder(
-	            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
+		//get other field out from db:
+		StringBuilder sql = new StringBuilder("select * from bill where id = " + billPanel.billID);
+    	try {
+    		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+            rs.next();
+        	int cashReceived = rs.getInt("cashReceived");
+        	int debitReceived = rs.getInt("debitReceived");
+            int visaReceived = rs.getInt("visaReceived");
+            int masterReceived = rs.getInt("masterReceived");
+            int otherReceived = rs.getInt("otherReceived");
+        	int cashBack = rs.getInt("cashback");
+            int tip = rs.getInt("tip");
+        
+			//generate a bill in db and update the output with the new bill id
+			String createtime = BarOption.df.format(new Date());
+			sql = new StringBuilder(
+	            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment,")
+	            .append(" opentime, cashReceived, debitReceived, visaReceived, masterReceived) VALUES ('")
 				.append(createtime).append("', '")
 	            .append(tableID).append("', '")	//table
 	            .append(billIndex).append("', ")			//bill
 	            .append(total).append(", ")//Math.round(Float.valueOf(valTotlePrice.getText()) * 100)/num).append(", ")	//total
 	            .append(billPanel.discount).append(", ")
-	            .append(billPanel.tip).append(", ")
-	            .append(billPanel.serviceFee).append(", ")
-	            .append(billPanel.cashback).append(", ")	//discount
+	            .append(tip).append(", ")
+	            .append(otherReceived).append(", ")			//currently used for storing service fee -_-!
+	            .append(cashBack).append(", ")	//discount
 	            .append(LoginDlg.USERID).append(", '")		//emoployid
 	            .append(billPanel.comment).append("', '")
-	            .append(opentime).append("')");				//content
-		try {
+	            .append(opentime).append("', ")
+	            .append(cashReceived).append(", ")
+	            .append(debitReceived).append(", ")
+	            .append(visaReceived).append(", ")
+	            .append(masterReceived).append(")");				//content
+		
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 			
 		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime)
 		   			.append("' and billIndex = '").append(billIndex).append("'");
-            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+            rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
             rs.beforeFirst();
             rs.next();
             return rs.getInt("id");

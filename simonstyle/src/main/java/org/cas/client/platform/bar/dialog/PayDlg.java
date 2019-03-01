@@ -144,8 +144,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	oldTip = rs.getInt("tip");
         	
         	//cashReceived
-        	onSrcCashReceived = oldCashReceived;
-        	onSrcCashReceived += oldCashback;
+        	onSrcCashReceived = oldCashReceived + oldCashback;
+        	
             
         	//debitReceived
             onSrcDebitReceived = oldDebitReceived;
@@ -178,9 +178,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         		onSrcMasterReceived = 0;
         	}
             //total
-            float total = oldTotal;
+            int total = oldTotal;
             //left
-            float left = Math.round(total - onSrcCashReceived - onSrcDebitReceived - onSrcVisaReceived - onSrcMasterReceived) / 100f;
+            int left = total - onSrcCashReceived - onSrcDebitReceived - onSrcVisaReceived - onSrcMasterReceived;
             
             //set the interface value.
             valCashReceived.setText(BarUtil.formatMoney(onSrcCashReceived/100.0));
