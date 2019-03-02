@@ -194,7 +194,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String ClosedBillCantVoid() {return "This bill has been closed already, can not do void order any more.";}
     @Override
-    public String ConvertClosedBillBack() {return "This bill is already closed, are your sure to re-open it?";}
+    public String ConvertClosedBillBack() {return "This bill is already printed, are your sure to create a new bill?";}
     @Override
 	public String SetCatogoryFirst() {return "Please Set Category First";}
     @Override

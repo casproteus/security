@@ -98,10 +98,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				.append(", discount = ").append(discount)
 				.append(", otherReceived = ").append(serviceFee)
 				.append(", status = ").append(DBConsts.billPrinted)//so the invoice can be saved.
-				.append(", comment = '").append(PrintService.REF_TO).append(billID).append("'")
+				.append(", comment = comment + ' ").append(PrintService.REF_TO).append(billID).append("'")
 				.append(" where tableID = '").append(tableID).append("'")
 				.append(" and BillIndex = '").append(billIndex).append("'")
-				.append(" and openTime = '").append(opentime).append("'");
+				.append(" and openTime = '").append(opentime).append("'")
+				.append(" and (status is null or status = ").append(DBConsts.original).append(")");
 		try {
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 		}catch(Exception e) {
@@ -730,7 +731,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	}
     
 	public boolean checkStatus() {
-		if(status >= DBConsts.completed || status < 0) {//check if the bill is .
+		if(status >= DBConsts.billPrinted || status < 0) {//check if the bill is .
 			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertClosedBillBack(), BarFrame.consts.Operator(),
 		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
 		        return false;
@@ -753,11 +754,15 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	 		//while, if user open the dumpted old bill, then the removed item will be dissappears and new added item will appear on old bill also.
 	 		//this will be a known bug. TDOO:we can make it better by searching output by billID when it's a dumpted bill. hope no one will need to check the dumpted bills.
 	 		//??what do we do when removing an saved item from billPanel?
-			comment = new StringBuilder(PrintService.REF_TO).append(billID).append("F").append("\n")
-					.append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(subTotal/100.0)).append("\n")
-					.append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst/100.0)).append("\n")
-					.append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst/100.0)).append("\n")
-					.append(PrintService.OLD_TOTAL).append(valTotlePrice.getText()).toString();
+	 		StringBuilder newComment = new StringBuilder(PrintService.REF_TO).append(billID);
+			if(status >= DBConsts.completed) {
+				newComment.append("F")
+					.append("\n").append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(subTotal/100.0))
+					.append("\n").append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst/100.0))
+					.append("\n").append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst/100.0))
+					.append("\n").append(PrintService.OLD_TOTAL).append(valTotlePrice.getText());
+			}
+			comment = newComment.toString();
 	 		int newBillID = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
 					String.valueOf(BarFrame.instance.valCurBillIdx.getText()),
 					BarFrame.instance.valStartTime.getText(),

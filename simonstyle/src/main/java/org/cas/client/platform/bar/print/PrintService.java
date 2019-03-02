@@ -132,7 +132,7 @@ public class PrintService{
         int tWidth = BarUtil.getPreferedWidth();
         
         //push head info
-	    pushBillHeadInfo(contents, tWidth, String.valueOf(saleRecords.get(0).getBillID()));
+	    pushBillHeadInfo(contents, tWidth, String.valueOf(billPanel.billID));
 	    
 	    //push table, bill waiter and time
 	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
@@ -769,9 +769,9 @@ public class PrintService{
 			}else if(oldsubtotal != null){
 				
 				
-			}else {
+			}else if(numeroRef.endsWith(billID)){
 				//NOTE: when bill printed, will put a ref to in the comment. and then it will go into the end message. and reach here.
-				isOriginalInvoiceAndBillPrinted = true;	//it's invoice, and it's not reprinted, it's not void, it's not refund, then it's it.
+				isOriginalInvoiceAndBillPrinted = true;	//it's invoice, and it's not reprinted, it's not void, it's not refund, and the ref is to it self, then it's it.
 				
 			}
 		}else {
@@ -1655,12 +1655,7 @@ public class PrintService{
             float left = -1 * ((int)((total * 100 - cashReceived - debitReceived - visaReceived - masterReceived)));
             str = BarUtil.formatMoney(left/100f);
             String lblText;
-            if(!isCashBack) {
-            	lblText = "TIP : ";
-            	content.append(lblText)
- 				.append(BarUtil.generateString(width - lblText.length() - str.length(), " "))
- 				.append(str).append("\n");
-            }else {
+            if(isCashBack) {
             	lblText = "MONNAIE : ";
             	content.append(lblText)
  				.append(BarUtil.generateString(width - lblText.length() - str.length(), " "))
@@ -1673,6 +1668,11 @@ public class PrintService{
      				.append(BarUtil.generateString(width - lblText.length() - roundedStr.length(), " "))
      				.append(roundedStr).append("\n");
             	}
+            }else {
+            	lblText = "TIP : ";
+            	content.append(lblText)
+ 				.append(BarUtil.generateString(width - lblText.length() - str.length(), " "))
+ 				.append(str).append("\n");
             }
             
 
