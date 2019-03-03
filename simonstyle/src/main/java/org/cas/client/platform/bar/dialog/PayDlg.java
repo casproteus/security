@@ -306,7 +306,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 //	        			SalesPanel.resetCurTableDBStatus();
 //	        		}
 //	        	}
-	        	JOptionPane.showMessageDialog(this, BarFrame.consts.Left() + " : "  + BarOption.getMoneySign()
+	        	JOptionPane.showMessageDialog(this, BarFrame.consts.Due() + " : "  + BarOption.getMoneySign()
         				+ BarUtil.formatMoney(left/100f));
 	        	//new ChangeDlg(BarFrame.instance, BarFrame.consts.Due() + BarOption.getMoneySign()
         		//		+ BarUtil.format(left/100f)).setVisible(true); //it's a non-modal dialog.
@@ -512,7 +512,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         
         lblTotal = new JLabel(BarFrame.consts.Total() + " : " + BarOption.getMoneySign());
         valTotal = new JLabel("");
-        lblLeft = new JLabel(BarFrame.consts.Left() + " : " + BarOption.getMoneySign());
+        lblLeft = new JLabel(BarFrame.consts.Due() + " : " + BarOption.getMoneySign());
         valLeft = new JLabel("");
         
         ok = new JButton("<html><h1 style='text-align: center; padding-bottom: 5px; color:#18F507;'>✔</h1></html>");

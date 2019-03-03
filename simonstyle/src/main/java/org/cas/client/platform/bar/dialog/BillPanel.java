@@ -358,6 +358,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 						return;
 					}
 				}
+
+	        	if(!checkStatus()) {	//check if it's bill printed, if yes, need to reopen a bill.
+            		return;
+            	}
+	        	
 				removeFromSelection(selectedRow);
 			}
 		}
@@ -699,12 +704,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     }
 
     void removeFromSelection(int selectedRow) {
+    	
 		int tValidRowCount = getUsedRowCount(); // get the used RowCount
     	if(selectedRow < 0 || selectedRow > tValidRowCount - 1) {
     		JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
     		ErrorUtil.write("Unexpected row number when calling removeAtSelection : " + selectedRow);
     		return;
     	}
+    	
     	//update db first
     	Dish dish = orderedDishAry.get(selectedRow);
     	if(dish.getOutputID() > -1) {

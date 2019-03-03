@@ -208,7 +208,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String NoNewSelectionToCancel() {return "There's no new selection to cancel! Do you want to cancel the whole bill?";}
     @Override
-	public String Left() {return "Left";}
+	public String Due() {return "Due";}
     @Override
 	public String OPENTIME() {return "OPEN TIME";}
     @Override

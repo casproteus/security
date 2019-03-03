@@ -208,7 +208,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String NoNewSelectionToCancel() {return "没有发现可取消的新增加的选项，您是否要取消整个账单？";}
     @Override
-	public String Left() {return "还欠";}
+	public String Due() {return "还欠";}
     @Override
 	public String OPENTIME() {return "开台时间";}
     @Override
