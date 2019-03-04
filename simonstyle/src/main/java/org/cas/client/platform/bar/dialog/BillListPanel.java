@@ -452,7 +452,8 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 					btnMoveItem.setSelected(false);
 					return;
 				}
-				
+				if(!panel.checkStatus())
+					return;
 				moveItemAction();
 			}
 		}else if(o instanceof ArrowButton){
@@ -663,15 +664,24 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 			}else {
 				int billId = 0;
 				//check if the bill exist
-				StringBuilder sql = new StringBuilder("Select id from Bill where billIndex = ").append(targetBillIdx)
+				StringBuilder sql = new StringBuilder("Select id, status from Bill where billIndex = ").append(targetBillIdx)
 				.append(" and tableId = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("'")
 				.append(" and opentime = '").append(BarFrame.instance.valStartTime.getText()).append("'")
-				.append(" and (status is null or status < ").append(DBConsts.completed).append(")");
+				.append(" and (status is null or status < ").append(DBConsts.expired).append(")");
 				try {
 					ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-		        	if(rs.next())
+		        	if(rs.next()) {
 		        		billId = rs.getInt("id");
-		        	else {
+		        		int status = rs.getInt("status");
+		        		if(status >= DBConsts.billPrinted || status < 0) {
+	        				if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertClosedBillBack(), BarFrame.consts.Operator(),
+	        			            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
+	        			        return;
+	        				}else {
+	        					billPanels.get(targetBillIdx - 1).reopen();
+	        				}
+		        		}
+		        	}else {
 		        		BarFrame.instance.createAnEmptyBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
 								BarFrame.instance.valStartTime.getText(), targetBillIdx);
 		        	}

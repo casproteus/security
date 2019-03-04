@@ -45,14 +45,14 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.160-20190301";
+	private String VERSION = "V0.162-20190304";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     
     public int curPanel;
     //curBillID is currently only used for displaying a expired bill, which is to say, when showingExpiredBill is set to true;
 	public int curBillID;	
-	public boolean showingExpiredBill;
+	public boolean isShowingAnExpiredBill;
 	
 	public DefaultComboBoxModel<String> tableNames = new DefaultComboBoxModel<String>(new String[] {""});
     public static NumberPanelDlg numberPanelDlg; 

@@ -115,6 +115,7 @@ public class PrintService{
 
 	private static final String CASH = "ARGENT";
 	private static final String REFUND = "Refund : ";
+    public static final String METHOD = "Method:";
 	private static final String VOID = "*Voided*";
     
     //The start time and end time are long format, need to be translate for print.
@@ -189,27 +190,27 @@ public class PrintService{
     }
 
     //The start time and end time are long format, need to be translate for print.
-    public static void exePrintConbinedInvoice(List<BillPanel> unclosedBillPanels, boolean isCashBack){
-		flushIpContent();
-        reInitPrintRelatedMaps();
-        
-        String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
-        if(ipContentMap.get(printerIP) == null)
-        	ipContentMap.put(printerIP,new ArrayList<String>());
-        List<String> contentList = ipContentMap.get(printerIP);
-        
-    	pushAllInOneBillContent(unclosedBillPanels, contentList, printerIP);
-    	
-    	//payInfo
-        pushPayInfo(unclosedBillPanels.get(0), contentList,  BarUtil.getPreferedWidth(), isCashBack);
-        
-        //end message
-        pushEndMessage(contentList);
-        contentList.add("\n\n\n\n\n");
-        contentList.add("cut");
-        
-        printContents();
-    }
+//    private static void exePrintConbinedInvoice(List<BillPanel> unclosedBillPanels, boolean isCashBack){
+//		flushIpContent();
+//        reInitPrintRelatedMaps();
+//        
+//        String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
+//        if(ipContentMap.get(printerIP) == null)
+//        	ipContentMap.put(printerIP,new ArrayList<String>());
+//        List<String> contentList = ipContentMap.get(printerIP);
+//        
+//    	pushAllInOneBillContent(unclosedBillPanels, contentList, printerIP);
+//    	
+//    	//payInfo
+//        pushPayInfo(unclosedBillPanels.get(0), contentList,  BarUtil.getPreferedWidth(), isCashBack);
+//        
+//        //end message
+//        pushEndMessage(contentList);
+//        contentList.add("\n\n\n\n\n");
+//        contentList.add("cut");
+//        
+//        printContents();
+//    }
     
 	public static void pushAllInOneBillContent(List<BillPanel> unclosedBillPanels, List<String> contentList, String printerIP) {
         
@@ -709,7 +710,8 @@ public class PrintService{
 		int startPos = sndMsg.get(0).indexOf(billNumberStartStr);
 		String billID = sndMsg.get(0).substring(startPos + billNumberStartStr.length(), sndMsg.get(0).indexOf("\n", startPos)); //billID
 		String numeroTrans = transType.endsWith("RFER") ? billNumberStartStr + billID + "F" :  billNumberStartStr + billID;
-
+		String paiementTrans = "SOB";
+		
 		//make sure the number not too long.
 		if(numeroTrans.length() > 10) {
 			numeroTrans = billNumberStartStr + numeroTrans.substring(billNumberStartStr.length() + numeroTrans.length() - 10); 
@@ -761,6 +763,11 @@ public class PrintService{
 				isRefund = true;	//modify the content to be negative.
 				reimpression = "N";
 				
+				p = sndMsg.get(3).indexOf(METHOD);
+				if(p > 0) {
+					paiementTrans = sndMsg.get(3).substring(p + METHOD.length()).trim();
+				}
+				
 			}else if(sndMsg.get(3).contains(VOID)){	//if it's Voided.
 				transType = transType.substring(2);
 				isVoided = true;	//modify the content to be 0.
@@ -796,7 +803,6 @@ public class PrintService{
 		printContent.append(mev2);
 		
 		//==========the third part========
-		String paiementTrans = "SOB";
 		String comptoir = BarOption.isFastFoodMode() ? "O" : "N";
 		String autreCompte = "S";	//Identifies any sales recorded in a system other than the SRS.• F(Package deal)• G(Group event)• S Sans objet (N/A)
 
@@ -1232,7 +1238,7 @@ public class PrintService{
         strAryFR.add("NormalFont");     //push normal font
         
         //payInfo
-        pushPayInfo(billPanel, strAryFR, tWidth, isCashBack);
+        strAryFR.add(getOutPayInfo(billPanel, tWidth, isCashBack));
         
         // when formatting invoice for different status of bill(original, printted, completed) will set different foot message..
     	// so when the message was fetched out from map, if it's to be print in mev format, we'll know how to process it.
@@ -1287,7 +1293,15 @@ public class PrintService{
 	    pushWaiterAndTime(strAryFR, tWidth, tableIdx, startTimeStr.toString(), "");
 	    
 	    strAryFR.add(getServiceDetailContent(billPanel.orderedDishAry, curPrintIp, billPanel, tWidth).toString());
-        pushRefundAndNewTotal(billPanel, strAryFR, refundAmount, tWidth);
+	    String payMethodInfo = getOutPayInfo(billPanel, tWidth, false);
+	    String a[] = payMethodInfo.split("\n");
+	    String payMethod = "";
+	    if(a.length == 2) {		//we use I, because there's a line of "change" or "tip".
+	    	payMethod = getMatechPaytrans(a[0]);
+		}else if (a.length  > 2){
+			payMethod = "MIX";
+		}
+        pushRefundAndNewTotal(billPanel, strAryFR, refundAmount, payMethod, tWidth);
         
         strAryFR.add(billPanel.comment);
     	strAryFR.add("\n##REFUND##\n\n");
@@ -1594,11 +1608,12 @@ public class PrintService{
         strAryFR.add("NormalFont");
 	}
 	
-	private static void pushRefundAndNewTotal(BillPanel billPanel, ArrayList<String> strAryFR, int refund, int tWidth) {
+	private static void pushRefundAndNewTotal(BillPanel billPanel, ArrayList<String> strAryFR, int refund, String method, int tWidth) {
 		StringBuilder content = new StringBuilder();
 		//push refund into ary.
 		String refundStr = BarUtil.formatMoney(refund/100f);
-	    content.append("Refund : ").append(BarUtil.generateString(tWidth - 9 - refundStr.length(), " ")).append(refundStr).append("\n");
+	    content.append(REFUND).append(BarUtil.generateString(tWidth - 9 - refundStr.length(), " ")).append(refundStr).append("\n");
+	    content.append(METHOD).append(BarUtil.generateString(tWidth - METHOD.length() - method.length(), " ")).append(method).append("\n");
 	    strAryFR.add(content.toString());    
 	    
 	    //push new totall
@@ -1613,7 +1628,7 @@ public class PrintService{
         strAryFR.add("NormalFont");
 	}
 	
-	private static void pushPayInfo(BillPanel billPanel, List<String> strAryFR, int width, boolean isCashBack) {
+	private static String getOutPayInfo(BillPanel billPanel, int width, boolean isCashBack) {
 
 		StringBuilder content = new StringBuilder("\n");
 		int billId = billPanel.getBillId();
@@ -1680,7 +1695,7 @@ public class PrintService{
     		ErrorUtil.write(e);
     	}
     	
-		strAryFR.add(content.toString());
+		return content.toString();
 	}
 	
 	private static void pushEndMessage(List<String> strAryFR) {
