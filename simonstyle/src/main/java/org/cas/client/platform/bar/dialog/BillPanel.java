@@ -389,6 +389,19 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					BillListPanel.curDish = null;
 				}else {	//no current item ready for split, then just select the. 
 					billButton.setSelected(!billButton.isSelected());
+					if(billButton.isSelected()) {
+						BarFrame.instance.valCurBillIdx.setText(billButton.getText());
+						BarFrame.instance.curBillID = billID;
+					}else {
+						BillPanel panel = billListPanel.getCurBillPanel();
+						if(panel != null) {
+							BarFrame.instance.valCurBillIdx.setText(panel.billButton.getText());
+							BarFrame.instance.curBillID = panel.billID;
+						}else {
+							BarFrame.instance.valCurBillIdx.setText("");
+							BarFrame.instance.curBillID = 0;
+						}
+					}
 				}
 			}
 		}
@@ -552,13 +565,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			//used deleted <= 1, means both uncompleted and normally completed will be displayed, unnormally delted recored will be delted = 100
 			String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 			String openTime = BarFrame.instance.valStartTime.getText();
-			boolean isShowingExpiredBill = BarFrame.instance.showingExpiredBill;
+			boolean isShowingExpiredBill = BarFrame.instance.isShowingAnExpiredBill;
 			sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
 				.append(tableName)
 				.append("' and CONTACTID = ").append(billIndex)
 				.append(" and (deleted is null or deleted < ").append(isShowingExpiredBill ? DBConsts.deleted : DBConsts.expired)	//dumpted also should show.
 				.append(") AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
-				.append(openTime).append(isShowingExpiredBill ? "' and output.category = " + billID : "'");	//new added after dump should not display.
+				.append(openTime).append(isShowingExpiredBill ? "' and output.category = " + BarFrame.instance.curBillID : "'");	//new added after dump should not display.
 			
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
@@ -661,7 +674,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		
 		updateTotleArea();
 		//reset the flag whichi is only used for showing expired bills.
-		BarFrame.instance.showingExpiredBill = false;
+		BarFrame.instance.isShowingAnExpiredBill = false;
 	}
 
     private void resetProperties(){
@@ -769,7 +782,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					.append("\n").append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst/100.0))
 					.append("\n").append(PrintService.OLD_TOTAL).append(valTotlePrice.getText());
 			}
-			comment = newComment.toString();
+			this.comment = newComment.toString();	//set the comment property, so when creating a new bill base on current one, will copy the comment into the new bill.
 	 		int newBillID = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
 					String.valueOf(BarFrame.instance.valCurBillIdx.getText()),
 					BarFrame.instance.valStartTime.getText(),
