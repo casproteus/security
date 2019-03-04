@@ -47,6 +47,9 @@ import org.cas.client.platform.pimview.pimtable.IPIMTableColumnModel;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 
 public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener, ListSelectionListener, FocusListener {
+    
+	private boolean isEditingBillID;
+	
     /**
      * Creates a new instance of ContactDialog
      * 
@@ -201,23 +204,24 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
             ActionEvent e) {
         Object o = e.getSource();
         if (o == btnChangeDate) {
-        	StringBuilder startTime = new StringBuilder();
-        	startTime.append(tfdYearFrom.getText());
-        	startTime.append("-");
-        	startTime.append(tfdMonthFrom.getText());
-        	startTime.append("-");
-        	startTime.append(tfdDayFrom.getText());
-        	startTime.append(" 00:00:00");
-
-        	StringBuilder endTime = new StringBuilder();
-        	endTime.append(tfdYearTo.getText());
-        	endTime.append("-");
-        	endTime.append(tfdMonthTo.getText());
-        	endTime.append("-");
-        	endTime.append(tfdDayTo.getText());
-        	endTime.append(" 23:59:59");
-        	
-        	initContent(startTime.toString(), endTime.toString());
+        	if(!isEditingBillID) {	//if is editing in BillID field, then leave to the focus lost event to handle.s
+	        	StringBuilder startTime = new StringBuilder();
+	        	startTime.append(tfdYearFrom.getText());
+	        	startTime.append("-");
+	        	startTime.append(tfdMonthFrom.getText());
+	        	startTime.append("-");
+	        	startTime.append(tfdDayFrom.getText());
+	        	startTime.append(" 00:00:00");
+	
+	        	StringBuilder endTime = new StringBuilder();
+	        	endTime.append(tfdYearTo.getText());
+	        	endTime.append("-");
+	        	endTime.append(tfdMonthTo.getText());
+	        	endTime.append("-");
+	        	endTime.append(tfdDayTo.getText());
+	        	endTime.append(" 23:59:59");
+	        	initContent(startTime.toString(), endTime.toString());
+        	}
         	reLayout();
         }else if(o == btnPrintInvoice) {
         	if(showInSalesPanel()) {
@@ -228,7 +232,9 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
     }
 
 	@Override
-	public void focusGained(FocusEvent e) {}
+	public void focusGained(FocusEvent e) {
+		isEditingBillID = e.getSource() == tfdBillID;
+	}
 
 	@Override
 	public void focusLost(FocusEvent e) {
@@ -363,6 +369,13 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         // 加监听器－－－－－－－－
         tblContent.getSelectionModel().addListSelectionListener(this);
         tfdBillID.addFocusListener(this);
+        tfdYearFrom.addFocusListener(this);
+        tfdMonthFrom.addFocusListener(this);
+        tfdDayFrom.addFocusListener(this);
+        tfdYearTo.addFocusListener(this);
+        tfdMonthTo.addFocusListener(this);
+        tfdDayTo.addFocusListener(this);
+        
         btnChangeDate.addActionListener(this);
         btnChangeDate.addKeyListener(this);
         btnPrintInvoice.addActionListener(this);
