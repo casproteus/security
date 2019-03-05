@@ -15,6 +15,7 @@ import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.bar.i18n.BarDlgConst1;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -128,6 +129,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 	                    }
 	                    //if the total is 0, then close cur bill.
 	                    if("0.00".equals(salesPanel.billPanel.valTotlePrice.getText())) {
+	                    	PrintService.exePrintInvoice(salesPanel.billPanel, false, true, true);
 	                    	BarFrame.instance.closeCurrentBill();
 		                	this.setVisible(false);
 		                	
@@ -159,7 +161,6 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
     		}catch(Exception exp) {
     			L.e("Redeem Coupon", "exception happend when redeem coupon: " + sql, exp);
     		}
-    		
         	
         } else if (o == btnLine_3_3) {
     		BarFrame.consts = new BarDlgConst0();
