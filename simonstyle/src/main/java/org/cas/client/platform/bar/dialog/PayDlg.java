@@ -127,6 +127,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	
 	int oldCashback = 0;
 	int oldTip = 0;
+	int oldStatus = 0;
 	private void initMoneyDisplay(int billId) {
 		StringBuilder sb = new StringBuilder("select * from bill where id = " + billId);
     	try {
@@ -142,10 +143,18 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	
         	oldCashback = rs.getInt("cashback"); //cash back is negative in db. so use "+" instead of "-"
         	oldTip = rs.getInt("tip");
-        	
+        	oldStatus = rs.getInt("status");
         	//cashReceived
         	onSrcCashReceived = oldCashReceived + oldCashback;
-        	
+        	if(oldStatus < 0) {
+	        	if(onSrcCashReceived + oldStatus > 0) {
+	        		onSrcCashReceived += oldStatus;
+	        		oldStatus = 0;
+	        	}else {
+	        		oldStatus += onSrcCashReceived;
+	        		onSrcCashReceived = 0;
+	        	}
+        	}
             
         	//debitReceived
             onSrcDebitReceived = oldDebitReceived;
@@ -153,16 +162,35 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	if(oldDebitReceived > oldTip) {
         		onSrcDebitReceived -= tip;
         		tip = 0;
+        		if(oldStatus < 0) {
+        			if(onSrcDebitReceived + oldStatus > 0) {
+        				onSrcDebitReceived += oldStatus;
+        				oldStatus = 0;
+        			} else {
+        				oldStatus += onSrcDebitReceived;
+        				onSrcDebitReceived = 0;
+        			}
+        		}
         	}else {
         		tip -= onSrcDebitReceived;
         		onSrcDebitReceived = 0;
         	}
             
+        	
         	//visaReceived
             onSrcVisaReceived = oldVisaReceived;
             if(onSrcVisaReceived > tip) {
             	onSrcVisaReceived -= tip;
         		tip = 0;
+        		if(oldStatus < 0) {
+        			if(onSrcVisaReceived + oldStatus > 0) {
+        				onSrcVisaReceived += oldStatus;
+        				oldStatus = 0;
+        			} else {
+        				oldStatus += onSrcVisaReceived;
+        				onSrcVisaReceived = 0;
+        			}
+        		}
         	}else {
         		tip -= onSrcVisaReceived;
         		onSrcVisaReceived = 0;
@@ -173,6 +201,15 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             if(onSrcMasterReceived > tip) {
             	onSrcMasterReceived -= tip;
         		tip = 0;
+        		if(oldStatus < 0) {
+        			if(onSrcMasterReceived + oldStatus > 0) {
+        				onSrcMasterReceived += oldStatus;
+        				oldStatus = 0;
+        			} else {
+        				oldStatus += onSrcMasterReceived;
+        				onSrcMasterReceived = 0;
+        			}
+        		}
         	}else {
         		tip -= onSrcMasterReceived;
         		onSrcMasterReceived = 0;
