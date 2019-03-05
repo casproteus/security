@@ -115,23 +115,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		return BarFrame.instance.generateBillRecord(tableID, billIndex, opentime, Math.round(Float.valueOf(valTotlePrice.getText()) * 100), this);
 	}
 	
-	private void updateOutputBillId(int newBillID) {
-		if(newBillID < 0) {
-			return;
-		}
-		
-		for (Dish dish : orderedDishAry) {
-			if(dish.getOutputID() > 0) {
-				StringBuilder sql = new StringBuilder("update output set category = '").append(newBillID).append("' where id = ");
-				try {
-					PIMDBModel.getStatement().executeUpdate(sql.append(dish.getOutputID()).toString());
-				}catch(Exception exp) {
-					L.e("BillPanel ", "exception when updateOutputBillID" + sql, exp);
-				}
-			}
-		}
-	}
-
 	void sendDishToKitchen(Dish dish, boolean isCancelled) {
 		List<Dish> dishes = new ArrayList<Dish>();
 		dishes.add(dish);
@@ -282,14 +265,19 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     //table selection listener---------------------
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
+		//adjust more and less button status.
 		int selectedRow =  tblBillPanel.getSelectedRow();
 		btnMore.setEnabled(selectedRow >= 0 && selectedRow <= orderedDishAry.size());
 		btnLess.setEnabled(selectedRow >= 0 && selectedRow <= orderedDishAry.size());
+		
+		//if no row selected, reset curdish and return.
 		if(!btnMore.isEnabled()) {	//some time the selectedRow can be -1.
 			BillListPanel.curDish = null;
 			return;
 		}
 
+		//if in salesPanel mode, then adjust it's curDish and numberDlg if it's on show.
+		//if in billListPanel mode, then change bill selection status and do moving dish.
 		Dish selectedDish = orderedDishAry.get(selectedRow);
 		if(salesPanel != null) {
 			BillListPanel.curDish = selectedDish;
@@ -310,7 +298,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				billButton.setSelected(!billButton.isSelected());
 				return;
 			}
-			
+			//only not in splitting can reach here. 
  			if(BillListPanel.curDish != null && billListPanel.getCurBillPanel() != null && billListPanel.getCurBillPanel() != this) {
 				billListPanel.moveDishToBill(this);
 				BillListPanel.curDish = null;
@@ -341,6 +329,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	}
 
 	@Override
+	//this method is used for deleting an item in the billPanel by a drag action.
 	public void mouseReleased(MouseEvent e) {
 		stepCounter = 0;
 		if(isDragging == true) {
@@ -419,7 +408,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	@Override
 	public void mouseMoved(MouseEvent e) {}
 	
-    // 将对话盒区域的内容加入到列表
+    //add dish into the billPanel, tiggered by "+"button or the bubttons on menuPanel.
     void addContentToList(Dish dish) {
         int tRowCount = tblBillPanel.getRowCount(); // add content to the table.
         int tColCount = tblBillPanel.getColumnCount();
