@@ -711,7 +711,7 @@ public class PrintService{
 		String billID = sndMsg.get(0).substring(startPos + billNumberStartStr.length(), sndMsg.get(0).indexOf("\n", startPos)); //billID
 		String numeroTrans = transType.endsWith("RFER") ? billNumberStartStr + billID + "F" :  billNumberStartStr + billID;
 		String paiementTrans = "SOB";
-		
+		String refundvalue = "0";
 		//make sure the number not too long.
 		if(numeroTrans.length() > 10) {
 			numeroTrans = billNumberStartStr + numeroTrans.substring(billNumberStartStr.length() + numeroTrans.length() - 10); 
@@ -765,6 +765,7 @@ public class PrintService{
 				
 				p = sndMsg.get(3).indexOf(METHOD);
 				if(p > 0) {
+					refundvalue = sndMsg.get(3).substring(REFUND.length(), p).trim();
 					paiementTrans = sndMsg.get(3).substring(p + METHOD.length()).trim();
 				}
 				
@@ -848,11 +849,11 @@ public class PrintService{
 				}
 				//dateRef = dateTrans;
 			}else if(i == 2) {	//money
-				String tContent = tText.substring(tText.lastIndexOf("-") + 2); //there's a "\n".
+				String tContent = tText.substring(tText.lastIndexOf(SOUSTOTAL)); //there's a "\n".
 				String[] a = tContent.split("\n");
 				if(a.length >= 3) {
 					if(isRefund) {
-						Float refund = Float.valueOf(sndMsg.get(3).substring(REFUND.length()).trim());
+						Float refund = Float.valueOf(refundvalue);
 						int price = (int)(refund * 100);
 						Object tps = BarOption.getGST();
 			        	Object tvq = BarOption.getQST();
@@ -882,11 +883,16 @@ public class PrintService{
 					}
 				}
 			}else if(i == 3) {//find out the total
-				String total = tText.substring(tText.indexOf(":") + 1).trim();
 				if(isVoided) {
-					total = "0.00";
+					mtTransApTaxes = formatMoneyForMev("0.00", oldTotal, isRefund);
+				} else {
+					String total = tText.substring(tText.indexOf(":") + 1).trim();
+					int p = total.indexOf(METHOD);
+					if(p > 0) {
+						total = total.substring(0, p).trim();
+					}
+					mtTransApTaxes = formatMoneyForMev(total, oldTotal, isRefund);
 				}
-				mtTransApTaxes = formatMoneyForMev(total, oldTotal, isRefund);
 			}else if(i == 4) { // find out the payment.
 				String[] a = tText.split("\n");
 				if(a.length == 2) {		//we use I, because there's a line of "change" or "tip".
@@ -1294,7 +1300,7 @@ public class PrintService{
 	    
 	    strAryFR.add(getServiceDetailContent(billPanel.orderedDishAry, curPrintIp, billPanel, tWidth).toString());
 	    String payMethodInfo = getOutPayInfo(billPanel, tWidth, false);
-	    String a[] = payMethodInfo.split("\n");
+	    String a[] = payMethodInfo.trim().split("\n");
 	    String payMethod = "";
 	    if(a.length == 2) {		//we use I, because there's a line of "change" or "tip".
 	    	payMethod = getMatechPaytrans(a[0]);
