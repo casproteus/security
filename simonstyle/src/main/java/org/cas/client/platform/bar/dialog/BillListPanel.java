@@ -270,10 +270,27 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		repaint();
 	}
 	
+	//can only be triggered when clicking the billpanel's viewport or table area under "billListPanel mode".
 	void moveDishToBill(BillPanel targetBillPanel) {
 		int originalBillId = curDish.getBillID();
 		int targetBillId = targetBillPanel.orderedDishAry != null && targetBillPanel.orderedDishAry.size() > 0? 
 				targetBillPanel.orderedDishAry.get(0).getBillID() : 0;
+				
+		if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < 0
+				|| targetBillPanel.status >= DBConsts.billPrinted || targetBillPanel.status < 0) {
+			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertClosedBillBack(), BarFrame.consts.Operator(),
+		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
+		        return;
+			}else {
+				if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < 0) {
+					getCurBillPanel().reopen();
+				}
+				
+				if(targetBillPanel.status >= DBConsts.billPrinted || targetBillPanel.status < 0) {
+					targetBillPanel.reopen();
+				}
+			}
+		}
 		
 		try { 
 			//get the output price of the moving dish, it will be used to adjust the total of two bill.
