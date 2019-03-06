@@ -633,14 +633,25 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		//when we reset the table. we check if it the last non-empty bill and clean all the empty bill .
 		int combinedDiscount = 0;
 		int combinedServiceFee = 0;
+		String combinedComment = unclosedBillPanels.get(0).comment;
 		for (BillPanel billPanel : unclosedBillPanels) {
 			combinedDiscount += billPanel.discount;
 			combinedServiceFee += billPanel.serviceFee;
+			if(billPanel.status >= DBConsts.billPrinted || billPanel.status < 0) {
+				combinedComment += PrintService.REF_TO + billPanel.billID;
+			}
 		}
 		
-		sql = new StringBuilder("update bill set discount = ").append(combinedDiscount)
+		if(unclosedBillPanels.get(0).status >= DBConsts.billPrinted || unclosedBillPanels.get(0).status < 0) {
+				sql = new StringBuilder("update bill set discount = ").append(combinedDiscount)
+				.append(", otherReceived = ").append(combinedServiceFee)
+				.append(", comment = '").append(combinedComment).append("'")
+				.append(" where id = ").append(firstUnclosedBillId);
+		}else {
+			sql = new StringBuilder("update bill set discount = ").append(combinedDiscount)
 				.append(", otherReceived = ").append(combinedServiceFee)
 				.append(" where id = ").append(firstUnclosedBillId);
+		}
 		
 		try {
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
