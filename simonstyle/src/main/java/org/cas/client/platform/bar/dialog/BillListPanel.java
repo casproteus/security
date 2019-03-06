@@ -275,7 +275,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		int originalBillId = curDish.getBillID();
 		int targetBillId = targetBillPanel.orderedDishAry != null && targetBillPanel.orderedDishAry.size() > 0? 
 				targetBillPanel.orderedDishAry.get(0).getBillID() : 0;
-				
+		//generate the new bills and generate the ref in comment.
 		if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < 0
 				|| targetBillPanel.status >= DBConsts.billPrinted || targetBillPanel.status < 0) {
 			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertClosedBillBack(), BarFrame.consts.Operator(),
@@ -283,11 +283,21 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		        return;
 			}else {
 				if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < 0) {
-					getCurBillPanel().reopen();
+					getCurBillPanel().reopen(getCurBillPanel().billButton.getText());
 				}
 				
 				if(targetBillPanel.status >= DBConsts.billPrinted || targetBillPanel.status < 0) {
-					targetBillPanel.reopen();
+					targetBillPanel.reopen(targetBillPanel.billButton.getText());
+					if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < 0) {
+						StringBuilder sql = new StringBuilder("update bill set comment = comment + ' ")
+								.append(PrintService.REF_TO).append(getCurBillPanel().billID).append("'")
+								.append(" where id = ").append(targetBillPanel.billID);
+						try {
+							PIMDBModel.getStatement().executeUpdate(sql.toString());
+						}catch(Exception e) {
+							L.e("BillPane", "Excepioint in print bill:" + sql, e);
+						}
+					}
 				}
 			}
 		}
@@ -695,7 +705,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	        			            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
 	        			        return;
 	        				}else {
-	        					billPanels.get(targetBillIdx - 1).reopen();
+	        					billPanels.get(targetBillIdx - 1).reopen(billPanels.get(targetBillIdx - 1).billButton.getText());
 	        				}
 		        		}
 		        	}else {

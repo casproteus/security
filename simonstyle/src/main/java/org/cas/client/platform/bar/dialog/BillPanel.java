@@ -745,13 +745,16 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
 		        return false;
 			}else {
-				reopen();
+				reopen(null);
 			}
 		}
 		return true;
 	}
 	
-	public void reopen() {
+	public void reopen(String billIdx) {
+		if(billIdx == null || billIdx.length() == 0) {
+			billIdx = BarFrame.instance.valCurBillIdx.getText();
+		}
 		try {
 			//dump the old bill and create a new bill
 			StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.expired)
@@ -773,7 +776,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			}
 			this.comment = newComment.toString();	//set the comment property, so when creating a new bill base on current one, will copy the comment into the new bill.
 	 		int newBillID = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
-					String.valueOf(BarFrame.instance.valCurBillIdx.getText()),
+					billIdx,
 					BarFrame.instance.valStartTime.getText(),
 					Math.round(Float.valueOf(valTotlePrice.getText()) * 100), 
 					this);
