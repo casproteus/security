@@ -83,8 +83,6 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
     			}catch(Exception e) {
     				ErrorUtil.write("non integer string found! when setontents() called in NumberPanelDlg class.");
     			}
-    		}else {
-        		ErrorUtil.write("String not start with 'x'! when setontents() called in NumberPanelDlg class.");
     		}
     	}else {
     		ErrorUtil.write("unexpected null String when setontents() called in NumberPanelDlg class.");

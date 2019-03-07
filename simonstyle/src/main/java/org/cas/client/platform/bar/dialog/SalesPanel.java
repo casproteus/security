@@ -277,28 +277,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              	}
             }else if(o == btnLine_2_8) {	//refund
             	//check if it's already paid.
-            	boolean notPaiedYet = billPanel.orderedDishAry.size() < 1;
-            	if(!notPaiedYet) {
-            		int billID = billPanel.orderedDishAry.get(0).getBillID();
-            		notPaiedYet = billID == 0;
-            		if(!notPaiedYet) { //if already has billid, then check bill status.
-            			try {
-            				String sql = "select * from bill where id = " + billID;
-                            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
-                            rs.beforeFirst();
-                            rs.next();
-                            notPaiedYet = rs.getInt("status") == 0;
-            			}catch(Exception exp) {
-            				L.e("Refund function", "error happend when searching for bill with ID:"+billID, exp);
-            			}
-            		}
-            	}
-            	
-            	if(notPaiedYet) {
+            	if(billPanel.status != DBConsts.completed) {
             		JOptionPane.showMessageDialog(this, BarFrame.consts.NotPayYet());
             		return;
             	}
-
+            		
          		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.Refund());
          		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.RefundNotice());
             	BarFrame.numberPanelDlg.setBtnSource(null);
@@ -306,6 +289,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		BarFrame.numberPanelDlg.setPercentSupport(false);
          		BarFrame.numberPanelDlg.reLayout();
          		BarFrame.numberPanelDlg.setModal(true);
+         		BarFrame.numberPanelDlg.setContents(billPanel.valTotlePrice.getText());
          		BarFrame.numberPanelDlg.setVisible(true);
          		
          		try {

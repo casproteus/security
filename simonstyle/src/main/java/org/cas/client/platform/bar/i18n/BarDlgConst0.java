@@ -190,11 +190,11 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String COMFIRMLOSTACTION() {return "Are you sure not to send or save the new input content?";}
     @Override
-	public String ConfirmPayAgain() {return "This bill has already been paid! Are you sure you will receive money for it again?";}
+	public String ConfirmPayAgain() {return "This bill has already been closed! Are you sure to reopen it?";}
     @Override
 	public String ClosedBillCantVoid() {return "This bill has been closed already, can not do void order any more.";}
     @Override
-    public String ConvertClosedBillBack() {return "This bill is already printed, are your sure to create a new bill?";}
+    public String ConvertClosedBillBack() {return "This bill has already printed, are your sure to create a new bill?";}
     @Override
 	public String SetCatogoryFirst() {return "Please Set Category First";}
     @Override
