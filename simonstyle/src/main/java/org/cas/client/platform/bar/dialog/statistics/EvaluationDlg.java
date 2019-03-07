@@ -206,7 +206,7 @@ public class EvaluationDlg  extends JDialog
 			tShoestring = Integer.parseInt((String)CustOpts.custOps.getValue(PosDlgConst.Shoestring));
 		}catch(Exception exp){
 		}
-		tfdMoneyCurrent = new JTextField(BarUtil.formatMoney(tShoestring/100.0));
+		tfdMoneyCurrent = new JTextField(BarUtil.formatMoney(tShoestring / 100.0));
 		tfdMoneyLeft = new JTextField();
 		lblUnit = new JLabel(PosDlgConst.Unit);
 		lblUnit2 = new JLabel(PosDlgConst.Unit);
@@ -279,9 +279,9 @@ public class EvaluationDlg  extends JDialog
 				tValues[tmpPos][0] = rs.getString("SUBJECT");
 				tValues[tmpPos][1] = rs.getString("startTime");
 				tValues[tmpPos][2] = rs.getString("endTime");
-				tValues[tmpPos][3] = Float.valueOf((float)(rs.getInt("target")/100.0));
-				tValues[tmpPos][4] = Float.valueOf((float)(rs.getInt("receive")/100.0));
-				tValues[tmpPos][5] = Float.valueOf((float)(rs.getInt("profit")/100.0));
+				tValues[tmpPos][3] = Float.valueOf((float)(rs.getInt("target") / 100.0));
+				tValues[tmpPos][4] = Float.valueOf((float)(rs.getInt("receive") / 100.0));
+				tValues[tmpPos][5] = Float.valueOf((float)(rs.getInt("profit") / 100.0));
 				tmpPos++;
 			}
 			rs.close();//关闭
@@ -305,7 +305,7 @@ public class EvaluationDlg  extends JDialog
 			}
 			Float tReceived = (Float)tblContent.getValueAt(tblContent.getRowCount() - 1, 4);
 			tfdMoneyLeft.setText(BarUtil.formatMoney(
-					(tShoestring - tReceived.floatValue() * 100.0)/100.0));
+					Math.round(tShoestring - tReceived.floatValue() * 100.0) / 100.0));
 		}
 	}
 	

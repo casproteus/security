@@ -7,15 +7,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
-import java.util.Calendar;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -51,8 +48,10 @@ public class CheckInOutListDlg  extends JDialog
 		super(pParent, true);
 		initDialog();
 	}
+	@Override
 	public void keyTyped(KeyEvent e){}
-    public void keyPressed(KeyEvent e){
+    @Override
+	public void keyPressed(KeyEvent e){
     	Object o = e.getSource();
     	if(o == tfdMoneyCurrent){
     		switch (e.getKeyCode()){
@@ -73,11 +72,13 @@ public class CheckInOutListDlg  extends JDialog
     		}
      	}
     }
-    public void keyReleased(KeyEvent e){}
+    @Override
+	public void keyReleased(KeyEvent e){}
 	/* 对话盒的布局独立出来，为了在对话盒尺寸发生改变后，界面各元素能够重新布局，
 	 * 使整体保持美观。尤其在Linux系列的操作系统上，所有的对话盒都必须准备好应对用户的拖拉改变尺寸。
 	 * @NOTE:因为setBounds方法本身不会触发事件导致重新布局，所以本方法中设置Bounds之后调用了reLayout。
 	 */
+	@Override
 	public void reLayout(){
 		srpContent.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
 				getWidth() - CustOpts.SIZE_EDGE*2 - CustOpts.HOR_GAP * 2,
@@ -112,12 +113,18 @@ public class CheckInOutListDlg  extends JDialog
 		
     	validate();
 	}
+	@Override
 	public PIMRecord getContents(){return null;}
+	@Override
 	public boolean setContents(PIMRecord prmRecord){return true;}
+	@Override
 	public void makeBestUseOfTime(){}
+	@Override
 	public void addAttach(File[] file, Vector actualAttachFiles){}
+	@Override
 	public PIMTextPane getTextPane(){return null;}
 	
+	@Override
 	public void release(){
 		btnClose.removeActionListener(this);
 		btnFocus.removeActionListener(this);
@@ -125,13 +132,18 @@ public class CheckInOutListDlg  extends JDialog
 		System.gc();//@TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
 	}
 
-    public void componentResized(ComponentEvent e){
+    @Override
+	public void componentResized(ComponentEvent e){
     	reLayout();
     };
-    public void componentMoved(ComponentEvent e){};
-    public void componentShown(ComponentEvent e){};
-    public void componentHidden(ComponentEvent e){};
+    @Override
+	public void componentMoved(ComponentEvent e){};
+    @Override
+	public void componentShown(ComponentEvent e){};
+    @Override
+	public void componentHidden(ComponentEvent e){};
 
+	@Override
 	public void actionPerformed(ActionEvent e){
 		Object o = e.getSource();
 		if(o == btnClose){
@@ -180,6 +192,7 @@ public class CheckInOutListDlg  extends JDialog
 		}
 	}
 
+	@Override
 	public Container getContainer(){
 		return getContentPane();
 	}
@@ -198,7 +211,7 @@ public class CheckInOutListDlg  extends JDialog
 			tShoestring = Integer.parseInt((String)CustOpts.custOps.getValue(PosDlgConst.Shoestring));
 		}catch(Exception exp){
 		}
-		tfdMoneyCurrent = new JTextField(new DecimalFormat("#0.00").format(tShoestring/100.0));
+		tfdMoneyCurrent = new JTextField(new DecimalFormat("#0.00").format(tShoestring / 100.0));
 		tfdMoneyLeft = new JTextField();
 		lblUnit = new JLabel(PosDlgConst.Unit);
 		lblUnit2 = new JLabel(PosDlgConst.Unit);
@@ -251,6 +264,7 @@ public class CheckInOutListDlg  extends JDialog
 		getContentPane().addComponentListener(this);
 		//initContents--------------
 		SwingUtilities.invokeLater(new Runnable(){
+			@Override
 			public void run(){
 				initTable();
 				initMoneyInBox2();
@@ -275,9 +289,9 @@ public class CheckInOutListDlg  extends JDialog
 				tValues[tmpPos][0] = rs.getString("SUBJECT");
 				tValues[tmpPos][1] = rs.getString("startTime");
 				tValues[tmpPos][2] = rs.getString("endTime");
-				tValues[tmpPos][3] = Float.valueOf((float)(rs.getInt("target")/100.0));
-				tValues[tmpPos][4] = Float.valueOf((float)(rs.getInt("receive")/100.0));
-				tValues[tmpPos][5] = Float.valueOf((float)(rs.getInt("profit")/100.0));
+				tValues[tmpPos][3] = Float.valueOf((float)(rs.getInt("target") / 100.0));
+				tValues[tmpPos][4] = Float.valueOf((float)(rs.getInt("receive") / 100.0));
+				tValues[tmpPos][5] = Float.valueOf((float)(rs.getInt("profit") / 100.0));
 				tmpPos++;
 			}
 			rs.close();//关闭
@@ -301,7 +315,7 @@ public class CheckInOutListDlg  extends JDialog
 			}
 			Float tReceived = (Float)tblContent.getValueAt(tblContent.getRowCount() - 1, 4);
 			tfdMoneyLeft.setText(new DecimalFormat("#0.00").format(
-					(tShoestring - tReceived.floatValue() * 100.0)/100.0));
+					(tShoestring - tReceived.floatValue() * 100.0) / 100.0));
 		}
 	}
 	

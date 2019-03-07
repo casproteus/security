@@ -608,7 +608,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				
 				tValues[tmpPos][2] = lang;
 				if(dish.getDiscount() > 0) {
-					tValues[tmpPos][2] = lang + "  -" + BarOption.getMoneySign() + BarUtil.formatMoney(dish.getDiscount()/100.0);
+					tValues[tmpPos][2] = lang + "  -" + BarOption.getMoneySign() + BarUtil.formatMoney(dish.getDiscount() / 100.0);
 				}
 				
 				tValues[tmpPos][3] =  BarOption.getMoneySign() + dish.getTotalPrice() / 100f;
@@ -768,12 +768,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	 		//??what do we do when removing an saved item from billPanel?
 	 		StringBuilder newComment = new StringBuilder(PrintService.REF_TO).append(billID);
 			if(status >= DBConsts.completed) {
-				newComment.append("F")
-					.append("\n").append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(subTotal/100.0))
-					.append("\n").append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst/100.0))
-					.append("\n").append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst/100.0))
-					.append("\n").append(PrintService.OLD_TOTAL).append(valTotlePrice.getText());
+				newComment.append("F");
 			}
+			newComment.append("\n").append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(subTotal / 100.0))
+					.append("\n").append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst / 100.0))
+					.append("\n").append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst / 100.0))
+					.append("\n").append(PrintService.OLD_TOTAL).append(valTotlePrice.getText());
 			this.comment = newComment.toString();	//set the comment property, so when creating a new bill base on current one, will copy the comment into the new bill.
 	 		int newBillID = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
 					billIdx,

@@ -58,13 +58,17 @@ public class ProfitDlg extends JDialog
 		super(pParent, true);
 		initDialog();
 	}
+	@Override
 	public void keyTyped(KeyEvent e){}
-    public void keyPressed(KeyEvent e){}
-    public void keyReleased(KeyEvent e){}
+    @Override
+	public void keyPressed(KeyEvent e){}
+    @Override
+	public void keyReleased(KeyEvent e){}
 	/* 对话盒的布局独立出来，为了在对话盒尺寸发生改变后，界面各元素能够重新布局，
 	 * 使整体保持美观。尤其在Linux系列的操作系统上，所有的对话盒都必须准备好应对用户的拖拉改变尺寸。
 	 * @NOTE:因为setBounds方法本身不会触发事件导致重新布局，所以本方法中设置Bounds之后调用了reLayout。
 	 */
+	@Override
 	public void reLayout(){
 		srpContent.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 143,
 				getHeight() - CustOpts.SIZE_TITLE - CustOpts.SIZE_EDGE - CustOpts.VER_GAP*3 - CustOpts.BTN_HEIGHT);
@@ -95,12 +99,18 @@ public class ProfitDlg extends JDialog
 					srpContent.getHeight());
     	validate();
 	}
+	@Override
 	public PIMRecord getContents(){return null;}
+	@Override
 	public boolean setContents(PIMRecord prmRecord){return true;}
+	@Override
 	public void makeBestUseOfTime(){}
+	@Override
 	public void addAttach(File[] file, Vector actualAttachFiles){}
+	@Override
 	public PIMTextPane getTextPane(){return null;}
 	
+	@Override
 	public void release(){
 		btnClose.removeActionListener(this);
 		btnFocus.removeActionListener(this);
@@ -108,13 +118,18 @@ public class ProfitDlg extends JDialog
 		System.gc();//@TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
 	}
 
-    public void componentResized(ComponentEvent e){
+    @Override
+	public void componentResized(ComponentEvent e){
     	reLayout();
     };
-    public void componentMoved(ComponentEvent e){};
-    public void componentShown(ComponentEvent e){};
-    public void componentHidden(ComponentEvent e){};
+    @Override
+	public void componentMoved(ComponentEvent e){};
+    @Override
+	public void componentShown(ComponentEvent e){};
+    @Override
+	public void componentHidden(ComponentEvent e){};
 
+	@Override
 	public void actionPerformed(ActionEvent e){
 		Object o = e.getSource();
 		if(o == btnClose){
@@ -163,6 +178,7 @@ public class ProfitDlg extends JDialog
 		}
 	}
 
+	@Override
 	public Container getContainer(){
 		return getContentPane();
 	}
@@ -234,6 +250,7 @@ public class ProfitDlg extends JDialog
 		getContentPane().addComponentListener(this);
 		//initContents--------------
 		SwingUtilities.invokeLater(new Runnable(){
+			@Override
 			public void run(){
 				initTable();
 			}
@@ -255,7 +272,7 @@ public class ProfitDlg extends JDialog
 			while (rs.next()){
 				String tTime = rs.getString("startTime");
 				tableValues[tmpPos][0] = tTime.substring(0, tTime.indexOf(" "));
-				tableValues[tmpPos][1] = Float.valueOf((float)(rs.getInt("profit")/100.0));
+				tableValues[tmpPos][1] = Float.valueOf((float)(rs.getInt("profit") / 100.0));
 				tmpPos++;
 			}
 			rs.close();//关闭

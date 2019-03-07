@@ -390,10 +390,16 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 						JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
 						return;
 					}
+					
+					//if current billPanel is printed, then create a new one and expire it.
+					if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < 0) {
+						getCurBillPanel().reopen(null);
+					}
+					
 					//split into {num} bills. each dish's number and price will be divided by {num}.
 					Dish.splitOutputList(panel.orderedDishAry, num, null);//the third parameter is null, means update existing outputs
 					//update existing bill.
-					int curBillId = panel.orderedDishAry.get(0).getBillID();
+					int curBillId = getCurBillPanel().billID;
 					if(curBillId > 0) {
 						try {
 							StringBuilder sql = new StringBuilder("update bill set total = ").append(Math.round(Float.valueOf(panel.valTotlePrice.getText()) * 100)/num)

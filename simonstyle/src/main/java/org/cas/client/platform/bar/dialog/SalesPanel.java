@@ -320,7 +320,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		// get out existing status.
              		int refundAmount = billPanel.status;
                     if(refundAmount < -1) {	//if already refund, then add into existing amount.
-                    	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.AllreadyRefund() + BarOption.getMoneySign() + (0-refundAmount)/100.0, DlgConst.DlgTitle,
+                    	if (JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.AllreadyRefund() + BarOption.getMoneySign() + (0-refundAmount) / 100.0, DlgConst.DlgTitle,
     		                    JOptionPane.YES_NO_OPTION) != 0) {// allready refunded, sure to refund again?
     						return;
     					}else {

@@ -24,7 +24,6 @@ import javax.swing.SwingUtilities;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
-import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
@@ -243,7 +242,7 @@ public class HangupDlg extends JDialog implements ICASDialog, ActionListener, Co
         // tValues[tmpPos][2] = rs.getString("MNEMONIC");
         // tValues[tmpPos][3] = Integer.valueOf(rs.getInt("STORE"));
         // tValues[tmpPos][4] = rs.getString("UNIT");
-        // tValues[tmpPos][5] = Float.valueOf((float)(rs.getInt("PRICE")/100.0));
+        // tValues[tmpPos][5] = Float.valueOf((float)(rs.getInt("PRICE") / 100.0));
         // tValues[tmpPos][6] = rs.getString("CATEGORY");
         // tValues[tmpPos][7] = rs.getString("CONTENT");
         // tmpPos++;

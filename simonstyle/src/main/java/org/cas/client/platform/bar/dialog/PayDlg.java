@@ -220,12 +220,12 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             int left = total - onSrcCashReceived - onSrcDebitReceived - onSrcVisaReceived - onSrcMasterReceived;
             
             //set the interface value.
-            valCashReceived.setText(BarUtil.formatMoney(onSrcCashReceived/100.0));
-            valDebitReceived.setText(BarUtil.formatMoney(onSrcDebitReceived/100.0));
-            valVisaReceived.setText(BarUtil.formatMoney(onSrcVisaReceived/100.0));
-            valMasterReceived.setText(BarUtil.formatMoney(onSrcMasterReceived/100.0));
-        	valTotal.setText(BarUtil.formatMoney(total/100.0));
-            valLeft.setText(BarUtil.formatMoney(left/100.0));
+            valCashReceived.setText(BarUtil.formatMoney(onSrcCashReceived / 100.0));
+            valDebitReceived.setText(BarUtil.formatMoney(onSrcDebitReceived / 100.0));
+            valVisaReceived.setText(BarUtil.formatMoney(onSrcVisaReceived / 100.0));
+            valMasterReceived.setText(BarUtil.formatMoney(onSrcMasterReceived / 100.0));
+        	valTotal.setText(BarUtil.formatMoney(total / 100.0));
+            valLeft.setText(BarUtil.formatMoney(left / 100.0));
             
     	}catch(Exception e) {
     		ErrorUtil.write(e);

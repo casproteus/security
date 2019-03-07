@@ -753,6 +753,10 @@ public class PrintService{
 						if(p > 0) {
 							oldTotal = oldQST.substring(p + OLD_TOTAL.length());
 							oldQST = oldQST.substring(0, p);
+							p = oldTotal.indexOf(REF_TO);
+							if(p > 0) {
+								oldTotal = oldTotal.substring(0, p);
+							}
 						}
 					}
 				}
@@ -863,14 +867,14 @@ public class PrintService{
 			        	float floatPrice = (float)(price / 100.0);
 			        	
 						mtTransAvTaxes = formatMoneyForMev(BarUtil.formatMoney(floatPrice), null, isRefund);//+000021.85
-						TPSTrans = formatMoneyForMev(BarUtil.formatMoney(floatPrice * gstRate/100.0), null, isRefund);//+000001.09
-						TVQTrans = formatMoneyForMev(BarUtil.formatMoney(floatPrice * qstRate/100.0), null, isRefund);//+000001.72
+						TPSTrans = formatMoneyForMev(BarUtil.formatMoney(Math.round(floatPrice * gstRate) / 100.0), null, isRefund);//+000001.09
+						TVQTrans = formatMoneyForMev(BarUtil.formatMoney(Math.round(floatPrice * qstRate) / 100.0), null, isRefund);//+000001.72
 						mtTransApTaxes = formatMoneyForMev(BarUtil.formatMoney(refund), null, isRefund);
 					} else if (isVoided) {
 						mtTransAvTaxes = formatMoneyForMev("0.00", null, false);//+000021.85
 						TPSTrans = formatMoneyForMev("0.00", null, false);//+000001.09
 						TVQTrans = formatMoneyForMev("0.00", null, false);//+000001.72
-						mtTransApTaxes = formatMoneyForMev("#0.00", null, false);
+						mtTransApTaxes = formatMoneyForMev("0.00", null, false);
 					} else {
 						String strAvT = a[0].substring(a[0].indexOf(":") + 1);
 						mtTransAvTaxes = formatMoneyForMev(strAvT, oldsubtotal, isRefund);//+000021.85
@@ -1350,7 +1354,7 @@ public class PrintService{
 	    pushWaiterAndTime(strAryFR, tWidth, null, startTime, endTime);
         pushSalesSummary(strAryFR, list, tWidth,
         		String.valueOf(salesGrossCount), String.valueOf(refundCount), 
-        		BarUtil.formatMoney(salesGrossAmount/100.0),
+        		BarUtil.formatMoney(salesGrossAmount / 100.0),
         		BarUtil.formatMoney(refoundAmount / 100.0),
         		BarUtil.formatMoney(net / 100.0),
         		BarUtil.formatMoney(HST / 100.0),
@@ -1466,9 +1470,9 @@ public class PrintService{
         		bp.updateTotleArea();
         		
         		formatDishListContent(entry.getValue(), curPrintIp, tWidth, content,
-	            		BarUtil.formatMoney(bp.subTotal/100.0),
-	            		BarUtil.formatMoney(bp.totalGst/100.0),
-	            		BarUtil.formatMoney(bp.totalQst/100.0),
+	            		BarUtil.formatMoney(bp.subTotal / 100.0),
+	            		BarUtil.formatMoney(bp.totalGst / 100.0),
+	            		BarUtil.formatMoney(bp.totalQst / 100.0),
 	            		BarUtil.formatMoney(fServiceFee/billDishesMap.size()),
 	            		BarUtil.formatMoney(fDiscount/billDishesMap.size()));
 			}
