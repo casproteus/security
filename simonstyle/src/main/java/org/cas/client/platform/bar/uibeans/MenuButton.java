@@ -2,6 +2,7 @@ package org.cas.client.platform.bar.uibeans;
 
 import java.awt.Color;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
 import org.cas.client.platform.bar.dialog.BarOption;
@@ -17,6 +18,9 @@ public class MenuButton extends JButton {
     		bg = new Color(204,255,102);
     	}
     	setBackground(bg);
+
+		setBorder(BorderFactory.createEtchedBorder());
+		
         this.dspIndex = dspIndex;
     }
 
