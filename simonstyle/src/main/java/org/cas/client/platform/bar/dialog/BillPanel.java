@@ -625,9 +625,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			//if has output, then get the billID from any output, 
 			if(orderedDishAry.size() > 0 && orderedDishAry.get(0).getBillID() > 0) {
 				sql = new StringBuilder("select * from Bill where opentime = '").append(openTime)
-						.append("' and billIndex = ").append(billIndex)
+						.append("' and billIndex = '").append(billIndex).append("'")
 						.append(" and tableID = '").append(tableName).append("'")
-						.append(" and (status is null or status ").append(isShowingExpiredBill ? "=" : "<").append(DBConsts.expired).append(")");
+						.append(" and (status is null or status ").append(isShowingExpiredBill ? "<=" : "<").append(DBConsts.expired).append(")");
 				  
 				rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 				rs.beforeFirst();
@@ -647,7 +647,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				sql = new StringBuilder("Select id from bill where tableID = '").append(tableName)
 						.append("' and opentime = '").append(openTime).append("'");
 				if(BarFrame.instance.valCurBillIdx.getText().length() > 0) {
-					sql.append(" and billIndex = ").append(BarFrame.instance.valCurBillIdx.getText());
+					sql.append(" and billIndex = '").append(BarFrame.instance.valCurBillIdx.getText()).append("'");
 				}
                 ResultSet resultSet = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
                 resultSet.beforeFirst();

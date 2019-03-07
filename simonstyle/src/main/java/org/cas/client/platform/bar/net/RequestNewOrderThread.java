@@ -144,7 +144,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		        .append(createtime).append("')");				//opentime
 		try {
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
-		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime).append("' and billIndex = ").append(billIndex);
+		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime).append("' and billIndex = '").append(billIndex).append("'");
 		    ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 		    rs.beforeFirst();
 		    rs.next();

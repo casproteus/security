@@ -581,8 +581,8 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	public void moveBillToTable(int billID, String newTable, int billIdx, String openTime) {
 		StringBuilder sql;
 		sql = new StringBuilder("update bill set tableID = '").append(newTable)
-				 .append("', BillIndex = ").append(billIdx)
-				 .append(" , opentime = '").append(openTime)
+				 .append("', BillIndex = '").append(billIdx)
+				 .append("' , opentime = '").append(openTime)
 				 .append("' where id = ").append(billID);
 		 try {
 			 PIMDBModel.getStatement().executeUpdate(sql.toString());

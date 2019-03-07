@@ -476,7 +476,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		    	String curBill = BarFrame.instance.valCurBillIdx.getText();
 		    	//update bill
 				sql = new StringBuilder("update bill set status = ").append(DBConsts.voided)
-						.append(" where billIndex = ").append("".equals(curBill) ? 1 : curBill)
+						.append(" where billIndex = '").append("".equals(curBill) ? 1 : curBill).append("'")
 						.append(" and openTime = '").append(BarFrame.instance.valStartTime.getText()).append("'");
 		    	PIMDBModel.getStatement().executeQuery(sql.toString());
 		    	//update output

@@ -708,8 +708,8 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 			}else {
 				int billId = 0;
 				//check if the bill exist
-				StringBuilder sql = new StringBuilder("Select id, status from Bill where billIndex = ").append(targetBillIdx)
-				.append(" and tableId = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("'")
+				StringBuilder sql = new StringBuilder("Select id, status from Bill where billIndex = '").append(targetBillIdx)
+				.append("' and tableId = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("'")
 				.append(" and opentime = '").append(BarFrame.instance.valStartTime.getText()).append("'")
 				.append(" and (status is null or status < ").append(DBConsts.expired).append(")");
 				try {
