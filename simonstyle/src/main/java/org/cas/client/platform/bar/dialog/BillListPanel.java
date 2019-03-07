@@ -726,7 +726,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	        				}
 		        		}
 		        	}else {
-		        		BarFrame.instance.createAnEmptyBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
+		        		billId = BarFrame.instance.createAnEmptyBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
 								BarFrame.instance.valStartTime.getText(), targetBillIdx);
 		        	}
 		        }catch(Exception exp) {

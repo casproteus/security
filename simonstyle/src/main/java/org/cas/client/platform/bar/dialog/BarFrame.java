@@ -615,7 +615,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		}
 	}
 
-	public void createAnEmptyBill(String tableName, String openTime, int newBillIdx){
+	public int createAnEmptyBill(String tableName, String openTime, int newBillIdx){
 		//validate parameters
 		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
 		openTime = openTime == null ? BarFrame.instance.valStartTime.getText() : openTime;
@@ -639,8 +639,17 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		        .append(openTime).append("')");				//content
 		try {
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
+			
+			sql = new StringBuilder("Select id from bill where createtime = '").append(createtime)
+		   			.append("' and tableID = '").append(tableName)
+		   			.append("' and BillIndex = '").append(newBillIdx).append("'");
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+            rs.beforeFirst();
+            rs.next();
+            return rs.getInt("id");
 		}catch(Exception exp) {
 			L.e("createABill", "exception when creating a bill: " + sql, exp);
+			return -1;
 		}
 	}
 	
