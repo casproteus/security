@@ -503,7 +503,11 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 			}else if(o == btnPrintAll) {
 				ArrayList<BillPanel> unclosedBillPanels = gatherAllUnclosedBillPanels();
 				for (BillPanel billPanel : unclosedBillPanels) {
-					billPanel.printBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(), billPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
+					billPanel.printBill(
+							BarFrame.instance.cmbCurTable.getSelectedItem().toString(), 
+							billPanel.billButton.getText(), 
+							BarFrame.instance.valStartTime.getText(),
+							true);
 				}
 			}else if(o == btnPrintOneBill) {    //Print into one bill with client sub total
 				if(!checkColosedBill()) {

@@ -33,7 +33,6 @@ import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.model.DBConsts;
-import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -224,10 +223,11 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         	}
         	reLayout();
         }else if(o == btnPrintInvoice) {
-        	if(showInSalesPanel()) {
-        		//use true as case back when re printing invoice. because no need to mention that restaurant receiced tips. 
-        		PrintService.exePrintInvoice(((SalesPanel)BarFrame.instance.panels[2]).billPanel, true, ckxIsToCustomer.isSelected(), true);
-        	}
+        	(((SalesPanel)BarFrame.instance.panels[2]).billPanel).printBill(
+        			BarFrame.instance.cmbCurTable.getSelectedItem().toString(), 
+        			BarFrame.instance.valCurBillIdx.getText(),
+        			BarFrame.instance.valStartTime.getText(), ckxIsToCustomer.isSelected());
+        	//use true as cashback when re printing invoice. because no need to mention that restaurant receiced tips. 
         }
     }
 

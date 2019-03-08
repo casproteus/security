@@ -95,10 +95,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     			billPricesUpdate();
         		
         		//if it's already paid, show comfirmDialog.
-        		if(billPanel.status >= DBConsts.completed)
-        			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.ConfirmPayAgain(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
+        		if(billPanel.status < 0 || billPanel.status >= DBConsts.completed) {
+        			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.ConfirmPayAgain(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
             			return;
-        		
+        			}else {
+        				billPanel.reopen(null);
+        			}
+        		}
         		//check the pay dialog is already visible, if yes, then update bill received values.
         		if(BarFrame.payDlg.isVisible()) {
         			BarFrame.payDlg.updateBill(billPanel.getBillId());
@@ -186,7 +189,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		billPricesUpdate();
         		billPanel.printBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
         				BarFrame.instance.getCurBillIndex(),
-        				BarFrame.instance.valStartTime.getText());
+        				BarFrame.instance.valStartTime.getText(),
+        				true);
         		billPanel.initContent();
         		
             } else if (o == btnLine_2_1) { // return

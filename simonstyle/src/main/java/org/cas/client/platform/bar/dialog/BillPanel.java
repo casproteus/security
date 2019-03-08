@@ -83,32 +83,34 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		initComponent();
 	}
 	
-	public void printBill(String tableID, String billIndex, String opentime) {
+	public void printBill(String tableID, String billIndex, String opentime, boolean isToCustomer) {
 		
         if(orderedDishAry.size() == 0){
             return;
         }
-
-        PrintService.exePrintBill(this, orderedDishAry);
-        status = DBConsts.billPrinted;
-		//update the total price of the target bill, 
-		//---because when add dish into the billPane, bill in db will not get updated.
-		StringBuilder sql = new StringBuilder("update bill set total = ")
-				.append(Math.round(Float.valueOf(valTotlePrice.getText()) * 100))
-				.append(", discount = ").append(discount)
-				.append(", otherReceived = ").append(serviceFee)
-				.append(", status = ").append(DBConsts.billPrinted)//so the invoice can be saved.
-				.append(", comment = comment + ' ").append(PrintService.REF_TO).append(billID).append("'")
-				.append(" where tableID = '").append(tableID).append("'")
-				.append(" and BillIndex = '").append(billIndex).append("'")
-				.append(" and openTime = '").append(opentime).append("'")
-				.append(" and (status is null or status = ").append(DBConsts.original).append(")");
-		try {
-			PIMDBModel.getStatement().executeUpdate(sql.toString());
-		}catch(Exception e) {
-			L.e("BillPane", "Excepioint in print bill:" + sql, e);
-		}
-		
+        if(status < 0 || status >= DBConsts.completed) {
+        	PrintService.exePrintInvoice(this, false, isToCustomer, true);
+        }else {
+	        PrintService.exePrintBill(this, orderedDishAry);
+	        status = DBConsts.billPrinted;
+			//update the total price of the target bill, 
+			//---because when add dish into the billPane, bill in db will not get updated.
+			StringBuilder sql = new StringBuilder("update bill set total = ")
+					.append(Math.round(Float.valueOf(valTotlePrice.getText()) * 100))
+					.append(", discount = ").append(discount)
+					.append(", otherReceived = ").append(serviceFee)
+					.append(", status = ").append(DBConsts.billPrinted)//so the invoice can be saved.
+					.append(", comment = comment + ' ").append(PrintService.REF_TO).append(billID).append("'")
+					.append(" where tableID = '").append(tableID).append("'")
+					.append(" and BillIndex = '").append(billIndex).append("'")
+					.append(" and openTime = '").append(opentime).append("'")
+					.append(" and (status is null or status = ").append(DBConsts.original).append(")");
+			try {
+				PIMDBModel.getStatement().executeUpdate(sql.toString());
+			}catch(Exception e) {
+				L.e("BillPane", "Excepioint in print bill:" + sql, e);
+			}
+        }
 	}
 
 	public int generateBillRecord(String tableID, String billIndex, String opentime) {
