@@ -91,8 +91,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         if (o instanceof FunctionButton) {
         	if(o == btnCASH || o == btnDEBIT || o == btnVISA || o == btnMASTER) { //pay
 
-        		createAndPrintNewOutput();
-    			billPricesUpdate();
+        		createAndPrintNewOutput();	//process the new added items (send to printer and db).
+    			billPricesUpdateToDB();		//the total price could has changed, because user added new item.
         		
         		//if it's already paid, show comfirmDialog.
         		if(billPanel.status < 0 || billPanel.status >= DBConsts.completed) {
@@ -102,7 +102,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         				billPanel.reopen(null);
         			}
         		}
-        		//check the pay dialog is already visible, if yes, then update bill received values.
+        		//check if the pay dialog is already visible, if yes, then update bill received values.
         		if(BarFrame.payDlg.isVisible()) {
         			BarFrame.payDlg.updateBill(billPanel.getBillId());
         		}
@@ -138,7 +138,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		}
         		
         		createAndPrintNewOutput();
-    			billPricesUpdate();
+    			billPricesUpdateToDB();
         		BarFrame.instance.switchMode(1);
         		
         	} else if (o == btnLine_1_5) {	//remove item.
@@ -177,7 +177,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		billPanel.updateTotleArea();
              		
              		createAndPrintNewOutput();
-             		billPricesUpdate();
+             		billPricesUpdateToDB();
              		
              	}catch(Exception exp) {
                  	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);
@@ -186,7 +186,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		
         	}else if (o == btnLine_1_10) { // print bill
         		createAndPrintNewOutput();		//will send new added(not printed yet) dishes to kitchen.
-        		billPricesUpdate();
+        		billPricesUpdateToDB();
         		billPanel.printBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
         				BarFrame.instance.getCurBillIndex(),
         				BarFrame.instance.valStartTime.getText(),
@@ -356,7 +356,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             	
             } else if (o == btnLine_2_10) {//send
         		createAndPrintNewOutput();
-        		billPricesUpdate();
+        		billPricesUpdateToDB();
             	if(BarOption.isFastFoodMode()) {
     		    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(BillListPanel.getANewBillIdx()));
     		    	BarFrame.instance.createAnEmptyBill(null, null, 0);//create new bill;
@@ -490,7 +490,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		billPanel.updateTotleArea();
 		
 		createAndPrintNewOutput();
-		billPricesUpdate();
+		billPricesUpdateToDB();
 	}
 
 	//add new bill with a new billID and billIdx.
@@ -552,12 +552,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		BarFrame.numberPanelDlg.setAction(new UpdateItemPriceAction(btnLine_1_8, billPanel));
 	}
 
+	//if there's new dish added.... update the total value field of bill record.
 	//and make sure new added dish will be updated with new information.
-	private void billPricesUpdate() {
-		//if there's new dish added, or discount, service fee changed.... update the total value field of bill record.
+	private void billPricesUpdateToDB() {
 		updateBillRecordPrices(billPanel.getBillId());		//in case if added service fee or discout of bill.
-		billPanel.initContent();	//always need to initContent, to make sure dish has new price. e.g. when adding a dish to a printed bill,
-	}								//and click print bill immediatly, will need the initContent. 
+		billPanel.initContent();	//always need to initContent, to make sure dish in selection ary has new property. e.g. saved dish should has different color.,
+	}
 
 	private void createAndPrintNewOutput() {
 		//if there's any new bill, send it to kitchen first, and this also made the output generated.
@@ -579,7 +579,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		
 		billPanel.updateTotleArea();
 		createAndPrintNewOutput();
-		billPricesUpdate();
+		billPricesUpdateToDB();
 	}
 	
 	void removeItem() {

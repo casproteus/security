@@ -9,7 +9,6 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.ResultSet;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -44,19 +43,24 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     	StringBuilder sb = new StringBuilder();
     	
 		String curTitle = getTitle();
-		//calculate the received of diffent kind
+		//calculate the received of diffent kind. new on-screen received value = old on-scr value + value new inputted.
+		//old~means the value in db, 
+		//onsrc value~ the value was first "value in db - cashback/tip - status, and do not change after that is use added money with this dialog several times.
+		//new~ means the latest onsrc + the new inputted content.
+		//@Note: we do not use old + new input directrly, because maybe the onscreen one is changed many time(when using this dlg to add a little (not enough) money.
+		//@NOTe: we do not use onSrc + new input, because onsrc value do not change afte first time calculated.
 		if(curTitle.equals(BarFrame.consts.EnterCashPayment())){
-			int cashReceived = reflectNewInput(valCashReceived.getText());
-			sb.append("update bill set cashReceived = ").append(oldCashReceived + cashReceived - onSrcCashReceived).append(" where id = ").append(billId);
+			int newCashReceived = reflectNewInput(valCashReceived.getText());
+			sb.append("update bill set cashReceived = ").append(oldCashReceived + newCashReceived - onSrcCashReceived).append(" where id = ").append(billId);
 		} else if(curTitle.equals(BarFrame.consts.EnterDebitPayment())) {
-			int debitReceived = reflectNewInput(valDebitReceived.getText());
-			sb.append("update bill set debitReceived = ").append(oldDebitReceived + debitReceived - onSrcDebitReceived).append(" where id = ").append(billId);
+			int newDebitReceived = reflectNewInput(valDebitReceived.getText());
+			sb.append("update bill set debitReceived = ").append(oldDebitReceived + newDebitReceived - onSrcDebitReceived).append(" where id = ").append(billId);
 		} else if(curTitle.equals(BarFrame.consts.EnterVisaPayment())) {
-			int visaReceived = reflectNewInput(valVisaReceived.getText());
-			sb.append("update bill set visaReceived = ").append(oldVisaReceived + visaReceived - onSrcVisaReceived).append(" where id = ").append(billId);
+			int newVisaReceived = reflectNewInput(valVisaReceived.getText());
+			sb.append("update bill set visaReceived = ").append(oldVisaReceived + newVisaReceived - onSrcVisaReceived).append(" where id = ").append(billId);
 		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment())) {
-			int masterReceived = reflectNewInput(valMasterReceived.getText());
-			sb.append("update bill set masterReceived = ").append(oldMasterReceived + masterReceived - onSrcMasterReceived).append(" where id = ").append(billId);
+			int newMasterReceived = reflectNewInput(valMasterReceived.getText());
+			sb.append("update bill set masterReceived = ").append(oldMasterReceived + newMasterReceived - onSrcMasterReceived).append(" where id = ").append(billId);
 		}
 		
 		try {
@@ -114,12 +118,14 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     	initMoneyDisplay(billId);
     }
 
+	//values got from db record
 	int oldTotal = 0;
 	int oldCashReceived = 0;
 	int oldDebitReceived = 0;
 	int oldVisaReceived = 0;
 	int oldMasterReceived = 0;
 	
+	//calculated by minus cashback/tip and refund. (cash back is negative)
 	int onSrcCashReceived = 0;
 	int onSrcDebitReceived = 0;
 	int onSrcVisaReceived = 0;
@@ -196,17 +202,17 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     	}
 	}
 	
-	public void initContent(List<BillPanel> unclosedBillPanels) {
-		BillPanel billPanel = unclosedBillPanels.get(0);
-		
-		Float total = 0.0f;
-		for (BillPanel bP : unclosedBillPanels) {
-			total += Float.valueOf(bP.valTotlePrice.getText());
-		}
-		
-		int billId = billPanel.getBillId();
-    	initMoneyDisplay(billId);
-    }
+//	public void initContent(List<BillPanel> unclosedBillPanels) {
+//		BillPanel billPanel = unclosedBillPanels.get(0);
+//		
+//		Float total = 0.0f;
+//		for (BillPanel bP : unclosedBillPanels) {
+//			total += Float.valueOf(bP.valTotlePrice.getText());
+//		}
+//		
+//		int billId = billPanel.getBillId();
+//    	initMoneyDisplay(billId);
+//    }
 	
     /*
      * 对话盒的布局独立出来，为了在对话盒尺寸发生改变后，界面各元素能够重新布局， 使整体保持美观。尤其在Linux系列的操作系统上，所有的对话盒都必须准备好应对用户的拖拉改变尺寸。
@@ -328,7 +334,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         			BarFrame.instance.closeATable(null, null);
         		}
         	}
-        	//no matter it's closed or not, we need to update the pay info of the bill.
+        	//no matter it's closed or not, we need to update the pay info of the bill. why?
     		updateBill(billId);
         	resetContent();
         	this.setVisible(false);

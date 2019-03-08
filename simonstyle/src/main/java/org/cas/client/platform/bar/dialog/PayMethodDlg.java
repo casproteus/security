@@ -1,16 +1,20 @@
 package org.cas.client.platform.bar.dialog;
 
-public class PayMethodDlg //extends JFrame implements ActionListener, WindowFocusListener
+import javax.swing.JFrame;
+
+import org.cas.client.platform.bar.uibeans.FunctionButton;
+
+public class PayMethodDlg extends JFrame  //implements ActionListener, WindowFocusListener
 {
 	
-//	BillListPanel billListPanel;
-//
-//    public PayMethodDlg(BillListPanel general) {
-//    	super();
-//    	setTitle(BarFrame.consts.MORE());
-//        billListPanel = general;
-//        initPanel();
-//    }
+	BillListPanel billListPanel;
+
+    public PayMethodDlg(BillListPanel general) {
+    	super();
+    	setTitle(BarFrame.consts.MORE());
+        billListPanel = general;
+        initPanel();
+    }
 //
 //    /**
 //     * Invoked when an action occurs. NOTE:PIM的绝大多数用于新建和编辑的对话盒，对于确定事件的处理，采用如下规则：
@@ -193,12 +197,12 @@ public class PayMethodDlg //extends JFrame implements ActionListener, WindowFocu
 //    	}
 //    }
 //	
-//	public void show(FunctionButton btnMore) {
-//		reLayout(btnMore);
-//		this.setVisible(true);
-//	}
-//	
-//	private void reLayout(FunctionButton btnMore) {
+	public void show(FunctionButton btnMore) {
+		reLayout(btnMore);
+		this.setVisible(true);
+	}
+	
+	private void reLayout(FunctionButton btnMore) {
 //		int x = btnMore.getX();
 //		int y = btnMore.getY();
 //		int width = btnMore.getWidth();
@@ -214,9 +218,9 @@ public class PayMethodDlg //extends JFrame implements ActionListener, WindowFocu
 //		setBounds(x, y - panelHeight, 
 //				width + CustOpts.HOR_GAP * 2 + CustOpts.SIZE_EDGE * 2 + 10,
 //				panelHeight + CustOpts.SIZE_EDGE * 2 + 40);
-//	}
-//	
-//	private void initPanel() {
+	}
+	
+	private void initPanel() {
 //		// 初始化－－－－－－－－－－－－－－－－
 //		btnCASH = new FunctionButton(BarFrame.consts.CASH());
 //		btnDEBIT = new FunctionButton(BarFrame.consts.DEBIT());
@@ -249,7 +253,7 @@ public class PayMethodDlg //extends JFrame implements ActionListener, WindowFocu
 //		btnCOUPON.addActionListener(this);
 //		
 //		this.addWindowFocusListener(this);
-//	}
+	}
 //	
 //	private FunctionButton btnCASH;
 //	private FunctionButton btnDEBIT;
