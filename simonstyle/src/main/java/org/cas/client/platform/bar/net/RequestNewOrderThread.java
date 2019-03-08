@@ -130,14 +130,14 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 	public int generateBill(String createtime, String tableID, String billIndex, String total) {
 		//create a bill
 		StringBuilder sql = new StringBuilder(
-		        "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
+		        "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, serviceFee, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
 				.append(createtime).append("', '")			//createtime
 		        .append(tableID).append("', '")				//tableID
 		        .append(billIndex).append("', ")			//BillIndex
 		        .append(total == null ? 0 : (int)(Float.parseFloat(total.substring(1)) * 100)).append(", ")	 //remove the $ ahead.
 		        .append(0).append(", ")	//discount
 		        .append(0).append(", ")	//tip
-		        .append(0).append(", ")	//otherreceived
+		        .append(0).append(", ")	//serviceFee
 		        .append(0).append(", ")	//cashback
 		        .append(0).append(", '")		//emoployid--0 is the id of automactically generated Robot employee when first time use.
 		        .append("").append("', '")					//Comment

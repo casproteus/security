@@ -186,7 +186,7 @@ public class App_Bar extends AbstractApp {
          
             // 增建一个Bill表, for remember the discount and comments and the cash back...
             sql = "CREATE CACHED TABLE Bill (ID INTEGER IDENTITY PRIMARY KEY, createtime VARCHAR(255),"
-            		.concat(" tableID VARCHAR(255), BillIndex VARCHAR(255), total INTEGER, discount INTEGER,")
+            		.concat(" tableID VARCHAR(255), BillIndex VARCHAR(255), total INTEGER, discount INTEGER, serviceFee INTEGER,")
             		.concat(" cashReceived INTEGER, debitReceived INTEGER, visaReceived INTEGER, masterReceived INTEGER, otherReceived INTEGER,")
             		.concat(" tip INTEGER, cashback INTEGER, status INTEGER, EMPLOYEEID INTEGER, Comment VARCHAR(255), opentime VARCHAR(255));");
             stm.executeUpdate(sql);

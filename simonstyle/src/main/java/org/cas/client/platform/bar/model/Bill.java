@@ -34,6 +34,14 @@ public class Bill {
 	public void setDiscount(float discount) {
 		this.discount = discount;
 	}
+
+	public float getServiceFee() {
+		return serviceFee;
+	}
+	public void setServiceFee(float serviceFee) {
+		this.serviceFee = serviceFee;
+	}
+	
 	public int getCashReceived() {
 		return cashReceived;
 	}
@@ -106,6 +114,7 @@ public class Bill {
 	private String billIndex;
 	private float total = 0f;
 	private float discount = 0f;
+	private float serviceFee = 0; 
 	private int cashReceived = 0;
 	private int debitReceived = 0;
 	private int visaReceived = 0;

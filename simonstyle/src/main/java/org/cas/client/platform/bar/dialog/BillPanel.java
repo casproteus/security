@@ -98,7 +98,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			StringBuilder sql = new StringBuilder("update bill set total = ")
 					.append(Math.round(Float.valueOf(valTotlePrice.getText()) * 100))
 					.append(", discount = ").append(discount)
-					.append(", otherReceived = ").append(serviceFee)
+					.append(", serviceFee = ").append(serviceFee)
 					.append(", status = ").append(DBConsts.billPrinted)//so the invoice can be saved.
 					.append(", comment = comment + ' ").append(PrintService.REF_TO).append(billID).append("'")
 					.append(" where tableID = '").append(tableID).append("'")
@@ -636,9 +636,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				if(rs.next()) {
 					billID = rs.getInt("id");	//@NOTE: do not use orderedDishAry.get(0).getBillID() to get billID, because when combine all we don't modify bill id in output and dish (for undo use)
 				    discount = rs.getInt("discount");
+				    serviceFee = rs.getInt("serviceFee");
 				    tip = rs.getInt("tip");
 				    cashback = rs.getInt("cashback");
-				    serviceFee = rs.getInt("otherreceived");
 				    status = rs.getInt("status");
 				    comment = rs.getString("comment");
 				    setBackground(status >= DBConsts.completed || status < 0 ? Color.gray : null);

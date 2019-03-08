@@ -612,7 +612,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		try {
 			PayDlg.updateBill(billId, "total", Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
 			PayDlg.updateBill(billId, "discount", Math.round(billPanel.discount));
-			PayDlg.updateBill(billId, "otherReceived", billPanel.serviceFee);
+			PayDlg.updateBill(billId, "serviceFee", billPanel.serviceFee);
 		}catch(Exception exp) {
 			L.e("SalesPanel", "unexpected error when updating the totalvalue of bill.", exp);
 		}

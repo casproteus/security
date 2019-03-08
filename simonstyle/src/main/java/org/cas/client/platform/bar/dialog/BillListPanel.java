@@ -404,7 +404,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 						try {
 							StringBuilder sql = new StringBuilder("update bill set total = ").append(Math.round(Float.valueOf(panel.valTotlePrice.getText()) * 100)/num)
 									.append(", discount = discount/").append(num)
-									.append(", otherReceived = otherReceived/").append(num)
+									.append(", serviceFee = serviceFee/").append(num)
 							.append(" where id = ").append(curBillId);
 							PIMDBModel.getStatement().executeUpdate(sql.toString());
 							
@@ -654,12 +654,12 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		
 		if(unclosedBillPanels.get(0).status >= DBConsts.billPrinted || unclosedBillPanels.get(0).status < 0) {
 				sql = new StringBuilder("update bill set discount = ").append(combinedDiscount)
-				.append(", otherReceived = ").append(combinedServiceFee)
+				.append(", serviceFee = ").append(combinedServiceFee)
 				.append(", comment = '").append(combinedComment).append("'")
 				.append(" where id = ").append(firstUnclosedBillId);
 		}else {
 			sql = new StringBuilder("update bill set discount = ").append(combinedDiscount)
-				.append(", otherReceived = ").append(combinedServiceFee)
+				.append(", serviceFee = ").append(combinedServiceFee)
 				.append(" where id = ").append(firstUnclosedBillId);
 		}
 		
@@ -754,7 +754,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	}
 	
 	//if in same table same openTime same billIndex, we should combine the outputs.
-	//qty, total price, discount, otherReceived
+	//qty, total price, discount, serviceFee
     private void combineOutputs(String tableName, String startTime, int billIdx) {
     	
     	//target the items which can be combined.

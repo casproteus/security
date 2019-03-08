@@ -45,7 +45,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.168-20190306";
+	private String VERSION = "V0.169-20190307";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     
@@ -625,7 +625,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		//create a bill for it. in case there will be something like order fee in future.
 		String createtime = BarOption.df.format(new Date());
 		StringBuilder sql = new StringBuilder(
-		        "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
+		        "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, serviceFee, cashback, EMPLOYEEID, Comment, opentime) VALUES ('")
 				.append(createtime).append("', '")
 		        .append(tableName).append("', '")	//table
 		        .append(newBillIdx).append("', ")			//bill
@@ -663,22 +663,22 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         	int debitReceived = rs.getInt("debitReceived");
             int visaReceived = rs.getInt("visaReceived");
             int masterReceived = rs.getInt("masterReceived");
-            int otherReceived = rs.getInt("otherReceived");
+            int otherreceived = rs.getInt("otherreceived");
         	int cashBack = rs.getInt("cashback");
             int tip = rs.getInt("tip");
         
 			//generate a bill in db and update the output with the new bill id
 			String createtime = BarOption.df.format(new Date());
 			sql = new StringBuilder(
-	            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, otherreceived, cashback, EMPLOYEEID, Comment,")
-	            .append(" opentime, cashReceived, debitReceived, visaReceived, masterReceived) VALUES ('")
+	            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, serviceFee, cashback, EMPLOYEEID, Comment,")
+	            .append(" opentime, cashReceived, debitReceived, visaReceived, masterReceived, otherreceived) VALUES ('")
 				.append(createtime).append("', '")
 	            .append(tableID).append("', '")	//table
 	            .append(billIndex).append("', ")			//bill
 	            .append(total).append(", ")//Math.round(Float.valueOf(valTotlePrice.getText()) * 100)/num).append(", ")	//total
 	            .append(billPanel.discount).append(", ")
 	            .append(tip).append(", ")
-	            .append(otherReceived).append(", ")			//currently used for storing service fee -_-!
+	            .append(billPanel.serviceFee).append(", ")			//currently used for storing service fee -_-!
 	            .append(cashBack).append(", ")	//discount
 	            .append(LoginDlg.USERID).append(", '")		//emoployid
 	            .append(billPanel.comment).append("', '")
@@ -686,7 +686,8 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	            .append(cashReceived).append(", ")
 	            .append(debitReceived).append(", ")
 	            .append(visaReceived).append(", ")
-	            .append(masterReceived).append(")");				//content
+	            .append(masterReceived).append(", ")
+	            .append(otherreceived).append(")");				//content
 		
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 			
