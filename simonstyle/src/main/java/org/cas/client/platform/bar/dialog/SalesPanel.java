@@ -485,11 +485,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		BarFrame.instance.switchMode(0);
 	}
 
-	public void discountBill(int discount) {
-		if (discount > billPanel.subTotal) {
-			discount = Math.round(billPanel.subTotal);
-		}
-		billPanel.discount = discount;
+	private void discountBill(float discount) {
+		billPanel.discount = discount > billPanel.subTotal ? billPanel.subTotal : discount;
 		billPanel.updateTotleArea();
 		
 		createAndPrintNewOutput();

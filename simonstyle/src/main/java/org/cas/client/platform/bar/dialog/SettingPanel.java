@@ -329,7 +329,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         //JToggleButton-------------------------------------------------------------------------------------
         else if(o instanceof JToggleButton) {
         	if(o == cbxIsTrainingMode) {
-        		LoginDlg.MODETRANS = "F";
+        		BarOption.setIsTrainingMode(cbxIsTrainingMode.isSelected() ? "true" : "false");
         	}else if(o == cbxIsSingleUserMode) {
         		BarOption.setSingleUser(cbxIsSingleUserMode.isSelected() ? "true" : "false");
         	}else if(o == cbxIsDiscoutAffectTax) {
@@ -574,6 +574,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxTreatPricePromtAsTaxInclude.setBackground(null);
         cbxShowCustomerFrame.setBackground(null);
         
+        cbxIsTrainingMode.setSelected(BarOption.isTrainingMode());
         cbxIsSingleUserMode.setSelected(BarOption.isSingleUser());
         cbxIsDiscoutAffectTax.setSelected(BarOption.isDiscountAffectTax());
         cbxIsServiceFeeAffectTax.setSelected(BarOption.isServiceFeeAffectTax());

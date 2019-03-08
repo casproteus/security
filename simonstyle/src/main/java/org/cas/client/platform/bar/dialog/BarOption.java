@@ -447,4 +447,13 @@ public class BarOption {
 	public static void setBillNumberStartStr(String BillNumberStartStr) {
     	CustOpts.custOps.setKeyAndValue("BillNumberStartStr", BillNumberStartStr);
 	}
+	
+	public static void setIsTrainingMode(String isTrainingMode) {
+		CustOpts.custOps.setKeyAndValue("isTrainingMode", isTrainingMode);
+		
+	}
+	public static boolean isTrainingMode() {
+		return CustOpts.custOps.getValue("isTrainingMode") == null ? 
+				false : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("isTrainingMode"));
+	}
 }

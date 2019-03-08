@@ -240,6 +240,10 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
 						break;
 					}
                     setVisible(false);
+                    
+                    if(BarOption.isTrainingMode()) {
+                    	MODETRANS = "F";
+                    }
                     return;
                 }
             }
