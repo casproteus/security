@@ -155,64 +155,28 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	        		onSrcCashReceived = 0;
 	        	}
         	}
-            
-        	//debitReceived
-            onSrcDebitReceived = oldDebitReceived;
-            int tip = oldTip;
-        	if(oldDebitReceived > oldTip) {
-        		onSrcDebitReceived -= tip;
-        		tip = 0;
-        		if(oldStatus < 0) {
-        			if(onSrcDebitReceived + oldStatus > 0) {
-        				onSrcDebitReceived += oldStatus;
-        				oldStatus = 0;
-        			} else {
-        				oldStatus += onSrcDebitReceived;
-        				onSrcDebitReceived = 0;
-        			}
-        		}
-        	}else {
-        		tip -= onSrcDebitReceived;
-        		onSrcDebitReceived = 0;
-        	}
-            
         	
-        	//visaReceived
-            onSrcVisaReceived = oldVisaReceived;
-            if(onSrcVisaReceived > tip) {
-            	onSrcVisaReceived -= tip;
-        		tip = 0;
-        		if(oldStatus < 0) {
-        			if(onSrcVisaReceived + oldStatus > 0) {
-        				onSrcVisaReceived += oldStatus;
-        				oldStatus = 0;
-        			} else {
-        				oldStatus += onSrcVisaReceived;
-        				onSrcVisaReceived = 0;
-        			}
-        		}
-        	}else {
-        		tip -= onSrcVisaReceived;
-        		onSrcVisaReceived = 0;
-        	}
-            
-            //masterReceived
-            onSrcMasterReceived = oldMasterReceived;
-            if(onSrcMasterReceived > tip) {
-            	onSrcMasterReceived -= tip;
-        		tip = 0;
-        		if(oldStatus < 0) {
-        			if(onSrcMasterReceived + oldStatus > 0) {
-        				onSrcMasterReceived += oldStatus;
-        				oldStatus = 0;
-        			} else {
-        				oldStatus += onSrcMasterReceived;
-        				onSrcMasterReceived = 0;
-        			}
-        		}
-        	}else {
-        		tip -= onSrcMasterReceived;
-        		onSrcMasterReceived = 0;
+            //if the tip is not 0, there must be one receive(debit, visa or master) which is bigger than tip.
+        	//@No need to consider the case that status is negative, because if it's refund, when reopenit, a new bill will be generated.
+        	//and the payDlg will display of payDlg is base on the new bill.
+        	if(oldTip > 0) {
+        		//debitReceived
+	            onSrcDebitReceived = oldDebitReceived;
+	        	if(oldDebitReceived > oldTip) {
+	        		onSrcDebitReceived -= oldTip;
+	        	}
+	        	
+	        	//visaReceived
+	            onSrcVisaReceived = oldVisaReceived;
+	            if(onSrcVisaReceived > oldTip) {
+	            	onSrcVisaReceived -= oldTip;
+	        	}
+	            
+	            //masterReceived
+	            onSrcMasterReceived = oldMasterReceived;
+	            if(onSrcMasterReceived > oldTip) {
+	            	onSrcMasterReceived -= oldTip;
+	        	}
         	}
             //total
             int total = oldTotal;

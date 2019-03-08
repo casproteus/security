@@ -635,6 +635,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					billID = rs.getInt("id");	//@NOTE: do not use orderedDishAry.get(0).getBillID() to get billID, because when combine all we don't modify bill id in output and dish (for undo use)
 				    discount = rs.getInt("discount");
 				    tip = rs.getInt("tip");
+				    cashback = rs.getInt("cashback");
 				    serviceFee = rs.getInt("otherreceived");
 				    status = rs.getInt("status");
 				    comment = rs.getString("comment");
@@ -751,20 +752,22 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		return true;
 	}
 	
+	//caller can specify the billIdx, if the billIdx is not specified, then use the billIdx on Frame.
 	public void reopen(String billIdx) {
 		if(billIdx == null || billIdx.length() == 0) {
 			billIdx = BarFrame.instance.valCurBillIdx.getText();
 		}
+		
 		try {
 			//dump the old bill and create a new bill
 			StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.expired)
 	 				.append(" where id = ").append(billID);
 	 		PIMDBModel.getStatement().executeUpdate(sql.toString());
 	 		
-	 		//generat new bill with ref to dumpted bill everything else use the data on current billPane
-	 		//@NOTE:no need to generata new output. because the output will be choosed by table and billIdx, so old output will goto new bill automatically.
-	 		//while, if user open the dumpted old bill, then the removed item will be dissappears and new added item will appear on old bill also.
-	 		//this will be a known bug. TDOO:we can make it better by searching output by billID when it's a dumpted bill. hope no one will need to check the dumpted bills.
+	 		//Generate new bill with ref to dumped bill everything else use the data on current billPane
+	 		//@NOTE:no need to generate new output. because the output will be choose by table and billIdx, so old output will go to new bill automatically.
+	 		//while, if user open the dumped old bill, then the removed item will be disappears and new added item will appear on old bill also.
+	 		//this will be a known bug. TDOO:we can make it better by searching output by billID when it's a dumped bill. hope no one will need to check the dumped bills.
 	 		//??what do we do when removing an saved item from billPanel?
 	 		StringBuilder newComment = new StringBuilder(PrintService.REF_TO).append(billID);
 			if(status >= DBConsts.completed) {
@@ -781,13 +784,83 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					Math.round(Float.valueOf(valTotlePrice.getText()) * 100), 
 					this);
 	 		
-	 		//Temporally change something on cur billPane.
+	        //when we reopen a refunded bill, we create a new bill which is a original bill, so we must clean the received money with the refund count.
+
+	 		if(status < 0){	//save the old money numbers, in case the old status is negative(means have returned some money.
+	 			StringBuilder sb = new StringBuilder("select * from bill where id = " + newBillID);
+
+ 	    		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sb.toString());
+ 	            rs.next();
+ 	        	
+ 	            int oldTotal = rs.getInt("total");
+ 	            int oldCashReceived =rs.getInt("cashReceived");
+ 	            int oldDebitReceived = rs.getInt("debitReceived");
+ 	            int oldVisaReceived = rs.getInt("visaReceived");
+ 	            int oldMasterReceived = rs.getInt("masterReceived");
+ 	        	
+ 	            //clean cashback and tip first, and clean status at the same time.
+ 	        	//set status = 0 immediatly when refund is covered by received money, in case another receive can also cover the refund, will be minus twice.
+ 	            int newCashReceived = oldCashReceived + cashback;	//cashReceived is always related with cashback.
+	        	if(newCashReceived + status > 0) {
+	        		newCashReceived += status;
+	        		status = 0;
+	        	}else {
+	        		status += newCashReceived;
+	        		newCashReceived = 0;
+	        	}
+ 	            
+ 	        	//debitReceived
+ 	        	int newDebitReceived = oldDebitReceived;
+ 	        	if(oldDebitReceived > tip) {
+ 	        		newDebitReceived -= tip;
+ 	        	}
+ 	        	if(newDebitReceived + status > 0) {
+    				newDebitReceived += status;
+    				status = 0;
+    			} else {
+    				status += newDebitReceived;
+    				newDebitReceived = 0;
+    			}
+ 	        	
+ 	        	//visaReceived
+ 	            int newVisaReceived = oldVisaReceived;
+ 	            if(newVisaReceived > tip) {
+ 	            	newVisaReceived -= tip;
+ 	        	}
+    			if(newVisaReceived + status > 0) {
+    				newVisaReceived += status;
+    				status = 0;
+    			} else {
+    				status += newVisaReceived;
+    				newVisaReceived = 0;
+    			}
+ 	            
+ 	            //masterReceived
+ 	            int newMasterReceived = oldMasterReceived;
+ 	            if(newMasterReceived > tip) {
+ 	            	newMasterReceived -= tip;
+ 	        	}
+    			if(newMasterReceived + status > 0) {
+    				newMasterReceived += status;
+    				status = 0;
+    			} else {
+    				status += newMasterReceived;
+    				newMasterReceived = 0;
+    			}
+ 	            
+ 	            sql = new StringBuilder("update bill set tip = 0, cashback = 0, status = 0, cashReceived = ").append(newCashReceived)
+ 	            		.append(", debitReceived = ").append(newDebitReceived)
+ 	            		.append(", visaReceived = ").append(newVisaReceived)
+ 	            		.append(", masterReceived = ").append(newMasterReceived)
+ 	            		.append(" where id = ").append(newBillID);
+ 	           PIMDBModel.getStatement().executeUpdate(sql.toString());
+	 		}
+	 		
+   			//tip must be able to set to 0.
+	        tip = 0;
+	        cashback = 0;
+	 		status = DBConsts.original;	//will be used when clicking buttons, set to original, so will not trigger warning dialogs.
 	 		billID = newBillID;			//will be used when adding new item into the bill
-	 		//save the old money numbers, case the old status is negative(means have returned some money.
-	 		status = status < 0 ? status : DBConsts.original;	//will be used when clicking button will not trigger warning.
-	 		
-	 		//waiting for operation, when print bill, will generate subtotal in endmessage, and eventually use the old subtotal to calculate the value for mev bill.
-	 		
 		}catch(Exception exp) {
 			L.e("SalesPane", "Exception happenned when converting bill's status to 0", exp);
 		}
