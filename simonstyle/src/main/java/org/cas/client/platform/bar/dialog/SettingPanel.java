@@ -320,6 +320,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		new AddModificationDialog(BarFrame.instance, "").setVisible(true);
         	}else if(o == btnLine_2_7) {
         		new GiftCardListDialog(BarFrame.instance).setVisible(true);
+        	}else if(o == btnCoupon) {
+        		new CouponListDialog(BarFrame.instance).setVisible(true);
         	}else if(o == btnLine_2_8) {
         		new SettingColorDlg(BarFrame.instance).setVisible(true);
         	}else if(o == btnLine_2_9) {
@@ -357,7 +359,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     void reLayout() {
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 10) / 9;
+        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 11) / 10;
         int tBtnHeight = panelHeight / 10;
 
         // command buttons--------------
@@ -365,8 +367,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
                 tBtnHeight);
         btnLine_2_2.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
                 tBtnHeight);
-//        btnLine_2_3.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-//                tBtnHeight);
         btnLine_2_3.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
                 tBtnHeight);
         btnLine_2_4.setBounds(btnLine_2_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
@@ -377,7 +377,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
                 tBtnHeight);
         btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_2_8.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+        btnCoupon.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+                tBtnHeight);
+        btnLine_2_8.setBounds(btnCoupon.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
                 tBtnHeight);
         btnLine_2_9.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
                 tBtnHeight);
@@ -545,6 +547,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_2_5 = new FunctionButton(BarFrame.consts.BillInfo());
         btnLine_2_6 = new FunctionButton(BarFrame.consts.MODIFY());
         btnLine_2_7 = new FunctionButton(BarFrame.consts.GIFTCARD());
+        btnCoupon = new FunctionButton(BarFrame.consts.COUPON());
         btnLine_2_8 = new FunctionButton(BarFrame.consts.Color().toUpperCase());
         btnLine_2_9 = new FunctionButton(BarFrame.consts.CheckInOut());
 
@@ -611,6 +614,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_2_5.addActionListener(this);
         btnLine_2_6.addActionListener(this);
         btnLine_2_7.addActionListener(this);
+        btnCoupon.addActionListener(this);
         btnLine_2_8.addActionListener(this);
         btnLine_2_9.addActionListener(this);
 
@@ -645,6 +649,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(btnLine_2_5);
         add(btnLine_2_6);
         add(btnLine_2_7);
+        add(btnCoupon);
         add(btnLine_2_8);
         add(btnLine_2_1);
 	}
@@ -761,6 +766,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     private FunctionButton btnLine_2_5;
     private FunctionButton btnLine_2_6;
     private FunctionButton btnLine_2_7;
+    private FunctionButton btnCoupon;
     private FunctionButton btnLine_2_8;
     private FunctionButton btnLine_2_9;
 }
