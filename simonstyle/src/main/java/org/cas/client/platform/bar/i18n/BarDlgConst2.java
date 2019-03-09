@@ -40,6 +40,8 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String EnterVisaPayment() {return "输入Visa金额";}
     @Override
 	public String EnterMasterPayment() {return "输入 Master金额";}
+    @Override
+	public String EnterOtherPayment() {return "输入其他支付方式金额";}
     
     @Override
 	public String ChangeMode() {return "改变模式";}
@@ -257,7 +259,7 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String PrinterError() {return "警告！后台打印时发生错误，请检查相关打印机然后再试！";}
     
     @Override
-	public String Other() {return "其他";}
+	public String OTHER() {return "其他";}
     @Override
 	public String ProdNumber() {return "Id";}
     @Override
@@ -557,6 +559,8 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String WIDTH() {return "打印宽度";}
 	@Override
 	public String COUPON() {return "优惠券";}
+	@Override
+	public String GIFTCARD() {return "储值卡";}
 	@Override
 	public String activeCode() {return "激活码:";}
 	@Override

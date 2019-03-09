@@ -40,6 +40,8 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String EnterVisaPayment() {return "Enter Visa Payment";}
     @Override
 	public String EnterMasterPayment() {return "Enter Master Payment";}
+    @Override
+	public String EnterOtherPayment() {return "Enter Other Payment";}
     
     @Override
 	public String ChangeMode() {return "<html><center>CHANGE<br>MODE</center></html>";}
@@ -257,7 +259,7 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String PrinterError() {return "WARNING! Error occured when printing in back end, please check printer and try again";}
     
     @Override
-	public String Other() {return "OTHER";}
+	public String OTHER() {return "OTHER";}
     @Override
 	public String ProdNumber() {return "Id";}
     @Override
@@ -557,6 +559,8 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String WIDTH() {return "Width";}
 	@Override
 	public String COUPON() {return "COUPON";}
+	@Override
+	public String GIFTCARD() {return "GIFT CARD";}
 	@Override
 	public String activeCode() {return "Activate Code:";}
 	@Override

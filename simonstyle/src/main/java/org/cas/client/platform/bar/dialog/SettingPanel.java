@@ -319,7 +319,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         	}else if(o == btnLine_2_6) {
         		new AddModificationDialog(BarFrame.instance, "").setVisible(true);
         	}else if(o == btnLine_2_7) {
-        		new CouponListDialog(BarFrame.instance).setVisible(true);
+        		new GiftCardListDialog(BarFrame.instance).setVisible(true);
         	}else if(o == btnLine_2_8) {
         		new SettingColorDlg(BarFrame.instance).setVisible(true);
         	}else if(o == btnLine_2_9) {
@@ -544,7 +544,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_2_4 = new FunctionButton(BarFrame.consts.TABLE());
         btnLine_2_5 = new FunctionButton(BarFrame.consts.BillInfo());
         btnLine_2_6 = new FunctionButton(BarFrame.consts.MODIFY());
-        btnLine_2_7 = new FunctionButton(BarFrame.consts.COUPON());
+        btnLine_2_7 = new FunctionButton(BarFrame.consts.GIFTCARD());
         btnLine_2_8 = new FunctionButton(BarFrame.consts.Color().toUpperCase());
         btnLine_2_9 = new FunctionButton(BarFrame.consts.CheckInOut());
 

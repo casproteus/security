@@ -89,7 +89,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         Object o = e.getSource();
         //FunctionButton------------------------------------------------------------------------------------------------
         if (o instanceof FunctionButton) {
-        	if(o == btnCASH || o == btnDEBIT || o == btnVISA || o == btnMASTER) { //pay
+        	if(o == btnCASH || o == btnDEBIT || o == btnVISA || o == btnMASTER || o == btnOTHER) { //pay
 
         		createAndPrintNewOutput();	//process the new added items (send to printer and db).
     			billPricesUpdateToDB();		//the total price could has changed, because user added new item.
@@ -116,6 +116,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          			BarFrame.payDlg.setTitle(BarFrame.consts.EnterVisaPayment());
          		}else if(o == btnMASTER) {
          			BarFrame.payDlg.setTitle(BarFrame.consts.EnterMasterPayment());
+         		}else if(o == btnOTHER) {
+         			BarFrame.payDlg.setTitle(BarFrame.consts.EnterOtherPayment());
          		}
          		//init payDialog content base on bill.
          		BarFrame.payDlg.initContent(billPanel);
@@ -555,7 +557,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	//if there's new dish added.... update the total value field of bill record.
 	//and make sure new added dish will be updated with new information.
 	private void billPricesUpdateToDB() {
-		updateBillRecordPrices(billPanel.getBillId());		//in case if added service fee or discout of bill.
+		updateBillRecordPrices(billPanel.getBillId());		//in case if added service fee or discout of bill. ??? so this means, when added discount, will not save to db immediatly?
 		billPanel.initContent();	//always need to initContent, to make sure dish in selection ary has new property. e.g. saved dish should has different color.,
 	}
 
@@ -605,6 +607,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		}
 	}
 
+	//
 	private void updateBillRecordPrices(int billId) {
 		try {
 			PayDlg.updateBill(billId, "total", Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
@@ -790,6 +793,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private FunctionButton btnLine_2_1;
     private FunctionButton btnLine_2_2;
     private FunctionButton btnMASTER;
+    public FunctionButton btnOTHER;
     private FunctionButton btnLine_2_4;
     private FunctionButton btnLine_2_5;
     private FunctionButton btnLine_2_6;

@@ -32,7 +32,29 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	//flag
 	boolean isAllContentSelected;
 	
-	float originalReceived;
+	float maxInput;
+	
+
+	//values got from db record
+	int oldTotal = 0;
+	int oldCashReceived = 0;
+	int oldDebitReceived = 0;
+	int oldVisaReceived = 0;
+	int oldMasterReceived = 0;
+	int oldOtherReceived = 0;
+	
+	//calculated by minus cashback/tip and refund. (cash back is negative)
+	int onSrcCashReceived = 0;
+	int onSrcDebitReceived = 0;
+	int onSrcVisaReceived = 0;
+	int onSrcMasterReceived = 0;
+	int onSrcOtherReceived = 0;
+	
+	int oldCashback = 0;
+	int oldTip = 0;
+	int oldStatus = 0;
+	
+	public String inputedContent;
 	
     public PayDlg(BarFrame pParent) {
         super(pParent, true);
@@ -61,6 +83,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment())) {
 			int newMasterReceived = reflectNewInput(valMasterReceived.getText());
 			sb.append("update bill set masterReceived = ").append(oldMasterReceived + newMasterReceived - onSrcMasterReceived).append(" where id = ").append(billId);
+		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment())) {
+			int newOtherReceived = reflectNewInput(valOtherReceived.getText());
+			sb.append("update bill set otherReceived = ").append(oldOtherReceived + newOtherReceived - onSrcOtherReceived).append(" where id = ").append(billId);
 		}
 		
 		try {
@@ -117,23 +142,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		int billId = billPanel.getBillId();
     	initMoneyDisplay(billId);
     }
-
-	//values got from db record
-	int oldTotal = 0;
-	int oldCashReceived = 0;
-	int oldDebitReceived = 0;
-	int oldVisaReceived = 0;
-	int oldMasterReceived = 0;
 	
-	//calculated by minus cashback/tip and refund. (cash back is negative)
-	int onSrcCashReceived = 0;
-	int onSrcDebitReceived = 0;
-	int onSrcVisaReceived = 0;
-	int onSrcMasterReceived = 0;
-	
-	int oldCashback = 0;
-	int oldTip = 0;
-	int oldStatus = 0;
 	private void initMoneyDisplay(int billId) {
 		StringBuilder sb = new StringBuilder("select * from bill where id = " + billId);
     	try {
@@ -146,6 +155,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	oldDebitReceived = rs.getInt("debitReceived");
         	oldVisaReceived = rs.getInt("visaReceived");
         	oldMasterReceived = rs.getInt("masterReceived");
+        	oldOtherReceived = rs.getInt("otherReceived");
         	
         	oldCashback = rs.getInt("cashback"); //cash back is negative in db. so use "+" instead of "-"
         	oldTip = rs.getInt("tip");
@@ -183,17 +193,25 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	            if(onSrcMasterReceived > oldTip) {
 	            	onSrcMasterReceived -= oldTip;
 	        	}
+	            
+	            //otherReceived
+	            onSrcOtherReceived = oldOtherReceived;
+	            if(onSrcOtherReceived > oldTip) {
+	            	onSrcOtherReceived -= oldTip;
+	        	}
         	}
             //total
             int total = oldTotal;
             //left
-            int left = total - onSrcCashReceived - onSrcDebitReceived - onSrcVisaReceived - onSrcMasterReceived;
+            int left = total - onSrcCashReceived - onSrcDebitReceived - onSrcVisaReceived - onSrcMasterReceived - onSrcOtherReceived;
             
             //set the interface value.
             valCashReceived.setText(BarUtil.formatMoney(onSrcCashReceived / 100.0));
             valDebitReceived.setText(BarUtil.formatMoney(onSrcDebitReceived / 100.0));
             valVisaReceived.setText(BarUtil.formatMoney(onSrcVisaReceived / 100.0));
             valMasterReceived.setText(BarUtil.formatMoney(onSrcMasterReceived / 100.0));
+            valOtherReceived.setText(BarUtil.formatMoney(onSrcOtherReceived / 100.0));
+            
         	valTotal.setText(BarUtil.formatMoney(total / 100.0));
             valLeft.setText(BarUtil.formatMoney(left / 100.0));
             
@@ -239,6 +257,11 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     			lblMasterReceived.getPreferredSize().width, lblMasterReceived.getPreferredSize().height);
         valMasterReceived.setBounds(lblMasterReceived.getX() + lblMasterReceived.getWidth(), lblMasterReceived.getY(),
         		100 - lblMasterReceived.getWidth(), lblMasterReceived.getHeight());
+        
+        lblOtherReceived.setBounds(lblVisaReceived.getX(), lblDebitReceived.getY(), 
+    			lblMasterReceived.getPreferredSize().width, lblMasterReceived.getPreferredSize().height);
+        valOtherReceived.setBounds(lblOtherReceived.getX() + lblOtherReceived.getWidth(), lblOtherReceived.getY(),
+        		100 - lblOtherReceived.getWidth(), lblOtherReceived.getHeight());
         
         tfdNewReceived.setBounds(lblMasterReceived.getX() + 100 + CustOpts.HOR_GAP, CustOpts.VER_GAP, 160, 40);
         
@@ -288,13 +311,14 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        String curContent = tfdNewReceived.getText();
+    	
+        inputedContent = tfdNewReceived.getText();
         
         Object o = e.getSource();
         if (o == ok) {
         	//check content format
         	try {
-        		Float.valueOf(curContent);
+        		Float.valueOf(inputedContent);
         	}catch(Exception exp) {
                 JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
         		return;
@@ -379,11 +403,11 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	
         } else {
 	        if(isAllContentSelected)
-	        	curContent = "";
+	        	inputedContent = "";
 	        
 	        if (o == back) {
-	            if (curContent != null && curContent.length() > 0) {
-	                tfdNewReceived.setText(curContent.substring(0, curContent.length() - 1));
+	            if (inputedContent != null && inputedContent.length() > 0) {
+	                tfdNewReceived.setText(inputedContent.substring(0, inputedContent.length() - 1));
 	                updateLeft();
 	            }
 	        } else if(o == btn10) {
@@ -409,22 +433,17 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	        } else if (o == num5) {
 	        	concatReceived("5");
 	        } else if (o == num6) {
-	            tfdNewReceived.setText(curContent.concat("6"));
-	            updateLeft();
+	        	concatReceived("6");
 	        } else if (o == num7) {
-	            tfdNewReceived.setText(curContent.concat("7"));
-	            updateLeft();
+	        	concatReceived("7");
 	        } else if (o == num8) {
-	            tfdNewReceived.setText(curContent.concat("8"));
-	            updateLeft();
+	        	concatReceived("8");
 	        } else if (o == num9) {
-	            tfdNewReceived.setText(curContent.concat("9"));
-	            updateLeft();
+	        	concatReceived("9");
 	        } else if (o == num0) {
-	            tfdNewReceived.setText(curContent.concat("0"));
-	            updateLeft();
+	        	concatReceived("0");
 	        } else if(o == point) {
-	            tfdNewReceived.setText(curContent.concat("."));
+	            tfdNewReceived.setText(inputedContent.concat("."));
 	        }
         }
         isAllContentSelected = false;
@@ -464,8 +483,13 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     }
     
     private void concatReceived(String num){
-        tfdNewReceived.setText(tfdNewReceived.getText().concat(num));
-        updateLeft();
+    	String newStr = tfdNewReceived.getText().concat(num);
+    	if(maxInput > 0 && Float.valueOf(newStr) > maxInput) {
+    		JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
+    	}else {
+	        tfdNewReceived.setText(newStr);
+	        updateLeft();
+    	}
     }
     
 	@Override
@@ -490,7 +514,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		try{ 
 			received += Float.valueOf(valCashReceived.getText()) + Float.valueOf(valDebitReceived.getText());
 			received += Float.valueOf(valVisaReceived.getText()) + Float.valueOf(valMasterReceived.getText());
-			received += Float.valueOf(tfdNewReceived.getText());
+			received += Float.valueOf(valOtherReceived.getText()) + Float.valueOf(tfdNewReceived.getText());
 		}catch(Exception e) {}
 		
 		valLeft.setText(String.valueOf((int)(total * 100 - received * 100)/100f));
@@ -514,6 +538,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         valVisaReceived = new JLabel("");
         lblMasterReceived = new JLabel(BarFrame.consts.MASTER() + " : " + BarOption.getMoneySign());
         valMasterReceived = new JLabel("");
+        lblOtherReceived = new JLabel(BarFrame.consts.OTHER() + " : " + BarOption.getMoneySign());
+        valOtherReceived = new JLabel("");
         
         tfdNewReceived = new JTextField();
         
@@ -590,6 +616,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         getContentPane().add(valVisaReceived);
         getContentPane().add(lblMasterReceived);
         getContentPane().add(valMasterReceived);
+        getContentPane().add(lblOtherReceived);
+        getContentPane().add(valOtherReceived);
+        
         
         getContentPane().add(tfdNewReceived);
         
@@ -692,6 +721,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     public JLabel valVisaReceived;
     private JLabel lblMasterReceived;
     public JLabel valMasterReceived;
+    private JLabel lblOtherReceived;
+    public JLabel valOtherReceived;
 
     public JTextField tfdNewReceived;
 
@@ -716,11 +747,12 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		valDebitReceived.setText("0.0");
 		valVisaReceived.setText("0.0");
 		valMasterReceived.setText("0.0");
-		
+		valOtherReceived.setText("0.00");
 		valTotal.setText("0.0");
 		valLeft.setText("0.0");
 		
 		tfdNewReceived.setText("");
+		maxInput = 0f;
 	}
 	
 	@Override

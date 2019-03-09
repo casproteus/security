@@ -563,7 +563,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
     		BarFrame.consts.DEBIT(),
     		BarFrame.consts.VISA(),
     		BarFrame.consts.MASTER(),
-    		BarFrame.consts.Other(),
+    		BarFrame.consts.OTHER(),
     		BarFrame.consts.BILL()
     };
 

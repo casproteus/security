@@ -25,12 +25,12 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 
 public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocusListener{
 	
-	SalesPanel barGeneralPanel;
+	SalesPanel salesPanel;
 
     public MoreButtonsDlg(SalesPanel general) {
     	super();
     	setTitle(BarFrame.consts.MORE());
-        barGeneralPanel = general;
+        salesPanel = general;
         initPanel();
     }
 
@@ -65,23 +65,64 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 //    			try {
 //    				String curContent = BarFrame.instance.numberPanelDlg.curContent;
 //            		int tQTY = Integer.valueOf(curContent);
-//                	int row = barGeneralPanel.billPanel.tblBillPanel.getSelectedRow();
-//                	barGeneralPanel.billPanel.tblBillPanel.setValueAt(curContent + "x", row, 0);
-//                	barGeneralPanel.billPanel.orderedDishAry.get(row).setNum(tQTY);
-//                	barGeneralPanel.billPanel.updateTotleArea();
+//                	int row = salesPanel.billPanel.tblBillPanel.getSelectedRow();
+//                	salesPanel.billPanel.tblBillPanel.setValueAt(curContent + "x", row, 0);
+//                	salesPanel.billPanel.orderedDishAry.get(row).setNum(tQTY);
+//                	salesPanel.billPanel.updateTotleArea();
 //            	}catch(Exception exp) {
 //                	JOptionPane.showMessageDialog(this, DlgConst.FORMATERROR);
 //            		return;
 //            	}
 //    		}
-//    		if(barGeneralPanel.billPanel.tblBillPanel.getSelectedRow() < 0) {
-//    			barGeneralPanel.billPanel.tblBillPanel.setSelectedRow(barGeneralPanel.billPanel.tblBillPanel.getRowCount()-1);
+//    		if(salesPanel.billPanel.tblBillPanel.getSelectedRow() < 0) {
+//    			salesPanel.billPanel.tblBillPanel.setSelectedRow(salesPanel.billPanel.tblBillPanel.getRowCount()-1);
 //    		}
 //    		//present the value in number dialog.
-//    		Object obj = barGeneralPanel.billPanel.tblBillPanel.getValueAt(barGeneralPanel.billPanel.tblBillPanel.getSelectedRow(), 3);
+//    		Object obj = salesPanel.billPanel.tblBillPanel.getValueAt(salesPanel.billPanel.tblBillPanel.getSelectedRow(), 3);
 //    		BarFrame.instance.numberPanelDlg.setContents(obj.toString());
 
-    	} else if (o == btnCoupon) {
+    	} else if (o == salesPanel.btnOTHER) {
+    		String giftCardNumber  = JOptionPane.showInputDialog(null, BarFrame.consts.Account());
+    		if(giftCardNumber == null || giftCardNumber.length() == 0)
+    			return;
+    		
+    		StringBuilder sql = new StringBuilder("SELECT * from hardware where category = 2 and name = '").append(giftCardNumber)
+    				.append("' and (status is null or status = 0)");
+    		try {
+    			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+    			rs.afterLast();
+                rs.relative(-1);
+                int tmpPos = rs.getRow();
+                if(tmpPos == 0) {	//if there's no this coupon number in database, then warning and return.
+                	JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidCoupon());
+                	return;
+                }else {			//if the number is OK.
+                	//get out every field of first matching record.
+                	rs.beforeFirst();
+                    tmpPos = 0;
+                    rs.next();
+                    int id = rs.getInt("id");
+                    int category = rs.getInt("style");
+                    String productCode = rs.getString("IP");
+                    int value = rs.getInt("langType");
+                    
+                    //show up the payDialog, waiting for user to input money, after confirm, the money should be deduct from the account of this card
+                    SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
+                    BarFrame.payDlg.maxInput = (float)(value / 100.0);
+                    salesPanel.actionPerformed(new ActionEvent(salesPanel.btnOTHER, 0, ""));
+                    //how to know the number user inputed, and how to verify if it's bigger than the money left in card?
+                    if (BarFrame.payDlg.inputedContent != null && BarFrame.payDlg.inputedContent.length() > 0) {
+	                    float usedMoneyQT = Math.round(Float.valueOf(BarFrame.payDlg.inputedContent) * 100);
+	                    sql = new StringBuilder("update hardware set langType = langType - ").append(usedMoneyQT)
+	                    		.append(" where id = ").append(id);
+	                    PIMDBModel.getStatement().executeUpdate(sql.toString());
+                    }
+                }
+    		}catch(Exception exp) {
+    			L.e("Redeem Coupon", "exception happend when redeem coupon: " + sql, exp);
+    		}
+        	
+    	} else if (o == btnDiscountCoupon) {
     		
     		String couponCode  = JOptionPane.showInputDialog(null, BarFrame.consts.couponCode());
     		if(couponCode == null || couponCode.length() == 0)
@@ -108,7 +149,6 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
                     int value = rs.getInt("langType");
                     
                     //check if the coupon can be applied on current bill
-                    SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
                     int langIdx = CustOpts.custOps.getUserLang();
                     ArrayList<String> nameAry = getAppliableDishNames(productCode, langIdx); //if nameAry is null, mean apply to whole bill.
                     ArrayList<Dish> dishesOnBill = salesPanel.billPanel.orderedDishAry;
@@ -257,8 +297,8 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		int height = btnMore.getHeight();
 		
 		btnLine_3_1.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, width, height);
-		btnCoupon.setBounds(btnLine_3_1.getX(), btnLine_3_1.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
-		btnLine_3_3.setBounds(btnLine_3_1.getX(), btnCoupon.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
+		salesPanel.btnOTHER.setBounds(btnLine_3_1.getX(), btnLine_3_1.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
+		btnLine_3_3.setBounds(btnLine_3_1.getX(), salesPanel.btnOTHER.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		btnLine_3_4.setBounds(btnLine_3_1.getX(), btnLine_3_3.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		btnLine_3_5.setBounds(btnLine_3_1.getX(), btnLine_3_4.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		//btnLine_3_6.setBounds(btnLine_3_1.getX(), btnLine_3_5.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
@@ -276,7 +316,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		// 初始化－－－－－－－－－－－－－－－－
 		btnLine_3_1 = new FunctionButton(BarFrame.consts.SETTINGS());
         //btnLine_3_2 = new JToggleButton(BarFrame.consts.QTY());
-        btnCoupon = new FunctionButton(BarFrame.consts.COUPON());
+        salesPanel.btnOTHER = new FunctionButton(BarFrame.consts.GIFTCARD());
 		btnLine_3_3 = new FunctionButton("EN");
 		btnLine_3_4 = new FunctionButton("FR");
 		btnLine_3_5 = new FunctionButton("CN");
@@ -286,7 +326,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 
 		// 属性设置－－－－－－－－－－－－－－
 		btnLine_3_1.setMargin(new Insets(0, 0, 0, 0));
-		btnCoupon.setMargin(btnLine_3_1.getMargin());
+		salesPanel.btnOTHER.setMargin(btnLine_3_1.getMargin());
 		btnLine_3_3.setMargin(btnLine_3_1.getMargin());
 		btnLine_3_4.setMargin(btnLine_3_1.getMargin());
 		btnLine_3_5.setMargin(btnLine_3_1.getMargin());
@@ -300,7 +340,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		
 		// 搭建－－－－－－－－－－－－－
 		add(btnLine_3_1);
-		add(btnCoupon);
+		add(salesPanel.btnOTHER);
 		add(btnLine_3_3);
 		add(btnLine_3_4);
 		add(btnLine_3_5);
@@ -311,7 +351,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 
 		// 加监听器－－－－－－－－
 		btnLine_3_1.addActionListener(this);
-		btnCoupon.addActionListener(this);
+		salesPanel.btnOTHER.addActionListener(this);
 		btnLine_3_3.addActionListener(this);
 		btnLine_3_4.addActionListener(this);
 		btnLine_3_5.addActionListener(this);
@@ -324,7 +364,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 	}
 	
 	private FunctionButton btnLine_3_1;
-	private FunctionButton btnCoupon;
+	private FunctionButton btnDiscountCoupon;
 	private FunctionButton btnLine_3_3;
 	private FunctionButton btnLine_3_4;
 	private FunctionButton btnLine_3_5;

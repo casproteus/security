@@ -26,6 +26,7 @@ public interface BarDlgConst {
     String EnterDebitPayment();
     String EnterVisaPayment();
     String EnterMasterPayment();
+    String EnterOtherPayment();
     
     String ChangeMode();
     String AddTable();
@@ -138,7 +139,7 @@ public interface BarDlgConst {
     String ServerHost();
     String PrinterError();
     
-    String Other();
+    String OTHER();
     String ProdNumber();
     String ProdName();
     String Count();
@@ -298,6 +299,7 @@ public interface BarDlgConst {
 	String FONTSIZE();
 	String WIDTH();
 	String COUPON();
+	String GIFTCARD();
 	String activeCode();
 	String couponCode();
 	String isRedeemed();
