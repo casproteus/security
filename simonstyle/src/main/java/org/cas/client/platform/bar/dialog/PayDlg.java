@@ -9,6 +9,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -215,6 +216,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	valTotal.setText(BarUtil.formatMoney(total / 100.0));
             valLeft.setText(BarUtil.formatMoney(left / 100.0));
             
+            reLayout();
+            
     	}catch(Exception e) {
     		ErrorUtil.write(e);
     	}
@@ -237,32 +240,62 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
      * @NOTE:因为setBounds方法本身不会触发事件导致重新布局，所以本方法中设置Bounds之后调用了reLayout。
      */
     public void reLayout() {
-
-    	lblCashReceived.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 
-    			lblCashReceived.getPreferredSize().width, lblTotal.getPreferredSize().height);
-        valCashReceived.setBounds(lblCashReceived.getX() + lblCashReceived.getWidth(), lblCashReceived.getY(),
-        		80 - lblCashReceived.getWidth(), lblCashReceived.getHeight());
-
-    	lblDebitReceived.setBounds(CustOpts.HOR_GAP, lblCashReceived.getY() + lblCashReceived.getHeight() + CustOpts.VER_GAP, 
-    			lblDebitReceived.getPreferredSize().width, lblDebitReceived.getPreferredSize().height);
-        valDebitReceived.setBounds(lblDebitReceived.getX() + lblDebitReceived.getWidth(), lblDebitReceived.getY(),
-        		80 - lblDebitReceived.getWidth(), lblDebitReceived.getHeight());
-
-    	lblVisaReceived.setBounds(lblCashReceived.getX() + 80 + CustOpts.HOR_GAP, CustOpts.VER_GAP, 
-    			lblVisaReceived.getPreferredSize().width, lblVisaReceived.getPreferredSize().height);
-        valVisaReceived.setBounds(lblVisaReceived.getX() + lblVisaReceived.getWidth(), lblVisaReceived.getY(),
-        		80 - lblVisaReceived.getWidth(), lblVisaReceived.getHeight());
-
-    	lblMasterReceived.setBounds(lblVisaReceived.getX(), lblDebitReceived.getY(), 
-    			lblMasterReceived.getPreferredSize().width, lblMasterReceived.getPreferredSize().height);
-        valMasterReceived.setBounds(lblMasterReceived.getX() + lblMasterReceived.getWidth(), lblMasterReceived.getY(),
-        		100 - lblMasterReceived.getWidth(), lblMasterReceived.getHeight());
-        
-        lblOtherReceived.setBounds(lblVisaReceived.getX(), lblDebitReceived.getY(), 
-    			lblMasterReceived.getPreferredSize().width, lblMasterReceived.getPreferredSize().height);
-        valOtherReceived.setBounds(lblOtherReceived.getX() + lblOtherReceived.getWidth(), lblOtherReceived.getY(),
-        		100 - lblOtherReceived.getWidth(), lblOtherReceived.getHeight());
-        
+    	ArrayList<JLabel> labels = new ArrayList<JLabel>();
+    	ArrayList<JLabel> values = new ArrayList<JLabel>();
+    	if(!valCashReceived.getText().equals("0.00")) {
+    		labels.add(lblCashReceived);
+    		values.add(valCashReceived);
+    	}
+    	if(!valDebitReceived.getText().equals("0.00")) {
+    		labels.add(lblDebitReceived);
+    		values.add(valDebitReceived);
+    	}
+    	if(!valVisaReceived.getText().equals("0.00")) {
+    		labels.add(lblVisaReceived);
+    		values.add(valVisaReceived);
+    	}
+    	if(!valMasterReceived.getText().equals("0.00")) {
+    		labels.add(lblMasterReceived);
+    		values.add(valMasterReceived);
+    	}
+    	if(!valOtherReceived.getText().equals("0.00")) {
+    		labels.add(lblOtherReceived);
+    		values.add(valOtherReceived);
+    	}
+    	
+    	if(labels.size() > 0) {
+        	JLabel lbl1 = labels.get(0);
+        	JLabel val1 = values.get(0);
+	    	lbl1.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 
+	    			lbl1.getPreferredSize().width, lblTotal.getPreferredSize().height);
+	        val1.setBounds(lbl1.getX() + lbl1.getWidth(), lbl1.getY(),
+	        		80 - lbl1.getWidth(), lblCashReceived.getHeight());
+	        if(labels.size() > 1) {
+	        	JLabel lbl2 = labels.get(1);
+	        	JLabel val2 = values.get(1);
+	        	lbl2.setBounds(CustOpts.HOR_GAP, lbl1.getY() + lbl1.getHeight() + CustOpts.VER_GAP, 
+	        			lbl2.getPreferredSize().width, lbl2.getPreferredSize().height);
+		        val2.setBounds(lbl2.getX() + lbl2.getWidth(), lbl2.getY(),
+		        		80 - lbl2.getWidth(), lbl2.getHeight());
+		        if(labels.size() > 2) {
+		        	JLabel lbl3 = labels.get(2);
+		        	JLabel val3 = values.get(2);
+		        	lbl3.setBounds(lbl1.getX() + 80 + CustOpts.HOR_GAP, CustOpts.VER_GAP, 
+		        			lbl3.getPreferredSize().width, lbl3.getPreferredSize().height);
+		            val3.setBounds(lbl3.getX() + lbl3.getWidth(), lbl3.getY(),
+		            		80 - lbl3.getWidth(), lbl3.getHeight());
+		            if(labels.size() > 3) {
+		            	JLabel lbl4 = labels.get(3);
+		            	JLabel val4 = values.get(3);
+		            	lbl4.setBounds(lbl3.getX(), lbl2.getY(), 
+		            			lbl4.getPreferredSize().width, lbl4.getPreferredSize().height);
+		            	val4.setBounds(lbl4.getX() + lbl4.getWidth(), lbl4.getY(),
+		                		100 - lbl4.getWidth(), lbl4.getHeight());
+		            }
+		        }
+	        }
+    	}
+    	
         tfdNewReceived.setBounds(lblMasterReceived.getX() + 100 + CustOpts.HOR_GAP, CustOpts.VER_GAP, 160, 40);
         
     	lblTotal.setBounds(tfdNewReceived.getX() + tfdNewReceived.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP,
