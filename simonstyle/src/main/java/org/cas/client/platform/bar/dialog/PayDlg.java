@@ -34,7 +34,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	boolean isAllContentSelected;
 	
 	float maxInput;
-	
 
 	//values got from db record
 	int oldTotal = 0;
@@ -56,6 +55,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	int oldStatus = 0;
 	
 	public String inputedContent;
+
+	ArrayList<JLabel> labels = new ArrayList<JLabel>();
+	ArrayList<JLabel> values = new ArrayList<JLabel>();
 	
     public PayDlg(BarFrame pParent) {
         super(pParent, true);
@@ -84,7 +86,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment())) {
 			int newMasterReceived = reflectNewInput(valMasterReceived.getText());
 			sb.append("update bill set masterReceived = ").append(oldMasterReceived + newMasterReceived - onSrcMasterReceived).append(" where id = ").append(billId);
-		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment())) {
+		} else if(curTitle.equals(BarFrame.consts.EnterOtherPayment())) {
 			int newOtherReceived = reflectNewInput(valOtherReceived.getText());
 			sb.append("update bill set otherReceived = ").append(oldOtherReceived + newOtherReceived - onSrcOtherReceived).append(" where id = ").append(billId);
 		}
@@ -176,27 +178,27 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             //if the tip is not 0, there must be one receive(debit, visa or master) which is bigger than tip.
         	//@No need to consider the case that status is negative, because if it's refund, when reopenit, a new bill will be generated.
         	//and the payDlg will display of payDlg is base on the new bill.
+            onSrcDebitReceived = oldDebitReceived;
+            onSrcVisaReceived = oldVisaReceived;
+            onSrcMasterReceived = oldMasterReceived;
+            onSrcOtherReceived = oldOtherReceived;
         	if(oldTip > 0) {
         		//debitReceived
-	            onSrcDebitReceived = oldDebitReceived;
 	        	if(oldDebitReceived > oldTip) {
 	        		onSrcDebitReceived -= oldTip;
 	        	}
 	        	
 	        	//visaReceived
-	            onSrcVisaReceived = oldVisaReceived;
 	            if(onSrcVisaReceived > oldTip) {
 	            	onSrcVisaReceived -= oldTip;
 	        	}
 	            
 	            //masterReceived
-	            onSrcMasterReceived = oldMasterReceived;
 	            if(onSrcMasterReceived > oldTip) {
 	            	onSrcMasterReceived -= oldTip;
 	        	}
 	            
 	            //otherReceived
-	            onSrcOtherReceived = oldOtherReceived;
 	            if(onSrcOtherReceived > oldTip) {
 	            	onSrcOtherReceived -= oldTip;
 	        	}
@@ -240,8 +242,15 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
      * @NOTE:因为setBounds方法本身不会触发事件导致重新布局，所以本方法中设置Bounds之后调用了reLayout。
      */
     public void reLayout() {
-    	ArrayList<JLabel> labels = new ArrayList<JLabel>();
-    	ArrayList<JLabel> values = new ArrayList<JLabel>();
+    	for (JLabel jLabel : labels) {
+    		getContentPane().remove(jLabel);
+		}
+    	for (JLabel jLabel : values) {
+    		getContentPane().remove(jLabel);
+		}
+    	labels.clear();
+    	values.clear();
+    	
     	if(!valCashReceived.getText().equals("0.00")) {
     		labels.add(lblCashReceived);
     		values.add(valCashReceived);
@@ -266,6 +275,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     	if(labels.size() > 0) {
         	JLabel lbl1 = labels.get(0);
         	JLabel val1 = values.get(0);
+        	getContentPane().add(lbl1);
+        	getContentPane().add(val1);
 	    	lbl1.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 
 	    			lbl1.getPreferredSize().width, lblTotal.getPreferredSize().height);
 	        val1.setBounds(lbl1.getX() + lbl1.getWidth(), lbl1.getY(),
@@ -273,6 +284,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	        if(labels.size() > 1) {
 	        	JLabel lbl2 = labels.get(1);
 	        	JLabel val2 = values.get(1);
+	        	getContentPane().add(lbl2);
+	        	getContentPane().add(val2);
 	        	lbl2.setBounds(CustOpts.HOR_GAP, lbl1.getY() + lbl1.getHeight() + CustOpts.VER_GAP, 
 	        			lbl2.getPreferredSize().width, lbl2.getPreferredSize().height);
 		        val2.setBounds(lbl2.getX() + lbl2.getWidth(), lbl2.getY(),
@@ -280,6 +293,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		        if(labels.size() > 2) {
 		        	JLabel lbl3 = labels.get(2);
 		        	JLabel val3 = values.get(2);
+		        	getContentPane().add(lbl3);
+		        	getContentPane().add(val3);
 		        	lbl3.setBounds(lbl1.getX() + 80 + CustOpts.HOR_GAP, CustOpts.VER_GAP, 
 		        			lbl3.getPreferredSize().width, lbl3.getPreferredSize().height);
 		            val3.setBounds(lbl3.getX() + lbl3.getWidth(), lbl3.getY(),
@@ -287,6 +302,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		            if(labels.size() > 3) {
 		            	JLabel lbl4 = labels.get(3);
 		            	JLabel val4 = values.get(3);
+		            	getContentPane().add(lbl4);
+		            	getContentPane().add(val4);
 		            	lbl4.setBounds(lbl3.getX(), lbl2.getY(), 
 		            			lbl4.getPreferredSize().width, lbl4.getPreferredSize().height);
 		            	val4.setBounds(lbl4.getX() + lbl4.getWidth(), lbl4.getY(),
