@@ -99,7 +99,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.ConfirmPayAgain(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
             			return;
         			}else {
-        				billPanel.reopen(null);
+        				billPanel.reGenerate(null);
         			}
         		}
         		//check if the pay dialog is already visible, if yes, then update bill received values.

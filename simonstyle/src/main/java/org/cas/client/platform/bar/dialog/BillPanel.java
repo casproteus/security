@@ -748,14 +748,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
 		        return false;
 			}else {
-				reopen(null);
+				reGenerate(null);
 			}
 		}
 		return true;
 	}
 	
 	//caller can specify the billIdx, if the billIdx is not specified, then use the billIdx on Frame.
-	public void reopen(String billIdx) {
+	public void reGenerate(String billIdx) {
 		if(billIdx == null || billIdx.length() == 0) {
 			billIdx = BarFrame.instance.valCurBillIdx.getText();
 		}
@@ -771,15 +771,20 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	 		//while, if user open the dumped old bill, then the removed item will be disappears and new added item will appear on old bill also.
 	 		//this will be a known bug. TDOO:we can make it better by searching output by billID when it's a dumped bill. hope no one will need to check the dumped bills.
 	 		//??what do we do when removing an saved item from billPanel?
-	 		StringBuilder newComment = new StringBuilder(PrintService.REF_TO).append(billID);
-			if(status >= DBConsts.completed) {
-				newComment.append("F");
+	 		if(status > 0) {
+		 		StringBuilder newComment = new StringBuilder(PrintService.REF_TO).append(billID);
+				if(status >= DBConsts.completed) {
+					newComment.append("F");
+				}				
+				newComment.append("\n").append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(subTotal / 100.0))
+						.append("\n").append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst / 100.0))
+						.append("\n").append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst / 100.0))
+						.append("\n").append(PrintService.OLD_TOTAL).append(valTotlePrice.getText());
+				this.comment = newComment.toString();	//set the comment property, so when creating a new bill base on current one, will copy the comment into the new bill.
+			}else {	//according to revenue test case, if it's refunded bill, when regenerate a bill base on it, should have not ref part, (personally don't understand it yet).
+				this.comment = "";
 			}
-			newComment.append("\n").append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(subTotal / 100.0))
-					.append("\n").append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst / 100.0))
-					.append("\n").append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst / 100.0))
-					.append("\n").append(PrintService.OLD_TOTAL).append(valTotlePrice.getText());
-			this.comment = newComment.toString();	//set the comment property, so when creating a new bill base on current one, will copy the comment into the new bill.
+	 		
 	 		int newBillID = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
 					billIdx,
 					BarFrame.instance.valStartTime.getText(),

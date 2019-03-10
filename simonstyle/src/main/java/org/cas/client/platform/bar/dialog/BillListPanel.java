@@ -283,11 +283,11 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		        return;
 			}else {
 				if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < 0) {
-					getCurBillPanel().reopen(getCurBillPanel().billButton.getText());
+					getCurBillPanel().reGenerate(getCurBillPanel().billButton.getText());
 				}
 				
 				if(targetBillPanel.status >= DBConsts.billPrinted || targetBillPanel.status < 0) {
-					targetBillPanel.reopen(targetBillPanel.billButton.getText());
+					targetBillPanel.reGenerate(targetBillPanel.billButton.getText());
 					if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < 0) {
 						StringBuilder sql = new StringBuilder("update bill set comment = comment + ' ")
 								.append(PrintService.REF_TO).append(getCurBillPanel().billID).append("'")
@@ -393,7 +393,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 					
 					//if current billPanel is printed, then create a new one and expire it.
 					if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < 0) {
-						getCurBillPanel().reopen(null);
+						getCurBillPanel().reGenerate(null);
 					}
 					
 					//split into {num} bills. each dish's number and price will be divided by {num}.
@@ -726,7 +726,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	        			            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
 	        			        return;
 	        				}else {
-	        					billPanels.get(targetBillIdx - 1).reopen(billPanels.get(targetBillIdx - 1).billButton.getText());
+	        					billPanels.get(targetBillIdx - 1).reGenerate(billPanels.get(targetBillIdx - 1).billButton.getText());
 	        				}
 		        		}
 		        	}else {

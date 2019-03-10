@@ -959,7 +959,11 @@ public class PrintService{
 			
 			mtRefAvTaxes = oldsubtotal == null ? mtTransAvTaxes : oldsubtotal;
 			numeroRef = numeroRef == null? billNumberStartStr + billID : numeroRef;
-			printContent.append(String.format(mevRef, numeroRef, dateTrans, mtRefAvTaxes));
+			//@NOTE add a patch, because just found that if it's refund, the revenue test case do not want a refrence. I don't understand why they don't need the ref, to me
+			//it make more sense if a refund bill has a ref to the bill which was refunded.......
+			if(!isRefund) {
+				printContent.append(String.format(mevRef, numeroRef, dateTrans, mtRefAvTaxes));
+			}
 		}
 		
 		printContent.append(mevEnd);
