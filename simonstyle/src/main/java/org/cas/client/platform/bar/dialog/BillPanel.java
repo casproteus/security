@@ -773,13 +773,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	 		//??what do we do when removing an saved item from billPanel?
 	 		if(status > 0) {
 		 		StringBuilder newComment = new StringBuilder(PrintService.REF_TO).append(billID);
-				if(status >= DBConsts.completed) {
-					newComment.append("F");
-				}				
-				newComment.append("\n").append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(subTotal / 100.0))
-						.append("\n").append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst / 100.0))
-						.append("\n").append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst / 100.0))
-						.append("\n").append(PrintService.OLD_TOTAL).append(valTotlePrice.getText());
+				if(status >= DBConsts.completed) {	//if already paid, then need to know old moneys, so in mev can report how much added or returned.
+					newComment.append("F");	
+					newComment.append("\n").append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(subTotal / 100.0))
+					.append("\n").append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst / 100.0))
+					.append("\n").append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst / 100.0))
+					.append("\n").append(PrintService.OLD_TOTAL).append(valTotlePrice.getText());
+				}			
 				this.comment = newComment.toString();	//set the comment property, so when creating a new bill base on current one, will copy the comment into the new bill.
 			}else {	//according to revenue test case, if it's refunded bill, when regenerate a bill base on it, should have not ref part, (personally don't understand it yet).
 				this.comment = "";

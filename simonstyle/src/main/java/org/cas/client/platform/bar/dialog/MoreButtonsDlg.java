@@ -298,7 +298,8 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		
 		btnLine_3_1.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, width, height);
 		salesPanel.btnOTHER.setBounds(btnLine_3_1.getX(), btnLine_3_1.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
-		btnLine_3_3.setBounds(btnLine_3_1.getX(), salesPanel.btnOTHER.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
+		btnDiscountCoupon.setBounds(btnLine_3_1.getX(), salesPanel.btnOTHER.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
+		btnLine_3_3.setBounds(btnLine_3_1.getX(), btnDiscountCoupon.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		btnLine_3_4.setBounds(btnLine_3_1.getX(), btnLine_3_3.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		btnLine_3_5.setBounds(btnLine_3_1.getX(), btnLine_3_4.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		//btnLine_3_6.setBounds(btnLine_3_1.getX(), btnLine_3_5.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
@@ -306,7 +307,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		//btnLine_3_8.setBounds(btnLine_3_1.getX(), btnLine_3_7.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		//btnLine_3_9.setBounds(btnLine_3_1.getX(), btnLine_3_8.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
         
-		int panelHeight = height * 5 + CustOpts.VER_GAP * 6;
+		int panelHeight = height * 6 + CustOpts.VER_GAP * 7;
 		setBounds(x, y - panelHeight, 
 				width + CustOpts.HOR_GAP * 2 + CustOpts.SIZE_EDGE * 2 + 10,
 				panelHeight + CustOpts.SIZE_EDGE * 2 + 40);
@@ -317,6 +318,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		btnLine_3_1 = new FunctionButton(BarFrame.consts.SETTINGS());
         //btnLine_3_2 = new JToggleButton(BarFrame.consts.QTY());
         salesPanel.btnOTHER = new FunctionButton(BarFrame.consts.GIFTCARD());
+        btnDiscountCoupon = new FunctionButton(BarFrame.consts.COUPON());
 		btnLine_3_3 = new FunctionButton("EN");
 		btnLine_3_4 = new FunctionButton("FR");
 		btnLine_3_5 = new FunctionButton("CN");
@@ -327,6 +329,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		// 属性设置－－－－－－－－－－－－－－
 		btnLine_3_1.setMargin(new Insets(0, 0, 0, 0));
 		salesPanel.btnOTHER.setMargin(btnLine_3_1.getMargin());
+		btnDiscountCoupon.setMargin(btnLine_3_1.getMargin());
 		btnLine_3_3.setMargin(btnLine_3_1.getMargin());
 		btnLine_3_4.setMargin(btnLine_3_1.getMargin());
 		btnLine_3_5.setMargin(btnLine_3_1.getMargin());
@@ -341,6 +344,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		// 搭建－－－－－－－－－－－－－
 		add(btnLine_3_1);
 		add(salesPanel.btnOTHER);
+		add(btnDiscountCoupon);
 		add(btnLine_3_3);
 		add(btnLine_3_4);
 		add(btnLine_3_5);
@@ -352,6 +356,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		// 加监听器－－－－－－－－
 		btnLine_3_1.addActionListener(this);
 		salesPanel.btnOTHER.addActionListener(this);
+		btnDiscountCoupon.addActionListener(this);
 		btnLine_3_3.addActionListener(this);
 		btnLine_3_4.addActionListener(this);
 		btnLine_3_5.addActionListener(this);

@@ -822,7 +822,7 @@ public class PrintService{
 		String mtTransApTaxes = null;//"+000000.00";	//+000024.66
 		
 		for (int i = 1; i < sndMsg.size(); i++) {
-			String tText = sndMsg.get(i);
+			String tText = sndMsg.get(i).trim();
 			
 			while(tText.startsWith("\n")) {
 				tText = tText.substring(1);
@@ -887,7 +887,7 @@ public class PrintService{
 					}
 				}
 			}else if(i == 3) {//find out the total
-				if(isVoided) {
+				if(isVoided) {	//this case is duplicated, because when i== 2, we have set the value for mtTransApTaxes.
 					mtTransApTaxes = formatMoneyForMev("0.00", oldTotal, isRefund);
 				} else {
 					String total = tText.substring(tText.indexOf(":") + 1).trim();
@@ -898,11 +898,13 @@ public class PrintService{
 					mtTransApTaxes = formatMoneyForMev(total, oldTotal, isRefund);
 				}
 			}else if(i == 4) { // find out the payment.
-				String[] a = tText.split("\n");
-				if(a.length == 2) {		//we use I, because there's a line of "change" or "tip".
-					paiementTrans = getMatechPaytrans(a[0]);
-				}else if (a.length  > 2){
-					paiementTrans = "MIX";
+				if(!tText.startsWith(REF_TO)) { //the element at this position might be a ref(including old moneys) not for sure a paid methods.
+					String[] a = tText.split("\n");
+					if(a.length == 2) {		//we use I, because there's a line of "change" or "tip".
+						paiementTrans = getMatechPaytrans(a[0]);
+					}else if (a.length  > 2){
+						paiementTrans = "MIX";
+					}
 				}
 			}
 		}
@@ -1653,35 +1655,44 @@ public class PrintService{
             rs.next();
             float total = (float) (rs.getInt("total") / 100.0);
             int cashReceived = rs.getInt("cashReceived");
-            String str = BarUtil.formatMoney(cashReceived/100f);
+            String str;
             if(cashReceived > 0) {
+            	str = BarUtil.formatMoney(cashReceived/100f);
     			content.append(CASH).append(" : ")
     			.append(BarUtil.generateString(width - 9 - str.length(), " "))
     			.append(str).append("\n");
     		}
             int debitReceived = rs.getInt("debitReceived");
-            str = BarUtil.formatMoney(debitReceived/100f);
             if(debitReceived > 0) {
+                str = BarUtil.formatMoney(debitReceived/100f);
     			content.append("DEBIT").append(" : ")
     			.append(BarUtil.generateString(width - 8 - str.length(), " "))
     			.append(str).append("\n");
     		}
             int visaReceived = rs.getInt("visaReceived");
-            str = BarUtil.formatMoney(visaReceived/100f);
             if(visaReceived > 0) {
+                str = BarUtil.formatMoney(visaReceived/100f);
     			content.append("VISA").append(" : ")
     			.append(BarUtil.generateString(width - 7 - str.length(), " "))
     			.append(str).append("\n");
     		}
             int masterReceived = rs.getInt("masterReceived");
-            str = BarUtil.formatMoney(masterReceived/100f);
         	if(masterReceived > 0) {
+                str = BarUtil.formatMoney(masterReceived/100f);
     			content.append("MASTER").append(" : ")
     			.append(BarUtil.generateString(width - 9 - str.length(), " "))
     			.append(str).append("\n");
     		}
-            
-            float left = -1 * ((int)((total * 100 - cashReceived - debitReceived - visaReceived - masterReceived)));
+
+            int otherReceived = rs.getInt("otherReceived");
+        	if(otherReceived > 0) {
+                str = BarUtil.formatMoney(otherReceived/100f);
+    			content.append("OTHER").append(" : ")
+    			.append(BarUtil.generateString(width - 9 - str.length(), " "))
+    			.append(str).append("\n");
+    		}
+        	
+            float left = -1 * ((int)((total * 100 - cashReceived - debitReceived - visaReceived - masterReceived - otherReceived)));
             str = BarUtil.formatMoney(left/100f);
             String lblText;
             if(isCashBack) {
