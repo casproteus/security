@@ -516,26 +516,30 @@ public class PrintService{
 		}
     }
     
+	//==============================================mev print part===========================================
     private static boolean doMevPrint(List<String> sndMsg) {
-
     	//check if mev device and printer has been installed?
     	checkPrinter(DocFlavor.INPUT_STREAM.AUTOSENSE, new HashPrintRequestAttributeSet());
 
-		//build the content, save contents into a file
-		String filePath = CASUtility.getPIMDirPath().concat(new Date().getTime() + "transaction.xml");
-		Path path = Paths.get(filePath);
-		byte[] contentToWirteToFile;
-		
-    	//check the msg (it's a bill/check(6 item inside)  or a receipt/invoice (7 item inside)
-    	String transType = checkTransType(sndMsg);	//we've added special content when prparing the content, in method:
+    	//check the msg type and do a clean.(e.g. if it's a bill/check(6 item inside)  or a receipt/invoice (7 item inside)
+    	String transType = getOutTransType(sndMsg);	//we've added special content when prparing the content, in method:
+    	cleanSndMsgBaseOnType(sndMsg, transType);
     	
-    	//base on different type cleaned useless part, to left only useful elements.
+    	//build the content, 
+    	byte[] contentToWirteToFile = transType.equals("REPORT") ? buildMevReportContent(sndMsg) : buildMevBillFormat(sndMsg, transType);
+		
+    	//save contents into a file
+		String filePath = CASUtility.getPIMDirPath().concat(new Date().getTime() + "transaction.xml");
+		return printMevFormattedContent(Paths.get(filePath), contentToWirteToFile);
+	}
+
+    //base on different type cleaned useless part, clean the sndMsg to left only useful elements.
+	private static void cleanSndMsgBaseOnType(List<String> sndMsg, String transType) {
     	switch (transType) {
-			case "V_RFER":		//voided receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice".
+			case "V_RFER":		//voided receipt 
 				sndMsg.remove(7);
 				sndMsg.remove(5);
 	    		sndMsg.remove(3);
-				contentToWirteToFile = transferToMevFormat(sndMsg, transType);
 				break;
 			
 	    	case "ADDI":	//check
@@ -550,7 +554,6 @@ public class PrintService{
 				sndMsg.remove(3);
 				sndMsg.add(3, total);
 				
-				contentToWirteToFile = transferToMevFormat(sndMsg, ADDI);
 				break;
 				
 			case "RFER":		//receipt
@@ -558,7 +561,6 @@ public class PrintService{
 	    		sndMsg.remove(8);
 	    		sndMsg.remove(5);
 	    		sndMsg.remove(3);
-				contentToWirteToFile = transferToMevFormat(sndMsg, RFER);
 				break;
 				
 			case "R_RFER":		//refund receipt //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice".
@@ -567,23 +569,19 @@ public class PrintService{
 	    		sndMsg.remove(8);
 	    		sndMsg.remove(6);
 	    		sndMsg.remove(4);
-				contentToWirteToFile = transferToMevFormat(sndMsg, transType);
 				break;
 				
 			case "REPORT":		//report //TODO: when we reprint receipt, we should make the msg added with a new Item like "re-printed invoice.".
 	    		sndMsg.remove(5);
 	    		sndMsg.remove(4);
-
-				contentToWirteToFile = buildMevReportContent(sndMsg);
 				break;
 				
 			default:
-				return false;
+				break;
 		}
-    	
-		return printMevFormattedContent(path, contentToWirteToFile);
 	}
 
+	
 	private static boolean printMevFormattedContent(Path path, byte[] contentToWirteToFile) {
 		//write content to file.
 		try {
@@ -604,7 +602,7 @@ public class PrintService{
 		return isSuccess;
 	}
 
-	private static String checkTransType(List<String> sndMsg) {
+	private static String getOutTransType(List<String> sndMsg) {
 		if(sndMsg.size() == 6) {	//currently if it's REPORT, sndMsg has 6 element. 
 			return "REPORT";
 		}else if(sndMsg.size() == 8) {		//currently if it's VOID receipt/invoice, sndMsg has 11 element. 
@@ -619,6 +617,7 @@ public class PrintService{
 		return "";
 	}
 
+	
 	private static boolean printThroughOSdriver(Path path, PrintRequestAttributeSet pras,
 			boolean deleteCommandFile) {
 		try {
@@ -683,91 +682,59 @@ public class PrintService{
 		return path;
 	}
 
-	//the contents could be composed by :1/Command.BEEP 2/BigFont 3/NormalFont 4/cut 5/content.
+	//the contents for printers could be composed by :1/Command.BEEP 2/BigFont 3/NormalFont 4/cut 5/content.
 	//while when sending to mev device, the sndMsg could only be content. and length will always be 1.
-	private static byte[] transferToMevFormat(List<String> sndMsg, String transType) {
+	private static byte[] buildMevBillFormat(List<String> sndMsg, String transType) {
 		
-		byte[] formattedContent = null;//the byte ary we will make the content into 
+		byte[] formattedContentFR = null;//the byte ary we will make the content into 
 		
 		boolean isRefund = false;
 		boolean isVoided = false;
 		boolean needReference = transType.endsWith("RFER");
 		boolean isOriginalInvoiceAndBillPrinted = false;
-		//we don't care what type the message is, just go through every line of it. to get out all the information needed,
+		
+		ArrayList<String> oldMoneys = initOldMenys();
+		
 		//the first round of check, check if it's a original? reprint? or duplicate print of invoice?
-		String duplicata = "N";// whether this is for internal used.• O (Yes) • N (No), By default, it's not a internal used bill, so duplicata = N
-		String reimpression = "N";
+		String duplicata = "N";		// whether this is for internal used.• O (Yes) • N (No), By default, it's not a internal used bill, so duplicata = N
+		String reimpression = "N";	//reimpression
 
-
-		String numeroRef = null;//the bill number of dumpted/printed bill, @NOTE: when a bill printed, the numRef will be set, so the mev invoice can do only record, no print.
-		String oldsubtotal = null; 
-		String oldGST = null;
-		String oldQST = null;
-		String oldTotal = null;
-		
-		//find out the bill Number
-		String billNumberStartStr = BarOption.getBillNumberStartStr();
-		int startPos = sndMsg.get(0).indexOf(billNumberStartStr);
-		String billID = sndMsg.get(0).substring(startPos + billNumberStartStr.length(), sndMsg.get(0).indexOf("\n", startPos)); //billID
-		String numeroTrans = transType.endsWith("RFER") ? billNumberStartStr + billID + "F" :  billNumberStartStr + billID;
-		String paiementTrans = "SOB";
+		String paiementTrans = "SOB";	//paiementTrans
 		String refundvalue = "0";
-		//make sure the number not too long.
-		if(numeroTrans.length() > 10) {
-			numeroTrans = billNumberStartStr + numeroTrans.substring(billNumberStartStr.length() + numeroTrans.length() - 10); 
-		}
-		
-		String endMessage = sndMsg.get(sndMsg.size() - 1).trim();
-		if(endMessage.startsWith(RE_PRINTED)) {	//if the first element is "*re-printed invoice*\n\n" then set to be duplicated.
+
+		String tBillID = buildBillID(sndMsg.get(0));
+		String numeroTrans = buildTransNumber(tBillID, transType);	//numeroTrans
+
+		String numeroRef = null;									//the bill number of a printed and dumped bill, 
+		String tEndMessage = sndMsg.get(sndMsg.size() - 1).trim();
+		if(tEndMessage.startsWith(RE_PRINTED)) {	//if the first element is "*re-printed invoice*\n\n" then set to be duplicated.
 			duplicata = "N"; 				//means for internal use only.
-			reimpression = "O";	//set reprint flag.
+			reimpression = "O";				//set reprint flag.
 			
 			needReference = true;
-			numeroRef = endMessage.substring(endMessage.indexOf("\n") + 1);
-			numeroTrans = "R" + numeroTrans.substring(billNumberStartStr.length());
-		}else if(endMessage.startsWith(RE_PRINTED_INTERNAL_USE)) {
+			numeroRef = tEndMessage.substring(tEndMessage.indexOf("\n") + 1);
+			numeroTrans = "R" + numeroTrans.substring(BarOption.getBillNumberStartStr().length());
+		}else if(tEndMessage.startsWith(RE_PRINTED_INTERNAL_USE)) {
 			duplicata = "O";
 			reimpression = "N";	//set reprint flag.
 			
 			needReference = true;
-			numeroRef = endMessage.substring(endMessage.indexOf("\n") + 1);
-			numeroTrans = "D" + numeroTrans.substring(billNumberStartStr.length());
-		}else if(endMessage.startsWith(REF_TO)) {
+			numeroRef = tEndMessage.substring(tEndMessage.indexOf("\n") + 1);
+			numeroTrans = "D" + numeroTrans.substring(BarOption.getBillNumberStartStr().length());
+		}else if(tEndMessage.startsWith(REF_TO)) {
+			duplicata = "N"; 				//means for internal use only.
+			reimpression = "N";	
 			
 			needReference = true;	//if there's a ref to, means we need to add a reference element at the end no matter it's a invoice of a bill.. 
-			
-			numeroRef = endMessage.substring(REF_TO.length());	//get out the number ref, and the subtotal before.
-			int p = numeroRef.indexOf(OLD_SUBTOTAL);			//add another check to see if the oldSubtotal are different.
-			if(p > 0) {
-				oldsubtotal = numeroRef.substring(p + OLD_SUBTOTAL.length()).trim();
-				numeroRef = numeroRef.substring(0, p).trim();
-				p = oldsubtotal.indexOf(OLD_GST);
-				if(p > 0) {
-					oldGST = oldsubtotal.substring(p + OLD_GST.length());
-					oldsubtotal = oldsubtotal.substring(0, p).trim();
-					p = oldGST.indexOf(OLD_QST);
-					if(p > 0) {
-						oldQST = oldGST.substring(p + OLD_QST.length());
-						oldGST = oldGST.substring(0, p);
-						p = oldQST.indexOf(OLD_TOTAL);
-						if(p > 0) {
-							oldTotal = oldQST.substring(p + OLD_TOTAL.length());
-							oldQST = oldQST.substring(0, p);
-							p = oldTotal.indexOf(REF_TO);
-							if(p > 0) {
-								oldTotal = oldTotal.substring(0, p);
-							}
-						}
-					}
-				}
-			}
+			numeroRef = tEndMessage.substring(REF_TO.length());	//get out the number ref, and the subtotal before.
+			numeroRef = initOldMoneys(numeroRef, oldMoneys);
 			
 			if(sndMsg.get(3).startsWith(REFUND)){	//if it's refund.
 				transType = transType.substring(2);
 				isRefund = true;	//modify the content to be negative.
 				reimpression = "N";
 				
-				p = sndMsg.get(3).indexOf(METHOD);
+				int p = sndMsg.get(3).indexOf(METHOD);
 				if(p > 0) {
 					refundvalue = sndMsg.get(3).substring(REFUND.length(), p).trim();
 					paiementTrans = sndMsg.get(3).substring(p + METHOD.length()).trim();
@@ -776,12 +743,12 @@ public class PrintService{
 			}else if(sndMsg.get(3).contains(VOID)){	//if it's Voided.
 				transType = transType.substring(2);
 				isVoided = true;	//modify the content to be 0.
-				numeroTrans = billNumberStartStr + billID;
+				numeroTrans = BarOption.getBillNumberStartStr() + tBillID;
 				
-			}else if(oldsubtotal != null){
+			}else if(oldMoneys.get(0) != null){
 				
 				
-			}else if(numeroRef.endsWith(billID)){
+			}else if(numeroRef.endsWith(tBillID)){
 				//NOTE: when bill printed, will put a ref to in the comment. and then it will go into the end message. and reach here.
 				isOriginalInvoiceAndBillPrinted = true;	//it's invoice, and it's not reprinted, it's not void, it's not refund, and the ref is to it self, then it's it.
 				
@@ -790,24 +757,23 @@ public class PrintService{
 			needReference = false;
 		}
 		
-		//need to know if it's printed, if printed, the first row must be the number of the bill.
 		String etatDoc = BarOption.isSavePrintInvoiceWhenBilled() && isOriginalInvoiceAndBillPrinted ? "N" : "I";	//Whether the contents of the <doc> tag are present and if they must be printed.
 												//• A (Absent and not to be printed)  • I (present and to be Printed)		• N (present but Not to be printed)
 		
 		String modeTrans = LoginDlg.MODETRANS;	// the mode of transactions • O (Operational)	• F (Training)   when user login with system user, or set into
 												// "training mode" in setting view by manager. it' will be change to "F". until relogin with a normal user.
 		
-		//==========the first part=====================
+		//==========the 1st part=====================
 		//mev1 = "<reqMEV><trans noVersionTrans="v0%s.00" etatDoc="%s" modeTrans="%s" duplicata="%s"><doc><texte><![CDATA[";
 		StringBuilder printContent = new StringBuilder(String.format(mev1, 2, etatDoc, modeTrans, duplicata));	
 		
-		//==========the second part====================
+		//==========the 2nd part====================
 		for (int i = 0; i < sndMsg.size(); i++) {
 			printContent.append(sndMsg.get(i));
 		}
 		printContent.append(mev2);
 		
-		//==========the third part========
+		//==========the 3rd part========
 		String comptoir = BarOption.isFastFoodMode() ? "O" : "N";
 		String autreCompte = "S";	//Identifies any sales recorded in a system other than the SRS.• F(Package deal)• G(Group event)• S Sans objet (N/A)
 
@@ -873,15 +839,15 @@ public class PrintService{
 					} else {	
 						//if was opening a completed bill, then the new money for avenue will be the difference. other wise new money for avenue will be the value on bill.
 						String strAvT = a[0].substring(a[0].indexOf(":") + 1);
-						mtTransAvTaxes = oldsubtotal != null && oldGST== null && oldQST == null ? 
-							 formatMoneyForMev(strAvT, null, false) : formatMoneyForMev(strAvT, oldsubtotal, isRefund);//+000021.85
+						mtTransAvTaxes = oldMoneys.get(0) != null && oldMoneys.get(1)== null && oldMoneys.get(2) == null ? 
+							 formatMoneyForMev(strAvT, null, false) : formatMoneyForMev(strAvT, oldMoneys.get(0), isRefund);//+000021.85
 						
 						String strTPS = a[1].substring(a[1].indexOf(":") + 1);
-						TPSTrans = formatMoneyForMev(strTPS, oldGST, isRefund);//+000001.09
+						TPSTrans = formatMoneyForMev(strTPS, oldMoneys.get(1), isRefund);//+000001.09
 						String strTVQ = a[2].substring(a[2].indexOf(":") + 1);
-						TVQTrans = formatMoneyForMev(strTVQ, oldQST, isRefund);//+000001.72
+						TVQTrans = formatMoneyForMev(strTVQ, oldMoneys.get(2), isRefund);//+000001.72
 						Float total = Float.valueOf(strAvT) +  Float.valueOf(strTPS) +  Float.valueOf(strTVQ);
-						mtTransApTaxes = formatMoneyForMev(BarUtil.formatMoney(total), oldTotal, isRefund);
+						mtTransApTaxes = formatMoneyForMev(BarUtil.formatMoney(total), oldMoneys.get(3), isRefund);
 					}
 				}
 			}else if(i == 3) {//find out the total  ????why we do it here? haven we find out the total already when i == 2?
@@ -891,7 +857,7 @@ public class PrintService{
 					if(p > 0) {
 						total = total.substring(0, p).trim();
 					}
-					if(!mtTransApTaxes.equals(formatMoneyForMev(total, oldTotal, isRefund))){
+					if(!mtTransApTaxes.equals(formatMoneyForMev(total, oldMoneys.get(3), isRefund))){
 						L.e("PrintService MEV printing", "Found that the total money != subtotal+tps+tpq", null);
 					}
 				}
@@ -957,8 +923,8 @@ public class PrintService{
 			
 			//"<ref numeroRef=\"%s\" dateRef=\"%s\" mtRefAvTaxes=\"%s\"/>";//»AAAAMMJJhhmmss»//»+/-999999.99»
 			
-			mtRefAvTaxes = oldsubtotal == null ? mtTransAvTaxes : oldsubtotal;
-			numeroRef = numeroRef == null? billNumberStartStr + billID : numeroRef;
+			mtRefAvTaxes = oldMoneys.get(0) == null ? mtTransAvTaxes : oldMoneys.get(0);
+			numeroRef = numeroRef == null? BarOption.getBillNumberStartStr() + tBillID : numeroRef;
 			//@NOTE add a patch, because just found that if it's refund, the revenue test case do not want a refrence. I don't understand why they don't need the ref, to me
 			//it make more sense if a refund bill has a ref to the bill which was refunded.......
 			if(!isRefund) {
@@ -970,15 +936,62 @@ public class PrintService{
 		
 		//=====================convert to ASCII and return========================
 		try {
-			formattedContent = printContent.toString().getBytes("ASCII");
+			formattedContentFR = printContent.toString().getBytes("ASCII");
 		}catch(UnsupportedEncodingException e) {
 			ErrorUtil.write(e);
 		}
 		
-		return formattedContent;
+		return formattedContentFR;
 	}
 	
-    private static String getMatechPaytrans(String string) {
+    private static ArrayList<String> initOldMenys() {
+    	ArrayList<String> oldMoneys = new ArrayList<String>();
+    	oldMoneys.add(null);
+    	oldMoneys.add(null);
+    	oldMoneys.add(null);
+    	oldMoneys.add(null);
+		return oldMoneys; 
+	}
+
+	private static String initOldMoneys(String numeroRef, ArrayList<String> oldMoneys) {
+    	String oldsubtotal = null;
+    	String oldGST = null;
+    	String oldQST = null;
+    	String oldTotal = null;
+    	
+    	int p = numeroRef.indexOf(OLD_SUBTOTAL);			//add another check to see if the oldSubtotal are different.
+		if(p > 0) {
+			oldsubtotal = numeroRef.substring(p + OLD_SUBTOTAL.length()).trim();
+			numeroRef = numeroRef.substring(0, p).trim();
+			p = oldsubtotal.indexOf(OLD_GST);
+			if(p > 0) {
+				oldGST = oldsubtotal.substring(p + OLD_GST.length()).trim();
+				oldsubtotal = oldsubtotal.substring(0, p).trim();
+				p = oldGST.indexOf(OLD_QST);
+				if(p > 0) {
+					oldQST = oldGST.substring(p + OLD_QST.length()).trim();
+					oldGST = oldGST.substring(0, p).trim();
+					p = oldQST.indexOf(OLD_TOTAL);
+					if(p > 0) {
+						oldTotal = oldQST.substring(p + OLD_TOTAL.length()).trim();
+						oldQST = oldQST.substring(0, p).trim();
+						p = oldTotal.indexOf(REF_TO);
+						if(p > 0) {
+							oldTotal = oldTotal.substring(0, p).trim();
+						}
+					}
+				}
+			}
+		}
+		oldMoneys.clear();
+		oldMoneys.add(oldsubtotal);
+		oldMoneys.add(oldGST);
+		oldMoneys.add(oldQST);
+		oldMoneys.add(oldTotal);
+		return numeroRef;
+	}
+
+	private static String getMatechPaytrans(String string) {
 		if(string == null || string.length() == 0) {
 			return "SOB";
 		}else {
@@ -996,7 +1009,27 @@ public class PrintService{
 			}
 		}
 	}
-
+    
+    //Figure out the bill Number
+    private static String buildBillID(String content) {
+		String tBillNumberStartStr = BarOption.getBillNumberStartStr();
+		
+		int tStartPos = content.indexOf(tBillNumberStartStr);
+		String tBillID = content.substring(tStartPos + tBillNumberStartStr.length(), content.indexOf("\n", tStartPos)); //billID
+		return tBillID;
+    }
+    
+    //build the numeroTrans
+    private static String buildTransNumber(String tBillID, String transType) {
+		String numeroTrans = transType.endsWith("RFER") ? BarOption.getBillNumberStartStr() + tBillID + "F" :  BarOption.getBillNumberStartStr() + tBillID;
+		
+		if(numeroTrans.length() > 10) {	//make sure the number not too long. because the mev accept max 10 character for this field.
+			numeroTrans = BarOption.getBillNumberStartStr() + numeroTrans.substring(BarOption.getBillNumberStartStr().length() + numeroTrans.length() - 10); 
+		}
+		
+		return numeroTrans;
+	}
+    
 	private static String formatMoneyForMev(String newValue, String oldValue, boolean isRefund) {
 		float finalValue = Float.valueOf(newValue) - (oldValue == null ? 0.0f : Float.valueOf(oldValue));
 		newValue = BarUtil.formatMoney(finalValue);

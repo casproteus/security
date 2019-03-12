@@ -775,11 +775,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		 		StringBuilder newComment = new StringBuilder(PrintService.REF_TO).append(billID);
 				if(status >= DBConsts.completed) {	//if already paid, then need to know old moneys, so in mev can report how much added or returned.
 					newComment.append("F");	
-					newComment.append("\n").append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst / 100.0))
-					.append("\n").append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst / 100.0))
-					.append("\n").append(PrintService.OLD_TOTAL).append(valTotlePrice.getText());
 				}
 				newComment.append("\n").append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(subTotal / 100.0));	//this value will be needed anyway.
+				if(status >= DBConsts.completed) {	//@Note mess the order of each money.
+					newComment.append("\n").append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst / 100.0))
+						.append("\n").append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst / 100.0))
+						.append("\n").append(PrintService.OLD_TOTAL).append(valTotlePrice.getText());
+				}
 				
 				//as long as a bill is regenerated, the status of the bill must be at least billprinted.
 				//now the problem is shall we remember the old price? if we append the old moneys, then when we calculate the mtTransAvTaxes, sub total will minus 
