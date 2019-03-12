@@ -866,16 +866,16 @@ public class PrintService{
 						TVQTrans = formatMoneyForMev(BarUtil.formatMoney(Math.round(floatPrice * qstRate) / 100.0), null, isRefund);//+000001.72
 						mtTransApTaxes = formatMoneyForMev(BarUtil.formatMoney(refund), null, isRefund);
 					} else if (isVoided) {
-						oldsubtotal = a[0].substring(a[0].indexOf(":") + 1);
-						oldsubtotal = formatMoneyForMev(oldsubtotal, null, false);//+000021.85
-
 						mtTransAvTaxes = formatMoneyForMev("0.00", null, false);//+000021.85
 						TPSTrans = formatMoneyForMev("0.00", null, false);//+000001.09
 						TVQTrans = formatMoneyForMev("0.00", null, false);//+000001.72
 						mtTransApTaxes = formatMoneyForMev("0.00", null, false);
-					} else {
+					} else {	
+						//if was opening a completed bill, then the new money for avenue will be the difference. other wise new money for avenue will be the value on bill.
 						String strAvT = a[0].substring(a[0].indexOf(":") + 1);
-						mtTransAvTaxes = formatMoneyForMev(strAvT, oldsubtotal, isRefund);//+000021.85
+						mtTransAvTaxes = oldsubtotal != null && oldGST== null && oldQST == null ? 
+							 formatMoneyForMev(strAvT, null, false) : formatMoneyForMev(strAvT, oldsubtotal, isRefund);//+000021.85
+						
 						String strTPS = a[1].substring(a[1].indexOf(":") + 1);
 						TPSTrans = formatMoneyForMev(strTPS, oldGST, isRefund);//+000001.09
 						String strTVQ = a[2].substring(a[2].indexOf(":") + 1);
@@ -884,16 +884,16 @@ public class PrintService{
 						mtTransApTaxes = formatMoneyForMev(BarUtil.formatMoney(total), oldTotal, isRefund);
 					}
 				}
-			}else if(i == 3) {//find out the total
-				if(isVoided) {	//this case is duplicated, because when i== 2, we have set the value for mtTransApTaxes.
-					mtTransApTaxes = formatMoneyForMev("0.00", oldTotal, isRefund);
-				} else {
+			}else if(i == 3) {//find out the total  ????why we do it here? haven we find out the total already when i == 2?
+				if(!isVoided) {	//this case is duplicated, we temporally keep it for test.
 					String total = tText.substring(tText.indexOf(":") + 1).trim();
 					int p = total.indexOf(METHOD);
 					if(p > 0) {
 						total = total.substring(0, p).trim();
 					}
-					mtTransApTaxes = formatMoneyForMev(total, oldTotal, isRefund);
+					if(!mtTransApTaxes.equals(formatMoneyForMev(total, oldTotal, isRefund))){
+						L.e("PrintService MEV printing", "Found that the total money != subtotal+tps+tpq", null);
+					}
 				}
 			}else if(i == 4) { // find out the payment.
 				if(!tText.startsWith(REF_TO)) { //the element at this position might be a ref(including old moneys) not for sure a paid methods.
@@ -938,7 +938,7 @@ public class PrintService{
 
 		printContent.append(mev3);
 		
-		//=======================the fourth part==========
+		//=======================the 4th part==========
 		if(needReference) {
 			//ref: This element is present for each transaction referenced by the current transaction.
 			//The reference indicates a link between the current transaction and one or more prior transactions.

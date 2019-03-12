@@ -775,16 +775,18 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		 		StringBuilder newComment = new StringBuilder(PrintService.REF_TO).append(billID);
 				if(status >= DBConsts.completed) {	//if already paid, then need to know old moneys, so in mev can report how much added or returned.
 					newComment.append("F");	
-					newComment.append("\n").append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(subTotal / 100.0))
-					.append("\n").append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst / 100.0))
+					newComment.append("\n").append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst / 100.0))
 					.append("\n").append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst / 100.0))
 					.append("\n").append(PrintService.OLD_TOTAL).append(valTotlePrice.getText());
 				}
+				newComment.append("\n").append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(subTotal / 100.0));	//this value will be needed anyway.
+				
 				//as long as a bill is regenerated, the status of the bill must be at least billprinted.
-				//now the problem is shall we remember the old price? if we append the old moneys, then when we calculate the mtTransAvTaxes, 
-				//sub total will minus the oldSubtotal, which means the mtTransAVTaxes will eventurally be the differents----this is good for modified invoice, not modified check.
-				//so we currently decide only when it's completed, we append the olde moneys. that mean, when we are calculating a mtTransAvTaxes for checks, we should remenber that
-				//there's no old money in end message.
+				//now the problem is shall we remember the old price? if we append the old moneys, then when we calculate the mtTransAvTaxes, sub total will minus 
+				//the oldSubtotal, which means the mtTransAVTaxes will eventurally be the differents----this is good for modified invoice, not for modified check.
+				//so we currently decide only when it's completed, we append the old moneys. that mean, when we are calculating a mtTransAvTaxes for checks, we
+				//should remenber that there's only one old money(subtotal) in end message if it's not completed, but bill printed....we have to keep this one because 
+				//when the check modified, we need to know the old subtotal in ref part.
 				this.comment = newComment.toString();	//set the comment property, so when creating a new bill base on current one, will copy the comment into the new bill.
 			}else {	//according to revenue test case, if it's refunded bill, when regenerate a bill base on it, should have not ref part, (personally don't understand it yet).
 				this.comment = "";
