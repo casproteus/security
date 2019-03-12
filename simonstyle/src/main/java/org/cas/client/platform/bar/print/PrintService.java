@@ -727,7 +727,7 @@ public class PrintService{
 			
 			needReference = true;	//if there's a ref to, means we need to add a reference element at the end no matter it's a invoice of a bill.. 
 			numeroRef = tEndMessage.substring(REF_TO.length());	//get out the number ref, and the subtotal before.
-			numeroRef = initOldMoneys(numeroRef, oldMoneys);
+			numeroRef = initOldMoneys(numeroRef, oldMoneys);	//use a method to init old moneys.
 			
 			if(sndMsg.get(3).startsWith(REFUND)){	//if it's refund.
 				transType = transType.substring(2);
@@ -776,7 +776,6 @@ public class PrintService{
 		//==========the 3rd part========
 		String comptoir = BarOption.isFastFoodMode() ? "O" : "N";
 		String autreCompte = "S";	//Identifies any sales recorded in a system other than the SRS.• F(Package deal)• G(Group event)• S Sans objet (N/A)
-
 		String tableTrans = null;//"T1";
 		String serveurTrans = null;//"Tao";
 		String dateTrans = null;//"00000000000000";	//20090128084800
@@ -1052,6 +1051,7 @@ public class PrintService{
 		return stringFR.append(cleanText).toString();
 	}
 
+	//==============================================
 	private static boolean doSerialPrint(List<String> sndMsg) {
         CommPortIdentifier commPortIdentifier;
         SerialPort tSerialPort = null;
