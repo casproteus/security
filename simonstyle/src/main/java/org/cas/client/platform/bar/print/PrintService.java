@@ -824,13 +824,8 @@ public class PrintService{
 		for (int i = 1; i < sndMsg.size(); i++) {
 			String tText = sndMsg.get(i).trim();
 			
-			while(tText.startsWith("\n")) {
-				tText = tText.substring(1);
-			}
-			
 			if(i == 1) {//find out the table and client and time and sub total and tps tpq
-				String firstLine = tText.substring(0, tText.indexOf("\n"));
-				String[] ary = firstLine.split(" ");
+				String[] ary = tText.split(" ");
 				if(ary.length > 0) {
 					int s = ary[0].indexOf("(");
 					if(s >= 0) {
@@ -857,7 +852,7 @@ public class PrintService{
 				String[] a = tContent.split("\n");
 				if(a.length >= 3) {
 					if(isRefund) {
-						Float refund = Float.valueOf(refundvalue);
+						Float refund = Math.abs(Float.valueOf(refundvalue));	//@NOTE: have to make it a positive number to avoid Math.round(-108.5) = -108 instead of -109.
 						int price = (int)(refund * 100);
 						Object tps = BarOption.getGST();
 			        	Object tvq = BarOption.getQST();
@@ -871,6 +866,9 @@ public class PrintService{
 						TVQTrans = formatMoneyForMev(BarUtil.formatMoney(Math.round(floatPrice * qstRate) / 100.0), null, isRefund);//+000001.72
 						mtTransApTaxes = formatMoneyForMev(BarUtil.formatMoney(refund), null, isRefund);
 					} else if (isVoided) {
+						oldsubtotal = a[0].substring(a[0].indexOf(":") + 1);
+						oldsubtotal = formatMoneyForMev(oldsubtotal, null, false);//+000021.85
+
 						mtTransAvTaxes = formatMoneyForMev("0.00", null, false);//+000021.85
 						TPSTrans = formatMoneyForMev("0.00", null, false);//+000001.09
 						TVQTrans = formatMoneyForMev("0.00", null, false);//+000001.72
@@ -1009,7 +1007,9 @@ public class PrintService{
     	if(newValue.startsWith("-")) {
     		cleanText = cleanText.substring(1);
     		stringFR.append("-");
-    	}else {
+    	} else if(isRefund) {
+    		stringFR.append("-");
+    	} else {
     		stringFR.append("+");
     	}
     	

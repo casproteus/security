@@ -779,7 +779,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					.append("\n").append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst / 100.0))
 					.append("\n").append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst / 100.0))
 					.append("\n").append(PrintService.OLD_TOTAL).append(valTotlePrice.getText());
-				}			
+				}
+				//as long as a bill is regenerated, the status of the bill must be at least billprinted.
+				//now the problem is shall we remember the old price? if we append the old moneys, then when we calculate the mtTransAvTaxes, 
+				//sub total will minus the oldSubtotal, which means the mtTransAVTaxes will eventurally be the differents----this is good for modified invoice, not modified check.
+				//so we currently decide only when it's completed, we append the olde moneys. that mean, when we are calculating a mtTransAvTaxes for checks, we should remenber that
+				//there's no old money in end message.
 				this.comment = newComment.toString();	//set the comment property, so when creating a new bill base on current one, will copy the comment into the new bill.
 			}else {	//according to revenue test case, if it's refunded bill, when regenerate a bill base on it, should have not ref part, (personally don't understand it yet).
 				this.comment = "";
