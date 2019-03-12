@@ -42,9 +42,6 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     private TableButton btnPressed;
     private boolean isDragged;
     private int xGap, yGap;
-    
-    static Color colorSelected = new Color(123, 213, 132);
-    static Color colorDefault = new Color(255, 255, 255);
             
     Integer tableColumn = (Integer) CustOpts.custOps.hash2.get("tableColumn");
     Integer tableRow = (Integer) CustOpts.custOps.hash2.get("tableRow");
@@ -113,28 +110,29 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 	            }
 			}
 			//if before is not selected, then update the status
-        	if(tableToggle.getBackground() != colorSelected){
-        		openATable(tableToggle);
+        	if(tableToggle.getBackground() != TableButton.colorSelected){
+        		tableToggle.open();
 			}
         	//update ui's time field.
         	BarFrame.instance.valStartTime.setText(tableToggle.getOpenTime());
+        	
 			try {
-	        	//including the output of closed bill.
-				StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableToggle.getText())
-						.append("' and (deleted is null or deleted = ").append(DBConsts.original)
-						.append(") and time = '").append(tableToggle.getOpenTime())
-						.append("' order by contactID");
+				StringBuilder sql = new StringBuilder("select * from bill where tableId = '").append(tableToggle.getText()).append("'")
+						.append(" and opentime = '").append(tableToggle.getOpenTime()).append("'")
+						.append(" and (status is null or status < ").append(DBConsts.completed).append(" and 0 <= status)");
 				ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 				rs.afterLast();
 				rs.relative(-1);
 				int num = rs.getRow();
 				
 				if (num == 0) {// if it's empty, switch to sales panel
+					L.e("open table", " found no related bill in a open status table", null);
+					tableToggle.open();
 					BarFrame.instance.valCurBillIdx.setText("");
 					BarFrame.instance.switchMode(2);
 				} else { // if it's not empty
 					if(num == 1 && CustOpts.custOps.getValue("FrobiddenQuickEnter") == null) {	// display the only bill
-						BarFrame.instance.valCurBillIdx.setText(rs.getString("contactID"));
+						BarFrame.instance.valCurBillIdx.setText(rs.getString("billIndex"));
 						BarFrame.instance.switchMode(2);
 					}else { //or switch to the bill panel to show all the bills.
 						BarFrame.instance.switchMode(1);
@@ -197,15 +195,6 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 //        	}
 //        }
     }
-
-	private void openATable(TableButton tableToggle) {
-		tableToggle.setBackground(colorSelected);
-		String openTime = BarOption.df.format(new Date());
-		tableToggle.setOpenTime(openTime);
-		
-		BarFrame.instance.openATable(tableToggle.getText(), openTime);
-		BarFrame.instance.createAnEmptyBill(tableToggle.getText(), openTime, 0);
-	}
 
     void reLayout() {
         int panelWidth = getWidth();
@@ -304,7 +293,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             	tableToggleButton.setBounds(rs.getInt("posX"), rs.getInt("posY"), rs.getInt("width"), rs.getInt("height"));
             	tableToggleButton.setOpenTime(rs.getString("openTime"));
             	if(rs.getInt("status") > 0)
-            		tableToggleButton.setBackground(colorSelected);
+            		tableToggleButton.setBackground(TableButton.colorSelected);
             	tableToggleButton.setMargin(new Insets(4, 4, 4, 4));
     			tableToggleButton.addActionListener(this);
     			int type = rs.getInt("type");

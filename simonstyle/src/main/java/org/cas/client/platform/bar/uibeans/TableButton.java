@@ -2,14 +2,20 @@ package org.cas.client.platform.bar.uibeans;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
+import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.casutil.CASUtility;
 
 public class TableButton extends JButton {
+	
+    public static Color colorSelected = new Color(123, 213, 132);
+    public static Color colorDefault = new Color(255, 255, 255);
+    
     private int id = -1;
     private int type;
     private String openTime;
@@ -56,6 +62,15 @@ public class TableButton extends JButton {
 
 	public void setOpenTime(String openTime) {
 		this.openTime = openTime;
+	}
+
+	public void open() {
+		setBackground(colorSelected);
+		String openTime = BarOption.df.format(new Date());
+		setOpenTime(openTime);
+		
+		BarFrame.instance.openATable(getText(), openTime);
+		BarFrame.instance.createAnEmptyBill(getText(), openTime, 0);
 	}
 
 }

@@ -548,10 +548,9 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		openTime = openTime == null ? BarFrame.instance.valStartTime.getText() : openTime;
     	
     	try {
-			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableName)
-					.append("' and (deleted is null or deleted = ").append(DBConsts.original)
-					.append(") and time = '").append(openTime)
-					.append("' order by contactID DESC");
+			StringBuilder sql = new StringBuilder("select * from bill where tableId = '").append(tableName).append("'")
+				.append(" and opentime = '").append(openTime).append("'")
+				.append(" and (status is null or status < ").append(DBConsts.completed).append(" and 0 <= status)");
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
 			rs.relative(-1);
