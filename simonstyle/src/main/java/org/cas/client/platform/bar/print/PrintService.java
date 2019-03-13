@@ -806,6 +806,8 @@ public class PrintService{
 					int s = ary[0].indexOf("(");
 					if(s >= 0) {
 						tableTrans = ary[0].substring(s + 1, ary[0].indexOf(")"));
+					}else {	//when user created a table which " " as table name, the (tableName) part will not appear in arys. the first will be name.
+						serveurTrans = ary[0]; 
 					}
 				}
 				
