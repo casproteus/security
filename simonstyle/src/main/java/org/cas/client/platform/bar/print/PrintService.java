@@ -872,34 +872,24 @@ public class PrintService{
 			}
 		}
 
-		HashMap<String, String> map = new HashMap<String, String>();//use this map to save every properties for mev.
-		map.put("reimpression", reimpression);	//set reprint flag.
-		map.put("typeTrans", transType);	//ADDI--ADDItion (Check)    RFER--Reçu de FERmeture (Closing receipt)
+		//Start to build the content
+		printContent.append("typeTrans").append("=\"").append(transType).append("\" ").append("\n");	//ADDI--ADDItion (Check)    RFER--Reçu de FERmeture (Closing receipt)
+		printContent.append("serveurTrans").append("=\"").append(serveurTrans).append("\" ").append("\n");	//Identifier of the waiter responsible for the transaction. 
+		printContent.append("tableTrans").append("=\"").append(tableTrans).append("\" ").append("\n");	//table associated with the transaction.
+		printContent.append("paiementTrans").append("=\"").append(paiementTrans).append("\" ").append("\n"); //method of payment for the transaction.ARG ARGent (cash) • AUT(other) • CRE(credit card)• DEB(debit card)• MIX(mixed payment) • SOB(N/A)
+		printContent.append("reimpression").append("=\"").append(reimpression).append("\" ").append("\n");	//set reprint flag.
 		//When a previously generated bill needs to be reprinted. The date and time displayed, must be exactly the same.
 		//Only the attribute “reimpression” (reprint) will have a different value in the reprinting request.
 		//The reprinting request must reproduce the references contained in the original request.
-		
-		map.put("autreCompte", autreCompte);	//the amount paid or to be paid (in full or in part) is recorded in a system
+		printContent.append("autreCompte").append("=\"").append(autreCompte).append("\" ").append("\n");	//the amount paid or to be paid (in full or in part) is recorded in a system
 		//other than the SRS. possible values:• F(Package deal)• G(Group event) • S(N/A)
-		
-		map.put("serveurTrans", serveurTrans);	//Identifier of the waiter responsible for the transaction. 
-		map.put("tableTrans", tableTrans);	//table associated with the transaction.
-		map.put("paiementTrans", paiementTrans); //method of payment for the transaction.ARG ARGent (cash) • AUT(other) • CRE(credit card)• DEB(debit card)• MIX(mixed payment) • SOB(N/A)
-		map.put("comptoir", comptoir);	//whether the operator uses  the SRS’ Counter service operating mode
-		
-		map.put("numeroTrans", numeroTrans);//Number of the current transaction. This number must match the one in the body of the bill ( in the <doc> tag).
-		map.put("dateTrans", dateTrans);
-		map.put("mtTransAvTaxes", mtTransAvTaxes);
-		map.put("TPSTrans", TPSTrans);
-		map.put("TVQTrans", TVQTrans);
-		map.put("mtTransApTaxes", mtTransApTaxes);
-		
-		for (Entry<String, String> entry : map.entrySet()) {
-			printContent.append(entry.getKey());
-			printContent.append("=\"");
-			printContent.append(entry.getValue());
-			printContent.append("\" ");
-		}
+		printContent.append("comptoir").append("=\"").append(comptoir).append("\" ").append("\n");	//whether the operator uses  the SRS’ Counter service operating mode
+		printContent.append("numeroTrans").append("=\"").append(numeroTrans).append("\" ").append("\n");//Number of the current transaction. This number must match the one in the body of the bill ( in the <doc> tag).
+		printContent.append("dateTrans").append("=\"").append(dateTrans).append("\" ").append("\n");
+		printContent.append("mtTransAvTaxes").append("=\"").append(mtTransAvTaxes).append("\" ").append("\n");
+		printContent.append("TPSTrans").append("=\"").append(TPSTrans).append("\" ").append("\n");
+		printContent.append("TVQTrans").append("=\"").append(TVQTrans).append("\" ").append("\n");
+		printContent.append("mtTransApTaxes").append("=\"").append(mtTransApTaxes).append("\" ").append("\n");
 
 		printContent.append(mev3);
 		
@@ -922,7 +912,7 @@ public class PrintService{
 			
 			//"<ref numeroRef=\"%s\" dateRef=\"%s\" mtRefAvTaxes=\"%s\"/>";//»AAAAMMJJhhmmss»//»+/-999999.99»
 			
-			mtRefAvTaxes = oldMoneys.get(0) == null ? mtTransAvTaxes : oldMoneys.get(0);
+			mtRefAvTaxes = oldMoneys.get(0) == null ? mtTransAvTaxes :  formatMoneyForMev(oldMoneys.get(0), null, false);
 			numeroRef = numeroRef == null? BarOption.getBillNumberStartStr() + tBillID : numeroRef;
 			//@NOTE add a patch, because just found that if it's refund, the revenue test case do not want a refrence. I don't understand why they don't need the ref, to me
 			//it make more sense if a refund bill has a ref to the bill which was refunded.......
