@@ -526,7 +526,7 @@ public class PrintService{
     	cleanSndMsgBaseOnType(sndMsg, transType);
     	
     	//build the content, 
-    	byte[] contentToWirteToFile = transType.equals("REPORT") ? buildMevReportContent(sndMsg) : buildMevBillFormat(sndMsg, transType);
+    	byte[] contentToWirteToFile = (transType.equals("REPORT") || transType.equals("KITCHEN"))? buildMevReportContent(sndMsg) : buildMevBillFormat(sndMsg, transType);
 		
     	//save contents into a file
 		String filePath = CASUtility.getPIMDirPath().concat(new Date().getTime() + "transaction.xml");
@@ -576,6 +576,15 @@ public class PrintService{
 	    		sndMsg.remove(4);
 				break;
 				
+			case "KITCHEN":
+				if(sndMsg.get(0).contains("Command.BEEP")) {
+					sndMsg.remove(0);
+				}
+				sndMsg.remove(3);
+				sndMsg.remove(2);
+				sndMsg.remove(0);
+				break;
+				
 			default:
 				break;
 		}
@@ -603,7 +612,9 @@ public class PrintService{
 	}
 
 	private static String getOutTransType(List<String> sndMsg) {
-		if(sndMsg.size() == 6) {	//currently if it's REPORT, sndMsg has 6 element. 
+		if(sndMsg.size() <= 5) {	//if it's KITCHEN BILL, allow it to come out from mev printer, because it's better than only thrown out an exception. 
+			return "KITCHEN";
+		}else if(sndMsg.size() == 6) {	//currently if it's REPORT, sndMsg has 6 element. 
 			return "REPORT";
 		}else if(sndMsg.size() == 8) {		//currently if it's VOID receipt/invoice, sndMsg has 11 element. 
 			return "V_RFER";
