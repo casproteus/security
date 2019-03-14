@@ -2,6 +2,7 @@ package org.cas.client.platform.bar.dialog.statistics;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -71,9 +72,10 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
      */
     @Override
     public void reLayout() {
-        lblFrom.setBounds(CustOpts.HOR_GAP,  CustOpts.VER_GAP,
+        lblFrom.setBounds(CustOpts.HOR_GAP,  50,
         		lblFrom.getPreferredSize().width, lblFrom.getPreferredSize().height);
-        lblYearFrom.setBounds(lblFrom.getX() + lblFrom.getWidth() + CustOpts.HOR_GAP, lblFrom.getY(),
+        
+        lblYearFrom.setBounds(lblFrom.getX() + lblFrom.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP,
         		60, lblYearFrom.getPreferredSize().height);
         tfdYearFrom.setBounds(lblYearFrom.getX(), lblYearFrom.getY() + lblYearFrom.getHeight() + CustOpts.VER_GAP, 
         		lblYearFrom.getWidth(), 30);
@@ -85,6 +87,21 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         lblDayFrom.setBounds(lblMonthFrom.getX() + lblMonthFrom.getWidth() + CustOpts.HOR_GAP, lblMonthFrom.getY(), 
         		lblMonthFrom.getWidth(), lblDayFrom.getPreferredSize().height);
         tfdDayFrom.setBounds(lblDayFrom.getX(), tfdYearFrom.getY(), lblDayFrom.getWidth(), tfdYearFrom.getHeight());
+        
+        lblHourFrom.setBounds(lblYearFrom.getX(), tfdYearFrom.getY() + tfdYearFrom.getHeight() + CustOpts.VER_GAP,
+        		60, lblHourFrom.getPreferredSize().height);
+        tfdHourFrom.setBounds(lblHourFrom.getX(), lblHourFrom.getY() + lblHourFrom.getHeight() + CustOpts.VER_GAP, 
+        		lblHourFrom.getWidth(), 30);
+        
+        lblMinuteFrom.setBounds(lblHourFrom.getX() + lblHourFrom.getWidth() + CustOpts.HOR_GAP, lblHourFrom.getY(), 
+        		40, lblMinuteFrom.getPreferredSize().height);
+        tfdMinuteFrom.setBounds(lblMinuteFrom.getX(), tfdHourFrom.getY(), lblMinuteFrom.getWidth(), tfdHourFrom.getHeight());
+        
+        lblSecondFrom.setBounds(lblMinuteFrom.getX() + lblMinuteFrom.getWidth() + CustOpts.HOR_GAP, lblMinuteFrom.getY(), 
+        		lblMinuteFrom.getWidth(), lblSecondFrom.getPreferredSize().height);
+        tfdSecondFrom.setBounds(lblSecondFrom.getX(), tfdMinuteFrom.getY(), lblSecondFrom.getWidth(), tfdMinuteFrom.getHeight());
+       
+        
         
         lblTo.setBounds(tfdDayFrom.getX() + tfdDayFrom.getWidth() + CustOpts.HOR_GAP, lblFrom.getY(), lblTo.getPreferredSize().width, lblFrom.getHeight());
         
@@ -99,12 +116,24 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         lblDayTo.setBounds(lblMonthTo.getX() + lblMonthTo.getWidth() + CustOpts.HOR_GAP, lblMonthFrom.getY(), 
         		lblDayFrom.getWidth(), lblDayFrom.getHeight());
         tfdDayTo.setBounds(lblDayTo.getX(), tfdYearFrom.getY(), lblDayTo.getWidth(), tfdYearFrom.getHeight());
+        
+        lblHourTo.setBounds(lblTo.getX() + lblTo.getWidth() + CustOpts.HOR_GAP, lblMinuteFrom.getY(), 
+        		lblHourFrom.getWidth(), lblHourFrom.getHeight());
+        tfdHourTo.setBounds(lblHourTo.getX(), tfdHourFrom.getY(), lblHourTo.getWidth(), tfdHourFrom.getHeight());
+        
+        lblMinuteTo.setBounds(lblHourTo.getX() + lblHourTo.getWidth() + CustOpts.HOR_GAP, lblMinuteFrom.getY(), 
+        		lblMinuteFrom.getWidth(), lblMinuteFrom.getHeight());
+        tfdMinuteTo.setBounds(lblMinuteTo.getX(), tfdHourFrom.getY(), lblMinuteTo.getWidth(), tfdHourFrom.getHeight());
+        
+        lblSecondTo.setBounds(lblMinuteTo.getX() + lblMinuteTo.getWidth() + CustOpts.HOR_GAP, lblMinuteFrom.getY(), 
+        		lblSecondFrom.getWidth(), lblSecondFrom.getHeight());
+        tfdSecondTo.setBounds(lblSecondTo.getX(), tfdHourFrom.getY(), lblSecondTo.getWidth(), tfdHourFrom.getHeight());
 
         int btnWidth = 80;
-        btnPrint.setBounds(tfdDayTo.getX() + tfdDayTo.getWidth() + CustOpts.HOR_GAP, lblDayTo.getY(),
-                btnWidth, tfdDayTo.getHeight() + lblDayTo.getHeight() + CustOpts.VER_GAP);
+        btnPrint.setBounds(tfdSecondTo.getX() + tfdSecondTo.getWidth() + CustOpts.HOR_GAP, 40,
+                btnWidth, tfdSecondTo.getHeight() + lblSecondTo.getHeight() + CustOpts.VER_GAP);
         
-        scrPane.setBounds(lblFrom.getX(), tfdDayTo.getY() + tfdDayTo.getHeight() + CustOpts.VER_GAP * 2,
+        scrPane.setBounds(lblFrom.getX(), tfdSecondTo.getY() + tfdSecondTo.getHeight() + CustOpts.VER_GAP * 2,
         		btnPrint.getX() + btnPrint.getWidth(), 540);
         validate();
     }
@@ -216,6 +245,20 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         tfdYearTo = new JTextField();
         tfdMonthTo = new JTextField();
         tfdDayTo = new JTextField();
+        
+        lblHourFrom = new JLabel("HH");
+        lblMinuteFrom = new JLabel("mm");
+        lblSecondFrom = new JLabel("SS");
+        lblHourTo = new JLabel("HH");
+        lblMinuteTo = new JLabel("mm");
+        lblSecondTo = new JLabel("SS");
+        tfdHourFrom = new JTextField();
+        tfdMinuteFrom = new JTextField();
+        tfdSecondFrom = new JTextField();
+        tfdHourTo = new JTextField();
+        tfdMinuteTo = new JTextField();
+        tfdSecondTo = new JTextField();
+        
         btnPrint = new JButton(BarFrame.consts.PRINT());
         txpPreview = new JTextArea();
         scrPane = new JScrollPane(txpPreview);
@@ -231,10 +274,17 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         lblMonthTo.setHorizontalTextPosition(SwingConstants.CENTER);
         lblDayTo.setHorizontalTextPosition(SwingConstants.CENTER);
         
-
+        lblHourFrom.setHorizontalTextPosition(SwingConstants.CENTER);
+        lblMinuteFrom.setHorizontalTextPosition(SwingConstants.CENTER);
+        lblSecondFrom.setHorizontalTextPosition(SwingConstants.CENTER);
+        lblHourTo.setHorizontalTextPosition(SwingConstants.CENTER);
+        lblMinuteTo.setHorizontalTextPosition(SwingConstants.CENTER);
+        lblSecondTo.setHorizontalTextPosition(SwingConstants.CENTER);
+        
         JLabel tLbl = new JLabel();
         tLbl.setOpaque(true);
         tLbl.setBackground(Color.GRAY);
+        txpPreview.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
         txpPreview.setEditable(false);
         
         // 布局---------------
@@ -244,6 +294,7 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         // 搭建－－－－－－－－－－－－－
         getContentPane().add(lblFrom);
         getContentPane().add(lblTo);
+        
         getContentPane().add(lblYearFrom);
         getContentPane().add(lblMonthFrom);
         getContentPane().add(lblDayFrom);
@@ -256,9 +307,22 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         getContentPane().add(tfdYearTo);
         getContentPane().add(tfdMonthTo);
         getContentPane().add(tfdDayTo);
+
+        getContentPane().add(lblHourFrom);
+        getContentPane().add(lblMinuteFrom);
+        getContentPane().add(lblSecondFrom);
+        getContentPane().add(lblHourTo);
+        getContentPane().add(lblMinuteTo);
+        getContentPane().add(lblSecondTo);
+        getContentPane().add(tfdHourFrom);
+        getContentPane().add(tfdMinuteFrom);
+        getContentPane().add(tfdSecondFrom);
+        getContentPane().add(tfdHourTo);
+        getContentPane().add(tfdMinuteTo);
+        getContentPane().add(tfdSecondTo);
+        
         getContentPane().add(btnPrint);
         getContentPane().add(scrPane);
-
         // 加监听器－－－－－－－－
         btnPrint.addActionListener(this);
         addChangeListener(tfdYearFrom, this);
@@ -267,6 +331,13 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         addChangeListener(tfdYearTo,this);
         addChangeListener(tfdMonthTo,this);
         addChangeListener(tfdDayTo,this);
+        
+        addChangeListener(tfdHourFrom,this);
+        addChangeListener(tfdMinuteFrom,this);
+        addChangeListener(tfdSecondFrom,this);
+        addChangeListener(tfdHourTo,this);
+        addChangeListener(tfdMinuteTo,this);
+        addChangeListener(tfdSecondTo,this);
         getContentPane().addComponentListener(this);
         
         //initContent
@@ -276,25 +347,45 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
 		initContent(startTime, endNow);
     }
 
+    //fill the dataselection area
 	private void initContent(String startTime, String endTime) {
-	      //fill the dataselection area
+	      //start date and time-----------------
 	      int p = startTime.indexOf(" ");
-	      startTime = startTime.substring(0, p);
-	      p = startTime.indexOf("-");
-	      tfdYearFrom.setText(startTime.substring(0, p));
-	      startTime = startTime.substring(p + 1);
-	      p = startTime.indexOf("-");
-	      tfdMonthFrom.setText(startTime.substring(0, p));
-	      tfdDayFrom.setText(startTime.substring(p + 1));
+	      String startDate = startTime.substring(0, p);
+	      startTime = startTime.substring(p+1);
 	      
+	      p = startDate.indexOf("-");
+	      tfdYearFrom.setText(startDate.substring(0, p));
+	      startDate = startDate.substring(p + 1);
+	      p = startDate.indexOf("-");
+	      tfdMonthFrom.setText(startDate.substring(0, p));
+	      tfdDayFrom.setText(startDate.substring(p + 1));
+	      
+	      p = startTime.indexOf(":");
+	      tfdHourFrom.setText(startTime.substring(0, p));
+	      startTime = startTime.substring(p + 1);
+	      p = startTime.indexOf(":");
+	      tfdMinuteFrom.setText(startTime.substring(0, p));
+	      tfdSecondFrom.setText(startTime.substring(p + 1));
+	      
+	      //end date and time-------------------
 	      p = endTime.indexOf(" ");
-	      endTime = endTime.substring(0, p);
-	      p = endTime.indexOf("-");
-	      tfdYearTo.setText(endTime.substring(0, p));
+	      String endDate = endTime.substring(0, p);
+	      endTime = endTime.substring(p+1);
+	      
+	      p = endDate.indexOf("-");
+	      tfdYearTo.setText(endDate.substring(0, p));
+	      endDate = endDate.substring(p + 1);
+	      p = endDate.indexOf("-");
+	      tfdMonthTo.setText(endDate.substring(0, p));
+	      tfdDayTo.setText(endDate.substring(p + 1));
+
+	      p = endTime.indexOf(":");
+	      tfdHourTo.setText(endTime.substring(0, p));
 	      endTime = endTime.substring(p + 1);
-	      p = endTime.indexOf("-");
-	      tfdMonthTo.setText(endTime.substring(0, p));
-	      tfdDayTo.setText(endTime.substring(p + 1));
+	      p = endTime.indexOf(":");
+	      tfdMinuteTo.setText(endTime.substring(0, p));
+	      tfdSecondTo.setText(endTime.substring(p + 1));
     }
     
     public ArrayList<Bill> queryBillList(String startTime, String endTime) {
@@ -345,18 +436,35 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
     
     JLabel lblFrom;
     JLabel lblTo;
+    
     JLabel lblYearFrom;
     JLabel lblMonthFrom;
     JLabel lblDayFrom;
     JLabel lblYearTo;
     JLabel lblMonthTo;
     JLabel lblDayTo;
+    
     JTextField tfdYearFrom;
     JTextField tfdMonthFrom;
     JTextField tfdDayFrom;
     JTextField tfdYearTo;
     JTextField tfdMonthTo;
     JTextField tfdDayTo;
+
+    JLabel lblHourFrom;
+    JLabel lblMinuteFrom;
+    JLabel lblSecondFrom;
+    JLabel lblHourTo;
+    JLabel lblMinuteTo;
+    JLabel lblSecondTo;
+    
+    JTextField tfdHourFrom;
+    JTextField tfdMinuteFrom;
+    JTextField tfdSecondFrom;
+    JTextField tfdHourTo;
+    JTextField tfdMinuteTo;
+    JTextField tfdSecondTo;
+    
     JTextArea txpPreview;
     JScrollPane scrPane;
     private JButton btnPrint;
