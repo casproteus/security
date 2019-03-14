@@ -160,15 +160,15 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
                     }
                     
                     //if matchedDishesOnBill is null, then apply the coupon to the whole bill.
-                    if(matchedDishesOnBill == null) {	
+                    if(matchedDishesOnBill == null) {
 	                    if(category == 0) {//mean the price is absolute price, not percentage.
 	                    	int total = Math.round(Float.valueOf(salesPanel.billPanel.valTotlePrice.getText()) * 100);
 	                    	value = value > total ?  total : value;
+	                    	salesPanel.discountBill(value);
 	                    }else {
 	                    	value = Math.round((salesPanel.billPanel.subTotal + salesPanel.billPanel.discount) * (Float.valueOf(value) / 100f));
+	                    	salesPanel.discountBill(value);
 	                    }
-	                    sql = new StringBuilder("update bill set otherReceived = ").append(value).append(" where id = ").append(salesPanel.billPanel.billID);
-	                    PIMDBModel.getStatement().executeUpdate(sql.toString());
 	                    //recalculate the left
 	                    
 	                    //if the total is 0, then close cur bill.

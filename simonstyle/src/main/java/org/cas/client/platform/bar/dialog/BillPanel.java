@@ -742,6 +742,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		updateTotleArea();
 	}
     
+    //return true means can move on, return false means user don't want to move on.
 	public boolean checkStatus() {
 		if(status >= DBConsts.billPrinted || status < 0) {//check if the bill is .
 			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertClosedBillBack(), BarFrame.consts.Operator(),

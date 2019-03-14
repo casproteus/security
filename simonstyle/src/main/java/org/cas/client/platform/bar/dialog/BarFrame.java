@@ -45,7 +45,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.174-20190313";
+	private String VERSION = "V0.176-20190313";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     
@@ -541,16 +541,25 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		return table;
 	}
 
-	// @NOTE we don't check the bills here, because it's OK there could be bills (an empty bill, or none-closed bills generated during the splitting bill) 
+	// @NOTE in first solution, we don't check the bills here, because it's OK there could be bills (an empty bill, or none-closed bills 
+	//generated during the splitting bill), while the bad thing is that before the table closed, there's bill displaying in the check 
+	//order list, which is not big problem but might cause the confusion of the store owner.....
+	//Then, I thought about a new sulution--when combining all or move item, should check the left output numbers of the bill, if no left, then put it to dumpt.
+	//while the bad thing of this solution is that, when uncombinning will have trouble, because it need to find the unclosed billPanes, if those bill closed,
+	//then the billPanel will not be found, then the button will not display unCombine, and even we do uncombine, we will need to change the status back.
+	//So, finally, I think it's better to let the unclosed bills display in check list box, anyway, they are not closed yet, they are waiting for uncombine.
     public boolean isTableEmpty(String tableName, String openTime){
 		//validate parameters
 		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
 		openTime = openTime == null ? BarFrame.instance.valStartTime.getText() : openTime;
     	
     	try {
-			StringBuilder sql = new StringBuilder("select * from bill where tableId = '").append(tableName).append("'")
-				.append(" and opentime = '").append(openTime).append("'")
-				.append(" and (status is null or status < ").append(DBConsts.completed).append(" and 0 <= status)");
+    		StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableName)
+				.append("' and (deleted is null or deleted = ").append(DBConsts.original)
+				.append(") and time = '").append(openTime).append("'");
+//			StringBuilder sql = new StringBuilder("select * from bill where tableId = '").append(tableName).append("'")
+//				.append(" and opentime = '").append(openTime).append("'")
+//				.append(" and (status is null or status < ").append(DBConsts.completed).append(" and status >= 0)");
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
 			rs.relative(-1);

@@ -169,9 +169,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		BarFrame.numberPanelDlg.setVisible(true);
          		
          		try {
-     				String curContent = BarFrame.numberPanelDlg.curContent;
-     				if(curContent == null || curContent.length() == 0)
+     				String curContent = NumberPanelDlg.curContent;
+     				if(curContent == null || curContent.length() == 0) {
      					return;
+     				}
+     				if(!billPanel.checkStatus()) {
+     					return;
+     				}
      				billPanel.serviceFee  = BarFrame.numberPanelDlg.isPercentage ? 
              				Math.round(Float.valueOf((billPanel.subTotal - billPanel.serviceFee + billPanel.discount) * Float.valueOf(curContent)))
              				: Math.round(Float.valueOf(curContent) * 100);
@@ -487,7 +491,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		BarFrame.instance.switchMode(0);
 	}
 
-	private void discountBill(float discount) {
+	public void discountBill(float discount) {
+		if(!billPanel.checkStatus()) {
+			return;
+		}
 		billPanel.discount = discount > billPanel.subTotal ? billPanel.subTotal : discount;
 		billPanel.updateTotleArea();
 		
@@ -570,7 +577,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	}
 
 	public void discountADish(int value, Dish mostExpensiveDish) throws SQLException {
-		
+		if(!billPanel.checkStatus()) {
+			return;
+		}
 		int outputID = mostExpensiveDish.getOutputID();
 		if(outputID >= 0) {
 			StringBuilder sql = new StringBuilder("update output set discount = ").append(value)
