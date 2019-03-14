@@ -431,11 +431,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         newDish.setNum(1);
         int price = dish.getPrice();
         if("true".equals(dish.getPrompPrice()) && BarOption.isTreatPricePromtAsTaxInclude()) {
-        	Object tps = BarOption.getGST();
-        	Object tvq = BarOption.getQST();
-        	float gstRate = tps == null ? 5f : Float.valueOf((String)tps);
-        	float qstRate = tvq == null ? 9.975f : Float.valueOf((String)tvq);
-        	price = (int)Math.round(price / ((100 + gstRate + qstRate) / 100.0));
+        	price = (int)Math.round(price / ((100 + BarOption.getGST() + BarOption.getQST()) / 100.0));
         }
         newDish.setTotalPrice(price * 1);
         newDish.setOpenTime(BarFrame.instance.valStartTime.getText());
@@ -478,10 +474,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	}
 
     public void updateTotleArea() {
-    	Object tvq = BarOption.getQST();
-    	Object tps = BarOption.getGST();
-    	float gstRate = tps == null ? 5f : Float.valueOf((String)tps);
-    	float qstRate = tvq == null ? 9.975f : Float.valueOf((String)tvq);
+    	float gstRate = BarOption.getQST();
+    	float qstRate = BarOption.getGST();
     	totalGst = 0;
     	totalQst = 0;
     	subTotal = 0;

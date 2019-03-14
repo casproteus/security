@@ -362,16 +362,17 @@ public class BarOption {
     			false : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("ShowCustomerFrame"));
 	}
 	
-	public static String getGST() {
+	public static float getGST() {
 	    	return CustOpts.custOps.getValue(BarFrame.consts.GST()) == null ? 
-	    			"5.0" : (String)CustOpts.custOps.getValue(BarFrame.consts.GST());
+	    			5f : Float.valueOf((String)CustOpts.custOps.getValue(BarFrame.consts.GST()));
     }
     public static void setGST(String gst) {
     	CustOpts.custOps.setKeyAndValue(BarFrame.consts.GST(), gst);
     }
-	public static String getQST() {
+    
+	public static float getQST() {
     	return CustOpts.custOps.getValue(BarFrame.consts.QST()) == null ? 
-    			"9.975" : (String)CustOpts.custOps.getValue(BarFrame.consts.QST());
+    			9.975f : Float.valueOf((String)CustOpts.custOps.getValue(BarFrame.consts.QST()));
 	}
 	public static void setQST(String qst) {
 		CustOpts.custOps.setKeyAndValue(BarFrame.consts.QST(), qst);

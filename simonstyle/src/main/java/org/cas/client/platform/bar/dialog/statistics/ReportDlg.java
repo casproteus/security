@@ -76,25 +76,25 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         		lblFrom.getPreferredSize().width, lblFrom.getPreferredSize().height);
         
         lblYearFrom.setBounds(lblFrom.getX() + lblFrom.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP,
-        		60, lblYearFrom.getPreferredSize().height);
+        		35, lblYearFrom.getPreferredSize().height);
         tfdYearFrom.setBounds(lblYearFrom.getX(), lblYearFrom.getY() + lblYearFrom.getHeight() + CustOpts.VER_GAP, 
         		lblYearFrom.getWidth(), 30);
         
         lblMonthFrom.setBounds(lblYearFrom.getX() + lblYearFrom.getWidth() + CustOpts.HOR_GAP, lblYearFrom.getY(), 
-        		40, lblMonthFrom.getPreferredSize().height);
+        		25, lblMonthFrom.getPreferredSize().height);
         tfdMonthFrom.setBounds(lblMonthFrom.getX(), tfdYearFrom.getY(), lblMonthFrom.getWidth(), tfdYearFrom.getHeight());
         
         lblDayFrom.setBounds(lblMonthFrom.getX() + lblMonthFrom.getWidth() + CustOpts.HOR_GAP, lblMonthFrom.getY(), 
         		lblMonthFrom.getWidth(), lblDayFrom.getPreferredSize().height);
         tfdDayFrom.setBounds(lblDayFrom.getX(), tfdYearFrom.getY(), lblDayFrom.getWidth(), tfdYearFrom.getHeight());
         
-        lblHourFrom.setBounds(lblYearFrom.getX(), tfdYearFrom.getY() + tfdYearFrom.getHeight() + CustOpts.VER_GAP,
-        		60, lblHourFrom.getPreferredSize().height);
+        lblHourFrom.setBounds(lblYearFrom.getX() + 10, tfdYearFrom.getY() + tfdYearFrom.getHeight() + CustOpts.VER_GAP,
+        		lblMonthFrom.getWidth(), lblHourFrom.getPreferredSize().height);
         tfdHourFrom.setBounds(lblHourFrom.getX(), lblHourFrom.getY() + lblHourFrom.getHeight() + CustOpts.VER_GAP, 
         		lblHourFrom.getWidth(), 30);
         
         lblMinuteFrom.setBounds(lblHourFrom.getX() + lblHourFrom.getWidth() + CustOpts.HOR_GAP, lblHourFrom.getY(), 
-        		40, lblMinuteFrom.getPreferredSize().height);
+        		lblHourFrom.getWidth(), lblMinuteFrom.getPreferredSize().height);
         tfdMinuteFrom.setBounds(lblMinuteFrom.getX(), tfdHourFrom.getY(), lblMinuteFrom.getWidth(), tfdHourFrom.getHeight());
         
         lblSecondFrom.setBounds(lblMinuteFrom.getX() + lblMinuteFrom.getWidth() + CustOpts.HOR_GAP, lblMinuteFrom.getY(), 
@@ -117,7 +117,7 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         		lblDayFrom.getWidth(), lblDayFrom.getHeight());
         tfdDayTo.setBounds(lblDayTo.getX(), tfdYearFrom.getY(), lblDayTo.getWidth(), tfdYearFrom.getHeight());
         
-        lblHourTo.setBounds(lblTo.getX() + lblTo.getWidth() + CustOpts.HOR_GAP, lblMinuteFrom.getY(), 
+        lblHourTo.setBounds(lblYearTo.getX() + 10, lblMinuteFrom.getY(), 
         		lblHourFrom.getWidth(), lblHourFrom.getHeight());
         tfdHourTo.setBounds(lblHourTo.getX(), tfdHourFrom.getY(), lblHourTo.getWidth(), tfdHourFrom.getHeight());
         
@@ -134,7 +134,7 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
                 btnWidth, tfdSecondTo.getHeight() + lblSecondTo.getHeight() + CustOpts.VER_GAP);
         
         scrPane.setBounds(lblFrom.getX(), tfdSecondTo.getY() + tfdSecondTo.getHeight() + CustOpts.VER_GAP * 2,
-        		btnPrint.getX() + btnPrint.getWidth(), 540);
+        		btnPrint.getX() + btnPrint.getWidth(), 495);
         validate();
     }
 
@@ -288,7 +288,7 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
         txpPreview.setEditable(false);
         
         // 布局---------------
-        setBounds((CustOpts.SCRWIDTH - 780) / 2, (CustOpts.SCRHEIGHT - 660) / 2, 500, 660); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 390) / 2, (CustOpts.SCRHEIGHT - 660) / 2, 390, 660); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
 
         // 搭建－－－－－－－－－－－－－
