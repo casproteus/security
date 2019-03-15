@@ -220,7 +220,7 @@ public class BarOption {
     
     public static boolean isDiscountAffectTax() {
     	return CustOpts.custOps.getValue("isDisCountBeforeTax") == null ? 
-    			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isDisCountBeforeTax"));
+    			true : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("isDisCountBeforeTax"));
     }
     public static void setIsDisCountBeforeTax(Boolean isDisCountBeforeTax) {
     	CustOpts.custOps.setKeyAndValue("isDisCountBeforeTax", String.valueOf(isDisCountBeforeTax));
@@ -228,7 +228,7 @@ public class BarOption {
     
     public static boolean isServiceFeeAffectTax() {
     	return CustOpts.custOps.getValue("isServiceFeeAffectTax") == null ? 
-    			false : Boolean.valueOf((String)CustOpts.custOps.getValue("isServiceFeeAffectTax"));
+    			true : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("isServiceFeeAffectTax"));
     }
     public static void setIsServiceFeeAffectTax(Boolean isServiceFeeAffectTax) {
     	CustOpts.custOps.setKeyAndValue("isServiceFeeAffectTax", String.valueOf(isServiceFeeAffectTax));
