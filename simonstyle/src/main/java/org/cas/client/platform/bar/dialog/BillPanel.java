@@ -474,8 +474,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	}
 
     public void updateTotleArea() {
-    	float gstRate = BarOption.getQST();
-    	float qstRate = BarOption.getGST();
+    	float gstRate = BarOption.getGST();
+    	float qstRate = BarOption.getQST();
     	totalGst = 0;
     	totalQst = 0;
     	subTotal = 0;
