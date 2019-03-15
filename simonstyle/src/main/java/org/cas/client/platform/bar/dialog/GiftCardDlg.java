@@ -38,11 +38,11 @@ public class GiftCardDlg extends JDialog implements ComponentListener, ActionLis
 		btnAdd = new JButton(BarFrame.consts.OK());
 		btnClose = new JButton(BarFrame.consts.Close());
 		
-		lblCouponCode = new JLabel(BarFrame.consts.couponCode());
+		lblCardAccount = new JLabel(BarFrame.consts.Account());
 		lblValue = new JLabel(BarFrame.consts.Price());
 		lblProduct = new JLabel(BarFrame.consts.Product());
 		
-		tfdCouponCode = new JTextField();
+		tfdCardAccount = new JTextField();
 		tfdValue = new JTextField();
 		txtProduct = new JTextArea();
 		
@@ -58,10 +58,10 @@ public class GiftCardDlg extends JDialog implements ComponentListener, ActionLis
 		statusAry[1] = "Y";
 		
 		// 搭建－－－－－－－－－－－－－
-		getContentPane().add(lblCouponCode);
+		getContentPane().add(lblCardAccount);
 		getContentPane().add(lblValue);
 		getContentPane().add(lblProduct);
-		getContentPane().add(tfdCouponCode);
+		getContentPane().add(tfdCardAccount);
 		getContentPane().add(tfdValue);
 		getContentPane().add(txtProduct);
 
@@ -81,7 +81,7 @@ public class GiftCardDlg extends JDialog implements ComponentListener, ActionLis
 		if(coupon == null) {
 			return;
 		}
-		tfdCouponCode.setText(coupon.getCouponCode());
+		tfdCardAccount.setText(coupon.getCouponCode());
 		tfdValue.setText(coupon.getPrice());
 		txtProduct.setText(coupon.getProductCode());
 	}
@@ -92,13 +92,13 @@ public class GiftCardDlg extends JDialog implements ComponentListener, ActionLis
         int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 9) / 8;
         int tBtnHeight = panelHeight / 10;
 
-        lblCouponCode.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCouponCode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-		tfdCouponCode.setBounds(lblCouponCode.getX() + lblCouponCode.getWidth() + CustOpts.HOR_GAP, lblCouponCode.getY(),
-				getWidth() - lblCouponCode.getX() - lblCouponCode.getWidth() - CustOpts.HOR_GAP * 4 - CustOpts.SIZE_EDGE, CustOpts.BTN_HEIGHT);
-		lblValue.setBounds(lblCouponCode.getX(), lblCouponCode.getY() + lblCouponCode.getHeight() + CustOpts.VER_GAP,
+        lblCardAccount.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCardAccount.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+		tfdCardAccount.setBounds(lblCardAccount.getX() + lblCardAccount.getWidth() + CustOpts.HOR_GAP, lblCardAccount.getY(),
+				getWidth() - lblCardAccount.getX() - lblCardAccount.getWidth() - CustOpts.HOR_GAP * 4 - CustOpts.SIZE_EDGE, CustOpts.BTN_HEIGHT);
+		lblValue.setBounds(lblCardAccount.getX(), lblCardAccount.getY() + lblCardAccount.getHeight() + CustOpts.VER_GAP,
 				lblValue.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-		tfdValue.setBounds(tfdCouponCode.getX(), lblValue.getY(),
-				tfdCouponCode.getWidth(), CustOpts.BTN_HEIGHT);
+		tfdValue.setBounds(tfdCardAccount.getX(), lblValue.getY(),
+				tfdCardAccount.getWidth(), CustOpts.BTN_HEIGHT);
 		lblProduct.setBounds(lblValue.getX(), lblValue.getY() + lblValue.getHeight() + CustOpts.VER_GAP,
 				lblProduct.getPreferredSize().width, CustOpts.BTN_HEIGHT);
 		
@@ -108,7 +108,7 @@ public class GiftCardDlg extends JDialog implements ComponentListener, ActionLis
 				CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
 
 		txtProduct.setBounds(tfdValue.getX(), lblProduct.getY(),
-				tfdCouponCode.getWidth(), btnAdd.getY() - lblProduct.getY() - CustOpts.VER_GAP * 2);
+				tfdCardAccount.getWidth(), btnAdd.getY() - lblProduct.getY() - CustOpts.VER_GAP * 2);
 	}
 	
 	@Override
@@ -119,12 +119,12 @@ public class GiftCardDlg extends JDialog implements ComponentListener, ActionLis
 		} else if (o == btnAdd) {
 			StringBuilder sql = new StringBuilder();
 		    if(coupon == null) {	//create new coupon.
-		    	sql.append("INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('").append(tfdCouponCode.getText())
+		    	sql.append("INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('").append(tfdCardAccount.getText())
 		    		.append("', 2, ").append(Math.round(Float.valueOf(tfdValue.getText()) * 100)).append(", '")
 		    		.append(txtProduct.getText()).append("', 0, 0)");
 		    	
 		    }else {
-		    	sql.append("UPDATE Hardware set name = '").append(tfdCouponCode.getText())
+		    	sql.append("UPDATE Hardware set name = '").append(tfdCardAccount.getText())
 		    	.append("',  langType = ").append(Math.round(Float.valueOf(tfdValue.getText()) * 100))
 		    	.append(", ip = '").append(txtProduct.getText())
 		    	.append("' where id = ").append(coupon.getId());
@@ -154,8 +154,8 @@ public class GiftCardDlg extends JDialog implements ComponentListener, ActionLis
 	@Override
 	public void componentHidden(ComponentEvent e) {}
 	
-	private JLabel lblCouponCode;
-	private JTextField tfdCouponCode;
+	private JLabel lblCardAccount;
+	private JTextField tfdCardAccount;
 	private JLabel lblValue;
 	private JTextField tfdValue;
 	private JLabel lblProduct;
