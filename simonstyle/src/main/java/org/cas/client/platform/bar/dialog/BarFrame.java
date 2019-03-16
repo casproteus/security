@@ -45,7 +45,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.176-20190313";
+	private String VERSION = "V0.181-20190315";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     
@@ -531,7 +531,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		     openTime = valStartTime.getText();
 		}else {											//if the target table is already opened
 			 //then should get a new billIdx number in target bill (even the existing bill on target table is an empty bill, we still create new one.)
-			 newBillIdx = ((SalesPanel)panels[2]).getExistingBillQt(newTable, table.getOpenTime()) + 1;
+			 newBillIdx = ((SalesPanel)panels[2]).getExistingMaxBillIdx(newTable, table.getOpenTime()) + 1;
 			 openTime = table.getOpenTime();
 		}
 		
@@ -557,9 +557,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     		StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableName)
 				.append("' and (deleted is null or deleted = ").append(DBConsts.original)
 				.append(") and time = '").append(openTime).append("'");
-//			StringBuilder sql = new StringBuilder("select * from bill where tableId = '").append(tableName).append("'")
-//				.append(" and opentime = '").append(openTime).append("'")
-//				.append(" and (status is null or status < ").append(DBConsts.completed).append(" and status >= 0)");
+
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
 			rs.relative(-1);
@@ -628,7 +626,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
 		openTime = openTime == null ? BarFrame.instance.valStartTime.getText() : openTime;
 		if(newBillIdx <= 0) {
-			newBillIdx = ((SalesPanel)panels[2]).getExistingBillQt(tableName, openTime) + 1;
+			newBillIdx = ((SalesPanel)panels[2]).getExistingMaxBillIdx(tableName, openTime) + 1;
 		}
 		//create a bill for it. in case there will be something like order fee in future.
 		String createtime = BarOption.df.format(new Date());
@@ -661,56 +659,6 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		}
 	}
 	
-	public int generateBillRecord(String tableID, String billIndex, String opentime, int total, BillPanel billPanel) {
-		//get other field out from db:
-		StringBuilder sql = new StringBuilder("select * from bill where id = " + billPanel.billID);
-    	try {
-    		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-            rs.next();
-        	int cashReceived = rs.getInt("cashReceived");
-        	int debitReceived = rs.getInt("debitReceived");
-            int visaReceived = rs.getInt("visaReceived");
-            int masterReceived = rs.getInt("masterReceived");
-            int otherreceived = rs.getInt("otherreceived");
-        	int cashBack = rs.getInt("cashback");
-            int tip = rs.getInt("tip");
-        
-			//generate a bill in db and update the output with the new bill id
-			String createtime = BarOption.df.format(new Date());
-			sql = new StringBuilder(
-	            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, serviceFee, cashback, EMPLOYEEID, Comment,")
-	            .append(" opentime, cashReceived, debitReceived, visaReceived, masterReceived, otherreceived) VALUES ('")
-				.append(createtime).append("', '")
-	            .append(tableID).append("', '")	//table
-	            .append(billIndex).append("', ")			//bill
-	            .append(total).append(", ")//Math.round(Float.valueOf(valTotlePrice.getText()) * 100)/num).append(", ")	//total
-	            .append(billPanel.discount).append(", ")
-	            .append(tip).append(", ")
-	            .append(billPanel.serviceFee).append(", ")			//currently used for storing service fee -_-!
-	            .append(cashBack).append(", ")	//discount
-	            .append(LoginDlg.USERID).append(", '")		//emoployid
-	            .append(billPanel.comment).append("', '")
-	            .append(opentime).append("', ")
-	            .append(cashReceived).append(", ")
-	            .append(debitReceived).append(", ")
-	            .append(visaReceived).append(", ")
-	            .append(masterReceived).append(", ")
-	            .append(otherreceived).append(")");				//content
-		
-			PIMDBModel.getStatement().executeUpdate(sql.toString());
-			
-		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime)
-		   			.append("' and billIndex = '").append(billIndex).append("'");
-            rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-            rs.beforeFirst();
-            rs.next();
-            return rs.getInt("id");
-		 }catch(Exception e) {
-			ErrorUtil.write(e);
-			return -1;
-		 }
-	}
-
 	public void closeCurrentBill() {
 		int billID = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
 		try {

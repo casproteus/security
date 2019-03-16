@@ -12,6 +12,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -113,9 +114,88 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         }
 	}
 
-	public int generateBillRecord(String tableID, String billIndex, String opentime) {
-		return BarFrame.instance.generateBillRecord(tableID, billIndex, opentime, Math.round(Float.valueOf(valTotlePrice.getText()) * 100), this);
+	//will not duplicat the comment property of current bill.
+	//when need to creat an empty new bill instead of  expire one and regenerate one and at the same time should call this.
+	public int generateEmptyBillRecord(String tableID, String billIndex, String opentime) {
+		//generate a bill in db and update the output with the new bill id
+		String createtime = BarOption.df.format(new Date());
+		try {
+			StringBuilder sql = new StringBuilder(
+	            "INSERT INTO bill(createtime, tableID, BillIndex, EMPLOYEEID, opentime) VALUES ('")
+				.append(createtime).append("', '")
+	            .append(tableID).append("', '")	//table
+	            .append(billIndex).append("', ")			//bill
+	            .append(LoginDlg.USERID).append(", '")		//emoployid
+	            .append(opentime).append("')");				//content
+		
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
+			
+		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime)
+		   			.append("' and billIndex = '").append(billIndex).append("'");
+	        ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+	        rs.beforeFirst();
+	        rs.next();
+	        return rs.getInt("id");
+		 }catch(Exception e) {
+			ErrorUtil.write(e);
+			return -1;
+		 }
 	}
+	
+	public int cloneCurrentBillRecord(String tableID, String billIndex, String opentime, int total) {
+		if(total < 0) {
+			total = Math.round(Float.valueOf(valTotlePrice.getText()) * 100);
+		}
+		
+		//get other field out from db:
+		StringBuilder sql = new StringBuilder("select * from bill where id = " + billID);
+    	try {
+    		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+            rs.next();
+        	int cashReceived = rs.getInt("cashReceived");
+        	int debitReceived = rs.getInt("debitReceived");
+            int visaReceived = rs.getInt("visaReceived");
+            int masterReceived = rs.getInt("masterReceived");
+            int otherreceived = rs.getInt("otherreceived");
+        	int cashBack = rs.getInt("cashback");
+            int tip = rs.getInt("tip");
+        
+			//generate a bill in db and update the output with the new bill id
+			String createtime = BarOption.df.format(new Date());
+			sql = new StringBuilder(
+	            "INSERT INTO bill(createtime, tableID, BillIndex, total, discount, tip, serviceFee, cashback, EMPLOYEEID, Comment,")
+	            .append(" opentime, cashReceived, debitReceived, visaReceived, masterReceived, otherreceived) VALUES ('")
+				.append(createtime).append("', '")
+	            .append(tableID).append("', '")	//table
+	            .append(billIndex).append("', ")			//bill
+	            .append(total).append(", ")//Math.round(Float.valueOf(valTotlePrice.getText()) * 100)/num).append(", ")	//total
+	            .append(discount).append(", ")
+	            .append(tip).append(", ")
+	            .append(serviceFee).append(", ")			//currently used for storing service fee -_-!
+	            .append(cashBack).append(", ")	//discount
+	            .append(LoginDlg.USERID).append(", '")		//emoployid
+	            .append(comment).append("', '")
+	            .append(opentime).append("', ")
+	            .append(cashReceived).append(", ")
+	            .append(debitReceived).append(", ")
+	            .append(visaReceived).append(", ")
+	            .append(masterReceived).append(", ")
+	            .append(otherreceived).append(")");				//content
+		
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
+			
+		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime)
+		   			.append("' and billIndex = '").append(billIndex).append("'");
+            rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+            rs.beforeFirst();
+            rs.next();
+            return rs.getInt("id");
+		 }catch(Exception e) {
+			ErrorUtil.write(e);
+			return -1;
+		 }
+	}
+
 	
 	void sendDishToKitchen(Dish dish, boolean isCancelled) {
 		List<Dish> dishes = new ArrayList<Dish>();
@@ -465,9 +545,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
 	public void sendNewOrdersToKitchenAndDB(List<Dish> dishes) {
 		//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
-		if(dishes.size() == orderedDishAry.size()) {	//didn't set the idx when bill created, because don't wanto display idx if there's only 1 bill.
-		    BarFrame.instance.valCurBillIdx.setText(String.valueOf(BillListPanel.getANewBillIdx()));
-		}
+//		if(dishes.size() == orderedDishAry.size()) {	//didn't set the idx when bill created, because don't wanto display idx if there's only 1 bill.
+//		    BarFrame.instance.valCurBillIdx.setText(String.valueOf(BillListPanel.getANewBillIdx()));
+//		}
 		sendDishesToKitchen(dishes, false);
 		persistDishesToOutput(dishes);
 		tblBillPanel.repaint();//to update the color of dishes, it's saved, so it's not red anymore.
@@ -789,11 +869,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				this.comment = "";
 			}
 	 		
-	 		int newBillID = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
+	 		int newBillID = cloneCurrentBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
 					billIdx,
 					BarFrame.instance.valStartTime.getText(),
-					Math.round(Float.valueOf(valTotlePrice.getText()) * 100), 
-					this);
+					Math.round(Float.valueOf(valTotlePrice.getText()) * 100));
 	 		
 	        //when we reopen a refunded bill, we create a new bill which is a original bill, so we must clean the received money with the refund count.
 

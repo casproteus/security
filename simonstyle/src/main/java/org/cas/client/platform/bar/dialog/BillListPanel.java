@@ -330,7 +330,10 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 						.append(" where id = ").append(targetBillId);
 				PIMDBModel.getStatement().executeUpdate(sql.toString());
 			}else {
-				targetBillId = targetBillPanel.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(), targetBillPanel.billButton.getText(), BarFrame.instance.valStartTime.getText());
+				targetBillId = targetBillPanel.generateEmptyBillRecord(
+						BarFrame.instance.cmbCurTable.getSelectedItem().toString(), 
+						targetBillPanel.billButton.getText(), 
+						BarFrame.instance.valStartTime.getText());
 				sql = new StringBuilder("update bill set total = ")
 						.append(outputTotalPrice)
 						.append(" where id = ").append(targetBillId);
@@ -421,11 +424,10 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 						//generate a bill for each new occupied panel, incase there's discount info need to set into it.
 						//@Note, when the initContent of the panel called, the bill ID will be set into the dish instance in memory.
 						//and eventually, if the bill id is not 0, will calculate the service fee and discount into Total.
-						int id = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
+						int id = panel.cloneCurrentBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
 								String.valueOf(billIndex),
 								BarFrame.instance.valStartTime.getText(),
-								Math.round(Float.valueOf(panel.valTotlePrice.getText()) * 100/num), 
-								panel);
+								Math.round(Float.valueOf(panel.valTotlePrice.getText()) * 100/num));
 
 						ArrayList<Dish> tDishAry = new ArrayList<Dish>();
 						for (Dish dish : panel.orderedDishAry) {
@@ -464,7 +466,10 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 						//generate a bill for each new occupied panel, incase there's discount info need to set into it.
 						//@Note, when the initContent of the panel called, the bill ID will be set into the dish instance in memory.
 						//and eventually, if the bill id is not 0, will calculate the service fee and discount into Total.
-						int id = billPanel.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(), String.valueOf(billIndex), BarFrame.instance.valStartTime.getText());
+						int id = billPanel.generateEmptyBillRecord(
+								BarFrame.instance.cmbCurTable.getSelectedItem().toString(), 
+								String.valueOf(billIndex), 
+								BarFrame.instance.valStartTime.getText());
 						Dish dish = curDish.clone();
 						dish.setBillID(id);
 						Dish.splitOutput(dish, selectedPanels.size() + 1, billPanel.billButton.getText());
@@ -499,7 +504,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 			initContent();
 		}else {
 			if(o == btnAddUser){
-				((SalesPanel)BarFrame.instance.panels[2]).addNewBill(null, null);
+				((SalesPanel)BarFrame.instance.panels[2]).addNewBillInCurTable();
 			}else if(o == btnPrintAll) {
 				ArrayList<BillPanel> unclosedBillPanels = gatherAllUnclosedBillPanels();
 				for (BillPanel billPanel : unclosedBillPanels) {
@@ -845,15 +850,14 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	public static int getANewBillIdx(){
     	int num = 0;
     	try {
-			StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString())
-					.append("' and (deleted is null or deleted = ").append(DBConsts.original)
-					.append(" or deleted = ").append(DBConsts.completed)
-					.append(" or deleted = ").append(DBConsts.suspended)
-					.append(") and time = '").append(BarFrame.instance.valStartTime.getText()).append("' order by contactID");
+			StringBuilder sql = new StringBuilder("select DISTINCT billIndex from bill where tableId = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("'")
+				.append(" and opentime = '").append(BarFrame.instance.valStartTime.getText()).append("'")
+				.append(" and (status is null or status < ").append(DBConsts.completed).append(" and status >= 0)")
+				.append(" order by billIndex");
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
 			rs.relative(-1);
-			num = rs.getInt("contactID");
+			num = rs.getInt("billIndex");
 		} catch (Exception exp) {
 			L.d("BillListPane.getANewBillNumber", "lagest num is 0.");
 		}
