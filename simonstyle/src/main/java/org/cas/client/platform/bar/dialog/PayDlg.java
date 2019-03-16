@@ -131,7 +131,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 			sql = new StringBuilder("update output set deleted = ").append(DBConsts.completed)
 					.append(" where ( deleted is null or deleted = ").append(DBConsts.original)
 					.append(") and time = '").append(BarFrame.instance.valStartTime.getText()).append("'")
-					.append(" and SUBJECT = '").append(BarFrame.instance.cmbCurTable.getSelectedItem()).append("'");
+					.append(" and SUBJECT = '").append(BarFrame.instance.cmbCurTable.getSelectedItem()).append("'")
+					.append(" and contactid = ").append(BarFrame.instance.getCurBillIndex());
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
    		}catch(Exception e) {
 			ErrorUtil.write(e);

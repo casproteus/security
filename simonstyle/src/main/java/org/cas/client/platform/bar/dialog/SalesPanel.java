@@ -211,7 +211,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             } else if(o == btnLine_2_2) {		//Add bill
             	//save unsaved output
             	createAndPrintNewOutput();
-            	addNewBill(null, null);
+            	addNewBill();
         	} else if (o == btnLine_2_4) { // cancel all---- if bill is empty, then check if table is empty, if yes, close current table. yes or not, all back to table view.
             	if(billPanel.orderedDishAry.size() > 0) {	//if not empty, remove all new added items.
             		int newDishQT = billPanel.getNewDishes().size();
@@ -335,11 +335,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		//generat new bill with ref to dumpted bill everything else use the data on current billPane
              		//@NOTE:no need to generata new output. the output will be choosed by table and billIdx.
             		billPanel.comment = PrintService.REF_TO + billPanel.billID + "F";
-             		int newBillID = BarFrame.instance.generateBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
+             		int newBillID = billPanel.cloneCurrentBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
             				String.valueOf(BarFrame.instance.valCurBillIdx.getText()),
             				BarFrame.instance.valStartTime.getText(),
-            				Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100), 
-            				billPanel);
+            				Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
              		
              		//change something on cur billPane, then use it to print the refund bill, to let revenue know the store refund some money.
              		billPanel.billID = newBillID;
@@ -409,10 +408,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         }
     }
 
-	public void voidCurrentOrder() {
+	private void voidCurrentOrder() {
 		int dishLength = billPanel.orderedDishAry.size();
 		int billID = billPanel.billID;
-		
+    	String curBill = BarFrame.instance.valCurBillIdx.getText();
 		try {
 			//check if it's a mistake-opening-table-action or adding bill action by check if there's any output on it already. 
 			//will be considered as non-empty as long as there's output connecting to the id, even the output is not currently displaying on this bill.
@@ -439,6 +438,14 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		    				BarFrame.consts.COMFIRMDELETEACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
 		                 return;	
 		            }
+		    		//if it's voiding a check printed bill, then we will regenerat a bill base on it, and set the regenerated bill as printed instead of original.
+		    		if(billPanel.status >= DBConsts.billPrinted || billPanel.status < 0) {
+			    		if(!billPanel.checkStatus()) {	//this will regenerate a bill, but the new generated bill is original status. status will be unnecessarily checked again in
+			    			return;						//method checkStatus(), but it dosn't harm, just some cpu time, so let it check again.
+			    		}else {	//@NOTE if a new bill created, we want to set the status to be printed, so when it's print bill later, it will not send cancel info to kitchen.
+					    	billPanel.status = DBConsts.billPrinted; //temperally set should be OK, because later in this method, will set status to void.
+			    		}
+		    		}
 		        }else {												//all new
 		        	if(JOptionPane.showConfirmDialog(BarFrame.instance, 
 		    				BarFrame.consts.COMFIRMLOSTACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
@@ -467,7 +474,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		    	
 		    	//@NOTE: we need to process cur bill, give it a special status, so we can see the voided bills in check order dialog. 
 		    	//and have to process it to be not null, better will not be considered as there's still non closed bill, when checking in isLastBill()
-		    	String curBill = BarFrame.instance.valCurBillIdx.getText();
 		    	//update bill
 				sql = new StringBuilder("update bill set status = ").append(DBConsts.voided)
 						.append(" where billIndex = '").append("".equals(curBill) ? 1 : curBill).append("'")
@@ -503,32 +509,29 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	}
 
 	//add new bill with a new billID and billIdx.
-	public void addNewBill(String tableName, String openTime) {
-		if(tableName == null) {
-			tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
-		}
-		if(openTime == null) {
-			openTime = BarFrame.instance.valStartTime.getText();
-		}
+	public void addNewBill() {
+		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
+		String openTime = BarFrame.instance.valStartTime.getText();
 		
-		int existingBillQT = getExistingBillQt(tableName, openTime);
+		int existingBillQT = getExistingMaxBillIdx(tableName, openTime);
 		String newBillIdx = String.valueOf(existingBillQT + 1);
 		
-		int billId = billPanel.generateBillRecord(tableName, newBillIdx, openTime);
+		int billId = billPanel.generateEmptyBillRecord(tableName, newBillIdx, openTime);
 		billPanel.billID = billId;
 		BarFrame.instance.valCurBillIdx.setText(newBillIdx);
 		BarFrame.instance.switchMode(2);
 	}
 
-	public int getExistingBillQt(String tableName, String openTime) {
-		StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableName)
-				.append("' and (deleted is null or deleted < ").append(DBConsts.voided)
-				.append(") and time = '").append(openTime).append("' order by contactID DESC");
+	public int getExistingMaxBillIdx(String tableName, String openTime) {
+		StringBuilder sql = new StringBuilder("select DISTINCT billIndex from bill where tableId = '").append(tableName).append("'")
+			.append(" and opentime = '").append(openTime).append("'")
+			.append(" and (status is null or status < ").append(DBConsts.completed).append(" and status >= 0)")
+			.append(" order by billIndex DESC");
 		try {
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.beforeFirst();
 			rs.next();
-			return rs.getInt("contactID");
+			return rs.getInt("billIndex");
 			
 		}catch(Exception exp) {
 			return 0;

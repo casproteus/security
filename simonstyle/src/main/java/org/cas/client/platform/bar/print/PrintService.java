@@ -981,6 +981,14 @@ public class PrintService{
 					}
 				}
 			}
+			
+			//in case at the end there's an other *ref to(e.g first print added *ref. then when modified, a *subtotal was
+			//added, then print bill again, another *ref to will be added at the end.
+			p = oldsubtotal.indexOf(REF_TO);
+			if(p > 0) {
+				numeroRef = oldsubtotal.substring(p + REF_TO.length()).trim();
+				oldsubtotal = oldsubtotal.substring(0, p).trim();
+			}
 		}
 		oldMoneys.clear();
 		oldMoneys.add(oldsubtotal);
