@@ -182,7 +182,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		int col = BarOption.getBillPageCol();
 		int row = BarOption.getBillPageRow();
 		
-		int billNum = getANewBillIdx();
+		int billNum = getANewBillIdx(null, null);
 		for(int i = 0; i < row * col; i++) {
 			if(row * col * curPageNum + i < billPanels.size()) {	//some panel is using the panel in billPanels list.
 				onScrBills.add(billPanels.get(row * col * curPageNum + i));
@@ -419,7 +419,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 					}
 											
 					for (int i = 1; i < num; i++) {				//generate output for splited ones.
-						int billIndex = BillListPanel.getANewBillIdx();
+						int billIndex = BillListPanel.getANewBillIdx(null, null);
 						
 						//generate a bill for each new occupied panel, incase there's discount info need to set into it.
 						//@Note, when the initContent of the panel called, the bill ID will be set into the dish instance in memory.
@@ -462,7 +462,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 					}
 					Dish.splitOutput(curDish, selectedPanels.size() + 1, null); // update the num and totalprice of curDish
 					for (BillPanel billPanel : selectedPanels) { // insert new output with other billID
-						int billIndex = BillListPanel.getANewBillIdx();
+						int billIndex = BillListPanel.getANewBillIdx(null, null);
 						//generate a bill for each new occupied panel, incase there's discount info need to set into it.
 						//@Note, when the initContent of the panel called, the bill ID will be set into the dish instance in memory.
 						//and eventually, if the bill id is not 0, will calculate the service fee and discount into Total.
@@ -847,11 +847,18 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		}
 	}
 
-	public static int getANewBillIdx(){
+	public static int getANewBillIdx(String tableName, String openTime){
+		if(tableName == null) {
+			tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
+		}
+		if(openTime == null) {
+			openTime = BarFrame.instance.valStartTime.getText();
+		}
+		
     	int num = 0;
     	try {
-			StringBuilder sql = new StringBuilder("select DISTINCT billIndex from bill where tableId = '").append(BarFrame.instance.cmbCurTable.getSelectedItem().toString()).append("'")
-				.append(" and opentime = '").append(BarFrame.instance.valStartTime.getText()).append("'")
+			StringBuilder sql = new StringBuilder("select DISTINCT billIndex from bill where tableId = '").append(tableName).append("'")
+				.append(" and opentime = '").append(openTime).append("'")
 				.append(" and (status is null or status < ").append(DBConsts.completed).append(" and status >= 0)")
 				.append(" order by billIndex");
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -859,7 +866,8 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 			rs.relative(-1);
 			num = rs.getInt("billIndex");
 		} catch (Exception exp) {
-			L.d("BillListPane.getANewBillNumber", "lagest num is 0.");
+			L.d("BillListPane.getANewBillNumber", "found no bill on an already opened table.");
+			return 0;
 		}
     	return num + 1;
     }

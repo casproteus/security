@@ -363,8 +363,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		createAndPrintNewOutput();
         		billPricesUpdateToDB();
             	if(BarOption.isFastFoodMode()) {
-    		    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(BillListPanel.getANewBillIdx()));
-    		    	BarFrame.instance.createAnEmptyBill(null, null, 0);//create new bill;
+            		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
+    		    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(newBillIdx));
+    		    	BarFrame.instance.createAnEmptyBill(null, null, newBillIdx);//create new bill;
     		    	billPanel.initContent();
     		    }else {
     		    	BarFrame.instance.switchMode(0);
@@ -513,29 +514,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String openTime = BarFrame.instance.valStartTime.getText();
 		
-		int existingBillQT = getExistingMaxBillIdx(tableName, openTime);
-		String newBillIdx = String.valueOf(existingBillQT + 1);
+		String newBillIdx = String.valueOf(BillListPanel.getANewBillIdx(null, null));
 		
 		int billId = billPanel.generateEmptyBillRecord(tableName, newBillIdx, openTime);
 		billPanel.billID = billId;
 		BarFrame.instance.valCurBillIdx.setText(newBillIdx);
 		BarFrame.instance.switchMode(2);
-	}
-
-	public int getExistingMaxBillIdx(String tableName, String openTime) {
-		StringBuilder sql = new StringBuilder("select DISTINCT billIndex from bill where tableId = '").append(tableName).append("'")
-			.append(" and opentime = '").append(openTime).append("'")
-			.append(" and (status is null or status < ").append(DBConsts.completed).append(" and status >= 0)")
-			.append(" order by billIndex DESC");
-		try {
-			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-			rs.beforeFirst();
-			rs.next();
-			return rs.getInt("billIndex");
-			
-		}catch(Exception exp) {
-			return 0;
-		}
 	}
 
 	//Todo: Maybe it's safe to delete this method, because I think no need to touch ouputs.

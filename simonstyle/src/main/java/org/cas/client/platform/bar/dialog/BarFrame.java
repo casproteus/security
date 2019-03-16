@@ -518,25 +518,25 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	//update all current output and bill with target table name, opentime and with the new billIdx?
 	//@Note: why people merge table??? maybe they are friends met in restaurant, they shouldn't share same bill number for sure, 
 	//because they might AA when pay the bill.
-	private Table moveBillToAnotherTable(String newTable, int billID) {
+	private Table moveBillToAnotherTable(String newTableName, int billID) {
 		//NOTE:check the status of the target table every time. because when this method changed, the status may change.
-		Table table = getTheInfoOfTable(newTable);
+		Table table = getTheInfoOfTable(newTableName);
 		String openTime;
 		int newBillIdx;
 		
 		if(table.getStatus() == DBConsts.original) {	//if the target is not openned.
-		     openATable(newTable, valStartTime.getText());
+		     openATable(newTableName, valStartTime.getText());
 
 		     newBillIdx = 1;
 		     openTime = valStartTime.getText();
 		}else {											//if the target table is already opened
 			 //then should get a new billIdx number in target bill (even the existing bill on target table is an empty bill, we still create new one.)
-			 newBillIdx = ((SalesPanel)panels[2]).getExistingMaxBillIdx(newTable, table.getOpenTime()) + 1;
+			 newBillIdx = BillListPanel.getANewBillIdx(newTableName, table.getOpenTime());
 			 openTime = table.getOpenTime();
 		}
 		
-		moveOutputToTable(billID, newTable, newBillIdx, openTime); 
-		moveBillToTable(billID, newTable, newBillIdx, openTime);
+		moveOutputToTable(billID, newTableName, newBillIdx, openTime); 
+		moveBillToTable(billID, newTableName, newBillIdx, openTime);
 		
 		return table;
 	}
@@ -626,7 +626,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
 		openTime = openTime == null ? BarFrame.instance.valStartTime.getText() : openTime;
 		if(newBillIdx <= 0) {
-			newBillIdx = ((SalesPanel)panels[2]).getExistingMaxBillIdx(tableName, openTime) + 1;
+			newBillIdx = BillListPanel.getANewBillIdx(tableName, openTime);
 		}
 		//create a bill for it. in case there will be something like order fee in future.
 		String createtime = BarOption.df.format(new Date());
