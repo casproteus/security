@@ -867,7 +867,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 			num = rs.getInt("billIndex");
 		} catch (Exception exp) {
 			L.d("BillListPane.getANewBillNumber", "found no bill on an already opened table.");
-			return 0;
+			return 1;
 		}
     	return num + 1;
     }
