@@ -387,13 +387,16 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         
         StringBuilder sql = new StringBuilder("select * from bill, employee where createTime >= '").append(startTime)
         		.append("' and createTime <= '").append(endTime)
-        		.append("' and bill.employeeId = employee.id and (bill.status is null or bill.status < ")
-        		.append(LoginDlg.USERTYPE < 2 ? DBConsts.expired : DBConsts.deleted).append(")");
-        //if configured, then do not show records of other waiter.
-        if("true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("HideRecordFromOtherWaiter")))
+        		.append("' and bill.employeeId = employee.id and (bill.status < ").append(LoginDlg.USERTYPE < 2 ? DBConsts.expired : DBConsts.deleted)
+        		.append(" or bill.status is null)");
+        if(!"true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("ShowProcessingBill")))) {
+        	sql.append("and bill.status is not null ").append(" and bill.status != ").append(DBConsts.billPrinted);
+        }
+        if("true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("HideRecordFromOtherWaiter"))) //if configured, then do not show records of other waiter.
         		&& LoginDlg.USERTYPE < 2) {
         	sql.append(" and employee.id = ").append(LoginDlg.USERID);
         }
+        
         sql.append(" order by createTime desc");
         fillTableAreaWithResultSet(sql);
         

@@ -119,25 +119,27 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 			try {
 				StringBuilder sql = new StringBuilder("select * from bill where tableId = '").append(tableToggle.getText()).append("'")
 						.append(" and opentime = '").append(tableToggle.getOpenTime()).append("'")
-						.append(" and (status is null or status < ").append(DBConsts.completed).append(" and 0 <= status)");
+						.append(" and (status is null or status < ").append(DBConsts.completed)
+						.append(" and status >= ").append(DBConsts.original).append(")");
 				ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 				rs.afterLast();
 				rs.relative(-1);
 				int num = rs.getRow();
 				
-				if (num == 0) {// if it's empty, switch to sales panel
-					L.e("open table", " found no related bill in a open status table", null);
-					tableToggle.open();
-					BarFrame.instance.valCurBillIdx.setText("");
-					BarFrame.instance.switchMode(2);
-				} else { // if it's not empty
+				//will not be empty anymore, because whenever click a table, we will create a bill for it.
+//				if (num == 0) {// if it's empty, switch to sales panel
+//					L.e("open table", " found no related bill in a open status table", null);
+//					tableToggle.open();
+//					BarFrame.instance.valCurBillIdx.setText("");
+//					BarFrame.instance.switchMode(2);
+//				} else { // if it's not empty
 					if(num == 1 && CustOpts.custOps.getValue("FrobiddenQuickEnter") == null) {	// display the only bill
 						BarFrame.instance.valCurBillIdx.setText(rs.getString("billIndex"));
 						BarFrame.instance.switchMode(2);
 					}else { //or switch to the bill panel to show all the bills.
 						BarFrame.instance.switchMode(1);
 					}
-				}
+//				}
 				tableToggle.setSelected(true);
 			} catch (Exception exp) {
 				ErrorUtil.write(exp);

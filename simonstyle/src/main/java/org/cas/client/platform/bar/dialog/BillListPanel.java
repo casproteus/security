@@ -490,7 +490,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 					btnMoveItem.setSelected(false);
 					return;
 				}
-				if(!panel.checkStatus())
+				if(!panel.checkStatus())	//create a new bill for original bill
 					return;
 				moveItemAction();
 			}

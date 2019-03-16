@@ -211,7 +211,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             } else if(o == btnLine_2_2) {		//Add bill
             	//save unsaved output
             	createAndPrintNewOutput();
-            	addNewBill();
+            	addNewBillInCurTable();
         	} else if (o == btnLine_2_4) { // cancel all---- if bill is empty, then check if table is empty, if yes, close current table. yes or not, all back to table view.
             	if(billPanel.orderedDishAry.size() > 0) {	//if not empty, remove all new added items.
             		int newDishQT = billPanel.getNewDishes().size();
@@ -509,7 +509,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	}
 
 	//add new bill with a new billID and billIdx.
-	public void addNewBill() {
+	public void addNewBillInCurTable() {
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String openTime = BarFrame.instance.valStartTime.getText();
 		
