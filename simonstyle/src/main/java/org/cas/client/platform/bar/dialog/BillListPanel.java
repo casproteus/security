@@ -622,7 +622,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 
 	void combineBills(ArrayList<BillPanel> unclosedBillPanels) {
 		String firstUnclosedBillIdx = unclosedBillPanels.get(0).billButton.getText();
-		int firstUnclosedBillId = unclosedBillPanels.get(0).billID;
+		
 		//update all related output to belongs to first Bill, deleted and completed output will not be modified.
 		//the billId will not be modified, so when waiter want to do a undo, can use the billID to undo combine all.
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
@@ -648,25 +648,23 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		//when we reset the table. we check if it the last non-empty bill and clean all the empty bill .
 		int combinedDiscount = 0;
 		int combinedServiceFee = 0;
-		String combinedComment = unclosedBillPanels.get(0).comment;
+		StringBuilder combinedComment = new StringBuilder();
 		for (BillPanel billPanel : unclosedBillPanels) {
 			combinedDiscount += billPanel.discount;
 			combinedServiceFee += billPanel.serviceFee;
 			if(billPanel.status >= DBConsts.billPrinted || billPanel.status < 0) {
-				combinedComment += PrintService.REF_TO + billPanel.billID;
+				combinedComment.append(PrintService.REF_TO).append(billPanel.billID);
 			}
 		}
 		
-		if(unclosedBillPanels.get(0).status >= DBConsts.billPrinted || unclosedBillPanels.get(0).status < 0) {
-				sql = new StringBuilder("update bill set discount = ").append(combinedDiscount)
+		BillPanel billPanel = unclosedBillPanels.get(0);
+		if(billPanel.status >= DBConsts.billPrinted || billPanel.status < 0) {
+			billPanel.reGenerate(billPanel.billButton.getText());
+		}
+		sql = new StringBuilder("update bill set discount = ").append(combinedDiscount)
 				.append(", serviceFee = ").append(combinedServiceFee)
 				.append(", comment = '").append(combinedComment).append("'")
-				.append(" where id = ").append(firstUnclosedBillId);
-		}else {
-			sql = new StringBuilder("update bill set discount = ").append(combinedDiscount)
-				.append(", serviceFee = ").append(combinedServiceFee)
-				.append(" where id = ").append(firstUnclosedBillId);
-		}
+				.append(" where id = ").append(billPanel.getBillId());	//billPanel's billID will be a new bill Id if it's regenerated.
 		
 		try {
 			PIMDBModel.getStatement().executeUpdate(sql.toString());

@@ -846,7 +846,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	 		//while, if user open the dumped old bill, then the removed item will be disappears and new added item will appear on old bill also.
 	 		//this will be a known bug. TDOO:we can make it better by searching output by billID when it's a dumped bill. hope no one will need to check the dumped bills.
 	 		//??what do we do when removing an saved item from billPanel?
-	 		if(status > 0) {
+	 		if(status >= DBConsts.billPrinted) {
 		 		StringBuilder newComment = new StringBuilder(PrintService.REF_TO).append(billID);
 				if(status >= DBConsts.completed) {	//if already paid, then need to know old moneys, so in mev can report how much added or returned.
 					newComment.append("F");	
