@@ -89,19 +89,21 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         if(orderedDishAry.size() == 0){
             return;
         }
-        if(status < 0 || status >= DBConsts.completed) {
+        if(status < 0 || status >= DBConsts.completed || comment.contains(PrintService.OLD_GST)) { //for completed or reopened completed bill
         	PrintService.exePrintInvoice(this, false, isToCustomer, true);
-        }else {
+        }else {		//for original or billprinted or reopeneed billPrinted bills go here..
 	        PrintService.exePrintBill(this, orderedDishAry);
 	        status = DBConsts.billPrinted;
+	        comment += PrintService.REF_TO + billID;
+	        comment = replaceMoney(comment, lblSubTotle.getText());
 			//update the total price of the target bill, 
 			//---because when add dish into the billPane, bill in db will not get updated.
 			StringBuilder sql = new StringBuilder("update bill set total = ")
 					.append(Math.round(Float.valueOf(valTotlePrice.getText()) * 100))
 					.append(", discount = ").append(discount)
 					.append(", serviceFee = ").append(serviceFee)
-					.append(", status = ").append(DBConsts.billPrinted)//so the invoice can be saved.
-					.append(", comment = comment + ' ").append(PrintService.REF_TO).append(billID).append("'")
+					.append(", status = ").append(DBConsts.billPrinted)//so the invoice can be printed with "save paper mode".
+					.append(", comment = ' ").append(comment).append("'")
 					.append(" where tableID = '").append(tableID).append("'")
 					.append(" and BillIndex = '").append(billIndex).append("'")
 					.append(" and openTime = '").append(opentime).append("'")
@@ -112,6 +114,30 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				L.e("BillPane", "Excepioint in print bill:" + sql, e);
 			}
         }
+	}
+
+	private String replaceMoney(String comment, String subTotalStr) {
+		//clean the subTotal string. incase it't like "subtotal:0.00"
+		int p = subTotalStr.indexOf(":");
+		if(p > 0) {
+			subTotalStr = subTotalStr.substring(p + 1).trim();
+		}
+		p = subTotalStr.indexOf(BarOption.getMoneySign());	//in case there's dollar sign like "subtotal:$0.00"
+		if(p >= 0) {
+			subTotalStr = subTotalStr.substring(p + BarOption.getMoneySign().length());
+		}
+		
+		//change the comment
+		p = comment.indexOf(PrintService.OLD_SUBTOTAL);
+		if(p > 0) {
+			p += PrintService.OLD_SUBTOTAL.length();
+			String firstPart = comment.substring(0, p);
+			String secondPart = comment.substring(p);
+			p = secondPart.indexOf("*");
+			secondPart = p >0 ? subTotalStr + "\n" + secondPart.substring(p) : subTotalStr;
+			comment = firstPart + secondPart;
+		}
+		return comment;
 	}
 
 	//will not duplicat the comment property of current bill.
