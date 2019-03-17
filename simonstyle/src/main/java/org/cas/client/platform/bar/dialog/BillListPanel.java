@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
@@ -39,7 +40,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	void initComponent() {
 		removeAll();
 		billPanels= new ArrayList<BillPanel>();
-		onScrBills= new ArrayList<BillPanel>();
+		onScrBillPanels= new ArrayList<BillPanel>();
 
 	    btnLeft = new ArrowButton("<<");
 	    btnRight = new ArrowButton(">>");
@@ -185,13 +186,13 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		int billNum = getANewBillIdx(null, null);
 		for(int i = 0; i < row * col; i++) {
 			if(row * col * curPageNum + i < billPanels.size()) {	//some panel is using the panel in billPanels list.
-				onScrBills.add(billPanels.get(row * col * curPageNum + i));
+				onScrBillPanels.add(billPanels.get(row * col * curPageNum + i));
 				btnRight.setEnabled(true);
 			}else {													//others are temperally newed BillPanel.
 				BillPanel panel = new BillPanel(this, new JToggleButton(String.valueOf(billNum)));	//have to give a number to construct valid sql.
 				panel.initComponent();
 				panel.initContent();
-				onScrBills.add(panel);
+				onScrBillPanels.add(panel);
 				btnRight.setEnabled(false);
 				billNum++;
 			}
@@ -199,11 +200,11 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	}
 
 	public void cleanInterface() {
-		for(int i = onScrBills.size() - 1; i >= 0; i--) {
-			remove(onScrBills.get(i));
+		for(int i = onScrBillPanels.size() - 1; i >= 0; i--) {
+			remove(onScrBillPanels.get(i));
 		}
 		billPanels.clear();
-		onScrBills.clear();
+		onScrBillPanels.clear();
 	}
 	
 	private void reLayout() {
@@ -246,7 +247,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				btnLeft.getY(),
 				40, 40);
 
-		if(onScrBills.size() > 0) { //@NOTE: when barframe initialized, this will be called.
+		if(onScrBillPanels.size() > 0) { //@NOTE: when barframe initialized, this will be called.
 			int col = CustOpts.custOps.getValue("BillPanel_Col") == null ? 4 : Integer.valueOf((String)CustOpts.custOps.getValue("BillPanel_Col"));
 			int row = CustOpts.custOps.getValue("BillPanel_Row") == null ? 1 : Integer.valueOf((String)CustOpts.custOps.getValue("BillPanel_Row"));
 			int table_H = (separator.getY() - CustOpts.VER_GAP * 2)/row;
@@ -255,10 +256,10 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				for (int c = 0; c < col; c++) {
 					int x = btnLeft.getX() + btnLeft.getWidth() + CustOpts.HOR_GAP + (CustOpts.HOR_GAP + table_W) * c;
 					int y = (table_H + CustOpts.VER_GAP) * r + CustOpts.VER_GAP;
-					onScrBills.get(i).setBounds(x, y, table_W, table_H);
-					onScrBills.get(i).reLayout();
-					onScrBills.get(i).resetColWidth(table_W);
-					add(onScrBills.get(i));
+					onScrBillPanels.get(i).setBounds(x, y, table_W, table_H);
+					onScrBillPanels.get(i).reLayout();
+					onScrBillPanels.get(i).resetColWidth(table_W);
+					add(onScrBillPanels.get(i));
 					
 					i++;
 				}
@@ -754,6 +755,10 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		        }
 		        BillListPanel.curDish = null;
 		        initContent();
+		        //find the two bill, and update the total price in db.
+		        for (BillPanel billPanel : onScrBillPanels) {
+			        BarUtil.updateBillRecordPrices(billPanel);
+				}
 			}
 		}
 	}
@@ -883,7 +888,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
     
 	List<BillPanel> getSelectedBillPannels(){
 		List<BillPanel> panels = new ArrayList<>();
-		for (BillPanel billPanel : onScrBills) {
+		for (BillPanel billPanel : onScrBillPanels) {
 			if(billPanel.billButton.isSelected())
 				panels.add(billPanel);
 		}
@@ -892,7 +897,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	}
 	
 	List<BillPanel> billPanels;
-	List<BillPanel> onScrBills;
+	List<BillPanel> onScrBillPanels;
 
     private ArrowButton btnLeft;
     private ArrowButton btnRight;

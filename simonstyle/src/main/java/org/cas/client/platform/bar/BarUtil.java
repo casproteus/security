@@ -10,6 +10,7 @@ import java.util.Enumeration;
 import javax.swing.JOptionPane;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -186,6 +187,23 @@ public class BarUtil {
 			PIMDBModel.getStatement().executeUpdate(sb.toString());
 		}catch(Exception exp) {
 			ErrorUtil.write(exp);
+		}
+	}
+
+	//
+	public static void updateBillRecordPrices(BillPanel billPanel) {
+		updateBill(billPanel.billID, "total", Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
+		updateBill(billPanel.billID, "discount", Math.round(billPanel.discount));
+		updateBill(billPanel.billID, "serviceFee", billPanel.serviceFee);
+	}
+	
+	public static void updateBill(int billId, String fieldName, int value) {
+		StringBuilder sb = new StringBuilder("update bill set ").append(fieldName).append(" = ").append(value).append(" where id = ").append(billId);
+		
+		try {
+			PIMDBModel.getStatement().executeUpdate(sb.toString());
+		}catch(Exception e) {
+			ErrorUtil.write(e);
 		}
 	}
 }

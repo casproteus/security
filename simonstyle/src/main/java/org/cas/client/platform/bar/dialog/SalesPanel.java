@@ -211,6 +211,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             } else if(o == btnLine_2_2) {		//Add bill
             	//save unsaved output
             	createAndPrintNewOutput();
+            	BarUtil.updateBillRecordPrices(billPanel);
             	addNewBillInCurTable();
         	} else if (o == btnLine_2_4) { // cancel all---- if bill is empty, then check if table is empty, if yes, close current table. yes or not, all back to table view.
             	if(billPanel.orderedDishAry.size() > 0) {	//if not empty, remove all new added items.
@@ -551,7 +552,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	//if there's new dish added.... update the total value field of bill record.
 	//and make sure new added dish will be updated with new information.
 	private void billPricesUpdateToDB() {
-		updateBillRecordPrices(billPanel.getBillId());		//in case if added service fee or discout of bill. ??? so this means, when added discount, will not save to db immediatly?
+		BarUtil.updateBillRecordPrices(billPanel);		//in case if added service fee or discout of bill. ??? so this means, when added discount, will not save to db immediatly?
 		billPanel.initContent();	//always need to initContent, to make sure dish in selection ary has new property. e.g. saved dish should has different color.,
 	}
 
@@ -596,24 +597,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			//clean from screen.
 			billPanel.removeFromSelection(billPanel.tblBillPanel.getSelectedRow());
 			//update bill info, must be after the screen update, because will get total from screen.
-			updateBillRecordPrices(BillListPanel.curDish.getBillID());
+			BarUtil.updateBillRecordPrices(billPanel);
 		}else {
 			//only do clean from screen, because the output not generated yet, and will not affect the toltal in bill.
 			billPanel.removeFromSelection(billPanel.tblBillPanel.getSelectedRow());
 		}
 	}
 
-	//
-	private void updateBillRecordPrices(int billId) {
-		try {
-			PayDlg.updateBill(billId, "total", Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
-			PayDlg.updateBill(billId, "discount", Math.round(billPanel.discount));
-			PayDlg.updateBill(billId, "serviceFee", billPanel.serviceFee);
-		}catch(Exception exp) {
-			L.e("SalesPanel", "unexpected error when updating the totalvalue of bill.", exp);
-		}
-	}
-    
 //    public static void resetCurTable(){
 //    	try {
 //            //clean all empty bill (match table id and opentime, status is null, while doesn't exist in any output.).

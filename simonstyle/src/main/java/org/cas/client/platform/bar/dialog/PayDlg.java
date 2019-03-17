@@ -400,9 +400,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             				+ BarUtil.formatMoney((0 - left)/100f)).setVisible(true); //it's a non-modal dialog.
             		//if the last pay was with cash, then might need cash back (no change, paid with a "50" bill)
             		if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
-            			updateBill(billId, "cashback", oldCashback + left);
+            			BarUtil.updateBill(billId, "cashback", oldCashback + left);
             		}else {
-                		updateBill(billId, "TIP", oldTip - left);	//otherwise, treated as tip. the tip in DB are positive, because it means we earned money.
+            			BarUtil.updateBill(billId, "TIP", oldTip - left);	//otherwise, treated as tip. the tip in DB are positive, because it means we earned money.
             		}
             	}
         		if(BarFrame.instance.isTableEmpty(null, null)) {
@@ -499,16 +499,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         }
         isAllContentSelected = false;
     }
-
-	public static void updateBill(int billId, String fieldName, int value) {
-		StringBuilder sb = new StringBuilder("update bill set ").append(fieldName).append(" = ").append(value).append(" where id = ").append(billId);
-		
-		try {
-			PIMDBModel.getStatement().executeUpdate(sb.toString());
-		}catch(Exception e) {
-			ErrorUtil.write(e);
-		}
-	}
 
 	private int getBillStatus(int billId) {
 		StringBuilder sb = new StringBuilder("select * from bill where id = ").append(billId);
