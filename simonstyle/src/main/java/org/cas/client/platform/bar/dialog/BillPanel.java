@@ -89,7 +89,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         if(orderedDishAry.size() == 0){
             return;
         }
-        if(status < 0 || status >= DBConsts.completed || comment.contains(PrintService.OLD_GST)) { //for completed or reopened completed bill
+        if(status >= DBConsts.completed || status < DBConsts.original || comment.contains(PrintService.OLD_GST)) { //for completed or reopened completed bill
         	PrintService.exePrintInvoice(this, false, isToCustomer, true);
         }else {		//for original or billprinted or reopeneed billPrinted bills go here..
 	        PrintService.exePrintBill(this, orderedDishAry);
@@ -741,7 +741,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				    cashback = rs.getInt("cashback");
 				    status = rs.getInt("status");
 				    comment = rs.getString("comment");
-				    setBackground(status >= DBConsts.completed || status < 0 ? Color.gray : null);
+				    setBackground(status >= DBConsts.completed || status < DBConsts.original ? Color.gray : null);
 				}
 			}
 			//if has no output, then search related bill from db. ---could be an non-first but empty bill, 
@@ -844,7 +844,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     
     //return true means can move on, return false means user don't want to move on.
 	public boolean checkStatus() {
-		if(status >= DBConsts.billPrinted || status < 0) {//check if the bill is .
+		if(status >= DBConsts.billPrinted || status < DBConsts.original) {//check if the bill is .
 			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertClosedBillBack(), BarFrame.consts.Operator(),
 		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
 		        return false;
@@ -872,13 +872,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	 		//while, if user open the dumped old bill, then the removed item will be disappears and new added item will appear on old bill also.
 	 		//this will be a known bug. TDOO:we can make it better by searching output by billID when it's a dumped bill. hope no one will need to check the dumped bills.
 	 		//??what do we do when removing an saved item from billPanel?
-	 		if(status >= DBConsts.billPrinted) {
+	 		if(status >= DBConsts.billPrinted || status < DBConsts.original) {
 		 		StringBuilder newComment = new StringBuilder(PrintService.REF_TO).append(billID);
-				if(status >= DBConsts.completed) {	//if already paid, then need to know old moneys, so in mev can report how much added or returned.
+				if(status >= DBConsts.completed || status < DBConsts.original) {	//if already paid, then need to know old moneys, so in mev can report how much added or returned.
 					newComment.append("F");	
 				}
 				newComment.append("\n").append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(subTotal / 100.0));	//this value will be needed anyway.
-				if(status >= DBConsts.completed) {	//@Note mess the order of each money.
+				if(status >= DBConsts.completed || status < DBConsts.original) {	//@Note mess the order of each money.
 					newComment.append("\n").append(PrintService.OLD_GST).append(BarUtil.formatMoney(totalGst / 100.0))
 						.append("\n").append(PrintService.OLD_QST).append(BarUtil.formatMoney(totalQst / 100.0))
 						.append("\n").append(PrintService.OLD_TOTAL).append(valTotlePrice.getText());
@@ -902,7 +902,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	 		
 	        //when we reopen a refunded bill, we create a new bill which is a original bill, so we must clean the received money with the refund count.
 
-	 		if(status < 0){	//save the old money numbers, in case the old status is negative(means have returned some money.
+	 		if(status < DBConsts.original){	//save the old money numbers, in case the old status is negative(means have returned some money.
 	 			StringBuilder sb = new StringBuilder("select * from bill where id = " + newBillID);
 
  	    		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sb.toString());

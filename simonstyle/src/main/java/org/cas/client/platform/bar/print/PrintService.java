@@ -1305,7 +1305,7 @@ public class PrintService{
         // when formatting invoice for different status of bill(original, printted, completed) will set different foot message..
     	// so when the message was fetched out from map, if it's to be print in mev format, we'll know how to process it.
         // and even if it's not printed through mev, it's still in good format.
-    	if(billPanel.status >= DBConsts.completed) {
+    	if(billPanel.status >= DBConsts.completed || billPanel.status < DBConsts.original) {
     		String comment = isToCustomer ? RE_PRINTED : RE_PRINTED_INTERNAL_USE;
     		strAryFR.add(comment + billPanel.comment);	//@NOTE: no need to set ref number, should be same.
         	

@@ -95,7 +95,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     			billPricesUpdateToDB();		//the total price could has changed, because user added new item.
         		
         		//if it's already paid, show comfirmDialog.
-        		if(billPanel.status < 0 || billPanel.status >= DBConsts.completed) {
+        		if(billPanel.status >= DBConsts.completed || billPanel.status < DBConsts.original) {
         			if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.ConfirmPayAgain(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
             			return;
         			}else {
@@ -429,7 +429,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		    	
 		    } else { 						//if already has output.
 		        //check if bill is already closed.
-		        if(billPanel.status >= DBConsts.completed) {
+		        if(billPanel.status >= DBConsts.completed || billPanel.status < DBConsts.original) {
 		        	JOptionPane.showMessageDialog(this, BarFrame.consts.ClosedBillCantVoid());
 		        	return;
 		        }
@@ -441,7 +441,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		                 return;	
 		            }
 		    		//if it's voiding a check printed bill, then we will regenerat a bill base on it, and set the regenerated bill as printed instead of original.
-		    		if(billPanel.status >= DBConsts.billPrinted || billPanel.status < 0) {
+		    		if(billPanel.status >= DBConsts.billPrinted || billPanel.status < DBConsts.original) {
 			    		if(!billPanel.checkStatus()) {	//this will regenerate a bill, but the new generated bill is original status. status will be unnecessarily checked again in
 			    			return;						//method checkStatus(), but it dosn't harm, just some cpu time, so let it check again.
 			    		}else {	//@NOTE if a new bill created, we want to set the status to be printed, so when it's print bill later, it will not send cancel info to kitchen.
@@ -468,7 +468,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 				}
 		    	
 		    	//print a final receipt or notice kitchen to stop preparing.
-		    	if(billPanel.status >= DBConsts.billPrinted) {		//if bill printed, print a refund bill.
+		    	if(billPanel.status >= DBConsts.billPrinted || billPanel.status < DBConsts.original) {		//if bill printed, print a refund bill.
 		    		PrintService.exePrintVoid(billPanel);
 		    	}else if(billPanel.orderedDishAry.size() > 0) { 	//otherwise, tell kitchen to stop preparing.
 		    		billPanel.sendDishesToKitchen(billPanel.orderedDishAry, true);

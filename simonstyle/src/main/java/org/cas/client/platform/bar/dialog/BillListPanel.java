@@ -276,19 +276,19 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		int targetBillId = targetBillPanel.orderedDishAry != null && targetBillPanel.orderedDishAry.size() > 0? 
 				targetBillPanel.orderedDishAry.get(0).getBillID() : 0;
 		//generate the new bills and generate the ref in comment.
-		if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < 0
-				|| targetBillPanel.status >= DBConsts.billPrinted || targetBillPanel.status < 0) {
+		if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < DBConsts.original
+				|| targetBillPanel.status >= DBConsts.billPrinted || targetBillPanel.status < DBConsts.original) {
 			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertClosedBillBack(), BarFrame.consts.Operator(),
 		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
 		        return;
 			}else {
-				if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < 0) {
+				if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < DBConsts.original) {
 					getCurBillPanel().reGenerate(getCurBillPanel().billButton.getText());
 				}
 				
-				if(targetBillPanel.status >= DBConsts.billPrinted || targetBillPanel.status < 0) {
+				if(targetBillPanel.status >= DBConsts.billPrinted || targetBillPanel.status < DBConsts.original) {
 					targetBillPanel.reGenerate(targetBillPanel.billButton.getText());
-					if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < 0) {
+					if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < DBConsts.original) {
 						StringBuilder sql = new StringBuilder("update bill set comment = comment + ' ")
 								.append(PrintService.REF_TO).append(getCurBillPanel().billID).append("'")
 								.append(" where id = ").append(targetBillPanel.billID);
@@ -395,7 +395,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 					}
 					
 					//if current billPanel is printed, then create a new one and expire it.
-					if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < 0) {
+					if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < DBConsts.original) {
 						getCurBillPanel().reGenerate(null);
 					}
 					
@@ -652,13 +652,13 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		for (BillPanel billPanel : unclosedBillPanels) {
 			combinedDiscount += billPanel.discount;
 			combinedServiceFee += billPanel.serviceFee;
-			if(billPanel.status >= DBConsts.billPrinted || billPanel.status < 0) {
+			if(billPanel.status >= DBConsts.billPrinted || billPanel.status < DBConsts.original) {
 				combinedComment.append(PrintService.REF_TO).append(billPanel.billID);
 			}
 		}
 		
 		BillPanel billPanel = unclosedBillPanels.get(0);
-		if(billPanel.status >= DBConsts.billPrinted || billPanel.status < 0) {
+		if(billPanel.status >= DBConsts.billPrinted || billPanel.status < DBConsts.original) {
 			billPanel.reGenerate(billPanel.billButton.getText());
 		}
 		sql = new StringBuilder("update bill set discount = ").append(combinedDiscount)
@@ -724,7 +724,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		        	if(rs.next()) {
 		        		billId = rs.getInt("id");
 		        		int status = rs.getInt("status");
-		        		if(status >= DBConsts.billPrinted || status < 0) {
+		        		if(status >= DBConsts.billPrinted || status < DBConsts.original) {
 	        				if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertClosedBillBack(), BarFrame.consts.Operator(),
 	        			            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
 	        			        return;

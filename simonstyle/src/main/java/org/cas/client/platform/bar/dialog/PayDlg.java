@@ -166,7 +166,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	oldStatus = rs.getInt("status");
         	//cashReceived
         	onSrcCashReceived = oldCashReceived + oldCashback;
-        	if(oldStatus < 0) {
+        	if(oldStatus < DBConsts.original) {
 	        	if(onSrcCashReceived + oldStatus > 0) {
 	        		onSrcCashReceived += oldStatus;
 	        		oldStatus = 0;
