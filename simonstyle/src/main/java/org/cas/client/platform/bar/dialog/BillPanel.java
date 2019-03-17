@@ -121,12 +121,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		String createtime = BarOption.df.format(new Date());
 		try {
 			StringBuilder sql = new StringBuilder(
-	            "INSERT INTO bill(createtime, tableID, BillIndex, EMPLOYEEID, opentime) VALUES ('")
+	            "INSERT INTO bill(createtime, tableID, BillIndex, EMPLOYEEID, opentime, comment) VALUES ('")
 				.append(createtime).append("', '")
 	            .append(tableID).append("', '")	//table
-	            .append(billIndex).append("', ")			//bill
+	            .append(billIndex).append("', ")			//billIdx
 	            .append(LoginDlg.USERID).append(", '")		//emoployid
-	            .append(opentime).append("')");				//content
+	            .append(opentime).append("', '')");				//comment
 		
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 			

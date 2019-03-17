@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 
-import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
@@ -756,9 +755,10 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		        BillListPanel.curDish = null;
 		        initContent();
 		        //find the two bill, and update the total price in db.
-		        for (BillPanel billPanel : onScrBillPanels) {
-			        BarUtil.updateBillRecordPrices(billPanel);
-				}
+//TODO: this is not the right way to find out the two relevant panel, since it's a little complex, let's leave to next version	
+//		        for (BillPanel billPanel : billPanels) {
+//			        BarUtil.updateBillRecordPrices(billPanel);
+//				}
 			}
 		}
 	}

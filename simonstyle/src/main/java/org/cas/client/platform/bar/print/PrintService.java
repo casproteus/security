@@ -156,7 +156,7 @@ public class PrintService{
 	    contents.add("NormalFont");     //push normal font
         
         //push end message
-	    if(billPanel.comment.length() >= 0) {
+	    if(billPanel.comment == null || billPanel.comment.length() >= 0) {
 	    	contents.add("\n" + billPanel.comment);	//has comment means bill printed(will be co-considered when saving paper flag is set) or invoice was reopened,
         }else {
             pushEndMessage(contents);
@@ -723,14 +723,14 @@ public class PrintService{
 			reimpression = "O";				//set reprint flag.
 			
 			needReference = true;
-			numeroRef = tEndMessage.substring(tEndMessage.indexOf("\n") + 1);
+			numeroRef = tEndMessage.substring(tEndMessage.lastIndexOf("\n") + 1);
 			numeroTrans = "R" + numeroTrans.substring(BarOption.getBillNumberStartStr().length());
 		}else if(tEndMessage.startsWith(RE_PRINTED_INTERNAL_USE)) {
 			duplicata = "O";
 			reimpression = "N";	//set reprint flag.
 			
 			needReference = true;
-			numeroRef = tEndMessage.substring(tEndMessage.indexOf("\n") + 1);
+			numeroRef = tEndMessage.substring(tEndMessage.lastIndexOf("\n") + 1);
 			numeroTrans = "D" + numeroTrans.substring(BarOption.getBillNumberStartStr().length());
 		}else if(tEndMessage.startsWith(REF_TO)) {
 			duplicata = "N"; 				//means for internal use only.
@@ -995,6 +995,11 @@ public class PrintService{
 		oldMoneys.add(oldGST);
 		oldMoneys.add(oldQST);
 		oldMoneys.add(oldTotal);
+		
+		p = numeroRef.lastIndexOf(REF_TO);
+		if(p > 0) {
+			numeroRef = numeroRef.substring(p + REF_TO.length());
+		}
 		return numeroRef;
 	}
 
