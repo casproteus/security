@@ -199,6 +199,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         				true);
         		billPanel.initContent();
         		
+            	addNewBillInCurTable();
             } else if (o == btnLine_2_1) { // return
             	if(billPanel.getNewDishes().size() > 0) {
             		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
@@ -206,7 +207,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	                 return;	
     	            }
             	}
-            	BarFrame.instance.switchMode(0);
+            	BarFrame.instance.switchMode(2);
+            	BarFrame.instance.setVisible(false);
+            	BarFrame.singleUserLoginProcess();
             	
             } else if(o == btnLine_2_2) {		//Add bill
             	//save unsaved output
@@ -358,7 +361,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              	}
             	
             } else if (o == btnLine_2_9) {//more
-            	new MoreButtonsDlg(this).show((FunctionButton)o);
+            	BarFrame.instance.switchMode(3);
             	
             } else if (o == btnLine_2_10) {//send
         		createAndPrintNewOutput();
@@ -632,32 +635,32 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     void reLayout() {
         int panelHeight = getHeight();
 
-        int tBtnWidht = (getWidth() - CustOpts.HOR_GAP * 10) / 10;
+        int tBtnWidht = (getWidth() - CustOpts.HOR_GAP * 4) / 4;
         int tBtnHeight = panelHeight / 10;
 
         // command buttons--------------
         // line 2
         btnLine_2_1.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
-        btnLine_2_2.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnMASTER.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_4.setBounds(btnMASTER.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_5.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_8.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_9.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_10.setBounds(btnLine_2_9.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_2_2.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+//        btnMASTER.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_2_4.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_2_5.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_2_8.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_2_9.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_10.setBounds(btnLine_2_9.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
         // line 1
-        btnCASH.setBounds(btnLine_2_1.getX(),  btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
-        btnDEBIT.setBounds(btnLine_2_2.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnVISA.setBounds(btnMASTER.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_4.setBounds(btnLine_2_4.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_5.setBounds(btnLine_2_5.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_6.setBounds(btnLine_2_6.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_7.setBounds(btnLine_2_7.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_8.setBounds(btnLine_2_8.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_9.setBounds(btnLine_2_9.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_10.setBounds(btnLine_2_10.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+//        btnCASH.setBounds(btnLine_2_1.getX(),  btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
+//        btnDEBIT.setBounds(btnLine_2_2.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+//        btnVISA.setBounds(btnMASTER.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_1_4.setBounds(btnLine_2_4.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_1_5.setBounds(btnLine_2_5.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_1_6.setBounds(btnLine_2_6.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_1_7.setBounds(btnLine_2_7.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_1_8.setBounds(btnLine_2_8.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_1_9.setBounds(btnLine_2_9.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_1_10.setBounds(btnLine_2_10.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
 
 //        btnLine_2_11.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_2.getY(), tBtnWidht, tBtnHeight);
 //        btnLine_2_12.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_14.getY(), tBtnWidht, tBtnHeight);
@@ -665,7 +668,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 //        btnLine_2_14.setBounds(CustOpts.HOR_GAP,, tBtnWidht, tBtnHeight);
         
         // TOP part============================
-        int topAreaHeight = btnCASH.getY() - 3 * CustOpts.VER_GAP;
+        int topAreaHeight = btnLine_1_10.getY() - 3 * CustOpts.VER_GAP;
 
         billPanel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
                 (int) (getWidth() * (1 - BarOption.getMenuAreaPortion())), topAreaHeight);
@@ -701,7 +704,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnLine_2_6 = new FunctionButton(BarFrame.consts.OpenDrawer());
         btnLine_2_7 = new FunctionButton(BarFrame.consts.VolumnDiscount());
         btnLine_2_8 = new FunctionButton(BarFrame.consts.Refund());
-        btnLine_2_9 = new FunctionButton(BarFrame.consts.MORE());
+        btnLine_2_9 = new FunctionButton(BarFrame.consts.SETTINGS());
         btnLine_2_10 = new FunctionButton(BarFrame.consts.SEND());
         
         billPanel = new BillPanel(this);
@@ -714,27 +717,27 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         setLayout(null);
         
         // built
-        add(btnCASH);
-        add(btnDEBIT);
-        add(btnVISA);
-        add(btnLine_1_4);
-        add(btnLine_1_5);
-        add(btnLine_1_6);
-        add(btnLine_1_7);
-        add(btnLine_1_8);
-        add(btnLine_1_9);
+//        add(btnCASH);
+//        add(btnDEBIT);
+//        add(btnVISA);
+//        add(btnLine_1_4);
+//        add(btnLine_1_5);
+//        add(btnLine_1_6);
+//        add(btnLine_1_7);
+//        add(btnLine_1_8);
+//        add(btnLine_1_9);
         add(btnLine_1_10);
 
         add(btnLine_2_1);
-        add(btnLine_2_2);
-        add(btnMASTER);
+//        add(btnLine_2_2);
+//        add(btnMASTER);
         add(btnLine_2_4);
-        add(btnLine_2_5);
-        add(btnLine_2_6);
-        add(btnLine_2_7);
-        add(btnLine_2_8);
+//        add(btnLine_2_5);
+//        add(btnLine_2_6);
+//        add(btnLine_2_7);
+//        add(btnLine_2_8);
         add(btnLine_2_9);
-        add(btnLine_2_10);
+//        add(btnLine_2_10);
         
         add(billPanel);
         // add listener

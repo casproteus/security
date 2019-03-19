@@ -21,6 +21,7 @@ import javax.swing.SwingConstants;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.dialog.statistics.EmployeeListDlg;
+import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -295,7 +296,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         if (o instanceof FunctionButton) {
         	if(o == btnLine_2_1) {	//return;
         		LoginDlg.USERTYPE = -1;
-        		BarFrame.instance.switchMode(0);
+        		BarFrame.instance.switchMode(2);
         		if(BarOption.isSingleUser()) {
     				BarFrame.instance.setVisible(false);
     				BarFrame.singleUserLoginProcess();
@@ -325,7 +326,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         	}else if(o == btnLine_2_8) {
         		new SettingColorDlg(BarFrame.instance).setVisible(true);
         	}else if(o == btnLine_2_9) {
-        		new CheckInOutListDlg(BarFrame.instance).setVisible(true);
+        		ReportDlg dlg = new ReportDlg(BarFrame.instance);
+	    		dlg.setVisible(true);
         	}
         }
         //JToggleButton-------------------------------------------------------------------------------------
@@ -369,19 +371,19 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
                 tBtnHeight);
         btnLine_2_3.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_2_4.setBounds(btnLine_2_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+//        btnLine_2_4.setBounds(btnLine_2_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+//                tBtnHeight);
+        btnLine_2_5.setBounds(btnLine_2_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
                 tBtnHeight);
-        btnLine_2_5.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnCoupon.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_8.setBounds(btnCoupon.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-                tBtnHeight);
-        btnLine_2_9.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+//        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+//                tBtnHeight);
+//        btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+//                tBtnHeight);
+//        btnCoupon.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+//                tBtnHeight);
+//        btnLine_2_8.setBounds(btnCoupon.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
+//                tBtnHeight);
+        btnLine_2_9.setBounds(btnLine_2_5.getX(), btnLine_2_7.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
                 tBtnHeight);
 
         // TOP part============================
@@ -549,7 +551,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnLine_2_7 = new FunctionButton(BarFrame.consts.GIFTCARD());
         btnCoupon = new FunctionButton(BarFrame.consts.COUPON());
         btnLine_2_8 = new FunctionButton(BarFrame.consts.Color().toUpperCase());
-        btnLine_2_9 = new FunctionButton(BarFrame.consts.CheckInOut());
+        btnLine_2_9 = new FunctionButton(BarFrame.consts.Report());
 
         // properties
         Color bg = BarOption.getBK("Setting");
@@ -645,12 +647,12 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 		add(btnLine_2_9);
         add(btnLine_2_2);
         add(btnLine_2_3);
-        add(btnLine_2_4);
+//        add(btnLine_2_4);
         add(btnLine_2_5);
-        add(btnLine_2_6);
-        add(btnLine_2_7);
-        add(btnCoupon);
-        add(btnLine_2_8);
+//        add(btnLine_2_6);
+//        add(btnLine_2_7);
+//        add(btnCoupon);
+//        add(btnLine_2_8);
         add(btnLine_2_1);
 	}
 	
