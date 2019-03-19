@@ -415,9 +415,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		int billID = billPanel.billID;
     	String curBill = BarFrame.instance.valCurBillIdx.getText();
 		try {
-			//check if it's a mistake-opening-table-action or adding bill action by check if there's any output on it already. 
+			//check if it's a "mistake-opening-table-action" or "adding bill action" by check if there's any output on it already. 
 			//will be considered as non-empty as long as there's output connecting to the id, even the output is not currently displaying on this bill.
-			StringBuilder sql = new StringBuilder("select * from output where category = ").append(billID);
+			StringBuilder sql = new StringBuilder("select * from output where category = ").append(billID)
+					.append(" or (subject = '").append(BarFrame.instance.cmbCurTable.getSelectedItem()).append("'")
+					.append(" and time = '").append(BarFrame.instance.valStartTime.getText()).append("'")
+					.append(" and contactID = ").append(curBill).append(")"); 	//in future version, might need to check the deleted property.
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
 		    rs.relative(-1);

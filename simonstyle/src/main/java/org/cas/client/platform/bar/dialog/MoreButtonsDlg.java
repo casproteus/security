@@ -166,7 +166,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 	                    	value = value > total ?  total : value;
 	                    	salesPanel.discountBill(value);
 	                    }else {
-	                    	value = Math.round((salesPanel.billPanel.subTotal + salesPanel.billPanel.discount) * (Float.valueOf(value) / 100f));
+	                    	value = Math.round((salesPanel.billPanel.subTotal + salesPanel.billPanel.discount) * (Float.valueOf(value/100f) / 100f));
 	                    	salesPanel.discountBill(value);
 	                    }
 	                    //recalculate the left

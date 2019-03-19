@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.text.DecimalFormat;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -38,7 +37,7 @@ public class CouponDlg extends JDialog implements ComponentListener, ActionListe
 		setTitle(BarFrame.consts.COUPON());
 		setModal(true);
 		
-		btnAdd = new JButton(BarFrame.consts.OK());
+		btnOK = new JButton(BarFrame.consts.OK());
 		btnClose = new JButton(BarFrame.consts.Close());
 		
 		lblCouponCode = new JLabel(BarFrame.consts.couponCode());
@@ -78,13 +77,13 @@ public class CouponDlg extends JDialog implements ComponentListener, ActionListe
 		getContentPane().add(choStatus);
 		getContentPane().add(txtProduct);
 
-		getContentPane().add(btnAdd);
+		getContentPane().add(btnOK);
 		getContentPane().add(btnClose);
 		
 		// 加监听器－－－－－－－－
 		addComponentListener(this);
 		btnClose.addActionListener(this);
-		btnAdd.addActionListener(this);
+		btnOK.addActionListener(this);
 		initContent(null);
 		reLayout();
 	}
@@ -126,13 +125,13 @@ public class CouponDlg extends JDialog implements ComponentListener, ActionListe
 		lblProduct.setBounds(lblStatus.getX(), lblStatus.getY() + lblStatus.getHeight() + CustOpts.VER_GAP,
 				lblProduct.getPreferredSize().width, CustOpts.BTN_HEIGHT);
 		
-		btnAdd.setBounds(getWidth() - CustOpts.BTN_WIDTH * 2 - CustOpts.HOR_GAP * 2 - 20, getHeight() - CustOpts.BTN_HEIGHT - 50,
+		btnOK.setBounds(getWidth() - CustOpts.BTN_WIDTH * 2 - CustOpts.HOR_GAP * 2 - 20, getHeight() - CustOpts.BTN_HEIGHT - 50,
 				 CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
-		btnClose.setBounds(btnAdd.getX() + btnAdd.getWidth() + CustOpts.HOR_GAP, btnAdd.getY(), 
+		btnClose.setBounds(btnOK.getX() + btnOK.getWidth() + CustOpts.HOR_GAP, btnOK.getY(), 
 				CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
 
 		txtProduct.setBounds(choStatus.getX(), lblProduct.getY(),
-				tfdCouponCode.getWidth(), btnAdd.getY() - lblProduct.getY() - CustOpts.VER_GAP * 2);
+				tfdCouponCode.getWidth(), btnOK.getY() - lblProduct.getY() - CustOpts.VER_GAP * 2);
 	}
 	
 	@Override
@@ -140,12 +139,12 @@ public class CouponDlg extends JDialog implements ComponentListener, ActionListe
 		Object o = e.getSource();
 		if (o == btnClose) {
 		    dispose();
-		} else if (o == btnAdd) {
+		} else if (o == btnOK) {
 			StringBuilder sql = new StringBuilder();
 		    if(coupon == null) {	//create new coupon.
 		    	sql.append("INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('").append(tfdCouponCode.getText())
 		    		.append("', 1, ").append(Math.round(Float.valueOf(tfdValue.getText()) * 100)).append(", '")
-		    		.append(txtProduct.getText()).append("', 0, 0)");
+		    		.append(txtProduct.getText()).append("', ").append(choCategory.getSelectedIndex()).append(", 0)");
 		    	
 		    }else {
 		    	sql.append("UPDATE Hardware set name = '").append(tfdCouponCode.getText())
@@ -192,5 +191,5 @@ public class CouponDlg extends JDialog implements ComponentListener, ActionListe
 	private JTextArea txtProduct;
 	
 	private JButton btnClose;
-	private JButton btnAdd;
+	private JButton btnOK;
 }

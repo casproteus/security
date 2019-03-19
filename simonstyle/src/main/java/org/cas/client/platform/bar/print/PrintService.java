@@ -718,14 +718,14 @@ public class PrintService{
 
 		String numeroRef = null;									//the bill number of a printed and dumped bill, 
 		String tEndMessage = sndMsg.get(sndMsg.size() - 1).trim();
-		if(tEndMessage.startsWith(RE_PRINTED)) {	//if the first element is "*re-printed invoice*\n\n" then set to be duplicated.
+		if(tEndMessage.startsWith(RE_PRINTED.trim())) {	//if the first element is "*re-printed invoice*\n\n" then set to be duplicated.
 			duplicata = "N"; 				//means for internal use only.
 			reimpression = "O";				//set reprint flag.
 			
 			needReference = true;
 			numeroRef = tEndMessage.substring(tEndMessage.lastIndexOf("\n") + 1);
 			numeroTrans = "R" + numeroTrans.substring(BarOption.getBillNumberStartStr().length());
-		}else if(tEndMessage.startsWith(RE_PRINTED_INTERNAL_USE)) {
+		}else if(tEndMessage.startsWith(RE_PRINTED_INTERNAL_USE.trim())) {
 			duplicata = "O";
 			reimpression = "N";	//set reprint flag.
 			
