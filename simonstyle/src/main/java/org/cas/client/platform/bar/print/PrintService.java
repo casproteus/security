@@ -65,9 +65,9 @@ public class PrintService{
     
 	public static final String REF_TO = "*ref to:";
 
-	private static final String RE_PRINTED_INTERNAL_USE = "*re-printed* *internal use*\n";
+	private static final String RE_PRINTED_INTERNAL_USE = "*internal use reprint*\n";
 
-	private static final String RE_PRINTED = "*re-printed*\n";
+	private static final String RE_PRINTED = "*reprinted*\n";
 
 	public static int SUCCESS = -1;	//@NOTE:must be less than 0, because if it's 0, means the first element caused error.
     
@@ -722,16 +722,14 @@ public class PrintService{
 			duplicata = "N"; 				//means for internal use only.
 			reimpression = "O";				//set reprint flag.
 			
-			needReference = true;
-			numeroRef = tEndMessage.substring(tEndMessage.lastIndexOf("\n") + 1);
-			numeroTrans = "R" + numeroTrans.substring(BarOption.getBillNumberStartStr().length());
+			needReference = false;
+			numeroTrans = numeroTrans.substring(BarOption.getBillNumberStartStr().length());
 		}else if(tEndMessage.startsWith(RE_PRINTED_INTERNAL_USE.trim())) {
 			duplicata = "O";
 			reimpression = "N";	//set reprint flag.
 			
-			needReference = true;
-			numeroRef = tEndMessage.substring(tEndMessage.lastIndexOf("\n") + 1);
-			numeroTrans = "D" + numeroTrans.substring(BarOption.getBillNumberStartStr().length());
+			needReference = false;
+			numeroTrans = numeroTrans.substring(BarOption.getBillNumberStartStr().length());
 		}else if(tEndMessage.startsWith(REF_TO)) {
 			duplicata = "N"; 				//means for internal use only.
 			reimpression = "N";	
