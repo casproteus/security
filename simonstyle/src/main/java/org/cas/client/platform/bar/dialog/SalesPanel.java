@@ -28,6 +28,7 @@ import org.cas.client.platform.bar.uibeans.CategoryToggleButton;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.bar.uibeans.MenuButton;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
@@ -197,9 +198,29 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         				BarFrame.instance.getCurBillIndex(),
         				BarFrame.instance.valStartTime.getText(),
         				true);
-        		billPanel.initContent();
         		
-            	addNewBillInCurTable();
+        		//give a exactCash and close table so teh record will have a moneyreceived and new open time.
+           		try {
+           			//NOTE: should consider might been paid with card, so the new received should be the left not the total..
+           	    	StringBuilder sql = new StringBuilder("update bill set CashReceived = ")
+        	   	    	.append(Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100))
+        	   	    	.append(", status = ").append(DBConsts.completed)
+        	   	    	.append(" where id = ").append(billPanel.billID);
+        			PIMDBModel.getStatement().executeUpdate(sql.toString());
+        			//update the status of relevant outputs.
+        			sql = new StringBuilder("update output set deleted = ").append(DBConsts.completed)
+        					.append(" where ( deleted is null or deleted = ").append(DBConsts.original)
+        					.append(") and time = '").append(BarFrame.instance.valStartTime.getText()).append("'")
+        					.append(" and SUBJECT = '").append(BarFrame.instance.cmbCurTable.getSelectedItem()).append("'")
+        					.append(" and contactid = ").append(BarFrame.instance.getCurBillIndex());
+        			PIMDBModel.getStatement().executeUpdate(sql.toString());
+           		}catch(Exception exp) {
+        			ErrorUtil.write(exp);
+        		}
+           		if(BarFrame.instance.isTableEmpty(null, null)) {
+        			BarFrame.instance.closeATable(null, null);
+           		}
+           		
             } else if (o == btnLine_2_1) { // return
             	if(billPanel.getNewDishes().size() > 0) {
             		if(JOptionPane.showConfirmDialog(BarFrame.instance, 

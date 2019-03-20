@@ -45,7 +45,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.181-20190315";
+	private String VERSION = "STGO_V1.0";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     
@@ -270,7 +270,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     
     public void initComponent(){
     	getContentPane().removeAll();
-    	setTitle(BarFrame.consts.Title());
+    	setTitle("STGO POS");//BarFrame.consts.Title());
         setIconImage(CustOpts.custOps.getFrameLogoImage()); // 设置主窗体的LOGO。
 
         setBounds(0, 0, CustOpts.SCRWIDTH, CustOpts.SCRHEIGHT - 30); // 对话框的默认尺寸。

@@ -1370,7 +1370,7 @@ public class PrintService{
         return strAryFR;
     }
     
-    public static ArrayList<String> formatContentForReport(List<Bill> list, String curPrintIp, String startTime, String endTime){
+    public static ArrayList<String> formatContentForReport(String waiterName, List<Bill> list, String curPrintIp, String startTime, String endTime){
     	ArrayList<String> strAryFR = new ArrayList<String>();
         
         //initContent
@@ -1395,14 +1395,14 @@ public class PrintService{
   		int tWidth = BarUtil.getPreferedWidth();
   		//@NOTE times goes first, to make the number bigger, then do divide. to avoid lost number after ".".
 	    //pushBillHeadInfo(strAryFR, tWidth, null);
-	    pushWaiterAndTime(strAryFR, tWidth, null, startTime, endTime);
+	    pushWaiterAndTime(waiterName, strAryFR, tWidth, null, startTime, endTime);
         pushSalesSummary(strAryFR, list, tWidth,
         		String.valueOf(salesGrossCount), String.valueOf(refundCount), 
         		salesGrossAmount, BarUtil.formatMoney(refoundAmount / 100.0));
-        pushPaymentSummary(strAryFR, list, tWidth);
-        pushSummaryByServiceType(strAryFR, list, tWidth);
-        pushVoidItemSummary(strAryFR, tWidth, startTime, endTime);
-        pushOtherSummary(list);
+//        pushPaymentSummary(strAryFR, list, tWidth);
+//        pushSummaryByServiceType(strAryFR, list, tWidth);
+//        pushVoidItemSummary(strAryFR, tWidth, startTime, endTime);
+//        pushOtherSummary(list);
         strAryFR.add("\n\n\n\n\n");
         strAryFR.add("cut");
         return strAryFR;
@@ -1416,6 +1416,10 @@ public class PrintService{
 	}
 	
 	private static void pushWaiterAndTime(List<String> strAryFR, int tWidth, String tableIdx, String sartTimeStr, String endTimeStr) {
+		String waiterName = LoginDlg.USERNAME;
+		pushWaiterAndTime(waiterName, strAryFR, tWidth, tableIdx, sartTimeStr, endTimeStr);
+	}
+	private static void pushWaiterAndTime(String waiterName, List<String> strAryFR, int tWidth, String tableIdx, String sartTimeStr, String endTimeStr) {
 		StringBuilder content = new StringBuilder();
 		//table
 		if(tableIdx != null && tableIdx.trim().length() > 0) {
@@ -1429,7 +1433,6 @@ public class PrintService{
         }
         
         //waiter
-        String waiterName = LoginDlg.USERNAME;
         if(waiterName.length() > 10) {
         	waiterName = waiterName.substring(0,8) + "..";
         }

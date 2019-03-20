@@ -8,6 +8,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.Date;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -19,6 +20,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
+import org.cas.client.platform.bar.dialog.statistics.CheckBillDlg;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.dialog.statistics.EmployeeListDlg;
 import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
@@ -383,7 +385,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 //                tBtnHeight);
 //        btnLine_2_8.setBounds(btnCoupon.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
 //                tBtnHeight);
-        btnLine_2_9.setBounds(btnLine_2_5.getX(), btnLine_2_7.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
+        btnLine_2_9.setBounds(btnLine_2_5.getX(), btnLine_2_5.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
                 tBtnHeight);
 
         // TOP part============================
@@ -448,7 +450,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     			sepH2.getPreferredSize().height);
     	
     	//------------------------------------------------
-    	lblServerHost.setBounds(sepH2.getX(), sepH2.getY() + sepH2.getHeight() + CustOpts.VER_GAP * 2,
+    	lblServerHost.setBounds(sepH2.getX(), sepH1.getY() + sepH2.getHeight() + CustOpts.VER_GAP * 2,
          		lblServerHost.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdServerHost.setBounds(lblServerHost.getX() + lblServerHost.getWidth() + CustOpts.HOR_GAP, lblServerHost.getY(),
          		200, CustOpts.BTN_HEIGHT);
@@ -694,20 +696,20 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(lblServerHost);
         add(tfdServerHost);
         
-        add(cbxIsTrainingMode);
-        add(cbxIsSingleUserMode);
-        add(cbxIsDiscoutAffectTax);
-        add(cbxIsServiceFeeAffectTax);
-        add(cbxIsBuffetMode);
-        add(cbxIsFastFoodMode);
-        add(cbxIsHideRecordFromOtherWaiter);
-        add(cbxIsWaiterAllowedToDiscount);
-        add(cbxIsWaiterAllowedToChangePrice);
-        add(cbxTreatPricePromtAsTaxInclude);
-        add(cbxShowCustomerFrame);
+//        add(cbxIsTrainingMode);
+//        add(cbxIsSingleUserMode);
+//        add(cbxIsDiscoutAffectTax);
+//        add(cbxIsServiceFeeAffectTax);
+//        add(cbxIsBuffetMode);
+//        add(cbxIsFastFoodMode);
+//        add(cbxIsHideRecordFromOtherWaiter);
+//        add(cbxIsWaiterAllowedToDiscount);
+//        add(cbxIsWaiterAllowedToChangePrice);
+//        add(cbxTreatPricePromtAsTaxInclude);
+//        add(cbxShowCustomerFrame);
         
         add(sepH1);
-        add(sepH2);
+//        add(sepH2);
         add(sepV);
 	}
 

@@ -15,7 +15,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Vector;
 
@@ -40,12 +42,14 @@ import javax.swing.text.JTextComponent;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.model.Bill;
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 
@@ -184,6 +188,15 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
     @Override
     public void actionPerformed(ActionEvent e) {
     	PrintService.exePrintReport(printerIP, formattedString);
+    	//todo delete relevant record.
+    	StringBuilder sql = new StringBuilder("update Bill set status = ").append(DBConsts.deleted)
+    			.append(" where createTime >= '").append(startTime).append("'")
+    			.append(" and createTime <= '").append(endTime).append("'");
+    	try {
+    		PIMDBModel.getStatement().executeUpdate(sql.toString());
+    	}catch(Exception exp) {
+    		L.e("Report", " exception when trying to delete records from db", exp);
+    	}
     }
     
 	@Override
@@ -208,19 +221,40 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
     	endTime.append(tfdDayTo.getText());
     	String endDate = endTime.toString();
     	endTime.append(" 23:59:59");
-    	bills = queryBillList(startTime.toString(), endTime.toString());
     	
+    	bills = queryBillList(startTime.toString(), endTime.toString());
+    	HashMap<String, ArrayList<Bill>> map = divideIntoMap(bills); 
 		printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
-		formattedString = PrintService.formatContentForReport(bills, printerIP, startTime.toString(), endTime.toString());
 
 		StringBuilder wholeContent = new StringBuilder();
-		for (String content : formattedString) {
-			wholeContent.append(content);
+		for (Entry<String, ArrayList<Bill>> entry : map.entrySet()) {
+			formattedString = PrintService.formatContentForReport(entry.getKey(), entry.getValue(),
+					printerIP, startTime.toString(), endTime.toString());
+
+			for (String content : formattedString) {
+				wholeContent.append(content);
+			}
 		}
 		txpPreview.setText(wholeContent.substring(0, wholeContent.length() - 9));
 	}
 	
-    @Override
+    private HashMap<String, ArrayList<Bill>> divideIntoMap(ArrayList<Bill> bills2) {
+    	HashMap<String, ArrayList<Bill>> map = new HashMap<String, ArrayList<Bill>>();
+    	for (Bill bill : bills2) {
+			String waiterName = bill.getEmployeeName();
+			if(map.containsKey(waiterName)) {
+				ArrayList<Bill> list = map.get(waiterName);
+				list.add(bill);
+			}else {
+				ArrayList<Bill> list = new ArrayList<Bill>();
+				list.add(bill);
+				map.put(waiterName, list);
+			}
+		}
+		return map;
+	}
+
+	@Override
     public Container getContainer() {
         return getContentPane();
     }
