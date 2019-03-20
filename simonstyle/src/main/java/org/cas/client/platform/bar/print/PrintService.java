@@ -63,7 +63,7 @@ public class PrintService{
     public static final String OLD_QST = "*Old QST:";
     public static final String OLD_TOTAL = "*Old Total:";
     
-	public static final String REF_TO = "*ref to:";
+	public static final String REF_TO = "#ref to:";
 
 	private static final String RE_PRINTED_INTERNAL_USE = "*internal use reprint*\n";
 
@@ -704,7 +704,7 @@ public class PrintService{
 		boolean needReference = transType.endsWith("RFER");
 		boolean isOriginalInvoiceAndBillPrinted = false;
 		
-		ArrayList<String> oldMoneys = initOldMenys();
+		List<List<String>> oldMoneysAry = initOldMenys();
 		
 		//the first round of check, check if it's a original? reprint? or duplicate print of invoice?
 		String duplicata = "N";		// whether this is for internal used.• O (Yes) • N (No), By default, it's not a internal used bill, so duplicata = N
@@ -716,7 +716,7 @@ public class PrintService{
 		String tBillID = buildBillID(sndMsg.get(0));
 		String numeroTrans = buildTransNumber(tBillID, transType);	//numeroTrans
 
-		String numeroRef = null;									//the bill number of a printed and dumped bill, 
+		List<String> numeroRefAry = new ArrayList<String>();									//the bill number of a printed and dumped bill, 
 		String tEndMessage = sndMsg.get(sndMsg.size() - 1).trim();
 		if(tEndMessage.startsWith(RE_PRINTED.trim())) {	//if the first element is "*re-printed invoice*\n\n" then set to be duplicated.
 			duplicata = "N"; 				//means for internal use only.
@@ -735,8 +735,7 @@ public class PrintService{
 			reimpression = "N";	
 			
 			needReference = true;	//if there's a ref to, means we need to add a reference element at the end no matter it's a invoice of a bill.. 
-			numeroRef = tEndMessage.substring(REF_TO.length());	//get out the number ref, and the subtotal before.
-			numeroRef = initOldMoneys(numeroRef, oldMoneys);	//use a method to init old moneys.
+			numeroRefAry = initRefAdnMoneyList(tEndMessage.substring(REF_TO.length()), oldMoneysAry);	//use a method to init numeroRef and old moneys.
 			
 			if(sndMsg.get(3).startsWith(REFUND)){	//if it's refund.
 				transType = transType.substring(2);
@@ -754,10 +753,10 @@ public class PrintService{
 				isVoided = true;	//modify the content to be 0.
 				numeroTrans = BarOption.getBillNumberStartStr() + tBillID;
 				
-			}else if(oldMoneys.get(0) != null){
+			}else if(oldMoneysAry.get(0).get(0) != null){
 				
 				
-			}else if(numeroRef.endsWith(tBillID)){
+			}else if(numeroRefAry.size() > 0 && numeroRefAry.get(numeroRefAry.size() - 1).endsWith(tBillID)){
 				//NOTE: when bill printed, will put a ref to in the comment. and then it will go into the end message. and reach here.
 				isOriginalInvoiceAndBillPrinted = true;	//it's invoice, and it's not reprinted, it's not void, it's not refund, and the ref is to it self, then it's it.
 				
@@ -846,6 +845,7 @@ public class PrintService{
 					} else {	
 						//if was opening a completed bill, then the new money for avenue will be the difference. other wise new money for avenue will be the value on bill.
 						String strAvT = a[0].substring(a[0].indexOf(":") + 1);
+						List<String> oldMoneys = oldMoneysAry.get(0);
 						mtTransAvTaxes = oldMoneys.get(0) != null && oldMoneys.get(1)== null && oldMoneys.get(2) == null ? 
 							 formatMoneyForMev(strAvT, null, false) : formatMoneyForMev(strAvT, oldMoneys.get(0), isRefund);//+000021.85
 						
@@ -864,7 +864,7 @@ public class PrintService{
 					if(p > 0) {
 						total = total.substring(0, p).trim();
 					}
-					if(!mtTransApTaxes.equals(formatMoneyForMev(total, oldMoneys.get(3), isRefund))){
+					if(!mtTransApTaxes.equals(formatMoneyForMev(total, oldMoneysAry.get(0).get(3), isRefund))){
 						L.e("PrintService MEV printing", "Found that the total money != subtotal+tps+tpq", null);
 					}
 				}
@@ -919,13 +919,15 @@ public class PrintService{
 			//• Mandatory • Format: +/–999999.99 • The following 10 characters are mandatory:
 			
 			//"<ref numeroRef=\"%s\" dateRef=\"%s\" mtRefAvTaxes=\"%s\"/>";//»AAAAMMJJhhmmss»//»+/-999999.99»
-			
-			mtRefAvTaxes = oldMoneys.get(0) == null ? mtTransAvTaxes :  formatMoneyForMev(oldMoneys.get(0), null, false);
-			numeroRef = numeroRef == null? BarOption.getBillNumberStartStr() + tBillID : numeroRef;
-			//@NOTE add a patch, because just found that if it's refund, the revenue test case do not want a refrence. I don't understand why they don't need the ref, to me
-			//it make more sense if a refund bill has a ref to the bill which was refunded.......
-			if(!isRefund) {
-				printContent.append(String.format(mevRef, numeroRef, dateTrans, mtRefAvTaxes));
+			for(int i = 0; i < numeroRefAry.size(); i++) {
+				List<String> oldMoneys = oldMoneysAry.get(i);
+				mtRefAvTaxes = oldMoneys.get(0) == null ? mtTransAvTaxes :  formatMoneyForMev(oldMoneys.get(0), null, false);
+				String numeroRef = numeroRefAry.get(i) == null? BarOption.getBillNumberStartStr() + tBillID : numeroRefAry.get(i);
+				//@NOTE add a patch, because just found that if it's refund, the revenue test case do not want a refrence. I don't understand why they don't need the ref, to me
+				//it make more sense if a refund bill has a ref to the bill which was refunded.......
+				if(!isRefund) {
+					printContent.append(String.format(mevRef, numeroRefAry, dateTrans, mtRefAvTaxes));
+				}
 			}
 		}
 		
@@ -941,16 +943,35 @@ public class PrintService{
 		return formattedContentFR;
 	}
 	
-    private static ArrayList<String> initOldMenys() {
-    	ArrayList<String> oldMoneys = new ArrayList<String>();
+    private static List<List<String>> initOldMenys() {
+    	ArrayList<List<String>> oldMoneysAry = new ArrayList<List<String>>();
+    	List<String> oldMoneys = new ArrayList<String>();
     	oldMoneys.add(null);
     	oldMoneys.add(null);
     	oldMoneys.add(null);
     	oldMoneys.add(null);
-		return oldMoneys; 
+    	oldMoneysAry.add(oldMoneys);
+		return oldMoneysAry; 
 	}
-
-	private static String initOldMoneys(String numeroRef, ArrayList<String> oldMoneys) {
+    
+    
+    private static List<String> initRefAdnMoneyList(String numeroRef, List<List<String>> oldMoneys) {
+    	List<String> listFR = new ArrayList<String>();
+    	String[] strs = numeroRef.split(REF_TO);
+    	for (int i = 0; i < strs.length; i++) {
+    		if(oldMoneys.size() < i + 1) {
+    			List<String> list = new ArrayList<String>();
+    			list.add(null);
+    			list.add(null);
+    			list.add(null);
+    			list.add(null);
+    			oldMoneys.add(list);
+    		}
+    		listFR.add(initOldMoneys(strs[i], oldMoneys.get(i)));
+		}
+    	return listFR;
+    }
+	private static String initOldMoneys(String numeroRef, List<String> oldMoneys) {
     	String oldsubtotal = null;
     	String oldGST = null;
     	String oldQST = null;

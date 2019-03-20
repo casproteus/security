@@ -715,6 +715,13 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 			if(targetBillIdx < 1) {
 				JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
 			}else {
+				//check if the original panel need to be regenerat
+	        	BillPanel originalBillPanel = billPanels.get(Integer.valueOf(curDish.getBillIndex()) - 1);
+	        	int origianlBillstatus = originalBillPanel.status;	//save the status before it's changed when regenerate the bill.
+	        	if(origianlBillstatus >= DBConsts.billPrinted || origianlBillstatus < DBConsts.original) {
+	        		originalBillPanel.reGenerate(billPanels.get(targetBillIdx - 1).billButton.getText());
+	        	}
+	        	
 				int billId = 0;
 				//check if the bill exist
 				StringBuilder sql = new StringBuilder("Select id, status from Bill where billIndex = '").append(targetBillIdx)
@@ -737,9 +744,23 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		        	}else {
 		        		billId = BarFrame.instance.createAnEmptyBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
 								BarFrame.instance.valStartTime.getText(), targetBillIdx);
-		        		//TODO:add comment.
 		        	}
-		        	add comment with the id and subtotal of original bill.
+		        	
+		        	if(origianlBillstatus >= DBConsts.billPrinted || origianlBillstatus < DBConsts.original) {	//@NOTE: use the old one, new one might be changed when regenerate.
+		        		//find the current bill's status and add comment with the id and subtotal of original bill.
+		        		sql = new StringBuilder("update bill set comment = comment + '").append(PrintService.REF_TO).append(originalBillPanel.billID);
+		        		if(originalBillPanel.status == DBConsts.completed || originalBillPanel.status < DBConsts.original) {
+		        			sql.append("F");
+		        		}
+		        		sql.append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(originalBillPanel.subTotal / 100.0))
+		        		.append(" where id = ").append(billId);
+		        		
+		        		try {
+				        	PIMDBModel.getStatement().executeUpdate(sql.toString());
+				        }catch(Exception exp) {
+				        	ErrorUtil.write(exp);
+				        }
+		        	}
 		        }catch(Exception exp) {
 		        	JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
 		        	return;
