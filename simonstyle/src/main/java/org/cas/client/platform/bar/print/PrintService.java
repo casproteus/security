@@ -156,7 +156,7 @@ public class PrintService{
 	    contents.add("NormalFont");     //push normal font
         
         //push end message
-	    if(billPanel.comment == null || billPanel.comment.length() >= 0) {
+	    if(billPanel.comment.length() > 0) {
 	    	contents.add("\n" + billPanel.comment);	//has comment means bill printed(will be co-considered when saving paper flag is set) or invoice was reopened,
         }else {
             pushEndMessage(contents);
@@ -1307,7 +1307,7 @@ public class PrintService{
     		String comment = isToCustomer ? RE_PRINTED : RE_PRINTED_INTERNAL_USE;
     		strAryFR.add(comment + billPanel.comment);	//@NOTE: no need to set ref number, should be same.
         	
-    	}else if(billPanel.comment.length() >= 0) {
+    	}else if(billPanel.comment.length() > 0) {
     		strAryFR.add("\n" + billPanel.comment);	//has comment means bill printed(will be co-considered when saving paper flag is set) or invoice was reopened,
     		
     	}else {
@@ -1333,7 +1333,7 @@ public class PrintService{
 	    
         pushVoidedTotal(billPanel, strAryFR, tWidth);
         
-        if(billPanel.comment.length() >= 0) {
+        if(billPanel.comment.length() > 0) {
     		strAryFR.add(billPanel.comment);	//has comment means bill printed(will be co-considered when saving paper flag is set) or invoice was reopened,
         }else {
         	pushEndMessage(strAryFR);

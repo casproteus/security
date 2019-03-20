@@ -220,11 +220,11 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
                 tBtnHeight);
         //btnWaiterReport.setBounds(btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
         //        tBtnHeight);
-        btnSetting.setBounds(btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, btnOpenDrawer.getY(), tBtnWidht,
+        btnReport.setBounds(btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, btnOpenDrawer.getY(), tBtnWidht,
                 tBtnHeight);
-        btnReport.setBounds(btnSetting.getX() + tBtnWidht + CustOpts.HOR_GAP, btnSetting.getY(), tBtnWidht,
+        btnSetting.setBounds(btnReport.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReport.getY(), tBtnWidht,
                 tBtnHeight);
-        btnCheckInOut.setBounds(btnReport.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReport.getY(), tBtnWidht,
+        btnCheckInOut.setBounds(btnSetting.getX() + tBtnWidht + CustOpts.HOR_GAP, btnSetting.getY(), tBtnWidht,
                 tBtnHeight);
     }
     
@@ -253,7 +253,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 //        add(btnOrderManage);
 //        add(btnOpenDrawer);
         //add(btnWaiterReport);
-//        add(btnSetting);
+        add(btnSetting);
 //        add(btnReport);
         add(btnCheckInOut);
 
