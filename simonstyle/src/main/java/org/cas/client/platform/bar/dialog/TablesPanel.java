@@ -136,8 +136,12 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 					if(num == 1 && CustOpts.custOps.getValue("FrobiddenQuickEnter") == null) {	// display the only bill
 						BarFrame.instance.valCurBillIdx.setText(rs.getString("billIndex"));
 						BarFrame.instance.switchMode(2);
-					}else { //or switch to the bill panel to show all the bills.
+					}else if(num > 1){ //or switch to the bill panel to show all the bills.
 						BarFrame.instance.switchMode(1);
+					}else {
+						BarFrame.instance.closeATable(null, null);
+						tableToggle.setSelected(false);
+						return;
 					}
 //				}
 				tableToggle.setSelected(true);
@@ -244,13 +248,13 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         setLayout(null);
 
         // built
-//        add(btnChangeMode);
-        add(btnAddTable);
-        add(btnOrderManage);
-        add(btnOpenDrawer);
+        //add(btnChangeMode);
+//        add(btnAddTable);
+//        add(btnOrderManage);
+//        add(btnOpenDrawer);
         //add(btnWaiterReport);
-        add(btnSetting);
-        add(btnReport);
+//        add(btnSetting);
+//        add(btnReport);
         add(btnCheckInOut);
 
         // add listener

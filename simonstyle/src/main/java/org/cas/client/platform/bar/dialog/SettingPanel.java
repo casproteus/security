@@ -8,7 +8,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.Date;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -20,8 +19,6 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
-import org.cas.client.platform.bar.dialog.statistics.CheckBillDlg;
-import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.dialog.statistics.EmployeeListDlg;
 import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
@@ -298,7 +295,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         if (o instanceof FunctionButton) {
         	if(o == btnLine_2_1) {	//return;
         		LoginDlg.USERTYPE = -1;
-        		BarFrame.instance.switchMode(2);
+        		BarFrame.instance.switchMode(0);
         		if(BarOption.isSingleUser()) {
     				BarFrame.instance.setVisible(false);
     				BarFrame.singleUserLoginProcess();
@@ -373,8 +370,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
                 tBtnHeight);
         btnLine_2_3.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
                 tBtnHeight);
-//        btnLine_2_4.setBounds(btnLine_2_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-//                tBtnHeight);
+        btnLine_2_4.setBounds(CustOpts.HOR_GAP, btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
+                tBtnHeight);
         btnLine_2_5.setBounds(btnLine_2_3.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
                 tBtnHeight);
 //        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
@@ -649,7 +646,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 		add(btnLine_2_9);
         add(btnLine_2_2);
         add(btnLine_2_3);
-//        add(btnLine_2_4);
+        add(btnLine_2_4);
         add(btnLine_2_5);
 //        add(btnLine_2_6);
 //        add(btnLine_2_7);

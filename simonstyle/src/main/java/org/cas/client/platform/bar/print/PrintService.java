@@ -1370,21 +1370,16 @@ public class PrintService{
         return strAryFR;
     }
     
-    public static ArrayList<String> formatContentForReport(String waiterName, List<Bill> list, String curPrintIp, String startTime, String endTime){
+    public static ArrayList<String> formatContentForReport(List<Bill> list){
     	ArrayList<String> strAryFR = new ArrayList<String>();
         
-        //initContent
-  		int refundCount = 0;
-  		int refoundAmount = 0;
   		int salesGrossCount = 0;
   		int salesGrossAmount = 0;
     	
   		for (Bill bill : list) {
   			int status = bill.getStatus();
   			if(status < DBConsts.original) {//means has refund)
-  				refundCount++;
   				status = -1 * status;
-  				refoundAmount += status;
   				salesGrossAmount -= status;
   			}
 			salesGrossCount++;
@@ -1395,16 +1390,9 @@ public class PrintService{
   		int tWidth = BarUtil.getPreferedWidth();
   		//@NOTE times goes first, to make the number bigger, then do divide. to avoid lost number after ".".
 	    //pushBillHeadInfo(strAryFR, tWidth, null);
-	    pushWaiterAndTime(waiterName, strAryFR, tWidth, null, startTime, endTime);
         pushSalesSummary(strAryFR, list, tWidth,
-        		String.valueOf(salesGrossCount), String.valueOf(refundCount), 
-        		salesGrossAmount, BarUtil.formatMoney(refoundAmount / 100.0));
-//        pushPaymentSummary(strAryFR, list, tWidth);
-//        pushSummaryByServiceType(strAryFR, list, tWidth);
-//        pushVoidItemSummary(strAryFR, tWidth, startTime, endTime);
-//        pushOtherSummary(list);
-        strAryFR.add("\n\n\n\n\n");
-        strAryFR.add("cut");
+        		String.valueOf(salesGrossCount),  
+        		salesGrossAmount);
         return strAryFR;
     }
     
@@ -1419,7 +1407,7 @@ public class PrintService{
 		String waiterName = LoginDlg.USERNAME;
 		pushWaiterAndTime(waiterName, strAryFR, tWidth, tableIdx, sartTimeStr, endTimeStr);
 	}
-	private static void pushWaiterAndTime(String waiterName, List<String> strAryFR, int tWidth, String tableIdx, String sartTimeStr, String endTimeStr) {
+	public static void pushWaiterAndTime(String waiterName, List<String> strAryFR, int tWidth, String tableIdx, String sartTimeStr, String endTimeStr) {
 		StringBuilder content = new StringBuilder();
 		//table
 		if(tableIdx != null && tableIdx.trim().length() > 0) {
@@ -1772,7 +1760,7 @@ public class PrintService{
 	}
     
 	private static void pushSalesSummary(ArrayList<String> strAryFR, List<Bill> list, int width, 
-			String countSale, String countRefund, int salesGrossAmount, String refundGross) {
+			String countSale, int salesGrossAmount) {
 		
   		float net = salesGrossAmount * 100 /(100 + BarOption.getGST() + BarOption.getQST());
   		float GST = net * BarOption.getGST()/100;
@@ -1780,28 +1768,18 @@ public class PrintService{
   		float HST = GST + QST;
 		
 		StringBuilder content = new StringBuilder();
-		//title
-		content.append(getSeperatorLine(1, width)).append("\n");
-		String saleSummary = "Sale Summary";
-		String emptySpaceStr = BarUtil.generateString((width - saleSummary.length())/2, " ");
-		content.append(emptySpaceStr).append(saleSummary).append("\n");
+
 		content.append(getSeperatorLine(0, width)).append("\n");
 		content.append("Tran Type").append(BarUtil.generateString(width - 15 - 9, " "))
 		.append("Count").append("    ").append("Amount").append("\n");
 		content.append(getSeperatorLine(0, width)).append("\n");
 		//countSaleGross + amountSaleGross
 		String amountSaleGross = BarUtil.formatMoney(salesGrossAmount / 100.0);
-		String totalSaleCount = String.valueOf(Integer.valueOf(countRefund) + Integer.valueOf(countSale));
+		String totalSaleCount = String.valueOf(Integer.valueOf(countSale));
 		content.append("Sale Gross").append(BarUtil.generateString(width - 10 - 10 - totalSaleCount.length(), " "))
 		.append(totalSaleCount).append(BarUtil.generateString(10 - amountSaleGross.length() , " ")).append(amountSaleGross)
 		.append("\n");
-		//countRefond
-		content.append("Refund Gross").append(BarUtil.generateString(width - 12 - 10 - countRefund.length(), " "))
-		.append(countRefund).append(BarUtil.generateString(10 - refundGross.length() , " ")).append(refundGross)
-		.append("\n");
 		content.append(getSeperatorLine(1, width)).append("\n");
-		
-
 			
 		//Net
 		String netIncome = BarUtil.formatMoney(net / 100.0);
@@ -2003,7 +1981,7 @@ public class PrintService{
         }
 	};
     
-	private static String getSeperatorLine(int index, int tWidth) {
+	public static String getSeperatorLine(int index, int tWidth) {
 		//seperator
 		if(sepLines == null) {
 			sepLines = new String[2];

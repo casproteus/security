@@ -221,6 +221,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         			BarFrame.instance.closeATable(null, null);
            		}
            		
+        		PrintService.openDrawer();
+            	BarFrame.instance.switchMode(0);
             } else if (o == btnLine_2_1) { // return
             	if(billPanel.getNewDishes().size() > 0) {
             		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
@@ -228,9 +230,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	                 return;	
     	            }
             	}
-            	BarFrame.instance.switchMode(2);
-            	BarFrame.instance.setVisible(false);
-            	BarFrame.singleUserLoginProcess();
+            	BarFrame.instance.switchMode(0);
             	
             } else if(o == btnLine_2_2) {		//Add bill
             	//save unsaved output

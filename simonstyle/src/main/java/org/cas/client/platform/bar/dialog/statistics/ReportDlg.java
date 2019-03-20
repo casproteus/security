@@ -39,6 +39,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.model.Bill;
@@ -227,15 +228,83 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
 		printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
 
 		StringBuilder wholeContent = new StringBuilder();
+		//title
+		int width = BarUtil.getPreferedWidth();
+		
+		String saleSummary = "Sale Summary";
+		wholeContent.append("\n");
+		wholeContent.append("\n");
+		String emptySpaceStr = BarUtil.generateString((width - saleSummary.length())/2, " ");
+		wholeContent.append(emptySpaceStr).append(saleSummary).append("\n");
+		
+        //times
+        wholeContent.append(startTime).append(" To ").append(endTime);;
+        wholeContent.append("\n");
+		
+        int totalQT = 0;
+        int totalMoney = 0;
 		for (Entry<String, ArrayList<Bill>> entry : map.entrySet()) {
-			formattedString = PrintService.formatContentForReport(entry.getKey(), entry.getValue(),
-					printerIP, startTime.toString(), endTime.toString());
+			wholeContent.append(PrintService.getSeperatorLine(1, width)).append("\n");
+	  		int salesGrossCount = 0;
+	  		int salesGrossAmount = 0;
+	    	
+	  		for (Bill bill : entry.getValue()) {
+	  			int status = bill.getStatus();
+				salesGrossCount++;
+				salesGrossAmount += bill.getCashReceived() + bill.getCashback();
+	  		}
 
-			for (String content : formattedString) {
-				wholeContent.append(content);
-			}
+	  		float net = salesGrossAmount * 100 /(100 + BarOption.getGST() + BarOption.getQST());
+	  		float GST = net * BarOption.getGST()/100;
+	  		float QST = net * BarOption.getQST()/100;
+			
+	  		//name and qt
+	  		wholeContent.append(entry.getKey()).append("(").append(salesGrossCount).append(")\n");
+			//Net
+			String netIncome = BarUtil.formatMoney(net / 100.0);
+			wholeContent.append("Net").append(BarUtil.generateString(width - 3 - netIncome.length(), " ")).append(netIncome).append("\n");
+			//GST
+			String strGST = BarUtil.formatMoney(GST / 100.0);
+			wholeContent.append("GST").append(BarUtil.generateString(width - 3 - strGST.length(), " ")).append(strGST).append("\n");
+			//QST
+			String strQST = BarUtil.formatMoney(QST / 100.0);
+			wholeContent.append("QST").append(BarUtil.generateString(width - 3 - strQST.length(), " ")).append(strQST).append("\n");
+			
+			//total
+			String total = BarUtil.formatMoney(salesGrossAmount / 100.0);
+			wholeContent.append("Total").append(BarUtil.generateString(width - total.length() - 5, " ")).append(total).append("\n");
+
+	  		totalQT += salesGrossCount;
+	  		totalMoney += salesGrossAmount;
 		}
-		txpPreview.setText(wholeContent.substring(0, wholeContent.length() - 9));
+		
+		float net = totalMoney * 100 /(100 + BarOption.getGST() + BarOption.getQST());
+  		float GST = net * BarOption.getGST()/100;
+  		float QST = net * BarOption.getQST()/100;
+  		
+		wholeContent.append(PrintService.getSeperatorLine(0, width)).append("\n");
+		wholeContent.append("Total QT").append("(").append(totalQT).append(")\n");
+		//Net
+		String netIncome = BarUtil.formatMoney(net / 100.0);
+		wholeContent.append("Net").append(BarUtil.generateString(width - 3 - netIncome.length(), " ")).append(netIncome).append("\n");
+		//GST
+		String strGST = BarUtil.formatMoney(GST / 100.0);
+		wholeContent.append("GST").append(BarUtil.generateString(width - 3 - strGST.length(), " ")).append(strGST).append("\n");
+		//QST
+		String strQST = BarUtil.formatMoney(QST / 100.0);
+		wholeContent.append("QST").append(BarUtil.generateString(width - 3 - strQST.length(), " ")).append(strQST).append("\n");
+		//total
+		String total = BarUtil.formatMoney(totalMoney / 100.0);
+		wholeContent.append("Total").append(BarUtil.generateString(width - total.length() - 5, " ")).append(total).append("\n");
+		
+
+		
+		txpPreview.setText(wholeContent.toString());
+		formattedString = new ArrayList<String>();
+		formattedString.add(wholeContent.toString());
+
+		formattedString.add("\n\n\n");
+		formattedString.add("cut");
 	}
 	
     private HashMap<String, ArrayList<Bill>> divideIntoMap(ArrayList<Bill> bills2) {
@@ -424,7 +493,9 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
     
     public ArrayList<Bill> queryBillList(String startTime, String endTime) {
         StringBuilder sql = new StringBuilder("select * from bill, employee where createTime >= '").append(startTime)
-        		.append("' and createTime <= '").append(endTime).append("' and bill.employeeId = employee.id");
+        		.append("' and createTime <= '").append(endTime).append("'")
+        		.append(" and bill.employeeId = employee.id")
+        		.append(" and bill.status < ").append(DBConsts.expired);
         if(LoginDlg.USERTYPE < 2) {	//if is not admin, then get out only user related records.
         	sql.append(" and employee.id = ").append(LoginDlg.USERID);
         }

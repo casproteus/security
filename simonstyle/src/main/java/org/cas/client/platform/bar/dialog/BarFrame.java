@@ -263,7 +263,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {//call it later, because it will trigger BarFrame.instance.cmbCurTable.setModel(); 
-                switchMode(2);	//while BarFrame.instance is still null if don't put it in the later.
+                switchMode(0);	//while BarFrame.instance is still null if don't put it in the later.
             }
         });
     }
@@ -348,7 +348,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 				customerFrame.initContent();
 				secondScreen.setFullScreenWindow(customerFrame);
 			}
-			cmbCurTable.setEnabled(false);//((SalesPanel)panels[i]).billPanel.status < DBConsts.completed);
+			cmbCurTable.setEnabled(((SalesPanel)panels[i]).billPanel.status < DBConsts.completed);
 		}else if(i == 1) {	//bill
 			((BillListPanel)panels[i]).initContent();
 		}else if(i == 0) {	//table
