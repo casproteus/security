@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
@@ -291,6 +292,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 					if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < DBConsts.original) {
 						StringBuilder sql = new StringBuilder("update bill set comment = comment + ' ")
 								.append(PrintService.REF_TO).append(getCurBillPanel().billID).append("'")
+								.append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(getCurBillPanel().subTotal/100.0))
 								.append(" where id = ").append(targetBillPanel.billID);
 						try {
 							PIMDBModel.getStatement().executeUpdate(sql.toString());
@@ -653,7 +655,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 			combinedDiscount += billPanel.discount;
 			combinedServiceFee += billPanel.serviceFee;
 			if(billPanel.status >= DBConsts.billPrinted || billPanel.status < DBConsts.original) {
-				combinedComment.append(PrintService.REF_TO).append(billPanel.billID);
+				combinedComment.append(PrintService.REF_TO).append(billPanel.billID).append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(billPanel.subTotal/100.0));
 			}
 		}
 		
@@ -735,7 +737,9 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		        	}else {
 		        		billId = BarFrame.instance.createAnEmptyBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
 								BarFrame.instance.valStartTime.getText(), targetBillIdx);
+		        		//TODO:add comment.
 		        	}
+		        	add comment with the id and subtotal of original bill.
 		        }catch(Exception exp) {
 		        	JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
 		        	return;

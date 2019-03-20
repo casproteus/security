@@ -40,6 +40,7 @@ import javax.swing.text.JTextComponent;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.model.Bill;
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
@@ -388,9 +389,12 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
 	      tfdSecondTo.setText(endTime.substring(p + 1));
     }
     
-    public ArrayList<Bill> queryBillList(String startTime, String endTime) {
+    private ArrayList<Bill> queryBillList(String startTime, String endTime) {
         StringBuilder sql = new StringBuilder("select * from bill, employee where createTime >= '").append(startTime)
-        		.append("' and createTime <= '").append(endTime).append("' and bill.employeeId = employee.id");
+        		.append("' and createTime <= '").append(endTime)
+        		.append("' and bill.employeeId = employee.id ")
+        		.append(" and bill.status < ").append(DBConsts.original)
+        		.append(" or bill.status = ").append(DBConsts.completed);
         if(LoginDlg.USERTYPE < 2) {	//if is not admin, then get out only user related records.
         	sql.append(" and employee.id = ").append(LoginDlg.USERID);
         }
