@@ -656,21 +656,21 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     void reLayout() {
         int panelHeight = getHeight();
 
-        int tBtnWidht = (getWidth() - CustOpts.HOR_GAP * 4) / 4;
+        int tBtnWidht = (getWidth() - CustOpts.HOR_GAP * 2) / 2;
         int tBtnHeight = panelHeight / 10;
 
         // command buttons--------------
         // line 2
-        btnLine_2_1.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
+//        btnLine_2_1.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
 //        btnLine_2_2.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
 //        btnMASTER.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_4.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
 //        btnLine_2_5.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
 //        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
 //        btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
 //        btnLine_2_8.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_9.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_10.setBounds(btnLine_2_9.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_2_9.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnLine_1_10.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
+        btnLine_2_4.setBounds(btnLine_1_10.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_10.getY(), tBtnWidht, tBtnHeight);
         // line 1
 //        btnCASH.setBounds(btnLine_2_1.getX(),  btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
 //        btnDEBIT.setBounds(btnLine_2_2.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
@@ -749,7 +749,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 //        add(btnLine_1_9);
         add(btnLine_1_10);
 
-        add(btnLine_2_1);
+//        add(btnLine_2_1);
 //        add(btnLine_2_2);
 //        add(btnMASTER);
         add(btnLine_2_4);
@@ -757,8 +757,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 //        add(btnLine_2_6);
 //        add(btnLine_2_7);
 //        add(btnLine_2_8);
-        add(btnLine_2_9);
-//        add(btnLine_2_10);
+//        add(btnLine_2_9);
+        add(btnLine_2_10);
         
         add(billPanel);
         // add listener

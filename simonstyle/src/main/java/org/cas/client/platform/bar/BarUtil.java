@@ -226,7 +226,11 @@ public class BarUtil {
 			}
 			p = string.indexOf("<br>");
 			if(p > 0) {
-				string = string.substring(0, p) + " " + string.substring(p + 6);
+				string = string.substring(0, p) + " " + string.substring(p + 4);
+			}
+			p = string.indexOf("<br>");
+			if(p > 0) {
+				string = string.substring(0, p);
 			}
 		}
 		return string;

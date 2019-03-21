@@ -1070,7 +1070,7 @@ public class PrintService{
         try {
             Enumeration tPorts = CommPortIdentifier.getPortIdentifiers();
             if (tPorts == null || !tPorts.hasMoreElements()) {
-            	JOptionPane.showMessageDialog(BarFrame.instance, "no comm ports found! please check the printer connection.");
+            	JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.NoComPortFound());
                 return false;
             }
 
@@ -1139,6 +1139,7 @@ public class PrintService{
         			return true;
                 //}
             }
+        	JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.NoSerialPrinterFound());
             return false;
         } catch (Exception e) {
 			ErrorUtil.write(e);

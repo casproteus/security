@@ -270,7 +270,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     
     public void initComponent(){
     	getContentPane().removeAll();
-    	setTitle("STGO POS");//BarFrame.consts.Title());
+    	setTitle("STGO");//BarFrame.consts.Title());
         setIconImage(CustOpts.custOps.getFrameLogoImage()); // 设置主窗体的LOGO。
 
         setBounds(0, 0, CustOpts.SCRWIDTH, CustOpts.SCRHEIGHT - 30); // 对话框的默认尺寸。
