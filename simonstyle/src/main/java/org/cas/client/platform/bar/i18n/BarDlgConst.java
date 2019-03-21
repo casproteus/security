@@ -138,6 +138,8 @@ public interface BarDlgConst {
     String PrinterMinReachTime();
     String ServerHost();
     String PrinterError();
+    String NoSerialPrinterFound();
+    String NoComPortFound();
     
     String OTHER();
     String ProdNumber();
