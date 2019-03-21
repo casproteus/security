@@ -1600,7 +1600,7 @@ public class PrintService{
             }
             
             String dishName = d.getLanguage(langIndex); 
-            sb.append(dishName);
+            sb.append(BarUtil.getPlainTextOut(dishName));
             
             if(d.getNum() > 1){//NOTE: the number could be bigger than 10000.
             	sb.append(" ").append(Dish.getDisplayableNum(d.getNum()));
@@ -2118,7 +2118,7 @@ public class PrintService{
                 sb.append(d.getId());
                 sb.append(BarUtil.generateString(5 - String.valueOf(d.getId()).length(), " "));
             }
-            sb.append(d.getLanguage(langIndex));
+            sb.append(BarUtil.getPlainTextOut(d.getLanguage(langIndex)));
             if(d.getNum() > 1){//Note：when sending to kitchen, the number couldnot be bigger than 10000.
                 String space = " ";
                 int occupiedLength = BarUtil.getLengthOfString(sb.toString());
