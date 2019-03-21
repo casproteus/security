@@ -206,4 +206,30 @@ public class BarUtil {
 			ErrorUtil.write(e);
 		}
 	}
+	
+	//remove html tags e.g.<html><center>Bill<br>FOOT INFO</center></html>
+	public static String getPlainTextOut(String string) {
+		int p = string.indexOf("<html>");
+		if(p >= 0) {
+			string = string.substring(p + 6);
+			p = string.indexOf("</html>");
+			if(p >= 0) {
+				string = string.substring(0, p);
+			}
+			p = string.indexOf("<center>");
+			if(p >= 0) {
+				string = string.substring(p + 8);
+			}
+			p = string.indexOf("</center>");
+			if(p >= 0) {
+				string = string.substring(0, p);
+			}
+			p = string.indexOf("<br>");
+			if(p > 0) {
+				string = string.substring(0, p) + " " + string.substring(p + 6);
+			}
+		}
+		return string;
+	}
+
 }
