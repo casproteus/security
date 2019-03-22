@@ -147,7 +147,7 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
         getContentPane().add(addToListBTN);
         getContentPane().add(categoryList);
         getContentPane().add(deleteBTN);
-        getContentPane().add(resetBTN);
+        //getContentPane().add(resetBTN);
         getContentPane().add(textArea);
         getContentPane().add(topLabel);
         getContentPane().add(ok);
