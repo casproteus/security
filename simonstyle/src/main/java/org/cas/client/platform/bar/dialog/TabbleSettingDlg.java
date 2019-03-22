@@ -117,14 +117,17 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
         		for (TableButton tableButton : btnTables) {
 					if (tableButton.getBackground().equals(bg)) {
 						isAnyTableButtonSelected = true;
-						String tableName = tableButton.getText() + "_copy";
-						String sql = "INSERT INTO DINING_TABLE (name, posX, posY, width, height, type) VALUES ('"
-								+ tableName + "', " + (tableButton.getX() + 10) + ", " + (tableButton.getY() + 10) + ", "
-								+ tableButton.getWidth() + ", " + tableButton.getHeight() + ", " + tableButton.getType() + ")";
+						String tableName = tableButton.getText();
 						try {
-							smt.executeUpdate(sql);
-						}catch(Exception exp) {
-							ErrorUtil.write(exp);
+							int value = Integer.valueOf(tableName) + 1;
+							boolean isNameUsed = isNameUserd(String.valueOf(value), btnTables);
+							if(isNameUsed) {
+								createTempTable(smt, tableButton);
+							}else {	//the new name is number and is not used
+								createdAlignedTable(smt, tableButton, value);
+							}
+						}catch(Exception exp) {	// if copying non-number table will trigger the exception and create temporal name table.
+							createTempTable(smt, tableButton);
 						}
 					}
 				}
@@ -133,6 +136,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
         			new TableDlg(this, new TableButton()).setVisible(true);
         		}
         		initContent();
+        		btnTables.get(btnTables.size() - 1).setBackground(bg);
         	}else if(o == btnLess) {
         		Statement smt = PIMDBModel.getStatement();
         		for (TableButton tableButton : btnTables) {
@@ -158,6 +162,43 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
         }
 
     }
+
+	public void createdAlignedTable(Statement smt, TableButton tableButton, int value) {
+		String tableName = String.valueOf(value);
+		int x = (value / 10) * (tableButton.getWidth() + 10) + 10;
+		int y = (value - (value / 10) * 10) * (tableButton.getHeight() + 10) + 10;
+		StringBuilder sql = new StringBuilder("INSERT INTO DINING_TABLE (name, posX, posY, width, height, type) VALUES ('")
+				.append(tableName).append("', ").append(x).append(", ")
+				.append(y).append(", ")
+				.append(tableButton.getWidth()).append(", ").append(tableButton.getHeight()).append(", ")
+				.append(tableButton.getType()).append(")");
+		try {
+			smt.executeUpdate(sql.toString());
+		}catch(Exception exp) {
+			ErrorUtil.write(exp);
+		}
+	}
+
+	private boolean isNameUserd(String value, ArrayList<TableButton> btnTables) {
+		for (TableButton tableButton2 : btnTables) {
+			if(tableButton2.getText().equals(value)) {	//if new number already used, then created temporal name table
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void createTempTable(Statement smt, TableButton tableButton) {
+		String tableName = tableButton.getText() + "_copy";
+		String sql = "INSERT INTO DINING_TABLE (name, posX, posY, width, height, type) VALUES ('"
+				+ tableName + "', " + (tableButton.getX() + 10) + ", " + (tableButton.getY() + 10) + ", "
+				+ tableButton.getWidth() + ", " + tableButton.getHeight() + ", " + tableButton.getType() + ")";
+		try {
+			smt.executeUpdate(sql);
+		}catch(Exception exp) {
+			ErrorUtil.write(exp);
+		}
+	}
 
     /** 本方法用于设置View上各个组件的尺寸。 */
     @Override
