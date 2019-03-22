@@ -38,13 +38,13 @@ public class UpdateItemDiscountAction implements ActionListener{
             		Float.valueOf(curContent);
             	}
 
-             	int row = billPanel.tblBillPanel.getSelectedRow();
+             	int row = billPanel.table.getSelectedRow();
              	//NOTE: current total price + existing discount = original total price.
-             	String strDisCount = (String)billPanel.tblBillPanel.getValueAt(row, 2);
+             	String strDisCount = (String)billPanel.table.getValueAt(row, 2);
              	strDisCount = (strDisCount == null || strDisCount.length() == 0) ? "0" : strDisCount.trim().substring(2);//remove "-$"
              	float oldDiscount = Float.valueOf(strDisCount);
              	
-             	String strTotalPrice = (String)billPanel.tblBillPanel.getValueAt(row, 3);
+             	String strTotalPrice = (String)billPanel.table.getValueAt(row, 3);
 				strTotalPrice = strTotalPrice.trim().substring(1);
              	float totalPrice = Float.valueOf(strTotalPrice);
              	
@@ -56,8 +56,8 @@ public class UpdateItemDiscountAction implements ActionListener{
  				}
  				
  				totalPrice = totalPrice + oldDiscount - newDiscount;
-             	billPanel.tblBillPanel.setValueAt("-"+ BarOption.getMoneySign() + BarUtil.formatMoney(newDiscount), row, 2);
-             	billPanel.tblBillPanel.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney(totalPrice), row, 3);
+             	billPanel.table.setValueAt("-"+ BarOption.getMoneySign() + BarUtil.formatMoney(newDiscount), row, 2);
+             	billPanel.table.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney(totalPrice), row, 3);
              	billPanel.orderedDishAry.get(row).setDiscount((int)(newDiscount * 100));
              	billPanel.orderedDishAry.get(row).setTotalPrice((int)((totalPrice) * 100));
              	

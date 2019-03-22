@@ -232,16 +232,16 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             			billPanel.orderedDishAry.remove(i);
             		}
             		//update the table view
-            		int tColCount = billPanel.tblBillPanel.getColumnCount();
+            		int tColCount = billPanel.table.getColumnCount();
             		int tValidRowCount = billPanel.orderedDishAry.size(); // get the used RowCount
             		Object[][] tValues = new Object[tValidRowCount][tColCount];
             		for (int r = 0; r < tValidRowCount; r++) {
             			for (int c = 0; c < tColCount; c++)
-            				tValues[r][c] = billPanel.tblBillPanel.getValueAt(r, c);
+            				tValues[r][c] = billPanel.table.getValueAt(r, c);
             		}
-            		billPanel.tblBillPanel.setDataVector(tValues, billPanel.header);
+            		billPanel.table.setDataVector(tValues, billPanel.header);
             		billPanel.resetColWidth(billPanel.getWidth());
-            		billPanel.tblBillPanel.setSelectedRow(tValues.length - 1);
+            		billPanel.table.setSelectedRow(tValues.length - 1);
             		billPanel.updateTotleArea();
             	}else {
             		//@NOTE: we don't close current bill, because maybe there's output still have billID of this bill, all the empty bill will be closed when table closed.
@@ -598,12 +598,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			BillListPanel.curDish.setCanceled(true);	//set the dish with cancelled flag, so when it's printout, will with "!!!!!".
 			billPanel.sendDishToKitchen(BillListPanel.curDish, true);
 			//clean from screen.
-			billPanel.removeFromSelection(billPanel.tblBillPanel.getSelectedRow());
+			billPanel.removeFromSelection(billPanel.table.getSelectedRow());
 			//update bill info, must be after the screen update, because will get total from screen.
 			BarUtil.updateBillRecordPrices(billPanel);
 		}else {
 			//only do clean from screen, because the output not generated yet, and will not affect the toltal in bill.
-			billPanel.removeFromSelection(billPanel.tblBillPanel.getSelectedRow());
+			billPanel.removeFromSelection(billPanel.table.getSelectedRow());
 		}
 	}
 
