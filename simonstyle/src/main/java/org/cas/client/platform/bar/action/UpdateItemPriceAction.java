@@ -43,7 +43,8 @@ public class UpdateItemPriceAction implements ActionListener{
             	}
          		
              	dish.setPrice((int)(price * 100));
-
+             	dish.setTotalPrice((dish.getPrice() - dish.getDiscount()) * dish.getNum());
+             	
  				int num = dish.getNum();
  				int pK = num /(BarOption.MaxQTY * 100);
  	    		if(num > BarOption.MaxQTY * 100) {
