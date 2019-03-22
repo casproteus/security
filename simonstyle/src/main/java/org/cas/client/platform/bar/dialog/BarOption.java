@@ -457,4 +457,19 @@ public class BarOption {
 		return CustOpts.custOps.getValue("isTrainingMode") == null ? 
 				false : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("isTrainingMode"));
 	}
+	
+	public static int getTableRowHeight() {
+		try{
+			return Integer.valueOf((String)CustOpts.custOps.getValue("TableRowHeight"));
+		}catch(Exception exp) {
+			return 30;
+		}
+	}
+	public static void setTableRowHeight(String height) {
+		try {
+	    	CustOpts.custOps.setKeyAndValue("TableRowHeight", Integer.valueOf(height));
+		}catch(Exception exp) {
+			CustOpts.custOps.setKeyAndValue("TableRowHeight", null);
+		}
+	}
 }
