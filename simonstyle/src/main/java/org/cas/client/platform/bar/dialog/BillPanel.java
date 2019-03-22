@@ -428,9 +428,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		if(row < orderedDishAry.size()) {
 			Dish dish = orderedDishAry.get(row);
 			if(dish.getOutputID() > -1) {
-				return Color.BLACK;
+				return Color.GRAY;
 			}else {
-				return Color.RED;
+				return Color.BLACK;
 			}
 		}else
 			return null;
@@ -802,6 +802,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         PIMTableColumn tmpCol3 = tblBillPanel.getColumnModel().getColumn(2);
         tmpCol3.setWidth(width - (scrContent.getVerticalScrollBar().isVisible() ? scrContent.getVerticalScrollBar().getWidth() : 0));
         tmpCol3.setPreferredWidth(width - (scrContent.getVerticalScrollBar().isVisible() ? scrContent.getVerticalScrollBar().getWidth() : 0));
+        
+        tblBillPanel.setRowHeight(BarOption.getTableRowHeight());
         
         tblBillPanel.validate();
         tblBillPanel.revalidate();
