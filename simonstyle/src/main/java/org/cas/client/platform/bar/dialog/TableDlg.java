@@ -67,11 +67,20 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         		sptName.getWidth() - lblName.getWidth() - CustOpts.HOR_GAP * 2,  CustOpts.BTN_HEIGHT);
      
         int otherAreaHeight = LoginDlg.USERTYPE >= 2 ? 0 : 200;
+        
         // bounds--------
         sptBounds.setBounds(sptName.getX(), tfdName.getY() + tfdName.getHeight() + CustOpts.VER_GAP + otherAreaHeight,
                 sptName.getWidth(), CustOpts.SEP_HEIGHT + 2);
-
-        lblWidth.setBounds(CustOpts.HOR_GAP * 2, sptBounds.getY() + sptBounds.getHeight() + CustOpts.VER_GAP,
+        lblX.setBounds(CustOpts.HOR_GAP * 2, sptBounds.getY() + sptBounds.getHeight() + CustOpts.VER_GAP,
+        		lblX.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdX.setBounds(lblX.getX() + lblX.getWidth() + CustOpts.HOR_GAP,
+        		lblX.getY(), sptName.getWidth()/2 - lblX.getWidth() - CustOpts.HOR_GAP * 2, CustOpts.BTN_HEIGHT);
+        lblY.setBounds(tfdX.getX() + tfdX.getWidth() + CustOpts.HOR_GAP, lblX.getY(), 
+        		lblY.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        tfdY.setBounds(lblY.getX() + lblY.getWidth() + CustOpts.HOR_GAP, lblY.getY(), 
+        		sptName.getWidth()/2 - lblY.getWidth() - CustOpts.HOR_GAP * 2, CustOpts.BTN_HEIGHT);
+        
+        lblWidth.setBounds(CustOpts.HOR_GAP * 2, lblX.getY() + lblX.getHeight() + CustOpts.VER_GAP,
         		lblWidth.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         tfdWidth.setBounds(lblWidth.getX() + lblWidth.getWidth() + CustOpts.HOR_GAP,
         		lblWidth.getY(), sptName.getWidth()/2 - lblWidth.getWidth() - CustOpts.HOR_GAP * 2, CustOpts.BTN_HEIGHT);
@@ -212,7 +221,9 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         tfdName = new JTextField(btnTable.getText());
 
         sptBounds = new PIMSeparator(BarFrame.consts.Size());
+        lblX = new JLabel("Horizontal");
         tfdX = new JTextField();
+        lblY = new JLabel("Vertical");
         tfdY = new JTextField();
         lblWidth = new JLabel("Width");
         tfdWidth = new JTextField();
@@ -247,8 +258,8 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         ok.setMnemonic('o');
         ok.setMargin(new Insets(0, 0, 0, 0));
 
-        setBounds((CustOpts.SCRWIDTH - 280) / 2, (CustOpts.SCRHEIGHT - 220) / 2,
-        		280, LoginDlg.USERTYPE >= 2 ? 220 : 120); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 280) / 2, (CustOpts.SCRHEIGHT - 260) / 2,
+        		280, LoginDlg.USERTYPE >= 2 ? 260 : 160); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
         getRootPane().setDefaultButton(ok);
 
@@ -258,6 +269,10 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         getContentPane().add(tfdWidth);
         getContentPane().add(lblHeight);
         getContentPane().add(tfdHeight);
+        getContentPane().add(lblX);
+        getContentPane().add(tfdX);
+        getContentPane().add(lblY);
+        getContentPane().add(tfdY);
 
         getContentPane().add(sptBounds);
 
@@ -287,7 +302,9 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
     private JTextField tfdWidth;
     private JLabel lblHeight;
     private JTextField tfdHeight;
+    private JLabel lblX;
     private JTextField tfdX;
+    private JLabel lblY;
     private JTextField tfdY;
     
     private PIMSeparator sptType;
