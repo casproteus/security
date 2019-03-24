@@ -10,26 +10,26 @@ public interface CategoryDialogConstants
     public static final String CATEGORYEditorTITLE = "Category Editor";
     
     //
-    public static final String TOP_LABEL = "项目属于这些类别(I)";
+    public static final String TOP_LABEL = "Applied Categories";
     
     //
-    public static final String MIDDLE_LABEL = "可用类别(V)";
+    public static final String MIDDLE_LABEL = "Available";
     
     //
-    public static final String ADD_TO_LIST = "添至列表(A)";
+    public static final String ADD_TO_LIST = "Add To List";
     
     //
-    public static final String DELETE_BTN = "删除(D)";
+    public static final String DELETE_BTN = "Delete";
     
     //
-    public static final String RESET_BTN = "重置(R)";
+    public static final String RESET_BTN = "Reset";
     
     
     //
-    public static final String OK_BTN = "确定";
+    public static final String OK_BTN = "OK";
     
     //
-    public static final String CANCEL_BTN = "取消";
+    public static final String CANCEL_BTN = "Cancel";
     
     //
     public static final String VIP = "VIP";
