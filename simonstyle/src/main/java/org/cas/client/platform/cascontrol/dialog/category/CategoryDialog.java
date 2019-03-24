@@ -107,21 +107,21 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
 
     /** 初始化并布局; */
     private void initComponent() {
-        setTitle(CategoryDialogConstants.CATEGORYTITLE); // 设置标题
+        setTitle(CategoryDialogConstants.getCATEGORYTITLE()); // 设置标题
         getContentPane().setLayout(null);
-        setBounds((CustOpts.SCRWIDTH - 250) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 250, 320); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 360) / 2, (CustOpts.SCRHEIGHT - 330) / 2, 360, 330); // 对话框的默认尺寸。
         setResizable(true);
 
         // init--------------------------
-        midLabel = new JLabel(CategoryDialogConstants.MIDDLE_LABEL); // "可用类别"标签
+        midLabel = new JLabel(CategoryDialogConstants.getMIDDLE_LABEL()); // "可用类别"标签
         textArea = new JTextArea(); // 加入会滚动的文本区
-        topLabel = new JLabel(CategoryDialogConstants.TOP_LABEL); // "项目属于这些类别"标签
+        topLabel = new JLabel(CategoryDialogConstants.getTOP_LABEL()); // "项目属于这些类别"标签
         categoryList = new JList();
-        addToListBTN = new JButton(CategoryDialogConstants.ADD_TO_LIST); // 加至列表按钮
-        deleteBTN = new JButton(CategoryDialogConstants.DELETE_BTN); // 删除按钮
-        resetBTN = new JButton(CategoryDialogConstants.RESET_BTN); // 重置按钮
-        ok = new JButton(CategoryDialogConstants.OK_BTN); // 设置OK按钮
-        cancel = new JButton(CategoryDialogConstants.CANCEL_BTN); // 设置Cancel按钮
+        addToListBTN = new JButton(CategoryDialogConstants.getADD_TO_LIST()); // 加至列表按钮
+        deleteBTN = new JButton(CategoryDialogConstants.getDELETE_BTN()); // 删除按钮
+        resetBTN = new JButton(CategoryDialogConstants.getRESET_BTN()); // 重置按钮
+        ok = new JButton(CategoryDialogConstants.getOK_BTN()); // 设置OK按钮
+        cancel = new JButton(CategoryDialogConstants.getCANCEL_BTN()); // 设置Cancel按钮
 
         // properties-------------------------
         midLabel.setLabelFor(categoryList);
@@ -171,11 +171,11 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
     }
 
     private void reLayout() {
-        cancel.setBounds(getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, getHeight()
-                - CustOpts.BTN_HEIGHT - CustOpts.SIZE_EDGE - CustOpts.SIZE_TITLE - CustOpts.VER_GAP,
+        cancel.setBounds(getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP*2, 
+        		getHeight() - CustOpts.BTN_HEIGHT - CustOpts.SIZE_EDGE - CustOpts.SIZE_TITLE - CustOpts.VER_GAP*2,
                 CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
-        ok.setBounds(cancel.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, cancel.getY(), CustOpts.BTN_WIDTH,
-                CustOpts.BTN_HEIGHT);
+        ok.setBounds(cancel.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, cancel.getY(), 
+        		CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
 
         topLabel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, cancel.getX() - CustOpts.HOR_GAP * 2,
                 CustOpts.LBL_HEIGHT);

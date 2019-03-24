@@ -10,26 +10,26 @@ public interface CategoryDialogConstants
     public static final String CATEGORYEditorTITLE = "Category Editor";
     
     //
-    public static final String TOP_LABEL = "项目属于这些类别(I)";
+    public static final String TOP_LABEL = "Current Category";
     
     //
-    public static final String MIDDLE_LABEL = "可用类别(V)";
+    public static final String MIDDLE_LABEL = "Available categories";
     
     //
-    public static final String ADD_TO_LIST = "添至列表(A)";
+    public static final String ADD_TO_LIST = "Add to List";
     
     //
-    public static final String DELETE_BTN = "删除(D)";
+    public static final String DELETE_BTN = "Delete";
     
     //
-    public static final String RESET_BTN = "重置(R)";
+    public static final String RESET_BTN = "Reset";
     
     
     //
-    public static final String OK_BTN = "确定";
+    public static final String OK_BTN = "OK";
     
     //
-    public static final String CANCEL_BTN = "取消";
+    public static final String CANCEL_BTN = "Cancel";
     
     //
     public static final String VIP = "VIP";
@@ -57,6 +57,38 @@ public interface CategoryDialogConstants
     public static final String[] CATEGORY_ITEMS =
     {VIP,MATCH,STRATEGY,WAIT,PHONE,PERSON,SUPPLIER,VIEWPOINT,INTERNATIONAL,POSTCARD,
      VACATION,GIFT,PURPOSE,BUSINESS,TIME_AND_OUTlAY,FAVORITORY,ACQUAINTANCE,OTHER,IMPORTANT_CLIENT,STATE};
+
+	public static String getCATEGORYTITLE() {
+		return CATEGORYTITLE;
+	}
+
+	public static String getMIDDLE_LABEL() {
+		return MIDDLE_LABEL;
+	}
+
+	public static String getADD_TO_LIST() {
+		return ADD_TO_LIST;
+	}
+
+	public static String getDELETE_BTN() {
+		return DELETE_BTN;
+	}
+
+	public static String getRESET_BTN() {
+		return RESET_BTN;
+	}
+
+	public static String getTOP_LABEL() {
+		return TOP_LABEL;
+	}
+
+	public static String getOK_BTN() {
+		return OK_BTN;
+	}
+
+	public static String getCANCEL_BTN() {
+		return CANCEL_BTN;
+	}
     
 
 }
