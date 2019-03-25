@@ -173,6 +173,21 @@ public class PrintService{
         contents.add("\n\n\n\n\n");
         contents.add("cut");
         
+        //if it's set to print more than one bill each time then repeat the content.
+        int printBillQT = BarOption.getPrintBillQT();	
+        if(printBillQT > 1) {
+	        List<String> contentsBK = new ArrayList<String>();
+	        for(int i = 1; i < printBillQT; i++){
+	        	contents.add("\n");
+	        	for (String string : contents) {
+	        		contentsBK.add(string);
+				}
+	        }
+	        for (String string : contentsBK) {
+	        	contents.add(string);
+			}
+        }
+        
         printContents();
     }
 

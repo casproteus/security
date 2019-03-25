@@ -502,4 +502,11 @@ public class BarOption {
 //			CustOpts.custOps.setKeyAndValue("BigFontWidth", null);
 //		}
 //	}
+	public static int getPrintBillQT() {
+		try{
+			return Integer.valueOf((String)CustOpts.custOps.getValue("PrintBillQT"));
+		}catch(Exception exp) {
+			return 1;
+		}
+	}
 }
