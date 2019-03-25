@@ -472,4 +472,34 @@ public class BarOption {
 			CustOpts.custOps.setKeyAndValue("TableRowHeight", null);
 		}
 	}
+	
+	public static int getHistoryDays() {
+		try{
+			return Integer.valueOf((String)CustOpts.custOps.getValue("HistoryDays"));
+		}catch(Exception exp) {
+			return 1;
+		}
+	}
+//	public static void setHistoryDays(String historyDays) {
+//		try {
+//	    	CustOpts.custOps.setKeyAndValue("HistoryDays", Integer.valueOf(historyDays));
+//		}catch(Exception exp) {
+//			CustOpts.custOps.setKeyAndValue("HistoryDays", null);
+//		}
+//	}
+	
+	public static int getBigFontWidth() {
+		try{
+			return Integer.valueOf((String)CustOpts.custOps.getValue("BigFontWidth"));
+		}catch(Exception exp) {
+			return 0;
+		}
+	}
+//	public static void setBigFontWidth(String BigFontWidth) {
+//		try {
+//	    	CustOpts.custOps.setKeyAndValue("BigFontWidth", Integer.valueOf(BigFontWidth));
+//		}catch(Exception exp) {
+//			CustOpts.custOps.setKeyAndValue("BigFontWidth", null);
+//		}
+//	}
 }

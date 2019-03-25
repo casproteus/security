@@ -140,9 +140,9 @@ public class BarUtil {
 	}
 
 
-    public static String generateString(int l, String character){
+    public static String generateString(int length, String character){
         StringBuilder sb = new StringBuilder("");
-        for (int i = 0;i<l;i++){
+        for (int i = 0; i < length; i++){
             sb.append(character);
         }
         return sb.toString();
@@ -236,4 +236,18 @@ public class BarUtil {
 		return string;
 	}
 
+    public static String canadianPennyRound(String substring) {
+		Float price = Float.valueOf(substring.trim());
+		int cent = (int)(price * 100);
+		int lastNum = cent % 10;
+		if(lastNum < 3) {
+			cent = cent - lastNum;
+		}else if(lastNum > 7) {
+			cent = cent - lastNum + 10;
+		}else {
+			cent = cent - lastNum + 5;
+		}
+		
+		return BarUtil.formatMoney(cent/100f);
+	}
 }

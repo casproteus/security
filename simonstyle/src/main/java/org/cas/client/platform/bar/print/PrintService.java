@@ -151,10 +151,17 @@ public class PrintService{
 	    String lastRow = content.substring(pStart, pEnd);
 	    
 	    contents.add(content.substring(0, pStart + 1));
+	    
 	    contents.add("BigFont");	    //push bigger font. while it will not work for mev.
-	    contents.add(lastRow);
+
+	    int p = lastRow.indexOf(" : ");
+	    String totalPrice = lastRow.substring(p + 3);
+	    contents.add(lastRow.substring(0, p + 3) + BarUtil.generateString(BarOption.getBigFontWidth() - lastRow.length(), " ") + totalPrice);
+	    String roundedPrice = BarUtil.canadianPennyRound(totalPrice);
+	    contents.add("\nRounded : " +  BarUtil.generateString(BarOption.getBigFontWidth() - roundedPrice.length() - 11, " ") + roundedPrice);     //push rounded money
+	    contents.add("\n" + BarUtil.generateString((BarOption.getBigFontWidth() - LoginDlg.USERNAME.length())/2, " ") + LoginDlg.USERNAME);
 	    contents.add("NormalFont");     //push normal font
-        
+	    
         //push end message
 	    if(billPanel.comment.length() > 0) {
 	    	contents.add("\n" + billPanel.comment);	//has comment means bill printed(will be co-considered when saving paper flag is set) or invoice was reopened,
@@ -168,8 +175,8 @@ public class PrintService{
         
         printContents();
     }
-    
-    //The start time and end time are long format, need to be translate for print.
+
+	//The start time and end time are long format, need to be translate for print.
     //@NOTE: not openned for now.
     public static void exePrintBills(List<BillPanel> unclosedBillPanels){
 		flushIpContent();
@@ -1406,7 +1413,7 @@ public class PrintService{
 	
 	private static void pushWaiterAndTime(List<String> strAryFR, int tWidth, String tableIdx, String sartTimeStr, String endTimeStr) {
 		String waiterName = LoginDlg.USERNAME;
-		pushWaiterAndTime(waiterName, strAryFR, tWidth, tableIdx, sartTimeStr, endTimeStr);
+		pushWaiterAndTime("", strAryFR, tWidth, tableIdx, sartTimeStr, endTimeStr);
 	}
 	public static void pushWaiterAndTime(String waiterName, List<String> strAryFR, int tWidth, String tableIdx, String sartTimeStr, String endTimeStr) {
 		StringBuilder content = new StringBuilder();
