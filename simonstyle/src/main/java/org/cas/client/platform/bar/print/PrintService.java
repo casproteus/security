@@ -157,9 +157,11 @@ public class PrintService{
 	    int p = lastRow.indexOf(" : ");
 	    String totalPrice = lastRow.substring(p + 3);
 	    contents.add(lastRow.substring(0, p + 3) + BarUtil.generateString(BarOption.getBigFontWidth() - lastRow.length(), " ") + totalPrice);
+	    contents.add("NormalFont");     //push normal font
 	    String roundedPrice = BarUtil.canadianPennyRound(totalPrice);
 	    contents.add("\nRounded : " +  BarUtil.generateString(BarOption.getBigFontWidth() - roundedPrice.length() - 11, " ") + roundedPrice);     //push rounded money
-	    contents.add("\n" + BarUtil.generateString((BarOption.getBigFontWidth() - LoginDlg.USERNAME.length())/2, " ") + LoginDlg.USERNAME);
+	    contents.add("BigFont");	    //push bigger font. while it will not work for mev.
+	    contents.add("\n\n" + BarUtil.generateString((BarOption.getBigFontWidth() - LoginDlg.USERNAME.length())/2, " ") + LoginDlg.USERNAME);
 	    contents.add("NormalFont");     //push normal font
 	    
         //push end message
@@ -1653,7 +1655,7 @@ public class PrintService{
 	private static void pushRound(BillPanel billPanel, ArrayList<String> strAryFR, int tWidth) {
 		StringBuilder content = new StringBuilder();
         //push total
-        String strTotal = roundCent(billPanel.valTotlePrice.getText());
+        String strTotal = BarUtil.canadianPennyRound(billPanel.valTotlePrice.getText());
         content.append("Round").append(" : ").append(BarUtil.generateString(tWidth - 9 - strTotal.length(), " "))
 			.append(strTotal).append("\n");
         strAryFR.add(content.toString());
@@ -1748,7 +1750,7 @@ public class PrintService{
  				.append(BarUtil.generateString(width - lblText.length() - str.length(), " "))
  				.append(str).append("\n");
             	
-            	String roundedStr = roundCent(str);
+            	String roundedStr = BarUtil.canadianPennyRound(str);
             	if(!roundedStr.equals(str)) {
             		lblText = "ARRONDI DE MONTANT : ";	//rounded price
             		content.append(lblText)
@@ -2183,20 +2185,6 @@ public class PrintService{
 		    }
 	    }
 	}
-	
-	private static String roundCent(String priceStr) {
-		Float f = Float.parseFloat(priceStr);
-		int t = (int)(f * 100);
-    	//get the last bit
-    	int last = t % 10;
-    	if(last == 1 || last == 2)
-    		last = 0;
-    	else if(last == 3 || last == 4 || last == 6 || last == 7)
-    		last = 5;
-    	else if(last == 8 || last == 9)
-    		last = 10;
-    	return BarUtil.formatMoney((t/ 10 * 10 + last) / 100.0);
-    }
 	
     final static String mev1 = "<reqMEV><trans noVersionTrans=\"v0%s.00\" etatDoc=\"%s\" modeTrans=\"%s\" duplicata=\"%s\"><doc><texte><![CDATA[\n";
     final static String mev2 = "]]></texte></doc>\r\n		<donneesTrans ";
