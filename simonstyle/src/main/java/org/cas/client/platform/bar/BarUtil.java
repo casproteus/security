@@ -15,6 +15,7 @@ import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
 import gnu.io.CommPortIdentifier;
@@ -24,6 +25,9 @@ import gnu.io.PortInUseException;
 public class BarUtil {
 	
     public static DecimalFormat formatter = new DecimalFormat("#0.00");
+    public static String[] sepLines;
+    public static String SEP_STR1 = "=";
+    public static String SEP_STR2 = "-";
 	
 	//not sure the command still available. I am currently using Command.OPEN_CASHIER
 	public static void openMoneyBox() {
@@ -140,9 +144,9 @@ public class BarUtil {
 	}
 
 
-    public static String generateString(int l, String character){
+    public static String generateString(int length, String character){
         StringBuilder sb = new StringBuilder("");
-        for (int i = 0;i<l;i++){
+        for (int i = 0; i < length; i++){
             sb.append(character);
         }
         return sb.toString();
@@ -226,10 +230,52 @@ public class BarUtil {
 			}
 			p = string.indexOf("<br>");
 			if(p > 0) {
-				string = string.substring(0, p) + " " + string.substring(p + 6);
+				string = string.substring(0, p) + " " + string.substring(p + 4);
+			}
+			p = string.indexOf("<br>");
+			if(p > 0) {
+				string = string.substring(0, p);
 			}
 		}
 		return string;
 	}
 
+    public static String canadianPennyRound(String substring) {
+		Float price = Float.valueOf(substring.trim());
+		int cent = (int)(price * 100);
+		int lastNum = cent % 10;
+		if(lastNum < 3) {
+			cent = cent - lastNum;
+		}else if(lastNum > 7) {
+			cent = cent - lastNum + 10;
+		}else {
+			cent = cent - lastNum + 5;
+		}
+		
+		return BarUtil.formatMoney(cent/100f);
+	}
+    
+	public static String getSeperatorLine(int index, int tWidth) {
+		//seperator
+		if(sepLines == null) {
+			sepLines = new String[2];
+	        String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
+	        if(sep_str1 == null || sep_str1.length() == 0){
+	            sep_str1 = SEP_STR1;
+	        }
+	        sepLines[0] = BarUtil.generateString(tWidth, sep_str1);
+
+	        String sep_str2 = (String)CustOpts.custOps.getValue("sep_str2");
+	        if(sep_str2 == null || sep_str2.length() == 0){
+	            sep_str2 = SEP_STR2;
+	        }
+
+	        sepLines[1] = BarUtil.generateString(tWidth, sep_str2);
+		}
+		if(index > sepLines.length) {
+			L.e("PrintService", "Unexpect index when getting item from sepLines with Index: " + index
+					+ "the width of sepLines is " + sepLines.length, null);
+		}
+		return sepLines[index];
+	}
 }

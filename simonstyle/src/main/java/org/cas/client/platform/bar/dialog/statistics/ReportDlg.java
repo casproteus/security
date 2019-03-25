@@ -15,6 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
@@ -47,6 +49,7 @@ import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 
@@ -57,6 +60,13 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
 	private StringBuilder endTime;
 	private ArrayList<Bill> bills;
 	private String printerIP;
+	
+	private Integer year;
+	private Integer month;
+	private Integer day;
+	private Integer hrs;
+	private Integer min;
+	private Integer sec;
 	/**
      * Creates a new instance of ContactDialog
      * 
@@ -185,6 +195,19 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
     @Override
     public void actionPerformed(ActionEvent e) {
     	PrintService.exePrintReport(printerIP, formattedString);
+    	//delete relevant record.
+    	Date searchDate = new GregorianCalendar(year, month - 1 , day, hrs, min, sec).getTime();
+    	int days = (int) ((new Date().getTime() - searchDate.getTime()) / (1000*3600*24));
+    	if(days >= BarOption.getHistoryDays()) {
+	    	StringBuilder sql = new StringBuilder("update Bill set status = ").append(DBConsts.deleted)
+	    			.append(" where createTime >= '").append(startTime).append("'")
+	    			.append(" and createTime <= '").append(endTime).append("'");
+	    	try {
+	    		PIMDBModel.getStatement().executeUpdate(sql.toString());
+	    	}catch(Exception exp) {
+	    		L.e("Report", " exception when trying to delete records from db", exp);
+	    	}
+    	}
     }
     
 	@Override
@@ -193,35 +216,124 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		startTime = new StringBuilder();
-    	startTime.append(tfdYearFrom.getText());
+		year = Integer.valueOf(tfdYearFrom.getText());
+		if(year < 100) {
+			year += 100;
+		}else if(year < 1000){
+			year += 2000;
+		}
+    	startTime.append(year);
     	startTime.append("-");
-    	startTime.append(tfdMonthFrom.getText());
-    	startTime.append("-");
-    	startTime.append(tfdDayFrom.getText());
-    	String startDate = startTime.toString();
-    	startTime.append(" 00:00:00");
 
+		month = Integer.valueOf(tfdMonthFrom.getText());
+    	if(month < 10) {
+    		startTime.append("0");
+		}
+		startTime.append(month);
+    	startTime.append("-");
+		
+		day =  Integer.valueOf(tfdDayFrom.getText());
+    	if(day < 10) {
+    		startTime.append("0");
+    	}
+    	startTime.append(day);
+    	startTime.append(" ");
+    	
+		hrs = Integer.valueOf(tfdHourFrom.getText());
+    	if(hrs < 10) {
+    		startTime.append("0");
+		}
+		startTime.append(hrs);
+    	startTime.append(":");
+		
+		min =  Integer.valueOf(tfdMinuteFrom.getText());
+    	if(min < 10) {
+    		startTime.append("0");
+    	}
+    	startTime.append(min);
+    	startTime.append(":");
+
+		sec =  Integer.valueOf(tfdSecondFrom.getText());
+    	if(sec < 10) {
+    		startTime.append("0");
+    	}
+    	startTime.append(sec);
+    	
+    	//endTime--------------------------------------------
     	endTime = new StringBuilder();
+    	year = Integer.valueOf(tfdYearTo.getText());
+    	if(year < 100) {
+			year += 100;
+		}else if(year < 1000){
+			year += 2000;
+		}
     	endTime.append(tfdYearTo.getText());
     	endTime.append("-");
-    	endTime.append(tfdMonthTo.getText());
+
+		month = Integer.valueOf(tfdMonthTo.getText());
+		if(month < 10) {
+	    	endTime.append("0");
+		}
+    	endTime.append(month);
     	endTime.append("-");
-    	endTime.append(tfdDayTo.getText());
-    	String endDate = endTime.toString();
-    	endTime.append(" 23:59:59");
-    	bills = queryBillList(startTime.toString(), endTime.toString());
     	
+		day = Integer.valueOf(tfdDayTo.getText());
+		if(day < 10) {
+			endTime.append("0");
+		}
+    	endTime.append(day);
+    	endTime.append(" ");
+    	
+		hrs = Integer.valueOf(tfdHourTo.getText());
+    	if(hrs < 10) {
+    		endTime.append("0");
+		}
+    	endTime.append(hrs);
+    	endTime.append(":");
+		
+		min = Integer.valueOf(tfdMinuteTo.getText());
+    	if(min < 10) {
+    		endTime.append("0");
+    	}
+    	endTime.append(min);
+    	endTime.append(":");
+
+		sec = Integer.valueOf(tfdSecondTo.getText());
+    	if(sec < 10) {
+    		endTime.append("0");
+    	}
+    	endTime.append(sec);
+    	
+    	//
+    	bills = queryBillList(startTime.toString(), endTime.toString());
+    	HashMap<String, ArrayList<Bill>> map = divideIntoMap(bills); 
 		printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
-		formattedString = PrintService.formatContentForReport(bills, printerIP, startTime.toString(), endTime.toString());
 
 		StringBuilder wholeContent = new StringBuilder();
+		formattedString = PrintService.formatContentForReport(bills, printerIP, startTime.toString(), endTime.toString());
 		for (String content : formattedString) {
 			wholeContent.append(content);
 		}
 		txpPreview.setText(wholeContent.substring(0, wholeContent.length() - 9));
 	}
 	
-    @Override
+    private HashMap<String, ArrayList<Bill>> divideIntoMap(ArrayList<Bill> bills2) {
+    	HashMap<String, ArrayList<Bill>> map = new HashMap<String, ArrayList<Bill>>();
+    	for (Bill bill : bills2) {
+			String waiterName = bill.getEmployeeName();
+			if(map.containsKey(waiterName)) {
+				ArrayList<Bill> list = map.get(waiterName);
+				list.add(bill);
+			}else {
+				ArrayList<Bill> list = new ArrayList<Bill>();
+				list.add(bill);
+				map.put(waiterName, list);
+			}
+		}
+		return map;
+	}
+
+	@Override
     public Container getContainer() {
         return getContentPane();
     }
@@ -389,7 +501,7 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
 	      tfdSecondTo.setText(endTime.substring(p + 1));
     }
     
-    private ArrayList<Bill> queryBillList(String startTime, String endTime) {
+    public ArrayList<Bill> queryBillList(String startTime, String endTime) {
         StringBuilder sql = new StringBuilder("select * from bill, employee where createTime >= '").append(startTime)
         		.append("' and createTime <= '").append(endTime)
         		.append("' and bill.employeeId = employee.id ")

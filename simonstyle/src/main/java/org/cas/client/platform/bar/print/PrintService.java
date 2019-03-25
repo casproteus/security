@@ -72,7 +72,6 @@ public class PrintService{
 	public static int SUCCESS = -1;	//@NOTE:must be less than 0, because if it's 0, means the first element caused error.
     
     public static Category[] allCategory;
-    public static String[] sepLines;
     
     public static HashMap<String,Printer> ipPrinterMap = new HashMap<>();
     private static HashMap<String,List<Dish>> ipSelectionsMap;
@@ -80,8 +79,6 @@ public class PrintService{
 
     private static String curPrintIp = "";
     private String code = "GBK";
-    private static String SEP_STR1 = "=";
-    private static String SEP_STR2 = "-";
 
     private static String SOUSTOTAL = "SOUS-TOTAL";
     private static String TPS = "TPS";
@@ -248,7 +245,7 @@ public class PrintService{
         //seperator
         String sep_str2 = (String)CustOpts.custOps.getValue("sep_str2");
         if(sep_str2 == null || sep_str2.length() == 0){
-            sep_str2 = SEP_STR2;
+            sep_str2 = BarUtil.SEP_STR2;
         }
         content.append(BarUtil.generateString(tWidth, sep_str2)).append("\n");
         //subtotal, tps, tvq
@@ -1540,7 +1537,7 @@ public class PrintService{
         	//it's a combined bill, so need to add an extra total part.	
 	        String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
 	        if(sep_str1 == null || sep_str1.length() == 0){
-	            sep_str1 = SEP_STR1;
+	            sep_str1 = BarUtil.SEP_STR1;
 	        }
 	        content.append(BarUtil.generateString(tWidth, sep_str1)).append("\n\n");
 	        
@@ -1582,11 +1579,11 @@ public class PrintService{
 		//seperator
         String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
         if(sep_str1 == null || sep_str1.length() == 0){
-            sep_str1 = SEP_STR1;
+            sep_str1 = BarUtil.SEP_STR1;
         }
         String sep_str2 = (String)CustOpts.custOps.getValue("sep_str2");
         if(sep_str2 == null || sep_str2.length() == 0){
-            sep_str2 = SEP_STR2;
+            sep_str2 = BarUtil.SEP_STR2;
         }
         
 		content.append(BarUtil.generateString(tWidth, sep_str1)).append("\n\n");
@@ -1799,14 +1796,14 @@ public class PrintService{
 		
 		StringBuilder content = new StringBuilder();
 		//title
-		content.append(getSeperatorLine(1, width)).append("\n");
+		content.append(BarUtil.getSeperatorLine(1, width)).append("\n");
 		String saleSummary = "Sale Summary";
 		String emptySpaceStr = BarUtil.generateString((width - saleSummary.length())/2, " ");
 		content.append(emptySpaceStr).append(saleSummary).append("\n");
-		content.append(getSeperatorLine(0, width)).append("\n");
+		content.append(BarUtil.getSeperatorLine(0, width)).append("\n");
 		content.append("Tran Type").append(BarUtil.generateString(width - 15 - 9, " "))
 		.append("Count").append("    ").append("Amount").append("\n");
-		content.append(getSeperatorLine(0, width)).append("\n");
+		content.append(BarUtil.getSeperatorLine(0, width)).append("\n");
 		//countSaleGross + amountSaleGross
 		String amountSaleGross = BarUtil.formatMoney(salesGrossAmount / 100.0);
 		String totalSaleCount = String.valueOf(Integer.valueOf(countRefund) + Integer.valueOf(countSale));
@@ -1817,7 +1814,7 @@ public class PrintService{
 		content.append("Refund Gross").append(BarUtil.generateString(width - 12 - 10 - countRefund.length(), " "))
 		.append(countRefund).append(BarUtil.generateString(10 - refundGross.length() , " ")).append(refundGross)
 		.append("\n");
-		content.append(getSeperatorLine(1, width)).append("\n");
+		content.append(BarUtil.getSeperatorLine(1, width)).append("\n");
 		
 
 			
@@ -1840,7 +1837,7 @@ public class PrintService{
 		
 		//total
 		String total = BarUtil.formatMoney((net + HST) / 100.0);
-		content.append(getSeperatorLine(1, width)).append("\n");
+		content.append(BarUtil.getSeperatorLine(1, width)).append("\n");
 		content.append(BarUtil.generateString(width - total.length(), " ")).append(total);
 		
 		strAryFR.add(content.toString());
@@ -1853,9 +1850,9 @@ public class PrintService{
 		String emptySpaceStr = BarUtil.generateString((width - paymentSummary.length())/2, " ");
 		content.append("\n");
 		content.append(emptySpaceStr).append(paymentSummary).append("\n");
-		content.append(getSeperatorLine(0, width)).append("\n");
+		content.append(BarUtil.getSeperatorLine(0, width)).append("\n");
 		content.append("PayBy  Qt     Sales   Tip   ").append(BarUtil.generateString(width - 34, " ")).append("TOTAL").append("\n");
-		content.append(getSeperatorLine(0, width)).append("\n");
+		content.append(BarUtil.getSeperatorLine(0, width)).append("\n");
 
 		int cashQt = 0, cashTotal = 0;
 		int debitQt = 0, debitSales = 0, debitTip = 0, debitTotal = 0;
@@ -1947,7 +1944,7 @@ public class PrintService{
 		.append(BarUtil.generateString(9 - strotherTip.length(), " ")).append(strotherTip)
 		.append(BarUtil.generateString(width - 28 - strotherTotal.length(), " ")).append(strotherTotal).append("\n");
 		
-		content.append(getSeperatorLine(1, width)).append("\n");
+		content.append(BarUtil.getSeperatorLine(1, width)).append("\n");
 		
 		content.append(BarUtil.generateString(18 - strtotalTip.length(), " ")).append("total tip:").append(strtotalTip)
 		.append(BarUtil.generateString(width - 28 - strcashTotal.length() - 5, " ")).append("cash:").append(strcashTotal).append("\n");
@@ -1970,9 +1967,9 @@ public class PrintService{
 		String emptySpaceStr = BarUtil.generateString((width - voidItemSummary.length())/2, " ");
 		content.append("\n");
 		content.append(emptySpaceStr).append(voidItemSummary).append("\n");
-		content.append(getSeperatorLine(0, width)).append("\n");
+		content.append(BarUtil.getSeperatorLine(0, width)).append("\n");
 		content.append("Time        Table  Dish         Qt   Sales").append("\n");
-		content.append(getSeperatorLine(0, width)).append("\n");
+		content.append(BarUtil.getSeperatorLine(0, width)).append("\n");
 
 		StringBuilder sql = new StringBuilder("Select * from Output, product, bill where bill.status = ").append(DBConsts.voided)
 				.append(" and time >= '").append(startDateStr).append("' and time <= '").append(endDateStr)
@@ -2008,7 +2005,7 @@ public class PrintService{
                 totalSales += f;
             }
             
-    		content.append(getSeperatorLine(1, width)).append("\n");
+    		content.append(BarUtil.getSeperatorLine(1, width)).append("\n");
     		String toltal = BarUtil.formatMoney(totalSales);
     		content.append(BarUtil.generateString(width - toltal.length(), " "))
     		.append(toltal).append("\n");
@@ -2020,30 +2017,6 @@ public class PrintService{
         	L.e("Pos", "Printing Report", e);
         }
 	};
-    
-	private static String getSeperatorLine(int index, int tWidth) {
-		//seperator
-		if(sepLines == null) {
-			sepLines = new String[2];
-	        String sep_str1 = (String)CustOpts.custOps.getValue("sep_str1");
-	        if(sep_str1 == null || sep_str1.length() == 0){
-	            sep_str1 = SEP_STR1;
-	        }
-	        sepLines[0] = BarUtil.generateString(tWidth, sep_str1);
-
-	        String sep_str2 = (String)CustOpts.custOps.getValue("sep_str2");
-	        if(sep_str2 == null || sep_str2.length() == 0){
-	            sep_str2 = SEP_STR2;
-	        }
-
-	        sepLines[1] = BarUtil.generateString(tWidth, sep_str2);
-		}
-		if(index > sepLines.length) {
-			L.e("PrintService", "Unexpect index when getting item from sepLines with Index: " + index
-					+ "the width of sepLines is " + sepLines.length, null);
-		}
-		return sepLines[index];
-	}
 	
     private static StringBuilder getFormattedBillHeader(int tWidth, String id) {
     	StringBuilder sb = id == null ? new StringBuilder() : new StringBuilder("#").append(id).append("\n");
@@ -2103,11 +2076,11 @@ public class PrintService{
 
         String sep_str1 = isCancelled ? "!" : (String)CustOpts.custOps.getValue("sep_str1");
         if(sep_str1 == null || sep_str1.length() == 0){
-            sep_str1 = SEP_STR1;
+            sep_str1 = BarUtil.SEP_STR1;
         }
         String sep_str2 = isCancelled ? "X" : (String)CustOpts.custOps.getValue("sep_str2");
         if(sep_str2 == null || sep_str2.length() == 0){
-            sep_str2 = SEP_STR2;
+            sep_str2 = BarUtil.SEP_STR2;
         }
 
         content.append(BarUtil.generateString(tWidth, sep_str1)).append("\n\n");
