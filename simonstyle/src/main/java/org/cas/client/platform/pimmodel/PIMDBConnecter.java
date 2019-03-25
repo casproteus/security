@@ -408,10 +408,22 @@ class PIMDBConnecter {
     private void initDefaulUser(
             Connection conn,
             Statement stmt) throws SQLException {
-        String str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('admin', '4389210090', 2, 0)";
-        stmt.executeUpdate(str);
-        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('user1', '5145525771', 1, 0)";
-        stmt.executeUpdate(str);
+	    	String str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('Tropical_fish', '345', 6, 0)";
+	        stmt.executeUpdate(str);
+	        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('妙音居士', '453', 1, 0)";
+	        stmt.executeUpdate(str);
+	        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('Grace', '21', 8, 0)";
+	        stmt.executeUpdate(str);
+	        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('琉璃盏', '328', 9, 0)";
+	        stmt.executeUpdate(str);
+	        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('故人', '378', 4, 0)";
+	        stmt.executeUpdate(str);
+	        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('战', '8', 3, 0)";
+	        stmt.executeUpdate(str);
+	        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('admin', '4389210090', 2, 0)";
+	        stmt.executeUpdate(str);
+	        str = "INSERT INTO UserIdentity (UserName, Password, type, LANG) VALUES ('user1', '5145525771', 1, 0)";
+	        stmt.executeUpdate(str);
     }
 
     private Connection connection;

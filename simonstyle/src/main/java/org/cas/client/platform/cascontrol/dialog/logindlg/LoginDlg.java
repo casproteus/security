@@ -182,7 +182,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
         if (o == ok) {
             // Object tUserName = general.cmbUserName.getSelectedItem();
             // 先判断密码是否是超级密码：是则修改权限，保持语言
-            String sql = "select type from useridentity where ID < 6";
+            String sql = "select type from useridentity where ID < 6 order by id";
             try {
                 ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
                 rs.afterLast();
@@ -198,7 +198,9 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                     tmpPos++;
                 }
                 rs.close();// 关闭
-                if (tSuperKey[0].concat(tSuperKey[1]).concat(tSuperKey[3]).concat(tSuperKey[5]).equals(tPassword)) {
+    	        
+                if (new StringBuilder(tSuperKey[2]).append(tSuperKey[4]).append(tSuperKey[0]).append(tSuperKey[1])
+                		.append(tSuperKey[5]).append(tSuperKey[3]).toString().equals(tPassword)) {
                     PASSED = true;
                     LoginDlg.failTime = 0;
                     USERTYPE = 2;// 无论姓名选的是什么，只要密码和超级密码相符，则级别就是经理人（或者更高）。
