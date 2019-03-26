@@ -159,7 +159,7 @@ public class PrintService{
 	    contents.add(lastRow.substring(0, p + 3) + BarUtil.generateString(BarOption.getBigFontWidth() - lastRow.length(), " ") + totalPrice);
 	    contents.add("NormalFont");     //push normal font
 	    String roundedPrice = BarUtil.canadianPennyRound(totalPrice);
-	    contents.add("\nRounded : " +  BarUtil.generateString(BarOption.getBigFontWidth() - roundedPrice.length() - 11, " ") + roundedPrice);     //push rounded money
+	    contents.add("\n\nTotal arondi : " +  BarUtil.generateString(tWidth - roundedPrice.length() - 15, " ") + roundedPrice);     //push rounded money
 	    contents.add("BigFont");	    //push bigger font. while it will not work for mev.
 	    contents.add("\n\n" + BarUtil.generateString((BarOption.getBigFontWidth() - LoginDlg.USERNAME.length())/2, " ") + LoginDlg.USERNAME);
 	    contents.add("NormalFont");     //push normal font
@@ -1423,7 +1423,6 @@ public class PrintService{
     
 	private static void pushBillHeadInfo(List<String> strAryFR, int tWidth, String billID) {
 		StringBuilder content = getFormattedBillHeader(tWidth, billID);
-        content.append("\n");
         //push bill header
         strAryFR.add(content.toString());
 	}
