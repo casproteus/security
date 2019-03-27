@@ -1101,7 +1101,7 @@ public class PrintService{
                     tSerialPort = (SerialPort)commPortIdentifier.open("PrintService", 10000);//并口用"ParallelBlackBox"
                     outputStream = new DataOutputStream(tSerialPort.getOutputStream());
                     for (String msg : sndMsg) {
-                    	if(msg.startsWith(REF_TO) && msg.substring(REF_TO.length()).equals(sndMsg.get(0).substring(0))) {
+                    	if(msg.startsWith(REF_TO) && msg.substring(REF_TO.length()).equals(sndMsg.get(0).substring(1))) {
                     		continue;
                     	}
             			sendContentOutThroughStream(msg, outputStream);
@@ -1209,7 +1209,7 @@ public class PrintService{
 			socket = new Socket(ip, 9100);
 			outputStream = socket.getOutputStream();
 			for (String msg : sndMsg) {
-            	if(msg.startsWith(REF_TO) && msg.substring(REF_TO.length()).equals(sndMsg.get(0).substring(0))) {
+            	if(msg.startsWith(REF_TO) && msg.substring(REF_TO.length()).equals(sndMsg.get(0).substring(1))) {
             		continue;
             	}
 				sendContentOutThroughStream(msg, outputStream);
