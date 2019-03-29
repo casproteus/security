@@ -10,6 +10,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -121,9 +122,10 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     public static void exactMoney(int billId, String pay) {
    		try {
    			//NOTE: should consider might been paid with card, so the new received should be the left not the total..
-   	    	StringBuilder sql = new StringBuilder("update bill set ").append(pay).append("Received = ")
-	   	    	.append(Math.round(Float.valueOf(valLeft.getText()) * 100))
+   	    	StringBuilder sql = new StringBuilder("update bill set ").append(pay)
+   	    			.append("Received = ").append(Math.round(Float.valueOf(valLeft.getText()) * 100))
 	   	    	//.append(", DebitReceived = 0, VisaReceived = 0, MasterReceived = 0")
+   	    		.append(", createTime = '").append(BarOption.df.format(new Date())).append("'")
 	   	    	.append(", status = ").append(DBConsts.completed)
 	   	    	.append(" where id = ").append(billId);
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
