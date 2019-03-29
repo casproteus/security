@@ -1771,8 +1771,13 @@ public class PrintService{
  				.append(BarUtil.generateString(width - lblText.length() - str.length(), " "))
  				.append(str).append("\n");
             }
-            
 
+            if(BarOption.getGSTAccount() != null && BarOption.getGSTAccount().length() > 5
+            		&& BarOption.getQSTAccount() != null && BarOption.getQSTAccount().length() > 5) {
+	            content.append("\n\nGST:").append(BarOption.getGSTAccount());
+	            content.append("\nQST:").append(BarOption.getQSTAccount()).append("\n");
+            }
+            
     	}catch(Exception e) {
     		ErrorUtil.write(e);
     	}
