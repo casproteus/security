@@ -45,7 +45,6 @@ public class ChangeDlg extends JDialog implements ComponentListener, ActionListe
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		this.dispose();
-    	BarFrame.instance.switchMode(0);
 	}
 	
 	@Override

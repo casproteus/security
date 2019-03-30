@@ -146,7 +146,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	    	BarFrame.instance.createAnEmptyBill(null, null, newBillIdx);//create new bill;
 	    	((SalesPanel)BarFrame.instance.panels[2]).billPanel.initContent();
 	    }else if(BarFrame.instance.isTableEmpty(null, null)) {
-				BarFrame.instance.closeATable(null, null);
+			BarFrame.instance.closeATable(null, null);
 	    }
    		
     }
@@ -434,8 +434,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	        	BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
         		boolean needToBePrinted = billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled();
 	        	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
-	        	
-        		BarFrame.instance.switchMode(0);
+	        	if(!BarOption.isFastFoodMode()) {
+	        		BarFrame.instance.switchMode(0);
+	        	}
         	}
         	
         } else if(o == btnExact) {//update bill and display change 0.00;
@@ -464,7 +465,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
         	
     		PrintService.openDrawer();
-        	BarFrame.instance.switchMode(0);
+    		if(!BarOption.isFastFoodMode()) {
+    			BarFrame.instance.switchMode(0);
+    		}
         	
         } else {
 	        if(isAllContentSelected)

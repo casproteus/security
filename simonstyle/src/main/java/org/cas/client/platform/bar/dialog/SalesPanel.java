@@ -243,7 +243,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		billPanel.resetColWidth(billPanel.getWidth());
             		billPanel.table.setSelectedRow(tValues.length - 1);
             		billPanel.updateTotleArea();
-            	}else {
+            	}else if(!BarOption.isFastFoodMode()){
             		//@NOTE: we don't close current bill, because maybe there's output still have billID of this bill, all the empty bill will be closed when table closed.
             		//update bill and dining_table in db.
             		if(BarFrame.instance.isTableEmpty(null, null)) {
@@ -495,11 +495,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			L.e("void order", "error happend when voiding a bill with ID:"+ billID, exp);
 		}
 		
-		//if the bill amount is 1, cancel the selected status of the table.
-		if(BarFrame.instance.isTableEmpty(null, null)) {
-			BarFrame.instance.closeATable(null, null);
+		if(!BarOption.isFastFoodMode()) {
+			//if the bill amount is 1, cancel the selected status of the table.
+			if(BarFrame.instance.isTableEmpty(null, null)) {
+				BarFrame.instance.closeATable(null, null);
+			}
+			BarFrame.instance.switchMode(0);
 		}
-		BarFrame.instance.switchMode(0);
 	}
 
 	public void discountBill(float discount) {

@@ -176,11 +176,17 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 	                    	PrintService.exePrintInvoice(salesPanel.billPanel, false, true, true);
 	                    	BarFrame.instance.closeCurrentBill();
 		                	this.setVisible(false);
-		                	
-		            		if(BarFrame.instance.isTableEmpty(null, null)) {
-		            			BarFrame.instance.closeATable(null, null);
-		            		}
-		            		BarFrame.instance.switchMode(0);
+		                	if(BarOption.isFastFoodMode()) {
+		                		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
+		            	    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(newBillIdx));
+		            	    	BarFrame.instance.createAnEmptyBill(null, null, newBillIdx);//create new bill;
+		            	    	((SalesPanel)BarFrame.instance.panels[2]).billPanel.initContent();
+		                	}else {
+			            		if(BarFrame.instance.isTableEmpty(null, null)) {
+			            			BarFrame.instance.closeATable(null, null);
+			            		}
+			            		BarFrame.instance.switchMode(0);
+		                	}
 	                    }
                     } else {//apply the coupon only to the dish item.
 	                	//find out the most expensive dish

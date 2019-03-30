@@ -45,7 +45,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.190-20190329";
+	private String VERSION = "V0.191-20190330";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     
@@ -473,6 +473,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 
     String oldTable;
 	public boolean ignoreItemChange;
+	
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		switch (e.getStateChange()){
@@ -508,7 +509,6 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
                  if(isTableEmpty(oldTable, null)) {
                 	 closeATable(oldTable, null);
          		 }
-                 
                  
                  switchMode(0);//switch back to table interface, otherwise, when there's multiple bills, the content will be run.
                  break;
