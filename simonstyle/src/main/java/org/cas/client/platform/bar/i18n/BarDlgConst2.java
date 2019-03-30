@@ -257,6 +257,10 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String ServerHost() {return "服务器地址";}
     @Override
 	public String PrinterError() {return "警告！后台打印时发生错误，请检查相关打印机然后再试！";}
+    @Override
+	public String NoSerialPrinterFound() {return "没有找到打印机！请检查打印机连接，并确保打印机连到第一个com端口.";}
+    @Override
+	public String NoComPortFound() {return "没有找到可用com端口! 请检查打印机连接和com端口的驱动.";}
     
     @Override
 	public String OTHER() {return "其他";}
