@@ -139,9 +139,16 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
    		}catch(Exception e) {
 			ErrorUtil.write(e);
 		}
-   		if(BarFrame.instance.isTableEmpty(null, null)) {
-			BarFrame.instance.closeATable(null, null);
-   		}
+   		
+   		if(BarOption.isFastFoodMode()) {
+    		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
+	    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(newBillIdx));
+	    	BarFrame.instance.createAnEmptyBill(null, null, newBillIdx);//create new bill;
+	    	((SalesPanel)BarFrame.instance.panels[2]).billPanel.initContent();
+	    }else if(BarFrame.instance.isTableEmpty(null, null)) {
+				BarFrame.instance.closeATable(null, null);
+	    }
+   		
     }
     
 	public void initContent(BillPanel billPanel) {
@@ -407,9 +414,14 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             			BarUtil.updateBill(billId, "TIP", oldTip - left);	//otherwise, treated as tip. the tip in DB are positive, because it means we earned money.
             		}
             	}
-        		if(BarFrame.instance.isTableEmpty(null, null)) {
+            	if(BarOption.isFastFoodMode()) {
+            		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
+        	    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(newBillIdx));
+        	    	BarFrame.instance.createAnEmptyBill(null, null, newBillIdx);//create new bill;
+        	    	((SalesPanel)BarFrame.instance.panels[2]).billPanel.initContent();
+        	    }else if(BarFrame.instance.isTableEmpty(null, null)) {
         			BarFrame.instance.closeATable(null, null);
-        		}
+        	    }
         	}
         	//no matter it's closed or not, we need to update the pay info of the bill. why?
     		updateBill(billId);
