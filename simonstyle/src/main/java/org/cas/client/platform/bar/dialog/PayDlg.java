@@ -379,6 +379,12 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	int billOldStatus = getBillStatus(billId);
         	//check if left moeny is 0. 
         	int left = Math.round(Float.valueOf(valLeft.getText()) * 100);
+
+        	//no matter it's closed or not, we need to update the pay info of the bill. why?
+    		updateBill(billId);
+        	resetContent();
+        	this.setVisible(false);
+        	
         	if( left > 0) {
 //	        	if(JOptionPane.showConfirmDialog(this, BarFrame.consts.reCeivedMoneyNotEnough(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
 //	        		//user selected to close the bill. update the bill to closed
@@ -421,11 +427,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	    	BarFrame.instance.switchMode(0);
         	    }
         	}
-        	//no matter it's closed or not, we need to update the pay info of the bill. why?
-    		updateBill(billId);
-        	resetContent();
-        	this.setVisible(false);
-
+        	
         	PrintService.openDrawer();
         	
         } else if(o == btnExact) {//update bill and display change 0.00;
@@ -447,13 +449,14 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 
         	BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
         	boolean needToBePrinted = billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled();
-        	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
         	
         	exactMoney(billId, strPay);
         	resetContent();
         	this.setVisible(false);
-    		PrintService.openDrawer();
         	
+        	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
+    		PrintService.openDrawer();
+
         	if(BarOption.isFastFoodMode()) {
     	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
     	    	((SalesPanel)BarFrame.instance.panels[2]).addNewBillInCurTable();
