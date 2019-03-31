@@ -10,6 +10,7 @@ import java.awt.event.FocusListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -364,10 +365,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		createAndPrintNewOutput();
         		billPricesUpdateToDB();
             	if(BarOption.isFastFoodMode()) {
-            		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
-    		    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(newBillIdx));
-    		    	BarFrame.instance.createAnEmptyBill(null, null, newBillIdx);//create new bill;
-    		    	billPanel.initContent();
+        	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
+        	    	addNewBillInCurTable();
     		    }else {
     		    	BarFrame.instance.switchMode(0);
     		    }
@@ -520,11 +519,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String openTime = BarFrame.instance.valStartTime.getText();
 		
-		String newBillIdx = String.valueOf(BillListPanel.getANewBillIdx(null, null));
+		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
 		
-		int billId = billPanel.generateEmptyBillRecord(tableName, newBillIdx, openTime);
+		int billId = BarFrame.instance.createAnEmptyBill(tableName, openTime, newBillIdx);
 		billPanel.billID = billId;
-		BarFrame.instance.valCurBillIdx.setText(newBillIdx);
+		BarFrame.instance.valCurBillIdx.setText(String.valueOf(newBillIdx));
 		BarFrame.instance.switchMode(2);
 	}
 

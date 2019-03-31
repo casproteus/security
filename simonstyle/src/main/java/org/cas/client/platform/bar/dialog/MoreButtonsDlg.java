@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -177,10 +178,8 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 	                    	BarFrame.instance.closeCurrentBill();
 		                	this.setVisible(false);
 		                	if(BarOption.isFastFoodMode()) {
-		                		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
-		            	    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(newBillIdx));
-		            	    	BarFrame.instance.createAnEmptyBill(null, null, newBillIdx);//create new bill;
-		            	    	((SalesPanel)BarFrame.instance.panels[2]).billPanel.initContent();
+		            	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
+		            	    	salesPanel.addNewBillInCurTable();
 		                	}else {
 			            		if(BarFrame.instance.isTableEmpty(null, null)) {
 			            			BarFrame.instance.closeATable(null, null);

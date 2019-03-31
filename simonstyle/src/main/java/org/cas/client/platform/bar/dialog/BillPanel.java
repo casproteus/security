@@ -140,34 +140,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		return comment;
 	}
 
-	//will not duplicat the comment property of current bill.
-	//when need to creat an empty new bill instead of  expire one and regenerate one and at the same time should call this.
-	public int generateEmptyBillRecord(String tableID, String billIndex, String opentime) {
-		//generate a bill in db and update the output with the new bill id
-		String createtime = BarOption.df.format(new Date());
-		try {
-			StringBuilder sql = new StringBuilder(
-	            "INSERT INTO bill(createtime, tableID, BillIndex, EMPLOYEEID, opentime, comment) VALUES ('")
-				.append(createtime).append("', '")
-	            .append(tableID).append("', '")	//table
-	            .append(billIndex).append("', ")			//billIdx
-	            .append(LoginDlg.USERID).append(", '")		//emoployid
-	            .append(opentime).append("', '')");				//comment
-		
-			PIMDBModel.getStatement().executeUpdate(sql.toString());
-			
-		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime)
-		   			.append("' and billIndex = '").append(billIndex).append("'");
-	        ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-	        rs.beforeFirst();
-	        rs.next();
-	        return rs.getInt("id");
-		 }catch(Exception e) {
-			ErrorUtil.write(e);
-			return -1;
-		 }
-	}
-	
 	public int cloneCurrentBillRecord(String tableID, String billIndex, String opentime, int total) {
 		if(total < 0) {
 			total = Math.round(Float.valueOf(valTotlePrice.getText()) * 100);

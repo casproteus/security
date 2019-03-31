@@ -140,15 +140,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 			ErrorUtil.write(e);
 		}
    		
-   		if(BarOption.isFastFoodMode()) {
-    		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
-	    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(newBillIdx));
-	    	BarFrame.instance.createAnEmptyBill(null, null, newBillIdx);//create new bill;
-	    	((SalesPanel)BarFrame.instance.panels[2]).billPanel.initContent();
-	    }else if(BarFrame.instance.isTableEmpty(null, null)) {
-			BarFrame.instance.closeATable(null, null);
-	    }
-   		
     }
     
 	public void initContent(BillPanel billPanel) {
@@ -414,13 +405,20 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             			BarUtil.updateBill(billId, "TIP", oldTip - left);	//otherwise, treated as tip. the tip in DB are positive, because it means we earned money.
             		}
             	}
+
+            	//let's qa decide if we should go back to table interface.
+	        	BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
+        		boolean needToBePrinted = billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled();
+	        	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
+            	
             	if(BarOption.isFastFoodMode()) {
-            		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
-        	    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(newBillIdx));
-        	    	BarFrame.instance.createAnEmptyBill(null, null, newBillIdx);//create new bill;
-        	    	((SalesPanel)BarFrame.instance.panels[2]).billPanel.initContent();
-        	    }else if(BarFrame.instance.isTableEmpty(null, null)) {
-        			BarFrame.instance.closeATable(null, null);
+        	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
+        	    	((SalesPanel)BarFrame.instance.panels[2]).addNewBillInCurTable();
+        	    }else {
+        	    	if(BarFrame.instance.isTableEmpty(null, null)) {
+            			BarFrame.instance.closeATable(null, null);
+            	    }
+        	    	BarFrame.instance.switchMode(0);
         	    }
         	}
         	//no matter it's closed or not, we need to update the pay info of the bill. why?
@@ -429,15 +427,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	this.setVisible(false);
 
         	PrintService.openDrawer();
-        	//let's qa decide if we should go back to table interface.
-        	if(left <= 0) {
-	        	BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
-        		boolean needToBePrinted = billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled();
-	        	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
-	        	if(!BarOption.isFastFoodMode()) {
-	        		BarFrame.instance.switchMode(0);
-	        	}
-        	}
         	
         } else if(o == btnExact) {//update bill and display change 0.00;
         	String strPay = "other";
@@ -455,19 +444,23 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     		
     		int billId = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
     		int billOldStatus = getBillStatus(billId);
-    		
-        	exactMoney(billId, strPay);
-        	resetContent();
-        	this.setVisible(false);
 
         	BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
         	boolean needToBePrinted = billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled();
         	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
         	
+        	exactMoney(billId, strPay);
+        	resetContent();
+        	this.setVisible(false);
     		PrintService.openDrawer();
-    		if(!BarOption.isFastFoodMode()) {
+        	
+        	if(BarOption.isFastFoodMode()) {
+    	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
+    	    	((SalesPanel)BarFrame.instance.panels[2]).addNewBillInCurTable();
+    	    }else if(BarFrame.instance.isTableEmpty(null, null)) {
+    			BarFrame.instance.closeATable(null, null);
     			BarFrame.instance.switchMode(0);
-    		}
+    	    }
         	
         } else {
 	        if(isAllContentSelected)
