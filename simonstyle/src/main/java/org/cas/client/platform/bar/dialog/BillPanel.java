@@ -726,8 +726,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				}
                 ResultSet resultSet = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
                 resultSet.beforeFirst();
-                resultSet.next();
-                billID = resultSet.getInt("id");
+                if(resultSet.next()) {
+                	billID = resultSet.getInt("id");
+                }else {
+                	L.e("initing BillPanel", "there's no bill in an openned table.", null);
+                	BarFrame.instance.createAnEmptyBill(tableName, openTime, 0);
+                }
 			}
 			rs.close();
 		} catch (Exception e) {
