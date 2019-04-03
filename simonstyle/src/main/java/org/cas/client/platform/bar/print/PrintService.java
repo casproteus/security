@@ -867,10 +867,11 @@ public class PrintService{
 				}
 			}else if(i == 4) { // find out the payment.
 				if(!tText.startsWith(REF_TO)) { //the element at this position might be a ref(including old moneys) not for sure a paid methods.
-					String[] a = tText.split("\n");
+					int p = tText.indexOf("\n\n");
+					String[] a = tText.substring(0, p).split("\n");
 					if(a.length == 2) {		//we use I, because there's a line of "change" or "tip".
 						paiementTrans = getMatechPaytrans(a[0]);
-					}else if (a.length  > 2){
+					}else if (a.length > 2){
 						paiementTrans = "MIX";
 					}
 				}
