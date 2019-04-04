@@ -205,7 +205,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
 		//prepare the printing String and do printing
 		String curTable = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
-		String curCustomerIdx = BarFrame.instance.valCurBillIdx.getText();
+		String curCustomerIdx = BarFrame.instance.getOnSrcCurBillIdx();
 		String waiterName = BarFrame.instance.valOperator.getText();
 		PrintService.exePrintOrderList(dishes, curTable, curCustomerIdx, waiterName, isCancelled);
 	}
@@ -311,7 +311,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         		return;
         	}
         	
-    		BarFrame.instance.valCurBillIdx.setText(((JToggleButton)o).getText());
+    		BarFrame.instance.setCurBillIdx(((JToggleButton)o).getText());
             BarFrame.instance.switchMode(2);
 		}
 		
@@ -459,15 +459,15 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				}else {	//no current item ready for split, then just select the. 
 					billButton.setSelected(!billButton.isSelected());
 					if(billButton.isSelected()) {
-						BarFrame.instance.valCurBillIdx.setText(billButton.getText());
+						BarFrame.instance.setCurBillIdx(billButton.getText());
 						BarFrame.instance.curBillID = billID;
 					}else {
 						BillPanel panel = billListPanel.getCurBillPanel();
 						if(panel != null) {
-							BarFrame.instance.valCurBillIdx.setText(panel.billButton.getText());
+							BarFrame.instance.setCurBillIdx(panel.billButton.getText());
 							BarFrame.instance.curBillID = panel.billID;
 						}else {
-							BarFrame.instance.valCurBillIdx.setText("");
+							BarFrame.instance.setCurBillIdx("");
 							BarFrame.instance.curBillID = 0;
 						}
 					}
@@ -513,7 +513,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         }
         newDish.setTotalPrice(price * 1);
         newDish.setOpenTime(BarFrame.instance.valStartTime.getText());
-        newDish.setBillIndex(BarFrame.instance.valCurBillIdx.getText());
+        newDish.setBillIndex(BarFrame.instance.getCurBillIndex());
         newDish.setBillID(billID);
         orderedDishAry.add(newDish);				//valueChanged process. not being cleared immediately-----while now dosn't matter
         BillListPanel.curDish = newDish;
@@ -720,10 +720,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			//so must consider the bill ID if it's not empty string.
 			else if(tableName.length() > 0 && openTime.length() > 0) {
 				sql = new StringBuilder("Select id from bill where tableID = '").append(tableName)
-						.append("' and opentime = '").append(openTime).append("'");
-				if(BarFrame.instance.valCurBillIdx.getText().length() > 0) {
-					sql.append(" and billIndex = '").append(BarFrame.instance.valCurBillIdx.getText()).append("'");
-				}
+						.append("' and opentime = '").append(openTime)
+						.append("' and billIndex = '").append(BarFrame.instance.getCurBillIndex()).append("'");
                 ResultSet resultSet = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
                 resultSet.beforeFirst();
                 if(resultSet.next()) {
@@ -836,7 +834,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	//caller can specify the billIdx, if the billIdx is not specified, then use the billIdx on Frame.
 	public void reGenerate(String billIdx) {
 		if(billIdx == null || billIdx.length() == 0) {
-			billIdx = BarFrame.instance.valCurBillIdx.getText();
+			billIdx = BarFrame.instance.getCurBillIndex();
 		}
 		
 		try {

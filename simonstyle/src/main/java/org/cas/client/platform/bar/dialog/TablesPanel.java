@@ -131,11 +131,11 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 					L.w("Warning:", "when open table, found no related bill in a open status table", null);
 					tableToggle.open();
 					BarFrame.instance.valStartTime.setText(tableToggle.getOpenTime());
-					BarFrame.instance.valCurBillIdx.setText("");
+					BarFrame.instance.setCurBillIdx("");
 					BarFrame.instance.switchMode(2);
 				} else { // if it's not empty
 					if(num == 1 && CustOpts.custOps.getValue("FrobiddenQuickEnter") == null) {	// display the only bill
-						BarFrame.instance.valCurBillIdx.setText(rs.getString("billIndex"));
+						BarFrame.instance.setCurBillIdx(rs.getString("billIndex"));
 						BarFrame.instance.switchMode(2);
 					}else { //or switch to the bill panel to show all the bills.
 						BarFrame.instance.switchMode(1);

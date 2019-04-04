@@ -45,7 +45,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.191-20190330";
+	private String VERSION = "V0.192-20190403";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     
@@ -665,7 +665,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 			StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.completed)
 					.append(" where subject = '").append(BarFrame.instance.cmbCurTable.getSelectedItem())
 					.append("' and time = '").append(BarFrame.instance.valStartTime.getText()).append("'")
-					.append(" and contactID = ").append(BarFrame.instance.valCurBillIdx.getText());
+					.append(" and contactID = ").append(BarFrame.instance.getCurBillIndex());
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 			
 			sql = new StringBuilder("update bill set status = ").append(DBConsts.completed)
@@ -744,7 +744,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     private JLabel lblStartTime;
     
     public JComboBox<String> cmbCurTable;
-    public JLabel valCurBillIdx;
+    private JLabel valCurBillIdx;
     public JLabel valOperator;
     public JLabel valStartTime;
 
@@ -759,6 +759,17 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 			return "1";
 		else
 			return curBillIndex;
+	}
+	
+	public String getOnSrcCurBillIdx(){
+		return valCurBillIdx.getText();
+	}
+	
+	public void setCurBillIdx(String curBillIndex) {
+		if(curBillIndex == null || curBillIndex.trim().length() == 0 || "0".equals(curBillIndex))
+			valCurBillIdx.setText("");
+		else
+			valCurBillIdx.setText(curBillIndex);
 	}
 
 }

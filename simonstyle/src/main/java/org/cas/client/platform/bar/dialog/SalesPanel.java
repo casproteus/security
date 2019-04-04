@@ -338,7 +338,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		//@NOTE:no need to generata new output. the output will be choosed by table and billIdx.
             		billPanel.comment = PrintService.REF_TO + billPanel.billID + "F";
              		int newBillID = billPanel.cloneCurrentBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
-            				String.valueOf(BarFrame.instance.valCurBillIdx.getText()),
+            				String.valueOf(BarFrame.instance.getCurBillIndex()),
             				BarFrame.instance.valStartTime.getText(),
             				Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
              		
@@ -412,8 +412,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	private void voidCurrentOrder() {
 		int dishLength = billPanel.orderedDishAry.size();
 		int billID = billPanel.billID;
-    	String curBill = BarFrame.instance.valCurBillIdx.getText();
-    	curBill = "".equals(curBill) ? "1" : curBill;
+    	String curBill = BarFrame.instance.getCurBillIndex();
+    	
 		try {
 			//check if it's a "mistake-opening-table-action" or "adding bill action" by check if there's any output on it already. 
 			//will be considered as non-empty as long as there's output connecting to the id, even the output is not currently displaying on this bill.
@@ -500,7 +500,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			String newOpenTime = BarOption.df.format(new Date());
 			int newBillIdx = BillListPanel.getANewBillIdx(tableName, newOpenTime);
 			BarFrame.instance.valStartTime.setText(newOpenTime);
-			BarFrame.instance.valCurBillIdx.setText(String.valueOf(newBillIdx));
+			BarFrame.instance.setCurBillIdx(String.valueOf(newBillIdx));
 			
 			BarFrame.instance.createAnEmptyBill(tableName, newOpenTime, newBillIdx);
 			billPanel.initContent();
@@ -534,7 +534,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		
 		int billId = BarFrame.instance.createAnEmptyBill(tableName, openTime, newBillIdx);
 		billPanel.billID = billId;
-		BarFrame.instance.valCurBillIdx.setText(String.valueOf(newBillIdx));
+		BarFrame.instance.setCurBillIdx(String.valueOf(newBillIdx));
 		BarFrame.instance.switchMode(2);
 	}
 

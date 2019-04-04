@@ -609,11 +609,11 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		        	ErrorUtil.write(exp);
 		        }
 		        
-				BarFrame.instance.valCurBillIdx.setText("");
+				BarFrame.instance.setCurBillIdx("");
 				BarFrame.instance.switchMode(0);
 				
 			}else if(o == btnReturn) {
-				BarFrame.instance.valCurBillIdx.setText("");
+				BarFrame.instance.setCurBillIdx("");
 				BarFrame.instance.switchMode(0);
 			}
 
