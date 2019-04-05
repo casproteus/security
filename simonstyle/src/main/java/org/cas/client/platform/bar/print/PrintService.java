@@ -871,12 +871,7 @@ public class PrintService{
 					if(p > 0) {
 						tText = tText.substring(0, p);
 					}
-					String[] a = tText.split("\n");
-					if(a.length == 2) {		//we use I, because there's a line of "change" or "tip".
-						paiementTrans = getMatechPaytrans(a[0]);
-					}else if (a.length > 2){
-						paiementTrans = "MIX";
-					}
+					paiementTrans = getMatechPaytrans(tText.split("\n"));
 				}
 			}
 		}
@@ -1023,22 +1018,41 @@ public class PrintService{
 		return numeroRef;
 	}
 
-	private static String getMatechPaytrans(String string) {
-		if(string == null || string.length() == 0) {
-			return "SOB";
-		}else {
-			switch (string.substring(0, string.indexOf(":")).trim()) {
-			case CASH:
-				return "ARG";
-			case "DEBIT":
-				return "DEB";
-			case "VISA":
-				return "CRE";
-			case "MASTER":
-				return "CRE";
-			default:
-				return "AUT";
+	private static String getMatechPaytrans(String[] lines) {
+		String paiementTrans = "SOB";
+		int payMethodQT = 0;
+		for (String string : lines) {
+			if(string == null || string.length() == 0) {
+				continue;
+			}else {
+				switch (string.substring(0, string.indexOf(":")).trim()) {
+				case CASH:
+					payMethodQT++;
+					paiementTrans = "ARG";
+					break;
+				case "DEBIT":
+					payMethodQT++;
+					paiementTrans = "DEB";
+					break;
+				case "VISA":
+					payMethodQT++;
+					paiementTrans = "CRE";
+					break;
+				case "MASTER":
+					payMethodQT++;
+					paiementTrans = "CRE";
+					break;
+				case "OTHER":
+					payMethodQT++;
+					paiementTrans = "AUT";
+					break;
+				}
 			}
+		}
+		if(payMethodQT > 1) {
+			return "MIX";
+		}else {
+			return paiementTrans;
 		}
 	}
     
@@ -1382,13 +1396,8 @@ public class PrintService{
 	    
 	    strAryFR.add(getServiceDetailContent(billPanel.orderedDishAry, curPrintIp, billPanel, tWidth).toString());
 	    String payMethodInfo = getOutPayInfo(billPanel, tWidth, false);
-	    String a[] = payMethodInfo.trim().split("\n");
-	    String payMethod = "";
-	    if(a.length == 2) {		//we use I, because there's a line of "change" or "tip".
-	    	payMethod = getMatechPaytrans(a[0]);
-		}else if (a.length  > 2){
-			payMethod = "MIX";
-		}
+	    String payMethod = getMatechPaytrans(payMethodInfo.trim().split("\n"));
+		
         pushRefundAndNewTotal(billPanel, strAryFR, refundAmount, payMethod, tWidth);
         
         strAryFR.add(billPanel.comment);
@@ -1427,7 +1436,7 @@ public class PrintService{
         pushSalesSummary(strAryFR, list, tWidth,
         		String.valueOf(salesGrossCount), String.valueOf(refundCount), 
         		salesGrossAmount, BarUtil.formatMoney(refoundAmount / 100.0));
-        pushPaymentSummary(strAryFR, list, tWidth);
+        pushPaymentSummaryForReport(strAryFR, list, tWidth);
         pushSummaryByServiceType(strAryFR, list, tWidth);
         pushVoidItemSummary(strAryFR, tWidth, startTime, endTime);
         pushOtherSummary(list);
@@ -1858,7 +1867,7 @@ public class PrintService{
 		strAryFR.add(content.toString());
 	}
 	
-	private static void pushPaymentSummary(ArrayList<String> strAryFR, List<Bill> list, int width) {
+	private static void pushPaymentSummaryForReport(ArrayList<String> strAryFR, List<Bill> list, int width) {
 		StringBuilder content = new StringBuilder();
 		//title
 		String paymentSummary = "Payment Summary";
