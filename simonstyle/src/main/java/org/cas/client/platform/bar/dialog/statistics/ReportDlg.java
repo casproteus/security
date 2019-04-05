@@ -317,9 +317,9 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
 		txpPreview.setText(wholeContent.substring(0, wholeContent.length() - 9));
 	}
 	
-    private HashMap<String, ArrayList<Bill>> divideIntoMap(ArrayList<Bill> bills2) {
+    private HashMap<String, ArrayList<Bill>> divideIntoMap(ArrayList<Bill> bills) {
     	HashMap<String, ArrayList<Bill>> map = new HashMap<String, ArrayList<Bill>>();
-    	for (Bill bill : bills2) {
+    	for (Bill bill : bills) {
 			String waiterName = bill.getEmployeeName();
 			if(map.containsKey(waiterName)) {
 				ArrayList<Bill> list = map.get(waiterName);
@@ -529,6 +529,7 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
             	bill.setDebitReceived(rs.getInt("debitReceived"));
             	bill.setVisaReceived(rs.getInt("visaReceived"));
             	bill.setMasterReceived(rs.getInt("masterReceived")); 
+            	bill.setOtherReceived(rs.getInt("otherReceived")); 
             	bill.setTip(rs.getInt("tip"));
             	bill.setCashback(rs.getInt("cashback"));
             	bill.setStatus(rs.getInt("status"));
