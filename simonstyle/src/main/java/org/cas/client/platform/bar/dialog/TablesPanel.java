@@ -126,20 +126,21 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 				rs.relative(-1);
 				int num = rs.getRow();
 				
-				//will not be empty anymore, because whenever click a table, we will create a bill for it.
-//				if (num == 0) {// if it's empty, switch to sales panel
-//					L.e("open table", " found no related bill in a open status table", null);
-//					tableToggle.open();
-//					BarFrame.instance.valCurBillIdx.setText("");
-//					BarFrame.instance.switchMode(2);
-//				} else { // if it's not empty
+				//if it's table mode, will not be empty anymore, because whenever click a table, we will create a bill for it.
+				if (num == 0) {// if it's empty, means it's fastfood mode, and the previous bill was deleted (should not happen though). switch to sales panel
+					L.w("Warning:", "when open table, found no related bill in a open status table", null);
+					tableToggle.open();
+					BarFrame.instance.valStartTime.setText(tableToggle.getOpenTime());
+					BarFrame.instance.setCurBillIdx("");
+					BarFrame.instance.switchMode(2);
+				} else { // if it's not empty
 					if(num == 1 && CustOpts.custOps.getValue("FrobiddenQuickEnter") == null) {	// display the only bill
-						BarFrame.instance.valCurBillIdx.setText(rs.getString("billIndex"));
+						BarFrame.instance.setCurBillIdx(rs.getString("billIndex"));
 						BarFrame.instance.switchMode(2);
 					}else { //or switch to the bill panel to show all the bills.
 						BarFrame.instance.switchMode(1);
 					}
-//				}
+				}
 				tableToggle.setSelected(true);
 			} catch (Exception exp) {
 				ErrorUtil.write(exp);

@@ -332,10 +332,10 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 						.append(" where id = ").append(targetBillId);
 				PIMDBModel.getStatement().executeUpdate(sql.toString());
 			}else {
-				targetBillId = targetBillPanel.generateEmptyBillRecord(
+				targetBillId = BarFrame.instance.createAnEmptyBill(
 						BarFrame.instance.cmbCurTable.getSelectedItem().toString(), 
-						targetBillPanel.billButton.getText(), 
-						BarFrame.instance.valStartTime.getText());
+						BarFrame.instance.valStartTime.getText(), 
+						Integer.valueOf(targetBillPanel.billButton.getText()));
 				sql = new StringBuilder("update bill set total = ")
 						.append(outputTotalPrice)
 						.append(" where id = ").append(targetBillId);
@@ -468,10 +468,10 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 						//generate a bill for each new occupied panel, incase there's discount info need to set into it.
 						//@Note, when the initContent of the panel called, the bill ID will be set into the dish instance in memory.
 						//and eventually, if the bill id is not 0, will calculate the service fee and discount into Total.
-						int id = billPanel.generateEmptyBillRecord(
+						int id = BarFrame.instance.createAnEmptyBill(
 								BarFrame.instance.cmbCurTable.getSelectedItem().toString(), 
-								String.valueOf(billIndex), 
-								BarFrame.instance.valStartTime.getText());
+								BarFrame.instance.valStartTime.getText(), 
+								billIndex);
 						Dish dish = curDish.clone();
 						dish.setBillID(id);
 						Dish.splitOutput(dish, selectedPanels.size() + 1, billPanel.billButton.getText());
@@ -609,11 +609,11 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		        	ErrorUtil.write(exp);
 		        }
 		        
-				BarFrame.instance.valCurBillIdx.setText("");
+				BarFrame.instance.setCurBillIdx("");
 				BarFrame.instance.switchMode(0);
 				
 			}else if(o == btnReturn) {
-				BarFrame.instance.valCurBillIdx.setText("");
+				BarFrame.instance.setCurBillIdx("");
 				BarFrame.instance.switchMode(0);
 			}
 

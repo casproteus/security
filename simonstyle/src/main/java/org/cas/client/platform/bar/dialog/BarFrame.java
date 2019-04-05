@@ -45,7 +45,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.187-20190318";
+	private String VERSION = "V0.192-20190403";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     
@@ -473,6 +473,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 
     String oldTable;
 	public boolean ignoreItemChange;
+	
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		switch (e.getStateChange()){
@@ -508,7 +509,6 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
                  if(isTableEmpty(oldTable, null)) {
                 	 closeATable(oldTable, null);
          		 }
-                 
                  
                  switchMode(0);//switch back to table interface, otherwise, when there's multiple bills, the content will be run.
                  break;
@@ -665,10 +665,11 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 			StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.completed)
 					.append(" where subject = '").append(BarFrame.instance.cmbCurTable.getSelectedItem())
 					.append("' and time = '").append(BarFrame.instance.valStartTime.getText()).append("'")
-					.append(" and contactID = ").append(BarFrame.instance.valCurBillIdx.getText());
+					.append(" and contactID = ").append(BarFrame.instance.getCurBillIndex());
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 			
 			sql = new StringBuilder("update bill set status = ").append(DBConsts.completed)
+					.append(", createTime = '").append(BarOption.df.format(new Date())).append("'")
 					.append(" where id = ").append(billID);
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 		}catch(Exception exp) {
@@ -743,7 +744,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     private JLabel lblStartTime;
     
     public JComboBox<String> cmbCurTable;
-    public JLabel valCurBillIdx;
+    private JLabel valCurBillIdx;
     public JLabel valOperator;
     public JLabel valStartTime;
 
@@ -758,6 +759,17 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 			return "1";
 		else
 			return curBillIndex;
+	}
+	
+	public String getOnSrcCurBillIdx(){
+		return valCurBillIdx.getText();
+	}
+	
+	public void setCurBillIdx(String curBillIndex) {
+		if(curBillIndex == null || curBillIndex.trim().length() == 0 || "0".equals(curBillIndex))
+			valCurBillIdx.setText("");
+		else
+			valCurBillIdx.setText(curBillIndex);
 	}
 
 }

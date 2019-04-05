@@ -867,12 +867,11 @@ public class PrintService{
 				}
 			}else if(i == 4) { // find out the payment.
 				if(!tText.startsWith(REF_TO)) { //the element at this position might be a ref(including old moneys) not for sure a paid methods.
-					String[] a = tText.split("\n");
-					if(a.length == 2) {		//we use I, because there's a line of "change" or "tip".
-						paiementTrans = getMatechPaytrans(a[0]);
-					}else if (a.length  > 2){
-						paiementTrans = "MIX";
+					int p = tText.indexOf("\n\n");
+					if(p > 0) {
+						tText = tText.substring(0, p);
 					}
+					paiementTrans = getMatechPaytrans(tText.split("\n"));
 				}
 			}
 		}
@@ -1019,22 +1018,41 @@ public class PrintService{
 		return numeroRef;
 	}
 
-	private static String getMatechPaytrans(String string) {
-		if(string == null || string.length() == 0) {
-			return "SOB";
-		}else {
-			switch (string.substring(0, string.indexOf(":")).trim()) {
-			case CASH:
-				return "ARG";
-			case "DEBIT":
-				return "DEB";
-			case "VISA":
-				return "CRE";
-			case "MASTER":
-				return "CRE";
-			default:
-				return "AUT";
+	private static String getMatechPaytrans(String[] lines) {
+		String paiementTrans = "SOB";
+		int payMethodQT = 0;
+		for (String string : lines) {
+			if(string == null || string.length() == 0) {
+				continue;
+			}else {
+				switch (string.substring(0, string.indexOf(":")).trim()) {
+				case CASH:
+					payMethodQT++;
+					paiementTrans = "ARG";
+					break;
+				case "DEBIT":
+					payMethodQT++;
+					paiementTrans = "DEB";
+					break;
+				case "VISA":
+					payMethodQT++;
+					paiementTrans = "CRE";
+					break;
+				case "MASTER":
+					payMethodQT++;
+					paiementTrans = "CRE";
+					break;
+				case "OTHER":
+					payMethodQT++;
+					paiementTrans = "AUT";
+					break;
+				}
 			}
+		}
+		if(payMethodQT > 1) {
+			return "MIX";
+		}else {
+			return paiementTrans;
 		}
 	}
     
@@ -1100,8 +1118,11 @@ public class PrintService{
                 //if (!commPortIdentifier.isCurrentlyOwned()) {
                     tSerialPort = (SerialPort)commPortIdentifier.open("PrintService", 10000);//并口用"ParallelBlackBox"
                     outputStream = new DataOutputStream(tSerialPort.getOutputStream());
-                    for (String string : sndMsg) {
-            			sendContentOutThroughStream(string, outputStream);
+                    for (String msg : sndMsg) {
+                    	if(msg.startsWith(REF_TO) && msg.substring(REF_TO.length()).equals(sndMsg.get(0).substring(1))) {
+                    		continue;
+                    	}
+            			sendContentOutThroughStream(msg, outputStream);
 					}
 //                    outputStream.write(27); // 打印机初始化：
 //                    outputStream.write(64);
@@ -1206,6 +1227,9 @@ public class PrintService{
 			socket = new Socket(ip, 9100);
 			outputStream = socket.getOutputStream();
 			for (String msg : sndMsg) {
+            	if(msg.startsWith(REF_TO) && msg.substring(REF_TO.length()).equals(sndMsg.get(0).substring(1))) {
+            		continue;
+            	}
 				sendContentOutThroughStream(msg, outputStream);
 			}
 			outputStream.close();
@@ -1372,13 +1396,8 @@ public class PrintService{
 	    
 	    strAryFR.add(getServiceDetailContent(billPanel.orderedDishAry, curPrintIp, billPanel, tWidth).toString());
 	    String payMethodInfo = getOutPayInfo(billPanel, tWidth, false);
-	    String a[] = payMethodInfo.trim().split("\n");
-	    String payMethod = "";
-	    if(a.length == 2) {		//we use I, because there's a line of "change" or "tip".
-	    	payMethod = getMatechPaytrans(a[0]);
-		}else if (a.length  > 2){
-			payMethod = "MIX";
-		}
+	    String payMethod = getMatechPaytrans(payMethodInfo.trim().split("\n"));
+		
         pushRefundAndNewTotal(billPanel, strAryFR, refundAmount, payMethod, tWidth);
         
         strAryFR.add(billPanel.comment);
@@ -1417,7 +1436,7 @@ public class PrintService{
         pushSalesSummary(strAryFR, list, tWidth,
         		String.valueOf(salesGrossCount), String.valueOf(refundCount), 
         		salesGrossAmount, BarUtil.formatMoney(refoundAmount / 100.0));
-        pushPaymentSummary(strAryFR, list, tWidth);
+        pushPaymentSummaryForReport(strAryFR, list, tWidth);
         pushSummaryByServiceType(strAryFR, list, tWidth);
         pushVoidItemSummary(strAryFR, tWidth, startTime, endTime);
         pushOtherSummary(list);
@@ -1765,8 +1784,13 @@ public class PrintService{
  				.append(BarUtil.generateString(width - lblText.length() - str.length(), " "))
  				.append(str).append("\n");
             }
-            
 
+            if(BarOption.getGSTAccount() != null && BarOption.getGSTAccount().length() > 5
+            		&& BarOption.getQSTAccount() != null && BarOption.getQSTAccount().length() > 5) {
+	            content.append("\n\nGST:").append(BarOption.getGSTAccount());
+	            content.append("\nQST:").append(BarOption.getQSTAccount()).append("\n");
+            }
+            
     	}catch(Exception e) {
     		ErrorUtil.write(e);
     	}
@@ -1843,7 +1867,7 @@ public class PrintService{
 		strAryFR.add(content.toString());
 	}
 	
-	private static void pushPaymentSummary(ArrayList<String> strAryFR, List<Bill> list, int width) {
+	private static void pushPaymentSummaryForReport(ArrayList<String> strAryFR, List<Bill> list, int width) {
 		StringBuilder content = new StringBuilder();
 		//title
 		String paymentSummary = "Payment Summary";

@@ -10,6 +10,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -121,9 +122,10 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     public static void exactMoney(int billId, String pay) {
    		try {
    			//NOTE: should consider might been paid with card, so the new received should be the left not the total..
-   	    	StringBuilder sql = new StringBuilder("update bill set ").append(pay).append("Received = ")
-	   	    	.append(Math.round(Float.valueOf(valLeft.getText()) * 100))
+   	    	StringBuilder sql = new StringBuilder("update bill set ").append(pay)
+   	    			.append("Received = ").append(Math.round(Float.valueOf(valLeft.getText()) * 100))
 	   	    	//.append(", DebitReceived = 0, VisaReceived = 0, MasterReceived = 0")
+   	    		.append(", createTime = '").append(BarOption.df.format(new Date())).append("'")
 	   	    	.append(", status = ").append(DBConsts.completed)
 	   	    	.append(" where id = ").append(billId);
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
@@ -137,9 +139,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
    		}catch(Exception e) {
 			ErrorUtil.write(e);
 		}
-   		if(BarFrame.instance.isTableEmpty(null, null)) {
-			BarFrame.instance.closeATable(null, null);
-   		}
+   		
     }
     
 	public void initContent(BillPanel billPanel) {
@@ -379,6 +379,12 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	int billOldStatus = getBillStatus(billId);
         	//check if left moeny is 0. 
         	int left = Math.round(Float.valueOf(valLeft.getText()) * 100);
+
+        	//no matter it's closed or not, we need to update the pay info of the bill. why?
+    		updateBill(billId);
+        	resetContent();
+        	this.setVisible(false);
+        	
         	if( left > 0) {
 //	        	if(JOptionPane.showConfirmDialog(this, BarFrame.consts.reCeivedMoneyNotEnough(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
 //	        		//user selected to close the bill. update the bill to closed
@@ -405,24 +411,24 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             			BarUtil.updateBill(billId, "TIP", oldTip - left);	//otherwise, treated as tip. the tip in DB are positive, because it means we earned money.
             		}
             	}
-        		if(BarFrame.instance.isTableEmpty(null, null)) {
-        			BarFrame.instance.closeATable(null, null);
-        		}
-        	}
-        	//no matter it's closed or not, we need to update the pay info of the bill. why?
-    		updateBill(billId);
-        	resetContent();
-        	this.setVisible(false);
 
-        	PrintService.openDrawer();
-        	//let's qa decide if we should go back to table interface.
-        	if(left <= 0) {
+            	//let's qa decide if we should go back to table interface.
 	        	BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
         		boolean needToBePrinted = billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled();
 	        	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
-	        	
-        		BarFrame.instance.switchMode(0);
+            	
+            	if(BarOption.isFastFoodMode()) {
+        	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
+        	    	((SalesPanel)BarFrame.instance.panels[2]).addNewBillInCurTable();
+        	    }else {
+        	    	if(BarFrame.instance.isTableEmpty(null, null)) {
+            			BarFrame.instance.closeATable(null, null);
+            	    }
+        	    	BarFrame.instance.switchMode(0);
+        	    }
         	}
+        	
+        	PrintService.openDrawer();
         	
         } else if(o == btnExact) {//update bill and display change 0.00;
         	String strPay = "other";
@@ -440,17 +446,24 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     		
     		int billId = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
     		int billOldStatus = getBillStatus(billId);
-    		
-        	exactMoney(billId, strPay);
-        	resetContent();
-        	this.setVisible(false);
 
         	BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
         	boolean needToBePrinted = billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled();
-        	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
         	
+        	exactMoney(billId, strPay);
+        	resetContent();
+        	this.setVisible(false);
+        	
+        	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
     		PrintService.openDrawer();
-        	BarFrame.instance.switchMode(0);
+
+        	if(BarOption.isFastFoodMode()) {
+    	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
+    	    	((SalesPanel)BarFrame.instance.panels[2]).addNewBillInCurTable();
+    	    }else if(BarFrame.instance.isTableEmpty(null, null)) {
+    			BarFrame.instance.closeATable(null, null);
+    			BarFrame.instance.switchMode(0);
+    	    }
         	
         } else {
 	        if(isAllContentSelected)

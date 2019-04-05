@@ -51,7 +51,7 @@ public class HttpRequestClient extends Thread{
             urlConnection.setConnectTimeout(20000);
             if(urlConnection.getResponseCode()==HttpURLConnection.HTTP_OK){//得到服务端的返回码是否连接成功
                 responseString = readBackFromConnection(urlConnection);
-                if(actionListener != null) {
+                if(actionListener != null && responseString.length() > 0) {
                 	actionListener.actionPerformed(new ActionEvent(this, -1, responseString));
                 }
             }else{

@@ -140,34 +140,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		return comment;
 	}
 
-	//will not duplicat the comment property of current bill.
-	//when need to creat an empty new bill instead of  expire one and regenerate one and at the same time should call this.
-	public int generateEmptyBillRecord(String tableID, String billIndex, String opentime) {
-		//generate a bill in db and update the output with the new bill id
-		String createtime = BarOption.df.format(new Date());
-		try {
-			StringBuilder sql = new StringBuilder(
-	            "INSERT INTO bill(createtime, tableID, BillIndex, EMPLOYEEID, opentime, comment) VALUES ('")
-				.append(createtime).append("', '")
-	            .append(tableID).append("', '")	//table
-	            .append(billIndex).append("', ")			//billIdx
-	            .append(LoginDlg.USERID).append(", '")		//emoployid
-	            .append(opentime).append("', '')");				//comment
-		
-			PIMDBModel.getStatement().executeUpdate(sql.toString());
-			
-		   	sql = new StringBuilder("Select id from bill where createtime = '").append(createtime)
-		   			.append("' and billIndex = '").append(billIndex).append("'");
-	        ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-	        rs.beforeFirst();
-	        rs.next();
-	        return rs.getInt("id");
-		 }catch(Exception e) {
-			ErrorUtil.write(e);
-			return -1;
-		 }
-	}
-	
 	public int cloneCurrentBillRecord(String tableID, String billIndex, String opentime, int total) {
 		if(total < 0) {
 			total = Math.round(Float.valueOf(valTotlePrice.getText()) * 100);
@@ -233,7 +205,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
 		//prepare the printing String and do printing
 		String curTable = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
-		String curCustomerIdx = BarFrame.instance.valCurBillIdx.getText();
+		String curCustomerIdx = BarFrame.instance.getOnSrcCurBillIdx();
 		String waiterName = BarFrame.instance.valOperator.getText();
 		PrintService.exePrintOrderList(dishes, curTable, curCustomerIdx, waiterName, isCancelled);
 	}
@@ -339,7 +311,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         		return;
         	}
         	
-    		BarFrame.instance.valCurBillIdx.setText(((JToggleButton)o).getText());
+    		BarFrame.instance.setCurBillIdx(((JToggleButton)o).getText());
             BarFrame.instance.switchMode(2);
 		}
 		
@@ -487,15 +459,15 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				}else {	//no current item ready for split, then just select the. 
 					billButton.setSelected(!billButton.isSelected());
 					if(billButton.isSelected()) {
-						BarFrame.instance.valCurBillIdx.setText(billButton.getText());
+						BarFrame.instance.setCurBillIdx(billButton.getText());
 						BarFrame.instance.curBillID = billID;
 					}else {
 						BillPanel panel = billListPanel.getCurBillPanel();
 						if(panel != null) {
-							BarFrame.instance.valCurBillIdx.setText(panel.billButton.getText());
+							BarFrame.instance.setCurBillIdx(panel.billButton.getText());
 							BarFrame.instance.curBillID = panel.billID;
 						}else {
-							BarFrame.instance.valCurBillIdx.setText("");
+							BarFrame.instance.setCurBillIdx("");
 							BarFrame.instance.curBillID = 0;
 						}
 					}
@@ -541,7 +513,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         }
         newDish.setTotalPrice(price * 1);
         newDish.setOpenTime(BarFrame.instance.valStartTime.getText());
-        newDish.setBillIndex(BarFrame.instance.valCurBillIdx.getText());
+        newDish.setBillIndex(BarFrame.instance.getCurBillIndex());
         newDish.setBillID(billID);
         orderedDishAry.add(newDish);				//valueChanged process. not being cleared immediately-----while now dosn't matter
         BillListPanel.curDish = newDish;
@@ -748,14 +720,16 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			//so must consider the bill ID if it's not empty string.
 			else if(tableName.length() > 0 && openTime.length() > 0) {
 				sql = new StringBuilder("Select id from bill where tableID = '").append(tableName)
-						.append("' and opentime = '").append(openTime).append("'");
-				if(BarFrame.instance.valCurBillIdx.getText().length() > 0) {
-					sql.append(" and billIndex = '").append(BarFrame.instance.valCurBillIdx.getText()).append("'");
-				}
+						.append("' and opentime = '").append(openTime)
+						.append("' and billIndex = '").append(BarFrame.instance.getCurBillIndex()).append("'");
                 ResultSet resultSet = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
                 resultSet.beforeFirst();
-                resultSet.next();
-                billID = resultSet.getInt("id");
+                if(resultSet.next()) {
+                	billID = resultSet.getInt("id");
+                }else {
+                	L.e("initing BillPanel", "there's no bill in an openned table.", null);
+                	BarFrame.instance.createAnEmptyBill(tableName, openTime, 0);
+                }
 			}
 			rs.close();
 		} catch (Exception e) {
@@ -860,7 +834,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	//caller can specify the billIdx, if the billIdx is not specified, then use the billIdx on Frame.
 	public void reGenerate(String billIdx) {
 		if(billIdx == null || billIdx.length() == 0) {
-			billIdx = BarFrame.instance.valCurBillIdx.getText();
+			billIdx = BarFrame.instance.getCurBillIndex();
 		}
 		
 		try {

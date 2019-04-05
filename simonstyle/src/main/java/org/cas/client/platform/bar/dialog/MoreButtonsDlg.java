@@ -7,6 +7,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -176,11 +177,15 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 	                    	PrintService.exePrintInvoice(salesPanel.billPanel, false, true, true);
 	                    	BarFrame.instance.closeCurrentBill();
 		                	this.setVisible(false);
-		                	
-		            		if(BarFrame.instance.isTableEmpty(null, null)) {
-		            			BarFrame.instance.closeATable(null, null);
-		            		}
-		            		BarFrame.instance.switchMode(0);
+		                	if(BarOption.isFastFoodMode()) {
+		            	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
+		            	    	salesPanel.addNewBillInCurTable();
+		                	}else {
+			            		if(BarFrame.instance.isTableEmpty(null, null)) {
+			            			BarFrame.instance.closeATable(null, null);
+			            		}
+			            		BarFrame.instance.switchMode(0);
+		                	}
 	                    }
                     } else {//apply the coupon only to the dish item.
 	                	//find out the most expensive dish

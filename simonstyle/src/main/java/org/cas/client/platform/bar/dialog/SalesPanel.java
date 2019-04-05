@@ -10,6 +10,7 @@ import java.awt.event.FocusListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -243,7 +244,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		billPanel.resetColWidth(billPanel.getWidth());
             		billPanel.table.setSelectedRow(tValues.length - 1);
             		billPanel.updateTotleArea();
-            	}else {
+            	}else if(!BarOption.isFastFoodMode()){
             		//@NOTE: we don't close current bill, because maybe there's output still have billID of this bill, all the empty bill will be closed when table closed.
             		//update bill and dining_table in db.
             		if(BarFrame.instance.isTableEmpty(null, null)) {
@@ -337,7 +338,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		//@NOTE:no need to generata new output. the output will be choosed by table and billIdx.
             		billPanel.comment = PrintService.REF_TO + billPanel.billID + "F";
              		int newBillID = billPanel.cloneCurrentBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
-            				String.valueOf(BarFrame.instance.valCurBillIdx.getText()),
+            				String.valueOf(BarFrame.instance.getCurBillIndex()),
             				BarFrame.instance.valStartTime.getText(),
             				Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
              		
@@ -364,10 +365,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		createAndPrintNewOutput();
         		billPricesUpdateToDB();
             	if(BarOption.isFastFoodMode()) {
-            		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
-    		    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(newBillIdx));
-    		    	BarFrame.instance.createAnEmptyBill(null, null, newBillIdx);//create new bill;
-    		    	billPanel.initContent();
+        	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
+        	    	addNewBillInCurTable();
     		    }else {
     		    	BarFrame.instance.switchMode(0);
     		    }
@@ -413,7 +412,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	private void voidCurrentOrder() {
 		int dishLength = billPanel.orderedDishAry.size();
 		int billID = billPanel.billID;
-    	String curBill = BarFrame.instance.valCurBillIdx.getText();
+    	String curBill = BarFrame.instance.getCurBillIndex();
+    	
 		try {
 			//check if it's a "mistake-opening-table-action" or "adding bill action" by check if there's any output on it already. 
 			//will be considered as non-empty as long as there's output connecting to the id, even the output is not currently displaying on this bill.
@@ -481,12 +481,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		    	//and have to process it to be not null, better will not be considered as there's still non closed bill, when checking in isLastBill()
 		    	//update bill
 				sql = new StringBuilder("update bill set status = ").append(DBConsts.voided)
-						.append(" where billIndex = '").append("".equals(curBill) ? 1 : curBill).append("'")
+						.append(" where billIndex = '").append(curBill).append("'")
 						.append(" and openTime = '").append(BarFrame.instance.valStartTime.getText()).append("'");
 		    	PIMDBModel.getStatement().executeQuery(sql.toString());
 		    	//update output
 		    	sql = new StringBuilder("update output set deleted = ").append(DBConsts.voided)
-		    			.append(" where contactID = ").append("".equals(curBill) ? 1 : curBill)
+		    			.append(" where contactID = ").append(curBill)
 		    			.append(" and time = '").append(BarFrame.instance.valStartTime.getText()).append("'");
 		        PIMDBModel.getStatement().executeQuery(sql.toString());
 		        
@@ -495,11 +495,23 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			L.e("void order", "error happend when voiding a bill with ID:"+ billID, exp);
 		}
 		
-		//if the bill amount is 1, cancel the selected status of the table.
-		if(BarFrame.instance.isTableEmpty(null, null)) {
-			BarFrame.instance.closeATable(null, null);
+		if(BarOption.isFastFoodMode()) {
+			String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
+			String newOpenTime = BarOption.df.format(new Date());
+			int newBillIdx = BillListPanel.getANewBillIdx(tableName, newOpenTime);
+			BarFrame.instance.valStartTime.setText(newOpenTime);
+			BarFrame.instance.setCurBillIdx(String.valueOf(newBillIdx));
+			
+			BarFrame.instance.createAnEmptyBill(tableName, newOpenTime, newBillIdx);
+			billPanel.initContent();
+			
+		}else {
+			//if the bill amount is 1, cancel the selected status of the table.
+			if(BarFrame.instance.isTableEmpty(null, null)) {
+				BarFrame.instance.closeATable(null, null);
+			}
+			BarFrame.instance.switchMode(0);
 		}
-		BarFrame.instance.switchMode(0);
 	}
 
 	public void discountBill(float discount) {
@@ -518,11 +530,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String openTime = BarFrame.instance.valStartTime.getText();
 		
-		String newBillIdx = String.valueOf(BillListPanel.getANewBillIdx(null, null));
+		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
 		
-		int billId = billPanel.generateEmptyBillRecord(tableName, newBillIdx, openTime);
+		int billId = BarFrame.instance.createAnEmptyBill(tableName, openTime, newBillIdx);
 		billPanel.billID = billId;
-		BarFrame.instance.valCurBillIdx.setText(newBillIdx);
+		BarFrame.instance.setCurBillIdx(String.valueOf(newBillIdx));
 		BarFrame.instance.switchMode(2);
 	}
 

@@ -225,7 +225,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         }else if(o == btnPrintInvoice) {
         	(((SalesPanel)BarFrame.instance.panels[2]).billPanel).printBill(
         			BarFrame.instance.cmbCurTable.getSelectedItem().toString(), 
-        			BarFrame.instance.valCurBillIdx.getText(),
+        			BarFrame.instance.getOnSrcCurBillIdx(),
         			BarFrame.instance.valStartTime.getText(), ckxIsToCustomer.isSelected());
         	//use true as cashback when re printing invoice. because no need to mention that restaurant receiced tips. 
         }
@@ -260,7 +260,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
 
         BarFrame.instance.ignoreItemChange = true;
     	BarFrame.instance.cmbCurTable.setSelectedItem(String.valueOf(tblContent.getValueAt(selectedRow, 1)));
-    	BarFrame.instance.valCurBillIdx.setText(String.valueOf(tblContent.getValueAt(selectedRow, 2)));
+    	BarFrame.instance.setCurBillIdx(String.valueOf(tblContent.getValueAt(selectedRow, 2)));
     	BarFrame.instance.valOperator.setText(String.valueOf(tblContent.getValueAt(selectedRow, 9)));
     	BarFrame.instance.valStartTime.setText(String.valueOf(tblContent.getValueAt(selectedRow, 11)));
 
