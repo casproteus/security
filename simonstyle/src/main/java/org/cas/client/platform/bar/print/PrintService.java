@@ -1022,7 +1022,7 @@ public class PrintService{
 		String paiementTrans = "SOB";
 		int payMethodQT = 0;
 		for (String string : lines) {
-			if(string == null || string.length() == 0) {
+			if(string == null || string.length() == 0 || string.indexOf(":") < 0) {
 				continue;
 			}else {
 				switch (string.substring(0, string.indexOf(":")).trim()) {
