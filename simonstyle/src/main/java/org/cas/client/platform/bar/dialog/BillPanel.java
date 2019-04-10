@@ -755,7 +755,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         serviceFee = 0;
         received = 0;
         cashback = 0;
-        billID = 0;
+        //set bill ID to 0 is not helpful, it should be updated in each call. setBillID(0);
         comment = "";
         status = DBConsts.original;
         setBackground(null);

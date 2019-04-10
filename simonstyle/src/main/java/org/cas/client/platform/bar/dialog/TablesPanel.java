@@ -130,7 +130,6 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 				if (num == 0) {// if it's empty, means it's fastfood mode, and the previous bill was deleted (should not happen though). switch to sales panel
 					L.w("Warning:", "when open table, found no related bill in a open status table", null);
 					tableToggle.open();
-					BarFrame.instance.valStartTime.setText(tableToggle.getOpenTime());
 					BarFrame.instance.setCurBillIdx("");
 					BarFrame.instance.switchMode(2);
 				} else { // if it's not empty
