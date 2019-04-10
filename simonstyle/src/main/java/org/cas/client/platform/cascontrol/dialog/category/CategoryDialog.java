@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -35,7 +36,8 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
 	 * if type == -1 then it's used for employee.
 	 * if type >= 0, means it's for dish.
 	 */
-	private int type = 0;	
+	private int type = 0;
+	private boolean isSingleSelectionMode = true;	
 	
     /**
      * 创建一个 Category 的实例
@@ -625,6 +627,12 @@ public class CategoryDialog extends JDialog implements ActionListener, ListSelec
         int index = categoryList.getSelectedIndex();
         if (index != -1) {
             CheckItem seleItem = (CheckItem) categoryList.getSelectedValue();
+            if(!seleItem.isSelected() && isSingleSelectionMode) {
+            	if(textArea.getText().trim().length() > 0) {
+            		JOptionPane.showMessageDialog(this, "Please unckeck existing selection before set a new one.");
+            		return;
+            	}
+            }
             categoryListModel.set(index, new CheckItem(seleItem.getName(), !seleItem.isSelected()));
 
             // 以列表框的模型来设置文本区中的显示

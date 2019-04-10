@@ -1838,8 +1838,9 @@ public class PrintService{
 		.append(totalSaleCount).append(BarUtil.generateString(10 - amountSaleGross.length() , " ")).append(amountSaleGross)
 		.append("\n");
 		//countRefond
+		String refoundMoney = BarUtil.formatMoney(refoundAmount/100.0);
 		content.append("Refund Gross").append(BarUtil.generateString(width - 12 - 10 - String.valueOf(refundCount).length(), " "))
-		.append(refundCount).append(BarUtil.generateString(10 - String.valueOf(refoundAmount).length() , " ")).append(refoundAmount)
+		.append(refundCount).append(BarUtil.generateString(10 - refoundMoney.length() , " ")).append(refoundMoney)
 		.append("\n");
 		content.append(BarUtil.getSeperatorLine(1, width)).append("\n");
 		
