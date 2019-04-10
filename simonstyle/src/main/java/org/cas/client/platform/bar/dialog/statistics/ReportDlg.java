@@ -520,6 +520,7 @@ public class ReportDlg extends JDialog implements ICASDialog, ActionListener, Co
             rs.beforeFirst();
             while (rs.next()) {
             	Bill bill = new Bill();
+            	bill.setId(rs.getInt("id"));
             	bill.setCreateTime(rs.getString("createTime"));
             	bill.setTableID(rs.getString("tableID"));
             	bill.setBillIndex(rs.getString("billIndex"));

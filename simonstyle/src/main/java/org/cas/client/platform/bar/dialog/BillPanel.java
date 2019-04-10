@@ -620,21 +620,26 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     }
     
     void initContent() {
+    	String billIndex = billButton == null ? BarFrame.instance.getCurBillIndex() : billButton.getText();
+		//used deleted <= 1, means both uncompleted and normally completed will be displayed, unnormally delted recored will be delted = 100
+		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
+		String openTime = BarFrame.instance.valStartTime.getText();
+		String billId = BarFrame.instance.isShowingAnExpiredBill ? String.valueOf(BarFrame.instance.curBillID) : "";
+		initContent(billId, billIndex, tableName, openTime);
+	}
+    
+    public void initContent(String billId, String billIndex, String tableName, String openTime) {
     	resetProperties();
     	//get outputs of current table and bill id.
     	StringBuilder sql = null;
 		try {
-			String billIndex = billButton == null ? BarFrame.instance.getCurBillIndex() : billButton.getText();
-			//used deleted <= 1, means both uncompleted and normally completed will be displayed, unnormally delted recored will be delted = 100
-			String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
-			String openTime = BarFrame.instance.valStartTime.getText();
 			boolean isShowingExpiredBill = BarFrame.instance.isShowingAnExpiredBill;
 			sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
 				.append(tableName)
 				.append("' and CONTACTID = ").append(billIndex)
 				.append(" and (deleted is null or deleted < ").append(isShowingExpiredBill ? DBConsts.deleted : DBConsts.expired)	//dumpted also should show.
 				.append(") AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
-				.append(openTime).append(isShowingExpiredBill ? "' and output.category = " + BarFrame.instance.curBillID : "'");	//new added after dump should not display.
+				.append(openTime).append(billId != null && billId.length() > 0 ? "' and output.category = " + billId : "'");	//new added after dump should not display.
 			
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();

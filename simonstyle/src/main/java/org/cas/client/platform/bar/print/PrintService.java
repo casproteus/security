@@ -1411,31 +1411,11 @@ public class PrintService{
     	ArrayList<String> strAryFR = new ArrayList<String>();
         
         //initContent
-  		int refundCount = 0;
-  		int refoundAmount = 0;
-  		int salesGrossCount = 0;
-  		int salesGrossAmount = 0;
-    	
-  		for (Bill bill : list) {
-  			int status = bill.getStatus();
-  			if(status < DBConsts.original) {//means has refund)
-  				refundCount++;
-  				status = -1 * status;
-  				refoundAmount += status;
-  				salesGrossAmount -= status;
-  			}
-			salesGrossCount++;
-			salesGrossAmount += bill.getCashReceived() + bill.getDebitReceived()
-			+ bill.getVisaReceived() + bill.getMasterReceived() + bill.getOtherReceived() + bill.getCashback();
-  		}
-  		
   		int tWidth = BarUtil.getPreferedWidth();
   		//@NOTE times goes first, to make the number bigger, then do divide. to avoid lost number after ".".
 	    //pushBillHeadInfo(strAryFR, tWidth, null);
 	    pushWaiterAndTime(strAryFR, tWidth, null, startTime, endTime);
-        pushSalesSummary(strAryFR, list, tWidth,
-        		String.valueOf(salesGrossCount), String.valueOf(refundCount), 
-        		salesGrossAmount, BarUtil.formatMoney(refoundAmount / 100.0));
+        pushSalesSummary(strAryFR, list, tWidth);
         pushPaymentSummaryForReport(strAryFR, list, tWidth);
         pushSummaryByServiceType(strAryFR, list, tWidth);
         pushVoidItemSummary(strAryFR, tWidth, startTime, endTime);
@@ -1810,14 +1790,37 @@ public class PrintService{
         strAryFR.add(content.toString());
 	}
     
-	private static void pushSalesSummary(ArrayList<String> strAryFR, List<Bill> list, int width, 
-			String countSale, String countRefund, int salesGrossAmount, String refundGross) {
-		
-  		float net = salesGrossAmount * 100 /(100 + BarOption.getGST() + BarOption.getQST());
-  		float GST = net * BarOption.getGST()/100;
-  		float QST = net * BarOption.getQST()/100;
-  		float HST = GST + QST;
-		
+	private static void pushSalesSummary(ArrayList<String> strAryFR, List<Bill> list, int width) {
+  		int refundCount = 0;
+  		int refoundAmount = 0;
+  		int salesGrossCount = 0;
+  		int salesGrossAmount = 0;
+  		
+  		float net = 0;//salesGrossAmount * 100 /(100 + BarOption.getGST() + BarOption.getQST());
+  		float GST = 0;//net * BarOption.getGST()/100;
+  		float QST = 0;//net * BarOption.getQST()/100;
+  		
+  		for (Bill bill : list) {
+  			BillPanel bp = new BillPanel(null);
+    		bp.initContent(String.valueOf(bill.getId()), bill.getBillIndex(), bill.getTableID(), bill.getOpenTime());
+    		bp.updateTotleArea();
+    		
+    		net += bp.subTotal;
+    		GST += bp.totalGst;
+    		QST += bp.totalQst;
+            				
+  			int status = bill.getStatus();
+  			if(status < DBConsts.original) {//means has refund)
+  				refundCount++;
+  				status = -1 * status;
+  				refoundAmount += status;
+  				salesGrossAmount -= status;
+  			}
+			salesGrossCount++;
+			salesGrossAmount += bill.getCashReceived() + bill.getDebitReceived()
+			+ bill.getVisaReceived() + bill.getMasterReceived() + bill.getOtherReceived() + bill.getCashback();
+  		}
+  		
 		StringBuilder content = new StringBuilder();
 		//title
 		content.append(BarUtil.getSeperatorLine(1, width)).append("\n");
@@ -1830,18 +1833,18 @@ public class PrintService{
 		content.append(BarUtil.getSeperatorLine(0, width)).append("\n");
 		//countSaleGross + amountSaleGross
 		String amountSaleGross = BarUtil.formatMoney(salesGrossAmount / 100.0);
-		String totalSaleCount = String.valueOf(Integer.valueOf(countRefund) + Integer.valueOf(countSale));
+		String totalSaleCount = String.valueOf(Integer.valueOf(refundCount) + Integer.valueOf(salesGrossCount));
 		content.append("Sale Gross").append(BarUtil.generateString(width - 10 - 10 - totalSaleCount.length(), " "))
 		.append(totalSaleCount).append(BarUtil.generateString(10 - amountSaleGross.length() , " ")).append(amountSaleGross)
 		.append("\n");
 		//countRefond
-		content.append("Refund Gross").append(BarUtil.generateString(width - 12 - 10 - countRefund.length(), " "))
-		.append(countRefund).append(BarUtil.generateString(10 - refundGross.length() , " ")).append(refundGross)
+		content.append("Refund Gross").append(BarUtil.generateString(width - 12 - 10 - String.valueOf(refundCount).length(), " "))
+		.append(refundCount).append(BarUtil.generateString(10 - String.valueOf(refoundAmount).length() , " ")).append(refoundAmount)
 		.append("\n");
 		content.append(BarUtil.getSeperatorLine(1, width)).append("\n");
 		
 
-			
+  		float HST = GST + QST;
 		//Net
 		String netIncome = BarUtil.formatMoney(net / 100.0);
 		content.append("Net").append(BarUtil.generateString(width - 3 - netIncome.length(), " ")).append(netIncome)
