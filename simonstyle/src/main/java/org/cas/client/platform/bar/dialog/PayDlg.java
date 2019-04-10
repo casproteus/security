@@ -442,6 +442,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     			strPay = "visa";
     		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment())) {
     			strPay = "master";
+    		} else if(curTitle.equals(BarFrame.consts.EnterOtherPayment())) {
+    			strPay = "other";
     		}
     		
     		int billId = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
@@ -450,6 +452,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
         	boolean needToBePrinted = billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled();
         	
+        	inputedContent = valLeft.getText();	//if it's paying with gift card, will determine how much to update the account left base on this property.
         	exactMoney(billId, strPay);
         	resetContent();
         	this.setVisible(false);
