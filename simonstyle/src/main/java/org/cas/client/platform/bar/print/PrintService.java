@@ -130,7 +130,7 @@ public class PrintService{
         int tWidth = BarUtil.getPreferedWidth();
         
         //push head info
-	    pushBillHeadInfo(contents, tWidth, String.valueOf(billPanel.billID));
+	    pushBillHeadInfo(contents, tWidth, String.valueOf(billPanel.getBillID()));
 	    
 	    //push table, bill waiter and time
 	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();

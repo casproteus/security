@@ -60,7 +60,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     public ArrayList<Dish> orderedDishAry = new ArrayList<Dish>();
     
     //Bill property (not for specific item).the info should be retrieved from bill record if have.
-    public int billID;
+    private int billID;
     public float discount;
     public float totalGst;
 	public float totalQst;
@@ -94,7 +94,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         }else {		//for original or billprinted or reopeneed billPrinted bills go here..
 	        PrintService.exePrintBill(this, orderedDishAry);
 	        status = DBConsts.billPrinted;
-	        comment += PrintService.REF_TO + billID;
+	        comment += PrintService.REF_TO + getBillID();
 	        comment = replaceMoney(comment, lblSubTotle.getText());
 			//update the total price of the target bill, 
 			//---because when add dish into the billPane, bill in db will not get updated.
@@ -146,7 +146,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		}
 		
 		//get other field out from db:
-		StringBuilder sql = new StringBuilder("select * from bill where id = " + billID);
+		StringBuilder sql = new StringBuilder("select * from bill where id = " + getBillID());
     	try {
     		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
             rs.next();
@@ -460,12 +460,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					billButton.setSelected(!billButton.isSelected());
 					if(billButton.isSelected()) {
 						BarFrame.instance.setCurBillIdx(billButton.getText());
-						BarFrame.instance.curBillID = billID;
+						BarFrame.instance.curBillID = getBillID();
 					}else {
 						BillPanel panel = billListPanel.getCurBillPanel();
 						if(panel != null) {
 							BarFrame.instance.setCurBillIdx(panel.billButton.getText());
-							BarFrame.instance.curBillID = panel.billID;
+							BarFrame.instance.curBillID = panel.getBillID();
 						}else {
 							BarFrame.instance.setCurBillIdx("");
 							BarFrame.instance.curBillID = 0;
@@ -514,7 +514,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         newDish.setTotalPrice(price * 1);
         newDish.setOpenTime(BarFrame.instance.valStartTime.getText());
         newDish.setBillIndex(BarFrame.instance.getCurBillIndex());
-        newDish.setBillID(billID);
+        newDish.setBillID(getBillID());
         orderedDishAry.add(newDish);				//valueChanged process. not being cleared immediately-----while now dosn't matter
         BillListPanel.curDish = newDish;
         
@@ -711,7 +711,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 				rs.beforeFirst();
 				if(rs.next()) {
-					billID = rs.getInt("id");	//@NOTE: do not use orderedDishAry.get(0).getBillID() to get billID, because when combine all we don't modify bill id in output and dish (for undo use)
+					setBillID(rs.getInt("id"));	//@NOTE: do not use orderedDishAry.get(0).getBillID() to get billID, because when combine all we don't modify bill id in output and dish (for undo use)
 				    discount = rs.getInt("discount");
 				    serviceFee = rs.getInt("serviceFee");
 				    tip = rs.getInt("tip");
@@ -730,7 +730,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
                 ResultSet resultSet = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
                 resultSet.beforeFirst();
                 if(resultSet.next()) {
-                	billID = resultSet.getInt("id");
+                	setBillID(resultSet.getInt("id"));
                 }else {
                 	L.e("initing BillPanel", "there's no bill in an openned table.", null);
                 	BarFrame.instance.createAnEmptyBill(tableName, openTime, 0);
@@ -845,7 +845,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		try {
 			//dump the old bill and create a new bill
 			StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.expired)
-	 				.append(" where id = ").append(billID);
+	 				.append(" where id = ").append(getBillID());
 	 		PIMDBModel.getStatement().executeUpdate(sql.toString());
 	 		
 	 		//Generate new bill with ref to dumped bill everything else use the data on current billPane
@@ -854,7 +854,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	 		//this will be a known bug. TDOO:we can make it better by searching output by billID when it's a dumped bill. hope no one will need to check the dumped bills.
 	 		//??what do we do when removing an saved item from billPanel?
 	 		if(status >= DBConsts.billPrinted || status < DBConsts.original) {
-		 		StringBuilder newComment = new StringBuilder(PrintService.REF_TO).append(billID);
+		 		StringBuilder newComment = new StringBuilder(PrintService.REF_TO).append(getBillID());
 				if(status >= DBConsts.completed || status < DBConsts.original) {	//if already paid, then need to know old moneys, so in mev can report how much added or returned.
 					newComment.append("F");	
 				}
@@ -957,7 +957,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	        tip = 0;
 	        cashback = 0;
 	 		status = DBConsts.original;	//will be used when clicking buttons, set to original, so will not trigger warning dialogs.
-	 		billID = newBillID;			//will be used when adding new item into the bill
+	 		setBillID(newBillID);			//will be used when adding new item into the bill
 		}catch(Exception exp) {
 			L.e("SalesPane", "Exception happenned when converting bill's status to 0", exp);
 		}
@@ -971,7 +971,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     }
 
     public int getBillId(){
-    	return billID;
+    	return getBillID();
     }
     
     void reLayout() {
@@ -1107,7 +1107,16 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		reLayout();
     }
     
-    public PIMTable table;
+    public int getBillID() {
+		return billID;
+	}
+
+    int lastID;
+	public void setBillID(int billID) {
+		this.billID = billID;
+	}
+
+	public PIMTable table;
     private PIMScrollPane scrContent;
 
     public JLabel lblSubTotle;

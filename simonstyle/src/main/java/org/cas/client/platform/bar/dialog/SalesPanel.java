@@ -331,19 +331,19 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		
             		//dump the old bill and create a new bill
             		StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.expired)
-             				.append(" where id = ").append(billPanel.billID);
+             				.append(" where id = ").append(billPanel.getBillID());
              		PIMDBModel.getStatement().executeUpdate(sql.toString());
              		
              		//generat new bill with ref to dumpted bill everything else use the data on current billPane
              		//@NOTE:no need to generata new output. the output will be choosed by table and billIdx.
-            		billPanel.comment = PrintService.REF_TO + billPanel.billID + "F";
+            		billPanel.comment = PrintService.REF_TO + billPanel.getBillID() + "F";
              		int newBillID = billPanel.cloneCurrentBillRecord(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
             				String.valueOf(BarFrame.instance.getCurBillIndex()),
             				BarFrame.instance.valStartTime.getText(),
             				Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
              		
              		//change something on cur billPane, then use it to print the refund bill, to let revenue know the store refund some money.
-             		billPanel.billID = newBillID;
+             		billPanel.setBillID(newBillID);
             		PrintService.exePrintRefund(billPanel, - (int)(refund * 100));
             		
             		//update the status with new refund amount for the new bill, so next time refund will base on new number.
@@ -411,7 +411,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
 	private void voidCurrentOrder() {
 		int dishLength = billPanel.orderedDishAry.size();
-		int billID = billPanel.billID;
+		int billID = billPanel.getBillID();
     	String curBill = BarFrame.instance.getCurBillIndex();
     	
 		try {
@@ -531,9 +531,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		String openTime = BarFrame.instance.valStartTime.getText();
 		
 		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
-		
+		int oldbill = billPanel.getBillID();
 		int billId = BarFrame.instance.createAnEmptyBill(tableName, openTime, newBillIdx);
-		billPanel.billID = billId;
+		if(billId <= oldbill) {
+			System.out.println("error!");
+		}
+		billPanel.setBillID(billId);
 		BarFrame.instance.setCurBillIdx(String.valueOf(newBillIdx));
 		BarFrame.instance.switchMode(2);
 	}
