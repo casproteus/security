@@ -196,9 +196,9 @@ public class BarUtil {
 
 	//
 	public static void updateBillRecordPrices(BillPanel billPanel) {
-		updateBill(billPanel.billID, "total", Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
-		updateBill(billPanel.billID, "discount", Math.round(billPanel.discount));
-		updateBill(billPanel.billID, "serviceFee", billPanel.serviceFee);
+		updateBill(billPanel.getBillID(), "total", Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
+		updateBill(billPanel.getBillID(), "discount", Math.round(billPanel.discount));
+		updateBill(billPanel.getBillID(), "serviceFee", billPanel.serviceFee);
 	}
 	
 	public static void updateBill(int billId, String fieldName, int value) {

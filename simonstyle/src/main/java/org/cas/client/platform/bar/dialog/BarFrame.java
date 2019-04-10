@@ -45,7 +45,9 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V0.198-20190407";
+
+	private String VERSION = "V0.199-20190410";
+
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     
@@ -262,8 +264,27 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         //display table view.
         SwingUtilities.invokeLater(new Runnable() {
             @Override
-            public void run() {//call it later, because it will trigger BarFrame.instance.cmbCurTable.setModel(); 
-                switchMode(0);	//while BarFrame.instance is still null if don't put it in the later.
+            public void run() {//call it later, because it will trigger cmbCurTable.setModel(); 
+            	if(BarOption.isFastFoodMode()) {
+            		ignoreItemChange = true;
+                	cmbCurTable.setSelectedItem("");
+                	setCurBillIdx("1");
+                	
+                	String openTime = BarOption.df.format(new Date());
+                	valStartTime.setText(openTime);
+
+                	openATable("", openTime);
+                	int billID = createAnEmptyBill("", openTime, 0);
+                	((SalesPanel)panels[2]).billPanel.setBillID(billID);
+            		
+                	//if this flag set, the initContent will choose outputs and bill differently.
+                	//NOTE: there's could be one final and several expired bills under same tableid and billIdx and opentime. we don't support more than one exipred bill.
+                	isShowingAnExpiredBill = true;
+                	curBillID = billID;
+                	switchMode(2);
+            	}else {
+            		switchMode(0);	//while BarFrame.instance is still null if don't put it in the later.
+            	}
             }
         });
     }
@@ -472,7 +493,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     public void componentHidden(ComponentEvent e) {};
 
     String oldTable;
-	public boolean ignoreItemChange;
+	public boolean ignoreItemChange;	//to temperally make the comboBox deaf to the value changes.
 	
 	@Override
 	public void itemStateChanged(ItemEvent e) {
@@ -501,7 +522,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
          		
                  Table table = null;
                  for(int i = 0; i < unclosedBillPanels.size(); i++) {
-                	 table = moveBillToAnotherTable(newTable, unclosedBillPanels.get(i).billID);
+                	 table = moveBillToAnotherTable(newTable, unclosedBillPanels.get(i).getBillID());
                  }
                  valStartTime.setText(table.getOpenTime());
                 	 
@@ -551,7 +572,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     public boolean isTableEmpty(String tableName, String openTime){
 		//validate parameters
 		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
-		openTime = openTime == null ? BarFrame.instance.valStartTime.getText() : openTime;
+		openTime = openTime == null ? valStartTime.getText() : openTime;
     	
     	try {
     		StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableName)
@@ -624,7 +645,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	public int createAnEmptyBill(String tableName, String openTime, int newBillIdx){
 		//validate parameters
 		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
-		openTime = openTime == null ? BarFrame.instance.valStartTime.getText() : openTime;
+		openTime = openTime == null ? valStartTime.getText() : openTime;
 		if(newBillIdx <= 0) {
 			newBillIdx = BillListPanel.getANewBillIdx(tableName, openTime);
 		}
@@ -660,12 +681,12 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	}
 	
 	public void closeCurrentBill() {
-		int billID = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
+		int billID = ((SalesPanel)panels[2]).billPanel.getBillId();
 		try {
 			StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.completed)
-					.append(" where subject = '").append(BarFrame.instance.cmbCurTable.getSelectedItem())
-					.append("' and time = '").append(BarFrame.instance.valStartTime.getText()).append("'")
-					.append(" and contactID = ").append(BarFrame.instance.getCurBillIndex());
+					.append(" where subject = '").append(cmbCurTable.getSelectedItem())
+					.append("' and time = '").append(valStartTime.getText()).append("'")
+					.append(" and contactID = ").append(getCurBillIndex());
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 			
 			sql = new StringBuilder("update bill set status = ").append(DBConsts.completed)
@@ -680,7 +701,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	public void closeATable(String tableName, String openTime) {
 		//validate parameters
 		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
-		openTime = openTime == null ? BarFrame.instance.valStartTime.getText() : openTime;
+		openTime = openTime == null ? valStartTime.getText() : openTime;
 		//all the bill should already completed when table closed except those was generated while has no output on it.
 		//this is the designed time to clean those bills.
 		StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.deleted)

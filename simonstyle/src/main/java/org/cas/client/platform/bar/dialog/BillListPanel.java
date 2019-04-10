@@ -291,9 +291,9 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 					targetBillPanel.reGenerate(targetBillPanel.billButton.getText());
 					if(getCurBillPanel().status >= DBConsts.billPrinted || getCurBillPanel().status < DBConsts.original) {
 						StringBuilder sql = new StringBuilder("update bill set comment = comment + ' ")
-								.append(PrintService.REF_TO).append(getCurBillPanel().billID).append("'")
+								.append(PrintService.REF_TO).append(getCurBillPanel().getBillID()).append("'")
 								.append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(getCurBillPanel().subTotal/100.0))
-								.append(" where id = ").append(targetBillPanel.billID);
+								.append(" where id = ").append(targetBillPanel.getBillID());
 						try {
 							PIMDBModel.getStatement().executeUpdate(sql.toString());
 						}catch(Exception e) {
@@ -404,7 +404,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 					//split into {num} bills. each dish's number and price will be divided by {num}.
 					Dish.splitOutputList(panel.orderedDishAry, num, null);//the third parameter is null, means update existing outputs
 					//update existing bill.
-					int curBillId = getCurBillPanel().billID;
+					int curBillId = getCurBillPanel().getBillID();
 					if(curBillId > 0) {
 						try {
 							StringBuilder sql = new StringBuilder("update bill set total = ").append(Math.round(Float.valueOf(panel.valTotlePrice.getText()) * 100)/num)
@@ -655,7 +655,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 			combinedDiscount += billPanel.discount;
 			combinedServiceFee += billPanel.serviceFee;
 			if(billPanel.status >= DBConsts.billPrinted || billPanel.status < DBConsts.original) {
-				combinedComment.append(PrintService.REF_TO).append(billPanel.billID).append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(billPanel.subTotal/100.0));
+				combinedComment.append(PrintService.REF_TO).append(billPanel.getBillID()).append(PrintService.OLD_SUBTOTAL).append(BarUtil.formatMoney(billPanel.subTotal/100.0));
 			}
 		}
 		
@@ -748,7 +748,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		        	
 		        	if(origianlBillstatus >= DBConsts.billPrinted || origianlBillstatus < DBConsts.original) {	//@NOTE: use the old one, new one might be changed when regenerate.
 		        		//find the current bill's status and add comment with the id and subtotal of original bill.
-		        		sql = new StringBuilder("update bill set comment = comment + '").append(PrintService.REF_TO).append(originalBillPanel.billID);
+		        		sql = new StringBuilder("update bill set comment = comment + '").append(PrintService.REF_TO).append(originalBillPanel.getBillID());
 		        		if(originalBillPanel.status == DBConsts.completed || originalBillPanel.status < DBConsts.original) {
 		        			sql.append("F");
 		        		}

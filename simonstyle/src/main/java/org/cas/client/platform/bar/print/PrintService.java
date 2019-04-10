@@ -130,7 +130,7 @@ public class PrintService{
         int tWidth = BarUtil.getPreferedWidth();
         
         //push head info
-	    pushBillHeadInfo(contents, tWidth, String.valueOf(billPanel.billID));
+	    pushBillHeadInfo(contents, tWidth, String.valueOf(billPanel.getBillID()));
 	    
 	    //push table, bill waiter and time
 	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
@@ -1802,7 +1802,7 @@ public class PrintService{
   		
   		for (Bill bill : list) {
   			BillPanel bp = new BillPanel(null);
-    		bp.initContent(String.valueOf(bill.getId()), bill.getBillIndex(), bill.getTableID(), bill.getOpenTime());
+    		bp.initContent(null, bill.getBillIndex(), bill.getTableID(), bill.getOpenTime());
     		bp.updateTotleArea();
     		
     		net += bp.subTotal;
