@@ -257,6 +257,10 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String ServerHost() {return "Server host";}
     @Override
 	public String PrinterError() {return "WARNING! Error occured when printing in back end, please check printer and try again";}
+    @Override
+	public String NoSerialPrinterFound() {return "no printer found! please connect the printer to the first serial port.";}
+    @Override
+	public String NoComPortFound() {return "no com ports found! please check the printer connection and com driver.";}
     
     @Override
 	public String OTHER() {return "OTHER";}
