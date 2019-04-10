@@ -1802,7 +1802,7 @@ public class PrintService{
   		
   		for (Bill bill : list) {
   			BillPanel bp = new BillPanel(null);
-    		bp.initContent(String.valueOf(bill.getId()), bill.getBillIndex(), bill.getTableID(), bill.getOpenTime());
+    		bp.initContent(null, bill.getBillIndex(), bill.getTableID(), bill.getOpenTime());
     		bp.updateTotleArea();
     		
     		net += bp.subTotal;
