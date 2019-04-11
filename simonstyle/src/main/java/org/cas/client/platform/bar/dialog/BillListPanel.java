@@ -886,9 +886,13 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
     	int num = 0;
     	try {
 			StringBuilder sql = new StringBuilder("select DISTINCT billIndex from bill where tableId = '").append(tableName).append("'")
-				.append(" and opentime = '").append(openTime).append("'")
-				.append(" and (status is null or status < ").append(DBConsts.completed).append(" and status >= 0)")
-				.append(" order by billIndex");
+				.append(" and opentime = '").append(openTime).append("'");
+			if(BarOption.isFastFoodMode()) {
+				sql.append(" and (status is null or status < ").append(DBConsts.deleted).append(")");
+			} else {
+				sql.append(" and (status is null or status < ").append(DBConsts.completed).append(" and status >= 0)");
+			}
+			sql.append(" order by billIndex");
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
 			rs.relative(-1);

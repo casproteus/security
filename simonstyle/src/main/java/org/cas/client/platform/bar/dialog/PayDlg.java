@@ -461,7 +461,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     		PrintService.openDrawer();
 
         	if(BarOption.isFastFoodMode()) {
-    	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
     	    	((SalesPanel)BarFrame.instance.panels[2]).addNewBillInCurTable();
     	    }else if(BarFrame.instance.isTableEmpty(null, null)) {
     			BarFrame.instance.closeATable(null, null);

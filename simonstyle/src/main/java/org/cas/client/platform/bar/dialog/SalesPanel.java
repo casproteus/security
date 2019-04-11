@@ -533,9 +533,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
 		int oldbill = billPanel.getBillID();
 		int billId = BarFrame.instance.createAnEmptyBill(tableName, openTime, newBillIdx);
-		if(billId <= oldbill) {
-			System.out.println("error!");
-		}
 		billPanel.setBillID(billId);
 		BarFrame.instance.setCurBillIdx(String.valueOf(newBillIdx));
 		BarFrame.instance.switchMode(2);
