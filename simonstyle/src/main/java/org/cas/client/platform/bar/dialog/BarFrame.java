@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.bar.model.DBConsts;
@@ -715,6 +716,21 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		 }catch(Exception exp) {
 			 L.e("change table", "exception when recover table:" + sql, exp);
 		 }
+	}
+	
+	public void userCheckOut() {
+		if(BarOption.isSingleUser()) {
+			CheckInOutListDlg.updateCheckInRecord();
+			BarFrame.instance.setVisible(false);
+			BarFrame.singleUserLoginProcess();
+		}else {
+			new LoginDlg(null).setVisible(true);
+		    if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
+		    	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
+		        //insert a record of start to work.
+		    	CheckInOutListDlg.updateCheckInRecord();
+		    }
+		}
 	}
 	
     @Override

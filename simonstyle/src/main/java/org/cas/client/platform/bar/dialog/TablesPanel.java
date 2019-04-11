@@ -177,18 +177,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 	    		ReportDlg dlg = new ReportDlg(BarFrame.instance);
 	    		dlg.setVisible(true);
             }else if (o == btnCheckInOut) {
-            	if(BarOption.isSingleUser()) {
-            		CheckInOutListDlg.updateCheckInRecord();
-    				BarFrame.instance.setVisible(false);
-    				BarFrame.singleUserLoginProcess();
-    			}else {
-    				new LoginDlg(null).setVisible(true);
-	                if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-	                	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
-	                    //insert a record of start to work.
-	                	CheckInOutListDlg.updateCheckInRecord();
-	                }
-    			}
+            	BarFrame.instance.userCheckOut();
             }
         }
 //		else if(o instanceof JToggleButton) {

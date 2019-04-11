@@ -207,7 +207,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	                 return;	
     	            }
             	}
-            	BarFrame.instance.switchMode(0);
+            	if(BarOption.isFastFoodMode()) {
+            		BarFrame.instance.userCheckOut();
+            	}else {
+            		BarFrame.instance.switchMode(0);
+            	}
             	
             } else if(o == btnLine_2_2) {		//Add bill
             	//save unsaved output
