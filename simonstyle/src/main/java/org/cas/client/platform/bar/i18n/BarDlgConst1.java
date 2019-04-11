@@ -7,7 +7,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String Cancel() {return "Alluner";}
     @Override
-	public String ChangeDate() {return "CHANGER DATE";}
+	public String ChangeDate() {return "CHANGER LA DATE";}
     @Override
 	public String ViewDetail() {return "VOIR DETAIL";}
     @Override
@@ -20,35 +20,35 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String SERVICEFEE() {return "<html><center>FRAIS DE  <br>SRIVICE</center></html>";}
     
     @Override
-	public String ServiceFeeNotice() {return "Veuillez entrer la somme des frais de service";}
+	public String ServiceFeeNotice() {return "Veuillez entrer la montant des frais de service";}
     @Override
 	public String Changes() {return "Monnaie";}
     @Override
 	public String AddToTip() {return "Ajouter Pourboire";}
     @Override
-	public String Status() {return "Etat";}
+	public String Status() {return "?tat";}
     @Override
 	public String Apply() {return "Appliquer";}
     @Override
 	public String PRINT() {return "Imprimer";}
 
     @Override
-	public String EnterCashPayment() {return "Ajouter Paiement En liquide";}
+	public String EnterCashPayment() {return "Entrer au Paiement En liquide";}
     @Override
-	public String EnterDebitPayment() {return "Ajouter Paiement En Debit";}
+	public String EnterDebitPayment() {return "Entrer au  Paiement En Debit";}
     @Override
-	public String EnterVisaPayment() {return "Ajouter Paiement Par Visa";}
+	public String EnterVisaPayment() {return "Entrer au  Paiement Par Visa";}
     @Override
-	public String EnterMasterPayment() {return "Ajouter Paiement Par Master";}
+	public String EnterMasterPayment() {return "Entrer au  Paiement Par Master";}
     @Override
-	public String EnterOtherPayment() {return "Ajouter Un Autre Paiement";}
+	public String EnterOtherPayment() {return "Entrer à Un Autre Paiement";}
     
     @Override
-	public String ChangeMode() {return "<html><center>CHANGER<br>MODE</center></html>";}
+	public String ChangeMode() {return "<html><center>CHANGER<br>LE MODE</center></html>";}
     @Override
-	public String AddTable() {return "<html><center>Ajouter<br>TABLE</center></html>";}
+	public String AddTable() {return "<html><center>AJOUTER<br>TABLE</center></html>";}
     @Override
-	public String OrderManage() {return "<html><center>v��rifier<br> ORDRE</center></html>";}
+	public String OrderManage() {return "<html><center>VERIFIER<br> ORDRE</center></html>";}
     @Override
 	public String OpenDrawer() {return "<html><center>OUVRIR<br>CAISSE</center></html>";}
     @Override
@@ -56,7 +56,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String DISCOUNT_BILL() {return "FACTURE DISCOUNT";}
     @Override
-	public String VolumnDiscountNotice() {return "Il va remiser la facture enti��re";}
+	public String VolumnDiscountNotice() {return "Il va remiser la facture entière";}
     
     @Override
 	public String WaiterReport() {return "<html><center>SERVEUR<br>RAPPORT</center></html>";}
@@ -89,7 +89,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String PAY() {return "PAYER";}
     @Override
-	public String REMOVEITEM() {return "<html><center>RETIRER<br>ARTICLE</center></html>";}
+	public String REMOVEITEM() {return "<html><center>ENLEVER<br>ARTICLE</center></html>";}
     @Override
 	public String VOID_ITEM() {return "VIDER ARTICLE";}
     @Override
@@ -103,19 +103,19 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String ChangePrice() {return "<html><center>CHANGER<br>PRIX</center></html>";}
     @Override
-	public String ChangePriceNotice() {return "Plaire importer un  differenet prix";}
+	public String ChangePriceNotice() {return "Veuillez taper un prix different";}
     @Override
 	public String CHANGEPRICE() {return "CHANGER PRIX";}
     @Override
 	public String QTY() {return "QTY";}
     @Override
-	public String QTYNOTICE() {return "Plaire importer un nombre pour proc��der";}
+	public String QTYNOTICE() {return "Veuillez taper un nombre pour procéder";}
     @Override
 	public String DISC_ITEM() {return "<html><center>REMISE<br>ARTICLE</center></html>";}
     @Override
 	public String DISCITEM() {return "REMISE ARTICLE";}
     @Override
-	public String DISC_ITEMNotice() {return "Il va remiser �� partir d'article s��lectionn��";}
+	public String DISC_ITEMNotice() {return "Il va remiser un article sélectionné";}
     @Override
 	public String PRINT_BILL() {return "<html><center>IMPRIMER<br>FACTURE</center></html>";}
 
@@ -130,20 +130,20 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String VOID_ORDER() {return "<html><center>VIDER<br>ORDRE</center></html>";}
     @Override
-	public String SETTINGS() {return "R��glage";}
+	public String SETTINGS() {return "Réglage";}
     @Override
-	public String RETURN() {return "Rembourser";}
+	public String RETURN() {return "RETOURNER";}
     @Override
-	public String MORE() {return "Plus";}
+	public String MORE() {return "PLUS";}
     @Override
-	public String SEND() {return "Envoyer";}
+	public String SEND() {return "ENVOYER";}
 
     @Override
 	public String EQUL_BILL() {return "EGALER FACTURE";}
     @Override
 	public String FAST_DISCOUNT() {return "DISCOUNT RAPIDE";}
     @Override
-	public String QUICK_OPEN() {return "OUVRIR RAPIDE";}
+	public String QUICK_OPEN() {return "OUVRIR RAPIDEMENT";}
     @Override
 	public String MODIFY() {return "MODIFIER";}
     @Override
@@ -152,27 +152,27 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String PRINTER() {return "IMPRIMANTE";}
     @Override
-	public String OnlyOneShouldBeSelected() {return "Assurez vous qu'un ou seulement un article s��lectionn��, ensuite essayer encore.";}
+	public String OnlyOneShouldBeSelected() {return "Assurez que seulement un article est sélectionné, ensuite ressayez.";}
     @Override
-	public String InvalidInput() {return "The input content is invalid for this function";}
+	public String InvalidInput() {return "Ce que vous tapez est invalide pour cette fonction";}
     @Override
-	public String ADMIN_MODE() {return "Syst��me est dans le mode de r��glage! Cliquez le bouton de d��connecter pour revenir au mode de utiliser";}
+	public String ADMIN_MODE() {return "Système est dans le mode de réglage! Cliquez sur le bouton de dèconnecter pour retourner au mode d'utilisateur";}
     @Override
-	public String USE_MODE() {return "Syst��me est dans le mode de fontionnement!";}
+	public String USE_MODE() {return "Système est dans le mode de fonctionnement!";}
     @Override
 	public String Title() {return "SanjiPos - Copyright 2019 - http://www.ShareTheGoodOnes.com";}
     @Override
-	public String DuplicatedInput() {return "Nom dupliqu�� trouv��! veuillez choisir un autre nom";}
+	public String DuplicatedInput() {return "Trouve un Nom doublé! veuillez choisir un autre nom";}
     @Override
-	public String NoBillSeleted() {return "Trouv�� aucune facture pour diviser l'article. Veuillez s��lectionner au moins une autre facture avant de rel?cher le bouton.";}
+	public String NoBillSeleted() {return "Ne trouve aucune facture pour diviser l'article. Veuillez sélectionner au moins une facture avant de relacher le bouton.";}
     @Override
-	public String NotPayYet() {return "Rembourser disponible uniquement pour les factures d��j�� pay��es";}
+	public String NotPayYet() {return "Remboursement est valide seulement pour les factures déjà payées";}
     @Override
-	public String AllreadyRefund() {return "Cette facture est d��j�� rembours��e, ��tes-vous sur de faire un autre remboursement?d��j�� rembours��e: ";}
+	public String AllreadyRefund() {return "Cette facture est déjà remboursée, êtes-vous sur de faire un autre remboursement?déjà remboursée: ";}
     @Override
-	public String UnSendRecordFound() {return "Unsend records found! s'il vous pla?t assurez-vous que tous les plats ont envoy�� �� la cuisine avant cette action";}
+	public String UnSendRecordFound() {return "Des records non envoyé sont trouvés! Veuillez assurez-vous que tous les plats sont envoyés à la cuisine avant cette action";}
     @Override
-	public String Colon() {return "：";}
+	public String Colon() {return "锛?;}
     @Override
 	public String Operator() {return "EMPLOYE";}
     @Override
@@ -182,86 +182,86 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String Bill() {return "FACTURE";}
     @Override
-	public String UnSavedRecordFound() {return "Are you sure to split the bill withoud sending new added ones? the unsend records will be cancelled";}
+	public String UnSavedRecordFound() {return "Vous assurez-vous de diviser cette facture sans envoyer une nouvelle? Des records non envoyé vont être supprimés";}
     @Override
-	public String COMFIRMDELETEACTION() {return "The dish might allready be prepared, are you sure to cancel?";}
+	public String COMFIRMDELETEACTION() {return "	Le plate a été préparé probablement,vous assurez-vous de le annuler?";}
     @Override
 	public String COMFIRMDELETEACTION2() {return "Etes-vous sur de le retirer de la liste?";}
     @Override
-	public String COMFIRMDELETECATEGORY() {return "Etes-vous su+r de Are you sure to remove the whole category? The menus under it will also be deleted! ";}
+	public String COMFIRMDELETECATEGORY() {return "Etes-vous sur de enveler la catégorie entière? Les menus dedans vont être envelés! ";}
     @Override
-	public String COMFIRMLOSTACTION() {return "Etes-vous sur de ne pas envoyer ou enregistrer le nouveau contenu d'entr��e?";}
+	public String COMFIRMLOSTACTION() {return "Etes-vous sur de ne pas envoyer ou enregistrer le nouveau contenu?";}
     @Override
-	public String ConfirmPayAgain() {return "Cette facture a d��j�� ��t�� pay��e! Etes-vous s?r que vous recevrez de l'argent pour lui encore?";}
+	public String ConfirmPayAgain() {return "Cette facture a déjà été payée! Etes-vous sur de recevoir de l'argent encore une fois?";}
     @Override
-	public String ClosedBillCantVoid() {return "Cette facture a ��t�� ferm��, ne peut pas vider ordre .";}
+	public String ClosedBillCantVoid() {return "Cette facture est fermée, vous ne pouvez plus vider cet ordre .";}
     @Override
-    public String ConvertClosedBillBack() {return "Cette facture est d��j�� imprim��e��etes-vous sur que cr��er une nouvelle facture?";}
+    public String ConvertClosedBillBack() {return "Cette facture est déjà imprimée，etes-vous sur que créer une nouvelle facture?";}
     @Override
-	public String SetCatogoryFirst() {return "plaire etablir la cat��gorie en premier";}
+	public String SetCatogoryFirst() {return "Veuillez etablir la catégorie en premier";}
     @Override
-	public String SendItemCanNotModify() {return "Etes-vous sur de diviser la facture sans en envoyer de nouvelles? les enregistrements non envoy��s seront annul��s";}
+	public String SendItemCanNotModify() {return "C'est interdit de modifier car cet article est déjà envoyé.Nous ajoutons un nouvel article à la liste";}
     @Override
-	public String reCeivedMoneyNotEnough() {return "N'avez pas recu assez d'argent, ��tes-vous s?r de fermer la facture?";}
+	public String reCeivedMoneyNotEnough() {return "Pas assez d'argent, êtes-vous sur de fermer la facture?";}
     @Override
-	public String LeftMoney() {return "De la derni��re session";}
+	public String LeftMoney() {return "De la dernière session";}
     @Override
-	public String UnSavedContentWillBeLost() {return "Le contenu non enregistr�� sera perdu";}
+	public String UnSavedContentWillBeLost() {return "Le contenu non enregistré sera perdu";}
     @Override
-	public String NoNewSelectionToCancel() {return "Aucune nouvelle s��lection �� annuler! Voulez-vous annuler la facture enti��re?";}
+	public String NoNewSelectionToCancel() {return "Aucune nouvelle sélection à annuler! Voulez-vous annuler la facture entière?";}
     @Override
 	public String Due() {return "Due";}
     @Override
-	public String OPENTIME() {return "Temps Ouvert";}
+	public String OPENTIME() {return "Temps d'ouverture";}
     @Override
-	public String EndTime() {return "Temps De Fin";}
+	public String EndTime() {return "Temps de fermeture";}
 
     @Override
 	public String EXACT() {return "EXACTE";}
 
     @Override
-	public String BillPageRow() {return "Facture rang��e de disposition:";}
+	public String BillPageRow() {return "Facture rangée de disposition:";}
     @Override
 	public String BillPageCol() {return "Facture colonne de disposition:";}
     @Override
-	public String RowsofCategoryButton() {return "Boutons de cat��gorie rang��e de disposition:";}
+	public String RowsofCategoryButton() {return "Boutons de catégorie rangée de disposition:";}
     @Override
-	public String ColumnsofCategoryButton() {return "Boutons de cat��gorie colonne de disposition:";}
+	public String ColumnsofCategoryButton() {return "Boutons de catégorie colonne de disposition:";}
     @Override
-	public String RowsofDishButton() {return "Boutons de menu rang��e de disposition:";}
+	public String RowsofDishButton() {return "Boutons de menu rangée de disposition:";}
     @Override
 	public String ColumnsofDishButton() {return "Boutons de menu colonne de disposition:";}
     @Override
-	public String PortionofCategoryArea() {return "Ratio d'aire de cat��gorie:";}
+	public String PortionofCategoryArea() {return "Ratio d'aire de catégorie:";}
     @Override
 	public String PortionofMenuArea() {return "Ratio d'aire de menu:";}
     @Override
    	public String IsTrainingMode() {return "Il est le mode de formation";}
     @Override
-	public String IsSingleUser() {return "Il est le mode de utilisateur unique";}
+	public String IsSingleUser() {return "Il est le mode de utilisateur singulier";}
     @Override
-	public String IsTaxNotAllowDiscount() {return "La taxe ne devrait pas ��tre affect��e par le rabais de plat";}
-    @Override
+	public String IsTaxNotAllowDiscount() {return "La taxe ne devrait pas être affectée par le rabais de plat";}
+    @OverrideH?te serveur
     public String IsServiceFeeAffectTax() {return "Frais de service va affecter de la taxe";}
     @Override
 	public String IsBuffetMode() {return "Mode de buffet";}
     @Override
 	public String IsFastFoodMode() {return "Mode de fast food";}
     @Override
-	public String IsPrintBillWhenPay() {return "Imprimer automatique de la facture quand paiement";}
+	public String IsPrintBillWhenPay() {return "Imprimer la facture automatiquement en payant";}
     @Override
-	public String StartTimeOfDay() {return "Heure de d��but de la journ��e";}
+	public String StartTimeOfDay() {return "Heure de départ de la journée";}
     @Override
-	public String PrinterMinReachTime() {return "Impression du temps d'attente maximal";}
+	public String PrinterMinReachTime() {return "Le temps d'attend maximun pour imprimer";}
     @Override
 	public String ServerHost() {return "Hote serveur";}
     @Override
-	public String PrinterError() {return "ATTENTION! Une erreur s'est produite quand impression en back-end, plaire v��rifier imprimante et essayer encore";}
+	public String PrinterError() {return "ATTENTION! Une erreur s'est produite quand l'impression est terminée, veuillez inspecter l'imprimante et essayer encore une fois";}
     @Override
 	public String NoSerialPrinterFound() {return "no printer found! please connect the printer to the first serial port.";}
     @Override
 	public String NoComPortFound() {return "no com ports found! please check the printer connection and com driver.";}
-
+    
     @Override
 	public String OTHER() {return "Autre";}
     @Override
@@ -273,7 +273,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String Price() {return "Prix";}
     @Override
-	public String Subtotal() {return "Total";}
+	public String Subtotal() {return "Sout-Total";}
     @Override
 	public String Total() {return "Total";}
     @Override
@@ -281,13 +281,11 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String GST() {return "TPS";}
     @Override
-	public String PricePomp() {return "PrixPomp";}
+	public String PricePomp() {return "Pompe de prix";}
     @Override
-	public String MenuPomp() {return "MenuPomp";}
+	public String MenuPomp() {return "Pompe de menu";}
     @Override
-	public String ModifyPomp() {return "ModifierPomp";}
-
-
+	public String ModifyPomp() {return "Pompe de modification";}
     @Override
 	public String Discount() {return "Rabais";}
     @Override
@@ -295,7 +293,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String comment() {return "commentaire";}
     @Override
-	public String OpenTime() {return "Temps Ouvret";}
+	public String OpenTime() {return "Temps d'ouverture";}
     
     @Override
 	public String Change() {return "Changer";}
@@ -305,20 +303,20 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String PrintAll() {return "Imprimer tout";}
     @Override
-	public String PrintOneBill() {return "UNE FACTURE";}
+	public String PrintOneBill() {return "FACTURE SINGULIERE";}
     @Override
-	public String PrintOneInvoice() {return "UN RECU";}
+	public String PrintOneInvoice() {return "RECU SINGULIER";}
 
     @Override
-	public String EqualBill() {return "DIVISER FACTURE";}
+	public String EqualBill() {return "EGALER FACTURE";}
     @Override
 	public String SplitItem() {return "DIVISER ARTICLE";}
     @Override
 	public String MoveItem() {return "DEPLACER ARTICLE";}
     @Override
-	public String CombineAll() {return "COMBINIER TOUT";}
+	public String CombineAll() {return "COMBINIER LES TOUS";}
     @Override
-	public String UnCombine() {return "NON COMBINER";}
+	public String UnCombine() {return "DEFAIRE COMBINER";}
     @Override
 	public String Refund() {return "REMBOURSER";}
     @Override
@@ -342,7 +340,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String IPAddress() {return "Location";}
     @Override
-	public String Categary() {return "Cat��gorie";}
+	public String Categary() {return "Catégorie";}
     @Override
 	public String TIME() {return "Create Temps";}
     
@@ -365,7 +363,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String LASTNAME() {return "Nom";}
     @Override
-	public String FIRSTNAME() {return "Pr��nom";}
+	public String FIRSTNAME() {return "Prénom";}
     @Override
 	public String DISPLAYAS() {return "Langue";}
     @Override
@@ -446,7 +444,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String Sex() {return "Male";}
     @Override
-	public String JoinTime() {return "Join Time";}
+	public String JoinTime() {return "Rejoindre le temps";}
     @Override
 	public String Salary() {return "Salary";}
     @Override
@@ -454,13 +452,13 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String SSCNUMBER() {return "SSN";}
     @Override
-	public String IDCARD() {return "Carte d;identit��";}
+	public String IDCARD() {return "Carte d;identité";}
     @Override
 	public String BIRTHDAY() {return "Anniversaire";}
     @Override
 	public String BANKNUMBER() {return "Compte bancaire";}
     @Override
-	public String Type() {return "Cat��gorie";}
+	public String Type() {return "Catégorie";}
     @Override
 	public String Note() {return "Remarque";}
     
@@ -479,17 +477,17 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String Product() {return "Produit";}
     @Override
-	public String InputRecs() {return "Enregistrements d'entr��e";}
+	public String InputRecs() {return "Enregistrements d'entrée";}
     @Override
 	public String Supplier() {return "Fournisseur";}
     
     @Override
-	public String PasswordMakeSure() {return "Please input password again";}
+	public String PasswordMakeSure() {return "Veuillez tapez mot de passe encore";}
     @Override
-	public String PasswordNotEqual() {return "The password input are not totally matched with previouse one, please input again";}
+	public String PasswordNotEqual() {return "La saisie du mot de passe ne correspond pas totalement à la précédente, veuillez saisir à nouveau";}
     
     @Override
-	public String MUser() {return "Modify User";}
+	public String MUser() {return "Modifier Utilisateur";}
     @Override
 	public String[] USERTYPE() {return new String[]{"Manager", "Employee" };}
 
@@ -501,22 +499,22 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String DeleteUser() {return "Supprimer Utilisateur";}
     
     @Override
-	public String UserNameInUsed() {return "This user name is not available, please choose another one";}
+	public String UserNameInUsed() {return "Ce nom d'utilisateur n'est pas disponible, veuillez en choisir un autre.";}
     @Override
-	public String FORMATERROR() {return "The content input are in wrong format, please try again";}
+	public String FORMATERROR() {return "Le contenu entré est dans un format incorrect, veuillez réessayer.";}
     @Override
-	public String AvailableModification() {return "Available Modifications";}
+	public String AvailableModification() {return "Modifications disponibles";}
     @Override
 	public String AddNewModificationItem() {return "Nouveau article (e.g. EN;FR;CN;IT, EN;FR;CN;IT)";}
     @Override
-	public String ADD_TO_LIST() {return "Ajouter �� la liste";}
+	public String ADD_TO_LIST() {return "Ajouter à la liste";}
     @Override
-	public String Delete() {return "Supprim��";}
+	public String Delete() {return "Supprimé";}
     @Override
-	public String RESET() {return "R��initialiser";}
+	public String RESET() {return "Réinitialiser";}
     
     @Override
-	public String LoginBK(){return "Login Dialog Back Ground";};
+	public String LoginBK(){return "Fond de boite de dialogue de connexion";};
     @Override
 	public String TablePanelBK(){return "Fond de panneau de table";}
     @Override
@@ -524,9 +522,9 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String SalesPanelBK(){return "Fond de panneau de vente";}
     @Override
-	public String SettingsPanelBK(){return "Fond de panneau de r��glage";}
+	public String SettingsPanelBK(){return "Fond de panneau de réglage";}
     @Override
-	public String CategoryBtnBK(){return "Fond de panneau de Cat��gorie";}
+	public String CategoryBtnBK(){return "Fond de panneau de Catégorie";}
     @Override
 	public String DishBtnBK(){return "Fond de bouton de plat";}
     @Override
@@ -534,29 +532,29 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String TableBtnBK(){return "Fond de bouton de table";}
     @Override
-	public String SelectedTableBtnBK(){return "Fond de bouton de table s��lectionn��";}
+	public String SelectedTableBtnBK(){return "Fond de bouton de table sélectionné";}
     @Override
-	public String NumberBtnBk(){return "Fond du bouton num��rique";}
+	public String NumberBtnBk(){return "Fond du bouton numérique";}
 	@Override
-	public String ArrowBtnBk() {return "Fond du bouton fl��che";}
+	public String ArrowBtnBk() {return "Fond du bouton flèche";}
     @Override
 	public String Color() {return "Couleur";}
 	@Override
-	public String IsHideRecordFromOtherWaiter() {return "Masquer les enregistrements d'un autre employ��";}
+	public String IsHideRecordFromOtherWaiter() {return "Masquer les enregistrements d'un autre employé";}
 	@Override
 	public String IsDisplayBillInKitchen() {return "Afficher l'index des factures dans la cuisine";}
 	@Override
-	public String IsDisplayWaiterInKitchen() {return "Afficher employ�� dans l'imprimeur de la cuisine";}
+	public String IsDisplayWaiterInKitchen() {return "Afficher employé dans l'imprimeur de la cuisine";}
 	@Override
-	public String IsSavePrintInvoiceWhenBilled() {return "N'imprimer aucune facture lorsque factur��."; }
+	public String IsSavePrintInvoiceWhenBilled() {return "N'imprimer aucune facture lorsque facturé."; }
 	@Override
 	public String TreatPricePromtAsTaxInclude() {return "Traiter le prixprom en tant que taxe incluent";};
 	@Override
 	public String IsShowCustomerFrame() {return "Afficher le cadre client";}
 	@Override
-	public String workOnOnlyUnclosedBills() {return "Certaines factures sont d��j�� ferm��s, voulez-vous agir sur les factures non ferm��e.";};
+	public String workOnOnlyUnclosedBills() {return "Certaines factures sont déjà fermés, voulez-vous agir sur les factures non fermée.";};
 	@Override
-	public Object nonEmptyBillFound() {return "Are you sure to close this table, there's still non empty bill to close first, or they will be deleted automatically.";};
+	public Object nonEmptyBillFound() {return "Etes-vous sur de fermer cette tableau, il n'y a toujours pas de facture vide à fermer en premier, ou ils seront automatiquement.";};
 	@Override
 	public String FONTSIZE() {return "Taille De Police";}
 	@Override
@@ -570,21 +568,21 @@ public class BarDlgConst1 implements BarDlgConst{
 	@Override
 	public String couponCode() {return "Code de Coupon";}
 	@Override
-	public String isRedeemed() {return "Rachet��";}
+	public String isRedeemed() {return "Racheté";}
 	@Override
-	public String InvalidCoupon() {return "Code de coupon invalide trouv��!";}
+	public String InvalidCoupon() {return "Code de coupon invalide trouvé!";}
 	@Override
 	public String Copy() {return "Copier";}
 	@Override
-	public String couponNotApplyToBill() {return "La facture en cours ne contient aucun ��l��ment �� utiliser pour ce coupon!";}
+	public String couponNotApplyToBill() {return "La facture en cours ne contient aucun élément à utiliser pour ce coupon!";}
 	@Override
-	public String AtLeastOneShouldBeSelected() {return "Au moins un article doit ��tre s��lectionn�� pour effectuer cette action!";}
+	public String AtLeastOneShouldBeSelected() {return "Au moins un article doit être sélectionné pour effectuer cette action!";}
 	@Override
 	public String printing() { return "Imprimer.....";}
 	@Override
-	public String isWaiterAllowedToDiscount() {return "Employe�� peut donner un r��duction";}
+	public String isWaiterAllowedToDiscount() {return "Employeé peut donner un réduction";}
 	@Override
-	public String isWaiterAllowedToChangePrice() {return "Employ�� peut changer prix";}
+	public String isWaiterAllowedToChangePrice() {return "Employé peut changer prix";}
 	@Override
 	public String isToCustomer() {return "A client";}
 }
