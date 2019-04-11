@@ -172,7 +172,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String UnSendRecordFound() {return "Des records non envoyé sont trouvés! Veuillez assurez-vous que tous les plats sont envoyés à la cuisine avant cette action";}
     @Override
-	public String Colon() {return "锛?;}
+	public String Colon() {return ":";}
     @Override
 	public String Operator() {return "EMPLOYE";}
     @Override
@@ -241,7 +241,7 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String IsSingleUser() {return "Il est le mode de utilisateur singulier";}
     @Override
 	public String IsTaxNotAllowDiscount() {return "La taxe ne devrait pas être affectée par le rabais de plat";}
-    @OverrideH?te serveur
+    @Override
     public String IsServiceFeeAffectTax() {return "Frais de service va affecter de la taxe";}
     @Override
 	public String IsBuffetMode() {return "Mode de buffet";}
