@@ -329,16 +329,6 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 		}
 		BarFrame.instance.cmbCurTable.setModel(new DefaultComboBoxModel<String>(tableNames));
 	}
-	
-    //private JToggleButton btnChangeMode;
-	private FunctionButton btnAddTable;
-	private FunctionButton btnOrderManage;
-	private FunctionButton btnOpenDrawer;
-	//private FunctionButton btnWaiterReport;
-	private FunctionButton btnSetting;
-	private FunctionButton btnReport;
-	private FunctionButton btnCheckInOut;
-
 
 	@Override
 	public void mouseClicked(MouseEvent e) {}
@@ -379,4 +369,14 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 
 	@Override
 	public void mouseExited(MouseEvent e) {}
+	
+    //private JToggleButton btnChangeMode;
+	private FunctionButton btnAddTable;
+	private FunctionButton btnOrderManage;
+	private FunctionButton btnOpenDrawer;
+	//private FunctionButton btnWaiterReport;
+	private FunctionButton btnSetting;
+	private FunctionButton btnReport;
+	private FunctionButton btnCheckInOut;
+
 }

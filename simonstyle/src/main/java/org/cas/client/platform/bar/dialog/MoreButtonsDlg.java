@@ -9,9 +9,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
+import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.bar.i18n.BarDlgConst1;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
@@ -24,13 +25,14 @@ import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
-public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocusListener{
+public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFocusListener{
 	
 	SalesPanel salesPanel;
 
     public MoreButtonsDlg(SalesPanel general) {
     	super();
     	setTitle(BarFrame.consts.MORE());
+    	setIconImage(CustOpts.custOps.getFrameLogoImage());
         salesPanel = general;
         initPanel();
     }
@@ -49,7 +51,8 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
         Object o = e.getSource();
         if (o == btnLine_3_1) { // enter the setting mode.(admin interface)
         	this.setVisible(false);
-        	BarFrame.instance.switchMode(3);
+        	ReportDlg dlg = new ReportDlg(BarFrame.instance);
+    		dlg.setVisible(true);
         	
 //        } else if (o == btnLine_3_2) {	//QTY
 //        	this.setVisible(false);
@@ -220,7 +223,10 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
         } else if (o == btnLine_3_5) {
     		BarFrame.consts = new BarDlgConst2();
         	updateInterface("update employee set subject = 'CN' where id = " + LoginDlg.USERID);
-        }
+        } else if (o == btnLine_3_6) { // enter the setting mode.(admin interface)
+        	this.setVisible(false);
+        	BarFrame.instance.switchMode(3);
+        } 
     }
     
     //find out which dishes in current bill can be apply on the coupon.
@@ -308,12 +314,12 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		btnLine_3_3.setBounds(btnLine_3_1.getX(), btnDiscountCoupon.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		btnLine_3_4.setBounds(btnLine_3_1.getX(), btnLine_3_3.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		btnLine_3_5.setBounds(btnLine_3_1.getX(), btnLine_3_4.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
-		//btnLine_3_6.setBounds(btnLine_3_1.getX(), btnLine_3_5.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
+		btnLine_3_6.setBounds(btnLine_3_1.getX(), btnLine_3_5.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		//btnLine_3_7.setBounds(btnLine_3_1.getX(), btnLine_3_6.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		//btnLine_3_8.setBounds(btnLine_3_1.getX(), btnLine_3_7.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		//btnLine_3_9.setBounds(btnLine_3_1.getX(), btnLine_3_8.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
         
-		int panelHeight = height * 6 + CustOpts.VER_GAP * 7;
+		int panelHeight = height * 7 + CustOpts.VER_GAP * 6;
 		setBounds(x, y - panelHeight, 
 				width + CustOpts.HOR_GAP * 2 + CustOpts.SIZE_EDGE * 2 + 10,
 				panelHeight + CustOpts.SIZE_EDGE * 2 + 40);
@@ -321,13 +327,14 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 	
 	private void initPanel() {
 		// 初始化－－－－－－－－－－－－－－－－
-		btnLine_3_1 = new FunctionButton(BarFrame.consts.SETTINGS());
+		btnLine_3_1 = new FunctionButton(BarFrame.consts.Report());
         //btnLine_3_2 = new JToggleButton(BarFrame.consts.QTY());
         salesPanel.btnOTHER = new FunctionButton(BarFrame.consts.GIFTCARD());
         btnDiscountCoupon = new FunctionButton(BarFrame.consts.COUPON());
 		btnLine_3_3 = new FunctionButton("EN");
 		btnLine_3_4 = new FunctionButton("FR");
 		btnLine_3_5 = new FunctionButton("CN");
+		btnLine_3_6 = new FunctionButton(BarFrame.consts.SETTINGS());
 		//btnLine_3_7 = new FunctionButton(BarFrame.consts.DISC_VOLUMN);
 		//btnLine_3_8 = new FunctionButton(BarFrame.consts.LOGOUT);
 		//btnLine_3_9 = new FunctionButton(BarFrame.consts.MORE);
@@ -339,7 +346,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		btnLine_3_3.setMargin(btnLine_3_1.getMargin());
 		btnLine_3_4.setMargin(btnLine_3_1.getMargin());
 		btnLine_3_5.setMargin(btnLine_3_1.getMargin());
-		//btnLine_3_6.setMargin(btnLine_3_1.getMargin());
+		btnLine_3_6.setMargin(btnLine_3_1.getMargin());
 		//btnLine_3_7.setMargin(btnLine_3_1.getMargin());
 		//btnLine_3_8.setMargin(btnLine_3_1.getMargin());
 		//btnLine_3_9.setMargin(btnLine_3_1.getMargin());
@@ -354,7 +361,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		add(btnLine_3_3);
 		add(btnLine_3_4);
 		add(btnLine_3_5);
-		//add(btnLine_3_6);
+		add(btnLine_3_6);
 		//add(btnLine_3_7);
 		//add(btnLine_3_8);
 		//add(btnLine_3_9);
@@ -366,7 +373,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 		btnLine_3_3.addActionListener(this);
 		btnLine_3_4.addActionListener(this);
 		btnLine_3_5.addActionListener(this);
-		//btnLine_3_6.addActionListener(this);
+		btnLine_3_6.addActionListener(this);
 		//btnLine_3_7.addActionListener(this);
 		//btnLine_3_8.addActionListener(this);
 		//btnLine_3_9.addActionListener(this);
@@ -379,6 +386,7 @@ public class MoreButtonsDlg extends JFrame implements ActionListener, WindowFocu
 	private FunctionButton btnLine_3_3;
 	private FunctionButton btnLine_3_4;
 	private FunctionButton btnLine_3_5;
+	private FunctionButton btnLine_3_6;
 
 	@Override
 	public void windowGainedFocus(WindowEvent e) {}
