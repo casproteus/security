@@ -6,16 +6,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
+import org.cas.client.platform.bar.dialog.statistics.CheckBillDlg;
 import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.bar.i18n.BarDlgConst1;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
@@ -226,7 +229,45 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
         } else if (o == btnLine_3_6) { // enter the setting mode.(admin interface)
         	this.setVisible(false);
         	BarFrame.instance.switchMode(3);
-        } 
+        } else if (o == btnLine_3_7) { // suspend bill
+        	this.setVisible(false);
+        	if(salesPanel.billPanel.status > DBConsts.suspended || salesPanel.billPanel.status < DBConsts.original) {
+				return;
+			}
+			
+	        try {
+	        	Statement smt = PIMDBModel.getStatement();
+	        	String tableID = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
+	        	//update outputs
+				StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.suspended)
+		                .append(" where SUBJECT = '").append(tableID)
+		                .append("' and time = '").append(BarFrame.instance.valStartTime.getText())
+		                .append("' and deleted is null or deleted = ").append(DBConsts.original);
+				smt.executeUpdate(sql.toString());
+				
+				//update bills
+				sql = new StringBuilder("update bill set status = ").append(DBConsts.suspended)
+						.append(" where openTime = '").append(BarFrame.instance.valStartTime.getText())
+						.append("' and deleted is null or deleted = ").append(DBConsts.original);
+				smt.executeUpdate(sql.toString());
+				
+	        	//update the tabel status
+				BarFrame.instance.closeATable(tableID, null);
+	        }catch(Exception exp) {
+	        	ErrorUtil.write(exp);
+	        }
+	        
+			BarFrame.instance.setCurBillIdx("");
+			BarFrame.instance.switchMode(0);
+        } else if (o == btnLine_3_8) { // check order
+        	this.setVisible(false);
+        	String endNow = BarOption.df.format(new Date());
+    		int p = endNow.indexOf(" ");
+    		String startTime = endNow.substring(0, p + 1) + BarOption.getStartTime();
+    		CheckBillDlg dlg = new CheckBillDlg(BarFrame.instance);
+    		dlg.initContent(startTime, endNow);
+    		dlg.setVisible(true);
+        }
     }
     
     //find out which dishes in current bill can be apply on the coupon.
@@ -315,8 +356,8 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 		btnLine_3_4.setBounds(btnLine_3_1.getX(), btnLine_3_3.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		btnLine_3_5.setBounds(btnLine_3_1.getX(), btnLine_3_4.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		btnLine_3_6.setBounds(btnLine_3_1.getX(), btnLine_3_5.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
-		//btnLine_3_7.setBounds(btnLine_3_1.getX(), btnLine_3_6.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
-		//btnLine_3_8.setBounds(btnLine_3_1.getX(), btnLine_3_7.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
+		btnLine_3_7.setBounds(btnLine_3_1.getX(), btnLine_3_6.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
+		btnLine_3_8.setBounds(btnLine_3_1.getX(), btnLine_3_7.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
 		//btnLine_3_9.setBounds(btnLine_3_1.getX(), btnLine_3_8.getY() + btnLine_3_1.getHeight() + CustOpts.VER_GAP, width, height);
         
 		int panelHeight = height * 7 + CustOpts.VER_GAP * 6;
@@ -335,8 +376,8 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 		btnLine_3_4 = new FunctionButton("FR");
 		btnLine_3_5 = new FunctionButton("CN");
 		btnLine_3_6 = new FunctionButton(BarFrame.consts.SETTINGS());
-		//btnLine_3_7 = new FunctionButton(BarFrame.consts.DISC_VOLUMN);
-		//btnLine_3_8 = new FunctionButton(BarFrame.consts.LOGOUT);
+		btnLine_3_7 = new FunctionButton(BarFrame.consts.SuspendAll());
+		btnLine_3_8 = new FunctionButton(BarFrame.consts.OrderManage());
 		//btnLine_3_9 = new FunctionButton(BarFrame.consts.MORE);
 
 		// 属性设置－－－－－－－－－－－－－－
@@ -347,8 +388,8 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 		btnLine_3_4.setMargin(btnLine_3_1.getMargin());
 		btnLine_3_5.setMargin(btnLine_3_1.getMargin());
 		btnLine_3_6.setMargin(btnLine_3_1.getMargin());
-		//btnLine_3_7.setMargin(btnLine_3_1.getMargin());
-		//btnLine_3_8.setMargin(btnLine_3_1.getMargin());
+		btnLine_3_7.setMargin(btnLine_3_1.getMargin());
+		btnLine_3_8.setMargin(btnLine_3_1.getMargin());
 		//btnLine_3_9.setMargin(btnLine_3_1.getMargin());
 		
 		// 布局---------------
@@ -362,8 +403,8 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 		add(btnLine_3_4);
 		add(btnLine_3_5);
 		add(btnLine_3_6);
-		//add(btnLine_3_7);
-		//add(btnLine_3_8);
+		add(btnLine_3_7);
+		add(btnLine_3_8);
 		//add(btnLine_3_9);
 
 		// 加监听器－－－－－－－－
@@ -374,8 +415,8 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 		btnLine_3_4.addActionListener(this);
 		btnLine_3_5.addActionListener(this);
 		btnLine_3_6.addActionListener(this);
-		//btnLine_3_7.addActionListener(this);
-		//btnLine_3_8.addActionListener(this);
+		btnLine_3_7.addActionListener(this);
+		btnLine_3_8.addActionListener(this);
 		//btnLine_3_9.addActionListener(this);
 		
 		this.addWindowFocusListener(this);
@@ -387,6 +428,8 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 	private FunctionButton btnLine_3_4;
 	private FunctionButton btnLine_3_5;
 	private FunctionButton btnLine_3_6;
+	private FunctionButton btnLine_3_7;
+	private FunctionButton btnLine_3_8;
 
 	@Override
 	public void windowGainedFocus(WindowEvent e) {}

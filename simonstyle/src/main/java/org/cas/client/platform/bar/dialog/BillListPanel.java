@@ -694,8 +694,6 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				if (JOptionPane.showConfirmDialog(this, BarFrame.consts.workOnOnlyUnclosedBills(),
 		                DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
 		            return false;
-				}else {
-					return true;
 				}
 			}
 		}

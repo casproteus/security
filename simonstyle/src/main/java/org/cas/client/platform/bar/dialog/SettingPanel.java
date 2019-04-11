@@ -295,7 +295,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         if (o instanceof FunctionButton) {
         	if(o == btnLine_2_1) {	//return;
         		LoginDlg.USERTYPE = -1;
-        		BarFrame.instance.switchMode(0);
+        		BarFrame.instance.switchMode(BarOption.isFastFoodMode() ? 2 : 0);
         		if(BarOption.isSingleUser()) {
     				BarFrame.instance.setVisible(false);
     				BarFrame.singleUserLoginProcess();
