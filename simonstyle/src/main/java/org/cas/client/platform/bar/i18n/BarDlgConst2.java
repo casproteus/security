@@ -324,7 +324,9 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String RefundNotice() {return "请输入退款金额";}
     @Override
-	public String SuspendAll() {return "翻台";}
+	public String SuspendAll() {return "全部挂单";}
+    @Override
+	public String SUSPEND() {return "挂单";}
     @Override
 	public String CancelAll() {return "全部取消";}
     @Override

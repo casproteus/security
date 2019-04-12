@@ -588,20 +588,19 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				}
 				
 		        try {
-		        	Statement smt = PIMDBModel.getStatement();
 		        	String tableID = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		        	//update outputs
 					StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.suspended)
 			                .append(" where SUBJECT = '").append(tableID)
 			                .append("' and time = '").append(BarFrame.instance.valStartTime.getText())
-			                .append("' and deleted is null or deleted = ").append(DBConsts.original);
-					smt.executeUpdate(sql.toString());
+			                .append("' and (deleted is null or deleted = ").append(DBConsts.original).append(")");
+					PIMDBModel.getStatement().executeUpdate(sql.toString());
 					
 					//update bills
 					sql = new StringBuilder("update bill set status = ").append(DBConsts.suspended)
 							.append(" where openTime = '").append(BarFrame.instance.valStartTime.getText())
-							.append("' and deleted is null or deleted = ").append(DBConsts.original);
-					smt.executeUpdate(sql.toString());
+							.append("' and (status is null or status = ").append(DBConsts.original).append(")");
+					PIMDBModel.getStatement().executeUpdate(sql.toString());
 					
 		        	//update the tabel status
 					BarFrame.instance.closeATable(tableID, null);
@@ -633,7 +632,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				//@NOTE we don't change the billID when combinAll(to support undo) .append(", category = '").append(firstUnclosedBillId).append("'")
 				.append(" where SUBJECT = '").append(tableName)
 				.append("' and time = '").append(openTime)
-				.append("' and deleted is null or DELETED = ").append(DBConsts.original);
+				.append("' and (deleted is null or DELETED = ").append(DBConsts.original).append(")");
 		try {
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 		}catch(Exception exp) {

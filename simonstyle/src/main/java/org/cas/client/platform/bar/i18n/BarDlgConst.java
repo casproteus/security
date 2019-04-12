@@ -175,6 +175,7 @@ public interface BarDlgConst {
     String Refund();
     String RefundNotice();
     String SuspendAll();
+    String SUSPEND();
     String CancelAll();
     String ProdCodeLength();
     String Shoestring();

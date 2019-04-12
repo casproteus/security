@@ -575,7 +575,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		billPanel.initContent();	//always need to initContent, to make sure dish in selection ary has new property. e.g. saved dish should has different color.,
 	}
 
-	private void createAndPrintNewOutput() {
+	public void createAndPrintNewOutput() {
 		//if there's any new bill, send it to kitchen first, and this also made the output generated.
 		List<Dish> dishes = billPanel.getNewDishes();
 		if (dishes != null && dishes.size() > 0) {

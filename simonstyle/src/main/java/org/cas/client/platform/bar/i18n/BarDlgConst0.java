@@ -326,6 +326,8 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String SuspendAll() {return "SUSPEND ALL";}
     @Override
+	public String SUSPEND() {return "SUSPEND";}
+    @Override
 	public String CancelAll() {return "Cancel All";}
     @Override
 	public String ProdCodeLength() {return "ProdCodeLength";}

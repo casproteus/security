@@ -390,7 +390,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         		.append("' and bill.employeeId = employee.id and (bill.status < ").append(LoginDlg.USERTYPE < 2 ? DBConsts.expired : DBConsts.deleted)
         		.append(" or bill.status is null)");
         if(!"true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("ShowProcessingBill")))) {
-        	sql.append("and bill.status is not null ").append(" and bill.status != ").append(DBConsts.billPrinted);
+        	sql.append(" and bill.status is not null ").append(" and bill.status != ").append(DBConsts.billPrinted);
         }
         if("true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("HideRecordFromOtherWaiter"))) //if configured, then do not show records of other waiter.
         		&& LoginDlg.USERTYPE < 2) {
