@@ -505,6 +505,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         newDish.setOutputID(-1);
         newDish.setNum(1);
         int price = dish.getPrice();
+        
         if("true".equals(dish.getPrompPrice()) && BarOption.isTreatPricePromtAsTaxInclude()) {
         	price = (int)Math.round(price / ((100 + BarOption.getGST() + BarOption.getQST()) / 100.0));
         }
@@ -530,7 +531,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		        if("true".equals(newDish.getPrompMofify())) {
 		        	new AddModificationDialog(BarFrame.instance, BillListPanel.curDish.getModification()).setVisible(true);
 		        }
-		        if("true".equals(newDish.getPrompPrice()) && !BarOption.isTreatPricePromtAsTaxInclude()) {
+	        	//if the original is not 0.00, then will still be treated as price promp not a taxInclude.
+		        if(newDish.getPrice() == 0 || "true".equals(newDish.getPrompPrice()) && !BarOption.isTreatPricePromtAsTaxInclude()) {
 		        	salesPanel.btnLine_1_8.setSelected(true);
 		        	salesPanel.showPriceChangeDlg();
 		        }
