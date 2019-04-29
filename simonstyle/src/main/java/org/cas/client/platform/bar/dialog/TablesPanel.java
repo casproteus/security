@@ -288,7 +288,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             Statement smt = PIMDBModel.getReadOnlyStatement();
 
             // load all the categorys---------------------------
-            ResultSet rs = smt.executeQuery("select * from dining_Table order by DSP_INDEX");
+            ResultSet rs = smt.executeQuery("select * from dining_Table order by Name");
             rs.beforeFirst();
 
             while (rs.next()) {

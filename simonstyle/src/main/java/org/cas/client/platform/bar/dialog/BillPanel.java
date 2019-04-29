@@ -285,32 +285,24 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
         Object o = e.getSource();
 		if(o instanceof ArrowButton) {
+        	if(!checkStatus()) {
+        		return;
+        	}
+        	int selectedRow =  table.getSelectedRow();
+    		Dish dish = orderedDishAry.get(selectedRow);
 	        if(o == btnMore) {
-            	if(!checkStatus()) {
-            		return;
-            	}
-	        	int selectedRow =  table.getSelectedRow();
-				if(orderedDishAry.get(selectedRow).getOutputID() >= 0) {	//already saved
+				if(dish.getOutputID() >= 0) {	//already saved
 					BarFrame.setStatusMes(BarFrame.consts.SendItemCanNotModify());
 					addContentToList(orderedDishAry.get(selectedRow));
 				}else {			//not saved yet  //NOTE:getNum() couldn't be bigger than 10000, if it's saved, + button will insert a new line.
 					int tQTY = orderedDishAry.get(selectedRow).getNum() + 1;
-					int row = table.getSelectedRow();
-					Dish dish = orderedDishAry.get(row);
 					dish.setNum(tQTY);
 					dish.setTotalPrice((dish.getPrice() - dish.getDiscount()) * tQTY);
 					
-					table.setValueAt(tQTY % BarOption.MaxQTY + "x", row, 0);
-					table.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f), row, 3);
+					table.setValueAt(tQTY % BarOption.MaxQTY + "x", selectedRow, 0);
+					table.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f), selectedRow, 3);
 				}
-				updateTotleArea();
-				table.setSelectedRow(selectedRow);
 	        } else if (o == btnLess) {
-	        	if(!checkStatus()) {
-            		return;
-            	}
-	    		int selectedRow =  table.getSelectedRow();
-	    		Dish dish = orderedDishAry.get(selectedRow);
 				if(dish.getOutputID() >= 0) {	//if it's already send, then do the removePanel.
 					salesPanel.removeItem();
 				}else {
@@ -324,15 +316,16 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 						}
 						removeFromSelection(selectedRow);
 					} else {
-						int tQTY = orderedDishAry.get(selectedRow).getNum() - 1;
-						int row = table.getSelectedRow();
-						orderedDishAry.get(row).setNum(tQTY);
-						table.setValueAt(tQTY == 1 ? "" : tQTY + "x"  , row, 0);		
-						table.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f), row, 3);
+						int tQTY = dish.getNum() - 1;
+						dish.setNum(tQTY);
+						dish.setTotalPrice((dish.getPrice() - dish.getDiscount()) * tQTY);
+						
+						table.setValueAt(tQTY == 1 ? "" : tQTY + "x"  , selectedRow, 0);		
+						table.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f), selectedRow, 3);
 					}
 				}
-				updateTotleArea();
 	        }
+			updateTotleArea();
         }else if(o == billButton){		//when bill button on top are clicked.
         	if(billListPanel != null && billListPanel.btnSplitItem.isSelected()) {
         		billButton.setSelected(!billButton.isSelected());
