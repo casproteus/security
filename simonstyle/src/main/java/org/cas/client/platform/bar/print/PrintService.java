@@ -1818,7 +1818,7 @@ public class PrintService{
   			}
 			salesGrossCount++;
 			salesGrossAmount += bill.getCashReceived() + bill.getDebitReceived()
-			+ bill.getVisaReceived() + bill.getMasterReceived() + bill.getOtherReceived() + bill.getCashback();
+			+ bill.getVisaReceived() + bill.getMasterReceived() + bill.getOtherReceived() + bill.getCashback() - bill.getTip();
   		}
   		
 		StringBuilder content = new StringBuilder();
