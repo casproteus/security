@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.sql.ResultSet;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -117,14 +118,41 @@ public class GiftCardDlg extends JDialog implements ComponentListener, ActionLis
 		if (o == btnClose) {
 		    dispose();
 		} else if (o == btnAdd) {
+			String accountID = tfdCardAccount.getText();
+			
 			StringBuilder sql = new StringBuilder();
 		    if(coupon == null) {	//create new coupon.
-		    	sql.append("INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('").append(tfdCardAccount.getText())
+		    	try {
+					ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery("select * from hardware where category = 2 and name = '" + accountID + "'");
+					rs.afterLast();
+			        rs.relative(-1);
+			        if(rs.getRow() > 0) {
+			        	JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
+			        	return;
+			        }
+				}catch(Exception exp) {
+		    		L.e("GiftCardDlg", "exception happenned when query hardware table", exp);
+		    	}
+		    	
+		    	sql.append("INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('").append(accountID)
 		    		.append("', 2, ").append(Math.round(Float.valueOf(tfdValue.getText()) * 100)).append(", '")
 		    		.append(txtProduct.getText()).append("', 0, 0)");
 		    	
 		    }else {
-		    	sql.append("UPDATE Hardware set name = '").append(tfdCardAccount.getText())
+		    	try {
+					ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(
+							"select * from hardware where category = 2 and name = '" + accountID + "' and id != " + coupon.getId());
+					rs.afterLast();
+			        rs.relative(-1);
+			        if(rs.getRow() > 0) {
+			        	JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
+			        	return;
+			        }
+				}catch(Exception exp) {
+		    		L.e("GiftCardDlg", "exception happenned when query hardware table", exp);
+		    	}
+		    	
+		    	sql.append("UPDATE Hardware set name = '").append(accountID)
 		    	.append("',  langType = ").append(Math.round(Float.valueOf(tfdValue.getText()) * 100))
 		    	.append(", ip = '").append(txtProduct.getText())
 		    	.append("' where id = ").append(coupon.getId());
@@ -134,7 +162,7 @@ public class GiftCardDlg extends JDialog implements ComponentListener, ActionLis
 	    		PIMDBModel.getStatement().executeUpdate(sql.toString());
 	    		dispose();
 	    	}catch(Exception exp) {
-	    		L.e("CouponDlg", "exception happenned when update hardware table" + sql, exp);
+	    		L.e("GiftCardDlg", "exception happenned when update hardware table" + sql, exp);
 	    		JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
 	    	}
 		}
