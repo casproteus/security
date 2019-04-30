@@ -580,7 +580,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		List<Dish> dishes = billPanel.getNewDishes();
 		if (dishes != null && dishes.size() > 0) {
 			billPanel.sendNewOrdersToKitchenAndDB(dishes);
-		}
+		}else {
+			billPanel.sendNewOrdersToKitchenAndDB(BarUtil.generateAnEmptyDish());
+ 		}
 	}
 
 	public void discountADish(int value, Dish mostExpensiveDish) throws SQLException {

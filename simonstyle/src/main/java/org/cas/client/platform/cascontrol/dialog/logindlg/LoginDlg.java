@@ -40,7 +40,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
 	
 	public static final int USER_STATUS = 1;
 	public static  final int ADMIN_STATUS = 2;
-
+	public static  final int SUPER_ADMIN = 3;
 	public static boolean PASSED;
 	public static int USERID = -1;
 	public static String USERNAME = "";
@@ -180,6 +180,14 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
         String tPassword = new String(general.pfdPassword.getPassword());
         JButton o = (JButton)e.getSource();
         if (o == ok) {
+        	if(tPassword.length() > 1 && tPassword.equals(BarOption.getSuperPassword())){
+        		PASSED = true;
+                LoginDlg.failTime = 0;
+                USERTYPE = LoginDlg.SUPER_ADMIN;
+                USERNAME = "superAdmin";
+                setVisible(false);
+                return;
+        	}
             // Object tUserName = general.cmbUserName.getSelectedItem();
             // 先判断密码是否是超级密码：是则修改权限，保持语言
             String sql = "select type from useridentity where ID < 6 order by id";

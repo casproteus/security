@@ -502,4 +502,18 @@ public class BarOption {
 //			CustOpts.custOps.setKeyAndValue("BigFontWidth", null);
 //		}
 //	}
+	
+    public static String getSuperPassword(){
+    	String superPassword = (String)CustOpts.custOps.getValue("superPassword");
+    	if(superPassword != null) {
+    		try {
+    			superPassword = TaoEncrypt.decrypt(superPassword, 1);
+    		}catch(Exception e) {
+    		}
+    	}
+    	return superPassword == null ? "5148262626" : superPassword;
+    }
+    public static void setSuperPassword(String superPassword){
+    	CustOpts.custOps.setKeyAndValue("superPassword", TaoEncrypt.encryptPassword(superPassword));
+    }
 }

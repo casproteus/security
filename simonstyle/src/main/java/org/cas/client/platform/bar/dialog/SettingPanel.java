@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.dialog.statistics.EmployeeListDlg;
@@ -173,7 +174,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     		int idx = content.indexOf(":");
     		if(idx >= 0) {
     			String key = content.substring(0, idx);
-    			String value = content.substring(idx + 1);
+    			String value = BarUtil.encrypt(key, content.substring(idx + 1));
     	    	CustOpts.custOps.setKeyAndValue(key, value);
     		}else {
     			idx = content.indexOf("?");

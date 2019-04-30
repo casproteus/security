@@ -2046,8 +2046,8 @@ public class PrintService{
         }
 	};
 	
-    private static StringBuilder getFormattedBillHeader(int tWidth, String id) {
-    	StringBuilder sb = id == null ? new StringBuilder() : new StringBuilder("#").append(id).append("\n");
+    private static StringBuilder getFormattedBillHeader(int tWidth, String billId) {
+    	StringBuilder sb = billId == null ? new StringBuilder() : new StringBuilder("#").append(billId).append("\n");
     	String s = BarOption.getBillHeadInfo();
     	if(s != null && s.trim().length() > 0) {
     		String[] infos = s.split(":");

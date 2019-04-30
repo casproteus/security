@@ -86,9 +86,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	
 	public void printBill(String tableID, String billIndex, String opentime, boolean isToCustomer) {
 		
-        if(orderedDishAry.size() == 0){
-            return;
-        }
         if(status >= DBConsts.completed || status < DBConsts.original || comment.contains(PrintService.OLD_GST)) { //for completed or reopened completed bill
         	PrintService.exePrintInvoice(this, false, isToCustomer, true);
         }else {		//for original or billprinted or reopeneed billPrinted bills go here..
