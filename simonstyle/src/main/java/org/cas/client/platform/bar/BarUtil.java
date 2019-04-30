@@ -5,16 +5,22 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.model.DBConsts;
+import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.model.Printer;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
+import org.cas.client.platform.casutil.TaoEncrypt;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
 import gnu.io.CommPortIdentifier;
@@ -249,5 +255,36 @@ public class BarUtil {
 		}
 		
 		return BarUtil.formatMoney(cent/100f);
+	}
+
+	public static void cleanDB() {
+		try {
+			//delete bill;
+			StringBuilder sql = new StringBuilder("delete from bill");
+    		PIMDBModel.getStatement().executeUpdate(sql.toString());
+    		//delete output
+    		sql = new StringBuilder("delete from output");
+    		PIMDBModel.getStatement().executeUpdate(sql.toString());
+    		//update the dining_table
+    		sql = new StringBuilder("update dining_table set status = 0");
+    		PIMDBModel.getStatement().executeUpdate(sql.toString());
+    	}catch(Exception exp) {
+    		L.e("Report", " exception when trying to delete records from db", exp);
+    	}
+		
+	}
+
+	public static String encrypt(String key, String substring) {
+		if(key.equals("superPassword")) {
+			substring = TaoEncrypt.encryptPassword(substring);
+		}
+		return substring;
+	}
+
+	public static List<Dish> generateAnEmptyDish() {
+		List<Dish> dishes = new ArrayList<Dish>();
+		Dish dish = new Dish();
+		dishes.add(dish);
+		return dishes;
 	}
 }

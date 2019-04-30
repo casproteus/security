@@ -199,7 +199,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         				BarFrame.instance.valStartTime.getText(),
         				true);
         		
-        		//give a exactCash and close table so teh record will have a moneyreceived and new open time.
+        		//give a exactCash and close table so the record will have a money received and new open time.
            		try {
            			//NOTE: should consider might been paid with card, so the new received should be the left not the total..
            	    	StringBuilder sql = new StringBuilder("update bill set CashReceived = ")
@@ -588,6 +588,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 		List<Dish> dishes = billPanel.getNewDishes();
 		if (dishes != null && dishes.size() > 0) {
 			billPanel.sendNewOrdersToKitchenAndDB(dishes);
+		}else {
+			billPanel.sendNewOrdersToKitchenAndDB(BarUtil.generateAnEmptyDish());
 		}
 	}
 
@@ -656,7 +658,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     void reLayout() {
         int panelHeight = getHeight();
 
-        int tBtnWidht = (getWidth() - CustOpts.HOR_GAP * 2) / 2;
+        int tBtnWidht = (getWidth() - CustOpts.HOR_GAP * 1) / 1;
         int tBtnHeight = panelHeight / 10;
 
         // command buttons--------------
@@ -670,7 +672,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 //        btnLine_2_8.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
 //        btnLine_2_9.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
         btnLine_1_10.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
-        btnLine_2_4.setBounds(btnLine_1_10.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_10.getY(), tBtnWidht, tBtnHeight);
+//        btnLine_2_4.setBounds(btnLine_1_10.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_10.getY(), tBtnWidht, tBtnHeight);
         // line 1
 //        btnCASH.setBounds(btnLine_2_1.getX(),  btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
 //        btnDEBIT.setBounds(btnLine_2_2.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);

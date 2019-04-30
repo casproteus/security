@@ -45,7 +45,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "STGO_V1.1_SJW";
+	private String VERSION = "STGO_V1.6_SJW";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     
@@ -510,7 +510,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
          		 }
                  
                  
-                 switchMode(0);//switch back to table interface, otherwise, when there's multiple bills, the content will be run.
+//                 switchMode(0);//switch back to table interface, otherwise, when there's multiple bills, the content will be run.
                  break;
 		}
 	}
@@ -529,6 +529,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 
 		     newBillIdx = 1;
 		     openTime = valStartTime.getText();
+		     table = getTheInfoOfTable(newTableName);
 		}else {											//if the target table is already opened
 			 //then should get a new billIdx number in target bill (even the existing bill on target table is an empty bill, we still create new one.)
 			 newBillIdx = BillListPanel.getANewBillIdx(newTableName, table.getOpenTime());

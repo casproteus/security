@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.dialog.statistics.EmployeeListDlg;
 import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
@@ -173,7 +174,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     		int idx = content.indexOf(":");
     		if(idx >= 0) {
     			String key = content.substring(0, idx);
-    			String value = content.substring(idx + 1);
+    			String value = BarUtil.encrypt(key, content.substring(idx + 1));
     	    	CustOpts.custOps.setKeyAndValue(key, value);
     		}else {
     			idx = content.indexOf("?");
@@ -316,8 +317,12 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		new TabbleSettingDlg(BarFrame.instance).setVisible(true);
         	}else if(o == btnFootInfo) {
         		new BillFootDialog(BarFrame.instance, BarOption.getBillFootInfo()).setVisible(true);
-        	}else if(o == btnLine_2_6) {
-        		new AddModificationDialog(BarFrame.instance, "").setVisible(true);
+        	}else if(o == btnResetEnv) {
+        		new LoginDlg(null).setVisible(true);
+                if (LoginDlg.PASSED == true && LoginDlg.USERTYPE == LoginDlg.SUPER_ADMIN) { // 如果用户选择了确定按钮。
+                    BarUtil.cleanDB();
+                    JOptionPane.showMessageDialog(this, "Database cleaned!");
+                }
         	}else if(o == btnLine_2_7) {
         		new GiftCardListDialog(BarFrame.instance).setVisible(true);
         	}else if(o == btnCoupon) {
@@ -374,8 +379,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
                 tBtnHeight);
         btnFootInfo.setBounds(btnPrinter.getX() + tBtnWidht + CustOpts.HOR_GAP, btnPrinter.getY(), tBtnWidht,
                 tBtnHeight);
-//        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
-//                tBtnHeight);
+        btnResetEnv.setBounds(btnEmployee.getX(), btnReturn.getY(), tBtnWidht,
+                tBtnHeight);
 //        btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
 //                tBtnHeight);
 //        btnCoupon.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht,
@@ -544,7 +549,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnPrinter = new FunctionButton( BarFrame.consts.PRINTER());
         btnTable = new FunctionButton(BarFrame.consts.TABLE());
         btnFootInfo = new FunctionButton(BarFrame.consts.BillInfo());
-        btnLine_2_6 = new FunctionButton(BarFrame.consts.MODIFY());
+        btnResetEnv = new FunctionButton(BarFrame.consts.RESET());
         btnLine_2_7 = new FunctionButton(BarFrame.consts.GIFTCARD());
         btnCoupon = new FunctionButton(BarFrame.consts.COUPON());
         btnColor = new FunctionButton(BarFrame.consts.Color().toUpperCase());
@@ -611,7 +616,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnPrinter.addActionListener(this);
         btnTable.addActionListener(this);
         btnFootInfo.addActionListener(this);
-        btnLine_2_6.addActionListener(this);
+        btnResetEnv.addActionListener(this);
         btnLine_2_7.addActionListener(this);
         btnCoupon.addActionListener(this);
         btnColor.addActionListener(this);
@@ -646,7 +651,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         add(btnPrinter);
         add(btnTable);
         add(btnFootInfo);
-//        add(btnLine_2_6);
+        add(btnResetEnv);
 //        add(btnLine_2_7);
 //        add(btnCoupon);
         add(btnColor);
@@ -763,7 +768,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     private FunctionButton btnPrinter;
     private FunctionButton btnTable;
     private FunctionButton btnFootInfo;
-    private FunctionButton btnLine_2_6;
+    private FunctionButton btnResetEnv;
     private FunctionButton btnLine_2_7;
     private FunctionButton btnCoupon;
     private FunctionButton btnColor;
