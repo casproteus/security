@@ -46,7 +46,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V2.03-20190429";
+	private String VERSION = "V2.03-20190430";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     
@@ -691,6 +691,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 			
 			sql = new StringBuilder("update bill set status = ").append(DBConsts.completed)
 					.append(", createTime = '").append(BarOption.df.format(new Date())).append("'")
+					.append(", employeeid = ").append(LoginDlg.USERID)
 					.append(" where id = ").append(billID);
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 		}catch(Exception exp) {
