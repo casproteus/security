@@ -23,6 +23,7 @@ import javax.swing.SwingUtilities;
 import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
+import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -127,6 +128,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	   	    	//.append(", DebitReceived = 0, VisaReceived = 0, MasterReceived = 0")
    	    		.append(", createTime = '").append(BarOption.df.format(new Date())).append("'")
 	   	    	.append(", status = ").append(DBConsts.completed)
+	   	    	.append(", employeeid = ").append(LoginDlg.USERID)
 	   	    	.append(" where id = ").append(billId);
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 			//update the status of relevant outputs.
