@@ -317,6 +317,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              				Float.valueOf(billPanel.valTotlePrice.getText()) * Float.valueOf(curContent)
              				: Float.valueOf(curContent);
              		
+             		if(refund > Float.valueOf(billPanel.valTotlePrice.getText())) {
+             			JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
+             			return;
+             		}
+             		
              		// get out existing status.
              		int refundAmount = billPanel.status;
                     if(refundAmount < -1) {	//if already refund, then add into existing amount.
