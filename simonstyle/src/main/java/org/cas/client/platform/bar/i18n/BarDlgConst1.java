@@ -109,7 +109,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String QTY() {return "QTY";}
     @Override
-	public String QTYNOTICE() {return "Veuillez taper un nombre pour procéder";}
+	public String QTYNOTICE() {return "Veuillez taper un nombre";}
     @Override
 	public String DISC_ITEM() {return "<html><center>REMISE<br>ARTICLE</center></html>";}
     @Override

@@ -388,6 +388,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				BarFrame.numberPanelDlg.setPercentSupport(false);
 				BarFrame.numberPanelDlg.setModal(true);
 				BarFrame.numberPanelDlg.reLayout();
+				BarFrame.numberPanelDlg.setNotice(BarFrame.consts.QTYNOTICE());
 				BarFrame.numberPanelDlg.setVisible(btnEqualBill.isSelected());
 				if(NumberPanelDlg.confirmed) {
 					int num = Integer.valueOf(NumberPanelDlg.curContent);
@@ -706,6 +707,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		BarFrame.numberPanelDlg.setPercentSupport(false);
 		BarFrame.numberPanelDlg.setModal(true);
 		BarFrame.numberPanelDlg.reLayout();
+		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.QTYNOTICE());
 		BarFrame.numberPanelDlg.setVisible(btnMoveItem.isSelected());
 		if(NumberPanelDlg.confirmed) {
 			int targetBillIdx = Integer.valueOf(NumberPanelDlg.curContent);

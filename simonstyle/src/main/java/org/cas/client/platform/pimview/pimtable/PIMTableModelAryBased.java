@@ -48,7 +48,7 @@ public class PIMTableModelAryBased extends AbstractPIMTableModel implements Seri
      * @return the number of rows in the model
      */
     public int getRowCount() {
-        return data.length;
+        return data == null ? 0 : data.length;
     }
 
     /**
