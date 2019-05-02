@@ -549,7 +549,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         btnPrinter = new FunctionButton( BarFrame.consts.PRINTER());
         btnTable = new FunctionButton(BarFrame.consts.TABLE());
         btnFootInfo = new FunctionButton(BarFrame.consts.BillInfo());
-        btnResetEnv = new FunctionButton(BarFrame.consts.RESET());
+        btnResetEnv = new FunctionButton("INFO");//BarFrame.consts.RESET());
         btnLine_2_7 = new FunctionButton(BarFrame.consts.GIFTCARD());
         btnCoupon = new FunctionButton(BarFrame.consts.COUPON());
         btnColor = new FunctionButton(BarFrame.consts.Color().toUpperCase());
