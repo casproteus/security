@@ -351,8 +351,6 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 	}
 	
 	private void reLayout(FunctionButton btnMore) {
-		int x = btnMore.getX();
-		int y = btnMore.getY();
 		int width = btnMore.getWidth();
 		int height = btnMore.getHeight();
 		
@@ -366,7 +364,9 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 		btnLine_3_5.setBounds(btnLine_3_3.getX(), btnLine_3_4.getY() + height + CustOpts.VER_GAP, width, height);
 		btnLine_3_6.setBounds(btnLine_3_3.getX(), btnLine_3_5.getY() + height + CustOpts.VER_GAP, width, height);
 		btnLine_3_9.setBounds(btnLine_3_3.getX(), btnLine_3_6.getY() + height + CustOpts.VER_GAP, width, height);
-        
+
+		int x = btnMore.getX() + salesPanel.getRootPane().getParent().getX();
+		int y = btnMore.getY() + salesPanel.getRootPane().getParent().getY();
 		int panelHeight = height * 5 + CustOpts.VER_GAP * 4;
 		setBounds(x - width - CustOpts.HOR_GAP, y - panelHeight, 
 				width * 2 + CustOpts.HOR_GAP * 3 + CustOpts.SIZE_EDGE * 2 + 10,
