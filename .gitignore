@@ -23,3 +23,6 @@ hs_err_pid*
 
 #every thing under target
 **/target/*
+
+#every thing under installer
+installer/*
