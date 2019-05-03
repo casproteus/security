@@ -361,7 +361,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				if(obj != null)
 					BarFrame.numberPanelDlg.setContents(obj.toString());
 			}
-			if( salesPanel.btnLine_1_7.isSelected()) {
+			if( salesPanel.btnDiscItem.isSelected()) {
 				Object obj = table.getValueAt(selectedRow,2);
 				//update the discount in qtyDlg.
 				if(obj != null)
@@ -530,7 +530,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		        }
 	        	//if the original is not 0.00, then will still be treated as price promp not a taxInclude.
 		        if(newDish.getPrice() == 0 || "true".equals(newDish.getPrompPrice()) && !BarOption.isTreatPricePromtAsTaxInclude()) {
-		        	salesPanel.btnLine_1_8.setSelected(true);
+		        	salesPanel.btnChangePrice.setSelected(true);
 		        	salesPanel.showPriceChangeDlg();
 		        }
 			}

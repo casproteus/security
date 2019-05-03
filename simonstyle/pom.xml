@@ -40,35 +40,40 @@
     	<groupId>org.stgo</groupId>
 	    <artifactId>hsqldb</artifactId>
 	    <version>2.4</version>
-	    <scope></scope>
+	    <scope>system</scope>
+    	<systemPath>${basedir}\lib\hsqldb-2.4.jar</systemPath>
 	</dependency>
 	
 	<dependency>
     	<groupId>org.stgo</groupId>
 	    <artifactId>comm</artifactId>
 	    <version>1.0</version>
-	    <scope></scope>
+	    <scope>system</scope>
+    	<systemPath>${basedir}\lib\comm-1.0.jar</systemPath>
 	</dependency>
 	
 	<dependency>
     	<groupId>org.stgo</groupId>
 	    <artifactId>jai_codec</artifactId>
 	    <version>1.0</version>
-	    <scope></scope>
+	    <scope>system</scope>
+    	<systemPath>${basedir}\lib\jai_codec-1.0.jar</systemPath>
 	</dependency>
 	
 	<dependency>
     	<groupId>org.stgo</groupId>
 	    <artifactId>jai_core</artifactId>
 	    <version>1.0</version>
-	    <scope></scope>
+	    <scope>system</scope>
+    	<systemPath>${basedir}\lib\jai_core-1.0.jar</systemPath>
 	</dependency>
 	
 	<dependency>
     	<groupId>org.stgo</groupId>
 	    <artifactId>jpos110</artifactId>
 	    <version>1.0</version>
-	    <scope></scope>
+	    <scope>system</scope>
+    	<systemPath>${basedir}\lib\jpos110-1.0.jar</systemPath>
 	</dependency>
 	
 	<dependency>
@@ -108,12 +113,12 @@
 			    <id>copy-dependencies</id>
 			    <phase>prepare-package</phase>
 			    <goals>
-				<goal>copy-dependencies</goal>
+					<goal>copy-dependencies</goal>
 			    </goals>
 			    <configuration>
-				<outputDirectory>
-				    target/libs
-				</outputDirectory>
+					<outputDirectory>
+					    target/libs
+					</outputDirectory>
 			    </configuration>
 			</execution>
 		    </executions>

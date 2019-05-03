@@ -124,7 +124,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		BarFrame.payDlg.initContent(billPanel);
          		BarFrame.payDlg.setVisible(true);
         		
-        	} else if (o == btnLine_1_4) {		//split bill
+        	} else if (o == btnSplitBill) {		//split bill
         		//check if there unsaved dish, and give warning.
         		if(BillListPanel.curDish == null) {
             		if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.UnSavedRecordFound(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0)
@@ -144,13 +144,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     			billPricesUpdateToDB();
         		BarFrame.instance.switchMode(1);
         		
-        	} else if (o == btnLine_1_5) {	//remove item.
+        	} else if (o == btnRemoveItem) {	//remove item.
         		if(!billPanel.checkStatus()) {
             		return;
             	}
         		removeItem();
         		
-        	} else if(o == btnLine_1_6) {	//Modify
+        	} else if(o == btnModify) {	//Modify
         		//if there's a curDish?
         		if(BillListPanel.curDish == null) {//check if there's an item selected.
         			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
@@ -158,7 +158,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		}
         		new AddModificationDialog(BarFrame.instance, BillListPanel.curDish.getModification()).setVisible(true);
         		
-        	}else if(o == btnLine_1_9) {	//service fee
+        	}else if(o == btnServiceFee) {	//service fee
          		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.ServiceFee());
          		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.ServiceFeeNotice());
         		BarFrame.numberPanelDlg.setBtnSource(null);
@@ -191,7 +191,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		return;
              	}
         		
-        	}else if (o == btnLine_1_10) { // print bill
+        	}else if (o == btnPrintBill) { // print bill
         		createAndPrintNewOutput();		//will send new added(not printed yet) dishes to kitchen.
         		billPricesUpdateToDB();
         		billPanel.printBill(BarFrame.instance.cmbCurTable.getSelectedItem().toString(),
@@ -200,7 +200,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         				true);
         		billPanel.initContent();
         		
-            } else if (o == btnLine_2_1) { // return
+            } else if (o == btnReturn) { // return
             	if(billPanel.getNewDishes().size() > 0) {
             		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
             				BarFrame.consts.COMFIRMLOSTACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
@@ -213,12 +213,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		BarFrame.instance.switchMode(0);
             	}
             	
-            } else if(o == btnLine_2_2) {		//Add bill
+            } else if(o == btnAddBill) {		//Add bill
             	//save unsaved output
             	createAndPrintNewOutput();
             	BarUtil.updateBillRecordPrices(billPanel);
             	addNewBillInCurTable();
-        	} else if (o == btnLine_2_4) { // cancel all---- if bill is empty, then check if table is empty, if yes, close current table. yes or not, all back to table view.
+        	} else if (o == btnCancelAll) { // cancel all---- if bill is empty, then check if table is empty, if yes, close current table. yes or not, all back to table view.
             	if(billPanel.orderedDishAry.size() > 0) {	//if not empty, remove all new added items.
             		int newDishQT = billPanel.getNewDishes().size();
             		if(newDishQT == 0) {
@@ -257,13 +257,13 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             		BarFrame.instance.switchMode(0);
             	}
             	
-            } else if (o == btnLine_2_5) { // void order include saved ones
+            } else if (o == btnVoidOrder) { // void order include saved ones
             	//if there's no dish on it at all (including deleted outputs), delete the bill directly
             	voidCurrentOrder();
-            } else if (o == btnLine_2_6) {		//open drawer
+            } else if (o == btnOpenDrawer) {		//open drawer
             	PrintService.openDrawer();
             	
-            } else if (o == btnLine_2_7) {//disc bill
+            } else if (o == btnDiscBill) {//disc bill
             	
             	if(!BarOption.isWaiterAllowedToDiscount()) {
             		if (!BarFrame.instance.adminAuthentication()) 
@@ -291,7 +291,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
                  	JOptionPane.showMessageDialog(BarFrame.discountDlg, DlgConst.FORMATERROR);
              		return;
              	}
-            }else if(o == btnLine_2_8) {	//refund
+            }else if(o == btnRefund) {	//refund
             	//check if it's already paid.
             	if(billPanel.status != DBConsts.completed) {
             		JOptionPane.showMessageDialog(this, BarFrame.consts.NotPayYet());
@@ -367,10 +367,10 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              		return;
              	}
             	
-            } else if (o == btnLine_2_9) {//more
+            } else if (o == btnMore) {//more
             	new MoreButtonsDlg(this).show((FunctionButton)o);
             	
-            } else if (o == btnLine_2_10) {//send
+            } else if (o == btnSend) {//send
         		createAndPrintNewOutput();
         		billPricesUpdateToDB();
             	if(BarOption.isFastFoodMode()) {
@@ -383,7 +383,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         }
         //JToggleButton-------------------------------------------------------------------------------------
         else if(o instanceof JToggleButton) {
-        	 if (o == btnLine_1_7) {	//disc item
+        	 if (o == btnDiscItem) {	//disc item
          		if(BillListPanel.curDish == null) {//check if there's an item selected.
          			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
          			return;
@@ -396,15 +396,15 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
          		
          		BarFrame.discountDlg.setTitle(BarFrame.consts.DISCITEM());
          		BarFrame.discountDlg.setNotice(BarFrame.consts.DISC_ITEMNotice());
-         		BarFrame.discountDlg.setBtnSource(btnLine_1_7);//pomp up a discountDlg
+         		BarFrame.discountDlg.setBtnSource(btnDiscItem);//pomp up a discountDlg
          		BarFrame.discountDlg.setFloatSupport(true);
          		BarFrame.discountDlg.setPercentSupport(true);
          		BarFrame.discountDlg.setModal(false);
          		//should no record selected, select the last one.
-         		BarFrame.discountDlg.setVisible(btnLine_1_7.isSelected());	//@NOTE: it's not model mode.
-         		BarFrame.discountDlg.setAction(new UpdateItemDiscountAction(btnLine_1_7, billPanel));
+         		BarFrame.discountDlg.setVisible(btnDiscItem.isSelected());	//@NOTE: it's not model mode.
+         		BarFrame.discountDlg.setAction(new UpdateItemDiscountAction(btnDiscItem, billPanel));
          		
-             }else if(o == btnLine_1_8) {	//change price
+             }else if(o == btnChangePrice) {	//change price
             	if(BillListPanel.curDish == null) {//check if there's an item selected.
           			JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
           			return;
@@ -563,14 +563,14 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	public void showPriceChangeDlg() {
 		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.CHANGEPRICE());
 		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.ChangePriceNotice());
-		BarFrame.numberPanelDlg.setBtnSource(btnLine_1_8);//pomp up a numberPanelDlg
+		BarFrame.numberPanelDlg.setBtnSource(btnChangePrice);//pomp up a numberPanelDlg
 		BarFrame.numberPanelDlg.setFloatSupport(true);
 		BarFrame.numberPanelDlg.setPercentSupport(false);
 		BarFrame.numberPanelDlg.setModal(false);
 		//should no record selected, select the last one.
-		btnLine_1_8.setSelected(true);
-		BarFrame.numberPanelDlg.setVisible(btnLine_1_8.isSelected());	//@NOTE: it's not model mode.
-		BarFrame.numberPanelDlg.setAction(new UpdateItemPriceAction(btnLine_1_8, billPanel));
+		btnChangePrice.setSelected(true);
+		BarFrame.numberPanelDlg.setVisible(btnChangePrice.isSelected());	//@NOTE: it's not model mode.
+		BarFrame.numberPanelDlg.setAction(new UpdateItemPriceAction(btnChangePrice, billPanel));
 	}
 
 	//if there's new dish added.... update the total value field of bill record.
@@ -660,27 +660,27 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 
         // command buttons--------------
         // line 2
-        btnLine_2_1.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
-        btnLine_2_2.setBounds(btnLine_2_1.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnMASTER.setBounds(btnLine_2_2.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_4.setBounds(btnMASTER.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_5.setBounds(btnLine_2_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_6.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_7.setBounds(btnLine_2_6.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_8.setBounds(btnLine_2_7.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_9.setBounds(btnLine_2_8.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
-        btnLine_2_10.setBounds(btnLine_2_9.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_1.getY(), tBtnWidht, tBtnHeight);
+        btnReturn.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
+        btnAddBill.setBounds(btnReturn.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
+        btnMASTER.setBounds(btnAddBill.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
+        btnCancelAll.setBounds(btnMASTER.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
+        btnVoidOrder.setBounds(btnCancelAll.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
+        btnOpenDrawer.setBounds(btnVoidOrder.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
+        btnDiscBill.setBounds(btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
+        btnRefund.setBounds(btnDiscBill.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
+        btnMore.setBounds(btnRefund.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
+        btnSend.setBounds(btnMore.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
         // line 1
-        btnCASH.setBounds(btnLine_2_1.getX(),  btnLine_2_1.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
-        btnDEBIT.setBounds(btnLine_2_2.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnCASH.setBounds(btnReturn.getX(),  btnReturn.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
+        btnDEBIT.setBounds(btnAddBill.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
         btnVISA.setBounds(btnMASTER.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_4.setBounds(btnLine_2_4.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_5.setBounds(btnLine_2_5.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_6.setBounds(btnLine_2_6.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_7.setBounds(btnLine_2_7.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_8.setBounds(btnLine_2_8.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_9.setBounds(btnLine_2_9.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnLine_1_10.setBounds(btnLine_2_10.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnSplitBill.setBounds(btnCancelAll.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnRemoveItem.setBounds(btnVoidOrder.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnModify.setBounds(btnOpenDrawer.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnDiscItem.setBounds(btnDiscBill.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnChangePrice.setBounds(btnRefund.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnServiceFee.setBounds(btnMore.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        btnPrintBill.setBounds(btnSend.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
 
 //        btnLine_2_11.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_2.getY(), tBtnWidht, tBtnHeight);
 //        btnLine_2_12.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_14.getY(), tBtnWidht, tBtnHeight);
@@ -708,24 +708,24 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnCASH = new FunctionButton(BarFrame.consts.CASH());
         btnDEBIT = new FunctionButton(BarFrame.consts.DEBIT());
         btnVISA = new FunctionButton(BarFrame.consts.VISA());
-        btnLine_1_4 = new FunctionButton(BarFrame.consts.SPLIT_BILL());
-        btnLine_1_5 = new FunctionButton(BarFrame.consts.REMOVEITEM());
-        btnLine_1_6 = new FunctionButton(BarFrame.consts.MODIFY());
-        btnLine_1_7 = new JToggleButton(BarFrame.consts.DISC_ITEM());
-        btnLine_1_8 = new JToggleButton(BarFrame.consts.ChangePrice());
-        btnLine_1_9 = new FunctionButton(BarFrame.consts.SERVICEFEE());
-        btnLine_1_10 = new FunctionButton(BarFrame.consts.PRINT_BILL());
+        btnSplitBill = new FunctionButton(BarFrame.consts.SPLIT_BILL());
+        btnRemoveItem = new FunctionButton(BarFrame.consts.REMOVEITEM());
+        btnModify = new FunctionButton(BarFrame.consts.MODIFY());
+        btnDiscItem = new JToggleButton(BarFrame.consts.DISC_ITEM());
+        btnChangePrice = new JToggleButton(BarFrame.consts.ChangePrice());
+        btnServiceFee = new FunctionButton(BarFrame.consts.SERVICEFEE());
+        btnPrintBill = new FunctionButton(BarFrame.consts.PRINT_BILL());
 
-        btnLine_2_1 = new FunctionButton(BarFrame.consts.RETURN());
-        btnLine_2_2 = new FunctionButton(BarFrame.consts.AddUser());
+        btnReturn = new FunctionButton(BarFrame.consts.RETURN());
+        btnAddBill = new FunctionButton(BarFrame.consts.AddUser());
         btnMASTER = new FunctionButton(BarFrame.consts.MASTER());
-        btnLine_2_4 = new FunctionButton(BarFrame.consts.CANCEL_ALL());
-        btnLine_2_5 = new FunctionButton(BarFrame.consts.VOID_ORDER());
-        btnLine_2_6 = new FunctionButton(BarFrame.consts.OpenDrawer());
-        btnLine_2_7 = new FunctionButton(BarFrame.consts.VolumnDiscount());
-        btnLine_2_8 = new FunctionButton(BarFrame.consts.Refund());
-        btnLine_2_9 = new FunctionButton(BarFrame.consts.MORE());
-        btnLine_2_10 = new FunctionButton(BarFrame.consts.SEND());
+        btnCancelAll = new FunctionButton(BarFrame.consts.CANCEL_ALL());
+        btnVoidOrder = new FunctionButton(BarFrame.consts.VOID_ORDER());
+        btnOpenDrawer = new FunctionButton(BarFrame.consts.OpenDrawer());
+        btnDiscBill = new FunctionButton(BarFrame.consts.VolumnDiscount());
+        btnRefund = new FunctionButton(BarFrame.consts.Refund());
+        btnMore = new FunctionButton(BarFrame.consts.MORE());
+        btnSend = new FunctionButton(BarFrame.consts.SEND());
         
         billPanel = new BillPanel(this);
         // properties
@@ -740,24 +740,24 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         add(btnCASH);
         add(btnDEBIT);
         add(btnVISA);
-        add(btnLine_1_4);
-        add(btnLine_1_5);
-        add(btnLine_1_6);
-        add(btnLine_1_7);
-        add(btnLine_1_8);
-        add(btnLine_1_9);
-        add(btnLine_1_10);
+        add(btnSplitBill);
+        add(btnRemoveItem);
+        add(btnModify);
+        add(btnDiscItem);
+        add(btnChangePrice);
+        add(btnServiceFee);
+        add(btnPrintBill);
 
-        add(btnLine_2_1);
-        add(btnLine_2_2);
+        add(btnReturn);
+        add(btnAddBill);
         add(btnMASTER);
-        add(btnLine_2_4);
-        add(btnLine_2_5);
-        add(btnLine_2_6);
-        add(btnLine_2_7);
-        add(btnLine_2_8);
-        add(btnLine_2_9);
-        add(btnLine_2_10);
+        add(btnCancelAll);
+        add(btnVoidOrder);
+        add(btnOpenDrawer);
+        add(btnDiscBill);
+        add(btnRefund);
+        add(btnMore);
+        add(btnSend);
         
         add(billPanel);
         // add listener
@@ -769,24 +769,24 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnCASH.addActionListener(this);
         btnDEBIT.addActionListener(this);
         btnVISA.addActionListener(this);
-        btnLine_1_4.addActionListener(this);
-        btnLine_1_5.addActionListener(this);
-        btnLine_1_6.addActionListener(this);
-        btnLine_1_7.addActionListener(this);
-        btnLine_1_8.addActionListener(this);
-        btnLine_1_9.addActionListener(this);
-        btnLine_1_10.addActionListener(this);
+        btnSplitBill.addActionListener(this);
+        btnRemoveItem.addActionListener(this);
+        btnModify.addActionListener(this);
+        btnDiscItem.addActionListener(this);
+        btnChangePrice.addActionListener(this);
+        btnServiceFee.addActionListener(this);
+        btnPrintBill.addActionListener(this);
 
-        btnLine_2_1.addActionListener(this);
-        btnLine_2_2.addActionListener(this);
+        btnReturn.addActionListener(this);
+        btnAddBill.addActionListener(this);
         btnMASTER.addActionListener(this);
-        btnLine_2_4.addActionListener(this);
-        btnLine_2_5.addActionListener(this);
-        btnLine_2_6.addActionListener(this);
-        btnLine_2_7.addActionListener(this);
-        btnLine_2_8.addActionListener(this);
-        btnLine_2_9.addActionListener(this);
-        btnLine_2_10.addActionListener(this);
+        btnCancelAll.addActionListener(this);
+        btnVoidOrder.addActionListener(this);
+        btnOpenDrawer.addActionListener(this);
+        btnDiscBill.addActionListener(this);
+        btnRefund.addActionListener(this);
+        btnMore.addActionListener(this);
+        btnSend.addActionListener(this);
         
 		reLayout();
     }
@@ -794,25 +794,25 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private FunctionButton btnCASH;
     private FunctionButton btnDEBIT;
     private FunctionButton btnVISA;
-    private FunctionButton btnLine_1_4;
-    private FunctionButton btnLine_1_5;
-    private FunctionButton btnLine_1_6;
-    public JToggleButton btnLine_1_7;
-    JToggleButton btnLine_1_8;
-    private FunctionButton btnLine_1_9;
-    private FunctionButton btnLine_1_10;
+    private FunctionButton btnSplitBill;
+    private FunctionButton btnRemoveItem;
+    private FunctionButton btnModify;
+    public JToggleButton btnDiscItem;
+    JToggleButton btnChangePrice;
+    private FunctionButton btnServiceFee;
+    private FunctionButton btnPrintBill;
 
-    private FunctionButton btnLine_2_1;
-    private FunctionButton btnLine_2_2;
+    private FunctionButton btnReturn;
+    private FunctionButton btnAddBill;
     private FunctionButton btnMASTER;
     public FunctionButton btnOTHER;
-    private FunctionButton btnLine_2_4;
-    private FunctionButton btnLine_2_5;
-    private FunctionButton btnLine_2_6;
-    private FunctionButton btnLine_2_7;
-    private FunctionButton btnLine_2_8;
-    private FunctionButton btnLine_2_9;
-    private FunctionButton btnLine_2_10;
+    private FunctionButton btnCancelAll;
+    private FunctionButton btnVoidOrder;
+    private FunctionButton btnOpenDrawer;
+    private FunctionButton btnDiscBill;
+    private FunctionButton btnRefund;
+    private FunctionButton btnMore;
+    private FunctionButton btnSend;
     
     public BillPanel billPanel;
 }
