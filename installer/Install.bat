@@ -5,4 +5,4 @@ echo This script only works with NT-based versions of Windows.
 goto :eof
 
 :nt
-"%~dp0\jre\bin\java" -jar stgo-security-service-installer-1-SNAPSHOT-standard.jar
+"%~dp0\jre\bin\java" -jar stgo-service-installer-1-SNAPSHOT-standard.jar
