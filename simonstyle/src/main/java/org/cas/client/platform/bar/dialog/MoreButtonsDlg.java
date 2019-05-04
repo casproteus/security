@@ -53,7 +53,7 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
     public void actionPerformed(
             ActionEvent e) {
         Object o = e.getSource();
-        if (o == btnLine_3_1) { // enter the setting mode.(admin interface)
+        if (o == btnReport) { // enter the setting mode.(admin interface)
         	this.setVisible(false);
         	ReportDlg dlg = new ReportDlg(BarFrame.instance);
     		dlg.setVisible(true);
@@ -218,16 +218,16 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
     			L.e("Redeem Coupon", "exception happend when redeem coupon: " + sql, exp);
     		}
         	
-        } else if (o == btnLine_3_3) {
+        } else if (o == btnEn) {
     		BarFrame.consts = new BarDlgConst0();
         	updateInterface("update employee set subject = 'EN' where id = " + LoginDlg.USERID);
-        } else if (o == btnLine_3_4) {
+        } else if (o == btnFR) {
     		BarFrame.consts = new BarDlgConst1();
     		updateInterface("update employee set subject = 'FR' where id = " + LoginDlg.USERID);
-        } else if (o == btnLine_3_5) {
+        } else if (o == btnCN) {
     		BarFrame.consts = new BarDlgConst2();
         	updateInterface("update employee set subject = 'CN' where id = " + LoginDlg.USERID);
-        } else if (o == btnLine_3_6) { // enter the setting mode.(admin interface)
+        } else if (o == btnSetting) { // enter the setting mode.(admin interface)
         	this.setVisible(false);
         	BarFrame.instance.switchMode(3);
         } else if (o == btnSuspend) { // suspend bill
@@ -272,7 +272,7 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
     		CheckBillDlg dlg = new CheckBillDlg(BarFrame.instance);
     		dlg.initContent(startTime, endNow);
     		dlg.setVisible(true);
-        } else if (o == btnLine_3_9) {
+        } else if (o == btnSignOut) {
         	BarFrame.instance.userCheckOut();
         }
     }
@@ -358,12 +358,12 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 		btnDiscountCoupon.setBounds(CustOpts.HOR_GAP, salesPanel.btnOTHER.getY() + height + CustOpts.VER_GAP, width, height);
 		btnSuspend.setBounds(CustOpts.HOR_GAP, btnDiscountCoupon.getY() + height + CustOpts.VER_GAP, width, height);
 		btnCheckOrder.setBounds(CustOpts.HOR_GAP, btnSuspend.getY() + height + CustOpts.VER_GAP, width, height);
-		btnLine_3_1.setBounds(CustOpts.HOR_GAP, btnCheckOrder.getY() + height + CustOpts.VER_GAP, width, height);
-		btnLine_3_3.setBounds(btnLine_3_1.getX() + width + CustOpts.HOR_GAP, salesPanel.btnOTHER.getY(), width, height);
-		btnLine_3_4.setBounds(btnLine_3_3.getX(), btnLine_3_3.getY() + height + CustOpts.VER_GAP, width, height);
-		btnLine_3_5.setBounds(btnLine_3_3.getX(), btnLine_3_4.getY() + height + CustOpts.VER_GAP, width, height);
-		btnLine_3_6.setBounds(btnLine_3_3.getX(), btnLine_3_5.getY() + height + CustOpts.VER_GAP, width, height);
-		btnLine_3_9.setBounds(btnLine_3_3.getX(), btnLine_3_6.getY() + height + CustOpts.VER_GAP, width, height);
+		btnReport.setBounds(CustOpts.HOR_GAP, btnCheckOrder.getY() + height + CustOpts.VER_GAP, width, height);
+		btnEn.setBounds(btnReport.getX() + width + CustOpts.HOR_GAP, salesPanel.btnOTHER.getY(), width, height);
+		btnFR.setBounds(btnEn.getX(), btnEn.getY() + height + CustOpts.VER_GAP, width, height);
+		btnCN.setBounds(btnEn.getX(), btnFR.getY() + height + CustOpts.VER_GAP, width, height);
+		btnSetting.setBounds(btnEn.getX(), btnCN.getY() + height + CustOpts.VER_GAP, width, height);
+		btnSignOut.setBounds(btnEn.getX(), btnSetting.getY() + height + CustOpts.VER_GAP, width, height);
 
 		int x = btnMore.getX() + salesPanel.getRootPane().getParent().getX();
 		int y = btnMore.getY() + salesPanel.getRootPane().getParent().getY();
@@ -375,67 +375,67 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 	
 	private void initPanel() {
 		// 初始化－－－－－－－－－－－－－－－－
-		btnLine_3_1 = new FunctionButton(BarFrame.consts.Report());
+		btnReport = new FunctionButton(BarFrame.consts.Report());
         //btnLine_3_2 = new JToggleButton(BarFrame.consts.QTY());
         salesPanel.btnOTHER = new FunctionButton(BarFrame.consts.GIFTCARD());
         btnDiscountCoupon = new FunctionButton(BarFrame.consts.COUPON());
 		btnSuspend = new FunctionButton(BarFrame.consts.SUSPEND());
 		btnCheckOrder = new FunctionButton(BarFrame.consts.OrderManage());
-		btnLine_3_3 = new FunctionButton("EN");
-		btnLine_3_4 = new FunctionButton("FR");
-		btnLine_3_5 = new FunctionButton("CN");
-		btnLine_3_6 = new FunctionButton(BarFrame.consts.SETTINGS());
-		btnLine_3_9 = new FunctionButton(BarFrame.consts.CheckOut());
+		btnEn = new FunctionButton("EN");
+		btnFR = new FunctionButton("FR");
+		btnCN = new FunctionButton("CN");
+		btnSetting = new FunctionButton(BarFrame.consts.SETTINGS());
+		btnSignOut = new FunctionButton(BarFrame.consts.CheckOut());
 
 		// 属性设置－－－－－－－－－－－－－－
-		btnLine_3_1.setMargin(new Insets(0, 0, 0, 0));
-		salesPanel.btnOTHER.setMargin(btnLine_3_1.getMargin());
-		btnDiscountCoupon.setMargin(btnLine_3_1.getMargin());
-		btnLine_3_3.setMargin(btnLine_3_1.getMargin());
-		btnLine_3_4.setMargin(btnLine_3_1.getMargin());
-		btnLine_3_5.setMargin(btnLine_3_1.getMargin());
-		btnLine_3_6.setMargin(btnLine_3_1.getMargin());
-		btnSuspend.setMargin(btnLine_3_1.getMargin());
-		btnCheckOrder.setMargin(btnLine_3_1.getMargin());
-		btnLine_3_9.setMargin(btnLine_3_1.getMargin());
+		btnReport.setMargin(new Insets(0, 0, 0, 0));
+		salesPanel.btnOTHER.setMargin(btnReport.getMargin());
+		btnDiscountCoupon.setMargin(btnReport.getMargin());
+		btnEn.setMargin(btnReport.getMargin());
+		btnFR.setMargin(btnReport.getMargin());
+		btnCN.setMargin(btnReport.getMargin());
+		btnSetting.setMargin(btnReport.getMargin());
+		btnSuspend.setMargin(btnReport.getMargin());
+		btnCheckOrder.setMargin(btnReport.getMargin());
+		btnSignOut.setMargin(btnReport.getMargin());
 		
 		// 布局---------------
 		setLayout(null);
 		
 		// 搭建－－－－－－－－－－－－－
-		add(btnLine_3_1);
+		add(btnReport);
 		add(salesPanel.btnOTHER);
 		add(btnDiscountCoupon);
-		add(btnLine_3_3);
-		add(btnLine_3_4);
-		add(btnLine_3_5);
-		add(btnLine_3_6);
+		add(btnEn);
+		add(btnFR);
+		add(btnCN);
+		add(btnSetting);
 		add(btnSuspend);
 		add(btnCheckOrder);
-		add(btnLine_3_9);
+		add(btnSignOut);
 
 		// 加监听器－－－－－－－－
-		btnLine_3_1.addActionListener(this);
+		btnReport.addActionListener(this);
 		salesPanel.btnOTHER.addActionListener(this);
 		btnDiscountCoupon.addActionListener(this);
-		btnLine_3_3.addActionListener(this);
-		btnLine_3_4.addActionListener(this);
-		btnLine_3_5.addActionListener(this);
-		btnLine_3_6.addActionListener(this);
+		btnEn.addActionListener(this);
+		btnFR.addActionListener(this);
+		btnCN.addActionListener(this);
+		btnSetting.addActionListener(this);
 		btnSuspend.addActionListener(this);
 		btnCheckOrder.addActionListener(this);
-		btnLine_3_9.addActionListener(this);
+		btnSignOut.addActionListener(this);
 		
 		this.addWindowFocusListener(this);
 	}
 	
-	private FunctionButton btnLine_3_1;
+	private FunctionButton btnReport;
 	private FunctionButton btnDiscountCoupon;
-	private FunctionButton btnLine_3_3;
-	private FunctionButton btnLine_3_4;
-	private FunctionButton btnLine_3_5;
-	private FunctionButton btnLine_3_6;
-	private FunctionButton btnLine_3_9;
+	private FunctionButton btnEn;
+	private FunctionButton btnFR;
+	private FunctionButton btnCN;
+	private FunctionButton btnSetting;
+	private FunctionButton btnSignOut;
 	private FunctionButton btnSuspend;
 	private FunctionButton btnCheckOrder;
 

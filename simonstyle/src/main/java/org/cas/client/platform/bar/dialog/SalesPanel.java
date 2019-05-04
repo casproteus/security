@@ -22,6 +22,8 @@ import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.action.UpdateItemDiscountAction;
 import org.cas.client.platform.bar.action.UpdateItemPriceAction;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
+import org.cas.client.platform.bar.dialog.statistics.CheckBillDlg;
+import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
@@ -29,6 +31,7 @@ import org.cas.client.platform.bar.uibeans.CategoryToggleButton;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.bar.uibeans.MenuButton;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
@@ -379,6 +382,178 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     		    }else {
     		    	BarFrame.instance.switchMode(0);
     		    }
+            } else if(o == btnOTHER) {
+            	String giftCardNumber  = JOptionPane.showInputDialog(null, BarFrame.consts.Account());
+        		if(giftCardNumber == null || giftCardNumber.length() == 0)
+        			return;
+        		
+        		StringBuilder sql = new StringBuilder("SELECT * from hardware where category = 2 and name = '").append(giftCardNumber)
+        				.append("' and (status is null or status = 0)");
+        		try {
+        			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+        			rs.afterLast();
+                    rs.relative(-1);
+                    int tmpPos = rs.getRow();
+                    if(tmpPos == 0) {	//if there's no this coupon number in database, then warning and return.
+                    	JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidCoupon());
+                    	return;
+                    }else {			//if the number is OK.
+                    	//get out every field of first matching record.
+                    	rs.beforeFirst();
+                        tmpPos = 0;
+                        rs.next();
+                        int id = rs.getInt("id");
+                        int category = rs.getInt("style");
+                        String productCode = rs.getString("IP");
+                        int value = rs.getInt("langType");
+                        
+                        //show up the payDialog, waiting for user to input money, after confirm, the money should be deduct from the account of this card
+                        SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
+                        BarFrame.payDlg.maxInput = (float)(value / 100.0);
+                        salesPanel.actionPerformed(new ActionEvent(salesPanel.btnOTHER, 0, ""));
+                        //how to know the number user inputed, and how to verify if it's bigger than the money left in card?
+                        if (BarFrame.payDlg.inputedContent != null && BarFrame.payDlg.inputedContent.length() > 0) {
+    	                    float usedMoneyQT = Math.round(Float.valueOf(BarFrame.payDlg.inputedContent) * 100);
+    	                    sql = new StringBuilder("update hardware set langType = langType - ").append(usedMoneyQT)
+    	                    		.append(" where id = ").append(id);
+    	                    PIMDBModel.getStatement().executeUpdate(sql.toString());
+                        }
+                    }
+        		}catch(Exception exp) {
+        			L.e("Redeem Coupon", "exception happend when redeem coupon: " + sql, exp);
+        		}
+            }else if (o == btnDiscountCoupon) {
+        		String couponCode  = JOptionPane.showInputDialog(null, BarFrame.consts.couponCode());
+        		if(couponCode == null || couponCode.length() == 0)
+        			return;
+        		
+        		StringBuilder sql = new StringBuilder("SELECT * from hardware where category = 1 and name = '").append(couponCode)
+        				.append("' and (status is null or status = 0)");
+        		try {
+        			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+        			rs.afterLast();
+                    rs.relative(-1);
+                    int tmpPos = rs.getRow();
+                    if(tmpPos == 0) {	//if there's no this coupon number in database, then warning and return.
+                    	JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidCoupon());
+                    	return;
+                    }else {			//if the number is OK.
+                    	//get out every field of first matching record.
+                    	rs.beforeFirst();
+                        tmpPos = 0;
+                        rs.next();
+                        int id = rs.getInt("id");
+                        int category = rs.getInt("style");
+                        String productCode = rs.getString("IP");
+                        int value = rs.getInt("langType");
+                        
+                        //check if the coupon can be applied on current bill
+                        int langIdx = CustOpts.custOps.getUserLang();
+                        ArrayList<String> nameAry = getAppliableDishNames(productCode, langIdx); //if nameAry is null, mean apply to whole bill.
+                        ArrayList<Dish> dishesOnBill = billPanel.orderedDishAry;
+                        ArrayList<Dish> matchedDishesOnBill = getMatchedItem(dishesOnBill, nameAry, langIdx);
+                        //@NOTE: if nameAry and matchedDishesOnBill are null, mean apply to whole bill.
+                        if(matchedDishesOnBill != null && matchedDishesOnBill.size() == 0) {
+                        	JOptionPane.showMessageDialog(this, BarFrame.consts.couponNotApplyToBill());
+                        	return;
+                        }
+                        
+                        //if matchedDishesOnBill is null, then apply the coupon to the whole bill.
+                        if(matchedDishesOnBill == null) {
+    	                    if(category == 0) {//mean the price is absolute price, not percentage.
+    	                    	int total = Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100);
+    	                    	value = value > total ?  total : value;
+    	                    	discountBill(value);
+    	                    }else {
+    	                    	value = Math.round((billPanel.subTotal + billPanel.discount) * (Float.valueOf(value/100f) / 100f));
+    	                    	discountBill(value);
+    	                    }
+    	                    //recalculate the left
+    	                    
+    	                    //if the total is 0, then close cur bill.
+    	                    if("0.00".equals(billPanel.valTotlePrice.getText())) {
+    	                    	PrintService.exePrintInvoice(billPanel, false, true, true);
+    	                    	BarFrame.instance.closeCurrentBill();
+    		                	this.setVisible(false);
+    		                	if(BarOption.isFastFoodMode()) {
+    		            	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
+    		            	    	addNewBillInCurTable();
+    		                	}else {
+    			            		if(BarFrame.instance.isTableEmpty(null, null)) {
+    			            			BarFrame.instance.closeATable(null, null);
+    			            		}
+    			            		BarFrame.instance.switchMode(0);
+    		                	}
+    	                    }
+                        } else {//apply the coupon only to the dish item.
+    	                	//find out the most expensive dish
+                        	Dish mostExpensiveDish = null;
+                        	for (Dish dish : matchedDishesOnBill) {
+                        		mostExpensiveDish = mostExpensiveDish.getPrice() < dish.getPrice() ? dish : mostExpensiveDish;
+    						}
+                        	//calculate coupon value:
+                        	if(category == 0) {//mean the price is absolute price, not persentage.
+                        		value = value > mostExpensiveDish.getPrice() ? mostExpensiveDish.getPrice() : value;
+    	                    }else {
+    	                    	value = Math.round(mostExpensiveDish.getPrice() * (Float.valueOf(value) / 100f));
+    	                    }
+                        	
+                        	discountADish(value, mostExpensiveDish);
+                        }
+                        
+                    	//update the status of the coupon.
+                    	sql = new StringBuilder("update hardware set status = 1 where id = ").append(id);
+                    	PIMDBModel.getStatement().executeUpdate(sql.toString());
+                    }
+        		}catch(Exception exp) {
+        			L.e("Redeem Coupon", "exception happend when redeem coupon: " + sql, exp);
+        		}
+            }else if (o == btnSetting) {
+            	BarFrame.instance.switchMode(3);
+            }else if (o == btnSuspend) {
+            	createAndPrintNewOutput();
+            	BarUtil.updateBillRecordPrices(billPanel);
+            	
+            	this.setVisible(false);
+            	if(billPanel.status > DBConsts.suspended || billPanel.status < DBConsts.original) {
+    				return;
+    			}
+    			
+    	        try {
+    	        	String tableID = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
+    	        	//update outputs
+    				StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.suspended)
+    		                .append(" where SUBJECT = '").append(tableID)
+    		                .append("' and time = '").append(BarFrame.instance.valStartTime.getText())
+    		                .append("' and (deleted is null or deleted = ").append(DBConsts.original).append(")");
+    				PIMDBModel.getStatement().executeUpdate(sql.toString());
+    				
+    				//update bills
+    				sql = new StringBuilder("update bill set status = ").append(DBConsts.suspended)
+    						.append(" where openTime = '").append(BarFrame.instance.valStartTime.getText())
+    						.append("' and (status is null or status = ").append(DBConsts.original).append(")");
+    				PIMDBModel.getStatement().executeUpdate(sql.toString());
+    				
+    	        }catch(Exception exp) {
+    	        	ErrorUtil.write(exp);
+    	        }
+    	        
+            	if(BarOption.isFastFoodMode()) {
+        	    	((SalesPanel)BarFrame.instance.panels[2]).addNewBillInCurTable();
+            	}else {
+    				BarFrame.instance.setCurBillIdx("");
+    				BarFrame.instance.switchMode(0);
+            	}
+            }else if (o == btnCheckOrder) {
+            	String endNow = BarOption.df.format(new Date());
+        		int p = endNow.indexOf(" ");
+        		String startTime = endNow.substring(0, p + 1) + BarOption.getStartTime();
+        		CheckBillDlg dlg = new CheckBillDlg(BarFrame.instance);
+        		dlg.initContent(startTime, endNow);
+        		dlg.setVisible(true);
+            }else if(o == btnReport) {
+            	ReportDlg dlg = new ReportDlg(BarFrame.instance);
+        		dlg.setVisible(true);
             }
         }
         //JToggleButton-------------------------------------------------------------------------------------
@@ -655,32 +830,40 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     void reLayout() {
         int panelHeight = getHeight();
 
-        int tBtnWidht = (getWidth() - CustOpts.HOR_GAP * 10) / 10;
+        int tBtnWidht = (getWidth() - CustOpts.HOR_GAP * 9) / 9;
         int tBtnHeight = panelHeight / 10;
 
         // command buttons--------------
         // line 2
-        btnReturn.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
-        btnAddBill.setBounds(btnReturn.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
-        btnMASTER.setBounds(btnAddBill.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
-        btnCancelAll.setBounds(btnMASTER.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
-        btnVoidOrder.setBounds(btnCancelAll.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
-        btnOpenDrawer.setBounds(btnVoidOrder.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
-        btnDiscBill.setBounds(btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
-        btnRefund.setBounds(btnDiscBill.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
-        btnMore.setBounds(btnRefund.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
-        btnSend.setBounds(btnMore.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
+        int y = panelHeight - tBtnHeight - CustOpts.VER_GAP;
+        //btnAddBill.setBounds(btnReturn.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
+        btnMASTER.setBounds(CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        btnOTHER.setBounds(btnMASTER.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        btnDiscountCoupon.setBounds(btnOTHER.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        btnCancelAll.setBounds(btnDiscountCoupon.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        //btnVoidOrder.setBounds(btnCancelAll.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
+        btnDiscBill.setBounds(btnCancelAll.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        btnRefund.setBounds(btnDiscBill.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        btnOpenDrawer.setBounds(btnRefund.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        //btnMore.setBounds(btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        //btnSend.setBounds(btnMore.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht, tBtnHeight);
+        btnSetting.setBounds(btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        btnReturn.setBounds(btnSetting.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
         // line 1
-        btnCASH.setBounds(btnReturn.getX(),  btnReturn.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
-        btnDEBIT.setBounds(btnAddBill.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnVISA.setBounds(btnMASTER.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnSplitBill.setBounds(btnCancelAll.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnRemoveItem.setBounds(btnVoidOrder.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnModify.setBounds(btnOpenDrawer.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnDiscItem.setBounds(btnDiscBill.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnChangePrice.setBounds(btnRefund.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnServiceFee.setBounds(btnMore.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
-        btnPrintBill.setBounds(btnSend.getX(), btnCASH.getY(), tBtnWidht, tBtnHeight);
+        y -= tBtnHeight + CustOpts.VER_GAP;
+        btnCASH.setBounds(btnMASTER.getX(),  y, tBtnWidht, tBtnHeight);
+        btnDEBIT.setBounds(btnCASH.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        btnVISA.setBounds(btnDEBIT.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        //btnSplitBill.setBounds(btnCancelAll.getX(), y, tBtnWidht, tBtnHeight);
+        btnRemoveItem.setBounds(btnVISA.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        //btnModify.setBounds(btnOpenDrawer.getX(), y, tBtnWidht, tBtnHeight);
+        btnDiscItem.setBounds(btnRemoveItem.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        btnChangePrice.setBounds(btnDiscItem.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        btnSuspend.setBounds(btnChangePrice.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        btnCheckOrder.setBounds(btnSuspend.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        btnReport.setBounds(btnCheckOrder.getX() + tBtnWidht + CustOpts.HOR_GAP, y, tBtnWidht, tBtnHeight);
+        //btnServiceFee.setBounds(btnMore.getX(), y, tBtnWidht, tBtnHeight);
+        //btnPrintBill.setBounds(btnMore.getX(), y, tBtnWidht, tBtnHeight);
 
 //        btnLine_2_11.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_2.getY(), tBtnWidht, tBtnHeight);
 //        btnLine_2_12.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_14.getY(), tBtnWidht, tBtnHeight);
@@ -719,6 +902,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnReturn = new FunctionButton(BarFrame.consts.RETURN());
         btnAddBill = new FunctionButton(BarFrame.consts.AddUser());
         btnMASTER = new FunctionButton(BarFrame.consts.MASTER());
+        btnOTHER = new FunctionButton(BarFrame.consts.GIFTCARD());
+        btnDiscountCoupon = new FunctionButton(BarFrame.consts.COUPON());
         btnCancelAll = new FunctionButton(BarFrame.consts.CANCEL_ALL());
         btnVoidOrder = new FunctionButton(BarFrame.consts.VOID_ORDER());
         btnOpenDrawer = new FunctionButton(BarFrame.consts.OpenDrawer());
@@ -726,6 +911,11 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnRefund = new FunctionButton(BarFrame.consts.Refund());
         btnMore = new FunctionButton(BarFrame.consts.MORE());
         btnSend = new FunctionButton(BarFrame.consts.SEND());
+        
+        btnSetting = new FunctionButton(BarFrame.consts.SETTINGS());
+        btnSuspend = new FunctionButton(BarFrame.consts.SUSPEND());
+        btnCheckOrder = new FunctionButton(BarFrame.consts.OrderManage());
+        btnReport = new FunctionButton(BarFrame.consts.Report());
         
         billPanel = new BillPanel(this);
         // properties
@@ -747,10 +937,15 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         add(btnChangePrice);
         add(btnServiceFee);
         add(btnPrintBill);
+        add(btnSuspend);
+        add(btnCheckOrder);
+        add(btnReport);
 
         add(btnReturn);
         add(btnAddBill);
         add(btnMASTER);
+        add(btnOTHER);
+        add(btnDiscountCoupon);
         add(btnCancelAll);
         add(btnVoidOrder);
         add(btnOpenDrawer);
@@ -758,6 +953,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         add(btnRefund);
         add(btnMore);
         add(btnSend);
+        add(btnSetting);
         
         add(billPanel);
         // add listener
@@ -776,6 +972,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnChangePrice.addActionListener(this);
         btnServiceFee.addActionListener(this);
         btnPrintBill.addActionListener(this);
+        btnSuspend.addActionListener(this);
+        btnCheckOrder.addActionListener(this);
+        btnReport.addActionListener(this);
 
         btnReturn.addActionListener(this);
         btnAddBill.addActionListener(this);
@@ -787,10 +986,69 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnRefund.addActionListener(this);
         btnMore.addActionListener(this);
         btnSend.addActionListener(this);
-        
+        btnSetting.addActionListener(this);
+        btnOTHER.addActionListener(this);
+        btnDiscountCoupon.addActionListener(this);
 		reLayout();
     }
 
+	private ArrayList<String> getAppliableDishNames(String productCode, int langIdx) {
+    	ArrayList<String> appliableDishes = new ArrayList<String>();
+    	if(productCode == null || productCode.trim().length() == 0) {
+    		return null;
+    	}
+    	//if it's a category
+    	String[] codes = productCode.split(",");
+        Dish[] dishAry = BarFrame.menuPanel.getDishAry();
+    	for(int m = 0; m < codes.length; m++) {
+			if(codes[m].length() == 0) {
+				continue;
+			}
+			boolean matched = false;
+	    	for(int i = 0; i < BarFrame.menuPanel.categoryNameMetrix[0].length; i++) {
+	    		//check 3 languages
+    			if(codes[m].trim().equalsIgnoreCase(BarFrame.menuPanel.categoryNameMetrix[0][i].trim())
+    					|| codes[m].trim().equalsIgnoreCase(BarFrame.menuPanel.categoryNameMetrix[1][i].trim())
+    					|| codes[m].trim().equalsIgnoreCase(BarFrame.menuPanel.categoryNameMetrix[2][i].trim())) {
+    				//add all relavant dishes
+    		        for (int j = 0; j < dishAry.length; j++) {
+    					if(dishAry[j].getCATEGORY().trim().equals(BarFrame.menuPanel.categoryNameMetrix[0][i].trim())) {
+    						appliableDishes.add(dishAry[j].getLanguage(langIdx));
+    					}
+    		        }
+    				matched = true;
+    				break;
+    			}
+	    	}
+	    	
+	    	//didn't match any category, then it's a menu name, add the lang0 into the list directly.
+	    	if(!matched) {
+	    		for (int j = 0; j < dishAry.length; j++) {
+					if(codes[m].trim().equalsIgnoreCase(dishAry[j].getLanguage(0).trim())
+						|| codes[m].trim().equalsIgnoreCase(dishAry[j].getLanguage(1).trim())
+						|| codes[m].trim().equalsIgnoreCase(dishAry[j].getLanguage(2).trim())){
+						appliableDishes.add(dishAry[j].getLanguage(langIdx));
+					}
+		        }
+	    	}
+    	}
+		return appliableDishes;
+	}
+	
+    //find out which dishes in current bill can be apply on the coupon.
+    private ArrayList<Dish> getMatchedItem(ArrayList<Dish> dishesOnBill, ArrayList<String> nameAry, int langIdx) {
+    	if(nameAry == null) {
+    		return null;
+    	}
+    	ArrayList<Dish> appliableDishes = new ArrayList<Dish>();
+    	for (Dish dish : dishesOnBill) {
+			if(nameAry.contains(dish.getLanguage(langIdx))) {
+				appliableDishes.add(dish);
+			}
+		}
+		return appliableDishes;
+	}
+    
     private FunctionButton btnCASH;
     private FunctionButton btnDEBIT;
     private FunctionButton btnVISA;
@@ -814,5 +1072,12 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     private FunctionButton btnMore;
     private FunctionButton btnSend;
     
+    //from more button dlg.
+	private FunctionButton btnReport;
+	private FunctionButton btnDiscountCoupon;
+	private FunctionButton btnSetting;
+	private FunctionButton btnSuspend;
+	private FunctionButton btnCheckOrder;
+	
     public BillPanel billPanel;
 }
