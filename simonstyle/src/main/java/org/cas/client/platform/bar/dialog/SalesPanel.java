@@ -987,7 +987,50 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         btnMore.addActionListener(this);
         btnSend.addActionListener(this);
         btnSetting.addActionListener(this);
-        btnOTHER.addActionListener(this);
+        btnOTHER.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String giftCardNumber  = JOptionPane.showInputDialog(null, BarFrame.consts.Account());
+	    		if(giftCardNumber == null || giftCardNumber.length() == 0)
+	    			return;
+	    		
+	    		StringBuilder sql = new StringBuilder("SELECT * from hardware where category = 2 and name = '").append(giftCardNumber)
+	    				.append("' and (status is null or status = 0)");
+	    		try {
+	    			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+	    			rs.afterLast();
+	                rs.relative(-1);
+	                int tmpPos = rs.getRow();
+	                if(tmpPos == 0) {	//if there's no this coupon number in database, then warning and return.
+	                	JOptionPane.showMessageDialog(null, BarFrame.consts.InvalidCoupon());
+	                	return;
+	                }else {			//if the number is OK.
+	                	//get out every field of first matching record.
+	                	rs.beforeFirst();
+	                    tmpPos = 0;
+	                    rs.next();
+	                    int id = rs.getInt("id");
+	                    int category = rs.getInt("style");
+	                    String productCode = rs.getString("IP");
+	                    int value = rs.getInt("langType");
+	                    
+	                    //show up the payDialog, waiting for user to input money, after confirm, the money should be deduct from the account of this card
+	                    SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
+	                    BarFrame.payDlg.maxInput = (float)(value / 100.0);
+	                    salesPanel.actionPerformed(new ActionEvent(salesPanel.btnOTHER, 0, ""));
+	                    //how to know the number user inputed, and how to verify if it's bigger than the money left in card?
+	                    if (BarFrame.payDlg.inputedContent != null && BarFrame.payDlg.inputedContent.length() > 0) {
+		                    float usedMoneyQT = Math.round(Float.valueOf(BarFrame.payDlg.inputedContent) * 100);
+		                    sql = new StringBuilder("update hardware set langType = langType - ").append(usedMoneyQT)
+		                    		.append(" where id = ").append(id);
+		                    PIMDBModel.getStatement().executeUpdate(sql.toString());
+	                    }
+	                }
+	    		}catch(Exception exp) {
+	    			L.e("Redeem Coupon", "exception happend when redeem coupon: " + sql, exp);
+	    		}
+			}
+		});
         btnDiscountCoupon.addActionListener(this);
 		reLayout();
     }

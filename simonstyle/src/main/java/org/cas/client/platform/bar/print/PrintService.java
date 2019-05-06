@@ -480,9 +480,11 @@ public class PrintService{
     }
 
 	public static boolean openDrawer(){
+		BarFrame.setStatusMes("Openning Drawer!");
 		String key = BarFrame.menuPanel.getPrinters()[0].getIp();
 		if(key.equalsIgnoreCase("mev")) {
 			try{
+				
 				printThroughOSdriver(getMevCommandFilePath("mevOpenCashierCommand.xml", Command.OPEN_CASHIER), new HashPrintRequestAttributeSet(), false);
 				return true;
 			} catch (Exception exp) {
@@ -490,21 +492,47 @@ public class PrintService{
 				return false;
 			}
 			
-		}else if (key.equalsIgnoreCase("serial")){	//TODO: not implemented yet.
+		}else if (key.equalsIgnoreCase("serial")){
+			CommPortIdentifier commPortIdentifier;
 			try{
-				return true;
+				Enumeration tPorts = CommPortIdentifier.getPortIdentifiers();
+		        if (tPorts == null || !tPorts.hasMoreElements()) {
+		        	JOptionPane.showMessageDialog(BarFrame.instance, "no comm ports found! please check the printer connection.");
+		        	return false;
+		        }
+
+		        while (tPorts.hasMoreElements()) {
+		        	commPortIdentifier = (CommPortIdentifier) tPorts.nextElement();
+		        	if (commPortIdentifier.getPortType() != CommPortIdentifier.PORT_SERIAL)
+		                    continue;
+					SerialPort tSerialPort = (SerialPort)commPortIdentifier.open("PrintService", 10000);//并口用"ParallelBlackBox"
+					OutputStream outputStream = new DataOutputStream(tSerialPort.getOutputStream());
+	                int[] cmd = BarOption.getOpenDrawerCommand();
+	 				for (int i : cmd) {
+	 					outputStream.write(i);
+	 				}
+	 				return true;
+		        }
+		        
+		        return false;
 			} catch (Exception exp) {
 				ErrorUtil.write(exp);
 				return false;
 			}
-		}else {	//TODO: not tested yet. worked around year 2005
+		}else {
 	    	try{
 				Socket socket = new Socket(key != null ? key : BarFrame.menuPanel.getPrinters()[0].getIp(), 9100);
+				BarFrame.setStatusMes("sockeet connected!");
 				OutputStream outputStream = socket.getOutputStream();
-				outputStream.write(Command.DLE_DC4);
-		
+				int[] cmd = BarOption.getOpenDrawerCommand();
+				for (int i : cmd) {
+					outputStream.write(i);
+				}
+				
+				BarFrame.setStatusMes("Command Send!");
 				outputStream.flush();
 				socket.close();
+				BarFrame.setStatusMes("Drawer Openned!");
 				return true;
 			} catch (Exception exp) {
 				ErrorUtil.write(exp);
@@ -1324,6 +1352,9 @@ public class PrintService{
 	    //push table, bill waiter and time
 	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
+	    if(startTimeStr.length() == 0) {
+	    	startTimeStr.append(BarOption.df.format(new Date()));
+	    }
 	    if(billPanel.billButton != null) {
 	    	startTimeStr.append("(").append(billPanel.billButton.getText()).append(")");
 	    }
@@ -1758,7 +1789,7 @@ public class PrintService{
      				.append(BarUtil.generateString(width - lblText.length() - roundedStr.length(), " "))
      				.append(roundedStr).append("\n");
             	}
-            }else {
+            }else if(!"0".equals(str) && !"0.00".equals(str) && str.trim().length() > 0){
             	lblText = "TIP : ";
             	content.append(lblText)
  				.append(BarUtil.generateString(width - lblText.length() - str.length(), " "))

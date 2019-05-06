@@ -112,8 +112,8 @@ public class Command {
     public static byte[] DLE_eot = new byte[] {0x10, 0x04, 0x00 };
 
     //实时弹钱箱指令
-    public static byte[] DLE_DC4 = new byte[] {0x10, 0x14, 0x00, 0x00, 0x00 };
-
+    public static int[] DLE_DC4 = new int[] {0x1B, 0x70, 0x00, 0x80, 0xFF};
+    
     //标准弹钱箱指令
     public static byte[] ESC_p = new byte[] {0x1b, 0x70, 0x00, 0x00, 0x00 };
 
