@@ -430,7 +430,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	    }
         	}
         	
-        	PrintService.openDrawer();
+        	if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
+        		PrintService.openDrawer();
+        	}
         	
         } else if(o == btnExact) {//update bill and display change 0.00;
         	String strPay = "other";

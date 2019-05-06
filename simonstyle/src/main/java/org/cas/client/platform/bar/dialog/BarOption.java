@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.text.SimpleDateFormat;
 
 import org.cas.client.platform.bar.net.RequestNewOrderThread;
+import org.cas.client.platform.bar.print.Command;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.casutil.TaoEncrypt;
@@ -516,4 +517,18 @@ public class BarOption {
     public static void setSuperPassword(String superPassword){
     	CustOpts.custOps.setKeyAndValue("superPassword", TaoEncrypt.encryptPassword(superPassword));
     }
+    
+	public static int[] getOpenDrawerCommand() {
+		String command = (String)CustOpts.custOps.getValue("OpenDrawerCommand");
+		if(command == null || command.trim().length() < 7) {
+			return Command.DLE_DC4;
+		}else {
+			String[] strs = command.split(",");
+			int[] intAry = new int[strs.length];
+			for(int i = 0; i < strs.length; i++) {
+				intAry[i] = Integer.valueOf(strs[i]);
+			}
+			return intAry;
+		}
+	}	
 }
