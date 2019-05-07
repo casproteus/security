@@ -360,7 +360,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     void reLayout() {
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 9) / 9;
+        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 8) / 8;
         int tBtnHeight = panelHeight / 10;
 
         // command buttons--------------
@@ -382,8 +382,8 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
                 tBtnHeight);
         btnColor.setBounds(btnCoupon.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht,
                 tBtnHeight);
-        btnCheckInOut.setBounds(btnColor.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht,
-                tBtnHeight);
+//        btnCheckInOut.setBounds(btnColor.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht,
+//                tBtnHeight);
 
         // TOP part============================
 		lblGST.setBounds(CustOpts.HOR_GAP * 4, CustOpts.VER_GAP * 4,

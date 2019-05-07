@@ -570,10 +570,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		float gst = totalPrice * (dish.getGst() * gstRate / 100f);	//an item could have a different tax rate.
     		float qst = totalPrice * (dish.getQst() * qstRate / 100f);
     		
-    		if(BarOption.isDiscountAffectTax()) {
-    			gst += dish.getDiscount() * (dish.getGst() * gstRate / 100f);
-    			qst += dish.getDiscount() * (dish.getQst() * gstRate / 100f);
-    		}
+//    		if(BarOption.isDiscountAffectTax()) {
+//    			gst += dish.getDiscount() * (dish.getGst() * gstRate / 100f);
+//    			qst += dish.getDiscount() * (dish.getQst() * gstRate / 100f);
+//    		}
     		
 //@NOTE: the price is already the final item totalprice (even the discount calculated), so no need to devide again.
 //    		if(pS > 0) {
@@ -629,11 +629,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	//get outputs of current table and bill id.
     	StringBuilder sql = null;
 		try {
-			boolean isShowingExpiredBill = BarFrame.instance.isShowingAnExpiredBill;
 			sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
 				.append(tableName)
 				.append("' and CONTACTID = ").append(billIndex)
-				.append(" and (deleted is null or deleted < ").append(isShowingExpiredBill ? DBConsts.deleted : DBConsts.expired)	//dumpted also should show.
+				.append(" and (deleted is null or deleted < ").append(BarFrame.instance.isShowingAnExpiredBill ? DBConsts.deleted : DBConsts.expired)	//dumpted also should show.
 				.append(") AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
 				.append(openTime).append("'").append(billId != null && billId.length() > 0 ? " and output.category = " + billId : "");	//new added after dump should not display.
 			
@@ -705,7 +704,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				sql = new StringBuilder("select * from Bill where opentime = '").append(openTime)
 						.append("' and billIndex = '").append(billIndex).append("'")
 						.append(" and tableID = '").append(tableName).append("'")
-						.append(" and (status is null or status ").append(isShowingExpiredBill ? "<=" : "<").append(DBConsts.expired).append(")");
+						.append(" and (status is null or status ").append(BarFrame.instance.isShowingAnExpiredBill ? "<=" : "<").append(DBConsts.expired).append(")");
 				  
 				rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 				rs.beforeFirst();
@@ -993,13 +992,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
             		BarFrame.consts.SCROLLBAR_WIDTH, BarFrame.consts.SCROLLBAR_WIDTH);
             btnLess.setBounds(btnMore.getX() - CustOpts.HOR_GAP - BarFrame.consts.SCROLLBAR_WIDTH, btnMore.getY(), 
             		BarFrame.consts.SCROLLBAR_WIDTH, BarFrame.consts.SCROLLBAR_WIDTH);
-    		lblSubTotle.setBounds(btnLess.getX() - 120, 
+    		lblSubTotle.setBounds(btnLess.getX() - 130, 
     				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
-    				120, lblSubTotle.getPreferredSize().height);
+    				130, lblSubTotle.getPreferredSize().height);
         }else {
-        	lblSubTotle.setBounds(scrContent.getX() + scrContent.getWidth() - 120, 
+        	lblSubTotle.setBounds(scrContent.getX() + scrContent.getWidth() - 130, 
     				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
-    				120, lblSubTotle.getHeight());
+    				130, lblSubTotle.getHeight());
         }
         lblDiscount.setBounds(scrContent.getX(), scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP, 
         		scrContent.getWidth() / 5, lblSubTotle.getHeight());
@@ -1011,7 +1010,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		lblTVQ.setBounds(lblTPS.getX() + lblTPS.getWidth() + CustOpts.HOR_GAP, lblTPS.getY(), lblTPS.getWidth(), lblTPS.getHeight());
 		lblTotlePrice.setBounds(lblSubTotle.getX(), lblTVQ.getY(), lblTotlePrice.getPreferredSize().width, lblTVQ.getHeight());
 		valTotlePrice.setBounds(lblTotlePrice.getX() + lblTotlePrice.getWidth(), lblTotlePrice.getY(),
-				120 - lblTotlePrice.getWidth(), lblTotlePrice.getHeight() + CustOpts.VER_GAP);
+				130 - lblTotlePrice.getWidth(), lblTotlePrice.getHeight() + CustOpts.VER_GAP);
     }
     
     void initComponent() {
@@ -1106,7 +1105,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		return billID;
 	}
 
-    int lastID;
 	public void setBillID(int billID) {
 		this.billID = billID;
 	}
