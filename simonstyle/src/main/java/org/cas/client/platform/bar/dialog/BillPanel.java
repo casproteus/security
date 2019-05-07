@@ -965,10 +965,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
                 return i; // 至此得到 the used RowCount。
         return table.getRowCount();
     }
-
-    public int getBillId(){
-    	return getBillID();
-    }
     
     void reLayout() {
         int panelHeight = getHeight();

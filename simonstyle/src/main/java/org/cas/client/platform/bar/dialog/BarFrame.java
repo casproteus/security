@@ -681,7 +681,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	}
 	
 	public void closeCurrentBill() {
-		int billID = ((SalesPanel)panels[2]).billPanel.getBillId();
+		int billID = ((SalesPanel)panels[2]).billPanel.getBillID();
 		try {
 			StringBuilder sql = new StringBuilder("update output set deleted = ").append(DBConsts.completed)
 					.append(" where subject = '").append(cmbCurTable.getSelectedItem())

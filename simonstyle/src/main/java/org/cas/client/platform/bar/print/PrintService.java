@@ -213,7 +213,7 @@ public class PrintService{
         
         int tWidth = BarUtil.getPreferedWidth();
         
-        pushBillHeadInfo(contentList, tWidth, String.valueOf(unclosedBillPanels.get(0).getBillId()));
+        pushBillHeadInfo(contentList, tWidth, String.valueOf(unclosedBillPanels.get(0).getBillID()));
         
 	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
@@ -1353,7 +1353,7 @@ public class PrintService{
     	int tWidth = BarUtil.getPreferedWidth();
     	
     	//push head info
-	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
+	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillID()));
 	    
 	    //push table, bill waiter and time
 	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
@@ -1402,7 +1402,7 @@ public class PrintService{
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	int tWidth = BarUtil.getPreferedWidth();
     	
-	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
+	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillID()));
 	    
 	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
@@ -1426,7 +1426,7 @@ public class PrintService{
     	ArrayList<String> strAryFR = new ArrayList<String>();
     	int tWidth = BarUtil.getPreferedWidth();
     	
-	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillId()));
+	    pushBillHeadInfo(strAryFR, tWidth, String.valueOf(billPanel.getBillID()));
 	    String tableIdx = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 	    StringBuilder startTimeStr = new StringBuilder(BarFrame.instance.valStartTime.getText());
 	    pushWaiterAndTime(strAryFR, tWidth, tableIdx, startTimeStr.toString(), "");
@@ -1734,7 +1734,7 @@ public class PrintService{
 	private static String getOutPayInfo(BillPanel billPanel, int width, boolean isCashBack) {
 
 		StringBuilder content = new StringBuilder("\n");
-		int billId = billPanel.getBillId();
+		int billId = billPanel.getBillID();
 		
     	StringBuilder sb = new StringBuilder("select * from bill where id = " + billId);
     	try {

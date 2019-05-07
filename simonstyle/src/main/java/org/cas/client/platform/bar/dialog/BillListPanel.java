@@ -666,7 +666,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		sql = new StringBuilder("update bill set discount = ").append(combinedDiscount)
 				.append(", serviceFee = ").append(combinedServiceFee)
 				.append(", comment = '").append(combinedComment).append("'")
-				.append(" where id = ").append(billPanel.getBillId());	//billPanel's billID will be a new bill Id if it's regenerated.
+				.append(" where id = ").append(billPanel.getBillID());	//billPanel's billID will be a new bill Id if it's regenerated.
 		
 		try {
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
