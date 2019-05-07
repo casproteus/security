@@ -46,7 +46,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V2.04-20190506";
+	private String VERSION = "V2.07-20190507";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     
@@ -85,7 +85,27 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         }else {
         	instance.setVisible(true);
         }
-      
+        
+    	if(BarOption.isFastFoodMode()) {
+    		BarFrame.instance.ignoreItemChange = true;
+    		BarFrame.instance.cmbCurTable.setSelectedItem("");
+    		BarFrame.instance.setCurBillIdx("1");
+        	
+        	String openTime = BarOption.df.format(new Date());
+        	BarFrame.instance.valStartTime.setText(openTime);
+
+        	BarFrame.instance.openATable("", openTime);
+        	BarFrame.instance.curBillID = BarFrame.instance.createAnEmptyBill("", openTime, 0);
+        	((SalesPanel)BarFrame.instance.panels[2]).billPanel.setBillID(BarFrame.instance.curBillID);
+    		
+        	//if this flag set, the initContent will choose outputs and bill differently.
+        	//NOTE: there's could be one final and several expired bills under same tableid and billIdx and opentime. we don't support more than one exipred bill.
+        	BarFrame.instance.isShowingAnExpiredBill = true;
+        	BarFrame.instance.switchMode(2);
+    	}else {
+    		BarFrame.instance.switchMode(0);	//while BarFrame.instance is still null if don't put it in the later.
+    	}
+        
         //this thread will start a request thread every 20 seconds to fetch new order from server..
         new RequestNewOrderThread().start();
         
@@ -259,32 +279,6 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     
     public BarFrame() {
     	initComponent();
-    	
-        //display table view.
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {//call it later, because it will trigger cmbCurTable.setModel(); 
-            	if(BarOption.isFastFoodMode()) {
-            		ignoreItemChange = true;
-                	cmbCurTable.setSelectedItem("");
-                	setCurBillIdx("1");
-                	
-                	String openTime = BarOption.df.format(new Date());
-                	valStartTime.setText(openTime);
-
-                	openATable("", openTime);
-                	curBillID = createAnEmptyBill("", openTime, 0);
-                	((SalesPanel)panels[2]).billPanel.setBillID(curBillID);
-            		
-                	//if this flag set, the initContent will choose outputs and bill differently.
-                	//NOTE: there's could be one final and several expired bills under same tableid and billIdx and opentime. we don't support more than one exipred bill.
-                	isShowingAnExpiredBill = true;
-                	switchMode(2);
-            	}else {
-            		switchMode(0);	//while BarFrame.instance is still null if don't put it in the later.
-            	}
-            }
-        });
     }
     
     public void initComponent(){
