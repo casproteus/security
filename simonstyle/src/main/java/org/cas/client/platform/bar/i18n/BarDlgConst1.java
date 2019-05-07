@@ -587,4 +587,6 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String isWaiterAllowedToChangePrice() {return "Employé peut changer prix";}
 	@Override
 	public String isToCustomer() {return "A client";}
+	@Override
+	public String CurrentBalanceMsg() {return "Le solde actuel du compte est:";}
 }

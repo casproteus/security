@@ -434,6 +434,12 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         		PrintService.openDrawer();
         	}
         } else if(o == btnExact) {//update bill and display change 0.00;
+        	
+        	if(maxInput > 0 && maxInput < Float.valueOf(valLeft.getText())) {
+				JOptionPane.showMessageDialog(this, BarFrame.consts.CurrentBalanceMsg() + maxInput);
+				return;
+			}
+        	
         	String strPay = "other";
     		String curTitle = getTitle();
     		//calculate the received of diffent kind
