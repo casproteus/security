@@ -105,7 +105,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		}
         		//check if the pay dialog is already visible, if yes, then update bill received values.
         		if(BarFrame.payDlg.isVisible()) {
-        			BarFrame.payDlg.updateBill(billPanel.getBillId());
+        			BarFrame.payDlg.updateBill(billPanel.getBillID());
         		}
         		//show dialog-------------------------------------
          		BarFrame.payDlg.setFloatSupport(true);
