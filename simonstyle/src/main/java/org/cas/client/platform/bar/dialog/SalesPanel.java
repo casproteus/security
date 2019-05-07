@@ -686,7 +686,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			BarFrame.instance.valStartTime.setText(newOpenTime);
 			BarFrame.instance.setCurBillIdx(String.valueOf(newBillIdx));
 			
-			BarFrame.instance.createAnEmptyBill(tableName, newOpenTime, newBillIdx);
+			billPanel.setBillID(BarFrame.instance.createAnEmptyBill(tableName, newOpenTime, newBillIdx));
 			billPanel.initContent();
 			
 		}else {
@@ -1017,6 +1017,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	                    //show up the payDialog, waiting for user to input money, after confirm, the money should be deduct from the account of this card
 	                    SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
 	                    BarFrame.payDlg.maxInput = (float)(value / 100.0);
+	                    BarFrame.setStatusMes("Current Balance of the Gift Card is:" + BarFrame.payDlg.maxInput);
 	                    salesPanel.actionPerformed(new ActionEvent(salesPanel.btnOTHER, 0, ""));
 	                    //how to know the number user inputed, and how to verify if it's bigger than the money left in card?
 	                    if (BarFrame.payDlg.inputedContent != null && BarFrame.payDlg.inputedContent.length() > 0) {

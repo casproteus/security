@@ -635,7 +635,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				.append("' and CONTACTID = ").append(billIndex)
 				.append(" and (deleted is null or deleted < ").append(isShowingExpiredBill ? DBConsts.deleted : DBConsts.expired)	//dumpted also should show.
 				.append(") AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
-				.append(openTime).append(billId != null && billId.length() > 0 ? "' and output.category = " + billId : "'");	//new added after dump should not display.
+				.append(openTime).append("'").append(billId != null && billId.length() > 0 ? " and output.category = " + billId : "");	//new added after dump should not display.
 			
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
@@ -729,7 +729,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
                 	setBillID(resultSet.getInt("id"));
                 }else {
                 	L.e("initing BillPanel", "there's no bill in an openned table.", null);
-                	BarFrame.instance.createAnEmptyBill(tableName, openTime, 0);
+                	setBillID(BarFrame.instance.createAnEmptyBill("", openTime, 0));
                 }
 			}
 			rs.close();
@@ -965,7 +965,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
                 return i; // 至此得到 the used RowCount。
         return table.getRowCount();
     }
-    
+
     void reLayout() {
         int panelHeight = getHeight();
 
