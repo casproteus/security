@@ -145,7 +145,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     }
     
 	public void initContent(BillPanel billPanel) {
-		int billId = billPanel.getBillId();
+		int billId = billPanel.getBillID();
     	initMoneyDisplay(billId);
     }
 	
@@ -377,7 +377,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         		return;
         	}
         	
-        	int billId = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
+        	int billId = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillID();
         	int billOldStatus = getBillStatus(billId);
         	//check if left moeny is 0. 
         	int left = Math.round(Float.valueOf(valLeft.getText()) * 100);
@@ -449,7 +449,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     			strPay = "other";
     		}
     		
-    		int billId = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillId();
+    		int billId = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillID();
     		int billOldStatus = getBillStatus(billId);
 
         	BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
