@@ -315,4 +315,5 @@ public interface BarDlgConst {
 	String isWaiterAllowedToDiscount();
 	String isWaiterAllowedToChangePrice();
 	String isToCustomer();
+	String CurrentBalanceMsg();
 }

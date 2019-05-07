@@ -511,7 +511,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 			BarFrame.instance.valStartTime.setText(newOpenTime);
 			BarFrame.instance.setCurBillIdx(String.valueOf(newBillIdx));
 			
-			BarFrame.instance.createAnEmptyBill(tableName, newOpenTime, newBillIdx);
+			billPanel.setBillID(BarFrame.instance.createAnEmptyBill(tableName, newOpenTime, newBillIdx));
 			billPanel.initContent();
 			
 		}else {
