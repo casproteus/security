@@ -497,19 +497,25 @@ public class PrintService{
 			try{
 				Enumeration tPorts = CommPortIdentifier.getPortIdentifiers();
 		        if (tPorts == null || !tPorts.hasMoreElements()) {
+		        	BarFrame.setStatusMes("no comm ports found!");
 		        	JOptionPane.showMessageDialog(BarFrame.instance, "no comm ports found! please check the printer connection.");
 		        	return false;
 		        }
 
 		        while (tPorts.hasMoreElements()) {
 		        	commPortIdentifier = (CommPortIdentifier) tPorts.nextElement();
+		        	BarFrame.setStatusMes("find one port!");
 		        	if (commPortIdentifier.getPortType() != CommPortIdentifier.PORT_SERIAL)
 		                    continue;
+		        	BarFrame.setStatusMes("find one serial port!");
 					SerialPort tSerialPort = (SerialPort)commPortIdentifier.open("PrintService", 10000);//并口用"ParallelBlackBox"
+					BarFrame.setStatusMes("port openned!");
 					OutputStream outputStream = new DataOutputStream(tSerialPort.getOutputStream());
 	                int[] cmd = BarOption.getOpenDrawerCommand();
+	                BarFrame.setStatusMes("opening drawer!");
 	 				for (int i : cmd) {
 	 					outputStream.write(i);
+	 					BarFrame.setStatusMes("opening drawer!---" + i);
 	 				}
 	 				return true;
 		        }
