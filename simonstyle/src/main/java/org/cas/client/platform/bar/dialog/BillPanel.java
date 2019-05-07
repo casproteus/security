@@ -641,7 +641,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			rs.afterLast();
 			rs.relative(-1);
 			int tmpPos = rs.getRow();
-
+			if("".equals(openTime) && tmpPos > 0) {
+				L.e("BillPanel", "Found " + tmpPos + " output with no time infomation with it!", null);
+				tmpPos = 0;
+			}
 			int tColCount = table.getColumnCount();
 			Object[][] tValues = new Object[tmpPos][tColCount];
 			rs.beforeFirst();

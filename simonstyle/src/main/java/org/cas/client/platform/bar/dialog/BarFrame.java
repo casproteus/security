@@ -359,7 +359,8 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		if (i == 3) {		//setting
 			if (!adminAuthentication()) 
 				return -1;
-			resetStatus();
+			//if make the time disappear, when return back, will not be able to continue the work from right place.
+			//resetStatus();
 		}else if(i == 2) {	//sale
 			((SalesPanel)panels[i]).billPanel.initContent();
 			
