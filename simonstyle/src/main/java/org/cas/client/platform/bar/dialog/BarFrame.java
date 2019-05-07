@@ -418,10 +418,10 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
      */
     @Override
     public void reLayout() {
-        lblCurTable.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCurTable.getPreferredSize().width,
-        		lblCurTable.getPreferredSize().height);
-        cmbCurTable.setBounds(lblCurTable.getX() + lblCurTable.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 60,
-        		lblCurTable.getPreferredSize().height);
+//        lblCurTable.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, lblCurTable.getPreferredSize().width,
+//        		lblCurTable.getPreferredSize().height);
+//        cmbCurTable.setBounds(lblCurTable.getX() + lblCurTable.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP, 60,
+//        		lblCurTable.getPreferredSize().height);
         lblCurBillIdx.setBounds(cmbCurTable.getX() + 180, CustOpts.VER_GAP, lblCurBillIdx.getPreferredSize().width,
         		lblCurBillIdx.getPreferredSize().height);
         valCurBillIdx.setBounds(lblCurBillIdx.getX() + lblCurBillIdx.getWidth(), CustOpts.VER_GAP, 180 - lblCurBillIdx.getWidth(),
