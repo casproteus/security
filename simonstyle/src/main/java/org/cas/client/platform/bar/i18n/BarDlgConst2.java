@@ -590,5 +590,11 @@ public class BarDlgConst2 implements BarDlgConst{
 	@Override
 	public String isToCustomer() {return "顾客单据";}
 	@Override
-	public String CurrentBalanceMsg() {return "本账号余额为:";}
+	public String CurrentBalanceMsg() {return "账户余额 :";}
+	@Override
+	public String History() {return "历史记录";}
+	@Override
+	public String Balance() {return "余额";}
+	@Override
+	public String Employee() {return "经办人";}
 }

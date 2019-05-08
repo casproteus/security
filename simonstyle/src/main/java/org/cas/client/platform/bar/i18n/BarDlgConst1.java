@@ -589,4 +589,10 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String isToCustomer() {return "A client";}
 	@Override
 	public String CurrentBalanceMsg() {return "Le solde actuel du compte est:";}
+	@Override
+	public String History() {return "Histoire";}
+	@Override
+	public String Balance() {return "Équilibre";}
+	@Override
+	public String Employee() {return "Employée";}
 }
