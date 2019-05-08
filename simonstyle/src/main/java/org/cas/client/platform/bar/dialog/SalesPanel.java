@@ -222,7 +222,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     					ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
     		        	if(rs.next()) {
     		        		int status = rs.getInt("status");
-    		        		if(status < DBConsts.suspended) {
+    		        		if(status < DBConsts.suspended && status >= DBConsts.original) {
     		        	        BarFrame.instance.ignoreItemChange = true;
     		        	    	BarFrame.instance.cmbCurTable.setSelectedItem(rs.getString("tableID"));
     		        	    	BarFrame.instance.setCurBillIdx(rs.getString("billIndex"));
