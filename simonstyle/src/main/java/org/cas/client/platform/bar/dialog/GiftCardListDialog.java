@@ -97,13 +97,13 @@ MouseListener {
 				getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.HOR_GAP  * 3, 
 		        getHeight() - CustOpts.SIZE_TITLE - CustOpts.SIZE_EDGE - CustOpts.VER_GAP * 4  - CustOpts.BTN_HEIGHT);
 		
-		btnClose.setBounds(getWidth() - CustOpts.HOR_GAP * 3 - CustOpts.BTN_WIDTH,
+		btnHistory.setBounds(getWidth() - CustOpts.HOR_GAP * 3 - CustOpts.BTN_WIDTH,
 		        srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP, 
 		        CustOpts.BTN_WIDTH, 
 		        CustOpts.BTN_HEIGHT);// 关闭
-		btnAdd.setBounds(srpContent.getX(), btnClose.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+		btnAdd.setBounds(srpContent.getX(), btnHistory.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
 		btnModify.setBounds(btnAdd.getX() + btnAdd.getWidth() + CustOpts.HOR_GAP, btnAdd.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
-		btnHistory.setBounds(btnModify.getX() + btnModify.getWidth() + CustOpts.HOR_GAP, btnModify.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+		btnDelete.setBounds(btnModify.getX() + btnModify.getWidth() + CustOpts.HOR_GAP, btnModify.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
 		
 		IPIMTableColumnModel tTCM = tblContent.getColumnModel();
 		tTCM.getColumn(0).setPreferredWidth(40);
@@ -131,7 +131,7 @@ MouseListener {
 	
 	@Override
 	public void release() {
-		btnClose.removeActionListener(this);
+		btnDelete.removeActionListener(this);
 		btnAdd.removeActionListener(this);
 		btnHistory.removeActionListener(this);
 		btnModify.removeActionListener(this);
@@ -156,8 +156,35 @@ MouseListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
-		if (o == btnClose) {
-		    dispose();
+		if (o == btnDelete) {
+			new LoginDlg(PosFrame.instance).setVisible(true);// 结果不会被保存到ini
+		    if (LoginDlg.PASSED != true || LoginDlg.USERTYPE != LoginDlg.SUPER_ADMIN) { // 如果用户选择了确定按钮。
+		    	JOptionPane.showMessageDialog(this, BarFrame.consts.PasswordMakeSure());
+		    	return;
+		    }
+		    
+			int[] tRow = tblContent.getSelectedRows();
+	        if(tRow.length == 0) {
+	        	JOptionPane.showMessageDialog(this, BarFrame.consts.AtLeastOneShouldBeSelected());
+	        	return;
+	        }
+	        
+		    if (JOptionPane.showConfirmDialog(this, BarFrame.consts.COMFIRMDELETEACTION2(), BarFrame.consts.Operator(), JOptionPane.YES_NO_OPTION) != 0) {// 纭®瀹氬垹闄ゅ悧锛
+		        return;
+		    }
+		    
+		    try {
+		    	for (int i : tRow) {
+				    StringBuilder sql = new StringBuilder("update hardware set status = ").append(DBConsts.deleted)
+					    	.append(" where ID = ").append(tblContent.getValueAt(i, IDCOLUM));
+			        PIMDBModel.getStatement().executeUpdate(sql.toString());
+				}
+		
+		        initTable(false);
+		        reLayout();
+		    } catch (SQLException exp) {
+		        L.e("copy coupon", "Exception when deleting a coupon: ", exp);
+		    }
 		} else if (o == btnAdd) {
 		    GiftCardDlg tDlg = new GiftCardDlg(this);
 		    tDlg.setVisible(true);
@@ -250,19 +277,19 @@ MouseListener {
 		// 初始化－－－－－－－－－－－－－－－－
 		tblContent = new PIMTable();// 显示字段的表格,设置模型
 		srpContent = new PIMScrollPane(tblContent);
-		btnClose = new JButton(BarFrame.consts.Close());
+		btnDelete = new JButton(BarFrame.consts.Delete());
 		btnAdd = new JButton(BarFrame.consts.Add());//NewUser());
 		btnModify = new JButton(BarFrame.consts.Modify());
 		btnHistory = new JButton(BarFrame.consts.History());
 		// properties
-		btnClose.setMnemonic('o');
-		btnClose.setMargin(new Insets(0, 0, 0, 0));
+		btnDelete.setMnemonic('o');
+		btnDelete.setMargin(new Insets(0, 0, 0, 0));
 		btnAdd.setMnemonic('A');
-		btnAdd.setMargin(btnClose.getMargin());
+		btnAdd.setMargin(btnDelete.getMargin());
 		btnModify.setMnemonic('M');
-		btnModify.setMargin(btnClose.getMargin());
+		btnModify.setMargin(btnDelete.getMargin());
 		btnHistory.setMnemonic('D');
-		btnHistory.setMargin(btnClose.getMargin());
+		btnHistory.setMargin(btnDelete.getMargin());
 		
 		tblContent.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		tblContent.setAutoscrolls(true);
@@ -274,7 +301,6 @@ MouseListener {
 		tLbl.setOpaque(true);
 		tLbl.setBackground(Color.GRAY);
 		srpContent.setCorner(JScrollPane.LOWER_RIGHT_CORNER, tLbl);
-		getRootPane().setDefaultButton(btnClose);
 		
 		// 布局---------------
 		setBounds((CustOpts.SCRWIDTH - 400) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 400, 320); // 对话框的默认尺寸。
@@ -282,17 +308,17 @@ MouseListener {
 		
 		// 搭建－－－－－－－－－－－－－
 		getContentPane().add(srpContent);
-		getContentPane().add(btnClose);
+		getContentPane().add(btnDelete);
 		getContentPane().add(btnAdd);
 		getContentPane().add(btnModify);
 		getContentPane().add(btnHistory);
 		
 		// 加监听器－－－－－－－－
-		btnClose.addActionListener(this);
+		btnDelete.addActionListener(this);
 		btnAdd.addActionListener(this);
 		btnModify.addActionListener(this);
 		btnHistory.addActionListener(this);
-		btnClose.addKeyListener(this);
+		btnDelete.addKeyListener(this);
 		btnAdd.addKeyListener(this);
 		btnHistory.addKeyListener(this);
 		tblContent.addMouseListener(this);
@@ -353,5 +379,5 @@ MouseListener {
 	private JButton btnAdd;
 	private JButton btnModify;
 	private JButton btnHistory;
-	private JButton btnClose;
+	private JButton btnDelete;
 }
