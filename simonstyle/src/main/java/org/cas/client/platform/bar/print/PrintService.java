@@ -122,6 +122,9 @@ public class PrintService{
         reInitPrintRelatedMaps();
         
         String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
+		if("".equals(printerIP)) {
+        	return;
+        }
         List<String> contents = ipContentMap.get(printerIP);
 		if(contents == null) {
         	ipContentMap.put(printerIP,new ArrayList<String>());
@@ -173,6 +176,9 @@ public class PrintService{
         reInitPrintRelatedMaps();
         
         String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
+		if("".equals(printerIP)) {
+        	return;
+        }
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         List<String> contentList = ipContentMap.get(printerIP);
@@ -283,6 +289,9 @@ public class PrintService{
 
         //there's a case that we don't print invoice: when it's not mev print, and and bill printed, and set the flag of saving paper.
         String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
+        if("".equals(printerIP)) {
+        	return;
+        }
         if(!"mev".equalsIgnoreCase(printerIP) && !needPrint) {	//needPrint == false means bill printed and saving paper flag is set.
         	return;												//when called from Print button on checkListDlg, the needPrint is true.
         }
@@ -296,15 +305,18 @@ public class PrintService{
     }
     
     public static void exePrintVoid(BillPanel billPanel){
-    	 flushIpContent();
-         reInitPrintRelatedMaps();
+    	flushIpContent();
+        reInitPrintRelatedMaps();
 
-         String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
-         if(ipContentMap.get(printerIP) == null)
-         	ipContentMap.put(printerIP,new ArrayList<String>());
-         ipContentMap.get(printerIP).addAll(
-         		formatContentForVoid(printerIP, billPanel));
-         printContents();
+        String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
+		if("".equals(printerIP)) {
+			return;
+        }
+        if(ipContentMap.get(printerIP) == null)
+        	ipContentMap.put(printerIP,new ArrayList<String>());
+        ipContentMap.get(printerIP).addAll(
+        	formatContentForVoid(printerIP, billPanel));
+        printContents();
     }
     
     public static void exePrintRefund(BillPanel billPanel, int refundAmount){
@@ -312,6 +324,9 @@ public class PrintService{
         reInitPrintRelatedMaps();
 
         String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
+		if("".equals(printerIP)) {
+        	return;
+        }
         if(ipContentMap.get(printerIP) == null)
         	ipContentMap.put(printerIP,new ArrayList<String>());
         ipContentMap.get(printerIP).addAll(
