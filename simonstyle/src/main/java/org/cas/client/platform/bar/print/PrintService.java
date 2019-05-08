@@ -2105,11 +2105,13 @@ public class PrintService{
     private static StringBuilder getFormattedBillHeader(int tWidth, String billId) {
     	StringBuilder sb = new StringBuilder();
     	if(billId != null) {
-    		sb.append("#").append(billId);
+    		sb.append("#");
     		String idx = BarOption.getNextIdx();
     		if(idx.length() > 0) {
-        		sb.append("(").append(idx).append(")");
-        	}
+        		sb.append.append(idx);
+        	}else{
+				sb.append(billId);
+			}
     		sb.append("\n");
     	}
     	String s = BarOption.getBillHeadInfo();
