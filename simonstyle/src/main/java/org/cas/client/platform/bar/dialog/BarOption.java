@@ -531,4 +531,19 @@ public class BarOption {
 			return intAry;
 		}
 	}
+	
+	public static String getNextIdx() {
+		int nextIdx = 0;
+		try{
+			nextIdx = Integer.valueOf(CustOpts.custOps.getValue("NextIdx").toString());
+		}catch(Exception e) {
+			return "";
+		}
+		
+		nextIdx++;
+		CustOpts.custOps.setKeyAndValue("NextIdx", String.valueOf(nextIdx));
+		CustOpts.custOps.saveData();
+		
+		return String.valueOf(nextIdx);
+ 	}	
 }
