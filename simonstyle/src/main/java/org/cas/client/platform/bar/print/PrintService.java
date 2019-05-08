@@ -283,6 +283,11 @@ public class PrintService{
 
         //there's a case that we don't print invoice: when it's not mev print, and and bill printed, and set the flag of saving paper.
         String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
+        if(printerIP.length() < 1) {
+        	JOptionPane.showMessageDialog(null, BarFrame.consts.PrinterError());
+        	return;
+        }
+        
         if(!"mev".equalsIgnoreCase(printerIP) && !needPrint) {	//needPrint == false means bill printed and saving paper flag is set.
         	return;												//when called from Print button on checkListDlg, the needPrint is true.
         }
@@ -481,6 +486,10 @@ public class PrintService{
 
 	public static boolean openDrawer(){
 		String key = BarFrame.menuPanel.getPrinters()[0].getIp();
+		if("".equals(key)) {
+			return false;
+		}
+		
 		if(key.equalsIgnoreCase("mev")) {
 			try{
 				printThroughOSdriver(getMevCommandFilePath("mevOpenCashierCommand.xml", Command.OPEN_CASHIER), new HashPrintRequestAttributeSet(), false);

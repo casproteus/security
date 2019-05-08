@@ -429,9 +429,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		cbxIsFastFoodMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsDiscoutAffectTax.setBounds(cbxIsFastFoodMode.getX(), cbxIsFastFoodMode.getY() + cbxIsFastFoodMode.getHeight() + CustOpts.VER_GAP,
         		cbxIsDiscoutAffectTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        cbxIsServiceFeeAffectTax.setBounds(cbxIsDiscoutAffectTax.getX(), cbxIsDiscoutAffectTax.getY() + cbxIsDiscoutAffectTax.getHeight() + CustOpts.VER_GAP,
-        		cbxIsServiceFeeAffectTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        cbxIsHideRecordFromOtherWaiter.setBounds(cbxIsServiceFeeAffectTax.getX(), cbxIsServiceFeeAffectTax.getY() + cbxIsServiceFeeAffectTax.getHeight() + CustOpts.VER_GAP,
+//        cbxIsServiceFeeAffectTax.setBounds(cbxIsDiscoutAffectTax.getX(), cbxIsDiscoutAffectTax.getY() + cbxIsDiscoutAffectTax.getHeight() + CustOpts.VER_GAP,
+//        		cbxIsServiceFeeAffectTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxIsHideRecordFromOtherWaiter.setBounds(cbxIsDiscoutAffectTax.getX(), cbxIsDiscoutAffectTax.getY() + cbxIsDiscoutAffectTax.getHeight() + CustOpts.VER_GAP,
         		cbxIsHideRecordFromOtherWaiter.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsWaiterAllowedToDiscount.setBounds(cbxIsHideRecordFromOtherWaiter.getX(), cbxIsHideRecordFromOtherWaiter.getY() + cbxIsHideRecordFromOtherWaiter.getHeight() + CustOpts.VER_GAP,
         		cbxIsWaiterAllowedToDiscount.getPreferredSize().width, CustOpts.BTN_HEIGHT);

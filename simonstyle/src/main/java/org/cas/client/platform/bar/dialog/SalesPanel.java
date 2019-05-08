@@ -28,7 +28,9 @@ import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.bar.uibeans.CategoryToggleButton;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.bar.uibeans.MenuButton;
+import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
@@ -208,7 +210,51 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	            }
             	}
             	if(BarOption.isFastFoodMode()) {
-            		BarFrame.instance.userCheckOut();
+            		BarFrame.instance.setVisible(false);
+        			BarFrame.singleUserLoginProcess();
+        			//get lateset bill
+        			StringBuilder sql = new StringBuilder("select * from bill where employeeID = ");
+        			sql.append(LoginDlg.USERID);
+        			sql.append(" order by id DESC limit 1");
+        			try {
+    					ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+    		        	if(rs.next()) {
+    		        		int status = rs.getInt("status");
+    		        		if(status < DBConsts.suspended && status >= DBConsts.original) {
+    		        	        BarFrame.instance.ignoreItemChange = true;
+    		        	    	BarFrame.instance.cmbCurTable.setSelectedItem(rs.getString("tableID"));
+    		        	    	BarFrame.instance.setCurBillIdx(rs.getString("billIndex"));
+    		        	    	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
+    		        	    	BarFrame.instance.valStartTime.setText(rs.getString("OPENTIME"));
+
+    		        	    	((SalesPanel)BarFrame.instance.panels[2]).billPanel.setBillID(rs.getInt("id"));
+    		        	    	
+    		        	    	//if this flag set, the initContent will choose outputs and bill differently.
+    		        	    	//NOTE: there's could be one final and several expired bills under same tableid and billIdx and opentime. we don't support more than one exipred bill.
+    		        	    	BarFrame.instance.isShowingAnExpiredBill = false;
+    		        	    	BarFrame.instance.curBillID = rs.getInt("id");
+    		        	    	BarFrame.instance.switchMode(2);
+
+    		        		}else {
+    		        			BarFrame.instance.ignoreItemChange = true;
+    		            		BarFrame.instance.cmbCurTable.setSelectedItem("");
+    		            		BarFrame.instance.setCurBillIdx("1");
+    		                	
+    		                	String openTime = BarOption.df.format(new Date());
+    		                	BarFrame.instance.valStartTime.setText(openTime);
+
+    		                	BarFrame.instance.openATable("", openTime);
+    		                	BarFrame.instance.curBillID = BarFrame.instance.createAnEmptyBill("", openTime, 0);
+    		                	((SalesPanel)BarFrame.instance.panels[2]).billPanel.setBillID(BarFrame.instance.curBillID);
+    		            		
+    		                	BarFrame.instance.switchMode(2);
+    		        		}
+    		        	}
+        			}catch (SQLException exp) {
+        	            ErrorUtil.write(exp);
+        	        }
+        			//if it's completed, then createa a new empty onee.
+        			//if it's not completed. this it's it.
             	}else {
             		BarFrame.instance.switchMode(0);
             	}
@@ -360,7 +406,9 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
              				.append(" where id = ").append(newBillID);
              		PIMDBModel.getStatement().executeUpdate(sql.toString());
             		
-            		BarFrame.instance.switchMode(0);
+             		if(!BarOption.isFastFoodMode()) {
+             			BarFrame.instance.switchMode(0);
+             		}				
              		PrintService.openDrawer();
              	}catch(Exception exp) {
                  	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);

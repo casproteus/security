@@ -570,11 +570,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     		float gst = totalPrice * (dish.getGst() * gstRate / 100f);	//an item could have a different tax rate.
     		float qst = totalPrice * (dish.getQst() * qstRate / 100f);
     		
-    		if(BarOption.isDiscountAffectTax()) {
-    			gst += dish.getDiscount() * (dish.getGst() * gstRate / 100f);
-    			qst += dish.getDiscount() * (dish.getQst() * gstRate / 100f);
-    		}
-    		
 //@NOTE: the price is already the final item totalprice (even the discount calculated), so no need to devide again.
 //    		if(pS > 0) {
 //    			price /= pS;
@@ -990,13 +985,13 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
             		BarFrame.consts.SCROLLBAR_WIDTH, BarFrame.consts.SCROLLBAR_WIDTH);
             btnLess.setBounds(btnMore.getX() - CustOpts.HOR_GAP - BarFrame.consts.SCROLLBAR_WIDTH, btnMore.getY(), 
             		BarFrame.consts.SCROLLBAR_WIDTH, BarFrame.consts.SCROLLBAR_WIDTH);
-    		lblSubTotle.setBounds(btnLess.getX() - 120, 
+    		lblSubTotle.setBounds(btnLess.getX() - 130, 
     				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
-    				120, lblSubTotle.getPreferredSize().height);
+    				130, lblSubTotle.getPreferredSize().height);
         }else {
-        	lblSubTotle.setBounds(scrContent.getX() + scrContent.getWidth() - 120, 
+        	lblSubTotle.setBounds(scrContent.getX() + scrContent.getWidth() - 130, 
     				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
-    				120, lblSubTotle.getHeight());
+    				130, lblSubTotle.getHeight());
         }
         lblDiscount.setBounds(scrContent.getX(), scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP, 
         		scrContent.getWidth() / 5, lblSubTotle.getHeight());
@@ -1008,7 +1003,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		lblTVQ.setBounds(lblTPS.getX() + lblTPS.getWidth() + CustOpts.HOR_GAP, lblTPS.getY(), lblTPS.getWidth(), lblTPS.getHeight());
 		lblTotlePrice.setBounds(lblSubTotle.getX(), lblTVQ.getY(), lblTotlePrice.getPreferredSize().width, lblTVQ.getHeight());
 		valTotlePrice.setBounds(lblTotlePrice.getX() + lblTotlePrice.getWidth(), lblTotlePrice.getY(),
-				120 - lblTotlePrice.getWidth(), lblTotlePrice.getHeight() + CustOpts.VER_GAP);
+				130 - lblTotlePrice.getWidth(), lblTotlePrice.getHeight() + CustOpts.VER_GAP);
     }
     
     void initComponent() {
@@ -1103,7 +1098,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		return billID;
 	}
 
-    int lastID;
 	public void setBillID(int billID) {
 		this.billID = billID;
 	}

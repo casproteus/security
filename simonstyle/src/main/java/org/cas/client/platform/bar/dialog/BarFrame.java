@@ -98,9 +98,6 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         	BarFrame.instance.curBillID = BarFrame.instance.createAnEmptyBill("", openTime, 0);
         	((SalesPanel)BarFrame.instance.panels[2]).billPanel.setBillID(BarFrame.instance.curBillID);
     		
-        	//if this flag set, the initContent will choose outputs and bill differently.
-        	//NOTE: there's could be one final and several expired bills under same tableid and billIdx and opentime. we don't support more than one exipred bill.
-        	BarFrame.instance.isShowingAnExpiredBill = true;
         	BarFrame.instance.switchMode(2);
     	}else {
     		BarFrame.instance.switchMode(0);	//while BarFrame.instance is still null if don't put it in the later.
