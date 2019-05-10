@@ -428,46 +428,6 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     		    }else {
     		    	BarFrame.instance.switchMode(0);
     		    }
-            } else if(o == btnOTHER) {
-            	String giftCardNumber  = JOptionPane.showInputDialog(null, BarFrame.consts.Account());
-        		if(giftCardNumber == null || giftCardNumber.length() == 0)
-        			return;
-        		
-        		StringBuilder sql = new StringBuilder("SELECT * from hardware where category = 2 and name = '").append(giftCardNumber)
-        				.append("' and (status is null or status = 0)");
-        		try {
-        			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-        			rs.afterLast();
-                    rs.relative(-1);
-                    int tmpPos = rs.getRow();
-                    if(tmpPos == 0) {	//if there's no this coupon number in database, then warning and return.
-                    	JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidCoupon());
-                    	return;
-                    }else {			//if the number is OK.
-                    	//get out every field of first matching record.
-                    	rs.beforeFirst();
-                        tmpPos = 0;
-                        rs.next();
-                        int id = rs.getInt("id");
-                        int category = rs.getInt("style");
-                        String productCode = rs.getString("IP");
-                        int value = rs.getInt("langType");
-                        
-                        //show up the payDialog, waiting for user to input money, after confirm, the money should be deduct from the account of this card
-                        SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
-                        BarFrame.payDlg.maxInput = (float)(value / 100.0);
-                        salesPanel.actionPerformed(new ActionEvent(salesPanel.btnOTHER, 0, ""));
-                        //how to know the number user inputed, and how to verify if it's bigger than the money left in card?
-                        if (BarFrame.payDlg.inputedContent != null && BarFrame.payDlg.inputedContent.length() > 0) {
-    	                    float usedMoneyQT = Math.round(Float.valueOf(BarFrame.payDlg.inputedContent) * 100);
-    	                    sql = new StringBuilder("update hardware set langType = langType - ").append(usedMoneyQT)
-    	                    		.append(" where id = ").append(id);
-    	                    PIMDBModel.getStatement().executeUpdate(sql.toString());
-                        }
-                    }
-        		}catch(Exception exp) {
-        			L.e("Redeem Coupon", "exception happend when redeem coupon: " + sql, exp);
-        		}
             }else if (o == btnDiscountCoupon) {
         		String couponCode  = JOptionPane.showInputDialog(null, BarFrame.consts.couponCode());
         		if(couponCode == null || couponCode.length() == 0)
@@ -1059,18 +1019,28 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
 	                    int category = rs.getInt("style");
 	                    String productCode = rs.getString("IP");
 	                    int value = rs.getInt("langType");
-	                    
+	                    if(value <=0) {
+	                    	JOptionPane.showMessageDialog(null, BarFrame.consts.InvalidCoupon());
+	                    	return;
+	                    }
 	                    //show up the payDialog, waiting for user to input money, after confirm, the money should be deduct from the account of this card
 	                    SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
 	                    BarFrame.payDlg.maxInput = (float)(value / 100.0);
 	                    BarFrame.setStatusMes(BarFrame.consts.CurrentBalanceMsg() + BarFrame.payDlg.maxInput);
 	                    salesPanel.actionPerformed(new ActionEvent(salesPanel.btnOTHER, 0, ""));
-	                    //how to know the number user inputed, and how to verify if it's bigger than the money left in card?
+	                   
 	                    if (BarFrame.payDlg.inputedContent != null && BarFrame.payDlg.inputedContent.length() > 0) {
-		                    float usedMoneyQT = Math.round(Float.valueOf(BarFrame.payDlg.inputedContent) * 100);
-		                    sql = new StringBuilder("update hardware set langType = langType - ").append(usedMoneyQT)
+		                    float newBalance = (float)(value / 100.0) - Float.valueOf(BarFrame.payDlg.inputedContent);
+		                    
+		                    sql = new StringBuilder("update hardware set status = ").append(DBConsts.expired)
 		                    		.append(" where id = ").append(id);
 		                    PIMDBModel.getStatement().executeUpdate(sql.toString());
+		                    
+		                    sql = new StringBuilder("INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('").append(giftCardNumber)
+						    		.append("', 2, ").append(Math.round(newBalance * 100)).append(", '")
+						    		.append(BarOption.df.format(new Date())).append("', ").append(LoginDlg.USERID).append(", ")
+						    		.append(DBConsts.original).append(")");
+						    PIMDBModel.getStatement().executeUpdate(sql.toString());
 	                    }
 	                }
 	    		}catch(Exception exp) {

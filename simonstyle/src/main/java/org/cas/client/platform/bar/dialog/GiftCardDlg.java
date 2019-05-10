@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.sql.ResultSet;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -15,7 +16,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
+import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.net.bean.Coupon;
+import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -50,7 +53,7 @@ public class GiftCardDlg extends JDialog implements ComponentListener, ActionLis
 		txtProduct.setBorder(new LineBorder(Color.GRAY));
 		
 		// 布局---------------
-		setBounds((CustOpts.SCRWIDTH - 270) / 2, (CustOpts.SCRHEIGHT - 290) / 2, 270, 290); // 对话框的默认尺寸。
+		setBounds((CustOpts.SCRWIDTH - 270) / 2, (CustOpts.SCRHEIGHT - 140) / 2, 270, 140); // 对话框的默认尺寸。
 		getContentPane().setLayout(null);
 		// 0-discount price/1-discount percentage/2-discount to price/3-discount to percentage
 		typeAry[0] = "$";
@@ -79,6 +82,7 @@ public class GiftCardDlg extends JDialog implements ComponentListener, ActionLis
 	
 	public void initContent(Coupon coupon) {
 		this.coupon = coupon;
+		tfdCardAccount.setEditable(coupon == null);
 		if(coupon == null) {
 			return;
 		}
@@ -100,16 +104,16 @@ public class GiftCardDlg extends JDialog implements ComponentListener, ActionLis
 				lblValue.getPreferredSize().width, CustOpts.BTN_HEIGHT);
 		tfdValue.setBounds(tfdCardAccount.getX(), lblValue.getY(),
 				tfdCardAccount.getWidth(), CustOpts.BTN_HEIGHT);
-		lblProduct.setBounds(lblValue.getX(), lblValue.getY() + lblValue.getHeight() + CustOpts.VER_GAP,
-				lblProduct.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+//		lblProduct.setBounds(lblValue.getX(), lblValue.getY() + lblValue.getHeight() + CustOpts.VER_GAP,
+//				lblProduct.getPreferredSize().width, CustOpts.BTN_HEIGHT);
 		
 		btnAdd.setBounds(getWidth() - CustOpts.BTN_WIDTH * 2 - CustOpts.HOR_GAP * 2 - 20, getHeight() - CustOpts.BTN_HEIGHT - 50,
 				 CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
 		btnClose.setBounds(btnAdd.getX() + btnAdd.getWidth() + CustOpts.HOR_GAP, btnAdd.getY(), 
 				CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
 
-		txtProduct.setBounds(tfdValue.getX(), lblProduct.getY(),
-				tfdCardAccount.getWidth(), btnAdd.getY() - lblProduct.getY() - CustOpts.VER_GAP * 2);
+//		txtProduct.setBounds(tfdValue.getX(), lblProduct.getY(),
+//				tfdCardAccount.getWidth(), btnAdd.getY() - lblProduct.getY() - CustOpts.VER_GAP * 2);
 	}
 	
 	@Override
@@ -120,8 +124,7 @@ public class GiftCardDlg extends JDialog implements ComponentListener, ActionLis
 		} else if (o == btnAdd) {
 			String accountID = tfdCardAccount.getText();
 			
-			StringBuilder sql = new StringBuilder();
-		    if(coupon == null) {	//create new coupon.
+		    if(coupon == null) {	//create new gift card.
 		    	try {
 					ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery("select * from hardware where category = 2 and name = '" + accountID + "'");
 					rs.afterLast();
@@ -130,41 +133,35 @@ public class GiftCardDlg extends JDialog implements ComponentListener, ActionLis
 			        	JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
 			        	return;
 			        }
+			        
+			        StringBuilder sql = new StringBuilder("INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('").append(accountID)
+				    		.append("', 2, ").append(Math.round(Float.valueOf(tfdValue.getText()) * 100)).append(", '")
+				    		.append(BarOption.df.format(new Date())).append("', ").append(LoginDlg.USERID).append(", ")
+				    		.append(DBConsts.original).append(")");
+				    PIMDBModel.getStatement().executeUpdate(sql.toString());
+				    dispose();
 				}catch(Exception exp) {
 		    		L.e("GiftCardDlg", "exception happenned when query hardware table", exp);
+		    		JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
 		    	}
 		    	
-		    	sql.append("INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('").append(accountID)
-		    		.append("', 2, ").append(Math.round(Float.valueOf(tfdValue.getText()) * 100)).append(", '")
-		    		.append(txtProduct.getText()).append("', 0, 0)");
-		    	
-		    }else {
+		    }else {	//modifying existing gift card)
 		    	try {
-					ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(
-							"select * from hardware where category = 2 and name = '" + accountID + "' and id != " + coupon.getId());
-					rs.afterLast();
-			        rs.relative(-1);
-			        if(rs.getRow() > 0) {
-			        	JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
-			        	return;
-			        }
+					StringBuilder sql = new StringBuilder("update hardware set status = ").append(DBConsts.expired)
+			    			.append(" where id = ").append(coupon.getId());
+			        PIMDBModel.getStatement().executeUpdate(sql.toString());
+			        
+			    	sql = new StringBuilder("INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('").append(accountID)
+				    		.append("', 2, ").append(Math.round(Float.valueOf(tfdValue.getText()) * 100)).append(", '")
+				    		.append(BarOption.df.format(new Date())).append("', ").append(LoginDlg.USERID).append(", ")
+				    		.append(DBConsts.original).append(")");
+				    PIMDBModel.getStatement().executeUpdate(sql.toString());
+				    dispose();
 				}catch(Exception exp) {
 		    		L.e("GiftCardDlg", "exception happenned when query hardware table", exp);
+		    		JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
 		    	}
-		    	
-		    	sql.append("UPDATE Hardware set name = '").append(accountID)
-		    	.append("',  langType = ").append(Math.round(Float.valueOf(tfdValue.getText()) * 100))
-		    	.append(", ip = '").append(txtProduct.getText())
-		    	.append("' where id = ").append(coupon.getId());
 		    }
-		    
-		    try {
-	    		PIMDBModel.getStatement().executeUpdate(sql.toString());
-	    		dispose();
-	    	}catch(Exception exp) {
-	    		L.e("GiftCardDlg", "exception happenned when update hardware table" + sql, exp);
-	    		JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
-	    	}
 		}
 	}
 	

@@ -1,5 +1,7 @@
 package org.cas.client.platform.bar.i18n;
 
+import javax.swing.Icon;
+
 public interface BarDlgConst {
     int SCROLLBAR_WIDTH = 40;
     int SubTotal_HEIGHT = 50;
@@ -316,4 +318,7 @@ public interface BarDlgConst {
 	String isWaiterAllowedToChangePrice();
 	String isToCustomer();
 	String CurrentBalanceMsg();
+	String History();
+	String Balance();
+	String Employee();
 }

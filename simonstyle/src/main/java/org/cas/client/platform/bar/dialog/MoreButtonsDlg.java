@@ -118,12 +118,16 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
                     SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
                     BarFrame.payDlg.maxInput = (float)(value / 100.0);
                     salesPanel.actionPerformed(new ActionEvent(salesPanel.btnOTHER, 0, ""));
-                    //how to know the number user inputed, and how to verify if it's bigger than the money left in card?
                     if (BarFrame.payDlg.inputedContent != null && BarFrame.payDlg.inputedContent.length() > 0) {
-	                    float usedMoneyQT = Math.round(Float.valueOf(BarFrame.payDlg.inputedContent) * 100);
-	                    sql = new StringBuilder("update hardware set langType = langType - ").append(usedMoneyQT)
+	                    float newBalance = (float)(value / 100.0) - Float.valueOf(BarFrame.payDlg.inputedContent);
+		                sql = new StringBuilder("update hardware set status = ").append(DBConsts.expired)
 	                    		.append(" where id = ").append(id);
 	                    PIMDBModel.getStatement().executeUpdate(sql.toString());
+						sql = new StringBuilder("INSERT INTO Hardware (name, category, langType, ip, style, status) VALUES ('").append(giftCardNumber)
+						    .append("', 2, ").append(Math.round(newBalance * 100)).append(", '")
+						    .append(BarOption.df.format(new Date())).append("', ").append(LoginDlg.USERID).append(", ")
+						    .append(DBConsts.original).append(")");
+						PIMDBModel.getStatement().executeUpdate(sql.toString());
                     }
                 }
     		}catch(Exception exp) {
