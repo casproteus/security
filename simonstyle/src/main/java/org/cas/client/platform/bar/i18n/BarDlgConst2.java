@@ -244,9 +244,9 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
     public String IsServiceFeeAffectTax() {return "服务费不计入税款";}
     @Override
-	public String IsBuffetMode() {return "自助餐模式";}
+	public String IsBuffetMode() {return "自助模式";}
     @Override
-	public String IsFastFoodMode() {return "快餐模式";}
+	public String IsFastFoodMode() {return "柜台模式";}
     @Override
 	public String IsPrintBillWhenPay() {return "付款同时自动打印账单";}
     @Override

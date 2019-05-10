@@ -427,9 +427,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         		cbxIsBuffetMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsFastFoodMode.setBounds(cbxIsBuffetMode.getX(), cbxIsBuffetMode.getY() + cbxIsBuffetMode.getHeight() + CustOpts.VER_GAP,
         		cbxIsFastFoodMode.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        cbxIsDiscoutAffectTax.setBounds(cbxIsFastFoodMode.getX(), cbxIsFastFoodMode.getY() + cbxIsFastFoodMode.getHeight() + CustOpts.VER_GAP,
-        		cbxIsDiscoutAffectTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        cbxIsServiceFeeAffectTax.setBounds(cbxIsDiscoutAffectTax.getX(), cbxIsDiscoutAffectTax.getY() + cbxIsDiscoutAffectTax.getHeight() + CustOpts.VER_GAP,
+//        cbxIsDiscoutAffectTax.setBounds(cbxIsFastFoodMode.getX(), cbxIsFastFoodMode.getY() + cbxIsFastFoodMode.getHeight() + CustOpts.VER_GAP,
+//        		cbxIsDiscoutAffectTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        cbxIsServiceFeeAffectTax.setBounds(cbxIsFastFoodMode.getX(), cbxIsFastFoodMode.getY() + cbxIsFastFoodMode.getHeight() + CustOpts.VER_GAP,
         		cbxIsServiceFeeAffectTax.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         cbxIsHideRecordFromOtherWaiter.setBounds(cbxIsServiceFeeAffectTax.getX(), cbxIsServiceFeeAffectTax.getY() + cbxIsServiceFeeAffectTax.getHeight() + CustOpts.VER_GAP,
         		cbxIsHideRecordFromOtherWaiter.getPreferredSize().width, CustOpts.BTN_HEIGHT);
