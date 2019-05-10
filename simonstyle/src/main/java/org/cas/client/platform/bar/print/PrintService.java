@@ -1595,7 +1595,19 @@ public class PrintService{
 	            sep_str1 = BarUtil.SEP_STR1;
 	        }
 	        content.append(BarUtil.generateString(tWidth, sep_str1)).append("\n\n");
-	        
+
+	        if(fServiceFee > 0) {
+	            String serviceFee = String.valueOf(fServiceFee);
+	            content.append(SERVICE_FEE).append(" : ")
+					.append(BarUtil.generateString(tWidth - serviceFee.length() - SERVICE_FEE.length() - 3, " "))
+	            	.append(serviceFee).append("\n");
+	        }
+	        if(fDiscount > 0) {
+	            String dicount = String.valueOf(fDiscount);
+	            content.append(DISCOUNT).append(" : ")
+					.append(BarUtil.generateString(tWidth - dicount.length() - DISCOUNT.length() - 3, " "))
+	            	.append(dicount).append("\n");
+	        }
 	        //add the tooooootal.
 	        String subtotal = BarUtil.formatMoney(fSubTotal);
 	        content.append(SOUSTOTAL).append(" : ")
@@ -1612,18 +1624,6 @@ public class PrintService{
 				.append(BarUtil.generateString(tWidth - tvq.length() - TVQ.length() - 3, " "))
 	        	.append(tvq).append("\n");
 	        
-	        if(fServiceFee > 0) {
-	            String serviceFee = String.valueOf(fServiceFee);
-	            content.append(SERVICE_FEE).append(" : ")
-					.append(BarUtil.generateString(tWidth - serviceFee.length() - SERVICE_FEE.length() - 3, " "))
-	            	.append(serviceFee).append("\n");
-	        }
-	        if(fDiscount > 0) {
-	            String dicount = String.valueOf(fDiscount);
-	            content.append(DISCOUNT).append(" : ")
-					.append(BarUtil.generateString(tWidth - dicount.length() - DISCOUNT.length() - 3, " "))
-	            	.append(dicount).append("\n");
-	        }
         }
         return content;
 	}
