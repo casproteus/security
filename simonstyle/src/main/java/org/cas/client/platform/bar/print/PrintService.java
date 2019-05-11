@@ -2108,7 +2108,7 @@ public class PrintService{
     		sb.append("#");
     		String idx = BarOption.getNextIdx();
     		if(idx.length() > 0) {
-        		sb.append.append(idx);
+        		sb.append(idx);
         	}else{
 				sb.append(billId);
 			}
