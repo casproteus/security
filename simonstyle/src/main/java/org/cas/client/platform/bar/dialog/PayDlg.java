@@ -59,7 +59,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	public String inputedContent;
 
 	ArrayList<JLabel> labels = new ArrayList<JLabel>();
-	ArrayList<JLabel> values = new ArrayList<JLabel>();
+	ArrayList<JButton> values = new ArrayList<JButton>();
 	
     public PayDlg(BarFrame pParent) {
         super(pParent, true);
@@ -76,19 +76,19 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		//new~ means the latest onsrc + the new inputted content.
 		//@Note: we do not use old + new input directrly, because maybe the onscreen one is changed many time(when using this dlg to add a little (not enough) money.
 		//@NOTe: we do not use onSrc + new input, because onsrc value do not change afte first time calculated.
-		if(curTitle.equals(BarFrame.consts.EnterCashPayment())){
+		if(curTitle.startsWith(BarFrame.consts.EnterCashPayment())){
 			int newCashReceived = reflectNewInput(valCashReceived.getText());
 			sb.append("update bill set cashReceived = ").append(oldCashReceived + newCashReceived - onSrcCashReceived).append(" where id = ").append(billId);
-		} else if(curTitle.equals(BarFrame.consts.EnterDebitPayment())) {
+		} else if(curTitle.startsWith(BarFrame.consts.EnterDebitPayment())) {
 			int newDebitReceived = reflectNewInput(valDebitReceived.getText());
 			sb.append("update bill set debitReceived = ").append(oldDebitReceived + newDebitReceived - onSrcDebitReceived).append(" where id = ").append(billId);
-		} else if(curTitle.equals(BarFrame.consts.EnterVisaPayment())) {
+		} else if(curTitle.startsWith(BarFrame.consts.EnterVisaPayment())) {
 			int newVisaReceived = reflectNewInput(valVisaReceived.getText());
 			sb.append("update bill set visaReceived = ").append(oldVisaReceived + newVisaReceived - onSrcVisaReceived).append(" where id = ").append(billId);
-		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment())) {
+		} else if(curTitle.startsWith(BarFrame.consts.EnterMasterPayment())) {
 			int newMasterReceived = reflectNewInput(valMasterReceived.getText());
 			sb.append("update bill set masterReceived = ").append(oldMasterReceived + newMasterReceived - onSrcMasterReceived).append(" where id = ").append(billId);
-		} else if(curTitle.equals(BarFrame.consts.EnterOtherPayment())) {
+		} else if(curTitle.startsWith(BarFrame.consts.EnterOtherPayment())) {
 			int newOtherReceived = reflectNewInput(valOtherReceived.getText());
 			sb.append("update bill set otherReceived = ").append(oldOtherReceived + newOtherReceived - onSrcOtherReceived).append(" where id = ").append(billId);
 		}
@@ -248,7 +248,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     	for (JLabel jLabel : labels) {
     		getContentPane().remove(jLabel);
 		}
-    	for (JLabel jLabel : values) {
+    	for (JButton jLabel : values) {
     		getContentPane().remove(jLabel);
 		}
     	labels.clear();
@@ -275,55 +275,58 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     		values.add(valOtherReceived);
     	}
     	
+    	int WIDTH = 50;
     	if(labels.size() > 0) {
         	JLabel lbl1 = labels.get(0);
-        	JLabel val1 = values.get(0);
+        	JButton val1 = values.get(0);
         	getContentPane().add(lbl1);
         	getContentPane().add(val1);
 	    	lbl1.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 
 	    			lbl1.getPreferredSize().width, lblTotal.getPreferredSize().height);
 	        val1.setBounds(lbl1.getX() + lbl1.getWidth(), lbl1.getY(),
-	        		80 - lbl1.getWidth(), lblCashReceived.getHeight());
+	        		WIDTH, lblCashReceived.getHeight());
 	        if(labels.size() > 1) {
 	        	JLabel lbl2 = labels.get(1);
-	        	JLabel val2 = values.get(1);
+	        	JButton val2 = values.get(1);
 	        	getContentPane().add(lbl2);
 	        	getContentPane().add(val2);
 	        	lbl2.setBounds(CustOpts.HOR_GAP, lbl1.getY() + lbl1.getHeight() + CustOpts.VER_GAP, 
 	        			lbl2.getPreferredSize().width, lbl2.getPreferredSize().height);
 		        val2.setBounds(lbl2.getX() + lbl2.getWidth(), lbl2.getY(),
-		        		80 - lbl2.getWidth(), lbl2.getHeight());
+		        		WIDTH, lbl2.getHeight());
 		        if(labels.size() > 2) {
 		        	JLabel lbl3 = labels.get(2);
-		        	JLabel val3 = values.get(2);
+		        	JButton val3 = values.get(2);
 		        	getContentPane().add(lbl3);
 		        	getContentPane().add(val3);
-		        	lbl3.setBounds(lbl1.getX() + 80 + CustOpts.HOR_GAP, CustOpts.VER_GAP, 
+		        	lbl3.setBounds(lbl1.getX() + lbl1.getWidth() + WIDTH + CustOpts.HOR_GAP, CustOpts.VER_GAP, 
 		        			lbl3.getPreferredSize().width, lbl3.getPreferredSize().height);
 		            val3.setBounds(lbl3.getX() + lbl3.getWidth(), lbl3.getY(),
-		            		80 - lbl3.getWidth(), lbl3.getHeight());
+		            		WIDTH, lbl3.getHeight());
 		            if(labels.size() > 3) {
 		            	JLabel lbl4 = labels.get(3);
-		            	JLabel val4 = values.get(3);
+		            	JButton val4 = values.get(3);
 		            	getContentPane().add(lbl4);
 		            	getContentPane().add(val4);
 		            	lbl4.setBounds(lbl3.getX(), lbl2.getY(), 
 		            			lbl4.getPreferredSize().width, lbl4.getPreferredSize().height);
 		            	val4.setBounds(lbl4.getX() + lbl4.getWidth(), lbl4.getY(),
-		                		100 - lbl4.getWidth(), lbl4.getHeight());
+		            			WIDTH, lbl4.getHeight());
 		            }
 		        }
 	        }
     	}
     	
-        tfdNewReceived.setBounds(lblMasterReceived.getX() + 100 + CustOpts.HOR_GAP, CustOpts.VER_GAP, 160, 40);
+        tfdNewReceived.setBounds(250, CustOpts.VER_GAP, 160, 40);
         
-    	lblTotal.setBounds(tfdNewReceived.getX() + tfdNewReceived.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP,
-    			lblTotal.getPreferredSize().width, lblTotal.getPreferredSize().height);
-        valTotal.setBounds(lblTotal.getX() + lblTotal.getWidth(), lblTotal.getY(), 100 - lblTotal.getWidth(), lblTotal.getHeight());
-        lblLeft.setBounds(lblTotal.getX(), lblMasterReceived.getY(), 
+//    	lblTotal.setBounds(tfdNewReceived.getX() + tfdNewReceived.getWidth() + CustOpts.HOR_GAP, CustOpts.VER_GAP,
+//    			lblTotal.getPreferredSize().width, lblTotal.getPreferredSize().height);
+//        valTotal.setBounds(lblTotal.getX() + lblTotal.getWidth(), lblTotal.getY(), 100 - lblTotal.getWidth(), lblTotal.getHeight());
+        
+        lblLeft.setBounds(tfdNewReceived.getX() + tfdNewReceived.getWidth() + CustOpts.HOR_GAP, tfdNewReceived.getY(), 
         		lblLeft.getPreferredSize().width, lblLeft.getPreferredSize().height);
-        valLeft.setBounds(lblLeft.getX() + lblLeft.getWidth(), lblLeft.getY(), 100 - lblLeft.getWidth(), lblLeft.getHeight());
+        valLeft.setBounds(tfdNewReceived.getX() + tfdNewReceived.getWidth() + CustOpts.HOR_GAP, lblLeft.getY() + lblLeft.getHeight() + CustOpts.HOR_GAP,
+        		50, lblLeft.getHeight());
         
         btn10.setBounds(CustOpts.HOR_GAP,  tfdNewReceived.getY() + tfdNewReceived.getHeight() + CustOpts.VER_GAP, CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
         btn20.setBounds(btn10.getX() + btn10.getWidth() + CustOpts.HOR_GAP, btn10.getY(), CustOpts.BTN_WIDTH_NUM, CustOpts.BTN_WIDTH_NUM);
@@ -366,7 +369,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     public void actionPerformed(ActionEvent e) {
     	
         inputedContent = tfdNewReceived.getText();
-        
+        int billId = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillID();
         Object o = e.getSource();
         if (o == ok) {
         	//check content format
@@ -377,7 +380,6 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         		return;
         	}
         	
-        	int billId = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillID();
         	int billOldStatus = getBillStatus(billId);
         	//check if left moeny is 0. 
         	int left = Math.round(Float.valueOf(valLeft.getText()) * 100);
@@ -444,19 +446,18 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	String strPay = "other";
     		String curTitle = getTitle();
     		//calculate the received of diffent kind
-    		if(curTitle.equals(BarFrame.consts.EnterCashPayment())){
+    		if(curTitle.startsWith(BarFrame.consts.EnterCashPayment())){
     			strPay = "cash";
-    		} else if(curTitle.equals(BarFrame.consts.EnterDebitPayment())) {
+    		} else if(curTitle.startsWith(BarFrame.consts.EnterDebitPayment())) {
     			strPay = "debit";
-    		} else if(curTitle.equals(BarFrame.consts.EnterVisaPayment())) {
+    		} else if(curTitle.startsWith(BarFrame.consts.EnterVisaPayment())) {
     			strPay = "visa";
-    		} else if(curTitle.equals(BarFrame.consts.EnterMasterPayment())) {
+    		} else if(curTitle.startsWith(BarFrame.consts.EnterMasterPayment())) {
     			strPay = "master";
-    		} else if(curTitle.equals(BarFrame.consts.EnterOtherPayment())) {
+    		} else if(curTitle.startsWith(BarFrame.consts.EnterOtherPayment())) {
     			strPay = "other";
     		}
     		
-    		int billId = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.getBillID();
     		int billOldStatus = getBillStatus(billId);
 
         	BillPanel bp = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
@@ -477,6 +478,28 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     			BarFrame.instance.switchMode(0);
     	    }
         	
+        } else if( o == valCashReceived || o == valDebitReceived || o == valVisaReceived || o == valMasterReceived || o == valOtherReceived) {
+        	StringBuilder sb = new StringBuilder("update bill set ");
+        	if(o == valCashReceived ) {
+        		sb.append("cashReceived = 0 where id = ");
+        	} else if(o == valDebitReceived) {
+        		sb.append("debitReceived = 0 where id = ");
+        	} else if(o == valVisaReceived) {
+        		sb.append("visaReceived = 0 where id = ");
+        	} else if(o == valMasterReceived) {
+        		sb.append("masterReceived = 0 where id = ");
+        	} else if(o == valOtherReceived) {
+        		sb.append("otherReceived = 0 where id = ");
+        	}
+        	sb.append(billId);
+        	try {
+    			PIMDBModel.getStatement().executeUpdate(sb.toString());
+    		}catch(Exception exp) {
+    			ErrorUtil.write(exp);
+    		}
+        	initMoneyDisplay(billId);
+        	revalidate();
+        	repaint();
         } else {
 	        if(isAllContentSelected)
 	        	inputedContent = "";
@@ -597,21 +620,21 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         // 初始化－－－－－－－－－－－－－－－－
 
         lblCashReceived = new JLabel(BarFrame.consts.CASH() + " : " + BarOption.getMoneySign());
-        valCashReceived = new JLabel("");
+        valCashReceived = new JButton("");
         lblDebitReceived = new JLabel(BarFrame.consts.DEBIT() + " : " + BarOption.getMoneySign());
-        valDebitReceived = new JLabel("");
+        valDebitReceived = new JButton("");
         lblVisaReceived = new JLabel(BarFrame.consts.VISA() + " : " + BarOption.getMoneySign());
-        valVisaReceived = new JLabel("");
+        valVisaReceived = new JButton("");
         lblMasterReceived = new JLabel(BarFrame.consts.MASTER() + " : " + BarOption.getMoneySign());
-        valMasterReceived = new JLabel("");
+        valMasterReceived = new JButton("");
         lblOtherReceived = new JLabel(BarFrame.consts.OTHER() + " : " + BarOption.getMoneySign());
-        valOtherReceived = new JLabel("");
+        valOtherReceived = new JButton("");
         
         tfdNewReceived = new JTextField();
         
         lblTotal = new JLabel(BarFrame.consts.Total() + " : " + BarOption.getMoneySign());
         valTotal = new JLabel("");
-        lblLeft = new JLabel(BarFrame.consts.Due() + " : " + BarOption.getMoneySign());
+        lblLeft = new JLabel(BarFrame.consts.Due());
         valLeft = new JLabel("");
         
         ok = new JButton("<html><h1 style='text-align: center; padding-bottom: 5px; color:#18F507;'>✔</h1></html>");
@@ -641,6 +664,13 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         // ok.setFont(CustOpts.custOps.getFontOfDefault());
         back.setMargin(new Insets(0, 0, 0, 0));
         ok.setMargin(new Insets(0, 0, 0, 0));
+        
+        valCashReceived.setMargin(back.getMargin());
+        valDebitReceived.setMargin(back.getMargin());
+        valVisaReceived.setMargin(back.getMargin());
+        valMasterReceived.setMargin(back.getMargin());
+        valOtherReceived.setMargin(back.getMargin());
+        
         btn10.setMargin(back.getMargin());
         btn20.setMargin(back.getMargin());
         btn30.setMargin(back.getMargin());
@@ -688,8 +718,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         
         getContentPane().add(tfdNewReceived);
         
-        getContentPane().add(lblTotal);
-        getContentPane().add(valTotal);
+//        getContentPane().add(lblTotal);
+//        getContentPane().add(valTotal);
         getContentPane().add(lblLeft);
         getContentPane().add(valLeft);
         
@@ -719,6 +749,11 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         // 加监听器－－－－－－－－
         ok.addActionListener(this);
         back.addActionListener(this);
+        valCashReceived.addActionListener(this);
+        valDebitReceived.addActionListener(this);
+        valVisaReceived.addActionListener(this);
+        valMasterReceived.addActionListener(this);
+        valOtherReceived.addActionListener(this);
         num1.addActionListener(this);
         num2.addActionListener(this);
         num3.addActionListener(this);
@@ -780,15 +815,15 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 
     
     private JLabel lblCashReceived;
-    public JLabel valCashReceived;
+    public JButton valCashReceived;
     private JLabel lblDebitReceived;
-    public JLabel valDebitReceived;
+    public JButton valDebitReceived;
     private JLabel lblVisaReceived;
-    public JLabel valVisaReceived;
+    public JButton valVisaReceived;
     private JLabel lblMasterReceived;
-    public JLabel valMasterReceived;
+    public JButton valMasterReceived;
     private JLabel lblOtherReceived;
-    public JLabel valOtherReceived;
+    public JButton valOtherReceived;
 
     public JTextField tfdNewReceived;
 
