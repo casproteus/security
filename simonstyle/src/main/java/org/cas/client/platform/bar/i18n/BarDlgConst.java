@@ -106,6 +106,7 @@ public interface BarDlgConst {
     String COMFIRMDELETEACTION2();
     String COMFIRMDELETECATEGORY();
     String COMFIRMLOSTACTION();
+    String COMFIRMCLEARMONEYRECEIVED();
     String ConfirmPayAgain();
     String ClosedBillCantVoid();
     String ConvertClosedBillBack();

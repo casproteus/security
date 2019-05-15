@@ -31,6 +31,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
@@ -389,7 +390,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         		.append("' and createTime <= '").append(endTime)
         		.append("' and bill.employeeId = employee.id and (bill.status < ").append(LoginDlg.USERTYPE < 2 ? DBConsts.expired : DBConsts.deleted)
         		.append(" or bill.status is null)");
-        if(!"true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("ShowProcessingBill")))) {
+        if(!"true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("ShowProcessingBill"))) && !BarOption.isFastFoodMode()) {
         	sql.append(" and bill.status is not null ").append(" and bill.status != ").append(DBConsts.billPrinted);
         }
         if("true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("HideRecordFromOtherWaiter"))) //if configured, then do not show records of other waiter.

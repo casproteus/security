@@ -386,10 +386,11 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 
         	//no matter it's closed or not, we need to update the pay info of the bill. why?
     		updateBill(billId);
-        	resetContent();
-        	this.setVisible(false);
         	
         	if( left > 0) {
+        		//if left is bigger than 0(already if reach here) and small than total, then set the partialPaid flag. otherwise reset flat.
+        		((SalesPanel)BarFrame.instance.panels[2]).partialPaid = left < (Float.valueOf(valTotal.getText()) * 100);
+        		
 //	        	if(JOptionPane.showConfirmDialog(this, BarFrame.consts.reCeivedMoneyNotEnough(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
 //	        		//user selected to close the bill. update the bill to closed
 //	        		billClosed = closeCurrentBill();
@@ -403,6 +404,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	        	//new ChangeDlg(BarFrame.instance, BarFrame.consts.Due() + BarOption.getMoneySign()
         		//		+ BarUtil.format(left/100f)).setVisible(true); //it's a non-modal dialog.
         	}else if(left <= 0) {
+        		((SalesPanel)BarFrame.instance.panels[2]).partialPaid = false;
         		BarFrame.instance.closeCurrentBill();
             	this.setVisible(false);
             	if(left < 0) {	//if it's equal to 0, then do not display the change dialog.
@@ -435,6 +437,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
         		PrintService.openDrawer();
         	}
+
+        	resetContent();
+        	this.setVisible(false);
         	
         } else if(o == btnExact) {//update bill and display change 0.00;
         	
@@ -476,6 +481,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     	    }else if(BarFrame.instance.isTableEmpty(null, null)) {
     			BarFrame.instance.closeATable(null, null);
     			BarFrame.instance.switchMode(0);
+    	    }else {	//in table mode, if there's other open bill on this table, should swith to billPanel
+    	    	BarFrame.instance.switchMode(1);
     	    }
         	
         } else if( o == valCashReceived || o == valDebitReceived || o == valVisaReceived || o == valMasterReceived || o == valOtherReceived) {

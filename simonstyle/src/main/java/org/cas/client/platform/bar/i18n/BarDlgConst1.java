@@ -192,6 +192,8 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String COMFIRMLOSTACTION() {return "Etes-vous sur de ne pas envoyer ou enregistrer le nouveau contenu?";}
     @Override
+	public String COMFIRMCLEARMONEYRECEIVED() {return "Cette facture est partiellement payée! Voulez-vous annuler tout l'argent payé avant de quitter cette interface?";}
+    @Override
 	public String ConfirmPayAgain() {return "Cette facture a déjà été payée! Etes-vous sur de recevoir de l'argent encore une fois?";}
     @Override
 	public String ClosedBillCantVoid() {return "Cette facture est fermée, vous ne pouvez plus vider cet ordre .";}

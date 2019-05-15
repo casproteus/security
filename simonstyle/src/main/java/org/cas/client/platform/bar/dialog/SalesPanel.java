@@ -51,6 +51,8 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     public static String SUCCESS = "0";
     public static String ERROR = "2";
     
+    //tempral flags
+    public boolean partialPaid;	//for indicating that money is partial paid, when leaving sales panel, will give a notice!
     
     public SalesPanel() {
         initComponent();
@@ -144,6 +146,23 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         		
         		createAndPrintNewOutput();
     			billPricesUpdateToDB();
+    			
+    			if(partialPaid) {
+        			if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+		    				BarFrame.consts.COMFIRMCLEARMONEYRECEIVED(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
+		            	//clean partial input
+		            	StringBuilder sql = new StringBuilder("update bill set cashReceived = 0, debitReceived = 0, visaReceived = 0, masterReceived = 0, otherReceived = 0");
+		            	sql.append(" where id = ").append(billPanel.getBillID());
+		            	try {
+		        			PIMDBModel.getStatement().executeUpdate(sql.toString());
+		        			partialPaid = false;
+		        		}catch(Exception exp) {
+		        			ErrorUtil.write(exp);
+		        		}
+		            }else {
+		            	return;
+		            }
+        		}
         		BarFrame.instance.switchMode(1);
         		
         	} else if (o == btnRemoveItem) {	//remove item.
@@ -209,6 +228,7 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
     	                 return;	
     	            }
             	}
+
             	if(BarOption.isFastFoodMode()) {
             		BarFrame.instance.setVisible(false);
         			BarFrame.singleUserLoginProcess();
@@ -256,6 +276,20 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
         			//if it's completed, then createa a new empty onee.
         			//if it's not completed. this it's it.
             	}else {
+                	if(partialPaid) {
+            			if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+    		    				BarFrame.consts.COMFIRMCLEARMONEYRECEIVED(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
+    		            	//clean partial input
+    		            	StringBuilder sql = new StringBuilder("update bill set cashReceived = 0, debitReceived = 0, visaReceived = 0, masterReceived = 0, otherReceived = 0");
+    		            	sql.append(" where id = ").append(billPanel.getBillID());
+    		            	try {
+    		        			PIMDBModel.getStatement().executeUpdate(sql.toString());
+    		        			partialPaid = false;
+    		        		}catch(Exception exp) {
+    		        			ErrorUtil.write(exp);
+    		        		}
+    		            }
+            		}
             		BarFrame.instance.switchMode(0);
             	}
             	
@@ -421,10 +455,25 @@ public class SalesPanel extends JPanel implements ComponentListener, ActionListe
             } else if (o == btnSend) {//send
         		createAndPrintNewOutput();
         		billPricesUpdateToDB();
+        		
             	if(BarOption.isFastFoodMode()) {
         	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
         	    	addNewBillInCurTable();
     		    }else {
+    		    	if(partialPaid) {
+            			if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+    		    				BarFrame.consts.COMFIRMCLEARMONEYRECEIVED(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
+    		            	//clean partial input
+    		            	StringBuilder sql = new StringBuilder("update bill set cashReceived = 0, debitReceived = 0, visaReceived = 0, masterReceived = 0, otherReceived = 0");
+    		            	sql.append(" where id = ").append(billPanel.getBillID());
+    		            	try {
+    		        			PIMDBModel.getStatement().executeUpdate(sql.toString());
+    		        			partialPaid = false;
+    		        		}catch(Exception exp) {
+    		        			ErrorUtil.write(exp);
+    		        		}
+    		            }
+            		}
     		    	BarFrame.instance.switchMode(0);
     		    }
             }
