@@ -15,5 +15,11 @@ public class Cmd_Modify  implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		//if there's a curDish?
+		if(BillListPanel.curDish == null) {//check if there's an item selected.
+			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
+			return;
+		}
+		new AddModificationDialog(BarFrame.instance, BillListPanel.curDish.getModification()).setVisible(true);
 	}
 }
