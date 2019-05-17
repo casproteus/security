@@ -21,6 +21,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.bar.BarUtil;
+import org.cas.client.platform.bar.action.Cmd_OpenDrawer;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -412,9 +413,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             				+ BarUtil.formatMoney((0 - left)/100f)).setVisible(true); //it's a non-modal dialog.
             		//if the last pay was with cash, then might need cash back (no change, paid with a "50" bill)
             		if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
-            			BarUtil.updateBill(billId, "cashback", oldCashback + left);
+            			BillPanel.updateBill(billId, "cashback", oldCashback + left);
             		}else {
-            			BarUtil.updateBill(billId, "TIP", oldTip - left);	//otherwise, treated as tip. the tip in DB are positive, because it means we earned money.
+            			BillPanel.updateBill(billId, "TIP", oldTip - left);	//otherwise, treated as tip. the tip in DB are positive, because it means we earned money.
             		}
             	}
 
@@ -425,7 +426,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             	
             	if(BarOption.isFastFoodMode()) {
         	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
-        	    	((SalesPanel)BarFrame.instance.panels[2]).addNewBillInCurTable();
+        	    	BarFrame.instance.addNewBillInCurTable();
         	    }else {
         	    	if(BarFrame.instance.isTableEmpty(null, null)) {
             			BarFrame.instance.closeATable(null, null);
@@ -435,7 +436,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	}
         	
         	if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
-        		PrintService.openDrawer();
+        		Cmd_OpenDrawer.getInstance().actionPerformed(null);
         	}
 
         	resetContent();
@@ -474,10 +475,10 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	this.setVisible(false);
         	
         	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
-    		PrintService.openDrawer();
+        	Cmd_OpenDrawer.getInstance().actionPerformed(null);
 
         	if(BarOption.isFastFoodMode()) {
-    	    	((SalesPanel)BarFrame.instance.panels[2]).addNewBillInCurTable();
+    	    	BarFrame.instance.addNewBillInCurTable();
     	    }else if(BarFrame.instance.isTableEmpty(null, null)) {
     			BarFrame.instance.closeATable(null, null);
     			BarFrame.instance.switchMode(0);

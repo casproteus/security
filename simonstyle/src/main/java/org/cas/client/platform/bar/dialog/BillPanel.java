@@ -84,6 +84,23 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		initComponent();
 	}
 	
+	public void createAndPrintNewOutput() {
+		//if there's any new bill, send it to kitchen first, and this also made the output generated.
+		List<Dish> dishes = getNewDishes();
+		if (dishes != null && dishes.size() > 0) {
+			sendNewOrdersToKitchenAndDB(dishes);
+		}else {
+			sendNewOrdersToKitchenAndDB(BarUtil.generateAnEmptyDish());
+ 		}
+	}
+	
+	//if there's new dish added.... update the total value field of bill record.
+	//and make sure new added dish will be updated with new information.
+	public void billPricesUpdateToDB() {
+		BillPanel.updateBillRecordPrices(this);		//in case if added service fee or discout of bill. ??? so this means, when added discount, will not save to db immediatly?
+		initContent();	//always need to initContent, to make sure dish in selection ary has new property. e.g. saved dish should has different color.,
+	}
+		
 	public void printBill(String tableID, String billIndex, String opentime, boolean isToCustomer) {
 		
         if(status >= DBConsts.completed || status < DBConsts.original || comment.contains(PrintService.OLD_GST)) { //for completed or reopened completed bill
@@ -199,7 +216,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	}
 	
 	//send to printer
-	void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
+	public void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
 		//prepare the printing String and do printing
 		String curTable = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String curCustomerIdx = BarFrame.instance.getOnSrcCurBillIdx();
@@ -237,7 +254,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		}
 	}
 	
-	List<Dish> getNewDishes() {
+	public List<Dish> getNewDishes() {
 		List<Dish> newDishes = new ArrayList<Dish>();
 		for (Dish dish : orderedDishAry) {
 			if(dish.getOutputID() > -1)	//if it's already saved into db, ignore.
@@ -274,7 +291,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 							selectedRow, 3);
 				}
 	        } else if (o == btnLess) {
-				if(dish.getOutputID() >= 0) {	//if it's already send, then do the removePanel.
+				if(dish.getOutputID() >= 0) {	//if it's already send, then do the removeItem.
 					salesPanel.removeItem();
 				}else {
 					if(orderedDishAry.get(selectedRow).getNum() == 1) {
@@ -300,7 +317,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
 			updateTotleArea();
         }else if(o == billButton){		//when bill button on top are clicked.
-        	if(billListPanel != null && billListPanel.btnSplitItem.isSelected()) {
+        	if(billListPanel != null && BarFrame.btnSplitItem.isSelected()) {
         		billButton.setSelected(!billButton.isSelected());
         		return;
         	}
@@ -361,14 +378,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				if(obj != null)
 					BarFrame.numberPanelDlg.setContents(obj.toString());
 			}
-			if( salesPanel.btnDiscItem.isSelected()) {
+			if( BarFrame.btnDiscItem.isSelected()) {
 				Object obj = table.getValueAt(selectedRow,2);
 				//update the discount in qtyDlg.
 				if(obj != null)
 					BarFrame.numberPanelDlg.setContents(obj.toString());
 			}
 		}else if(billListPanel != null) {
-			if(billListPanel.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
+			if(BarFrame.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
 				billButton.setSelected(!billButton.isSelected());
 				return;
 			}
@@ -442,7 +459,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == scrContent.getViewport()) {
 			if(billListPanel != null) {
-				if(billListPanel.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
+				if(BarFrame.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
 					billButton.setSelected(!billButton.isSelected());
 					return;
 				}
@@ -530,8 +547,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		        }
 	        	//if the original is not 0.00, then will still be treated as price promp not a taxInclude.
 		        if(newDish.getPrice() == 0 || "true".equals(newDish.getPrompPrice()) && !BarOption.isTreatPricePromtAsTaxInclude()) {
-		        	salesPanel.btnChangePrice.setSelected(true);
-		        	salesPanel.showPriceChangeDlg();
+		        	BarFrame.btnChangePrice.setSelected(true);
+		        	BarFrame.instance.showPriceChangeDlg();
 		        }
 			}
 		});
@@ -610,7 +627,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         valTotlePrice.setText(BarUtil.formatMoney((total)/100f));
     }
     
-    void initContent() {
+    public void initContent() {
     	String billIndex = billButton == null ? BarFrame.instance.getCurBillIndex() : billButton.getText();
 		//used deleted <= 1, means both uncompleted and normally completed will be displayed, unnormally delted recored will be delted = 100
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
@@ -757,7 +774,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         
     }
     
-    void resetColWidth(int tableWidth) {
+    public void resetColWidth(int tableWidth) {
         PIMTableColumn tmpCol1 = table.getColumnModel().getColumn(0);
         tmpCol1.setWidth(60);
         tmpCol1.setPreferredWidth(60);
@@ -816,7 +833,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     
     //return true means can move on, return false means user don't want to move on.
 	public boolean checkStatus() {
-		if(status >= DBConsts.billPrinted || status < DBConsts.original) {//check if the bill is .
+		if(status >= DBConsts.billPrinted || status < DBConsts.original) {//check if the bill is more than billPrinted.
 			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertClosedBillBack(), BarFrame.consts.Operator(),
 		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
 		        return false;
@@ -1101,6 +1118,23 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	public void setBillID(int billID) {
 		this.billID = billID;
 	}
+	
+	public static void updateBill(int billId, String fieldName, int value) {
+		StringBuilder sb = new StringBuilder("update bill set ").append(fieldName).append(" = ").append(value).append(" where id = ").append(billId);
+		
+		try {
+			PIMDBModel.getStatement().executeUpdate(sb.toString());
+		}catch(Exception e) {
+			ErrorUtil.write(e);
+		}
+	}
+
+	//
+	public static void updateBillRecordPrices(BillPanel billPanel) {
+		updateBill(billPanel.getBillID(), "total", Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
+		updateBill(billPanel.getBillID(), "discount", Math.round(billPanel.discount));
+		updateBill(billPanel.getBillID(), "serviceFee", billPanel.serviceFee);
+	}
 
 	public PIMTable table;
     private PIMScrollPane scrContent;
@@ -1116,6 +1150,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     private ArrowButton btnMore;
     private ArrowButton btnLess;
     
-    String[] header = new String[] {BarFrame.consts.Count(), BarFrame.consts.ProdName(), "", BarFrame.consts.Price()};
+    public String[] header = new String[] {BarFrame.consts.Count(), BarFrame.consts.ProdName(), "", BarFrame.consts.Price()};
 
 }

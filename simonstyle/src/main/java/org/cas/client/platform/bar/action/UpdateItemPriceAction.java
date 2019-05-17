@@ -10,6 +10,7 @@ import javax.swing.JToggleButton;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillPanel;
+import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
@@ -17,16 +18,18 @@ import org.cas.client.resource.international.DlgConst;
 public class UpdateItemPriceAction implements ActionListener{
 
 	JToggleButton btn;
-	BillPanel billPanel;
 	
-	public UpdateItemPriceAction(JToggleButton button, BillPanel billPanel) {
+	public UpdateItemPriceAction(JToggleButton button) {
 		this.btn = button;
-		this.billPanel = billPanel;
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(btn.isSelected()) {
+
+			SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
+			BillPanel billPanel = salesPanel.billPanel;
+			
  			try {
              	int row = billPanel.table.getSelectedRow();
          		Dish dish = billPanel.orderedDishAry.get(row);

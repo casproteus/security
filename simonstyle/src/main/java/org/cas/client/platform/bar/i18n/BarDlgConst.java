@@ -322,4 +322,5 @@ public interface BarDlgConst {
 	String History();
 	String Balance();
 	String Employee();
+	String ActionNotAllowed();
 }

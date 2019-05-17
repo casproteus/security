@@ -11,22 +11,25 @@ import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillPanel;
+import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
 public class UpdateItemDiscountAction implements ActionListener{
 
 	JToggleButton btn;
-	BillPanel billPanel;
 	
-	public UpdateItemDiscountAction(JToggleButton button, BillPanel billPanel) {
+	public UpdateItemDiscountAction(JToggleButton button) {
 		this.btn = button;
-		this.billPanel = billPanel;
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(btn.isSelected()) {
+
+			SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
+			BillPanel billPanel = salesPanel.billPanel;
+			
  			try {
  				String curContent = BarFrame.discountDlg.tfdQTY.getText();
             	if(curContent.endsWith("%")) {

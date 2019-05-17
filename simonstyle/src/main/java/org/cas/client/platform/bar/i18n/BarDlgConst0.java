@@ -242,7 +242,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String IsSingleUser() {return "Is single user mode";}
     @Override
-	public String IsTaxNotAllowDiscount() {return "discount of bill will affect tax";}
+	public String IsTaxNotAllowDiscount() {return "Discount of bill will affect tax";}
     @Override
     public String IsServiceFeeAffectTax() {return "service fee will affect tax";}
     @Override
@@ -599,5 +599,7 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String Balance() {return "Balance";}
 	@Override
 	public String Employee() {return "Employee";}
+	@Override
+	public String ActionNotAllowed() {return "Action not allowed in current status!";}
 
 }

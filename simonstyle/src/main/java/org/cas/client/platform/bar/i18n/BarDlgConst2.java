@@ -599,4 +599,6 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String Balance() {return "余额";}
 	@Override
 	public String Employee() {return "经办人";}
+	@Override
+	public String ActionNotAllowed() {return "该动作在当前状态下无效！";}
 }

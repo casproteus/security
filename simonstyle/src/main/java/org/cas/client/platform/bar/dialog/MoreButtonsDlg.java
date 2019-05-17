@@ -13,7 +13,7 @@ import java.util.Date;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import org.cas.client.platform.bar.BarUtil;
+import org.cas.client.platform.bar.action.Cmd_Pay;
 import org.cas.client.platform.bar.dialog.statistics.CheckBillDlg;
 import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
@@ -89,7 +89,7 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 //    		Object obj = salesPanel.billPanel.tblBillPanel.getValueAt(salesPanel.billPanel.tblBillPanel.getSelectedRow(), 3);
 //    		BarFrame.instance.numberPanelDlg.setContents(obj.toString());
 
-    	} else if (o == salesPanel.btnOTHER) {
+    	} else if (o == BarFrame.btnOTHER) {
     		String giftCardNumber  = JOptionPane.showInputDialog(null, BarFrame.consts.Account());
     		if(giftCardNumber == null || giftCardNumber.length() == 0)
     			return;
@@ -121,7 +121,7 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
                     SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
                     BarFrame.payDlg.maxInput = (float)(value / 100.0);
                     BarFrame.setStatusMes(BarFrame.consts.CurrentBalanceMsg() + BarFrame.payDlg.maxInput);
-                    salesPanel.actionPerformed(new ActionEvent(salesPanel.btnOTHER, 0, ""));
+                    Cmd_Pay.getInstance().actionPerformed(new ActionEvent(BarFrame.btnOTHER, 0, ""));
                     
                     if (BarFrame.payDlg.inputedContent != null && BarFrame.payDlg.inputedContent.length() > 0) {
 	                    float newBalance = (float)(value / 100.0) - Float.valueOf(BarFrame.payDlg.inputedContent);
@@ -195,7 +195,7 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 		                	this.setVisible(false);
 		                	if(BarOption.isFastFoodMode()) {
 		            	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
-		            	    	salesPanel.addNewBillInCurTable();
+		            	    	BarFrame.instance.addNewBillInCurTable();
 		                	}else {
 			            		if(BarFrame.instance.isTableEmpty(null, null)) {
 			            			BarFrame.instance.closeATable(null, null);
@@ -240,8 +240,8 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
         	this.setVisible(false);
         	BarFrame.instance.switchMode(3);
         } else if (o == btnSuspend) { // suspend bill
-        	salesPanel.createAndPrintNewOutput();
-        	BarUtil.updateBillRecordPrices(salesPanel.billPanel);
+        	salesPanel.billPanel.createAndPrintNewOutput();
+        	BillPanel.updateBillRecordPrices(salesPanel.billPanel);
         	
         	this.setVisible(false);
         	if(salesPanel.billPanel.status > DBConsts.suspended || salesPanel.billPanel.status < DBConsts.original) {
@@ -268,7 +268,7 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 	        }
 	        
         	if(BarOption.isFastFoodMode()) {
-    	    	((SalesPanel)BarFrame.instance.panels[2]).addNewBillInCurTable();
+    	    	BarFrame.instance.addNewBillInCurTable();
         	}else {
 				BarFrame.instance.setCurBillIdx("");
 				BarFrame.instance.switchMode(0);
@@ -363,12 +363,12 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 		int width = btnMore.getWidth();
 		int height = btnMore.getHeight();
 		
-		salesPanel.btnOTHER.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, width, height);
-		btnDiscountCoupon.setBounds(CustOpts.HOR_GAP, salesPanel.btnOTHER.getY() + height + CustOpts.VER_GAP, width, height);
+		BarFrame.btnOTHER.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, width, height);
+		btnDiscountCoupon.setBounds(CustOpts.HOR_GAP, BarFrame.btnOTHER.getY() + height + CustOpts.VER_GAP, width, height);
 		btnSuspend.setBounds(CustOpts.HOR_GAP, btnDiscountCoupon.getY() + height + CustOpts.VER_GAP, width, height);
 		btnCheckOrder.setBounds(CustOpts.HOR_GAP, btnSuspend.getY() + height + CustOpts.VER_GAP, width, height);
 		btnLine_3_1.setBounds(CustOpts.HOR_GAP, btnCheckOrder.getY() + height + CustOpts.VER_GAP, width, height);
-		btnLine_3_3.setBounds(btnLine_3_1.getX() + width + CustOpts.HOR_GAP, salesPanel.btnOTHER.getY(), width, height);
+		btnLine_3_3.setBounds(btnLine_3_1.getX() + width + CustOpts.HOR_GAP, BarFrame.btnOTHER.getY(), width, height);
 		btnLine_3_4.setBounds(btnLine_3_3.getX(), btnLine_3_3.getY() + height + CustOpts.VER_GAP, width, height);
 		btnLine_3_5.setBounds(btnLine_3_3.getX(), btnLine_3_4.getY() + height + CustOpts.VER_GAP, width, height);
 		btnLine_3_6.setBounds(btnLine_3_3.getX(), btnLine_3_5.getY() + height + CustOpts.VER_GAP, width, height);
@@ -386,7 +386,7 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 		// 初始化－－－－－－－－－－－－－－－－
 		btnLine_3_1 = new FunctionButton(BarFrame.consts.Report());
         //btnLine_3_2 = new JToggleButton(BarFrame.consts.QTY());
-        salesPanel.btnOTHER = new FunctionButton(BarFrame.consts.GIFTCARD());
+		BarFrame.btnOTHER = new FunctionButton(BarFrame.consts.GIFTCARD());
         btnDiscountCoupon = new FunctionButton(BarFrame.consts.COUPON());
 		btnSuspend = new FunctionButton(BarFrame.consts.SUSPEND());
 		btnCheckOrder = new FunctionButton(BarFrame.consts.OrderManage());
@@ -398,7 +398,7 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 
 		// 属性设置－－－－－－－－－－－－－－
 		btnLine_3_1.setMargin(new Insets(0, 0, 0, 0));
-		salesPanel.btnOTHER.setMargin(btnLine_3_1.getMargin());
+		BarFrame.btnOTHER.setMargin(btnLine_3_1.getMargin());
 		btnDiscountCoupon.setMargin(btnLine_3_1.getMargin());
 		btnLine_3_3.setMargin(btnLine_3_1.getMargin());
 		btnLine_3_4.setMargin(btnLine_3_1.getMargin());
@@ -413,7 +413,7 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 		
 		// 搭建－－－－－－－－－－－－－
 		add(btnLine_3_1);
-		add(salesPanel.btnOTHER);
+		add(BarFrame.btnOTHER);
 		add(btnDiscountCoupon);
 		add(btnLine_3_3);
 		add(btnLine_3_4);
@@ -425,7 +425,7 @@ public class MoreButtonsDlg extends JDialog implements ActionListener, WindowFoc
 
 		// 加监听器－－－－－－－－
 		btnLine_3_1.addActionListener(this);
-		salesPanel.btnOTHER.addActionListener(this);
+		BarFrame.btnOTHER.addActionListener(Cmd_Pay.getInstance());
 		btnDiscountCoupon.addActionListener(this);
 		btnLine_3_3.addActionListener(this);
 		btnLine_3_4.addActionListener(this);

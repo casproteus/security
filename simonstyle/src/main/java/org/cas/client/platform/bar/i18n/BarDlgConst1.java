@@ -597,4 +597,6 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String Balance() {return "Équilibre";}
 	@Override
 	public String Employee() {return "Employée";}
+	@Override
+	public String ActionNotAllowed() {return "Action non autorisée dans l'état actuel!";}
 }

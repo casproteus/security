@@ -19,11 +19,16 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
 import org.cas.client.platform.bar.BarUtil;
-import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
-import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
-import org.cas.client.platform.bar.dialog.statistics.EmployeeListDlg;
-import org.cas.client.platform.bar.uibeans.FunctionButton;
-import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
+import org.cas.client.platform.bar.action.Cmd_BillFoot;
+import org.cas.client.platform.bar.action.Cmd_CheckInOut3;
+import org.cas.client.platform.bar.action.Cmd_Color;
+import org.cas.client.platform.bar.action.Cmd_Coupon;
+import org.cas.client.platform.bar.action.Cmd_Employee;
+import org.cas.client.platform.bar.action.Cmd_GiftCard;
+import org.cas.client.platform.bar.action.Cmd_Modify3;
+import org.cas.client.platform.bar.action.Cmd_Printer;
+import org.cas.client.platform.bar.action.Cmd_Return3;
+import org.cas.client.platform.bar.action.Cmd_Table;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.resource.international.PaneConsts;
@@ -293,44 +298,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     public void actionPerformed(
             ActionEvent e) {
         Object o = e.getSource();
-        if (o instanceof FunctionButton) {
-        	if(o == btnReturn) {	//return;
-        		LoginDlg.USERTYPE = -1;
-        		BarFrame.instance.switchMode(BarOption.isFastFoodMode() ? 2 : 0);
-        		if(BarOption.isSingleUser()) {
-    				BarFrame.instance.setVisible(false);
-    				BarFrame.singleUserLoginProcess();
-    			}else {
-    				new LoginDlg(null).setVisible(true);
-	                if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-	                	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
-	                }
-    			}
-        		
-        	}else if(o == btnEmployee) {	//employee
-        		new EmployeeListDlg(BarFrame.instance).setVisible(true);
-//        	}else if(o == btnLine_2_3) {
-//        		//addMenuRelatedComps();
-        	}else if(o == btnPrinter) {
-        		new SettingPrinterDlg(BarFrame.instance).setVisible(true);
-        	}else if(o == btnTable) {
-        		new TabbleSettingDlg(BarFrame.instance).setVisible(true);
-        	}else if(o == btnBillFoot) {
-        		new BillFootDialog(BarFrame.instance, BarOption.getBillFootInfo()).setVisible(true);
-        	}else if(o == btnModify) {
-        		new AddModificationDialog(BarFrame.instance, "").setVisible(true);
-        	}else if(o == btnGiftCard) {
-        		new GiftCardListDialog(BarFrame.instance).setVisible(true);
-        	}else if(o == btnCoupon) {
-        		new CouponListDialog(BarFrame.instance).setVisible(true);
-        	}else if(o == btnColor) {
-        		new SettingColorDlg(BarFrame.instance).setVisible(true);
-        	}else if(o == btnCheckInOut) {
-        		new CheckInOutListDlg(BarFrame.instance).setVisible(true);
-        	}
-        }
-        //JToggleButton-------------------------------------------------------------------------------------
-        else if(o instanceof JToggleButton) {
+        if(o instanceof JToggleButton) {
         	if(o == cbxIsTrainingMode) {
         		BarOption.setIsTrainingMode(cbxIsTrainingMode.isSelected() ? "true" : "false");
         	}else if(o == cbxIsSingleUserMode) {
@@ -364,25 +332,25 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         int tBtnHeight = panelHeight / 10;
 
         // command buttons--------------
-        btnReturn.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
+        BarFrame.btnReturn3.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
                 tBtnHeight);
-        btnEmployee.setBounds(btnReturn.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht,
+        BarFrame.btnEmployee.setBounds(BarFrame.btnReturn3.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
                 tBtnHeight);
-        btnPrinter.setBounds(btnEmployee.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht,
+        BarFrame.btnPrinter.setBounds(BarFrame.btnEmployee.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
                 tBtnHeight);
-        btnTable.setBounds(btnPrinter.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht,
+        BarFrame.btnTable.setBounds(BarFrame.btnPrinter.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
                 tBtnHeight);
-        btnBillFoot.setBounds(btnTable.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht,
+        BarFrame.btnBillFoot.setBounds(BarFrame.btnTable.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
                 tBtnHeight);
-        btnModify.setBounds(btnBillFoot.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht,
+        BarFrame.btnModify3.setBounds(BarFrame.btnBillFoot.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
                 tBtnHeight);
-        btnGiftCard.setBounds(btnModify.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht,
+        BarFrame.btnGiftCard.setBounds(BarFrame.btnModify3.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
                 tBtnHeight);
-        btnCoupon.setBounds(btnGiftCard.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht,
+        BarFrame.btnCoupon.setBounds(BarFrame.btnGiftCard.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
                 tBtnHeight);
-        btnColor.setBounds(btnCoupon.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht,
+        BarFrame.btnColor.setBounds(BarFrame.btnCoupon.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
                 tBtnHeight);
-        btnCheckInOut.setBounds(btnColor.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReturn.getY(), tBtnWidht,
+        BarFrame.btnCheckInOut3.setBounds(BarFrame.btnColor.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
                 tBtnHeight);
 
         // TOP part============================
@@ -540,18 +508,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         lblMenuAreaPortion = new JLabel(BarFrame.consts.PortionofMenuArea());
         tfdMenuAreaPortion = new JTextField(String.valueOf(BarOption.getMenuAreaPortion()));
         
-        btnReturn = new FunctionButton(BarFrame.consts.RETURN());
-        btnEmployee = new FunctionButton(BarFrame.consts.Operator());
-        //btnLine_2_3 = new FunctionButton("TBD");
-        btnPrinter = new FunctionButton( BarFrame.consts.PRINTER());
-        btnTable = new FunctionButton(BarFrame.consts.TABLE());
-        btnBillFoot = new FunctionButton(BarFrame.consts.BillInfo());
-        btnModify = new FunctionButton(BarFrame.consts.MODIFY());
-        btnGiftCard = new FunctionButton(BarFrame.consts.GIFTCARD());
-        btnCoupon = new FunctionButton(BarFrame.consts.COUPON());
-        btnColor = new FunctionButton(BarFrame.consts.Color().toUpperCase());
-        btnCheckInOut = new FunctionButton(BarFrame.consts.CheckInOut());
-
         // properties
         Color bg = BarOption.getBK("Setting");
     	if(bg == null) {
@@ -608,16 +564,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         
         // 因为考虑到条码经常由扫描仪输入，不一定是靠键盘，所以专门为他加了DocumentListener，通过监视内容变化来自动识别输入完成，光标跳转。
         // tfdProdNumber.getDocument().addDocumentListener(this); // 而其它组件如实收金额框不这样做为了节约（一个KeyListener接口全搞定）
-        btnReturn.addActionListener(this);
-        btnEmployee.addActionListener(this);
-        btnPrinter.addActionListener(this);
-        btnTable.addActionListener(this);
-        btnBillFoot.addActionListener(this);
-        btnModify.addActionListener(this);
-        btnGiftCard.addActionListener(this);
-        btnCoupon.addActionListener(this);
-        btnColor.addActionListener(this);
-        btnCheckInOut.addActionListener(this);
 
         tfdGST.addFocusListener(this);
         tfdQST.addFocusListener(this);
@@ -643,16 +589,16 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     }
 
 	private void addControlButtons() {
-		add(btnCheckInOut);
-        add(btnEmployee);
-        add(btnPrinter);
-        add(btnTable);
-        add(btnBillFoot);
-        add(btnModify);
-        add(btnGiftCard);
-        add(btnCoupon);
-        add(btnColor);
-        add(btnReturn);
+		add(BarFrame.btnCheckInOut3);
+        add(BarFrame.btnEmployee);
+        add(BarFrame.btnPrinter);
+        add(BarFrame.btnTable);
+        add(BarFrame.btnBillFoot);
+        add(BarFrame.btnModify3);
+        add(BarFrame.btnGiftCard);
+        add(BarFrame.btnCoupon);
+        add(BarFrame.btnColor);
+        add(BarFrame.btnReturn3);
 	}
 	
 	private void addMenuRelatedComps() {
@@ -760,14 +706,5 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 	JSeparator sepH2;
 	JSeparator sepV;
 	
-    private FunctionButton btnReturn;
-    private FunctionButton btnEmployee;
-    private FunctionButton btnPrinter;
-    private FunctionButton btnTable;
-    private FunctionButton btnBillFoot;
-    private FunctionButton btnModify;
-    private FunctionButton btnGiftCard;
-    private FunctionButton btnCoupon;
-    private FunctionButton btnColor;
-    private FunctionButton btnCheckInOut;
+
 }

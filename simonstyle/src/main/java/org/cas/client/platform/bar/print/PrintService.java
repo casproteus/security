@@ -502,69 +502,6 @@ public class PrintService{
         return errorsAmount;
     }
 
-	public static boolean openDrawer(){
-		String key = BarFrame.menuPanel.getPrinters()[0].getIp();
-		if("".equals(key)) {
-			return false;
-		}
-		
-		if(key.equalsIgnoreCase("mev")) {
-			try{
-				printThroughOSdriver(getMevCommandFilePath("mevOpenCashierCommand.xml", Command.OPEN_CASHIER), new HashPrintRequestAttributeSet(), false);
-				return true;
-			} catch (Exception exp) {
-				ErrorUtil.write(exp);
-				return false;
-			}
-			
-		}else if (key.equalsIgnoreCase("serial")){
-			CommPortIdentifier commPortIdentifier;
-			try{
-				Enumeration tPorts = CommPortIdentifier.getPortIdentifiers();
-		        if (tPorts == null || !tPorts.hasMoreElements()) {
-		        	JOptionPane.showMessageDialog(BarFrame.instance, "no comm ports found! please check the printer connection.");
-		        	return false;
-		        }
-
-		        while (tPorts.hasMoreElements()) {
-		        	commPortIdentifier = (CommPortIdentifier) tPorts.nextElement();
-		        	if (commPortIdentifier.getPortType() != CommPortIdentifier.PORT_SERIAL)
-		                    continue;
-					SerialPort tSerialPort = (SerialPort)commPortIdentifier.open("PrintService", 10000);//并口用"ParallelBlackBox"
-					OutputStream outputStream = new DataOutputStream(tSerialPort.getOutputStream());
-	                int[] cmd = BarOption.getOpenDrawerCommand();
-	 				for (int i : cmd) {
-	 					outputStream.write(i);
-	 				}
-	 				return true;
-		        }
-		        
-		        return false;
-			} catch (Exception exp) {
-				ErrorUtil.write(exp);
-				return false;
-			}
-		}else {
-	    	try{
-				Socket socket = new Socket(key != null ? key : BarFrame.menuPanel.getPrinters()[0].getIp(), 9100);
-				BarFrame.setStatusMes("sockeet connected!");
-				OutputStream outputStream = socket.getOutputStream();
-				int[] cmd = BarOption.getOpenDrawerCommand();
-				for (int i : cmd) {
-					outputStream.write(i);
-				}
-				
-				BarFrame.setStatusMes("Command Send!");
-				outputStream.flush();
-				socket.close();
-				BarFrame.setStatusMes("Drawer Openned!");
-				return true;
-			} catch (Exception exp) {
-				ErrorUtil.write(exp);
-				return false;
-			}
-		}
-    }
     
 	//==============================================mev print part===========================================
     private static boolean doMevPrint(List<String> sndMsg) {
@@ -679,7 +616,7 @@ public class PrintService{
 	}
 
 	
-	private static boolean printThroughOSdriver(Path path, PrintRequestAttributeSet pras,
+	public static boolean printThroughOSdriver(Path path, PrintRequestAttributeSet pras,
 			boolean deleteCommandFile) {
 		try {
 			DocPrintJob job = defaultService.createPrintJob();
@@ -719,7 +656,7 @@ public class PrintService{
 		return formattedContent;
 	}
 	
-	private static Path getMevCommandFilePath(String fileName, byte[] command) {
+	public static Path getMevCommandFilePath(String fileName, byte[] command) {
 		String filePath = CASUtility.getPIMDirPath().concat(fileName);
 		Path path = Paths.get(filePath);
 		File file = new File(filePath);

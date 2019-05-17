@@ -21,6 +21,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.cas.client.platform.bar.action.Cmd_OpenDrawer;
 import org.cas.client.platform.bar.dialog.statistics.CheckBillDlg;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
@@ -146,40 +147,6 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 			}
 		}
 		// FunctionButton------------------------------------------------------------------------------------------------
-		else if (o instanceof FunctionButton) {
-        	if(o == btnAddTable) {		//add table
-        		if(!BarOption.isSingleUser()) {
-        			new LoginDlg(null).setVisible(true);
-    	            if (LoginDlg.PASSED == true) {
-    	            	BarFrame.checkSignIn();
-    	            	//@note: lowdown a little the level, to enable the admin do sales work.
-    	            	if ("admin".equalsIgnoreCase(LoginDlg.USERNAME))
-    	            		 LoginDlg.USERTYPE = LoginDlg.USER_STATUS;
-    	            }else {
-    	            	return;
-    	            }
-        		}
-    			new TableDlg(null, null).setVisible(true);
-    			initContent();
-        	}else if(o == btnOrderManage) {	//bill management
-        		String endNow = BarOption.df.format(new Date());
-        		int p = endNow.indexOf(" ");
-        		String startTime = endNow.substring(0, p + 1) + BarOption.getStartTime();
-        		CheckBillDlg dlg = new CheckBillDlg(BarFrame.instance);
-        		dlg.initContent(startTime, endNow);
-        		dlg.setVisible(true);
-        	} else if (o == btnOpenDrawer) {	//open drawer.
-        		PrintService.openDrawer();
-            //} else if (o == btnWaiterReport) {
-            } else if (o == btnSetting) {
-                BarFrame.instance.switchMode(3);
-            }else if (o == btnReport) {
-	    		ReportDlg dlg = new ReportDlg(BarFrame.instance);
-	    		dlg.setVisible(true);
-            }else if (o == btnCheckInOut) {
-            	BarFrame.instance.userCheckOut();
-            }
-        }
 //		else if(o instanceof JToggleButton) {
 //        	if(o == btnChangeMode) {
 //        		BarOption.setFastFoodMode(btnChangeMode.isSelected());
@@ -197,34 +164,27 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         // line 2
 //        btnChangeMode.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
 //                tBtnHeight);
-        btnAddTable.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
+        BarFrame.btnAddTable.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
                 tBtnHeight);
-        btnOrderManage.setBounds(btnAddTable.getX() + tBtnWidht + CustOpts.HOR_GAP, btnAddTable.getY(), tBtnWidht,
+        BarFrame.btnOrderManage.setBounds(BarFrame.btnAddTable.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnAddTable.getY(), tBtnWidht,
                 tBtnHeight);
-        btnOpenDrawer.setBounds(btnOrderManage.getX() + tBtnWidht + CustOpts.HOR_GAP, btnOrderManage.getY(), tBtnWidht,
+        BarFrame.btnOpenDrawer2.setBounds(BarFrame.btnOrderManage.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnOrderManage.getY(), tBtnWidht,
                 tBtnHeight);
-        //btnWaiterReport.setBounds(btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, btnChangeMode.getY(), tBtnWidht,
+        //btnWaiterReport.setBounds(BarFrame.btnOpenDrawer2.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnChangeMode.getY(), tBtnWidht,
         //        tBtnHeight);
-        btnSetting.setBounds(btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, btnOpenDrawer.getY(), tBtnWidht,
+        BarFrame.btnSetting.setBounds(BarFrame.btnOpenDrawer2.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnOpenDrawer2.getY(), tBtnWidht,
                 tBtnHeight);
-        btnReport.setBounds(btnSetting.getX() + tBtnWidht + CustOpts.HOR_GAP, btnSetting.getY(), tBtnWidht,
+        BarFrame.btnReport.setBounds(BarFrame.btnSetting.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnSetting.getY(), tBtnWidht,
                 tBtnHeight);
-        btnCheckInOut.setBounds(btnReport.getX() + tBtnWidht + CustOpts.HOR_GAP, btnReport.getY(), tBtnWidht,
+        BarFrame.btnCheckInOut.setBounds(BarFrame.btnReport.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReport.getY(), tBtnWidht,
                 tBtnHeight);
     }
     
     void initComponent() {
     	removeAll();
 //        btnChangeMode = new JToggleButton(BarFrame.consts.ChangeMode());
-		btnAddTable = new FunctionButton(BarFrame.consts.AddTable());
-		btnOrderManage = new FunctionButton(BarFrame.consts.OrderManage());
-		btnOpenDrawer = new FunctionButton(BarFrame.consts.OpenDrawer());
-		//btnWaiterReport = new FunctionButton(BarFrame.consts.WaiterReport());
-		btnSetting = new FunctionButton(BarFrame.consts.SETTINGS());
-		btnReport = new FunctionButton(BarFrame.consts.Report());
-		btnCheckInOut = new FunctionButton(BarFrame.consts.CheckOut());
 
-        // border----------
+    	// border----------
         Color bg = BarOption.getBK("TablePanel");
     	if(bg == null) {
     		bg = new Color(216,216,216);
@@ -234,26 +194,18 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 
         // built
 //        add(btnChangeMode);
-        add(btnAddTable);
-        add(btnOrderManage);
-        add(btnOpenDrawer);
+        add(BarFrame.btnAddTable);
+        add(BarFrame.btnOrderManage);
+        add(BarFrame.btnOpenDrawer2);
         //add(btnWaiterReport);
-        add(btnSetting);
-        add(btnReport);
-        add(btnCheckInOut);
+        add(BarFrame.btnSetting);
+        add(BarFrame.btnReport);
+        add(BarFrame.btnCheckInOut);
 
         // add listener
         addComponentListener(this);
 
 //        btnChangeMode.addActionListener(this);
-        btnAddTable.addActionListener(this);
-        btnOrderManage.addActionListener(this);
-        btnOpenDrawer.addActionListener(this);
-        //btnWaiterReport.addActionListener(this);
-        btnSetting.addActionListener(this);
-        btnReport.addActionListener(this);
-        btnCheckInOut.addActionListener(this);
-        
 //        btnChangeMode.setSelected(BarOption.isFastFoodMode());
 
 		reLayout();
@@ -369,14 +321,5 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 
 	@Override
 	public void mouseExited(MouseEvent e) {}
-	
-    //private JToggleButton btnChangeMode;
-	private FunctionButton btnAddTable;
-	private FunctionButton btnOrderManage;
-	private FunctionButton btnOpenDrawer;
-	//private FunctionButton btnWaiterReport;
-	private FunctionButton btnSetting;
-	private FunctionButton btnReport;
-	private FunctionButton btnCheckInOut;
 
 }

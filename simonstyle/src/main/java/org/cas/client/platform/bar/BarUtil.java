@@ -12,7 +12,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
-import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
@@ -198,23 +197,6 @@ public class BarUtil {
 		}
 	}
 
-	//
-	public static void updateBillRecordPrices(BillPanel billPanel) {
-		updateBill(billPanel.getBillID(), "total", Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
-		updateBill(billPanel.getBillID(), "discount", Math.round(billPanel.discount));
-		updateBill(billPanel.getBillID(), "serviceFee", billPanel.serviceFee);
-	}
-	
-	public static void updateBill(int billId, String fieldName, int value) {
-		StringBuilder sb = new StringBuilder("update bill set ").append(fieldName).append(" = ").append(value).append(" where id = ").append(billId);
-		
-		try {
-			PIMDBModel.getStatement().executeUpdate(sb.toString());
-		}catch(Exception e) {
-			ErrorUtil.write(e);
-		}
-	}
-	
 	//remove html tags e.g.<html><center>Bill<br>FOOT INFO</center></html>
 	public static String getPlainTextOut(String string) {
 		int p = string.indexOf("<html>");
