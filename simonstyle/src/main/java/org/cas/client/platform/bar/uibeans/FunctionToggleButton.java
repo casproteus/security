@@ -7,7 +7,7 @@ import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.dialog.BarOption;
 
-public class FunctionToggleButton extends JToggleButton implements CustomButton{
+public class FunctionToggleButton extends JToggleButton{
 	
 	public FunctionToggleButton(String title) {
 		super(title);

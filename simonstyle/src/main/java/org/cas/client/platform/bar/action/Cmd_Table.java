@@ -12,7 +12,7 @@ import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.TabbleSettingDlg;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 
-public class Cmd_Table  implements ActionListener {
+public class Cmd_Table implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

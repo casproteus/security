@@ -13,7 +13,7 @@ import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 
-public class Cmd_BillFoot  implements ActionListener {
+public class Cmd_BillFoot implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

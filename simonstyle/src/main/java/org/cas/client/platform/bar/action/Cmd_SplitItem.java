@@ -13,7 +13,7 @@ import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.Dish;
 
-public class Cmd_SplitItem  implements ActionListener {
+public class Cmd_SplitItem implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

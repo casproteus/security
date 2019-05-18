@@ -7,7 +7,7 @@ import javax.swing.JButton;
 
 import org.cas.client.platform.bar.dialog.BarOption;
 
-public class FunctionButton extends JButton implements CustomButton{
+public class FunctionButton extends JButton{
 	
 	public FunctionButton(String title) {
 		super(title);

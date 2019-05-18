@@ -17,7 +17,7 @@ import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 
-public class Cmd_PrintOneBill  implements ActionListener {
+public class Cmd_PrintOneBill implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

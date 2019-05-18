@@ -1,6 +1,7 @@
 package org.cas.client.platform.bar.dialog;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,20 +15,15 @@ import java.awt.event.MouseMotionListener;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.cas.client.platform.bar.action.Cmd_OpenDrawer;
-import org.cas.client.platform.bar.dialog.statistics.CheckBillDlg;
-import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
-import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.model.DBConsts;
-import org.cas.client.platform.bar.print.PrintService;
-import org.cas.client.platform.bar.uibeans.FunctionButton;
+import org.cas.client.platform.bar.uibeans.MoreButton;
 import org.cas.client.platform.bar.uibeans.TableButton;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -155,29 +151,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     }
 
     void reLayout() {
-        int panelWidth = getWidth();
-        int panelHeight = getHeight();
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 7) / 6;
-        int tBtnHeight = panelHeight / 10;
-
-        // command buttons--------------
-        // line 2
-//        btnChangeMode.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
-//                tBtnHeight);
-        BarFrame.btnAddTable.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
-                tBtnHeight);
-        BarFrame.btnOrderManage.setBounds(BarFrame.btnAddTable.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnAddTable.getY(), tBtnWidht,
-                tBtnHeight);
-        BarFrame.btnOpenDrawer2.setBounds(BarFrame.btnOrderManage.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnOrderManage.getY(), tBtnWidht,
-                tBtnHeight);
-        //btnWaiterReport.setBounds(BarFrame.btnOpenDrawer2.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnChangeMode.getY(), tBtnWidht,
-        //        tBtnHeight);
-        BarFrame.btnSetting.setBounds(BarFrame.btnOpenDrawer2.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnOpenDrawer2.getY(), tBtnWidht,
-                tBtnHeight);
-        BarFrame.btnReport.setBounds(BarFrame.btnSetting.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnSetting.getY(), tBtnWidht,
-                tBtnHeight);
-        BarFrame.btnCheckInOut.setBounds(BarFrame.btnReport.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReport.getY(), tBtnWidht,
-                tBtnHeight);
+    	BarUtil.layoutCommandButtons(BarFrame.instance.groupedButtons[0]);
     }
     
     void initComponent() {
@@ -192,15 +166,8 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         setBackground(bg);
         setLayout(null);
 
-        // built
-//        add(btnChangeMode);
-        add(BarFrame.btnAddTable);
-        add(BarFrame.btnOrderManage);
-        add(BarFrame.btnOpenDrawer2);
-        //add(btnWaiterReport);
-        add(BarFrame.btnSetting);
-        add(BarFrame.btnReport);
-        add(BarFrame.btnCheckInOut);
+        // command buttons
+        BarUtil.addFunctionButtons(this, BarFrame.instance.groupedButtons[0]);
 
         // add listener
         addComponentListener(this);

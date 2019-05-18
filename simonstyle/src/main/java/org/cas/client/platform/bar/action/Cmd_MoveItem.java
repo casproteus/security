@@ -20,7 +20,7 @@ import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
-public class Cmd_MoveItem  implements ActionListener {
+public class Cmd_MoveItem implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

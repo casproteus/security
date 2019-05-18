@@ -17,7 +17,7 @@ import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.dialog.statistics.CheckBillDlg;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 
-public class Cmd_OrderManage  implements ActionListener {
+public class Cmd_OrderManage implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
@@ -14,14 +15,19 @@ import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
-public class Cmd_SuspendAll implements ActionListener {
+public class Cmd_Suspend implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-		BillListPanel billListPanel = (BillListPanel)BarFrame.instance.panels[1];
+		SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
+		BillPanel billPanel = salesPanel.billPanel;
 		
-		if(!billListPanel.checkColosedBill()) {
+    	salesPanel.billPanel.createAndPrintNewOutput();
+    	BillPanel.updateBillRecordPrices(salesPanel.billPanel);
+    	
+    	//this.setVisible(false);
+    	if(salesPanel.billPanel.status > DBConsts.suspended || salesPanel.billPanel.status < DBConsts.original) {
 			return;
 		}
 		
@@ -40,14 +46,16 @@ public class Cmd_SuspendAll implements ActionListener {
 					.append("' and (status is null or status = ").append(DBConsts.original).append(")");
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 			
-        	//update the tabel status
-			BarFrame.instance.closeATable(tableID, null);
         }catch(Exception exp) {
         	ErrorUtil.write(exp);
         }
         
-		BarFrame.instance.setCurBillIdx("");
-		BarFrame.instance.switchMode(0);
+    	if(BarOption.isFastFoodMode()) {
+	    	BarFrame.instance.addNewBillInCurTable();
+    	}else {
+			BarFrame.instance.setCurBillIdx("");
+			BarFrame.instance.switchMode(0);
+    	}
 		
 	}
 }

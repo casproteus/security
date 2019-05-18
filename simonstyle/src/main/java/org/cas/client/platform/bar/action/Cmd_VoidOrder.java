@@ -20,7 +20,7 @@ import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
-public class Cmd_VoidOrder  implements ActionListener {
+public class Cmd_VoidOrder implements ActionListener {
 
 	private static Cmd_VoidOrder instance;
 	

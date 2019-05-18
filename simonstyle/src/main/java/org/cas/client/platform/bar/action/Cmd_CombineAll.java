@@ -18,7 +18,7 @@ import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.hsqldb.lib.HashMap;
 
-public class Cmd_CombineAll  implements ActionListener {
+public class Cmd_CombineAll implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

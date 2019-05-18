@@ -18,7 +18,7 @@ import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
-public class Cmd_Refund  implements ActionListener {
+public class Cmd_Refund implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

@@ -16,7 +16,7 @@ import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
-public class Cmd_Send  implements ActionListener {
+public class Cmd_Send implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

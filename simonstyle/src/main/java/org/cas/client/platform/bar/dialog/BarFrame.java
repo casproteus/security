@@ -20,6 +20,7 @@ import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -36,17 +37,19 @@ import org.cas.client.platform.bar.action.Cmd_CancelAll;
 import org.cas.client.platform.bar.action.Cmd_ChangePrice;
 import org.cas.client.platform.bar.action.Cmd_CheckInOut;
 import org.cas.client.platform.bar.action.Cmd_CheckInOut3;
+import org.cas.client.platform.bar.action.Cmd_CheckOrder;
 import org.cas.client.platform.bar.action.Cmd_Color;
 import org.cas.client.platform.bar.action.Cmd_CombineAll;
 import org.cas.client.platform.bar.action.Cmd_Coupon;
 import org.cas.client.platform.bar.action.Cmd_DiscBill;
 import org.cas.client.platform.bar.action.Cmd_DiscItem;
+import org.cas.client.platform.bar.action.Cmd_DiscountCoupon;
 import org.cas.client.platform.bar.action.Cmd_Employee;
 import org.cas.client.platform.bar.action.Cmd_EqualBill;
 import org.cas.client.platform.bar.action.Cmd_GiftCard;
+import org.cas.client.platform.bar.action.Cmd_Lang;
 import org.cas.client.platform.bar.action.Cmd_Modify;
 import org.cas.client.platform.bar.action.Cmd_Modify3;
-import org.cas.client.platform.bar.action.Cmd_More;
 import org.cas.client.platform.bar.action.Cmd_MoveItem;
 import org.cas.client.platform.bar.action.Cmd_OpenDrawer;
 import org.cas.client.platform.bar.action.Cmd_OrderManage;
@@ -67,6 +70,7 @@ import org.cas.client.platform.bar.action.Cmd_ServiceFee;
 import org.cas.client.platform.bar.action.Cmd_Setting;
 import org.cas.client.platform.bar.action.Cmd_SlpitBill;
 import org.cas.client.platform.bar.action.Cmd_SplitItem;
+import org.cas.client.platform.bar.action.Cmd_Suspend;
 import org.cas.client.platform.bar.action.Cmd_SuspendAll;
 import org.cas.client.platform.bar.action.Cmd_Table;
 import org.cas.client.platform.bar.action.Cmd_VoidOrder;
@@ -78,9 +82,9 @@ import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.net.HttpRequestClient;
 import org.cas.client.platform.bar.net.RequestNewOrderThread;
 import org.cas.client.platform.bar.net.bean.Table;
-import org.cas.client.platform.bar.uibeans.CustomButton;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
+import org.cas.client.platform.bar.uibeans.MoreButton;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -114,6 +118,9 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         CASControl.ctrl.setMainFrame(new CASMainFrame());
         menuPanel = new MenuPanel();	//have to be after initModel, before new BarFrame().
         instance = new BarFrame();
+        instance.initButtons();
+        instance.initComponent();
+    	
         numberPanelDlg = new NumberPanelDlg(instance);
         discountDlg = new DiscountDlg(instance);
         payDlg = new PayDlg(instance);
@@ -320,11 +327,6 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 			}
 		}
 	}
-    
-    public BarFrame() {
-    	initButtons();
-    	initComponent();
-    }
     
 	public void initComponent(){
     	getContentPane().removeAll();
@@ -853,6 +855,8 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     public JLabel valStartTime;
 
     public JPanel[] panels = new JPanel[4];
+    public ArrayList[] groupedButtons = {new ArrayList<JComponent>(), new ArrayList<JComponent>(), new ArrayList<JComponent>(),new ArrayList<JComponent>()};
+
     public static MenuPanel menuPanel;
     static JLabel lblStatus;
     private JLabel lblVersion;
@@ -922,9 +926,21 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         btnOpenDrawer = new FunctionButton(consts.OpenDrawer());
         btnDiscBill = new FunctionButton(consts.VolumnDiscount());
         btnRefund = new FunctionButton(consts.Refund());
-        btnMore = new FunctionButton(consts.MORE());
+        btnMore = new MoreButton(consts.MORE());
         btnSend = new FunctionButton(consts.SEND());
         
+        btnReport2 = new FunctionButton(BarFrame.consts.Report());
+        //btnLine_3_2 = new JToggleButton(BarFrame.consts.QTY());
+		BarFrame.btnOTHER = new FunctionButton(BarFrame.consts.GIFTCARD());
+        btnDiscountCoupon = new FunctionButton(BarFrame.consts.COUPON());
+		btnSuspend = new FunctionButton(BarFrame.consts.SUSPEND());
+		btnCheckOrder = new FunctionButton(BarFrame.consts.OrderManage());
+		btnEN = new FunctionButton("EN");
+		btnFR = new FunctionButton("FR");
+		btnCN = new FunctionButton("CN");
+		btnSettings2 = new FunctionButton(BarFrame.consts.SETTINGS());
+		btnCheckOut2 = new FunctionButton(BarFrame.consts.CheckOut());
+		
         //SettingPanel
         btnReturn3 = new FunctionButton(consts.RETURN());
         btnEmployee = new FunctionButton(consts.Operator());
@@ -943,9 +959,9 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         btnOrderManage.addActionListener(new Cmd_OrderManage());
         btnOpenDrawer2.addActionListener(Cmd_OpenDrawer.getInstance());
         //btnWaiterReport.addActionListener(this);
-        btnSetting.addActionListener(new Cmd_Setting());
-        btnReport.addActionListener(new Cmd_Report());
-        btnCheckInOut.addActionListener(new Cmd_CheckInOut());
+        btnSetting.addActionListener(Cmd_Setting.getInstance());
+        btnReport.addActionListener(Cmd_Report.getInstance());
+        btnCheckInOut.addActionListener(Cmd_CheckInOut.getInstance());
         //billList
         btnAddUser.addActionListener(new Cmd_AddUser());
 		btnPrintAll.addActionListener(new Cmd_PrintAll());
@@ -977,8 +993,18 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         btnOpenDrawer.addActionListener(Cmd_OpenDrawer.getInstance());
         btnDiscBill.addActionListener(new Cmd_DiscBill());
         btnRefund.addActionListener(new Cmd_Refund());
-        btnMore.addActionListener(new Cmd_More());
         btnSend.addActionListener(new Cmd_Send());
+        
+		btnReport2.addActionListener(Cmd_Report.getInstance());
+		BarFrame.btnOTHER.addActionListener(Cmd_Pay.getInstance());
+		btnDiscountCoupon.addActionListener(new Cmd_DiscountCoupon());
+		btnEN.addActionListener(Cmd_Lang.getInstance());
+		btnFR.addActionListener(Cmd_Lang.getInstance());
+		btnCN.addActionListener(Cmd_Lang.getInstance());
+		btnSettings2.addActionListener(Cmd_Setting.getInstance());
+		btnSuspend.addActionListener(new Cmd_Suspend());
+		btnCheckOrder.addActionListener(new Cmd_CheckOrder());
+		btnCheckOut2.addActionListener(Cmd_CheckInOut.getInstance());
         //
         btnReturn3.addActionListener(new Cmd_Return3());
         btnEmployee.addActionListener(new Cmd_Employee());
@@ -990,29 +1016,97 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         btnCoupon.addActionListener(new Cmd_Coupon());
         btnColor.addActionListener(new Cmd_Color());
         btnCheckInOut3.addActionListener(new Cmd_CheckInOut3());
+        regroupButtonsByDefault();
 	}
+    
+    private void regroupButtonsByDefault(){
+    	groupedButtons[0].add(btnAddTable);
+    	groupedButtons[0].add(btnOrderManage);
+    	groupedButtons[0].add(btnOpenDrawer2);
+    	//groupedButtons[0].add(btnWaiterReport);
+    	groupedButtons[0].add(btnSetting);
+    	groupedButtons[0].add(btnReport);
+    	groupedButtons[0].add(btnCheckInOut);
+    	
+    	//BillListPanel
+    	groupedButtons[1].add(btnAddUser);
+    	groupedButtons[1].add(btnPrintAll);
+    	groupedButtons[1].add(btnPrintOneBill);
+    	groupedButtons[1].add(btnPrintOneInVoice);
+    	groupedButtons[1].add(btnEqualBill);
+    	groupedButtons[1].add(btnSplitItem);
+    	groupedButtons[1].add(btnMoveItem);
+    	groupedButtons[1].add(btnCombineAll);
+    	groupedButtons[1].add(btnSuspendAll);
+    	groupedButtons[1].add(btnReturn2);
+    	
+    	//SalesPanel
+    	groupedButtons[2].add(btnCASH);
+    	groupedButtons[2].add(btnDEBIT);
+    	groupedButtons[2].add(btnVISA);
+    	groupedButtons[2].add(btnSplitBill);
+    	groupedButtons[2].add(btnRemoveItem);
+    	groupedButtons[2].add(btnModify);
+    	groupedButtons[2].add(btnDiscItem);
+    	groupedButtons[2].add(btnChangePrice);
+    	groupedButtons[2].add(btnServiceFee);
+    	groupedButtons[2].add(btnPrintBill);
+
+    	groupedButtons[2].add(btnReturn);
+    	groupedButtons[2].add(btnAddBill);
+    	groupedButtons[2].add(btnMASTER);
+    	groupedButtons[2].add(btnCancelAll);
+    	groupedButtons[2].add(btnVoidOrder);
+    	groupedButtons[2].add(btnOpenDrawer);
+    	groupedButtons[2].add(btnDiscBill);
+    	groupedButtons[2].add(btnRefund);
+    	groupedButtons[2].add(btnSend);
+		
+    	groupedButtons[2].add(btnReport2);
+    	groupedButtons[2].add(btnOTHER);
+    	groupedButtons[2].add(btnDiscountCoupon);
+    	groupedButtons[2].add(btnEN);
+    	groupedButtons[2].add(btnFR);
+    	groupedButtons[2].add(btnCN);
+    	groupedButtons[2].add(btnSettings2);
+    	groupedButtons[2].add(btnSuspend);
+    	groupedButtons[2].add(btnCheckOrder);
+    	groupedButtons[2].add(btnCheckOut2);
+    	
+    	//setting panels
+        groupedButtons[3].add(btnReturn3);
+        groupedButtons[3].add(btnEmployee);
+        groupedButtons[3].add(btnPrinter);
+        groupedButtons[3].add(btnTable);
+        groupedButtons[3].add(btnBillFoot);
+        groupedButtons[3].add(btnModify3);
+        groupedButtons[3].add(btnGiftCard);
+        groupedButtons[3].add(btnCoupon);
+        groupedButtons[3].add(btnColor);
+        groupedButtons[3].add(btnCheckInOut3);
+    }
     
 	//TablePanel
     //private JToggleButton btnChangeMode;
-	public static FunctionButton btnAddTable;
-	public static FunctionButton btnOrderManage;
-	public static FunctionButton btnOpenDrawer2;
-	//public static FunctionButton btnWaiterReport;
-	public static FunctionButton btnSetting;
-	public static FunctionButton btnReport;
-	public static FunctionButton btnCheckInOut;
+	private static FunctionButton btnAddTable;
+	private static FunctionButton btnOrderManage;
+	private static FunctionButton btnOpenDrawer2;
+	//private static FunctionButton btnWaiterReport;
+	private static FunctionButton btnSetting;
+	private static FunctionButton btnReport;
+	private static FunctionButton btnCheckInOut;
 	
 	//BillListPanel
-	public static FunctionButton btnAddUser;
-	public static FunctionButton btnPrintAll;
-	public static FunctionButton btnPrintOneBill;
-	public static FunctionButton btnPrintOneInVoice;
+	private static FunctionButton btnAddUser;
+	private static FunctionButton btnPrintAll;
+	private static FunctionButton btnPrintOneBill;
+	private static FunctionButton btnPrintOneInVoice;
 	public static FunctionToggleButton btnEqualBill;
 	public static FunctionToggleButton btnSplitItem;
 	public static FunctionToggleButton btnMoveItem;
 	public static FunctionButton btnCombineAll;
-	public static FunctionButton btnSuspendAll;
-	public static FunctionButton btnReturn2;
+	private static FunctionButton btnSuspendAll;
+	private static FunctionButton btnReturn2;
 	
 	//SalesPanel
 	public static FunctionButton btnCASH;
@@ -1020,88 +1114,99 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	public static FunctionButton btnVISA;
 	public static FunctionButton btnMASTER;
 	public static FunctionButton btnOTHER;
-	public static FunctionButton btnSplitBill;
-	public static FunctionButton btnRemoveItem;
-	public static FunctionButton btnModify;
+	private static FunctionButton btnSplitBill;
+	private static FunctionButton btnRemoveItem;
+	private static FunctionButton btnModify;
 	public static FunctionToggleButton btnDiscItem;
 	public static FunctionToggleButton btnChangePrice;
-	public static FunctionButton btnServiceFee;
-	public static FunctionButton btnPrintBill;
+	private static FunctionButton btnServiceFee;
+	private static FunctionButton btnPrintBill;
 
-	public static FunctionButton btnReturn;
-	public static FunctionButton btnAddBill;
+	private static FunctionButton btnReturn;
+	private static FunctionButton btnAddBill;
 	   
-	public static FunctionButton btnCancelAll;
-	public static FunctionButton btnVoidOrder;
-	public static FunctionButton btnOpenDrawer;
-	public static FunctionButton btnDiscBill;
-	public static FunctionButton btnRefund;
-	public static FunctionButton btnMore;
-	public static FunctionButton btnSend;
+	private static FunctionButton btnCancelAll;
+	private static FunctionButton btnVoidOrder;
+	private static FunctionButton btnOpenDrawer;
+	private static FunctionButton btnDiscBill;
+	private static FunctionButton btnRefund;
+	private static MoreButton btnMore;
+	private static FunctionButton btnSend;
+	
+	private static FunctionButton btnReport2;
+	private static FunctionButton btnDiscountCoupon;
+	public static FunctionButton btnEN;
+	public static FunctionButton btnFR;
+	public static FunctionButton btnCN;
+	private static FunctionButton btnSettings2;
+	private static FunctionButton btnCheckOut2;
+	private static FunctionButton btnSuspend;
+	private static FunctionButton btnCheckOrder;
 	
 	//setting panels
-    public static FunctionButton btnReturn3;
-    public static FunctionButton btnEmployee;
-    public static FunctionButton btnPrinter;
-    public static FunctionButton btnTable;
-    public static FunctionButton btnBillFoot;
-    public static FunctionButton btnModify3;
-    public static FunctionButton btnGiftCard;
-    public static FunctionButton btnCoupon;
-    public static FunctionButton btnColor;
-    public static FunctionButton btnCheckInOut3;
+    private static FunctionButton btnReturn3;
+    private static FunctionButton btnEmployee;
+    private static FunctionButton btnPrinter;
+    private static FunctionButton btnTable;
+    private static FunctionButton btnBillFoot;
+    private static FunctionButton btnModify3;
+    private static FunctionButton btnGiftCard;
+    private static FunctionButton btnCoupon;
+    private static FunctionButton btnColor;
+    private static FunctionButton btnCheckInOut3;
     
-    public static CustomButton[] buttons = {
+    private static JComponent[] buttons = {
     		btnAddTable,		//0
-    		btnOrderManage,		//
-    		btnOpenDrawer2,		//
-    		btnSetting,		//
-    		btnReport,		//
-    		btnCheckInOut,		//
+    		btnOrderManage,		//1
+    		btnOpenDrawer2,		//2
+    		btnSetting,		//3
+    		btnReport,		//4
+    		btnCheckInOut,		//5
     			
-    		btnAddUser,		//
-    		btnPrintAll,		//
-    		btnPrintOneBill,		//
-    		btnPrintOneInVoice,		//
-    		btnEqualBill,		//
-    		btnSplitItem,		//
-    		btnMoveItem,		//
-    		btnCombineAll,		//
-    		btnSuspendAll,		//
-    		btnReturn2,		//
+    		btnAddUser,		//6
+    		btnPrintAll,		//7
+    		btnPrintOneBill,		//8
+    		btnPrintOneInVoice,		//9
+    		btnEqualBill,		//10
+    		btnSplitItem,		//11
+    		btnMoveItem,		//12
+    		btnCombineAll,		//13
+    		btnSuspendAll,		//14
+    		btnReturn2,		//15
     			
-    		btnCASH,		//
-    		btnDEBIT,		//
-    		btnVISA,		//
-    		btnMASTER,		//
-    		btnOTHER,		//
-    		btnSplitBill,		//
-    		btnRemoveItem,		//
-    		btnModify,		//
-    		btnDiscItem,		//
-    		btnChangePrice,		//
-    		btnServiceFee,		//
-    		btnPrintBill,		//
+    		btnCASH,		//16
+    		btnDEBIT,		//17
+    		btnVISA,		//18
+    		btnMASTER,		//19
+    		btnOTHER,		//20
+    		btnSplitBill,		//21
+    		btnRemoveItem,		//22
+    		btnModify,		//23
+    		btnDiscItem,		//24
+    		btnChangePrice,		//25
+    		btnServiceFee,		//26
+    		btnPrintBill,		//27
 
-    		btnReturn,		//
-    		btnAddBill,		//
+    		btnReturn,		//28
+    		btnAddBill,		//29
     			   
-    		btnCancelAll,		//
-    		btnVoidOrder,		//
-    		btnOpenDrawer,		//
-    		btnDiscBill,		//
-    		btnRefund,		//
-    		btnMore,		//
-    		btnSend,		//
+    		btnCancelAll,		//30
+    		btnVoidOrder,		//31
+    		btnOpenDrawer,		//32
+    		btnDiscBill,		//33
+    		btnRefund,		//34
+    		btnMore,		//35
+    		btnSend,		//36
     			
-    		btnReturn3,		//
-    		btnEmployee,		//
-    		btnPrinter,		//
-    		btnTable,		//
-    		btnBillFoot,		//
-    		btnModify3,		//
-    		btnGiftCard,		//
-    		btnCoupon,		//
-    		btnColor,		//
-    		btnCheckInOut3}; 		//
+    		btnReturn3,		//37
+    		btnEmployee,		//38
+    		btnPrinter,		//39
+    		btnTable,		//40
+    		btnBillFoot,		//41
+    		btnModify3,		//42
+    		btnGiftCard,		//43
+    		btnCoupon,		//44
+    		btnColor,		//45
+    		btnCheckInOut3}; 		//46
+    
 }

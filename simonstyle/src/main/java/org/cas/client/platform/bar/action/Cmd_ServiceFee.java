@@ -13,7 +13,7 @@ import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.resource.international.DlgConst;
 
-public class Cmd_ServiceFee  implements ActionListener {
+public class Cmd_ServiceFee implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

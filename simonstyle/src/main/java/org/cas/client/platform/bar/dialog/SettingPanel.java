@@ -326,32 +326,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     }
 
     void reLayout() {
-        int panelWidth = getWidth();
-        int panelHeight = getHeight();
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 11) / 10;
-        int tBtnHeight = panelHeight / 10;
 
         // command buttons--------------
-        BarFrame.btnReturn3.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht,
-                tBtnHeight);
-        BarFrame.btnEmployee.setBounds(BarFrame.btnReturn3.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
-                tBtnHeight);
-        BarFrame.btnPrinter.setBounds(BarFrame.btnEmployee.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
-                tBtnHeight);
-        BarFrame.btnTable.setBounds(BarFrame.btnPrinter.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
-                tBtnHeight);
-        BarFrame.btnBillFoot.setBounds(BarFrame.btnTable.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
-                tBtnHeight);
-        BarFrame.btnModify3.setBounds(BarFrame.btnBillFoot.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
-                tBtnHeight);
-        BarFrame.btnGiftCard.setBounds(BarFrame.btnModify3.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
-                tBtnHeight);
-        BarFrame.btnCoupon.setBounds(BarFrame.btnGiftCard.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
-                tBtnHeight);
-        BarFrame.btnColor.setBounds(BarFrame.btnCoupon.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
-                tBtnHeight);
-        BarFrame.btnCheckInOut3.setBounds(BarFrame.btnColor.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn3.getY(), tBtnWidht,
-                tBtnHeight);
+        BarUtil.layoutCommandButtons(BarFrame.instance.groupedButtons[3]);
 
         // TOP part============================
 		lblGST.setBounds(CustOpts.HOR_GAP * 4, CustOpts.VER_GAP * 4,
@@ -547,7 +524,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxTreatPricePromtAsTaxInclude.setSelected(BarOption.isTreatPricePromtAsTaxInclude());
         cbxShowCustomerFrame.setSelected(BarOption.isShowCustomerFrame());
 
-        addControlButtons();
+        BarUtil.addFunctionButtons(this, BarFrame.instance.groupedButtons[3]);
         addMenuRelatedComps();
         addOtherComponentes();
 
@@ -588,19 +565,6 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
 		reLayout();
     }
 
-	private void addControlButtons() {
-		add(BarFrame.btnCheckInOut3);
-        add(BarFrame.btnEmployee);
-        add(BarFrame.btnPrinter);
-        add(BarFrame.btnTable);
-        add(BarFrame.btnBillFoot);
-        add(BarFrame.btnModify3);
-        add(BarFrame.btnGiftCard);
-        add(BarFrame.btnCoupon);
-        add(BarFrame.btnColor);
-        add(BarFrame.btnReturn3);
-	}
-	
 	private void addMenuRelatedComps() {
 		add(BarFrame.menuPanel);
 		add(lblCategoryRow);

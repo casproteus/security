@@ -12,7 +12,7 @@ import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.SettingPrinterDlg;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 
-public class Cmd_Printer  implements ActionListener {
+public class Cmd_Printer implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

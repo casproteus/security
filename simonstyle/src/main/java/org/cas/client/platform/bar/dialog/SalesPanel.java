@@ -1,51 +1,23 @@
 package org.cas.client.platform.bar.dialog;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.BarUtil;
-import org.cas.client.platform.bar.action.Cmd_AddBill;
-import org.cas.client.platform.bar.action.Cmd_CancelAll;
-import org.cas.client.platform.bar.action.Cmd_ChangePrice;
-import org.cas.client.platform.bar.action.Cmd_DiscBill;
-import org.cas.client.platform.bar.action.Cmd_DiscItem;
-import org.cas.client.platform.bar.action.Cmd_Modify;
-import org.cas.client.platform.bar.action.Cmd_More;
-import org.cas.client.platform.bar.action.Cmd_OpenDrawer;
-import org.cas.client.platform.bar.action.Cmd_Pay;
-import org.cas.client.platform.bar.action.Cmd_PrintBill;
-import org.cas.client.platform.bar.action.Cmd_Refund;
-import org.cas.client.platform.bar.action.Cmd_RemoveItem;
-import org.cas.client.platform.bar.action.Cmd_Return;
-import org.cas.client.platform.bar.action.Cmd_Send;
-import org.cas.client.platform.bar.action.Cmd_ServiceFee;
-import org.cas.client.platform.bar.action.Cmd_SlpitBill;
-import org.cas.client.platform.bar.action.Cmd_VoidOrder;
-import org.cas.client.platform.bar.action.UpdateItemDiscountAction;
-import org.cas.client.platform.bar.action.UpdateItemPriceAction;
-import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
-import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.bar.uibeans.CategoryToggleButton;
-import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.bar.uibeans.MenuButton;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
-import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
@@ -199,42 +171,11 @@ public class SalesPanel extends JPanel implements ComponentListener, FocusListen
 //    }
     
     void reLayout() {
-        int panelHeight = getHeight();
-
-        int tBtnWidht = (getWidth() - CustOpts.HOR_GAP * 10) / 10;
-        int tBtnHeight = panelHeight / 10;
-
         // command buttons--------------
-        // line 2
-        BarFrame.btnReturn.setBounds(CustOpts.HOR_GAP, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
-        BarFrame.btnAddBill.setBounds(BarFrame.btnReturn.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnMASTER.setBounds(BarFrame.btnAddBill.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnCancelAll.setBounds(BarFrame.btnMASTER.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnVoidOrder.setBounds(BarFrame.btnCancelAll.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnOpenDrawer.setBounds(BarFrame.btnVoidOrder.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnDiscBill.setBounds(BarFrame.btnOpenDrawer.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnRefund.setBounds(BarFrame.btnDiscBill.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnMore.setBounds(BarFrame.btnRefund.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnSend.setBounds(BarFrame.btnMore.getX() + tBtnWidht + CustOpts.HOR_GAP, BarFrame.btnReturn.getY(), tBtnWidht, tBtnHeight);
-        // line 1
-        BarFrame.btnCASH.setBounds(BarFrame.btnReturn.getX(),  BarFrame.btnReturn.getY() - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
-        BarFrame.btnDEBIT.setBounds(BarFrame.btnAddBill.getX(), BarFrame.btnCASH.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnVISA.setBounds(BarFrame.btnMASTER.getX(), BarFrame.btnCASH.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnSplitBill.setBounds(BarFrame.btnCancelAll.getX(), BarFrame.btnCASH.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnRemoveItem.setBounds(BarFrame.btnVoidOrder.getX(), BarFrame.btnCASH.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnModify.setBounds(BarFrame.btnOpenDrawer.getX(), BarFrame.btnCASH.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnDiscItem.setBounds(BarFrame.btnDiscBill.getX(), BarFrame.btnCASH.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnChangePrice.setBounds(BarFrame.btnRefund.getX(), BarFrame.btnCASH.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnServiceFee.setBounds(BarFrame.btnMore.getX(), BarFrame.btnCASH.getY(), tBtnWidht, tBtnHeight);
-        BarFrame.btnPrintBill.setBounds(BarFrame.btnSend.getX(), BarFrame.btnCASH.getY(), tBtnWidht, tBtnHeight);
-
-//        btnLine_2_11.setBounds(btnLine_2_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_1_2.getY(), tBtnWidht, tBtnHeight);
-//        btnLine_2_12.setBounds(btnLine_1_5.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_14.getY(), tBtnWidht, tBtnHeight);
-//        btnLine_2_13.setBounds(btnLine_1_4.getX() + tBtnWidht + CustOpts.HOR_GAP, btnLine_2_14.getY(), tBtnWidht, tBtnHeight);
-//        btnLine_2_14.setBounds(CustOpts.HOR_GAP,, tBtnWidht, tBtnHeight);
+        int top = BarUtil.layoutCommandButtons(BarFrame.instance.groupedButtons[2]);
         
         // TOP part============================
-        int topAreaHeight = BarFrame.btnCASH.getY() - 3 * CustOpts.VER_GAP;
+        int topAreaHeight = top - 3 * CustOpts.VER_GAP;
 
         billPanel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
                 (int) (getWidth() * (1 - BarOption.getMenuAreaPortion())), topAreaHeight);
@@ -262,27 +203,7 @@ public class SalesPanel extends JPanel implements ComponentListener, FocusListen
         setLayout(null);
         
         // built
-        add(BarFrame.btnCASH);
-        add(BarFrame.btnDEBIT);
-        add(BarFrame.btnVISA);
-        add(BarFrame.btnSplitBill);
-        add(BarFrame.btnRemoveItem);
-        add(BarFrame.btnModify);
-        add(BarFrame.btnDiscItem);
-        add(BarFrame.btnChangePrice);
-        add(BarFrame.btnServiceFee);
-        add(BarFrame.btnPrintBill);
-
-        add(BarFrame.btnReturn);
-        add(BarFrame.btnAddBill);
-        add(BarFrame.btnMASTER);
-        add(BarFrame.btnCancelAll);
-        add(BarFrame.btnVoidOrder);
-        add(BarFrame.btnOpenDrawer);
-        add(BarFrame.btnDiscBill);
-        add(BarFrame.btnRefund);
-        add(BarFrame.btnMore);
-        add(BarFrame.btnSend);
+        BarUtil.addFunctionButtons(this, BarFrame.instance.groupedButtons[2]);
         
         add(billPanel);
         // add listener

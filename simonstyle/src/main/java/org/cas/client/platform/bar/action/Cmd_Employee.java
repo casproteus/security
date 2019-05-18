@@ -12,7 +12,7 @@ import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.dialog.statistics.EmployeeListDlg;
 
-public class Cmd_Employee  implements ActionListener {
+public class Cmd_Employee implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

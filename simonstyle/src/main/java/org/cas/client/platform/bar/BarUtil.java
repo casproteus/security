@@ -1,5 +1,7 @@
 package org.cas.client.platform.bar;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -9,12 +11,15 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
+import org.cas.client.platform.bar.uibeans.MoreButton;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
@@ -295,5 +300,57 @@ public class BarUtil {
 		Dish dish = new Dish();
 		dishes.add(dish);
 		return dishes;
+	}
+	
+	public static void addFunctionButtons(Container panel, ArrayList<JComponent> buttons) {
+		int max = buttons.size();
+        if(max > 20) {
+        	MoreButton btnMore = new MoreButton(BarFrame.consts.MORE());
+        	for(int i = 19; i < buttons.size(); i++) {
+        		btnMore.addButton(buttons.get(i));
+        	}
+        	buttons.add(19, btnMore);
+        	max = 20;
+        }
+        
+        for(int i = 0; i < max ; i++) {
+        	panel.add((Component)buttons.get(i));
+		}
+	}
+
+	public static int layoutCommandButtons(ArrayList<JComponent> buttons) {
+        int panelWidth = BarFrame.instance.getWidth() - CustOpts.SIZE_EDGE * 2;
+        int panelHeight = BarFrame.instance.getHeight() - 80;
+
+        // command buttons--------------
+        int butonQT = buttons.size();
+        
+        int row;
+        int col;
+        if(butonQT <= 0) {
+        	row = 0;
+        	col = 0;
+        }else if(butonQT <= 10) {
+        	row = 1;
+        	col = butonQT;
+        }else {
+        	row = 2;
+        	if(butonQT >= 20){
+        		col = 10;
+        	}else{
+        		col = butonQT%2 + butonQT/2;
+        	}
+        }
+        
+        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * (col + 1)) / (col);
+        int tBtnHeight = panelHeight / 10;
+
+        int max = butonQT > 20 ? 20 : butonQT;
+        for(int i = 0; i < max; i++) {
+        	buttons.get(i).setBounds(CustOpts.HOR_GAP + tBtnWidht * (i < col ? i : i - col) + CustOpts.HOR_GAP * (i < col ? i : i - col),
+        			panelHeight - tBtnHeight * (i < col && max > col ? 2 : 1) - CustOpts.VER_GAP * (i < col && max > col ? 2 : 1),
+        			tBtnWidht, tBtnHeight);
+        }
+		return buttons != null && buttons.size() > 0 ? buttons.get(0).getY() : -1;
 	}
 }

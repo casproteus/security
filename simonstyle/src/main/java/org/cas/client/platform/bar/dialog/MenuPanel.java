@@ -38,7 +38,7 @@ public class MenuPanel extends JPanel implements ActionListener {
     Integer menuColumn;
     Integer menuRow;
 
-    String[][] categoryNameMetrix;
+    public String[][] categoryNameMetrix;
     ArrayList<ArrayList<CategoryToggleButton>> onSrcCategoryTgbMatrix = new ArrayList<ArrayList<CategoryToggleButton>>();
     CategoryToggleButton tgbActiveCategory;
     

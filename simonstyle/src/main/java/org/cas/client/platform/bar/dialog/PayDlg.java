@@ -36,7 +36,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	//flag
 	boolean isAllContentSelected;
 	
-	float maxInput;
+	public float maxInput;
 
 	//values got from db record
 	int oldTotal = 0;

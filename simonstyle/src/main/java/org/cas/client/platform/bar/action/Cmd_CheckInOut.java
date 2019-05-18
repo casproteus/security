@@ -11,8 +11,19 @@ import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 
-public class Cmd_CheckInOut  implements ActionListener {
+public class Cmd_CheckInOut implements ActionListener {
 
+	private static Cmd_CheckInOut instance;
+	
+	private Cmd_CheckInOut() {}
+	
+	public static Cmd_CheckInOut getInstance() {
+		if(instance == null) {
+			instance = new Cmd_CheckInOut();
+		}
+		return instance;
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		BarFrame.instance.userCheckOut();

@@ -17,7 +17,7 @@ import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
-public class Cmd_EqualBill  implements ActionListener {
+public class Cmd_EqualBill implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

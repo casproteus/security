@@ -24,7 +24,7 @@ import org.cas.client.platform.casutil.ErrorUtil;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 
-public class Cmd_OpenDrawer  implements ActionListener {
+public class Cmd_OpenDrawer implements ActionListener {
 	private static Cmd_OpenDrawer instance;
 	
 	private Cmd_OpenDrawer() {}

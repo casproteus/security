@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -65,16 +66,8 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		add(btnLeft);
 		add(btnRight);
 		add(separator);
-		add(BarFrame.btnAddUser);
-		add(BarFrame.btnPrintAll);
-//		add(BarFrame.btnPrintOneBill);
-//		add(BarFrame.btnPrintOneInVoice);
-		add(BarFrame.btnEqualBill);
-		add(BarFrame.btnCombineAll);
-		add(BarFrame.btnSplitItem);
-		add(BarFrame.btnMoveItem);
-		add(BarFrame.btnSuspendAll);
-		add(BarFrame.btnReturn2);
+		
+		BarUtil.addFunctionButtons(this, BarFrame.instance.groupedButtons[1]);
 		
 		addComponentListener(this);
 		btnLeft.addActionListener(this);
@@ -186,36 +179,13 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	}
 	
 	private void reLayout() {
-
-        int panelWidth = getWidth();
-        int panelHeight = getHeight();
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * 9) / 8;
-        int tBtnHeight = panelHeight / 10;
-
-
-        BarFrame.btnReturn2.setBounds(CustOpts.SIZE_EDGE, panelHeight - tBtnHeight - CustOpts.VER_GAP, tBtnWidht, tBtnHeight);
 		
-        BarFrame.btnAddUser.setBounds(BarFrame.btnReturn2.getX() + BarFrame.btnReturn2.getWidth() + CustOpts.HOR_GAP, BarFrame.btnReturn2.getY(), 
-				tBtnWidht, tBtnHeight);
-        BarFrame.btnPrintAll.setBounds(BarFrame.btnAddUser.getX() + BarFrame.btnAddUser.getWidth() + CustOpts.HOR_GAP, BarFrame.btnReturn2.getY(),
-				tBtnWidht, tBtnHeight);
-        BarFrame.btnPrintOneBill.setBounds(BarFrame.btnPrintAll.getX() + BarFrame.btnPrintAll.getWidth() + CustOpts.HOR_GAP, BarFrame.btnPrintAll.getY(),
-				tBtnWidht, tBtnHeight);
-        BarFrame.btnPrintOneInVoice.setBounds(BarFrame.btnPrintOneBill.getX() + BarFrame.btnPrintOneBill.getWidth() + CustOpts.HOR_GAP, BarFrame.btnPrintOneBill.getY(),
-				tBtnWidht, tBtnHeight);
-        BarFrame.btnEqualBill.setBounds(BarFrame.btnPrintAll.getX() + BarFrame.btnPrintAll.getWidth() + CustOpts.HOR_GAP, BarFrame.btnPrintAll.getY(),
-				tBtnWidht, tBtnHeight);
-        BarFrame.btnCombineAll.setBounds(BarFrame.btnEqualBill.getX() + BarFrame.btnEqualBill.getWidth() + CustOpts.HOR_GAP, BarFrame.btnEqualBill.getY(),
-				tBtnWidht, tBtnHeight);
-        BarFrame.btnSplitItem.setBounds(BarFrame.btnCombineAll.getX() + BarFrame.btnCombineAll.getWidth() + CustOpts.HOR_GAP, BarFrame.btnCombineAll.getY(),
-				tBtnWidht, tBtnHeight);
-        BarFrame.btnMoveItem.setBounds(BarFrame.btnSplitItem.getX() + BarFrame.btnSplitItem.getWidth() + CustOpts.HOR_GAP, BarFrame.btnSplitItem.getY(),
-				tBtnWidht, tBtnHeight);
-        BarFrame.btnSuspendAll.setBounds(BarFrame.btnMoveItem.getX() + BarFrame.btnMoveItem.getWidth() + CustOpts.HOR_GAP, BarFrame.btnMoveItem.getY(),
-				tBtnWidht, tBtnHeight);
+		int tBtnHeight = BarFrame.instance.getHeight() / 10;
 		
+		int top = BarUtil.layoutCommandButtons(BarFrame.instance.groupedButtons[1]);
+
 		separator.setBounds(CustOpts.HOR_GAP, 
-				BarFrame.btnSuspendAll.getY() - CustOpts.VER_GAP * 2,
+				top - CustOpts.VER_GAP * 2,
 				getWidth() - CustOpts.HOR_GAP * 2, tBtnHeight);
 		
 		btnLeft.setBounds(CustOpts.SIZE_EDGE, 

@@ -18,8 +18,19 @@ import org.cas.client.platform.bar.dialog.statistics.CheckBillDlg;
 import org.cas.client.platform.bar.dialog.statistics.ReportDlg;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 
-public class Cmd_Report  implements ActionListener {
-
+public class Cmd_Report implements ActionListener {
+	
+	private static Cmd_Report instance;
+	
+	private Cmd_Report() {}
+	
+	public static Cmd_Report getInstance() {
+		if(instance == null) {
+			instance = new Cmd_Report();
+		}
+		return instance;
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ReportDlg dlg = new ReportDlg(BarFrame.instance);
