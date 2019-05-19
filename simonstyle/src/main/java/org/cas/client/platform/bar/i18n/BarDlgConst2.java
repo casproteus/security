@@ -601,4 +601,6 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String Employee() {return "经办人";}
 	@Override
 	public String ActionNotAllowed() {return "该动作在当前状态下无效！";}
+	@Override
+	public String OrgonizeCommands() {return "设定命令按钮布局";}
 }

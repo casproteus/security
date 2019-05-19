@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.BillPanel;
+import org.cas.client.platform.bar.dialog.CommandBtnDlg;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.DBConsts;
@@ -50,15 +51,15 @@ public class Cmd_Pay implements ActionListener {
 		}
 		//show dialog-------------------------------------
  		BarFrame.payDlg.setFloatSupport(true);
- 		if(o == BarFrame.btnCASH) {
+ 		if(o == CommandBtnDlg.btnCASH) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterCashPayment());
- 		}else if(o == BarFrame.btnDEBIT) {
+ 		}else if(o == CommandBtnDlg.btnDEBIT) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterDebitPayment());
- 		}else if(o == BarFrame.btnVISA) {
+ 		}else if(o == CommandBtnDlg.btnVISA) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterVisaPayment());
- 		}else if(o == BarFrame.btnMASTER) {
+ 		}else if(o == CommandBtnDlg.btnMASTER) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterMasterPayment());
- 		}else if(o == BarFrame.btnOTHER) {
+ 		}else if(o == CommandBtnDlg.btnOTHER) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterOtherPayment());
  		}
  		//init payDialog content base on bill.

@@ -601,5 +601,7 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String Employee() {return "Employee";}
 	@Override
 	public String ActionNotAllowed() {return "Action not allowed in current status!";}
+	@Override
+	public String OrgonizeCommands() {return "Organize the commands";}
 
 }

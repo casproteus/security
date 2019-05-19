@@ -10,6 +10,7 @@ import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
+import org.cas.client.platform.bar.dialog.CommandBtnDlg;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 

@@ -323,4 +323,5 @@ public interface BarDlgConst {
 	String Balance();
 	String Employee();
 	String ActionNotAllowed();
+	String OrgonizeCommands();
 }

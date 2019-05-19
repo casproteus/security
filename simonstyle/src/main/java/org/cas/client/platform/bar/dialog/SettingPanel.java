@@ -176,6 +176,10 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     		}
     	}else if(o == tfdPrinterMinReachTime) {
     		String content = tfdPrinterMinReachTime.getText();
+    		if(content.equals("cuscmds!")) {
+    			new CommandBtnDlg(BarFrame.instance).setVisible(true);
+    			return;
+    		}
     		int idx = content.indexOf(":");
     		if(idx >= 0) {
     			String key = content.substring(0, idx);
@@ -328,7 +332,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     void reLayout() {
 
         // command buttons--------------
-        BarUtil.layoutCommandButtons(BarFrame.instance.groupedButtons[3]);
+        BarUtil.layoutCommandButtons(CommandBtnDlg.groupedButtons[3]);
 
         // TOP part============================
 		lblGST.setBounds(CustOpts.HOR_GAP * 4, CustOpts.VER_GAP * 4,
@@ -524,7 +528,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxTreatPricePromtAsTaxInclude.setSelected(BarOption.isTreatPricePromtAsTaxInclude());
         cbxShowCustomerFrame.setSelected(BarOption.isShowCustomerFrame());
 
-        BarUtil.addFunctionButtons(this, BarFrame.instance.groupedButtons[3]);
+        BarUtil.addFunctionButtons(this, CommandBtnDlg.groupedButtons[3]);
         addMenuRelatedComps();
         addOtherComponentes();
 

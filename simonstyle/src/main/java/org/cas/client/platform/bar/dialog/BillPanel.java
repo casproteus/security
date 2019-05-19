@@ -317,7 +317,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
 			updateTotleArea();
         }else if(o == billButton){		//when bill button on top are clicked.
-        	if(billListPanel != null && BarFrame.btnSplitItem.isSelected()) {
+        	if(billListPanel != null && CommandBtnDlg.btnSplitItem.isSelected()) {
         		billButton.setSelected(!billButton.isSelected());
         		return;
         	}
@@ -378,14 +378,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				if(obj != null)
 					BarFrame.numberPanelDlg.setContents(obj.toString());
 			}
-			if( BarFrame.btnDiscItem.isSelected()) {
+			if( CommandBtnDlg.btnDiscItem.isSelected()) {
 				Object obj = table.getValueAt(selectedRow,2);
 				//update the discount in qtyDlg.
 				if(obj != null)
 					BarFrame.numberPanelDlg.setContents(obj.toString());
 			}
 		}else if(billListPanel != null) {
-			if(BarFrame.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
+			if(CommandBtnDlg.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
 				billButton.setSelected(!billButton.isSelected());
 				return;
 			}
@@ -459,7 +459,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == scrContent.getViewport()) {
 			if(billListPanel != null) {
-				if(BarFrame.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
+				if(CommandBtnDlg.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
 					billButton.setSelected(!billButton.isSelected());
 					return;
 				}
@@ -547,7 +547,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		        }
 	        	//if the original is not 0.00, then will still be treated as price promp not a taxInclude.
 		        if(newDish.getPrice() == 0 || "true".equals(newDish.getPrompPrice()) && !BarOption.isTreatPricePromtAsTaxInclude()) {
-		        	BarFrame.btnChangePrice.setSelected(true);
+		        	CommandBtnDlg.btnChangePrice.setSelected(true);
 		        	BarFrame.instance.showPriceChangeDlg();
 		        }
 			}

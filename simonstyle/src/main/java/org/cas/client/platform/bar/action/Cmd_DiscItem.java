@@ -8,9 +8,7 @@ import javax.swing.JOptionPane;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillListPanel;
-import org.cas.client.platform.bar.dialog.BillPanel;
-import org.cas.client.platform.bar.dialog.SalesPanel;
-import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
+import org.cas.client.platform.bar.dialog.CommandBtnDlg;
 
 public class Cmd_DiscItem implements ActionListener {
 
@@ -29,13 +27,13 @@ public class Cmd_DiscItem implements ActionListener {
  		
  		BarFrame.discountDlg.setTitle(BarFrame.consts.DISCITEM());
  		BarFrame.discountDlg.setNotice(BarFrame.consts.DISC_ITEMNotice());
- 		BarFrame.discountDlg.setBtnSource(BarFrame.btnDiscItem);//pomp up a discountDlg
+ 		BarFrame.discountDlg.setBtnSource(CommandBtnDlg.btnDiscItem);//pomp up a discountDlg
  		BarFrame.discountDlg.setFloatSupport(true);
  		BarFrame.discountDlg.setPercentSupport(true);
  		BarFrame.discountDlg.setModal(false);
  		//should no record selected, select the last one.
- 		BarFrame.discountDlg.setVisible(BarFrame.btnDiscItem.isSelected());	//@NOTE: it's not model mode.
- 		BarFrame.discountDlg.setAction(new UpdateItemDiscountAction(BarFrame.btnDiscItem));
+ 		BarFrame.discountDlg.setVisible(CommandBtnDlg.btnDiscItem.isSelected());	//@NOTE: it's not model mode.
+ 		BarFrame.discountDlg.setAction(new UpdateItemDiscountAction(CommandBtnDlg.btnDiscItem));
  		
 	}
 }

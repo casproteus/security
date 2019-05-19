@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.BillPanel;
+import org.cas.client.platform.bar.dialog.CommandBtnDlg;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.Dish;
@@ -20,11 +21,11 @@ public class Cmd_SplitItem implements ActionListener {
 		
 		BillListPanel billListPanel = (BillListPanel)BarFrame.instance.panels[1];
 		
-		if(BarFrame.btnSplitItem.isSelected()) {//select
+		if(CommandBtnDlg.btnSplitItem.isSelected()) {//select
 			//check if there's one item selected.
 			if(billListPanel.curDish == null) {
 				JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
-				BarFrame.btnSplitItem.setSelected(false);
+				CommandBtnDlg.btnSplitItem.setSelected(false);
 			}
 		}else {
 		

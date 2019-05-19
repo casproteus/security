@@ -7,32 +7,19 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.BarUtil;
-import org.cas.client.platform.bar.action.Cmd_AddUser;
-import org.cas.client.platform.bar.action.Cmd_CombineAll;
-import org.cas.client.platform.bar.action.Cmd_EqualBill;
-import org.cas.client.platform.bar.action.Cmd_MoveItem;
-import org.cas.client.platform.bar.action.Cmd_PrintAll;
-import org.cas.client.platform.bar.action.Cmd_PrintOneBill;
-import org.cas.client.platform.bar.action.Cmd_PrintOneInVoice;
-import org.cas.client.platform.bar.action.Cmd_Return2;
-import org.cas.client.platform.bar.action.Cmd_SplitItem;
-import org.cas.client.platform.bar.action.Cmd_SuspendAll;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.bar.uibeans.ArrowButton;
-import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
@@ -67,7 +54,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		add(btnRight);
 		add(separator);
 		
-		BarUtil.addFunctionButtons(this, BarFrame.instance.groupedButtons[1]);
+		BarUtil.addFunctionButtons(this, CommandBtnDlg.groupedButtons[1]);
 		
 		addComponentListener(this);
 		btnLeft.addActionListener(this);
@@ -113,13 +100,13 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				rs.afterLast();
 	            rs.relative(-1);
 	            if (rs.getRow() > 1) {
-	            	BarFrame.btnCombineAll.setText(BarFrame.consts.UnCombine());
+	            	CommandBtnDlg.btnCombineAll.setText(BarFrame.consts.UnCombine());
 	            }
 			} catch (SQLException e) {
 	            ErrorUtil.write(e);
 	        }
 		}else {
-			BarFrame.btnCombineAll.setText(BarFrame.consts.CombineAll());
+			CommandBtnDlg.btnCombineAll.setText(BarFrame.consts.CombineAll());
 		}
 	}
 
@@ -182,7 +169,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		
 		int tBtnHeight = BarFrame.instance.getHeight() / 10;
 		
-		int top = BarUtil.layoutCommandButtons(BarFrame.instance.groupedButtons[1]);
+		int top = BarUtil.layoutCommandButtons(CommandBtnDlg.groupedButtons[1]);
 
 		separator.setBounds(CustOpts.HOR_GAP, 
 				top - CustOpts.VER_GAP * 2,
