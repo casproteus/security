@@ -1,10 +1,12 @@
 package org.cas.client.platform.bar.dialog;
 
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -13,10 +15,12 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.action.Cmd_AddBill;
 import org.cas.client.platform.bar.action.Cmd_AddTable;
 import org.cas.client.platform.bar.action.Cmd_AddUser;
@@ -65,12 +69,20 @@ import org.cas.client.platform.bar.action.Cmd_VoidOrder;
 import org.cas.client.platform.bar.uibeans.ArrowButton;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
+import org.cas.client.platform.bar.uibeans.ISbutton;
 import org.cas.client.platform.bar.uibeans.MoreButton;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.hsqldb.lib.HashMap;
 
 public class CommandBtnDlg extends JDialog implements ComponentListener, ActionListener{
    
+	private static final String KEY_SETTING_CMD = "SettingCmd";
+	private static final String KEY_SALE_CMD = "SaleCmd";
+	private static final String KEY_BILL_CMD = "BillCmd";
+	private static final String KEY_TABLE_CMD = "TableCmd";
+	
 	public static ArrayList[] groupedButtons = {new ArrayList<JComponent>(), new ArrayList<JComponent>(), new ArrayList<JComponent>(),new ArrayList<JComponent>()};
+	HashMap btns = new HashMap();
 	
 	public CommandBtnDlg(JFrame parent) {
 		super(parent);
@@ -78,10 +90,14 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 	}
 
 	private void initComponent() {
+		//title
 		setTitle(BarFrame.consts.OrgonizeCommands());
+		
+		//list
 		originalList = new JList<String>(btnNames);
 		originalScrollBar = new JScrollPane(originalList);
 		
+		//arrow buttons
 		toTable = new ArrowButton(">>");
 		toBill = new ArrowButton(">>");
 		toSale = new ArrowButton(">>");
@@ -92,21 +108,32 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 		fromSale = new ArrowButton("<<");
 		fromSetting = new ArrowButton("<<");
 		
+		//4 panels
 		tablePanle = new JPanel();
 		billPanle = new JPanel();
 		salePanle = new JPanel();
 		settingPanle = new JPanel();
 		
+		//reset button
+		reset = new FunctionButton(BarFrame.consts.RESET());
+		
+		//properties
 		Border etchedBorder = BorderFactory.createEtchedBorder(); 
 		tablePanle.setBorder(BorderFactory.createTitledBorder(etchedBorder,"Table"));
 		billPanle.setBorder(BorderFactory.createTitledBorder(etchedBorder,"Bill"));
 		salePanle.setBorder(BorderFactory.createTitledBorder(etchedBorder,"Sale"));
 		settingPanle.setBorder(BorderFactory.createTitledBorder(etchedBorder,"Setting"));
 		
+		//layout
+		tablePanle.setLayout(null);
+		billPanle.setLayout(null);
+		salePanle.setLayout(null);
+		settingPanle.setLayout(null);
+		getContentPane().setLayout(null);
+		
+		//build		
 		setBounds(BarFrame.instance.getX(), BarFrame.instance.getY(), BarFrame.instance.getWidth(), BarFrame.instance.getHeight());
-
 		getContentPane().add(originalScrollBar);
-
 		getContentPane().add(toTable);
 		getContentPane().add(toBill);
 		getContentPane().add(toSale);
@@ -121,7 +148,10 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 		getContentPane().add(billPanle);
 		getContentPane().add(salePanle);
 		getContentPane().add(settingPanle);
+		
+		getContentPane().add(reset);
 
+		//listener
 		toTable.addActionListener(this);
 		toBill.addActionListener(this);
 		toSale.addActionListener(this);
@@ -132,31 +162,114 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 		fromSale.addActionListener(this);
 		fromSetting.addActionListener(this);
 		
+		reset.addActionListener(this);
+		
 		addComponentListener(this);
+		
+		initPanel(KEY_TABLE_CMD, tablePanle);
+		initPanel(KEY_BILL_CMD, billPanle);
+		initPanel(KEY_SALE_CMD, salePanle);
+		initPanel(KEY_SETTING_CMD, settingPanle);
 		
 		relayout();
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		int[] ids = originalList.getSelectedIndices();
+		if(ids.length < 1) {
+			JOptionPane.showMessageDialog(this, BarFrame.consts.AtLeastOneShouldBeSelected());
+			return;
+		}
+		
 		Object o = e.getSource();
 		if(o == toTable) {
+			addCmd(KEY_TABLE_CMD, ids, tablePanle);
 			
 		}else if(o == toBill) {
+			addCmd(KEY_BILL_CMD, ids, billPanle);
 			
 		}else if(o == toSale) {
+			addCmd(KEY_SALE_CMD, ids, salePanle);
 			
 		}else if(o == toSetting) {
+			addCmd(KEY_SETTING_CMD, ids, settingPanle);
 			
 		}else if(o == fromTable) {
+			clearCmd(KEY_TABLE_CMD, tablePanle);
 			
 		}else if(o == fromBill) {
+			clearCmd(KEY_BILL_CMD, billPanle);
 			
 		}else if(o == fromSale) {
+			clearCmd(KEY_SALE_CMD, salePanle);
 			
 		}else if(o == fromSetting) {
+			clearCmd(KEY_SETTING_CMD, settingPanle);
 			
+		}else if(o == reset) {
+			CustOpts.custOps.removeKeyAndValue(KEY_TABLE_CMD);
+			CustOpts.custOps.removeKeyAndValue(KEY_BILL_CMD);
+			CustOpts.custOps.removeKeyAndValue(KEY_SALE_CMD);
+			CustOpts.custOps.removeKeyAndValue(KEY_SETTING_CMD);
+			CustOpts.custOps.saveData();
+			//update ui
+			tablePanle.removeAll();
+			billPanle.removeAll();
+			salePanle.removeAll();
+			settingPanle.removeAll();
 		}
+		
+		CustOpts.custOps.saveData();
+		
+		invalidate();
+		revalidate();
+		repaint();
+	}
+
+	private void clearCmd(String key, JPanel panel) {
+		CustOpts.custOps.setKeyAndValue(key, ",");
+		CustOpts.custOps.saveData();
+		//update ui
+		panel.removeAll();
+	}
+
+	private void addCmd(String key, int[] ids, JPanel panel) {
+		String strTableCmds = (String)CustOpts.custOps.getValue(key);
+		if(strTableCmds == null)
+			strTableCmds = "";
+		
+		if(strTableCmds.endsWith(",")) {
+			strTableCmds = strTableCmds.substring(0, strTableCmds.length() - 1);
+		}
+		for (int i : ids) {
+			strTableCmds += ("," + i);
+		}
+		CustOpts.custOps.setKeyAndValue(key, strTableCmds);
+		
+		//update ui
+		initPanel(key, panel);
+	}
+
+	private void initPanel(String key, JPanel panel) {
+		panel.removeAll();
+		btns.put(key, new ArrayList<JComponent>());
+		
+		String TableCmds = (String)CustOpts.custOps.getValue(key);
+		if(TableCmds == null)
+			return;
+		String[] sIDs = TableCmds.split(",");
+		
+		for (String id : sIDs) {
+			try {
+				int idx = Integer.valueOf(id);
+				((ArrayList) btns.get(key)).add(buttons[idx].clone());
+			}catch(Exception exp) {
+				continue;
+			}
+		}
+		BarUtil.addFunctionButtons(panel, (ArrayList<JComponent>)btns.get(key));
+		BarUtil.layoutCommandButtons(panel, (ArrayList<JComponent>)btns.get(key));
 	}
 	
 	@Override
@@ -176,7 +289,7 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 	private void relayout() {
 		int heigth = getHeight();
 		int width = getWidth();
-		int panelHeight = (heigth - 80) / 4;
+		int panelHeight = (heigth - 120) / 4;
 		
 		originalScrollBar.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 169, heigth - CustOpts.SIZE_EDGE * 2 - 60);
 
@@ -204,6 +317,21 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 		settingPanle.setBounds(salePanle.getX(), salePanle.getY() + salePanle.getHeight() + CustOpts.VER_GAP, 
 				salePanle.getWidth(), salePanle.getHeight());
 		
+		reset.setBounds(settingPanle.getX(), settingPanle.getY() + settingPanle.getHeight() + CustOpts.VER_GAP, 80, 40);
+
+		BarUtil.layoutCommandButtons(tablePanle, (ArrayList<JComponent>)btns.get(KEY_TABLE_CMD));
+		BarUtil.layoutCommandButtons(billPanle, (ArrayList<JComponent>)btns.get(KEY_BILL_CMD));
+		BarUtil.layoutCommandButtons(salePanle, (ArrayList<JComponent>)btns.get(KEY_SALE_CMD));
+		BarUtil.layoutCommandButtons(settingPanle, (ArrayList<JComponent>)btns.get(KEY_SETTING_CMD));
+
+		CustOpts.custOps.setKeyAndValue(KEY_TABLE_CMD, "");
+		CustOpts.custOps.setKeyAndValue(KEY_BILL_CMD, "");
+		CustOpts.custOps.setKeyAndValue(KEY_SALE_CMD, "");
+		CustOpts.custOps.setKeyAndValue(KEY_SETTING_CMD, "");
+		
+		invalidate();
+		revalidate();
+		repaint();
 	}
 
 	//buttons=========================================================================================================
@@ -278,6 +406,61 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
         btnCoupon = new FunctionButton(BarFrame.consts.COUPON());
         btnColor = new FunctionButton(BarFrame.consts.Color().toUpperCase());
         btnCheckInOut3 = new FunctionButton(BarFrame.consts.CheckInOut());
+        
+        buttons = new ISbutton[] {
+        		btnAddTable,		//0
+        		btnOrderManage,		//1
+        		btnOpenDrawer2,		//2
+        		btnSetting,		//3
+        		btnReport,		//4
+        		btnCheckInOut,		//5
+        			
+        		btnAddUser,		//6
+        		btnPrintAll,		//7
+        		btnPrintOneBill,		//8
+        		btnPrintOneInVoice,		//9
+        		btnEqualBill,		//10
+        		btnSplitItem,		//11
+        		btnMoveItem,		//12
+        		btnCombineAll,		//13
+        		btnSuspendAll,		//14
+        		btnReturn2,		//15
+        			
+        		btnCASH,		//16
+        		btnDEBIT,		//17
+        		btnVISA,		//18
+        		btnMASTER,		//19
+        		btnOTHER,		//20
+        		btnSplitBill,		//21
+        		btnRemoveItem,		//22
+        		btnModify,		//23
+        		btnDiscItem,		//24
+        		btnChangePrice,		//25
+        		btnServiceFee,		//26
+        		btnPrintBill,		//27
+
+        		btnReturn,		//28
+        		btnAddBill,		//29
+        			   
+        		btnCancelAll,		//30
+        		btnVoidOrder,		//31
+        		btnOpenDrawer,		//32
+        		btnDiscBill,		//33
+        		btnRefund,		//34
+        		btnSend,		//35
+        			
+        		btnReturn3,		//36
+        		btnEmployee,		//37
+        		btnPrinter,		//38
+        		btnTable,		//39
+        		btnBillFoot,		//40
+        		btnModify3,		//41
+        		btnGiftCard,		//42
+        		btnCoupon,		//43
+        		btnColor,		//44
+        		btnCheckInOut3}; 		//45
+        
+        
         //listener------------------------------
         //tablePanel
         btnAddTable.addActionListener(new Cmd_AddTable());
@@ -342,43 +525,30 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
         btnColor.addActionListener(new Cmd_Color());
         btnCheckInOut3.addActionListener(new Cmd_CheckInOut3());
         
-        regroupButtons();
+        groupButtons();
 	}
     
-    private static void regroupButtons() {
-		Object TableCmds = CustOpts.custOps.getValue("TableCmds");
-		Object BillCmd = CustOpts.custOps.getValue("BillCmd");
-		Object SaleCmd = CustOpts.custOps.getValue("SaleCmd");
-		Object SettingCmd = CustOpts.custOps.getValue("SettingCmd");
-		if(TableCmds == null && BillCmd == null && SaleCmd == null && SettingCmd == null) {
-			regroupButtonsByDefault();
+    private static void groupButtons() {
+    	//get current customization
+		Object strTableCmds = CustOpts.custOps.getValue(KEY_TABLE_CMD);
+		Object strBillCmd = CustOpts.custOps.getValue(KEY_BILL_CMD);
+		Object strSaleCmd = CustOpts.custOps.getValue(KEY_SALE_CMD);
+		Object strSettingCmd = CustOpts.custOps.getValue(KEY_SETTING_CMD);
+		
+		//if not all set, then use default.
+		if(strTableCmds == null || strBillCmd == null || strSaleCmd == null || strSettingCmd == null) {
+			fillRegroupBtnWithDefault();
+			
 		}else {
-			if(TableCmds != null) {
-				addIntoGroupedButtons(TableCmds, groupedButtons[0]);
-			}
-			
-			if(BillCmd != null) {
-				addIntoGroupedButtons(TableCmds, groupedButtons[1]);
-			}
-			
-			if(SaleCmd != null) {
-				addIntoGroupedButtons(TableCmds, groupedButtons[2]);
-			}
-			
-			if(SettingCmd != null) {
-				addIntoGroupedButtons(TableCmds, groupedButtons[3]);
-			}
+			//all not null, then fill grouped button with custimizations.
+			fillRegroupBtnWithCustimization(strTableCmds, groupedButtons[0]);
+			fillRegroupBtnWithCustimization(strBillCmd, groupedButtons[1]);
+			fillRegroupBtnWithCustimization(strSaleCmd, groupedButtons[2]);
+			fillRegroupBtnWithCustimization(strSettingCmd, groupedButtons[3]);
 		}
 	}
 
-	private static void addIntoGroupedButtons(Object TableCmds, ArrayList<JComponent> groupedButtons) {
-		String[] btns = ((String)TableCmds).split(",");
-		for (String string : btns) {
-			groupedButtons.add(buttons[Integer.valueOf(string)]);
-		}
-	}
-
-	private static void regroupButtonsByDefault(){
+	private static void fillRegroupBtnWithDefault(){
     	groupedButtons[0].add(btnAddTable);
     	groupedButtons[0].add(btnOrderManage);
     	groupedButtons[0].add(btnOpenDrawer2);
@@ -444,7 +614,19 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
         groupedButtons[3].add(btnColor);
         groupedButtons[3].add(btnCheckInOut3);
     }
-	
+
+	private static void fillRegroupBtnWithCustimization(Object customization, ArrayList<JComponent> groupedButtons) {
+		String[] btns = ((String)customization).split(",");
+		for (String string : btns) {
+			try {
+				int i = Integer.valueOf(string);
+				groupedButtons.add(buttons[i].clone());
+			}catch(Exception e) {
+				continue;
+			}
+		}
+	}	
+
 	JList<String> originalList;
 	JScrollPane originalScrollBar;
 	
@@ -462,6 +644,7 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 	JPanel salePanle;
 	JPanel settingPanle;
 
+    private static FunctionButton reset;
     
 	//TablePanel
     //private JToggleButton btnChangeMode;
@@ -532,59 +715,7 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
     private static FunctionButton btnColor;
     private static FunctionButton btnCheckInOut3;
     
-    static AbstractButton[] buttons = {
-    		btnAddTable,		//0
-    		btnOrderManage,		//1
-    		btnOpenDrawer2,		//2
-    		btnSetting,		//3
-    		btnReport,		//4
-    		btnCheckInOut,		//5
-    			
-    		btnAddUser,		//6
-    		btnPrintAll,		//7
-    		btnPrintOneBill,		//8
-    		btnPrintOneInVoice,		//9
-    		btnEqualBill,		//10
-    		btnSplitItem,		//11
-    		btnMoveItem,		//12
-    		btnCombineAll,		//13
-    		btnSuspendAll,		//14
-    		btnReturn2,		//15
-    			
-    		btnCASH,		//16
-    		btnDEBIT,		//17
-    		btnVISA,		//18
-    		btnMASTER,		//19
-    		btnOTHER,		//20
-    		btnSplitBill,		//21
-    		btnRemoveItem,		//22
-    		btnModify,		//23
-    		btnDiscItem,		//24
-    		btnChangePrice,		//25
-    		btnServiceFee,		//26
-    		btnPrintBill,		//27
-
-    		btnReturn,		//28
-    		btnAddBill,		//29
-    			   
-    		btnCancelAll,		//30
-    		btnVoidOrder,		//31
-    		btnOpenDrawer,		//32
-    		btnDiscBill,		//33
-    		btnRefund,		//34
-    		btnMore,		//35
-    		btnSend,		//36
-    			
-    		btnReturn3,		//37
-    		btnEmployee,		//38
-    		btnPrinter,		//39
-    		btnTable,		//40
-    		btnBillFoot,		//41
-    		btnModify3,		//42
-    		btnGiftCard,		//43
-    		btnCoupon,		//44
-    		btnColor,		//45
-    		btnCheckInOut3}; 		//46
+    static ISbutton[] buttons;
     
     static String[] btnNames = {
     		"AddTable",		//0

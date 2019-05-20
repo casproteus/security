@@ -176,7 +176,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     		}
     	}else if(o == tfdPrinterMinReachTime) {
     		String content = tfdPrinterMinReachTime.getText();
-    		if(content.equals("cuscmds!")) {
+    		if(content.equals("cuscmd")) {
     			new CommandBtnDlg(BarFrame.instance).setVisible(true);
     			return;
     		}
@@ -332,8 +332,9 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     void reLayout() {
 
         // command buttons--------------
-        BarUtil.layoutCommandButtons(CommandBtnDlg.groupedButtons[3]);
-
+        int top = BarUtil.layoutCommandButtons(this, CommandBtnDlg.groupedButtons[3]);
+        if(top < 0)
+        	return;
         // TOP part============================
 		lblGST.setBounds(CustOpts.HOR_GAP * 4, CustOpts.VER_GAP * 4,
 				lblGST.getPreferredSize().width, CustOpts.BTN_HEIGHT);

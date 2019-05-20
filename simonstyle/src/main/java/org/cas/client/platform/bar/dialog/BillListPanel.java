@@ -169,8 +169,10 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		
 		int tBtnHeight = BarFrame.instance.getHeight() / 10;
 		
-		int top = BarUtil.layoutCommandButtons(CommandBtnDlg.groupedButtons[1]);
-
+		int top = BarUtil.layoutCommandButtons(this, CommandBtnDlg.groupedButtons[1]);
+		if(top < 0) {
+			return;
+		}
 		separator.setBounds(CustOpts.HOR_GAP, 
 				top - CustOpts.VER_GAP * 2,
 				getWidth() - CustOpts.HOR_GAP * 2, tBtnHeight);

@@ -172,8 +172,10 @@ public class SalesPanel extends JPanel implements ComponentListener, FocusListen
     
     void reLayout() {
         // command buttons--------------
-        int top = BarUtil.layoutCommandButtons(CommandBtnDlg.groupedButtons[2]);
-        
+        int top = BarUtil.layoutCommandButtons(this, CommandBtnDlg.groupedButtons[2]);
+        if(top < 0) {
+        	return;
+        }
         // TOP part============================
         int topAreaHeight = top - 3 * CustOpts.VER_GAP;
 

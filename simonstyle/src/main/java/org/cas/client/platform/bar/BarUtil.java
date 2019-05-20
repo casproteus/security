@@ -318,9 +318,9 @@ public class BarUtil {
 		}
 	}
 
-	public static int layoutCommandButtons(ArrayList<JComponent> buttons) {
-        int panelWidth = BarFrame.instance.getWidth() - CustOpts.SIZE_EDGE * 2;
-        int panelHeight = BarFrame.instance.getHeight() - 80;
+	public static int layoutCommandButtons(JPanel panel, ArrayList<JComponent> buttons) {
+        int panelWidth = panel.getWidth();
+        int panelHeight = panel.getHeight();
 
         // command buttons--------------
         int butonQT = buttons.size();
@@ -342,8 +342,8 @@ public class BarUtil {
         	}
         }
         
-        int tBtnWidht = (panelWidth - CustOpts.HOR_GAP * (col + 1)) / (col);
-        int tBtnHeight = panelHeight / 10;
+        int tBtnWidht = col == 0? 100 : (panelWidth - CustOpts.HOR_GAP * (col + 1)) / (col);
+        int tBtnHeight = (BarFrame.instance.getHeight() - 80) / 10;
 
         int max = butonQT > 20 ? 20 : butonQT;
         for(int i = 0; i < max; i++) {

@@ -151,7 +151,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     }
 
     void reLayout() {
-    	BarUtil.layoutCommandButtons(CommandBtnDlg.groupedButtons[0]);
+    	BarUtil.layoutCommandButtons(this, CommandBtnDlg.groupedButtons[0]);
     }
     
     void initComponent() {
