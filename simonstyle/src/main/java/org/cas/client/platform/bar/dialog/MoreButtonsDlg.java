@@ -78,12 +78,11 @@ public class MoreButtonsDlg extends JDialog implements WindowFocusListener{
         			btnWidth, btnHeight);
         }
         
-        //dialog
-		int x = btnMore.getX() + salesPanel.getRootPane().getParent().getX();
-		int y = btnMore.getY() + salesPanel.getRootPane().getParent().getY();
-		
+        //dialog		
 		int width = btnWidth * col + CustOpts.HOR_GAP * (col + 1) + CustOpts.SIZE_EDGE * 2 + 10;
 		int height = btnHeight * row + CustOpts.VER_GAP * (row + 1) + CustOpts.SIZE_EDGE * 2 + 40;
+		int x = btnMore.getX() + salesPanel.getRootPane().getParent().getX();
+		int y = salesPanel.getRootPane().getHeight() - 80 + salesPanel.getRootPane().getParent().getY();
 		setBounds(x - width * (col - 1) + 40, y - height + 80, width, height);
 	}
 	

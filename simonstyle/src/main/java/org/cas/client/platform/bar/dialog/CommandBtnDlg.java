@@ -76,13 +76,13 @@ import org.hsqldb.lib.HashMap;
 
 public class CommandBtnDlg extends JDialog implements ComponentListener, ActionListener{
    
-	private static final String KEY_SETTING_CMD = "SettingCmd";
-	private static final String KEY_SALE_CMD = "SaleCmd";
-	private static final String KEY_BILL_CMD = "BillCmd";
 	private static final String KEY_TABLE_CMD = "TableCmd";
+	private static final String KEY_BILL_CMD = "BillCmd";
+	private static final String KEY_SALE_CMD = "SaleCmd";
+	private static final String KEY_SETTING_CMD = "SettingCmd";
 	
 	public static ArrayList[] groupedButtons = {new ArrayList<JComponent>(), new ArrayList<JComponent>(), new ArrayList<JComponent>(),new ArrayList<JComponent>()};
-	HashMap btns = new HashMap();
+	HashMap btnListMap = new HashMap();
 	
 	public CommandBtnDlg(JFrame parent) {
 		super(parent);
@@ -117,14 +117,14 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 		//reset button
 		reset = new FunctionButton(BarFrame.consts.RESET());
 		
-		//properties
+		//properties--------------------------------------------------------
 		Border etchedBorder = BorderFactory.createEtchedBorder(); 
 		tablePanle.setBorder(BorderFactory.createTitledBorder(etchedBorder,"Table"));
 		billPanle.setBorder(BorderFactory.createTitledBorder(etchedBorder,"Bill"));
 		salePanle.setBorder(BorderFactory.createTitledBorder(etchedBorder,"Sale"));
 		settingPanle.setBorder(BorderFactory.createTitledBorder(etchedBorder,"Setting"));
 		
-		//layout
+		//layout------------------------------------------------------------
 		tablePanle.setLayout(null);
 		billPanle.setLayout(null);
 		salePanle.setLayout(null);
@@ -176,13 +176,13 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		Object o = e.getSource();
 		int[] ids = originalList.getSelectedIndices();
-		if(ids.length < 1) {
+		if(ids.length < 1 && o != reset) {
 			JOptionPane.showMessageDialog(this, BarFrame.consts.AtLeastOneShouldBeSelected());
 			return;
 		}
 		
-		Object o = e.getSource();
 		if(o == toTable) {
 			addCmd(KEY_TABLE_CMD, ids, tablePanle);
 			
@@ -228,7 +228,7 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 	}
 
 	private void clearCmd(String key, JPanel panel) {
-		CustOpts.custOps.setKeyAndValue(key, ",");
+		CustOpts.custOps.setKeyAndValue(key, "");
 		CustOpts.custOps.saveData();
 		//update ui
 		panel.removeAll();
@@ -252,24 +252,25 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 	}
 
 	private void initPanel(String key, JPanel panel) {
-		panel.removeAll();
-		btns.put(key, new ArrayList<JComponent>());
-		
+
 		String TableCmds = (String)CustOpts.custOps.getValue(key);
 		if(TableCmds == null)
 			return;
-		String[] sIDs = TableCmds.split(",");
 		
+		panel.removeAll();
+		btnListMap.put(key, new ArrayList<JComponent>());
+		
+		String[] sIDs = TableCmds.split(",");
 		for (String id : sIDs) {
 			try {
 				int idx = Integer.valueOf(id);
-				((ArrayList) btns.get(key)).add(buttons[idx].clone());
+				((ArrayList) btnListMap.get(key)).add(buttons[idx].clone());
 			}catch(Exception exp) {
 				continue;
 			}
 		}
-		BarUtil.addFunctionButtons(panel, (ArrayList<JComponent>)btns.get(key));
-		BarUtil.layoutCommandButtons(panel, (ArrayList<JComponent>)btns.get(key));
+		BarUtil.addFunctionButtons(panel, (ArrayList<JComponent>)btnListMap.get(key));
+		BarUtil.layoutCommandButtons(panel, (ArrayList<JComponent>)btnListMap.get(key));
 	}
 	
 	@Override
@@ -291,8 +292,10 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 		int width = getWidth();
 		int panelHeight = (heigth - 120) / 4;
 		
+		//list
 		originalScrollBar.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 169, heigth - CustOpts.SIZE_EDGE * 2 - 60);
 
+		//buttons
 		toTable.setBounds(originalScrollBar.getX() + originalScrollBar.getWidth() + CustOpts.HOR_GAP, 
 				CustOpts.VER_GAP + panelHeight/2,  40, 20);
 		fromTable.setBounds(toTable.getX(), toTable.getY() + CustOpts.VER_GAP + 20,  40, 20);
@@ -306,6 +309,7 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 		toSetting.setBounds(toSale.getX(), toSale.getY() + panelHeight + CustOpts.VER_GAP,  40, 20);
 		fromSetting.setBounds(toSale.getX(), toSetting.getY() + CustOpts.VER_GAP + 20,  40, 20);
 		
+		//panel
 		tablePanle.setBounds(toTable.getX() + toTable.getWidth() + CustOpts.HOR_GAP,
 				CustOpts.VER_GAP, 
 				width - originalScrollBar.getWidth() - toTable.getWidth() - CustOpts.HOR_GAP * 3 - CustOpts.SIZE_EDGE * 2 - 20,
@@ -319,16 +323,11 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 		
 		reset.setBounds(settingPanle.getX(), settingPanle.getY() + settingPanle.getHeight() + CustOpts.VER_GAP, 80, 40);
 
-		BarUtil.layoutCommandButtons(tablePanle, (ArrayList<JComponent>)btns.get(KEY_TABLE_CMD));
-		BarUtil.layoutCommandButtons(billPanle, (ArrayList<JComponent>)btns.get(KEY_BILL_CMD));
-		BarUtil.layoutCommandButtons(salePanle, (ArrayList<JComponent>)btns.get(KEY_SALE_CMD));
-		BarUtil.layoutCommandButtons(settingPanle, (ArrayList<JComponent>)btns.get(KEY_SETTING_CMD));
+		BarUtil.layoutCommandButtons(tablePanle, (ArrayList<JComponent>)btnListMap.get(KEY_TABLE_CMD));
+		BarUtil.layoutCommandButtons(billPanle, (ArrayList<JComponent>)btnListMap.get(KEY_BILL_CMD));
+		BarUtil.layoutCommandButtons(salePanle, (ArrayList<JComponent>)btnListMap.get(KEY_SALE_CMD));
+		BarUtil.layoutCommandButtons(settingPanle, (ArrayList<JComponent>)btnListMap.get(KEY_SETTING_CMD));
 
-		CustOpts.custOps.setKeyAndValue(KEY_TABLE_CMD, "");
-		CustOpts.custOps.setKeyAndValue(KEY_BILL_CMD, "");
-		CustOpts.custOps.setKeyAndValue(KEY_SALE_CMD, "");
-		CustOpts.custOps.setKeyAndValue(KEY_SETTING_CMD, "");
-		
 		invalidate();
 		revalidate();
 		repaint();
@@ -757,17 +756,16 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
     		"OpenDrawer",		//32
     		"DiscBill",		//33
     		"Refund",		//34
-    		"More",		//35
-    		"Send",		//36
+    		"Send",		//35
     			
-    		"Return3",		//37
-    		"Employee",		//38
-    		"Printer",		//39
-    		"Table",		//40
-    		"BillFoot",		//41
-    		"Modify3",		//42
-    		"GiftCard",		//43
-    		"Coupon",		//44
-    		"Color",		//45
-    		"CheckInOut3"}; 		//46
+    		"Return3",		//36
+    		"Employee",		//37
+    		"Printer",		//38
+    		"Table",		//39
+    		"BillFoot",		//40
+    		"Modify3",		//41
+    		"GiftCard",		//42
+    		"Coupon",		//43
+    		"Color",		//44
+    		"CheckInOut3"}; 		//45
 }

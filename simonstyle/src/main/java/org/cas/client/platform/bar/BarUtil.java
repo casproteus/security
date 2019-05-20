@@ -319,6 +319,9 @@ public class BarUtil {
 	}
 
 	public static int layoutCommandButtons(JPanel panel, ArrayList<JComponent> buttons) {
+		if(buttons == null)
+			return -1;
+		
         int panelWidth = panel.getWidth();
         int panelHeight = panel.getHeight();
 
