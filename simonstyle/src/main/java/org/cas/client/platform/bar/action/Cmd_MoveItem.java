@@ -10,7 +10,7 @@ import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.BillPanel;
-import org.cas.client.platform.bar.dialog.CommandBtnDlg;
+import org.cas.client.platform.bar.dialog.CmdBtnsDlg;
 import org.cas.client.platform.bar.dialog.NumberPanelDlg;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
@@ -26,13 +26,13 @@ public class Cmd_MoveItem implements ActionListener {
 		
 		if(billListPanel.curDish == null) {
 			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
-			CommandBtnDlg.btnMoveItem.setSelected(false);
+			CmdBtnsDlg.btnMoveItem.setSelected(false);
 			return;
 		}
 		BillPanel panel = billListPanel.getCurBillPanel();
 		if(panel == null) {
 			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
-			CommandBtnDlg.btnMoveItem.setSelected(false);
+			CmdBtnsDlg.btnMoveItem.setSelected(false);
 			return;
 		}
 		if(!panel.checkStatus())	//create a new bill for original bill
@@ -42,13 +42,13 @@ public class Cmd_MoveItem implements ActionListener {
 	
 	private void moveItemAction() {
 		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.BILL());
-		BarFrame.numberPanelDlg.setBtnSource(CommandBtnDlg.btnMoveItem);
+		BarFrame.numberPanelDlg.setBtnSource(CmdBtnsDlg.btnMoveItem);
 		BarFrame.numberPanelDlg.setFloatSupport(false);
 		BarFrame.numberPanelDlg.setPercentSupport(false);
 		BarFrame.numberPanelDlg.setModal(true);
 		BarFrame.numberPanelDlg.reLayout();
 		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.QTYNOTICE());
-		BarFrame.numberPanelDlg.setVisible(CommandBtnDlg.btnMoveItem.isSelected());
+		BarFrame.numberPanelDlg.setVisible(CmdBtnsDlg.btnMoveItem.isSelected());
 		if(NumberPanelDlg.confirmed) {
 			BillListPanel billListPanel = (BillListPanel)BarFrame.instance.panels[1];
 			int targetBillIdx = Integer.valueOf(NumberPanelDlg.curContent);

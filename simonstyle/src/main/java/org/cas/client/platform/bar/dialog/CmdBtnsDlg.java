@@ -76,7 +76,7 @@ import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.resource.international.DlgConst;
 import org.hsqldb.lib.HashMap;
 
-public class CommandBtnDlg extends JDialog implements ComponentListener, ActionListener{
+public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionListener{
    
 	private static final String KEY_TABLE_CMD = "TableCmd";
 	private static final String KEY_BILL_CMD = "BillCmd";
@@ -86,7 +86,7 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 	public static ArrayList[] groupedButtons = {new ArrayList<JComponent>(), new ArrayList<JComponent>(), new ArrayList<JComponent>(),new ArrayList<JComponent>()};
 	HashMap btnListMap = new HashMap();
 	
-	public CommandBtnDlg(JFrame parent) {
+	public CmdBtnsDlg(JFrame parent) {
 		super(parent);
 		initComponent();
 	}

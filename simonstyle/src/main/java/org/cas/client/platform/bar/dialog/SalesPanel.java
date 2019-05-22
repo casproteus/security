@@ -172,7 +172,7 @@ public class SalesPanel extends JPanel implements ComponentListener, FocusListen
     
     void reLayout() {
         // command buttons--------------
-        int top = BarUtil.layoutCommandButtons(this, CommandBtnDlg.groupedButtons[2]);
+        int top = BarUtil.layoutCommandButtons(this, CmdBtnsDlg.groupedButtons[2]);
         if(top < 0) {
         	return;
         }
@@ -205,7 +205,7 @@ public class SalesPanel extends JPanel implements ComponentListener, FocusListen
         setLayout(null);
         
         // built
-        BarUtil.addFunctionButtons(this, CommandBtnDlg.groupedButtons[2]);
+        BarUtil.addFunctionButtons(this, CmdBtnsDlg.groupedButtons[2]);
         
         add(billPanel);
         // add listener

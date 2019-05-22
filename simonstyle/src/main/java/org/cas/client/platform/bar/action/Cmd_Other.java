@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
-import org.cas.client.platform.bar.dialog.CommandBtnDlg;
+import org.cas.client.platform.bar.dialog.CmdBtnsDlg;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.casutil.L;
@@ -50,7 +50,7 @@ public class Cmd_Other implements ActionListener {
                 //show up the payDialog, waiting for user to input money, after confirm, the money should be deduct from the account of this card
                 BarFrame.payDlg.maxInput = (float)(value / 100.0);
                 BarFrame.setStatusMes(BarFrame.consts.CurrentBalanceMsg() + BarFrame.payDlg.maxInput);
-                Cmd_Pay.getInstance().actionPerformed(new ActionEvent(CommandBtnDlg.btnOTHER, 0, ""));
+                Cmd_Pay.getInstance().actionPerformed(new ActionEvent(CmdBtnsDlg.btnOTHER, 0, ""));
                 
                 if (BarFrame.payDlg.inputedContent != null && BarFrame.payDlg.inputedContent.length() > 0) {
                     float newBalance = (float)(value / 100.0) - Float.valueOf(BarFrame.payDlg.inputedContent);

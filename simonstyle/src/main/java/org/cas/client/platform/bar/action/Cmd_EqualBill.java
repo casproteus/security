@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.BillPanel;
-import org.cas.client.platform.bar.dialog.CommandBtnDlg;
+import org.cas.client.platform.bar.dialog.CmdBtnsDlg;
 import org.cas.client.platform.bar.dialog.NumberPanelDlg;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
@@ -26,16 +26,16 @@ public class Cmd_EqualBill implements ActionListener {
 		BillPanel panel = billListPanel.getCurBillPanel();
 		if(panel == null) {
 			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
-			CommandBtnDlg.btnEqualBill.setSelected(false);
+			CmdBtnsDlg.btnEqualBill.setSelected(false);
 			return;
 		}
-		BarFrame.numberPanelDlg.setBtnSource(CommandBtnDlg.btnEqualBill);
+		BarFrame.numberPanelDlg.setBtnSource(CmdBtnsDlg.btnEqualBill);
 		BarFrame.numberPanelDlg.setFloatSupport(false);
 		BarFrame.numberPanelDlg.setPercentSupport(false);
 		BarFrame.numberPanelDlg.setModal(true);
 		BarFrame.numberPanelDlg.reLayout();
 		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.QTYNOTICE());
-		BarFrame.numberPanelDlg.setVisible(CommandBtnDlg.btnEqualBill.isSelected());
+		BarFrame.numberPanelDlg.setVisible(CmdBtnsDlg.btnEqualBill.isSelected());
 		if(NumberPanelDlg.confirmed) {
 			int num = Integer.valueOf(NumberPanelDlg.curContent);
 			if(num < 2) {

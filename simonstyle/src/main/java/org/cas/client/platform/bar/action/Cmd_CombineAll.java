@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.BillPanel;
-import org.cas.client.platform.bar.dialog.CommandBtnDlg;
+import org.cas.client.platform.bar.dialog.CmdBtnsDlg;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.casutil.L;
@@ -23,7 +23,7 @@ public class Cmd_CombineAll implements ActionListener {
 
 		BillListPanel billListPanel = (BillListPanel)BarFrame.instance.panels[1];
 		
-		if(CommandBtnDlg.btnCombineAll.getText().equals(BarFrame.consts.CombineAll())) {
+		if(CmdBtnsDlg.btnCombineAll.getText().equals(BarFrame.consts.CombineAll())) {
 			if(!billListPanel.checkColosedBill()) {
 				return;
 			}

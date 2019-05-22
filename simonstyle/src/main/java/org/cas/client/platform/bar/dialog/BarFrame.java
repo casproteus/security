@@ -118,7 +118,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         CASControl.ctrl.setMainFrame(new CASMainFrame());
         menuPanel = new MenuPanel();	//have to be after initModel, before new BarFrame().
         instance = new BarFrame();
-        CommandBtnDlg.initButtons();
+        CmdBtnsDlg.initButtons();
         instance.initComponent();
     	
         numberPanelDlg = new NumberPanelDlg(instance);
@@ -779,14 +779,14 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	public void showPriceChangeDlg() {
 		numberPanelDlg.setTitle(consts.CHANGEPRICE());
 		numberPanelDlg.setNotice(consts.ChangePriceNotice());
-		numberPanelDlg.setBtnSource(CommandBtnDlg.btnChangePrice);//pomp up a numberPanelDlg
+		numberPanelDlg.setBtnSource(CmdBtnsDlg.btnChangePrice);//pomp up a numberPanelDlg
 		numberPanelDlg.setFloatSupport(true);
 		numberPanelDlg.setPercentSupport(false);
 		numberPanelDlg.setModal(false);
 		//should no record selected, select the last one.
-		CommandBtnDlg.btnChangePrice.setSelected(true);
-		numberPanelDlg.setVisible(CommandBtnDlg.btnChangePrice.isSelected());	//@NOTE: it's not model mode.
-		numberPanelDlg.setAction(new UpdateItemPriceAction(CommandBtnDlg.btnChangePrice));
+		CmdBtnsDlg.btnChangePrice.setSelected(true);
+		numberPanelDlg.setVisible(CmdBtnsDlg.btnChangePrice.isSelected());	//@NOTE: it's not model mode.
+		numberPanelDlg.setAction(new UpdateItemPriceAction(CmdBtnsDlg.btnChangePrice));
 	}
 
 	public void userCheckOut() {

@@ -54,7 +54,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		add(btnRight);
 		add(separator);
 		
-		BarUtil.addFunctionButtons(this, CommandBtnDlg.groupedButtons[1]);
+		BarUtil.addFunctionButtons(this, CmdBtnsDlg.groupedButtons[1]);
 		
 		addComponentListener(this);
 		btnLeft.addActionListener(this);
@@ -100,13 +100,13 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				rs.afterLast();
 	            rs.relative(-1);
 	            if (rs.getRow() > 1) {
-	            	CommandBtnDlg.btnCombineAll.setText(BarFrame.consts.UnCombine());
+	            	CmdBtnsDlg.btnCombineAll.setText(BarFrame.consts.UnCombine());
 	            }
 			} catch (SQLException e) {
 	            ErrorUtil.write(e);
 	        }
 		}else {
-			CommandBtnDlg.btnCombineAll.setText(BarFrame.consts.CombineAll());
+			CmdBtnsDlg.btnCombineAll.setText(BarFrame.consts.CombineAll());
 		}
 	}
 
@@ -169,7 +169,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		
 		int tBtnHeight = BarFrame.instance.getHeight() / 10;
 		
-		int top = BarUtil.layoutCommandButtons(this, CommandBtnDlg.groupedButtons[1]);
+		int top = BarUtil.layoutCommandButtons(this, CmdBtnsDlg.groupedButtons[1]);
 		if(top < 0) {
 			return;
 		}
