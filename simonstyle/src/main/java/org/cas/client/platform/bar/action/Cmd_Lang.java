@@ -8,6 +8,7 @@ import org.cas.client.platform.bar.dialog.CommandBtnDlg;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.bar.i18n.BarDlgConst1;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
+import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -26,14 +27,14 @@ public class Cmd_Lang implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Object o = e.getSource();
- 		if(o == CommandBtnDlg.btnEN) {
+		String o = ((FunctionButton)e.getSource()).getText();
+ 		if(o.equals("EN")) {
  			BarFrame.consts = new BarDlgConst0();
         	updateInterface("update employee set subject = 'EN' where id = " + LoginDlg.USERID);
- 		}else if (o == CommandBtnDlg.btnFR) {
+ 		}else if (o.equals("FR")) {
     		BarFrame.consts = new BarDlgConst1();
     		updateInterface("update employee set subject = 'FR' where id = " + LoginDlg.USERID);
-        } else if (o == CommandBtnDlg.btnCN) {
+        } else if (o.equals("CN")) {
     		BarFrame.consts = new BarDlgConst2();
         	updateInterface("update employee set subject = 'CN' where id = " + LoginDlg.USERID);
         }

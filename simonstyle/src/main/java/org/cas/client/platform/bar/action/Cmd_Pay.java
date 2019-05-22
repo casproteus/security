@@ -12,6 +12,7 @@ import org.cas.client.platform.bar.dialog.CommandBtnDlg;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.DBConsts;
+import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.resource.international.DlgConst;
 
 public class Cmd_Pay implements ActionListener {
@@ -29,7 +30,7 @@ public class Cmd_Pay implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Object o = e.getSource();
+		String o = ((FunctionButton)e.getSource()).getText();
 		
 		SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
 		BillPanel billPanel = salesPanel.billPanel;
@@ -51,15 +52,15 @@ public class Cmd_Pay implements ActionListener {
 		}
 		//show dialog-------------------------------------
  		BarFrame.payDlg.setFloatSupport(true);
- 		if(o == CommandBtnDlg.btnCASH) {
+ 		if(o.equals(BarFrame.consts.CASH())) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterCashPayment());
- 		}else if(o == CommandBtnDlg.btnDEBIT) {
+ 		}else if(o.equals(BarFrame.consts.DEBIT())) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterDebitPayment());
- 		}else if(o == CommandBtnDlg.btnVISA) {
+ 		}else if(o.equals(BarFrame.consts.VISA())) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterVisaPayment());
- 		}else if(o == CommandBtnDlg.btnMASTER) {
+ 		}else if(o.equals(BarFrame.consts.MASTER())) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterMasterPayment());
- 		}else if(o == CommandBtnDlg.btnOTHER) {
+ 		}else if(o.equals(BarFrame.consts.OTHER())) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterOtherPayment());
  		}
  		//init payDialog content base on bill.

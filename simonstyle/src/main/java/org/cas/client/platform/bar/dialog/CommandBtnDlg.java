@@ -45,6 +45,7 @@ import org.cas.client.platform.bar.action.Cmd_Modify3;
 import org.cas.client.platform.bar.action.Cmd_MoveItem;
 import org.cas.client.platform.bar.action.Cmd_OpenDrawer;
 import org.cas.client.platform.bar.action.Cmd_OrderManage;
+import org.cas.client.platform.bar.action.Cmd_Other;
 import org.cas.client.platform.bar.action.Cmd_Pay;
 import org.cas.client.platform.bar.action.Cmd_PrintAll;
 import org.cas.client.platform.bar.action.Cmd_PrintBill;
@@ -72,6 +73,7 @@ import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
 import org.cas.client.platform.bar.uibeans.ISbutton;
 import org.cas.client.platform.bar.uibeans.MoreButton;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.resource.international.DlgConst;
 import org.hsqldb.lib.HashMap;
 
 public class CommandBtnDlg extends JDialog implements ComponentListener, ActionListener{
@@ -116,6 +118,8 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 		
 		//reset button
 		reset = new FunctionButton(BarFrame.consts.RESET());
+		//close button
+		close = new FunctionButton(BarFrame.consts.Close());
 		
 		//properties--------------------------------------------------------
 		Border etchedBorder = BorderFactory.createEtchedBorder(); 
@@ -150,7 +154,8 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 		getContentPane().add(settingPanle);
 		
 		getContentPane().add(reset);
-
+		getContentPane().add(close);
+		
 		//listener
 		toTable.addActionListener(this);
 		toBill.addActionListener(this);
@@ -163,6 +168,7 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 		fromSetting.addActionListener(this);
 		
 		reset.addActionListener(this);
+		close.addActionListener(this);
 		
 		addComponentListener(this);
 		
@@ -178,21 +184,33 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
 		int[] ids = originalList.getSelectedIndices();
-		if(ids.length < 1 && o != reset) {
-			JOptionPane.showMessageDialog(this, BarFrame.consts.AtLeastOneShouldBeSelected());
-			return;
-		}
 		
 		if(o == toTable) {
+			if(ids.length < 1) {
+				JOptionPane.showMessageDialog(this, BarFrame.consts.AtLeastOneShouldBeSelected());
+				return;
+			}
 			addCmd(KEY_TABLE_CMD, ids, tablePanle);
 			
 		}else if(o == toBill) {
+			if(ids.length < 1) {
+				JOptionPane.showMessageDialog(this, BarFrame.consts.AtLeastOneShouldBeSelected());
+				return;
+			}
 			addCmd(KEY_BILL_CMD, ids, billPanle);
 			
 		}else if(o == toSale) {
+			if(ids.length < 1) {
+				JOptionPane.showMessageDialog(this, BarFrame.consts.AtLeastOneShouldBeSelected());
+				return;
+			}
 			addCmd(KEY_SALE_CMD, ids, salePanle);
 			
 		}else if(o == toSetting) {
+			if(ids.length < 1) {
+				JOptionPane.showMessageDialog(this, BarFrame.consts.AtLeastOneShouldBeSelected());
+				return;
+			}
 			addCmd(KEY_SETTING_CMD, ids, settingPanle);
 			
 		}else if(o == fromTable) {
@@ -208,6 +226,10 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 			clearCmd(KEY_SETTING_CMD, settingPanle);
 			
 		}else if(o == reset) {
+			if(JOptionPane.showConfirmDialog(BarFrame.instance, "Are you sure to delete all your configration about command buttons? (interface will be reset to default layout.", DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+				return;
+			}			
+			
 			CustOpts.custOps.removeKeyAndValue(KEY_TABLE_CMD);
 			CustOpts.custOps.removeKeyAndValue(KEY_BILL_CMD);
 			CustOpts.custOps.removeKeyAndValue(KEY_SALE_CMD);
@@ -218,6 +240,8 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 			billPanle.removeAll();
 			salePanle.removeAll();
 			settingPanle.removeAll();
+		}else if(o == close) {
+			this.dispose();
 		}
 		
 		CustOpts.custOps.saveData();
@@ -320,8 +344,9 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 				billPanle.getWidth(), billPanle.getHeight());
 		settingPanle.setBounds(salePanle.getX(), salePanle.getY() + salePanle.getHeight() + CustOpts.VER_GAP, 
 				salePanle.getWidth(), salePanle.getHeight());
-		
+
 		reset.setBounds(settingPanle.getX(), settingPanle.getY() + settingPanle.getHeight() + CustOpts.VER_GAP, 80, 40);
+		close.setBounds(settingPanle.getX() + settingPanle.getWidth() - 80, reset.getY(), 80, 40);
 
 		BarUtil.layoutCommandButtons(tablePanle, (ArrayList<JComponent>)btnListMap.get(KEY_TABLE_CMD));
 		BarUtil.layoutCommandButtons(billPanle, (ArrayList<JComponent>)btnListMap.get(KEY_BILL_CMD));
@@ -503,7 +528,7 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
         btnSend.addActionListener(new Cmd_Send());
         
 		btnReport2.addActionListener(Cmd_Report.getInstance());
-		btnOTHER.addActionListener(Cmd_Pay.getInstance());
+		btnOTHER.addActionListener(new Cmd_Other());
 		btnDiscountCoupon.addActionListener(new Cmd_DiscountCoupon());
 		btnEN.addActionListener(Cmd_Lang.getInstance());
 		btnFR.addActionListener(Cmd_Lang.getInstance());
@@ -644,6 +669,7 @@ public class CommandBtnDlg extends JDialog implements ComponentListener, ActionL
 	JPanel settingPanle;
 
     private static FunctionButton reset;
+    private static FunctionButton close;
     
 	//TablePanel
     //private JToggleButton btnChangeMode;
