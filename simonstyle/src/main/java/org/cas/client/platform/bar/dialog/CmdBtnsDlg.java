@@ -582,16 +582,16 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     	groupedButtons[0].add(btnCheckInOut);
     	
     	//BillListPanel
+    	groupedButtons[1].add(btnReturn2);
     	groupedButtons[1].add(btnAddUser);
     	groupedButtons[1].add(btnPrintAll);
-    	groupedButtons[1].add(btnPrintOneBill);
-    	groupedButtons[1].add(btnPrintOneInVoice);
+//    	groupedButtons[1].add(btnPrintOneBill);
+//    	groupedButtons[1].add(btnPrintOneInVoice);
     	groupedButtons[1].add(btnEqualBill);
+    	groupedButtons[1].add(btnCombineAll);
     	groupedButtons[1].add(btnSplitItem);
     	groupedButtons[1].add(btnMoveItem);
-    	groupedButtons[1].add(btnCombineAll);
     	groupedButtons[1].add(btnSuspendAll);
-    	groupedButtons[1].add(btnReturn2);
     	
     	//SalesPanel
     	groupedButtons[2].add(btnCASH);
