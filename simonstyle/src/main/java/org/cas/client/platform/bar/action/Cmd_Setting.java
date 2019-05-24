@@ -12,6 +12,7 @@ import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.bar.uibeans.SamActionListener;
+import org.cas.client.resource.international.DlgConst;
 
 public class Cmd_Setting implements SamActionListener {
 
@@ -35,6 +36,19 @@ public class Cmd_Setting implements SamActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+
+		SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
+		BillPanel billPanel = salesPanel.billPanel;
+		
+		if(billPanel.getNewDishes().size() > 0) {
+    		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+    				BarFrame.consts.COMFIRMLOSTACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+                return;	
+            }else {
+    			//call cancel all
+    			Cmd_CancelAll.getInstance().actionPerformed(null);
+            }
+    	}
 		BarFrame.instance.switchMode(3);
 	}
 }

@@ -381,7 +381,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				if(obj != null)
 					BarFrame.numberPanelDlg.setContents(obj.toString());
 			}
-			if( Cmd_DiscItem.getInstance().getSourceBtn().isSelected()) {
+			if(Cmd_DiscItem.getInstance().getSourceBtn().isSelected()) {
 				Object obj = table.getValueAt(selectedRow,2);
 				//update the discount in qtyDlg.
 				if(obj != null)

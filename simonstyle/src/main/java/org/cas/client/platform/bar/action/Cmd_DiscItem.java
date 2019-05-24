@@ -27,9 +27,8 @@ public class Cmd_DiscItem implements SamActionListener {
 	public ISButton getSourceBtn() {
 		return sourceBtn;
 	}
-
 	@Override
-	public void setSourceBtn(ISButton btn) {
+	public void setSourceBtn(ISButton sourceBtn) {
 		this.sourceBtn = sourceBtn;
 	}
 	

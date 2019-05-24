@@ -51,7 +51,10 @@ public class Cmd_Return implements SamActionListener {
 		if(billPanel.getNewDishes().size() > 0) {
     		if(JOptionPane.showConfirmDialog(BarFrame.instance, 
     				BarFrame.consts.COMFIRMLOSTACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
-                 return;	
+                return;	
+            }else {
+    			//call cancel all
+    			Cmd_CancelAll.getInstance().actionPerformed(null);
             }
     	}
 
