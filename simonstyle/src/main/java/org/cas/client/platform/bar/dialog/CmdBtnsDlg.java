@@ -24,7 +24,7 @@ import org.cas.client.platform.bar.action.Cmd_BillFoot;
 import org.cas.client.platform.bar.action.Cmd_CancelAll;
 import org.cas.client.platform.bar.action.Cmd_ChangePrice;
 import org.cas.client.platform.bar.action.Cmd_CheckInOut;
-import org.cas.client.platform.bar.action.Cmd_CheckInOut3;
+import org.cas.client.platform.bar.action.Cmd_CheckInOutList;
 import org.cas.client.platform.bar.action.Cmd_CheckOrder;
 import org.cas.client.platform.bar.action.Cmd_Color;
 import org.cas.client.platform.bar.action.Cmd_CombineAll;
@@ -399,7 +399,6 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnMore = new MoreButton(BarFrame.consts.MORE());
         btnSend = new FunctionButton(BarFrame.consts.SEND());
         
-        btnReport2 = new FunctionButton(BarFrame.consts.Report());
         //btnLine_3_2 = new JToggleButton(BarFrame.consts.QTY());
 		btnOTHER = new FunctionButton(BarFrame.consts.GIFTCARD());
         btnDiscountCoupon = new FunctionButton(BarFrame.consts.COUPON());
@@ -408,8 +407,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 		btnEN = new FunctionButton("EN");
 		btnFR = new FunctionButton("FR");
 		btnCN = new FunctionButton("CN");
-		btnSettings2 = new FunctionButton(BarFrame.consts.SETTINGS());
-		btnCheckOut2 = new FunctionButton(BarFrame.consts.CheckOut());
+		btnCheckOut = new FunctionButton(BarFrame.consts.CheckOut());
 		
         //SettingPanel
         btnEmployee = new FunctionButton(BarFrame.consts.Operator());
@@ -514,16 +512,14 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnRefund.addActionListener(Cmd_Refund.getInstance());
         btnSend.addActionListener(Cmd_Send.getInstance());
         
-		btnReport2.addActionListener(Cmd_Report.getInstance());
 		btnOTHER.addActionListener(Cmd_Other.getInstance());
 		btnDiscountCoupon.addActionListener(Cmd_DiscountCoupon.getInstance());
 		btnEN.addActionListener(Cmd_Lang.getInstance());
 		btnFR.addActionListener(Cmd_Lang.getInstance());
 		btnCN.addActionListener(Cmd_Lang.getInstance());
-		btnSettings2.addActionListener(Cmd_Setting.getInstance());
 		btnSuspend.addActionListener(Cmd_Suspend.getInstance());
 		btnCheckOrder.addActionListener(Cmd_CheckOrder.getInstance());
-		btnCheckOut2.addActionListener(Cmd_CheckInOut.getInstance());
+		btnCheckOut.addActionListener(Cmd_CheckInOut.getInstance());
         //
         btnEmployee.addActionListener(Cmd_Employee.getInstance());
         btnPrinter.addActionListener(Cmd_Printer.getInstance());
@@ -533,7 +529,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnGiftCard.addActionListener(Cmd_GiftCard.getInstance());
         btnCoupon.addActionListener(Cmd_Coupon.getInstance());
         btnColor.addActionListener(Cmd_Color.getInstance());
-        btnCheckInOutList.addActionListener(Cmd_CheckInOut3.getInstance());
+        btnCheckInOutList.addActionListener(Cmd_CheckInOutList.getInstance());
         
         groupButtons();
 	}
@@ -601,16 +597,16 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     	groupedButtons[2].add(btnRefund);
     	groupedButtons[2].add(btnSend);
 		
-    	groupedButtons[2].add(btnReport2);
     	groupedButtons[2].add(btnOTHER);
     	groupedButtons[2].add(btnDiscountCoupon);
+    	groupedButtons[2].add(btnSuspend);
+    	groupedButtons[2].add(btnCheckOrder);
+    	groupedButtons[2].add(btnSetting.clone());
     	groupedButtons[2].add(btnEN);
     	groupedButtons[2].add(btnFR);
     	groupedButtons[2].add(btnCN);
-    	groupedButtons[2].add(btnSettings2);
-    	groupedButtons[2].add(btnSuspend);
-    	groupedButtons[2].add(btnCheckOrder);
-    	groupedButtons[2].add(btnCheckOut2);
+    	groupedButtons[2].add(btnReport.clone());
+    	groupedButtons[2].add(btnCheckOut);
     	
     	//setting panels
         groupedButtons[3].add(btnReturn.clone());
@@ -702,13 +698,11 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 	private static MoreButton btnMore;
 	private static FunctionButton btnSend;
 	
-	private static FunctionButton btnReport2;
 	private static FunctionButton btnDiscountCoupon;
 	private static FunctionButton btnEN;
 	private static FunctionButton btnFR;
 	private static FunctionButton btnCN;
-	private static FunctionButton btnSettings2;
-	private static FunctionButton btnCheckOut2;
+	private static FunctionButton btnCheckOut;
 	private static FunctionButton btnSuspend;
 	private static FunctionButton btnCheckOrder;
 	

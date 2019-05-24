@@ -14,13 +14,13 @@ import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.bar.uibeans.SamActionListener;
 
-public class Cmd_CheckInOut3 implements SamActionListener {
+public class Cmd_CheckInOutList implements SamActionListener {
 
-	private static Cmd_CheckInOut3 instance;
-	private Cmd_CheckInOut3() {}
-	public static Cmd_CheckInOut3 getInstance() {
+	private static Cmd_CheckInOutList instance;
+	private Cmd_CheckInOutList() {}
+	public static Cmd_CheckInOutList getInstance() {
 		if(instance == null)
-			instance = new Cmd_CheckInOut3();
+			instance = new Cmd_CheckInOutList();
 		return instance;
 	}
 	
