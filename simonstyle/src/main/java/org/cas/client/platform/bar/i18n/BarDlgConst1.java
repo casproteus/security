@@ -601,4 +601,6 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String ActionNotAllowed() {return "Action non autorisée dans l'état actuel!";}
 	@Override
 	public String OrgonizeCommands() {return "Organiser les commandes";}
+	@Override
+	public String RestartNeeded() {return "Veuillez redémarrer l'application pour appliquer les nouveaux paramètres.";}
 }

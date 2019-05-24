@@ -235,6 +235,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 			salePanle.removeAll();
 			settingPanle.removeAll();
 		}else if(o == close) {
+			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.RestartNeeded());
 			this.dispose();
 		}
 		
@@ -357,7 +358,6 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     	//TablePanel
 		btnAddTable = new FunctionButton(BarFrame.consts.AddTable());
 		btnOrderManage = new FunctionButton(BarFrame.consts.OrderManage());
-		btnOpenDrawer2 = new FunctionButton(BarFrame.consts.OpenDrawer());
 		//btnWaiterReport = new FunctionButton(BarFrame.consts.WaiterReport());
 		btnSetting = new FunctionButton(BarFrame.consts.SETTINGS());
 		btnReport = new FunctionButton(BarFrame.consts.Report());
@@ -421,65 +421,63 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnGiftCard = new FunctionButton(BarFrame.consts.GIFTCARD());
         btnCoupon = new FunctionButton(BarFrame.consts.COUPON());
         btnColor = new FunctionButton(BarFrame.consts.Color().toUpperCase());
-        btnCheckInOut3 = new FunctionButton(BarFrame.consts.CheckInOut());
+        btnCheckInOutList = new FunctionButton(BarFrame.consts.CheckInOut());
         
         buttons = new ISButton[] {
         		btnAddTable,	//0
-        		btnOrderManage,	//1
-        		btnOpenDrawer2,	//2
-        		btnSetting,		//3
-        		btnReport,		//4
-        		btnCheckInOut,	//5
+        		btnOrderManage,
+        		btnSetting,
+        		btnReport,
+        		btnCheckInOut,
         			
-        		btnAddUser,		//6
-        		btnPrintAll,	//7
-//        		btnPrintOneBill,//8
-//        		btnPrintOneInVoice,	//9
-        		btnEqualBill,	//8
-        		btnSplitItem,	//9
-        		btnMoveItem,	//10
-        		btnCombineAll,	//11
-        		btnSuspendAll,	//12
+        		btnAddUser,		//5
+        		btnPrintAll,
+//        		btnPrintOneBill,
+//        		btnPrintOneInVoice,
+        		btnEqualBill,
+        		btnSplitItem,
+        		btnMoveItem,
+        		btnCombineAll,	//10
+        		btnSuspendAll,
         			
-        		btnCASH,		//13
-        		btnDEBIT,		//14
-        		btnVISA,		//15
-        		btnMASTER,		//16
-        		btnOTHER,		//17
-        		btnSplitBill,	//18
-        		btnRemoveItem,	//19
-        		btnModify,		//20
-        		btnDiscItem,	//21
-        		btnChangePrice,	//22
-        		btnServiceFee,	//23
-        		btnPrintBill,	//24
+        		btnCASH,
+        		btnDEBIT,
+        		btnVISA,
+        		btnMASTER,		//15
+        		btnOTHER,
+        		btnSplitBill,
+        		btnRemoveItem,
+        		btnModify,
+        		btnDiscItem,	//20
+        		btnChangePrice,
+        		btnServiceFee,
+        		btnPrintBill,
 
-        		btnReturn,		//25
-        		btnAddBill,		//26
+        		btnReturn,
+        		btnAddBill,		//25
         			   
-        		btnCancelAll,	//27
-        		btnVoidOrder,	//28
-        		btnOpenDrawer,	//29
-        		btnDiscBill,	//30
-        		btnRefund,		//31
-        		btnSend,		//32
+        		btnCancelAll,
+        		btnVoidOrder,
+        		btnOpenDrawer,
+        		btnDiscBill,
+        		btnRefund,		//30
+        		btnSend,
         			
-        		btnEmployee,	//33
-        		btnPrinter,		//34
-        		btnTable,		//35
-        		btnBillFoot,	//36
-        		btnModifySetting,		//37
-        		btnGiftCard,	//38
-        		btnCoupon,		//39
-        		btnColor,		//40
-        		btnCheckInOut3};//41
+        		btnEmployee,
+        		btnPrinter,
+        		btnTable,
+        		btnBillFoot,	//35
+        		btnModifySetting,
+        		btnGiftCard,
+        		btnCoupon,
+        		btnColor,
+        		btnCheckInOutList};//40
         
         
         //listener------------------------------
         //tablePanel
         btnAddTable.addActionListener(Cmd_AddTable.getInstance());
         btnOrderManage.addActionListener(Cmd_OrderManage.getInstance());
-        btnOpenDrawer2.addActionListener(Cmd_OpenDrawer.getInstance());
         //btnWaiterReport.addActionListener(this);
         btnSetting.addActionListener(Cmd_Setting.getInstance());
         btnReport.addActionListener(Cmd_Report.getInstance());
@@ -535,7 +533,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnGiftCard.addActionListener(Cmd_GiftCard.getInstance());
         btnCoupon.addActionListener(Cmd_Coupon.getInstance());
         btnColor.addActionListener(Cmd_Color.getInstance());
-        btnCheckInOut3.addActionListener(Cmd_CheckInOut3.getInstance());
+        btnCheckInOutList.addActionListener(Cmd_CheckInOut3.getInstance());
         
         groupButtons();
 	}
@@ -563,7 +561,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 	private static void fillRegroupBtnWithDefault(){
     	groupedButtons[0].add(btnAddTable);
     	groupedButtons[0].add(btnOrderManage);
-    	groupedButtons[0].add(btnOpenDrawer2);
+    	groupedButtons[0].add(btnOpenDrawer);
     	//groupedButtons[0].add(btnWaiterReport);
     	groupedButtons[0].add(btnSetting);
     	groupedButtons[0].add(btnReport);
@@ -598,7 +596,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     	groupedButtons[2].add(btnMASTER);
     	groupedButtons[2].add(btnCancelAll);
     	groupedButtons[2].add(btnVoidOrder);
-    	groupedButtons[2].add(btnOpenDrawer);
+    	groupedButtons[2].add(btnOpenDrawer.clone());
     	groupedButtons[2].add(btnDiscBill);
     	groupedButtons[2].add(btnRefund);
     	groupedButtons[2].add(btnSend);
@@ -624,7 +622,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         groupedButtons[3].add(btnGiftCard);
         groupedButtons[3].add(btnCoupon);
         groupedButtons[3].add(btnColor);
-        groupedButtons[3].add(btnCheckInOut3);
+        groupedButtons[3].add(btnCheckInOutList);
     }
 
 	private static void fillRegroupBtnWithCustimization(Object customization, ArrayList<JComponent> groupedButtons) {
@@ -663,7 +661,6 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     //private JToggleButton btnChangeMode;
 	private static FunctionButton btnAddTable;
 	private static FunctionButton btnOrderManage;
-	private static FunctionButton btnOpenDrawer2;
 	//private static FunctionButton btnWaiterReport;
 	private static FunctionButton btnSetting;
 	private static FunctionButton btnReport;
@@ -724,58 +721,57 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     private static FunctionButton btnGiftCard;
     private static FunctionButton btnCoupon;
     private static FunctionButton btnColor;
-    private static FunctionButton btnCheckInOut3;
+    private static FunctionButton btnCheckInOutList;
     
     static ISButton[] buttons;
     
     static String[] btnNames = {
     		"AddTable",		//0
-    		"OrderManage",	//1
-    		"OpenDrawer2",	//2
-    		"Setting",		//3
-    		"Report",		//4
-    		"CheckInOut",	//5
+    		"OrderManage",
+    		"Setting",
+    		"Report",
+    		"CheckInOut",
     			
-    		"AddUser",		//6
-    		"PrintAll",		//7
-//    		"PrintOneBill",	//8
-//    		"PrintOneInVoice",	//9
-    		"EqualBill",	//8
-    		"SplitItem",	//9
-    		"MoveItem",		//10
-    		"CombineAll",	//11
-    		"SuspendAll",	//12
+    		"AddUser",		//5
+    		"PrintAll",
+//    		"PrintOneBill",
+//    		"PrintOneInVoice",
+    		"EqualBill",
+    		"SplitItem",
+    		"MoveItem",
+    		"CombineAll",	//10
+    		"SuspendAll",
     			
-    		"CASH",			//13
-    		"DEBIT",		//14
-    		"VISA",			//15
-    		"MASTER",		//16
-    		"OTHER",		//17
-    		"SplitBill",	//18
-    		"RemoveItem",	//19
-    		"Modify",		//20
-    		"DiscItem",		//21
-    		"ChangePrice",	//22
-    		"ServiceFee",	//23
-    		"PrintBill",	//24
+    		"CASH",
+    		"DEBIT",
+    		"VISA",			//
+    		"MASTER",		//15
+    		"OTHER",		//
+    		"SplitBill",	//
+    		"RemoveItem",	//
+    		"Modify",		//
+    		"DiscItem",		//20
+    		"ChangePrice",	//
+    		"ServiceFee",	//
+    		"PrintBill",	//
 
-    		"Return",		//25
-    		"AddBill",		//26
+    		"Return",		//
+    		"AddBill",		//25
     			   
-    		"CancelAll",	//27
-    		"VoidOrder",	//28
-    		"OpenDrawer",	//29
-    		"DiscBill",		//30
-    		"Refund",		//31
-    		"Send",			//32
+    		"CancelAll",	//
+    		"VoidOrder",	//
+    		"OpenDrawer",	//
+    		"DiscBill",		//
+    		"Refund",		//30
+    		"Send",			//
     			
-    		"Employee",		//33
-    		"Printer",		//34
-    		"Table",		//35
-    		"BillFoot",		//36
-    		"ModifySetting",//37
-    		"GiftCard",		//38
-    		"Coupon",		//39
-    		"Color",		//40
-    		"CheckInOut3"}; //41
+    		"Employee",		//
+    		"Printer",		//
+    		"Table",		//
+    		"BillFoot",		//35
+    		"ModifySetting",//
+    		"GiftCard",		//
+    		"Coupon",		//
+    		"Color",		//
+    		"CheckInOutList"}; //40
 }

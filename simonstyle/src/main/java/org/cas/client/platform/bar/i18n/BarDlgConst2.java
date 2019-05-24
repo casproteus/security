@@ -603,4 +603,6 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String ActionNotAllowed() {return "该动作在当前状态下无效！";}
 	@Override
 	public String OrgonizeCommands() {return "设定命令按钮布局";}
+	@Override
+	public String RestartNeeded() {return "请重启程序使新的设置生效。";}
 }

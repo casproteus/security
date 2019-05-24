@@ -603,5 +603,7 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String ActionNotAllowed() {return "Action not allowed in current status!";}
 	@Override
 	public String OrgonizeCommands() {return "Organize the commands";}
+	@Override
+	public String RestartNeeded() {return "Please restart the application to apply the new settings.";}
 
 }

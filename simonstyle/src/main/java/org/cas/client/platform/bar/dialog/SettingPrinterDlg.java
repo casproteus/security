@@ -16,6 +16,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
@@ -67,12 +68,11 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
         cbxSavePrintInvoiceWhenBilled.setBounds(cbxIsDisplayWaiterInKitchen.getX(), cbxIsDisplayWaiterInKitchen.getY() + cbxIsDisplayWaiterInKitchen.getHeight() + CustOpts.VER_GAP,
         		cbxSavePrintInvoiceWhenBilled.getPreferredSize().width, CustOpts.BTN_HEIGHT);
 
-        ok.setBounds(getWidth() / 2 - CustOpts.HOR_GAP - CustOpts.BTN_WIDTH,
-        		cbxSavePrintInvoiceWhenBilled.getY() + cbxSavePrintInvoiceWhenBilled.getHeight() + CustOpts.VER_GAP * 3, CustOpts.BTN_WIDTH,
-                CustOpts.BTN_HEIGHT);
-        cancel.setBounds(ok.getWidth() + ok.getX() + CustOpts.HOR_GAP * 2, ok.getY(), CustOpts.BTN_WIDTH,
-                CustOpts.BTN_HEIGHT);
-
+        cancel.setBounds(getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP + 3, 
+			getHeight() - CustOpts.BTN_HEIGHT - CustOpts.SIZE_EDGE - CustOpts.SIZE_TITLE - CustOpts.VER_GAP + 4,
+	        CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+        ok.setBounds(cancel.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, cancel.getY(), 
+        		CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
         validate();
     }
 
@@ -127,6 +127,7 @@ public class SettingPrinterDlg extends JDialog implements ICASDialog, ActionList
 	        		ErrorUtil.write(exp);
 	        	}
         	}
+        	JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.RestartNeeded());
         	dispose();
         } else if (o == cancel) {
             dispose();

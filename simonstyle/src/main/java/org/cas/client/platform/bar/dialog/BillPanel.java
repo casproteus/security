@@ -635,10 +635,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String openTime = BarFrame.instance.valStartTime.getText();
 		String billId = BarFrame.instance.isShowingAnExpiredBill ? String.valueOf(BarFrame.instance.curBillID) : "";
+		
 		initContent(billId, billIndex, tableName, openTime);
 	}
     
     public void initContent(String billId, String billIndex, String tableName, String openTime) {
+    	if((billId == null || "".equals(billId)) && (openTime == null || "".equals(openTime))) {
+    		return;
+    	}
     	resetProperties();
     	//get outputs of current table and bill id.
     	StringBuilder sql = null;

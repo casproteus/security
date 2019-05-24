@@ -22,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
@@ -439,6 +440,10 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      */
     private void deleteClicked() {
         int tmpSelectionIndex = modificationList.getSelectedIndex();
+        if(tmpSelectionIndex < 0) {
+        	JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.AtLeastOneShouldBeSelected());
+        	return;
+        }
         int size = listModel.getSize();
         // 看来字段删除必须在这时处理
         deleteModification(modificationList.getSelectedValue().getName());
