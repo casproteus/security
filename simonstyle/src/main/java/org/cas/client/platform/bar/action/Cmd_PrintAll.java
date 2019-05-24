@@ -11,8 +11,28 @@ import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 
-public class Cmd_PrintAll implements ActionListener {
+public class Cmd_PrintAll implements SamActionListener {
+
+	private static Cmd_PrintAll instance;
+	private Cmd_PrintAll() {}
+	public static Cmd_PrintAll getInstance() {
+		if(instance == null)
+			instance = new Cmd_PrintAll();
+		return instance;
+	}
+	
+	private ISButton sourceBtn;
+	
+	public ISButton getSourceBtn() {
+		return sourceBtn;
+	}
+	@Override
+	public void setSourceBtn(ISButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

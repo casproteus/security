@@ -14,8 +14,11 @@ import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 
-public class Cmd_SplitItem implements ActionListener {
+public class Cmd_SplitItem implements SamActionListener {
+
 	private static Cmd_SplitItem instance;
 	private Cmd_SplitItem() {}
 	public static Cmd_SplitItem getInstance() {
@@ -24,13 +27,13 @@ public class Cmd_SplitItem implements ActionListener {
 		return instance;
 	}
 	
-	private FunctionToggleButton sourceBtn;
+	private ISButton sourceBtn;
 	
-	public FunctionToggleButton getSourceBtn() {
+	public ISButton getSourceBtn() {
 		return sourceBtn;
 	}
-	
-	public void setSourceBtn(FunctionToggleButton sourceBtn) {
+	@Override
+	public void setSourceBtn(ISButton sourceBtn) {
 		this.sourceBtn = sourceBtn;
 	}
 	

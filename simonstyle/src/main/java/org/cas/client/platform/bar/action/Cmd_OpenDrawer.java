@@ -19,22 +19,33 @@ import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.print.Command;
 import org.cas.client.platform.bar.print.PrintService;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 import org.cas.client.platform.casutil.ErrorUtil;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 
-public class Cmd_OpenDrawer implements ActionListener {
+public class Cmd_OpenDrawer implements SamActionListener {
+
 	private static Cmd_OpenDrawer instance;
-	
 	private Cmd_OpenDrawer() {}
-	
 	public static Cmd_OpenDrawer getInstance() {
-		if(instance == null) {
+		if(instance == null)
 			instance = new Cmd_OpenDrawer();
-		}
 		return instance;
 	}
+	
+	private ISButton sourceBtn;
+	
+	public ISButton getSourceBtn() {
+		return sourceBtn;
+	}
+	@Override
+	public void setSourceBtn(ISButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String key = BarFrame.menuPanel.getPrinters()[0].getIp();

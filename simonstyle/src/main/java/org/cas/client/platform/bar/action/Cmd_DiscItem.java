@@ -10,8 +10,10 @@ import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.CmdBtnsDlg;
 import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 
-public class Cmd_DiscItem implements ActionListener {
+public class Cmd_DiscItem implements SamActionListener {
 	private static Cmd_DiscItem instance;
 	private Cmd_DiscItem() {}
 	public static Cmd_DiscItem getInstance() {
@@ -20,14 +22,17 @@ public class Cmd_DiscItem implements ActionListener {
 		return instance;
 	}
 	
-	FunctionToggleButton sourceBtn;
+	ISButton sourceBtn;
 	
-	public FunctionToggleButton getSourceBtn() {
+	public ISButton getSourceBtn() {
 		return sourceBtn;
 	}
-	public void setSourceBtn(FunctionToggleButton sourceBtn) {
+
+	@Override
+	public void setSourceBtn(ISButton btn) {
 		this.sourceBtn = sourceBtn;
 	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		this.sourceBtn = (FunctionToggleButton)e.getSource();

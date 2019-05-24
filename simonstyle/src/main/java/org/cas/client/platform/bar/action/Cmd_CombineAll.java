@@ -13,11 +13,14 @@ import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.hsqldb.lib.HashMap;
 
-public class Cmd_CombineAll implements ActionListener {
+public class Cmd_CombineAll implements SamActionListener {
+
 	private static Cmd_CombineAll instance;
 	private Cmd_CombineAll() {}
 	public static Cmd_CombineAll getInstance() {
@@ -26,14 +29,16 @@ public class Cmd_CombineAll implements ActionListener {
 		return instance;
 	}
 	
-	private FunctionButton sourceBtn;
+	private ISButton sourceBtn;
 	
-	public FunctionButton getSourceBtn() {
+	public ISButton getSourceBtn() {
 		return sourceBtn;
 	}
-	public void setSourceBtn(FunctionButton sourceBtn) {
+	@Override
+	public void setSourceBtn(ISButton sourceBtn) {
 		this.sourceBtn = sourceBtn;
 	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		this.sourceBtn = (FunctionButton)e.getSource();

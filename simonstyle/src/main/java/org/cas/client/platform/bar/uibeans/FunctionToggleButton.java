@@ -9,10 +9,10 @@ import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.dialog.BarOption;
 
-public class FunctionToggleButton extends JToggleButton implements ISbutton{
+public class FunctionToggleButton extends JToggleButton implements ISButton{
 	
 	private String title;
-	private ActionListener actionListener;
+	private SamActionListener actionListener;
 	
 	public FunctionToggleButton(String title) {
 		super(title);
@@ -26,14 +26,16 @@ public class FunctionToggleButton extends JToggleButton implements ISbutton{
 		setBorder(BorderFactory.createEtchedBorder());
 	}
 	
-	public void addActionListener(ActionListener actionListener) {
+	public void addActionListener(SamActionListener actionListener) {
 		super.addActionListener(actionListener);
 		this.actionListener = actionListener;
+		actionListener.setSourceBtn(this);
 	}
 	
 	public JComponent clone() {
 		FunctionToggleButton btn = new FunctionToggleButton(title);
 		btn.addActionListener(actionListener);
+		actionListener.setSourceBtn(btn);
 		return btn;
 	}
 }

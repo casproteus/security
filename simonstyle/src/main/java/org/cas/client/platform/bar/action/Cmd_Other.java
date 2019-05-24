@@ -12,11 +12,31 @@ import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.CmdBtnsDlg;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
-public class Cmd_Other implements ActionListener {
+public class Cmd_Other implements SamActionListener {
+
+	private static Cmd_Other instance;
+	private Cmd_Other() {}
+	public static Cmd_Other getInstance() {
+		if(instance == null)
+			instance = new Cmd_Other();
+		return instance;
+	}
+	
+	private ISButton sourceBtn;
+	
+	public ISButton getSourceBtn() {
+		return sourceBtn;
+	}
+	@Override
+	public void setSourceBtn(ISButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

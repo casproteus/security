@@ -11,9 +11,29 @@ import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 import org.cas.client.resource.international.DlgConst;
 
-public class Cmd_DiscBill implements ActionListener {
+public class Cmd_DiscBill implements SamActionListener {
+
+	private static Cmd_DiscBill instance;
+	private Cmd_DiscBill() {}
+	public static Cmd_DiscBill getInstance() {
+		if(instance == null)
+			instance = new Cmd_DiscBill();
+		return instance;
+	}
+	
+	private ISButton sourceBtn;
+	
+	public ISButton getSourceBtn() {
+		return sourceBtn;
+	}
+	@Override
+	public void setSourceBtn(ISButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

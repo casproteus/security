@@ -16,11 +16,31 @@ import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
-public class Cmd_DiscountCoupon implements ActionListener {
+public class Cmd_DiscountCoupon implements SamActionListener {
+
+	private static Cmd_DiscountCoupon instance;
+	private Cmd_DiscountCoupon() {}
+	public static Cmd_DiscountCoupon getInstance() {
+		if(instance == null)
+			instance = new Cmd_DiscountCoupon();
+		return instance;
+	}
+	
+	private ISButton sourceBtn;
+	
+	public ISButton getSourceBtn() {
+		return sourceBtn;
+	}
+	@Override
+	public void setSourceBtn(ISButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

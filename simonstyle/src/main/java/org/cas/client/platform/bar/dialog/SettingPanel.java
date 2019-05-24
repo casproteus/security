@@ -19,16 +19,6 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
 import org.cas.client.platform.bar.BarUtil;
-import org.cas.client.platform.bar.action.Cmd_BillFoot;
-import org.cas.client.platform.bar.action.Cmd_CheckInOut3;
-import org.cas.client.platform.bar.action.Cmd_Color;
-import org.cas.client.platform.bar.action.Cmd_Coupon;
-import org.cas.client.platform.bar.action.Cmd_Employee;
-import org.cas.client.platform.bar.action.Cmd_GiftCard;
-import org.cas.client.platform.bar.action.Cmd_Modify3;
-import org.cas.client.platform.bar.action.Cmd_Printer;
-import org.cas.client.platform.bar.action.Cmd_Return3;
-import org.cas.client.platform.bar.action.Cmd_Table;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.resource.international.PaneConsts;

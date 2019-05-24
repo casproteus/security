@@ -15,12 +15,32 @@ import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.DBConsts;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
-public class Cmd_Return implements ActionListener {
+public class Cmd_Return implements SamActionListener {
+
+	private static Cmd_Return instance;
+	private Cmd_Return() {}
+	public static Cmd_Return getInstance() {
+		if(instance == null)
+			instance = new Cmd_Return();
+		return instance;
+	}
+	
+	private ISButton sourceBtn;
+	
+	public ISButton getSourceBtn() {
+		return sourceBtn;
+	}
+	@Override
+	public void setSourceBtn(ISButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

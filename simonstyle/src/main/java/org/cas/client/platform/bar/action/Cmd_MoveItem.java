@@ -16,10 +16,13 @@ import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
-public class Cmd_MoveItem implements ActionListener {
+public class Cmd_MoveItem implements SamActionListener {
+
 	private static Cmd_MoveItem instance;
 	private Cmd_MoveItem() {}
 	public static Cmd_MoveItem getInstance() {
@@ -28,13 +31,14 @@ public class Cmd_MoveItem implements ActionListener {
 		return instance;
 	}
 	
-	private FunctionToggleButton sourceBtn;
+	private ISButton sourceBtn;
 	
-	public FunctionToggleButton getSourceBtn() {
+	public ISButton getSourceBtn() {
 		return sourceBtn;
 	}
-	public void setSourceBtn(FunctionToggleButton sourceBtn) {
-		this.sourceBtn = sourceBtn; 
+	@Override
+	public void setSourceBtn(ISButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
 	}
 	
 	@Override
@@ -58,7 +62,7 @@ public class Cmd_MoveItem implements ActionListener {
 		moveItemAction(sourceBtn);
 	}
 	
-	private void moveItemAction(FunctionToggleButton button) {
+	private void moveItemAction(ISButton button) {
 		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.BILL());
 		BarFrame.numberPanelDlg.setBtnSource(button);
 		BarFrame.numberPanelDlg.setFloatSupport(false);

@@ -1,16 +1,12 @@
 package org.cas.client.platform.bar.dialog;
 
-import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
-import java.util.Map;
 
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -56,8 +52,6 @@ import org.cas.client.platform.bar.action.Cmd_Refund;
 import org.cas.client.platform.bar.action.Cmd_RemoveItem;
 import org.cas.client.platform.bar.action.Cmd_Report;
 import org.cas.client.platform.bar.action.Cmd_Return;
-import org.cas.client.platform.bar.action.Cmd_Return2;
-import org.cas.client.platform.bar.action.Cmd_Return3;
 import org.cas.client.platform.bar.action.Cmd_Send;
 import org.cas.client.platform.bar.action.Cmd_ServiceFee;
 import org.cas.client.platform.bar.action.Cmd_Setting;
@@ -70,7 +64,7 @@ import org.cas.client.platform.bar.action.Cmd_VoidOrder;
 import org.cas.client.platform.bar.uibeans.ArrowButton;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
-import org.cas.client.platform.bar.uibeans.ISbutton;
+import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.bar.uibeans.MoreButton;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.resource.international.DlgConst;
@@ -381,7 +375,6 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 		btnCombineAll = new FunctionButton(BarFrame.consts.CombineAll());
 		
 		btnSuspendAll = new FunctionButton(BarFrame.consts.SuspendAll());
-		btnReturn2 = new FunctionButton(BarFrame.consts.RETURN());
 		
     	//SalesPanel
     	btnCASH = new FunctionButton(BarFrame.consts.CASH());
@@ -419,135 +412,130 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 		btnCheckOut2 = new FunctionButton(BarFrame.consts.CheckOut());
 		
         //SettingPanel
-        btnReturn3 = new FunctionButton(BarFrame.consts.RETURN());
         btnEmployee = new FunctionButton(BarFrame.consts.Operator());
         //btnLine_2_3 = new FunctionButton("TBD");
         btnPrinter = new FunctionButton(BarFrame.consts.PRINTER());
         btnTable = new FunctionButton(BarFrame.consts.TABLE());
         btnBillFoot = new FunctionButton(BarFrame.consts.BillInfo());
-        btnModify3 = new FunctionButton(BarFrame.consts.MODIFY());
+        btnModifySetting = new FunctionButton(BarFrame.consts.MODIFY());
         btnGiftCard = new FunctionButton(BarFrame.consts.GIFTCARD());
         btnCoupon = new FunctionButton(BarFrame.consts.COUPON());
         btnColor = new FunctionButton(BarFrame.consts.Color().toUpperCase());
         btnCheckInOut3 = new FunctionButton(BarFrame.consts.CheckInOut());
         
-        buttons = new ISbutton[] {
-        		btnAddTable,		//0
-        		btnOrderManage,		//1
-        		btnOpenDrawer2,		//2
+        buttons = new ISButton[] {
+        		btnAddTable,	//0
+        		btnOrderManage,	//1
+        		btnOpenDrawer2,	//2
         		btnSetting,		//3
         		btnReport,		//4
-        		btnCheckInOut,		//5
+        		btnCheckInOut,	//5
         			
         		btnAddUser,		//6
-        		btnPrintAll,		//7
-        		btnPrintOneBill,		//8
-        		btnPrintOneInVoice,		//9
-        		btnEqualBill,		//10
-        		btnSplitItem,		//11
-        		btnMoveItem,		//12
-        		btnCombineAll,		//13
-        		btnSuspendAll,		//14
-        		btnReturn2,		//15
+        		btnPrintAll,	//7
+//        		btnPrintOneBill,//8
+//        		btnPrintOneInVoice,	//9
+        		btnEqualBill,	//8
+        		btnSplitItem,	//9
+        		btnMoveItem,	//10
+        		btnCombineAll,	//11
+        		btnSuspendAll,	//12
         			
-        		btnCASH,		//16
-        		btnDEBIT,		//17
-        		btnVISA,		//18
-        		btnMASTER,		//19
-        		btnOTHER,		//20
-        		btnSplitBill,		//21
-        		btnRemoveItem,		//22
-        		btnModify,		//23
-        		btnDiscItem,		//24
-        		btnChangePrice,		//25
-        		btnServiceFee,		//26
-        		btnPrintBill,		//27
+        		btnCASH,		//13
+        		btnDEBIT,		//14
+        		btnVISA,		//15
+        		btnMASTER,		//16
+        		btnOTHER,		//17
+        		btnSplitBill,	//18
+        		btnRemoveItem,	//19
+        		btnModify,		//20
+        		btnDiscItem,	//21
+        		btnChangePrice,	//22
+        		btnServiceFee,	//23
+        		btnPrintBill,	//24
 
-        		btnReturn,		//28
-        		btnAddBill,		//29
+        		btnReturn,		//25
+        		btnAddBill,		//26
         			   
-        		btnCancelAll,		//30
-        		btnVoidOrder,		//31
-        		btnOpenDrawer,		//32
-        		btnDiscBill,		//33
-        		btnRefund,		//34
-        		btnSend,		//35
+        		btnCancelAll,	//27
+        		btnVoidOrder,	//28
+        		btnOpenDrawer,	//29
+        		btnDiscBill,	//30
+        		btnRefund,		//31
+        		btnSend,		//32
         			
-        		btnReturn3,		//36
-        		btnEmployee,		//37
-        		btnPrinter,		//38
-        		btnTable,		//39
-        		btnBillFoot,		//40
-        		btnModify3,		//41
-        		btnGiftCard,		//42
-        		btnCoupon,		//43
-        		btnColor,		//44
-        		btnCheckInOut3}; 		//45
+        		btnEmployee,	//33
+        		btnPrinter,		//34
+        		btnTable,		//35
+        		btnBillFoot,	//36
+        		btnModifySetting,		//37
+        		btnGiftCard,	//38
+        		btnCoupon,		//39
+        		btnColor,		//40
+        		btnCheckInOut3};//41
         
         
         //listener------------------------------
         //tablePanel
-        btnAddTable.addActionListener(new Cmd_AddTable());
-        btnOrderManage.addActionListener(new Cmd_OrderManage());
+        btnAddTable.addActionListener(Cmd_AddTable.getInstance());
+        btnOrderManage.addActionListener(Cmd_OrderManage.getInstance());
         btnOpenDrawer2.addActionListener(Cmd_OpenDrawer.getInstance());
         //btnWaiterReport.addActionListener(this);
         btnSetting.addActionListener(Cmd_Setting.getInstance());
         btnReport.addActionListener(Cmd_Report.getInstance());
         btnCheckInOut.addActionListener(Cmd_CheckInOut.getInstance());
         //billList
-        btnAddUser.addActionListener(new Cmd_AddUser());
-		btnPrintAll.addActionListener(new Cmd_PrintAll());
-		btnPrintOneBill.addActionListener(new Cmd_PrintOneBill());
-		btnPrintOneInVoice.addActionListener(new Cmd_PrintOneInVoice());
+        btnAddUser.addActionListener(Cmd_AddUser.getInstance());
+		btnPrintAll.addActionListener(Cmd_PrintAll.getInstance());
+		btnPrintOneBill.addActionListener(Cmd_PrintOneBill.getInstance());
+		btnPrintOneInVoice.addActionListener(Cmd_PrintOneInVoice.getInstance());
 		btnEqualBill.addActionListener(Cmd_EqualBill.getInstance());
 		btnCombineAll.addActionListener(Cmd_CombineAll.getInstance());
 		btnSplitItem.addActionListener(Cmd_SplitItem.getInstance());
 		btnMoveItem.addActionListener(Cmd_MoveItem.getInstance());
-		btnSuspendAll.addActionListener(new Cmd_SuspendAll());
-		btnReturn2.addActionListener(new Cmd_Return2());
+		btnSuspendAll.addActionListener(Cmd_SuspendAll.getInstance());
         //salesPanel
         btnCASH.addActionListener(Cmd_Pay.getInstance());
         btnDEBIT.addActionListener(Cmd_Pay.getInstance());
         btnVISA.addActionListener(Cmd_Pay.getInstance());
-        btnSplitBill.addActionListener(new Cmd_SlpitBill());
-        btnRemoveItem.addActionListener(new Cmd_RemoveItem());
-        btnModify.addActionListener(new Cmd_Modify());
+        btnSplitBill.addActionListener(Cmd_SlpitBill.getInstance());
+        btnRemoveItem.addActionListener(Cmd_RemoveItem.getInstance());
+        btnModify.addActionListener(Cmd_Modify.getInstance());
         btnDiscItem.addActionListener(Cmd_DiscItem.getInstance());
         btnChangePrice.addActionListener(Cmd_ChangePrice.getInstance());
-        btnServiceFee.addActionListener(new Cmd_ServiceFee());
-        btnPrintBill.addActionListener(new Cmd_PrintBill());
+        btnServiceFee.addActionListener(Cmd_ServiceFee.getInstance());
+        btnPrintBill.addActionListener(Cmd_PrintBill.getInstance());
 
-        btnReturn.addActionListener(new Cmd_Return());
-        btnAddBill.addActionListener(new Cmd_AddBill());
+        btnReturn.addActionListener(Cmd_Return.getInstance());
+        btnAddBill.addActionListener(Cmd_AddBill.getInstance());
         btnMASTER.addActionListener(Cmd_Pay.getInstance());
-        btnCancelAll.addActionListener(new Cmd_CancelAll());
+        btnCancelAll.addActionListener(Cmd_CancelAll.getInstance());
         btnVoidOrder.addActionListener(Cmd_VoidOrder.getInstance());
         btnOpenDrawer.addActionListener(Cmd_OpenDrawer.getInstance());
-        btnDiscBill.addActionListener(new Cmd_DiscBill());
-        btnRefund.addActionListener(new Cmd_Refund());
-        btnSend.addActionListener(new Cmd_Send());
+        btnDiscBill.addActionListener(Cmd_DiscBill.getInstance());
+        btnRefund.addActionListener(Cmd_Refund.getInstance());
+        btnSend.addActionListener(Cmd_Send.getInstance());
         
 		btnReport2.addActionListener(Cmd_Report.getInstance());
-		btnOTHER.addActionListener(new Cmd_Other());
-		btnDiscountCoupon.addActionListener(new Cmd_DiscountCoupon());
+		btnOTHER.addActionListener(Cmd_Other.getInstance());
+		btnDiscountCoupon.addActionListener(Cmd_DiscountCoupon.getInstance());
 		btnEN.addActionListener(Cmd_Lang.getInstance());
 		btnFR.addActionListener(Cmd_Lang.getInstance());
 		btnCN.addActionListener(Cmd_Lang.getInstance());
 		btnSettings2.addActionListener(Cmd_Setting.getInstance());
-		btnSuspend.addActionListener(new Cmd_Suspend());
-		btnCheckOrder.addActionListener(new Cmd_CheckOrder());
+		btnSuspend.addActionListener(Cmd_Suspend.getInstance());
+		btnCheckOrder.addActionListener(Cmd_CheckOrder.getInstance());
 		btnCheckOut2.addActionListener(Cmd_CheckInOut.getInstance());
         //
-        btnReturn3.addActionListener(new Cmd_Return3());
-        btnEmployee.addActionListener(new Cmd_Employee());
-        btnPrinter.addActionListener(new Cmd_Printer());
-        btnTable.addActionListener(new Cmd_Table());
-        btnBillFoot.addActionListener(new Cmd_BillFoot());
-        btnModify3.addActionListener(new Cmd_Modify3());
-        btnGiftCard.addActionListener(new Cmd_GiftCard());
-        btnCoupon.addActionListener(new Cmd_Coupon());
-        btnColor.addActionListener(new Cmd_Color());
-        btnCheckInOut3.addActionListener(new Cmd_CheckInOut3());
+        btnEmployee.addActionListener(Cmd_Employee.getInstance());
+        btnPrinter.addActionListener(Cmd_Printer.getInstance());
+        btnTable.addActionListener(Cmd_Table.getInstance());
+        btnBillFoot.addActionListener(Cmd_BillFoot.getInstance());
+        btnModifySetting.addActionListener(Cmd_Modify3.getInstance());
+        btnGiftCard.addActionListener(Cmd_GiftCard.getInstance());
+        btnCoupon.addActionListener(Cmd_Coupon.getInstance());
+        btnColor.addActionListener(Cmd_Color.getInstance());
+        btnCheckInOut3.addActionListener(Cmd_CheckInOut3.getInstance());
         
         groupButtons();
 	}
@@ -582,7 +570,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     	groupedButtons[0].add(btnCheckInOut);
     	
     	//BillListPanel
-    	groupedButtons[1].add(btnReturn2);
+    	groupedButtons[1].add(btnReturn);
     	groupedButtons[1].add(btnAddUser);
     	groupedButtons[1].add(btnPrintAll);
 //    	groupedButtons[1].add(btnPrintOneBill);
@@ -605,7 +593,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     	groupedButtons[2].add(btnServiceFee);
     	groupedButtons[2].add(btnPrintBill);
 
-    	groupedButtons[2].add(btnReturn);
+    	groupedButtons[2].add(btnReturn.clone());
     	groupedButtons[2].add(btnAddBill);
     	groupedButtons[2].add(btnMASTER);
     	groupedButtons[2].add(btnCancelAll);
@@ -627,12 +615,12 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     	groupedButtons[2].add(btnCheckOut2);
     	
     	//setting panels
-        groupedButtons[3].add(btnReturn3);
+        groupedButtons[3].add(btnReturn.clone());
         groupedButtons[3].add(btnEmployee);
         groupedButtons[3].add(btnPrinter);
         groupedButtons[3].add(btnTable);
         groupedButtons[3].add(btnBillFoot);
-        groupedButtons[3].add(btnModify3);
+        groupedButtons[3].add(btnModifySetting);
         groupedButtons[3].add(btnGiftCard);
         groupedButtons[3].add(btnCoupon);
         groupedButtons[3].add(btnColor);
@@ -691,7 +679,6 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 	private static FunctionToggleButton btnMoveItem;
 	private static FunctionButton btnCombineAll;
 	private static FunctionButton btnSuspendAll;
-	private static FunctionButton btnReturn2;
 	
 	//SalesPanel
 	private static FunctionButton btnCASH;
@@ -729,69 +716,66 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 	private static FunctionButton btnCheckOrder;
 	
 	//setting panels
-    private static FunctionButton btnReturn3;
     private static FunctionButton btnEmployee;
     private static FunctionButton btnPrinter;
     private static FunctionButton btnTable;
     private static FunctionButton btnBillFoot;
-    private static FunctionButton btnModify3;
+    private static FunctionButton btnModifySetting;
     private static FunctionButton btnGiftCard;
     private static FunctionButton btnCoupon;
     private static FunctionButton btnColor;
     private static FunctionButton btnCheckInOut3;
     
-    static ISbutton[] buttons;
+    static ISButton[] buttons;
     
     static String[] btnNames = {
     		"AddTable",		//0
-    		"OrderManage",		//1
-    		"OpenDrawer2",		//2
+    		"OrderManage",	//1
+    		"OpenDrawer2",	//2
     		"Setting",		//3
     		"Report",		//4
-    		"CheckInOut",		//5
+    		"CheckInOut",	//5
     			
     		"AddUser",		//6
     		"PrintAll",		//7
-    		"PrintOneBill",		//8
-    		"PrintOneInVoice",		//9
-    		"EqualBill",		//10
-    		"SplitItem",		//11
-    		"MoveItem",		//12
-    		"CombineAll",		//13
-    		"SuspendAll",		//14
-    		"Return2",		//15
+//    		"PrintOneBill",	//8
+//    		"PrintOneInVoice",	//9
+    		"EqualBill",	//8
+    		"SplitItem",	//9
+    		"MoveItem",		//10
+    		"CombineAll",	//11
+    		"SuspendAll",	//12
     			
-    		"CASH",		//16
-    		"DEBIT",		//17
-    		"VISA",		//18
-    		"MASTER",		//19
-    		"OTHER",		//20
-    		"SplitBill",		//21
-    		"RemoveItem",		//22
-    		"Modify",		//23
-    		"DiscItem",		//24
-    		"ChangePrice",		//25
-    		"ServiceFee",		//26
-    		"PrintBill",		//27
+    		"CASH",			//13
+    		"DEBIT",		//14
+    		"VISA",			//15
+    		"MASTER",		//16
+    		"OTHER",		//17
+    		"SplitBill",	//18
+    		"RemoveItem",	//19
+    		"Modify",		//20
+    		"DiscItem",		//21
+    		"ChangePrice",	//22
+    		"ServiceFee",	//23
+    		"PrintBill",	//24
 
-    		"Return",		//28
-    		"AddBill",		//29
+    		"Return",		//25
+    		"AddBill",		//26
     			   
-    		"CancelAll",		//30
-    		"VoidOrder",		//31
-    		"OpenDrawer",		//32
-    		"DiscBill",		//33
-    		"Refund",		//34
-    		"Send",		//35
+    		"CancelAll",	//27
+    		"VoidOrder",	//28
+    		"OpenDrawer",	//29
+    		"DiscBill",		//30
+    		"Refund",		//31
+    		"Send",			//32
     			
-    		"Return3",		//36
-    		"Employee",		//37
-    		"Printer",		//38
-    		"Table",		//39
-    		"BillFoot",		//40
-    		"Modify3",		//41
-    		"GiftCard",		//42
-    		"Coupon",		//43
-    		"Color",		//44
-    		"CheckInOut3"}; 		//45
+    		"Employee",		//33
+    		"Printer",		//34
+    		"Table",		//35
+    		"BillFoot",		//36
+    		"ModifySetting",//37
+    		"GiftCard",		//38
+    		"Coupon",		//39
+    		"Color",		//40
+    		"CheckInOut3"}; //41
 }

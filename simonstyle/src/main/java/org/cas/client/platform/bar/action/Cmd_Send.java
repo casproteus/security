@@ -12,11 +12,31 @@ import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
-public class Cmd_Send implements ActionListener {
+public class Cmd_Send implements SamActionListener {
+
+	private static Cmd_Send instance;
+	private Cmd_Send() {}
+	public static Cmd_Send getInstance() {
+		if(instance == null)
+			instance = new Cmd_Send();
+		return instance;
+	}
+	
+	private ISButton sourceBtn;
+	
+	public ISButton getSourceBtn() {
+		return sourceBtn;
+	}
+	@Override
+	public void setSourceBtn(ISButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

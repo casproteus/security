@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
+import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.bar.uibeans.NumButton;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -22,7 +23,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
 	public static String curContent = "";
 	public boolean isPercentage = false;
 	public static boolean confirmed;
-	private JToggleButton btnSource;
+	private ISButton btnSource;
 	//flag
 	boolean isAllContentSelected;
 	
@@ -284,7 +285,7 @@ public class NumberPanelDlg extends JDialog implements ActionListener, Component
         reLayout();
     }
 
-	public void setBtnSource(JToggleButton btnSource) {
+	public void setBtnSource(ISButton btnSource) {
 		this.btnSource = btnSource;
 		confirmed = false;
 		curContent = "";

@@ -12,14 +12,15 @@ import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
+import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
 public class UpdateItemDiscountAction implements ActionListener{
 
-	JToggleButton btn;
+	ISButton btn;
 	
-	public UpdateItemDiscountAction(JToggleButton button) {
+	public UpdateItemDiscountAction(ISButton button) {
 		this.btn = button;
 	}
 	

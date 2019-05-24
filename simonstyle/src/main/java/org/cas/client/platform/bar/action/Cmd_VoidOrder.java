@@ -16,21 +16,31 @@ import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
+import org.cas.client.platform.bar.uibeans.FunctionButton;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
-public class Cmd_VoidOrder implements ActionListener {
+public class Cmd_VoidOrder implements SamActionListener {
 
 	private static Cmd_VoidOrder instance;
-	
 	private Cmd_VoidOrder() {}
-	
 	public static Cmd_VoidOrder getInstance() {
-		if(instance == null) {
+		if(instance == null)
 			instance = new Cmd_VoidOrder();
-		}
 		return instance;
+	}
+	
+	private ISButton sourceBtn;
+	
+	public ISButton getSourceBtn() {
+		return sourceBtn;
+	}
+	@Override
+	public void setSourceBtn(ISButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
 	}
 	
 	@Override

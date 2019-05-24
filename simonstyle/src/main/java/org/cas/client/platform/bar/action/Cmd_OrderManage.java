@@ -15,9 +15,29 @@ import org.cas.client.platform.bar.dialog.TableDlg;
 import org.cas.client.platform.bar.dialog.TablesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.dialog.statistics.CheckBillDlg;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 
-public class Cmd_OrderManage implements ActionListener {
+public class Cmd_OrderManage implements SamActionListener {
+
+	private static Cmd_OrderManage instance;
+	private Cmd_OrderManage() {}
+	public static Cmd_OrderManage getInstance() {
+		if(instance == null)
+			instance = new Cmd_OrderManage();
+		return instance;
+	}
+	
+	private ISButton sourceBtn;
+	
+	public ISButton getSourceBtn() {
+		return sourceBtn;
+	}
+	@Override
+	public void setSourceBtn(ISButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

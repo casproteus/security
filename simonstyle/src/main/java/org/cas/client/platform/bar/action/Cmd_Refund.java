@@ -15,10 +15,30 @@ import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
-public class Cmd_Refund implements ActionListener {
+public class Cmd_Refund implements SamActionListener {
+
+	private static Cmd_Refund instance;
+	private Cmd_Refund() {}
+	public static Cmd_Refund getInstance() {
+		if(instance == null)
+			instance = new Cmd_Refund();
+		return instance;
+	}
+	
+	private ISButton sourceBtn;
+	
+	public ISButton getSourceBtn() {
+		return sourceBtn;
+	}
+	@Override
+	public void setSourceBtn(ISButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

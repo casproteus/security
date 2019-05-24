@@ -9,20 +9,30 @@ import org.cas.client.platform.bar.i18n.BarDlgConst0;
 import org.cas.client.platform.bar.i18n.BarDlgConst1;
 import org.cas.client.platform.bar.i18n.BarDlgConst2;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
+import org.cas.client.platform.bar.uibeans.ISButton;
+import org.cas.client.platform.bar.uibeans.SamActionListener;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
-public class Cmd_Lang implements ActionListener {
+public class Cmd_Lang implements SamActionListener {
+
 	private static Cmd_Lang instance;
-	
 	private Cmd_Lang() {}
-	
 	public static Cmd_Lang getInstance() {
-		if(instance == null) {
+		if(instance == null)
 			instance = new Cmd_Lang();
-		}
 		return instance;
+	}
+	
+	private ISButton sourceBtn;
+	
+	public ISButton getSourceBtn() {
+		return sourceBtn;
+	}
+	@Override
+	public void setSourceBtn(ISButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
 	}
 	
 	@Override

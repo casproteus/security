@@ -9,10 +9,10 @@ import javax.swing.JComponent;
 
 import org.cas.client.platform.bar.dialog.BarOption;
 
-public class FunctionButton extends JButton implements ISbutton{
+public class FunctionButton extends JButton implements ISButton{
 	
 	String title;
-	ActionListener actionListener;
+	SamActionListener actionListener;
 	
 	public FunctionButton(String title) {
 		super(title);
@@ -26,14 +26,16 @@ public class FunctionButton extends JButton implements ISbutton{
 		setBorder(BorderFactory.createEtchedBorder());
 	}
 
-	public void addActionListener(ActionListener actionListener) {
+	public void addActionListener(SamActionListener actionListener) {
 		super.addActionListener(actionListener);
 		this.actionListener = actionListener;
+		actionListener.setSourceBtn(this);
 	}
 	
 	public JComponent clone() {
 		FunctionButton btn = new FunctionButton(title);
 		btn.addActionListener(actionListener);
+		actionListener.setSourceBtn(btn);
 		return btn;
 	}
 	
