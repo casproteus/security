@@ -27,6 +27,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.bar.BarUtil;
+import org.cas.client.platform.bar.action.Cmd_ChangePrice;
+import org.cas.client.platform.bar.action.Cmd_DiscItem;
+import org.cas.client.platform.bar.action.Cmd_SplitItem;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.DBConsts;
@@ -317,7 +320,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
 			updateTotleArea();
         }else if(o == billButton){		//when bill button on top are clicked.
-        	if(billListPanel != null && CmdBtnsDlg.btnSplitItem.isSelected()) {
+        	if(billListPanel != null && Cmd_SplitItem.getInstance().getSourceBtn().isSelected()) {
         		billButton.setSelected(!billButton.isSelected());
         		return;
         	}
@@ -378,14 +381,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				if(obj != null)
 					BarFrame.numberPanelDlg.setContents(obj.toString());
 			}
-			if( CmdBtnsDlg.btnDiscItem.isSelected()) {
+			if( Cmd_DiscItem.getInstance().getSourceBtn().isSelected()) {
 				Object obj = table.getValueAt(selectedRow,2);
 				//update the discount in qtyDlg.
 				if(obj != null)
 					BarFrame.numberPanelDlg.setContents(obj.toString());
 			}
 		}else if(billListPanel != null) {
-			if(CmdBtnsDlg.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
+			if(Cmd_SplitItem.getInstance().getSourceBtn().isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
 				billButton.setSelected(!billButton.isSelected());
 				return;
 			}
@@ -459,7 +462,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == scrContent.getViewport()) {
 			if(billListPanel != null) {
-				if(CmdBtnsDlg.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
+				if(Cmd_SplitItem.getInstance().getSourceBtn().isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
 					billButton.setSelected(!billButton.isSelected());
 					return;
 				}
@@ -547,8 +550,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		        }
 	        	//if the original is not 0.00, then will still be treated as price promp not a taxInclude.
 		        if(newDish.getPrice() == 0 || "true".equals(newDish.getPrompPrice()) && !BarOption.isTreatPricePromtAsTaxInclude()) {
-		        	CmdBtnsDlg.btnChangePrice.setSelected(true);
-		        	BarFrame.instance.showPriceChangeDlg();
+		        	Cmd_ChangePrice.getInstance().showPriceChangeDlg(null);
 		        }
 			}
 		});

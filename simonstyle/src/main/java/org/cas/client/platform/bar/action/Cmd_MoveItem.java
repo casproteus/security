@@ -14,41 +14,59 @@ import org.cas.client.platform.bar.dialog.CmdBtnsDlg;
 import org.cas.client.platform.bar.dialog.NumberPanelDlg;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
+import org.cas.client.platform.bar.uibeans.FunctionButton;
+import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
 public class Cmd_MoveItem implements ActionListener {
-
+	private static Cmd_MoveItem instance;
+	private Cmd_MoveItem() {}
+	public static Cmd_MoveItem getInstance() {
+		if(instance == null)
+			instance = new Cmd_MoveItem();
+		return instance;
+	}
+	
+	private FunctionToggleButton sourceBtn;
+	
+	public FunctionToggleButton getSourceBtn() {
+		return sourceBtn;
+	}
+	public void setSourceBtn(FunctionToggleButton sourceBtn) {
+		this.sourceBtn = sourceBtn; 
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
+		this.sourceBtn = (FunctionToggleButton)e.getSource();
 		BillListPanel billListPanel = (BillListPanel)BarFrame.instance.panels[1];
 		
 		if(billListPanel.curDish == null) {
 			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
-			CmdBtnsDlg.btnMoveItem.setSelected(false);
+			sourceBtn.setSelected(false);
 			return;
 		}
 		BillPanel panel = billListPanel.getCurBillPanel();
 		if(panel == null) {
 			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
-			CmdBtnsDlg.btnMoveItem.setSelected(false);
+			sourceBtn.setSelected(false);
 			return;
 		}
 		if(!panel.checkStatus())	//create a new bill for original bill
 			return;
-		moveItemAction();
+		moveItemAction(sourceBtn);
 	}
 	
-	private void moveItemAction() {
+	private void moveItemAction(FunctionToggleButton button) {
 		BarFrame.numberPanelDlg.setTitle(BarFrame.consts.BILL());
-		BarFrame.numberPanelDlg.setBtnSource(CmdBtnsDlg.btnMoveItem);
+		BarFrame.numberPanelDlg.setBtnSource(button);
 		BarFrame.numberPanelDlg.setFloatSupport(false);
 		BarFrame.numberPanelDlg.setPercentSupport(false);
 		BarFrame.numberPanelDlg.setModal(true);
 		BarFrame.numberPanelDlg.reLayout();
 		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.QTYNOTICE());
-		BarFrame.numberPanelDlg.setVisible(CmdBtnsDlg.btnMoveItem.isSelected());
+		BarFrame.numberPanelDlg.setVisible(button.isSelected());
 		if(NumberPanelDlg.confirmed) {
 			BillListPanel billListPanel = (BillListPanel)BarFrame.instance.panels[1];
 			int targetBillIdx = Integer.valueOf(NumberPanelDlg.curContent);

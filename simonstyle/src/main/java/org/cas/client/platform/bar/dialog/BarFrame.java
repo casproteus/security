@@ -97,7 +97,7 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V2.12-20190522";
+	private String VERSION = "V2.13-20190523";
 	public static BarFrame instance;
     public static BarDlgConst consts = new BarDlgConst0();
     
@@ -774,19 +774,6 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		 }catch(Exception exp) {
 			 L.e("change table", "exception when recover table:" + sql, exp);
 		 }
-	}
-	
-	public void showPriceChangeDlg() {
-		numberPanelDlg.setTitle(consts.CHANGEPRICE());
-		numberPanelDlg.setNotice(consts.ChangePriceNotice());
-		numberPanelDlg.setBtnSource(CmdBtnsDlg.btnChangePrice);//pomp up a numberPanelDlg
-		numberPanelDlg.setFloatSupport(true);
-		numberPanelDlg.setPercentSupport(false);
-		numberPanelDlg.setModal(false);
-		//should no record selected, select the last one.
-		CmdBtnsDlg.btnChangePrice.setSelected(true);
-		numberPanelDlg.setVisible(CmdBtnsDlg.btnChangePrice.isSelected());	//@NOTE: it's not model mode.
-		numberPanelDlg.setAction(new UpdateItemPriceAction(CmdBtnsDlg.btnChangePrice));
 	}
 
 	public void userCheckOut() {

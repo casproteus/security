@@ -499,10 +499,10 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 		btnPrintAll.addActionListener(new Cmd_PrintAll());
 		btnPrintOneBill.addActionListener(new Cmd_PrintOneBill());
 		btnPrintOneInVoice.addActionListener(new Cmd_PrintOneInVoice());
-		btnEqualBill.addActionListener(new Cmd_EqualBill());
-		btnCombineAll.addActionListener(new Cmd_CombineAll());
-		btnSplitItem.addActionListener(new Cmd_SplitItem());
-		btnMoveItem.addActionListener(new Cmd_MoveItem());
+		btnEqualBill.addActionListener(Cmd_EqualBill.getInstance());
+		btnCombineAll.addActionListener(Cmd_CombineAll.getInstance());
+		btnSplitItem.addActionListener(Cmd_SplitItem.getInstance());
+		btnMoveItem.addActionListener(Cmd_MoveItem.getInstance());
 		btnSuspendAll.addActionListener(new Cmd_SuspendAll());
 		btnReturn2.addActionListener(new Cmd_Return2());
         //salesPanel
@@ -512,8 +512,8 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnSplitBill.addActionListener(new Cmd_SlpitBill());
         btnRemoveItem.addActionListener(new Cmd_RemoveItem());
         btnModify.addActionListener(new Cmd_Modify());
-        btnDiscItem.addActionListener(new Cmd_DiscItem());
-        btnChangePrice.addActionListener(new Cmd_ChangePrice());
+        btnDiscItem.addActionListener(Cmd_DiscItem.getInstance());
+        btnChangePrice.addActionListener(Cmd_ChangePrice.getInstance());
         btnServiceFee.addActionListener(new Cmd_ServiceFee());
         btnPrintBill.addActionListener(new Cmd_PrintBill());
 
@@ -686,24 +686,24 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 	private static FunctionButton btnPrintAll;
 	private static FunctionButton btnPrintOneBill;
 	private static FunctionButton btnPrintOneInVoice;
-	public static FunctionToggleButton btnEqualBill;
-	public static FunctionToggleButton btnSplitItem;
-	public static FunctionToggleButton btnMoveItem;
-	public static FunctionButton btnCombineAll;
+	private static FunctionToggleButton btnEqualBill;
+	private static FunctionToggleButton btnSplitItem;
+	private static FunctionToggleButton btnMoveItem;
+	private static FunctionButton btnCombineAll;
 	private static FunctionButton btnSuspendAll;
 	private static FunctionButton btnReturn2;
 	
 	//SalesPanel
-	public static FunctionButton btnCASH;
-	public static FunctionButton btnDEBIT;
-	public static FunctionButton btnVISA;
-	public static FunctionButton btnMASTER;
-	public static FunctionButton btnOTHER;
+	private static FunctionButton btnCASH;
+	private static FunctionButton btnDEBIT;
+	private static FunctionButton btnVISA;
+	private static FunctionButton btnMASTER;
+	private static FunctionButton btnOTHER;
 	private static FunctionButton btnSplitBill;
 	private static FunctionButton btnRemoveItem;
 	private static FunctionButton btnModify;
-	public static FunctionToggleButton btnDiscItem;
-	public static FunctionToggleButton btnChangePrice;
+	private static FunctionToggleButton btnDiscItem;
+	private static FunctionToggleButton btnChangePrice;
 	private static FunctionButton btnServiceFee;
 	private static FunctionButton btnPrintBill;
 
@@ -720,9 +720,9 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 	
 	private static FunctionButton btnReport2;
 	private static FunctionButton btnDiscountCoupon;
-	public static FunctionButton btnEN;
-	public static FunctionButton btnFR;
-	public static FunctionButton btnCN;
+	private static FunctionButton btnEN;
+	private static FunctionButton btnFR;
+	private static FunctionButton btnCN;
 	private static FunctionButton btnSettings2;
 	private static FunctionButton btnCheckOut2;
 	private static FunctionButton btnSuspend;

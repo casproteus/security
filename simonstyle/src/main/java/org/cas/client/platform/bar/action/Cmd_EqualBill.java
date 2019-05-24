@@ -13,29 +13,48 @@ import org.cas.client.platform.bar.dialog.CmdBtnsDlg;
 import org.cas.client.platform.bar.dialog.NumberPanelDlg;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.uibeans.FunctionButton;
+import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
 public class Cmd_EqualBill implements ActionListener {
-
+	private static Cmd_EqualBill instance;
+	private Cmd_EqualBill() {}
+	public static Cmd_EqualBill getInstance() {
+		if(instance == null)
+			instance = new Cmd_EqualBill();
+		return instance;
+	}
+	
+	private FunctionButton sourceBtn;
+	
+	public FunctionButton getSourceBtn() {
+		return sourceBtn;
+	}
+	public void setSourceBtn(FunctionButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		FunctionToggleButton o = (FunctionToggleButton)e.getSource();
 		//splite bill eually
 		BillListPanel billListPanel = (BillListPanel)BarFrame.instance.panels[1];
 		
 		BillPanel panel = billListPanel.getCurBillPanel();
 		if(panel == null) {
 			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
-			CmdBtnsDlg.btnEqualBill.setSelected(false);
+			o.setSelected(false);
 			return;
 		}
-		BarFrame.numberPanelDlg.setBtnSource(CmdBtnsDlg.btnEqualBill);
+		BarFrame.numberPanelDlg.setBtnSource(o);
 		BarFrame.numberPanelDlg.setFloatSupport(false);
 		BarFrame.numberPanelDlg.setPercentSupport(false);
 		BarFrame.numberPanelDlg.setModal(true);
 		BarFrame.numberPanelDlg.reLayout();
 		BarFrame.numberPanelDlg.setNotice(BarFrame.consts.QTYNOTICE());
-		BarFrame.numberPanelDlg.setVisible(CmdBtnsDlg.btnEqualBill.isSelected());
+		BarFrame.numberPanelDlg.setVisible(o.isSelected());
 		if(NumberPanelDlg.confirmed) {
 			int num = Integer.valueOf(NumberPanelDlg.curContent);
 			if(num < 2) {

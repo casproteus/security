@@ -11,19 +11,37 @@ import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.CmdBtnsDlg;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.uibeans.FunctionButton;
+import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.hsqldb.lib.HashMap;
 
 public class Cmd_CombineAll implements ActionListener {
-
+	private static Cmd_CombineAll instance;
+	private Cmd_CombineAll() {}
+	public static Cmd_CombineAll getInstance() {
+		if(instance == null)
+			instance = new Cmd_CombineAll();
+		return instance;
+	}
+	
+	private FunctionButton sourceBtn;
+	
+	public FunctionButton getSourceBtn() {
+		return sourceBtn;
+	}
+	public void setSourceBtn(FunctionButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
+	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		this.sourceBtn = (FunctionButton)e.getSource();
 		//@note should consider the time, incase there's some bill not paid before, while was calculated into current client.
 
 		BillListPanel billListPanel = (BillListPanel)BarFrame.instance.panels[1];
 		
-		if(CmdBtnsDlg.btnCombineAll.getText().equals(BarFrame.consts.CombineAll())) {
+		if(sourceBtn.getText().equals(BarFrame.consts.CombineAll())) {
 			if(!billListPanel.checkColosedBill()) {
 				return;
 			}

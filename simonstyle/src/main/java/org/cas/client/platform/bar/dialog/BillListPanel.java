@@ -16,6 +16,7 @@ import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.BarUtil;
+import org.cas.client.platform.bar.action.Cmd_CombineAll;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
@@ -100,13 +101,13 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				rs.afterLast();
 	            rs.relative(-1);
 	            if (rs.getRow() > 1) {
-	            	CmdBtnsDlg.btnCombineAll.setText(BarFrame.consts.UnCombine());
+	            	Cmd_CombineAll.getInstance().getSourceBtn().setText(BarFrame.consts.UnCombine());
 	            }
 			} catch (SQLException e) {
 	            ErrorUtil.write(e);
 	        }
 		}else {
-			CmdBtnsDlg.btnCombineAll.setText(BarFrame.consts.CombineAll());
+			Cmd_CombineAll.getInstance().getSourceBtn().setText(BarFrame.consts.CombineAll());
 		}
 	}
 

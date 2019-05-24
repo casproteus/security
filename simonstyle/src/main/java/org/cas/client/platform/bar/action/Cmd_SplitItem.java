@@ -13,19 +13,37 @@ import org.cas.client.platform.bar.dialog.CmdBtnsDlg;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
 
 public class Cmd_SplitItem implements ActionListener {
-
+	private static Cmd_SplitItem instance;
+	private Cmd_SplitItem() {}
+	public static Cmd_SplitItem getInstance() {
+		if(instance == null)
+			instance = new Cmd_SplitItem();
+		return instance;
+	}
+	
+	private FunctionToggleButton sourceBtn;
+	
+	public FunctionToggleButton getSourceBtn() {
+		return sourceBtn;
+	}
+	
+	public void setSourceBtn(FunctionToggleButton sourceBtn) {
+		this.sourceBtn = sourceBtn;
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
+		this.sourceBtn = (FunctionToggleButton)e.getSource();
 		BillListPanel billListPanel = (BillListPanel)BarFrame.instance.panels[1];
 		
-		if(CmdBtnsDlg.btnSplitItem.isSelected()) {//select
+		if(sourceBtn.isSelected()) {//select
 			//check if there's one item selected.
 			if(billListPanel.curDish == null) {
 				JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
-				CmdBtnsDlg.btnSplitItem.setSelected(false);
+				sourceBtn.setSelected(false);
 			}
 		}else {
 		
