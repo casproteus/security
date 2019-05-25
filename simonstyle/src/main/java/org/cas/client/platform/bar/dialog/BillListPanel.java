@@ -70,7 +70,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		
 		cleanInterface();
 		
-		// load all the unclosed outputs under this table with content inside.---------------------------
+		//load all the unclosed outputs under this table with content inside.---------------------------
 		//output will be set as deleted=true only when click a "-" button. when bill closed, the output will not be set as deleted = true! 
 		//so closed bill of this table will also be counted. but will displayed in different color.
 		
@@ -128,6 +128,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				billButton.setMargin(new Insets(0, 0, 0, 0));
 				
 				BillPanel billPanel = new BillPanel(this, billButton);
+	            
 				billPanel.initContent();
 				billPanels.add(billPanel);
 			}
@@ -149,8 +150,6 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 				btnRight.setEnabled(true);
 			}else {													//others are temperally newed BillPanel.
 				BillPanel panel = new BillPanel(this, new JToggleButton(String.valueOf(billNum)));	//have to give a number to construct valid sql.
-				panel.initComponent();
-				panel.initContent();
 				onScrBillPanels.add(panel);
 				btnRight.setEnabled(false);
 				billNum++;
@@ -495,10 +494,10 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	}
 
 	public static int getANewBillIdx(String tableName, String openTime){
-		if(tableName == null) {
+		if(BarUtil.empty(tableName)) {
 			tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		}
-		if(openTime == null) {
+		if(BarUtil.empty(openTime)) {
 			openTime = BarFrame.instance.valStartTime.getText();
 		}
 		
@@ -541,6 +540,15 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		
 		return panels;
 	}
+
+	public BillPanel getBillPanelByBillNumber(int targetBillIdx) {
+		for (BillPanel billPanel : billPanels) {
+			if(billPanel.billButton.getText().equals(String.valueOf(targetBillIdx))) {
+				return billPanel;
+			}
+		}
+		return null;
+	}
 	
 	public List<BillPanel> billPanels;
 	List<BillPanel> onScrBillPanels;
@@ -548,5 +556,5 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
     private ArrowButton btnLeft;
     private ArrowButton btnRight;
 	JSeparator separator;
-	
+
 }

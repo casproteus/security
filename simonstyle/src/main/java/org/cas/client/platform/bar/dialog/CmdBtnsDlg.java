@@ -396,7 +396,6 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnOpenDrawer = new FunctionButton(BarFrame.consts.OpenDrawer());
         btnDiscBill = new FunctionButton(BarFrame.consts.VolumnDiscount());
         btnRefund = new FunctionButton(BarFrame.consts.Refund());
-        btnMore = new MoreButton(BarFrame.consts.MORE());
         btnSend = new FunctionButton(BarFrame.consts.SEND());
         
         //btnLine_3_2 = new JToggleButton(BarFrame.consts.QTY());
@@ -695,7 +694,6 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 	private static FunctionButton btnOpenDrawer;
 	private static FunctionButton btnDiscBill;
 	private static FunctionButton btnRefund;
-	private static MoreButton btnMore;
 	private static FunctionButton btnSend;
 	
 	private static FunctionButton btnDiscountCoupon;

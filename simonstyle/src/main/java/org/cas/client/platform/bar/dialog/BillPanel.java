@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -211,7 +212,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		 }
 	}
 
-	
 	void sendDishToKitchen(Dish dish, boolean isCancelled) {
 		List<Dish> dishes = new ArrayList<Dish>();
 		dishes.add(dish);
@@ -630,7 +630,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     }
     
     public void initContent() {
-    	String billIndex = billButton == null ? BarFrame.instance.getCurBillIndex() : billButton.getText();
+    	String billIndex = billButton != null ? billButton.getText() : BarFrame.instance.getCurBillIndex();
 		//used deleted <= 1, means both uncompleted and normally completed will be displayed, unnormally delted recored will be delted = 100
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String openTime = BarFrame.instance.valStartTime.getText();
@@ -640,129 +640,146 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	}
     
     public void initContent(String billId, String billIndex, String tableName, String openTime) {
-    	if((billId == null || "".equals(billId)) && (openTime == null || "".equals(openTime))) {
+    	if((billId == null || "".equals(billId)) && (openTime == null || "".equals(openTime))) {//we can find bill by id, if no id, then openTime is a "must have" to locate a sigle bill.
     		return;
     	}
+    	
     	resetProperties();
+    	
     	//get outputs of current table and bill id.
     	StringBuilder sql = null;
 		try {
-			boolean isShowingExpiredBill = BarFrame.instance.isShowingAnExpiredBill;
-			sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
-				.append(tableName)
-				.append("' and CONTACTID = ").append(billIndex)
-				.append(" and (deleted is null or deleted < ").append(isShowingExpiredBill ? DBConsts.deleted : DBConsts.expired)	//dumpted also should show.
-				.append(") AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
-				.append(openTime).append("'").append(billId != null && billId.length() > 0 ? " and output.category = " + billId : "");	//new added after dump should not display.
+			orderedDishAry = initTableWithOutput(sql, billId, billIndex, tableName, openTime);	//make the table display the dishes in this bill first. (output of dumped bill will not match billId.)
+
+			if(orderedDishAry.size() > 0 && orderedDishAry.get(0).getBillID() > 0) {	//if has output, update the discount and service fee, and tip info, and (don't forget the billID).
+																						//then get the billID from any output, 
+				int billID = initBillStatus(sql, billIndex, tableName, openTime);
+				setBillID(billID);	//@NOTE: do not use orderedDishAry.get(0).getBillID() to get billID, because when combine all we don't modify bill id in output and dish (for undo use)
 			
-			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-			rs.afterLast();
-			rs.relative(-1);
-			int tmpPos = rs.getRow();
-
-			int tColCount = table.getColumnCount();
-			Object[][] tValues = new Object[tmpPos][tColCount];
-			rs.beforeFirst();
-			tmpPos = 0;
-			while (rs.next()) {
-				Dish dish = new Dish();
-				dish.setCATEGORY(rs.getString("PRODUCT.CATEGORY"));
-				dish.setDiscount(rs.getInt("OUTPUT.discount"));//
-				dish.setDspIndex(rs.getInt("PRODUCT.INDEX"));
-				dish.setGst(rs.getInt("PRODUCT.FOLDERID"));
-				dish.setId(rs.getInt("PRODUCT.ID"));
-				dish.setLanguage(0, rs.getString("PRODUCT.CODE"));
-				dish.setLanguage(1, rs.getString("PRODUCT.MNEMONIC"));
-				dish.setLanguage(2, rs.getString("PRODUCT.SUBJECT"));
-				dish.setModification(rs.getString("OUTPUT.CONTENT"));//
-				dish.setNum(rs.getInt("OUTPUT.AMOUNT"));//
-				dish.setOutputID(rs.getInt("OUTPUT.ID"));//
-				dish.setPrice(rs.getInt("PRODUCT.PRICE"));
-				dish.setPrinter(rs.getString("PRODUCT.BRAND"));
-				dish.setPrompMenu(rs.getString("PRODUCT.UNIT"));
-				dish.setPrompMofify(rs.getString("PRODUCT.PRODUCAREA"));
-				dish.setPrompPrice(rs.getString("PRODUCT.CONTENT"));
-				dish.setQst(rs.getInt("PRODUCT.STORE"));
-				dish.setSize(rs.getInt("PRODUCT.COST"));
-				dish.setBillIndex(billIndex);
-				dish.setOpenTime(rs.getString("OUTPUT.TIME"));	//output time is table's open time. no need to remember output created time.
-				dish.setBillID(rs.getInt("OUTPUT.Category"));
-				dish.setTotalPrice(rs.getInt("OUTPUT.TOLTALPRICE"));
-				orderedDishAry.add(dish);
-
-				tValues[tmpPos][0] = dish.getDisplayableNum(dish.getNum());
-				
-				tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
-
-				String[] langs = dish.getModification().split(BarDlgConst.semicolon);
-				String lang = langs.length > LoginDlg.USERLANG ? langs[LoginDlg.USERLANG] : langs[0];
-				if(lang.length() == 0 || "null".equalsIgnoreCase(lang))
-					lang = langs[0].length() == 0 || "null".equalsIgnoreCase(lang) ? "" : langs[0];
-				
-				tValues[tmpPos][2] = lang;
-				if(dish.getDiscount() > 0) {
-					tValues[tmpPos][2] = lang + "  -" + BarOption.getMoneySign() + BarUtil.formatMoney(dish.getDiscount() / 100.0);
-				}
-				
-				tValues[tmpPos][3] =  BarOption.getMoneySign() + dish.getTotalPrice() / 100f;
-				tmpPos++;
+			}else if(tableName.length() > 0 && openTime.length() > 0) {		//if has no output(---could be an non-first but empty bill), then if has tablename and opentime
+																			//together with the BillIdx in Barframe, we can still locate a bill.
+				int billID = getBillIdByIdxOrCreateNew(sql, Integer.valueOf(billIndex), tableName, openTime);			//what kind of case will reach here: no bill and create an new empty bill?
+				setBillID(billID);
 			}
-
-			table.setDataVector(tValues, header);
-			// do not set the default selected value, if it's used in billListDlg.
-			if (salesPanel != null)
-				table.setSelectedRow(tmpPos - 1);
-			//rs.close();
-			
-			//update the discount and service fee, and tip info, and (don't forget the billID).
-			//if has output, then get the billID from any output, 
-			if(orderedDishAry.size() > 0 && orderedDishAry.get(0).getBillID() > 0) {
-				sql = new StringBuilder("select * from Bill where opentime = '").append(openTime)
-						.append("' and billIndex = '").append(billIndex).append("'")
-						.append(" and tableID = '").append(tableName).append("'")
-						.append(" and (status is null or status ").append(isShowingExpiredBill ? "<=" : "<").append(DBConsts.expired).append(")");
-				  
-				rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-				rs.beforeFirst();
-				if(rs.next()) {
-					setBillID(rs.getInt("id"));	//@NOTE: do not use orderedDishAry.get(0).getBillID() to get billID, because when combine all we don't modify bill id in output and dish (for undo use)
-				    discount = rs.getInt("discount");
-				    serviceFee = rs.getInt("serviceFee");
-				    tip = rs.getInt("tip");
-				    cashback = rs.getInt("cashback");
-				    status = rs.getInt("status");
-				    comment = rs.getString("comment");
-				    setBackground(status >= DBConsts.completed || status < DBConsts.original ? Color.gray : null);
-				}
-			}
-			//if has no output, then search related bill from db. ---could be an non-first but empty bill, 
-			//so must consider the bill ID if it's not empty string.
-			else if(tableName.length() > 0 && openTime.length() > 0) {
-				sql = new StringBuilder("Select id from bill where tableID = '").append(tableName)
-						.append("' and opentime = '").append(openTime)
-						.append("' and billIndex = '").append(BarFrame.instance.getCurBillIndex()).append("'");
-                ResultSet resultSet = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-                resultSet.beforeFirst();
-                if(resultSet.next()) {
-                	setBillID(resultSet.getInt("id"));
-                }else {
-                	L.e("initing BillPanel", "there's no bill in an openned table.", null);
-                	setBillID(BarFrame.instance.createAnEmptyBill("", openTime, 0));
-                }
-			}
-			rs.close();
 		} catch (Exception e) {
 			L.e("BillPanel", " exception when initContent()" + sql, e);
 		}
 
-		resetColWidth(scrContent.getWidth());
-		
 		updateTotleArea();
+	    setBackground(status >= DBConsts.completed || status < DBConsts.original ? Color.gray : null);
 		//reset the flag whichi is only used for showing expired bills.
 		BarFrame.instance.isShowingAnExpiredBill = false;
 	}
 
-    private void resetProperties(){
+    private ArrayList<Dish> initTableWithOutput(StringBuilder sql, String billId, String billIndex, String tableName, Object openTime) throws SQLException {
+    	ArrayList<Dish> dishAry = new ArrayList<Dish>();
+    	sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
+			.append(tableName)
+			.append("' and CONTACTID = ").append(billIndex)
+			.append(" and (deleted is null or deleted < ").append(BarFrame.instance.isShowingAnExpiredBill ? DBConsts.deleted : DBConsts.expired)	//dumpted also should show.
+			.append(") AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
+			.append(openTime).append("'").append(billId != null && billId.length() > 0 ? " and output.category = " + billId : "");	//new added outputs after dumped should not display.
+		
+		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+		rs.afterLast();
+		rs.relative(-1);
+		int tmpPos = rs.getRow();
+
+		int tColCount = table.getColumnCount();
+		Object[][] tValues = new Object[tmpPos][tColCount];
+		rs.beforeFirst();
+		tmpPos = 0;
+		while (rs.next()) {
+			Dish dish = new Dish();
+			dish.setCATEGORY(rs.getString("PRODUCT.CATEGORY"));
+			dish.setDiscount(rs.getInt("OUTPUT.discount"));//
+			dish.setDspIndex(rs.getInt("PRODUCT.INDEX"));
+			dish.setGst(rs.getInt("PRODUCT.FOLDERID"));
+			dish.setId(rs.getInt("PRODUCT.ID"));
+			dish.setLanguage(0, rs.getString("PRODUCT.CODE"));
+			dish.setLanguage(1, rs.getString("PRODUCT.MNEMONIC"));
+			dish.setLanguage(2, rs.getString("PRODUCT.SUBJECT"));
+			dish.setModification(rs.getString("OUTPUT.CONTENT"));//
+			dish.setNum(rs.getInt("OUTPUT.AMOUNT"));//
+			dish.setOutputID(rs.getInt("OUTPUT.ID"));//
+			dish.setPrice(rs.getInt("PRODUCT.PRICE"));
+			dish.setPrinter(rs.getString("PRODUCT.BRAND"));
+			dish.setPrompMenu(rs.getString("PRODUCT.UNIT"));
+			dish.setPrompMofify(rs.getString("PRODUCT.PRODUCAREA"));
+			dish.setPrompPrice(rs.getString("PRODUCT.CONTENT"));
+			dish.setQst(rs.getInt("PRODUCT.STORE"));
+			dish.setSize(rs.getInt("PRODUCT.COST"));
+			dish.setBillIndex(billIndex);
+			dish.setOpenTime(rs.getString("OUTPUT.TIME"));	//output time is table's open time. no need to remember output created time.
+			dish.setBillID(rs.getInt("OUTPUT.Category"));
+			dish.setTotalPrice(rs.getInt("OUTPUT.TOLTALPRICE"));
+			dishAry.add(dish);
+
+			tValues[tmpPos][0] = dish.getDisplayableNum(dish.getNum());
+			
+			tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
+
+			String[] langs = dish.getModification().split(BarDlgConst.semicolon);
+			String lang = langs.length > LoginDlg.USERLANG ? langs[LoginDlg.USERLANG] : langs[0];
+			if(lang.length() == 0 || "null".equalsIgnoreCase(lang))
+				lang = langs[0].length() == 0 || "null".equalsIgnoreCase(lang) ? "" : langs[0];
+			
+			tValues[tmpPos][2] = lang;
+			if(dish.getDiscount() > 0) {
+				tValues[tmpPos][2] = lang + "  -" + BarOption.getMoneySign() + BarUtil.formatMoney(dish.getDiscount() / 100.0);
+			}
+			
+			tValues[tmpPos][3] =  BarOption.getMoneySign() + dish.getTotalPrice() / 100f;
+			tmpPos++;
+		}
+
+		table.setDataVector(tValues, header);
+		// do not set the default selected value, if it's used in billListDlg.
+		if (salesPanel != null)
+			table.setSelectedRow(tmpPos - 1);
+
+		resetColWidth(scrContent.getWidth());
+		return dishAry;
+	}
+
+	private int initBillStatus(StringBuilder sql, String billIndex, String tableName, String openTime) throws SQLException {
+		sql = new StringBuilder("select * from Bill where opentime = '").append(openTime)
+				.append("' and billIndex = '").append(billIndex).append("'")
+				.append(" and tableID = '").append(tableName).append("'")
+				.append(" and (status is null or status ").append(BarFrame.instance.isShowingAnExpiredBill ? "<=" : "<").append(DBConsts.expired).append(")");
+		  
+		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+		rs.beforeFirst();
+		if(rs.next()) {
+		    discount = rs.getInt("discount");
+		    serviceFee = rs.getInt("serviceFee");
+		    tip = rs.getInt("tip");
+		    cashback = rs.getInt("cashback");
+		    status = rs.getInt("status");
+		    comment = rs.getString("comment");
+		    return rs.getInt("id");
+		}
+		return -1;
+	}
+
+	private int getBillIdByIdxOrCreateNew(StringBuilder sql, int billIdx, String tableName, String openTime) throws SQLException {
+		sql = new StringBuilder("Select id from bill where tableID = '").append(tableName)
+				.append("' and opentime = '").append(openTime)
+				.append("' and billIndex = '").append(billIdx).append("'");
+		
+		ResultSet resultSet = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+		
+		resultSet.beforeFirst();
+		if(resultSet.next()) {
+			return resultSet.getInt("id");
+		}else {
+			// it's not error, can be openning a new bill by clicking an new table. what we should do is add a new bill.
+			//L.e("initing BillPanel", "there's no bill in an openned table.", null);
+			return BarFrame.instance.createAnEmptyBill("", openTime, billIdx);
+		}
+	}
+	
+	private void resetProperties(){
         orderedDishAry.clear();
         discount = 0;
         tip = 0;
@@ -1093,7 +1110,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         // built
         if(billButton != null) {
         	add(billButton);
-            billButton.addActionListener(this);
+        	billButton.addActionListener(this);
         }else {
             add(btnMore);
             add(btnLess);

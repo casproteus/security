@@ -19,6 +19,7 @@ import java.util.StringTokenizer;
 
 import javax.swing.ImageIcon;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.pimmodel.util.ModelConstants2;
 import org.cas.client.resource.international.PaneConsts;
@@ -298,7 +299,7 @@ public class PIMDBUtil {
      */
     public static String converTableNameToFolder(
             String prmTableName) {
-        if (prmTableName == null || prmTableName.length() < 1) // 判断当前的数据库表的名字是否可用
+        if (BarUtil.empty(prmTableName)) // 判断当前的数据库表的名字是否可用
             return null;
 
         StringBuffer tmpFolder = new StringBuffer();

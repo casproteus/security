@@ -26,6 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
@@ -575,8 +576,8 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	//So, finally, I think it's better to let the unclosed bills display in check list box, anyway, they are not closed yet, they are waiting for uncombine.
     public boolean isTableEmpty(String tableName, String openTime){
 		//validate parameters
-		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
-		openTime = openTime == null ? valStartTime.getText() : openTime;
+		tableName = BarUtil.empty(tableName) ? cmbCurTable.getSelectedItem().toString() : tableName;
+		openTime = BarUtil.empty(openTime) ? valStartTime.getText() : openTime;
     	
     	try {
     		StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableName)
@@ -648,8 +649,8 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 
 	public int createAnEmptyBill(String tableName, String openTime, int newBillIdx){
 		//validate parameters
-		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
-		openTime = openTime == null ? valStartTime.getText() : openTime;
+		tableName = BarUtil.empty(tableName) ? cmbCurTable.getSelectedItem().toString() : tableName;
+		openTime = BarUtil.empty(openTime) ? valStartTime.getText() : openTime;
 		if(newBillIdx <= 0) {
 			newBillIdx = BillListPanel.getANewBillIdx(tableName, openTime);
 		}
@@ -705,8 +706,8 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	
 	public void closeATable(String tableName, String openTime) {
 		//validate parameters
-		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
-		openTime = openTime == null ? valStartTime.getText() : openTime;
+		tableName = BarUtil.empty(tableName) ? cmbCurTable.getSelectedItem().toString() : tableName;
+		openTime = openTime == null || openTime.length() == 0? valStartTime.getText() : openTime;
 		//all the bill should already completed when table closed except those was generated while has no output on it.
 		//this is the designed time to clean those bills.
 		StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.deleted)

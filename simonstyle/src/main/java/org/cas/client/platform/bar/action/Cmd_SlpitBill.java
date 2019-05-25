@@ -55,15 +55,15 @@ public class Cmd_SlpitBill implements  SamActionListener {
 		List<Dish> newDishes = billPanel.getNewDishes();
 		if(newDishes.size() > 0) {
 			for (Dish dish : newDishes) {
-				if(dish.getPrinter() != null && dish.getPrinter().length() > 1) {
+				if(dish.getPrinter() != null && dish.getPrinter().length() > 1) {		//if has been set a printer, then means the new added dish need to be print first.
         			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.UnSendRecordFound());
         			return;
 				}
 			}
 		}
 		
-		billPanel.createAndPrintNewOutput();
-		billPanel.billPricesUpdateToDB();
+		billPanel.createAndPrintNewOutput();	//print
+		billPanel.billPricesUpdateToDB();		//save
 		
 		if(salesPanel.partialPaid) {
 			if(JOptionPane.showConfirmDialog(BarFrame.instance, 

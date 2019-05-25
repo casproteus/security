@@ -356,4 +356,8 @@ public class BarUtil {
         }
 		return buttons != null && buttons.size() > 0 ? buttons.get(0).getY() : -1;
 	}
+
+	public static boolean empty(String content) {
+		return content == null || content.trim().length() == 0;
+	}
 }

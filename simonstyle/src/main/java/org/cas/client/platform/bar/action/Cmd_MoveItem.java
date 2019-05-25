@@ -77,11 +77,11 @@ public class Cmd_MoveItem implements SamActionListener {
 			if(targetBillIdx < 1) {
 				JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
 			}else {
-				//check if the original panel need to be regenerat
-	        	BillPanel originalBillPanel = billListPanel.billPanels.get(Integer.valueOf(billListPanel.curDish.getBillIndex()) - 1);
+				//check if the original panel need to be regenerate
+	        	BillPanel originalBillPanel = billListPanel.getBillPanelByBillNumber(Integer.valueOf(billListPanel.curDish.getBillIndex()));
 	        	int origianlBillstatus = originalBillPanel.status;	//save the status before it's changed when regenerate the bill.
 	        	if(origianlBillstatus >= DBConsts.billPrinted || origianlBillstatus < DBConsts.original) {
-	        		originalBillPanel.reGenerate(billListPanel.billPanels.get(targetBillIdx - 1).billButton.getText());
+	        		originalBillPanel.reGenerate(billListPanel.getBillPanelByBillNumber(targetBillIdx).billButton.getText());
 	        	}
 	        	
 				int billId = 0;
@@ -100,7 +100,7 @@ public class Cmd_MoveItem implements SamActionListener {
 	        			            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
 	        			        return;
 	        				}else {
-	        					billListPanel.billPanels.get(targetBillIdx - 1).reGenerate(billListPanel.billPanels.get(targetBillIdx - 1).billButton.getText());
+	        					billListPanel.getBillPanelByBillNumber(targetBillIdx).reGenerate(billListPanel.getBillPanelByBillNumber(targetBillIdx).billButton.getText());
 	        				}
 		        		}
 		        	}else {
