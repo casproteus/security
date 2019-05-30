@@ -603,4 +603,6 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String OrgonizeCommands() {return "Organiser les commandes";}
 	@Override
 	public String RestartNeeded() {return "Veuillez redémarrer l'application pour appliquer les nouveaux paramètres.";}
+	@Override
+	public String Login() {return "S'identifier";}
 }

@@ -233,6 +233,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
                     USERNAME = general.subjectAry[i];
                     MODETRANS = general.modeTrans[i];
                     USERLANG = general.langAry[i];
+                    CustOpts.custOps.setUserLang(USERLANG);//next start up will use it as default interface language.
                     switch (USERLANG) {
 					case 0:
                     	BarFrame.consts = new BarDlgConst0();
@@ -295,7 +296,7 @@ public class LoginDlg extends JDialog implements ICASDialog, ActionListener, Com
     }
 
     private void initDialog() {
-        setTitle(LoginDlgConst.LoginDlgTitle);
+        setTitle(BarFrame.consts.Login());
         setAlwaysOnTop(true);
         setResizable(false);
 

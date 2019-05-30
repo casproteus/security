@@ -2292,14 +2292,13 @@ class FileCustomOptions extends CustOpts {
 
 	@Override
 	public void setUserLang(int prmUserLang) {
-		// TODO Auto-generated method stub
-		
+		hash.put(CustOptsConsts.USERNAME, Integer.toString(prmUserLang));
 	}
 
 	@Override
 	public int getUserLang() {
-		// TODO Auto-generated method stub
-		return 0;
+		Object tObj = hash.get(CustOptsConsts.USERNAME);
+        return tObj != null ? Integer.valueOf((String) tObj) : 0;
 	}
 }
 // / **

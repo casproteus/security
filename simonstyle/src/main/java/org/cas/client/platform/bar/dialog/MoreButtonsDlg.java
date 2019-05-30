@@ -89,7 +89,7 @@ public class MoreButtonsDlg extends JDialog implements WindowFocusListener{
 	private void initPanel() {
 		// 布局---------------
 		setLayout(null);
-		BarUtil.addFunctionButtons(this.getContentPane(), buttons);
+		BarUtil.addFunctionButtons(this.getContentPane(), buttons, 80);
 		this.addWindowFocusListener(this);
 	}
 	

@@ -34,7 +34,9 @@ import org.cas.client.platform.pimmodel.PIMDBModel;
 //Identity表应该和Employ表合并。
 public class TablesPanel extends JPanel implements ComponentListener, ActionListener, FocusListener, MouseListener {
 
-    static ArrayList<TableButton> btnTables = new ArrayList<TableButton>();
+    static final int MAX_CMDBTN_QT = 10;
+
+	static ArrayList<TableButton> btnTables = new ArrayList<TableButton>();
     
     private TableButton btnPressed;
     private boolean isDragged;
@@ -151,7 +153,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     }
 
     void reLayout() {
-    	BarUtil.layoutCommandButtons(this, CmdBtnsDlg.groupedButtons[0]);
+    	BarUtil.layoutCommandButtons(this, CmdBtnsDlg.groupedButtons[0], MAX_CMDBTN_QT);
     }
     
     void initComponent() {
@@ -167,7 +169,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
         setLayout(null);
 
         // command buttons
-        BarUtil.addFunctionButtons(this, CmdBtnsDlg.groupedButtons[0]);
+        BarUtil.addFunctionButtons(this, CmdBtnsDlg.groupedButtons[0], MAX_CMDBTN_QT);
 
         // add listener
         addComponentListener(this);

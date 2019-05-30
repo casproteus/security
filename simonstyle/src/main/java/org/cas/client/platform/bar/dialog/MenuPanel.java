@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.model.Category;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.model.Printer;
@@ -90,11 +91,16 @@ public class MenuPanel extends JPanel implements ActionListener {
 	}
 	
     public void initCategoryAndDishes() {
-        try {
-            Statement statement = PIMDBModel.getReadOnlyStatement();
+        loadAllCategorys();
+        loadAllDishes();
+        curMenuPage = 0;
+        reInitCategoryAndMenuBtns();
+    }
 
+	private void loadAllCategorys() {
+		try {
             // load all the categorys---------------------------
-            ResultSet categoryRS = statement.executeQuery("select ID, LANG1, LANG2, LANG3 from CATEGORY  where DSP_INDEX >= 0 order by DSP_INDEX");
+            ResultSet categoryRS = PIMDBModel.getReadOnlyStatement().executeQuery("select ID, LANG1, LANG2, LANG3 from CATEGORY  where DSP_INDEX >= 0 order by DSP_INDEX");
             categoryRS.afterLast();
             categoryRS.relative(-1);
             int tmpPos = categoryRS.getRow();
@@ -117,14 +123,20 @@ public class MenuPanel extends JPanel implements ActionListener {
                 tmpPos++;
             }
             categoryRS.close();// 关闭
-
+        } catch (Exception e) {
+            L.e("MenuPanel ", "exception when loading all categories", e);
+        }
+	}
+	
+	private void loadAllDishes() {
+		try {
             // load all the dishes----------------------------
             ResultSet productRS =
-                    statement
+            		PIMDBModel.getReadOnlyStatement()
                             .executeQuery("select ID, CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, STORE,  COST, BRAND, CATEGORY, CONTENT, UNIT, PRODUCAREA, INDEX from product where deleted != true order by index");
             productRS.afterLast();
             productRS.relative(-1);
-            tmpPos = productRS.getRow();
+            int tmpPos = productRS.getRow();
             dishNameMetrix = new String[3][tmpPos];
             dishAry = new Dish[tmpPos];
             productRS.beforeFirst();
@@ -156,11 +168,9 @@ public class MenuPanel extends JPanel implements ActionListener {
             productRS.close();// 关闭
 			
         } catch (Exception e) {
-            ErrorUtil.write(e);
+            L.e("MenuPanel ", "exception when loading all dishes", e);
         }
-        curMenuPage = 0;
-        reInitCategoryAndMenuBtns();
-    }
+	}
 
 	public void initPrinters() {
 		
@@ -232,7 +242,8 @@ public class MenuPanel extends JPanel implements ActionListener {
                 btnCategoryArry.add(btnCategory);
                 
                 if (globleCategoryIdxOfCurCategory < categoryNameMetrix[0].length) {
-                    btnCategory.setText(categoryNameMetrix[CustOpts.custOps.getUserLang()][globleCategoryIdxOfCurCategory]);
+                	String text = categoryNameMetrix[CustOpts.custOps.getUserLang()][globleCategoryIdxOfCurCategory];
+                    btnCategory.setText(BarUtil.empty(text) ? categoryNameMetrix[0][globleCategoryIdxOfCurCategory] : text);
                     if (tgbActiveCategory != null && categoryNameMetrix[CustOpts.custOps.getUserLang()][globleCategoryIdxOfCurCategory].equalsIgnoreCase(tgbActiveCategory.getText())) {
                         btnCategory.setSelected(true);
                     }
@@ -293,7 +304,8 @@ public class MenuPanel extends JPanel implements ActionListener {
                 btnMenu.addActionListener(this);
                 btnMenuArry.add(btnMenu);
                 if (globleMenuIdxOfCurCategory < classifiedMenuIndex) {	//the last page could be not full page.
-                    btnMenu.setText(classifiedDishNameMetrix[CustOpts.custOps.getUserLang()][globleMenuIdxOfCurCategory]);
+                	String text = classifiedDishNameMetrix[CustOpts.custOps.getUserLang()][globleMenuIdxOfCurCategory];
+                    btnMenu.setText(BarUtil.empty(text) ? classifiedDishNameMetrix[0][globleMenuIdxOfCurCategory] : text);
                     btnMenu.setDish(classifiedDishAry.get(globleMenuIdxOfCurCategory));
                     globleMenuIdxOfCurCategory++;
                 }

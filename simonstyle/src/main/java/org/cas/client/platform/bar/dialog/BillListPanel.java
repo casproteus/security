@@ -29,6 +29,7 @@ import org.cas.client.resource.international.DlgConst;
 import org.hsqldb.lib.HashMap;
 
 public class BillListPanel extends JPanel implements ActionListener, ComponentListener{
+	static final int MAX_CMDBTN_QT = 10;
 	public static Dish curDish;
 	int curPageNum;
 	
@@ -55,7 +56,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		add(btnRight);
 		add(separator);
 		
-		BarUtil.addFunctionButtons(this, CmdBtnsDlg.groupedButtons[1]);
+		BarUtil.addFunctionButtons(this, CmdBtnsDlg.groupedButtons[1], MAX_CMDBTN_QT);
 		
 		addComponentListener(this);
 		btnLeft.addActionListener(this);
@@ -169,7 +170,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		
 		int tBtnHeight = BarFrame.instance.getHeight() / 10;
 		
-		int top = BarUtil.layoutCommandButtons(this, CmdBtnsDlg.groupedButtons[1]);
+		int top = BarUtil.layoutCommandButtons(this, CmdBtnsDlg.groupedButtons[1], MAX_CMDBTN_QT);
 		if(top < 0) {
 			return;
 		}

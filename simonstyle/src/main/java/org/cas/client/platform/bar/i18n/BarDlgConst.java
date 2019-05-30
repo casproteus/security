@@ -325,4 +325,5 @@ public interface BarDlgConst {
 	String ActionNotAllowed();
 	String OrgonizeCommands();
 	Object RestartNeeded();
+	String Login();
 }

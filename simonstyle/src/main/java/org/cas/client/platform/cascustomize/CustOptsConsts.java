@@ -15,6 +15,7 @@ public interface CustOptsConsts {
     // 密码
     String USERNAME = "username";
     String USERTYPE = "CHRRY";
+    String USERLANG = "lang";
     // -------------
     /** 用于存取用户选择的打印机的名称 */
     String PRINTER = "printer";

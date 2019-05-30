@@ -363,7 +363,7 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String TO() {return "到";}
     
     @Override
-	public String Code() {return "内部编号:";}
+	public String Code() {return "识别码:";}
     @Override
 	public String PHOTO() {return "添加照片...";}
     @Override
@@ -605,4 +605,6 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String OrgonizeCommands() {return "设定命令按钮布局";}
 	@Override
 	public String RestartNeeded() {return "请重启程序使新的设置生效。";}
+	@Override
+	public String Login() {return "登录";}
 }

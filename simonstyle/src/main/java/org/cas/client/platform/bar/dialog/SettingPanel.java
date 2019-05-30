@@ -26,7 +26,9 @@ import org.cas.client.resource.international.PaneConsts;
 //Identity表应该和Employ表合并。
 public class SettingPanel extends JPanel implements ComponentListener, ActionListener, FocusListener {
     
-    public static String startTime;
+    static final int MAX_CMDBTN_QT = 10;
+
+	public static String startTime;
 
     //flags
     NumberPanelDlg numberPanelDlg; 
@@ -322,7 +324,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     void reLayout() {
 
         // command buttons--------------
-        int top = BarUtil.layoutCommandButtons(this, CmdBtnsDlg.groupedButtons[3]);
+        int top = BarUtil.layoutCommandButtons(this, CmdBtnsDlg.groupedButtons[3], MAX_CMDBTN_QT);
         if(top < 0)
         	return;
         // TOP part============================
@@ -519,7 +521,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxTreatPricePromtAsTaxInclude.setSelected(BarOption.isTreatPricePromtAsTaxInclude());
         cbxShowCustomerFrame.setSelected(BarOption.isShowCustomerFrame());
 
-        BarUtil.addFunctionButtons(this, CmdBtnsDlg.groupedButtons[3]);
+        BarUtil.addFunctionButtons(this, CmdBtnsDlg.groupedButtons[3], MAX_CMDBTN_QT);
         addMenuRelatedComps();
         addOtherComponentes();
 

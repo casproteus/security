@@ -43,6 +43,10 @@ public class Cmd_Pay implements SamActionListener {
 		
 		SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
 		BillPanel billPanel = salesPanel.billPanel;
+		if(billPanel.orderedDishAry.size() < 1) {
+			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.AtLeastOneShouldBeSelected());
+			return;
+		}
 		
 		billPanel.createAndPrintNewOutput();	//process the new added items (send to printer and db).
 		billPanel.billPricesUpdateToDB();		//the total price could has changed, because user added new item.

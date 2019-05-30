@@ -56,7 +56,7 @@ public class LoginGeneralPanel extends JPanel implements ComponentListener {
     private void initConponent() {
         lblUserName = new JLabel(LoginDlgConst.UserName);
         lblType = new JLabel(LoginDlgConst.Type);
-        lblPassword = new JLabel(LoginDlgConst.Password);
+        lblPassword = new JLabel(BarFrame.consts.Code());
         lblMakeSure = new JLabel(LoginDlgConst.MakeSure);
 
         cmbUserName = new JComboBox();

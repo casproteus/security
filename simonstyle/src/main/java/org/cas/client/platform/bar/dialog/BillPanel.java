@@ -661,6 +661,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				int billID = getBillIdByIdxOrCreateNew(sql, Integer.valueOf(billIndex), tableName, openTime);			//what kind of case will reach here: no bill and create an new empty bill?
 				setBillID(billID);
 			}
+			
+			// do not set the default selected value, if it's used in billListDlg.
+			if (salesPanel != null && orderedDishAry.size() > 0) {
+				table.setSelectedRow(orderedDishAry.size() - 1);
+			}
 		} catch (Exception e) {
 			L.e("BillPanel", " exception when initContent()" + sql, e);
 		}
@@ -714,7 +719,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			dish.setBillID(rs.getInt("OUTPUT.Category"));
 			dish.setTotalPrice(rs.getInt("OUTPUT.TOLTALPRICE"));
 			dishAry.add(dish);
-
+			
 			tValues[tmpPos][0] = dish.getDisplayableNum(dish.getNum());
 			
 			tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
@@ -734,10 +739,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		}
 
 		table.setDataVector(tValues, header);
-		// do not set the default selected value, if it's used in billListDlg.
-		if (salesPanel != null)
-			table.setSelectedRow(tmpPos - 1);
-
+		
 		resetColWidth(scrContent.getWidth());
 		return dishAry;
 	}

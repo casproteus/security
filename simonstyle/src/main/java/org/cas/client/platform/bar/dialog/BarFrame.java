@@ -30,6 +30,8 @@ import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
+import org.cas.client.platform.bar.i18n.BarDlgConst1;
+import org.cas.client.platform.bar.i18n.BarDlgConst2;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.net.HttpRequestClient;
 import org.cas.client.platform.bar.net.RequestNewOrderThread;
@@ -46,9 +48,9 @@ import org.cas.client.platform.pimmodel.PIMRecord;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V2.13-20190523";
+	private String VERSION = "V2.14-20190530";
 	public static BarFrame instance;
-    public static BarDlgConst consts = new BarDlgConst0();
+    public static BarDlgConst consts;
     
     public int curPanel;
     //curBillID is currently only used for displaying a expired bill, which is to say, when showingExpiredBill is set to true;
@@ -66,6 +68,19 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         CASControl.ctrl.initModel();
         CASControl.ctrl.setMainFrame(new CASMainFrame());
         menuPanel = new MenuPanel();	//have to be after initModel, before new BarFrame().
+        switch (CustOpts.custOps.getUserLang()){
+	        case 0:
+	       		consts = new BarDlgConst0();
+	            break;
+	        case 1:
+	       		consts = new BarDlgConst1();
+	            break;
+	        case 2:
+	       		consts = new BarDlgConst2();
+	            break;
+	        default:
+	        	consts = new BarDlgConst0();
+        }
         instance = new BarFrame();
         CmdBtnsDlg.initButtons();
         instance.initComponent();

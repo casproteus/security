@@ -24,6 +24,7 @@ import org.cas.client.resource.international.DlgConst;
 //Identity表应该和Employ表合并。
 public class SalesPanel extends JPanel implements ComponentListener, FocusListener {
 
+	static final int MAX_CMDBTN_QT = 20;
 	String[][] categoryNameMetrix;
     ArrayList<ArrayList<CategoryToggleButton>> onSrcCategoryTgbMatrix = new ArrayList<ArrayList<CategoryToggleButton>>();
     CategoryToggleButton tgbActiveCategory;
@@ -172,7 +173,7 @@ public class SalesPanel extends JPanel implements ComponentListener, FocusListen
     
     void reLayout() {
         // command buttons--------------
-        int top = BarUtil.layoutCommandButtons(this, CmdBtnsDlg.groupedButtons[2]);
+        int top = BarUtil.layoutCommandButtons(this, CmdBtnsDlg.groupedButtons[2], MAX_CMDBTN_QT);
         if(top < 0) {
         	return;
         }
@@ -205,7 +206,7 @@ public class SalesPanel extends JPanel implements ComponentListener, FocusListen
         setLayout(null);
         
         // built
-        BarUtil.addFunctionButtons(this, CmdBtnsDlg.groupedButtons[2]);
+        BarUtil.addFunctionButtons(this, CmdBtnsDlg.groupedButtons[2], MAX_CMDBTN_QT);
         
         add(billPanel);
         // add listener

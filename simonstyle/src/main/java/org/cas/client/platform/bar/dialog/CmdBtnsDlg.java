@@ -291,8 +291,8 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 				}
 			}
 		}
-		BarUtil.addFunctionButtons(panel, (ArrayList<JComponent>)btnListMap.get(key));
-		BarUtil.layoutCommandButtons(panel, (ArrayList<JComponent>)btnListMap.get(key));
+		BarUtil.addFunctionButtons(panel, (ArrayList<JComponent>)btnListMap.get(key), 20);
+		BarUtil.layoutCommandButtons(panel, (ArrayList<JComponent>)btnListMap.get(key), 20);
 	}
 	
 	@Override
@@ -346,10 +346,10 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 		reset.setBounds(settingPanle.getX(), settingPanle.getY() + settingPanle.getHeight() + CustOpts.VER_GAP, 80, 40);
 		close.setBounds(settingPanle.getX() + settingPanle.getWidth() - 80, reset.getY(), 80, 40);
 
-		BarUtil.layoutCommandButtons(tablePanle, (ArrayList<JComponent>)btnListMap.get(KEY_TABLE_CMD));
-		BarUtil.layoutCommandButtons(billPanle, (ArrayList<JComponent>)btnListMap.get(KEY_BILL_CMD));
-		BarUtil.layoutCommandButtons(salePanle, (ArrayList<JComponent>)btnListMap.get(KEY_SALE_CMD));
-		BarUtil.layoutCommandButtons(settingPanle, (ArrayList<JComponent>)btnListMap.get(KEY_SETTING_CMD));
+		BarUtil.layoutCommandButtons(tablePanle, (ArrayList<JComponent>)btnListMap.get(KEY_TABLE_CMD), TablesPanel.MAX_CMDBTN_QT);
+		BarUtil.layoutCommandButtons(billPanle, (ArrayList<JComponent>)btnListMap.get(KEY_BILL_CMD), BillListPanel.MAX_CMDBTN_QT);
+		BarUtil.layoutCommandButtons(salePanle, (ArrayList<JComponent>)btnListMap.get(KEY_SALE_CMD), SalesPanel.MAX_CMDBTN_QT);
+		BarUtil.layoutCommandButtons(settingPanle, (ArrayList<JComponent>)btnListMap.get(KEY_SETTING_CMD), SettingPanel.MAX_CMDBTN_QT);
 
 		invalidate();
 		revalidate();

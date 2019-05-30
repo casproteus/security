@@ -32,7 +32,7 @@ import gnu.io.PortInUseException;
 
 public class BarUtil {
 	
-    public static DecimalFormat formatter = new DecimalFormat("#0.00");
+	public static DecimalFormat formatter = new DecimalFormat("#0.00");
     public static String[] sepLines;
     public static String SEP_STR1 = "=";
     public static String SEP_STR2 = "-";
@@ -302,18 +302,18 @@ public class BarUtil {
 		return dishes;
 	}
 	
-	public static void addFunctionButtons(Container panel, ArrayList<JComponent> buttons) {
+	public static void addFunctionButtons(Container panel, ArrayList<JComponent> buttons, int maxBtnQt) {
 		int max = buttons.size();
-        if(max > 20) {
+        if(max > maxBtnQt) {
         	MoreButton btnMore = new MoreButton(BarFrame.consts.MORE());
-        	boolean moreBtnAdded = buttons.get(19) instanceof MoreButton;
-        	for(int i =  moreBtnAdded? 20 : 19; i < buttons.size(); i++) {
+        	boolean moreBtnAdded = buttons.get(9) instanceof MoreButton;
+        	for(int i =  moreBtnAdded? maxBtnQt : maxBtnQt - 1; i < buttons.size(); i++) {
         		btnMore.addButton(buttons.get(i));
         	}
         	if(!moreBtnAdded) {
-        		buttons.add(19, btnMore);
+        		buttons.add(maxBtnQt - 1, btnMore);
         	}
-        	max = 20;
+        	max = maxBtnQt;
         }
         
         for(int i = 0; i < max ; i++) {
@@ -321,7 +321,7 @@ public class BarUtil {
 		}
 	}
 
-	public static int layoutCommandButtons(JPanel panel, ArrayList<JComponent> buttons) {
+	public static int layoutCommandButtons(JPanel panel, ArrayList<JComponent> buttons, int maxBtnQt) {
 		if(buttons == null)
 			return -1;
 		
@@ -340,8 +340,8 @@ public class BarUtil {
         	row = 1;
         	col = butonQT;
         }else {
-        	row = 2;
-        	if(butonQT >= 20){
+        	row = maxBtnQt > 10 ? 2 : 1;
+        	if(butonQT >= maxBtnQt){
         		col = 10;
         	}else{
         		col = butonQT%2 + butonQT/2;
@@ -351,7 +351,7 @@ public class BarUtil {
         int tBtnWidht = col == 0? 100 : (panelWidth - CustOpts.HOR_GAP * (col + 1)) / (col);
         int tBtnHeight = (BarFrame.instance.getHeight() - 80) / 10;
 
-        int max = butonQT > 20 ? 20 : butonQT;
+        int max = butonQT > maxBtnQt ? maxBtnQt : butonQT;
         for(int i = 0; i < max; i++) {
         	buttons.get(i).setBounds(CustOpts.HOR_GAP + tBtnWidht * (i < col ? i : i - col) + CustOpts.HOR_GAP * (i < col ? i : i - col),
         			panelHeight - tBtnHeight * (i < col && max > col ? 2 : 1) - CustOpts.VER_GAP * (i < col && max > col ? 2 : 1),
