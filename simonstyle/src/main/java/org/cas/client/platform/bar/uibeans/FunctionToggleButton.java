@@ -1,13 +1,12 @@
 package org.cas.client.platform.bar.uibeans;
 
-import java.awt.Color;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JToggleButton;
 
-import org.cas.client.platform.bar.dialog.BarOption;
+import org.cas.client.platform.casutil.L;
 
 public class FunctionToggleButton extends JToggleButton implements ISButton{
 	
@@ -26,15 +25,21 @@ public class FunctionToggleButton extends JToggleButton implements ISButton{
 		setBorder(BorderFactory.createEtchedBorder());
 	}
 	
-	public void addActionListener(SamActionListener actionListener) {
+	public void addActionListener(ActionListener actionListener) {
+		if(actionListener == null) {
+			L.e("FunctionToggleButton", "receieved a null as actionListener", null);
+		}
 		super.addActionListener(actionListener);
-		this.actionListener = actionListener;
-		actionListener.setSourceBtn(this);
+		this.actionListener = (SamActionListener)actionListener;
+		this.actionListener.setSourceBtn(this);
 	}
 	
 	public JComponent clone() {
 		FunctionToggleButton btn = new FunctionToggleButton(title);
 		btn.addActionListener(actionListener);
+		if(actionListener == null) {
+			L.e("FunctionToggleButton", "actionListener is null!", null);
+		}
 		actionListener.setSourceBtn(btn);
 		return btn;
 	}

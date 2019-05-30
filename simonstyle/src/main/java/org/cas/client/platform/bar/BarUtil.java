@@ -306,10 +306,13 @@ public class BarUtil {
 		int max = buttons.size();
         if(max > 20) {
         	MoreButton btnMore = new MoreButton(BarFrame.consts.MORE());
-        	for(int i = 19; i < buttons.size(); i++) {
+        	boolean moreBtnAdded = buttons.get(19) instanceof MoreButton;
+        	for(int i =  moreBtnAdded? 20 : 19; i < buttons.size(); i++) {
         		btnMore.addButton(buttons.get(i));
         	}
-        	buttons.add(19, btnMore);
+        	if(!moreBtnAdded) {
+        		buttons.add(19, btnMore);
+        	}
         	max = 20;
         }
         

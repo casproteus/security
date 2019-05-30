@@ -17,7 +17,7 @@ import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.bar.uibeans.SamActionListener;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 
-public class Cmd_AddTable implements  SamActionListener {
+public class Cmd_AddTable implements SamActionListener {
 
 	private static Cmd_AddTable instance;
 	private Cmd_AddTable() {}

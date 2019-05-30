@@ -5,21 +5,21 @@ import java.awt.event.ActionListener;
 
 import javax.swing.AbstractButton;
 import javax.swing.JOptionPane;
-import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
 public class UpdateItemPriceAction implements ActionListener{
 
-	JToggleButton btn;
+	ISButton btn;
 	
-	public UpdateItemPriceAction(JToggleButton button) {
+	public UpdateItemPriceAction(ISButton button) {
 		this.btn = button;
 	}
 	

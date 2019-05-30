@@ -65,8 +65,8 @@ import org.cas.client.platform.bar.uibeans.ArrowButton;
 import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
 import org.cas.client.platform.bar.uibeans.ISButton;
-import org.cas.client.platform.bar.uibeans.MoreButton;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.resource.international.DlgConst;
 import org.hsqldb.lib.HashMap;
 
@@ -281,11 +281,14 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 		
 		String[] sIDs = TableCmds.split(",");
 		for (String id : sIDs) {
-			try {
-				int idx = Integer.valueOf(id);
-				((ArrayList) btnListMap.get(key)).add(buttons[idx].clone());
-			}catch(Exception exp) {
-				continue;
+			if(id.length() > 0) {//the first element could be an ""
+				try {
+					int idx = Integer.valueOf(id);
+					((ArrayList) btnListMap.get(key)).add(buttons[idx].clone());
+				}catch(Exception exp) {
+					L.e("CmdBtnDlg", "exception when cloning a button and add into btnListMap.", exp);
+					continue;
+				}
 			}
 		}
 		BarUtil.addFunctionButtons(panel, (ArrayList<JComponent>)btnListMap.get(key));
@@ -447,28 +450,32 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         		btnModify,
         		btnDiscItem,	//20
         		btnChangePrice,
+        		btnDiscBill,
         		btnServiceFee,
         		btnPrintBill,
 
-        		btnReturn,
-        		btnAddBill,		//25
+        		btnReturn,		//25
+        		btnAddBill,
         			   
         		btnCancelAll,
         		btnVoidOrder,
         		btnOpenDrawer,
-        		btnDiscBill,
-        		btnRefund,		//30
+        		btnDiscountCoupon,//30
+        		btnRefund,		
         		btnSend,
+        		btnEN,
+        		btnFR,
+        		btnCN,		//35
         			
         		btnEmployee,
         		btnPrinter,
         		btnTable,
-        		btnBillFoot,	//35
-        		btnModifySetting,
+        		btnBillFoot,
+        		btnModifySetting,		//40
         		btnGiftCard,
         		btnCoupon,
         		btnColor,
-        		btnCheckInOutList};//40
+        		btnCheckInOutList};
         
         
         //listener------------------------------
@@ -738,32 +745,35 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     		"DEBIT",
     		"VISA",			//
     		"MASTER",		//15
-    		"OTHER",		//
+    		"GiftCard",		//
     		"SplitBill",	//
     		"RemoveItem",	//
     		"Modify",		//
     		"DiscItem",		//20
     		"ChangePrice",	//
+    		"DiscBill",		//
     		"ServiceFee",	//
     		"PrintBill",	//
 
-    		"Return",		//
-    		"AddBill",		//25
+    		"Return",		//25
+    		"AddBill",		//
     			   
     		"CancelAll",	//
     		"VoidOrder",	//
     		"OpenDrawer",	//
-    		"DiscBill",		//
-    		"Refund",		//30
+    		"DiscountCoupon",//30
+    		"Refund",		//
     		"Send",			//
-    			
-    		"Employee",		//
-    		"Printer",		//
-    		"Table",		//
-    		"BillFoot",		//35
-    		"ModifySetting",//
-    		"GiftCard",		//
-    		"Coupon",		//
-    		"Color",		//
-    		"CheckInOutList"}; //40
+    		"EN",			//
+    		"FR",			//
+    		"ZH",			//35
+    		"EmployeeList",	  //
+    		"PrinterSetting", //
+    		"TableSetting",	  //
+    		"BillFootSetting",//
+    		"ModifySetting",  //40
+    		"GiftCardSetting",//
+    		"CouponSetting",  //
+    		"ColorSetting",	  //
+    		"CheckInOutList"};//
 }

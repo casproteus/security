@@ -85,19 +85,10 @@ public class Cmd_Return implements SamActionListener {
 	        	    	BarFrame.instance.switchMode(2);
 
 	        		}else {
-	        			BarFrame.instance.ignoreItemChange = true;
-	            		BarFrame.instance.cmbCurTable.setSelectedItem("");
-	            		BarFrame.instance.setCurBillIdx("1");
-	                	
-	                	String openTime = BarOption.df.format(new Date());
-	                	BarFrame.instance.valStartTime.setText(openTime);
-
-	                	BarFrame.instance.openATable("", openTime);
-	                	BarFrame.instance.curBillID = BarFrame.instance.createAnEmptyBill("", openTime, 0);
-	                	billPanel.setBillID(BarFrame.instance.curBillID);
-	            		
-	                	BarFrame.instance.switchMode(2);
+	        			initAnEmptyBill(billPanel);
 	        		}
+	        	}else {	//if has no bill with this employee, then create a new bill?
+	        		initAnEmptyBill(billPanel);
 	        	}
 			}catch (SQLException exp) {
 	            ErrorUtil.write(exp);
@@ -121,5 +112,19 @@ public class Cmd_Return implements SamActionListener {
     		}
     		BarFrame.instance.switchMode(0);
     	}
+	}
+	private void initAnEmptyBill(BillPanel billPanel) {
+		BarFrame.instance.ignoreItemChange = true;
+		BarFrame.instance.cmbCurTable.setSelectedItem("");
+		BarFrame.instance.setCurBillIdx("1");
+		
+		String openTime = BarOption.df.format(new Date());
+		BarFrame.instance.valStartTime.setText(openTime);
+
+		BarFrame.instance.openATable("", openTime);
+		BarFrame.instance.curBillID = BarFrame.instance.createAnEmptyBill("", openTime, 0);
+		billPanel.setBillID(BarFrame.instance.curBillID);
+		
+		BarFrame.instance.switchMode(2);
 	}
 }

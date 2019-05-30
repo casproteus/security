@@ -1,7 +1,6 @@
 package org.cas.client.platform.bar.action;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.util.Date;
 
@@ -9,8 +8,8 @@ import javax.swing.JOptionPane;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
-import org.cas.client.platform.bar.dialog.CmdBtnsDlg;
 import org.cas.client.platform.bar.model.DBConsts;
+import org.cas.client.platform.bar.uibeans.FunctionButton;
 import org.cas.client.platform.bar.uibeans.FunctionToggleButton;
 import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.bar.uibeans.SamActionListener;
@@ -41,7 +40,7 @@ public class Cmd_Other implements SamActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		FunctionToggleButton o = (FunctionToggleButton)e.getSource();
+		FunctionButton o = (FunctionButton)e.getSource();
 		
 		String giftCardNumber  = JOptionPane.showInputDialog(null, BarFrame.consts.Account());
 		if(giftCardNumber == null || giftCardNumber.length() == 0)

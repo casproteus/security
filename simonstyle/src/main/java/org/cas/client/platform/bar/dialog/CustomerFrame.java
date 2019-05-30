@@ -129,8 +129,10 @@ public class CustomerFrame extends JDialog implements ComponentListener{
 
 	public void updateChange(int left) {
 		valChange.setText(BarOption.getMoneySign() + String.valueOf(left/100f));
-		
-		int totalprice = Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100);
+		String totalPrice = billPanel.valTotlePrice.getText();
+		if(totalPrice.length() == 0)
+			totalPrice = "0";
+		int totalprice = Math.round(Float.valueOf(totalPrice) * 100);
 		valReceived.setText(BarOption.getMoneySign() + BarUtil.formatMoney((totalprice + left)/100f));
 	}
 	
