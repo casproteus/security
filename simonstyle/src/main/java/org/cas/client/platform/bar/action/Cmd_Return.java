@@ -99,7 +99,8 @@ public class Cmd_Return implements SamActionListener {
         	if(salesPanel.partialPaid) {
     			if(JOptionPane.showConfirmDialog(BarFrame.instance, 
 	    				BarFrame.consts.COMFIRMCLEARMONEYRECEIVED(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) == 0) {
-	            	//clean partial input
+    				//check if the otehr receivement is not null, add back to gift card.
+    				//clean partial input
 	            	StringBuilder sql = new StringBuilder("update bill set cashReceived = 0, debitReceived = 0, visaReceived = 0, masterReceived = 0, otherReceived = 0");
 	            	sql.append(" where id = ").append(billPanel.getBillID());
 	            	try {

@@ -402,7 +402,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnSend = new FunctionButton(BarFrame.consts.SEND());
         
         //btnLine_3_2 = new JToggleButton(BarFrame.consts.QTY());
-		btnOTHER = new FunctionButton(BarFrame.consts.GIFTCARD());
+		btnGIFTCARD = new FunctionButton(BarFrame.consts.GIFTCARD());
         btnDiscountCoupon = new FunctionButton(BarFrame.consts.COUPON());
 		btnSuspend = new FunctionButton(BarFrame.consts.SUSPEND());
 		btnCheckOrder = new FunctionButton(BarFrame.consts.OrderManage());
@@ -418,7 +418,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnTable = new FunctionButton(BarFrame.consts.TABLE());
         btnBillFoot = new FunctionButton(BarFrame.consts.BillInfo());
         btnModifySetting = new FunctionButton(BarFrame.consts.MODIFY());
-        btnGiftCard = new FunctionButton(BarFrame.consts.GIFTCARD());
+        btnGiftCardSetting = new FunctionButton(BarFrame.consts.GIFTCARD());
         btnCoupon = new FunctionButton(BarFrame.consts.COUPON());
         btnColor = new FunctionButton(BarFrame.consts.Color().toUpperCase());
         btnCheckInOutList = new FunctionButton(BarFrame.consts.CheckInOut());
@@ -444,7 +444,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         		btnDEBIT,
         		btnVISA,
         		btnMASTER,		//15
-        		btnOTHER,
+        		btnGIFTCARD,
         		btnSplitBill,
         		btnRemoveItem,
         		btnModify,
@@ -472,7 +472,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         		btnTable,
         		btnBillFoot,
         		btnModifySetting,		//40
-        		btnGiftCard,
+        		btnGiftCardSetting,
         		btnCoupon,
         		btnColor,
         		btnCheckInOutList};
@@ -518,7 +518,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnRefund.addActionListener(Cmd_Refund.getInstance());
         btnSend.addActionListener(Cmd_Send.getInstance());
         
-		btnOTHER.addActionListener(Cmd_Other.getInstance());
+		btnGIFTCARD.addActionListener(Cmd_Other.getInstance());
 		btnDiscountCoupon.addActionListener(Cmd_DiscountCoupon.getInstance());
 		btnEN.addActionListener(Cmd_Lang.getInstance());
 		btnFR.addActionListener(Cmd_Lang.getInstance());
@@ -532,7 +532,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnTable.addActionListener(Cmd_Table.getInstance());
         btnBillFoot.addActionListener(Cmd_BillFoot.getInstance());
         btnModifySetting.addActionListener(Cmd_Modify3.getInstance());
-        btnGiftCard.addActionListener(Cmd_GiftCard.getInstance());
+        btnGiftCardSetting.addActionListener(Cmd_GiftCard.getInstance());
         btnCoupon.addActionListener(Cmd_Coupon.getInstance());
         btnColor.addActionListener(Cmd_Color.getInstance());
         btnCheckInOutList.addActionListener(Cmd_CheckInOutList.getInstance());
@@ -603,7 +603,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     	groupedButtons[2].add(btnRefund);
     	groupedButtons[2].add(btnSend);
 		
-    	groupedButtons[2].add(btnOTHER);
+    	groupedButtons[2].add(btnGIFTCARD);
     	groupedButtons[2].add(btnDiscountCoupon);
     	groupedButtons[2].add(btnSuspend);
     	groupedButtons[2].add(btnCheckOrder);
@@ -621,7 +621,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         groupedButtons[3].add(btnTable);
         groupedButtons[3].add(btnBillFoot);
         groupedButtons[3].add(btnModifySetting);
-        groupedButtons[3].add(btnGiftCard);
+        groupedButtons[3].add(btnGiftCardSetting);
         groupedButtons[3].add(btnCoupon);
         groupedButtons[3].add(btnColor);
         groupedButtons[3].add(btnCheckInOutList);
@@ -684,7 +684,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 	private static FunctionButton btnDEBIT;
 	private static FunctionButton btnVISA;
 	private static FunctionButton btnMASTER;
-	private static FunctionButton btnOTHER;
+	private static FunctionButton btnGIFTCARD;
 	private static FunctionButton btnSplitBill;
 	private static FunctionButton btnRemoveItem;
 	private static FunctionButton btnModify;
@@ -717,7 +717,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     private static FunctionButton btnTable;
     private static FunctionButton btnBillFoot;
     private static FunctionButton btnModifySetting;
-    private static FunctionButton btnGiftCard;
+    private static FunctionButton btnGiftCardSetting;
     private static FunctionButton btnCoupon;
     private static FunctionButton btnColor;
     private static FunctionButton btnCheckInOutList;

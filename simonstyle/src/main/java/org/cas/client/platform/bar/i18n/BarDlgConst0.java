@@ -192,7 +192,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String COMFIRMLOSTACTION() {return "Are you sure not to send or save the new input content?";}
     @Override
-	public String COMFIRMCLEARMONEYRECEIVED() {return "This bill is partial paid! Do you want to cancel all the paid money before leaving this interface?";}
+	public String COMFIRMCLEARMONEYRECEIVED() {return "This bill is partial paid! Do you want to cancel all the paid money before leaving this interface? (If there's payment with gift card, need to call manager to refund!)";}
     @Override
 	public String ConfirmPayAgain() {return "This bill has already been closed! Are you sure to reopen it?";}
     @Override

@@ -192,7 +192,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String COMFIRMLOSTACTION() {return "您确定不要把新点的菜发送到厨房或者保存到系统中吗？";}
     @Override
-	public String COMFIRMCLEARMONEYRECEIVED() {return "该单尚未完全付清! 是否取消已输入的付款金额? 选是则改单所有类别的输入金额清零，选否则保留输入，再收钱时只需付清余额。";}
+	public String COMFIRMCLEARMONEYRECEIVED() {return "该单尚未完全付清! 是否取消已输入的付款金额? (如果有用礼品卡支付,则需要高级权限再后台调整相关礼品卡余额!)";}
     @Override
 	public String ConfirmPayAgain() {return "该账单已经支付过了！您确定要再次收钱吗？";}
     @Override

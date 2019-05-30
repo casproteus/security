@@ -83,7 +83,7 @@ public class MoreButtonsDlg extends JDialog implements WindowFocusListener{
 		int height = btnHeight * row + CustOpts.VER_GAP * (row + 1) + CustOpts.SIZE_EDGE * 2 + 40;
 		int x = btnMore.getX() + salesPanel.getRootPane().getParent().getX();
 		int y = salesPanel.getRootPane().getHeight() - 80 + salesPanel.getRootPane().getParent().getY();
-		setBounds(x - width * (col - 1) + 40, y - height + 80, width, height);
+		setBounds(x - width * (col - 1) - 40, y - height + 80, width, height);
 	}
 	
 	private void initPanel() {

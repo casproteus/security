@@ -73,7 +73,7 @@ public class Cmd_Pay implements SamActionListener {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterVisaPayment());
  		}else if(o.equals(BarFrame.consts.MASTER())) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterMasterPayment());
- 		}else if(o.equals(BarFrame.consts.OTHER())) {
+ 		}else if(o.equals(BarFrame.consts.GIFTCARD())) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterOtherPayment());
  		}
  		//init payDialog content base on bill.
