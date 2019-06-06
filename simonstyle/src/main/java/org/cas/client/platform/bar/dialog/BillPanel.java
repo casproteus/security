@@ -361,6 +361,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	public void valueChanged(ListSelectionEvent e) {
 		//adjust more and less button status.
 		int selectedRow =  table.getSelectedRow();
+		if(selectedRow < 0 || orderedDishAry.size() < selectedRow + 1)
+			return;
 		btnMore.setEnabled(selectedRow >= 0 && selectedRow <= orderedDishAry.size());
 		btnLess.setEnabled(selectedRow >= 0 && selectedRow <= orderedDishAry.size());
 		

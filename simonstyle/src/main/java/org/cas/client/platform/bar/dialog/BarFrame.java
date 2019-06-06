@@ -45,10 +45,11 @@ import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
+import org.cas.client.resource.international.DlgConst;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V2.14-20190530";
+	private String VERSION = "V2.14-20190605";
 	public static BarFrame instance;
     public static BarDlgConst consts;
     
@@ -521,7 +522,18 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
                  if(curPanel == 1) {
                 	 unclosedBillPanels.addAll(((BillListPanel)panels[curPanel]).gatherAllUnclosedBillPanels());
          		 }else if(curPanel == 2) { //modify only one bill
-         			unclosedBillPanels.add(((SalesPanel)panels[curPanel]).billPanel);
+         			BillPanel billPanel = ((SalesPanel)panels[curPanel]).billPanel;
+         			unclosedBillPanels.add(billPanel);
+                    //if there's unsend selections
+                    if(billPanel.getNewDishes().size() > 0) {
+	   	            	if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+	   	         				BarFrame.consts.COMFIRMLOSTACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+	   	                	 ignoreItemChange = true;
+	   	                	 this.cmbCurTable.setSelectedItem(oldTable);
+	   	                	 ignoreItemChange = false;
+	   	                     return;	
+	   	            	}
+                    }
          		 }
          		
                  Table table = null;
