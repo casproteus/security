@@ -49,7 +49,7 @@ import org.cas.client.resource.international.DlgConst;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V2.14-20190605";
+	private String VERSION = "V2.15-20190606";
 	public static BarFrame instance;
     public static BarDlgConst consts;
     
@@ -386,11 +386,14 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     		panel.setVisible(false);
 		
     	panels[i].setVisible(true);
+
+    	curPanel = i;
     	if(i > 1) {	//salespanel and setting pannel need menu panel on it.
+    		menuPanel.reInitCategoryAndMenuBtns();
+    		menuPanel.reLayout();
     		panels[i].add(menuPanel);
     	}
     	
-    	curPanel = i;
     	return 0;
 	}
     

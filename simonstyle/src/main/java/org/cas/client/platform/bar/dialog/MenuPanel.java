@@ -209,7 +209,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	}
 
     // menu and category buttons must be init after initContent---------
-    private void reInitCategoryAndMenuBtns() {
+    public void reInitCategoryAndMenuBtns() {
         // validate rows and columns first(in case they are changed into bad value)--------
         categoryColumn = (categoryColumn == null || categoryColumn < 4) ? 5 : categoryColumn;
         categoryRow = (categoryRow == null || categoryRow < 1 || categoryRow > 9) ? 3 : categoryRow;
@@ -319,30 +319,30 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private void adjustPageArrowStatus(int globleCategoryIdxOfCurCategory, int globleMenuIdxOfCurCategory) {
 		
 		//for category panel page up
-        if(globleCategoryIdxOfCurCategory <= categoryQtPerPage) {		//the last displayed category is less than categoryQtPerPage, means
+        if(globleCategoryIdxOfCurCategory <= categoryQtPerPage && curCategoryPage == 0) {		//the last displayed category is less than categoryQtPerPage, means
         	btnPageUpCategory.setVisible(false);				  			// now it's on first page. no need to display up arrow.
         }else {
         	btnPageUpCategory.setVisible(true);			//as long as not the first page, page up should display.
         }
         //for category panel page down
-        if(globleCategoryIdxOfCurCategory > categoryNameMetrix[0].length) {//if is the last page, and not full of last page, then should not display page down arrow.
+        if(categoryNameMetrix[0].length < categoryRow * categoryColumn * (curCategoryPage + 1)) {//if is the last page, and not full of last page, then should not display page down arrow.
         	btnPageDownCategory.setVisible(false);
-        }else if(categoryNameMetrix[0].length < categoryRow * categoryColumn) {//if there'no enough to display, then don't display page down.
+        }else if(BarFrame.instance == null || BarFrame.instance.curPanel != 3) {//if full of page, but is sales page, then hide.
         	btnPageDownCategory.setVisible(false);
         }else {	// if there's more than one page to display, and currently it's not last page then show it.
         	btnPageDownCategory.setVisible(true);
         }
 		
 		//for menu panel page up
-        if(globleMenuIdxOfCurCategory <= menuQTPerPage) {		//the last displayed menu is less than curMenuPerPage, means
+        if(globleMenuIdxOfCurCategory <= menuQTPerPage && curMenuPage == 0) {		//the last displayed menu is less than curMenuPerPage, means
             btnPageUpMenu.setVisible(false);				  	// now it's on first page. no need to display up arrow.
         }else {
         	btnPageUpMenu.setVisible(true);			//as long as not the first page, page up should display.
         }
         //for menu panel page down
-        if(globleMenuIdxOfCurCategory == classifiedDishAry.size() && globleMenuIdxOfCurCategory % (menuRow * menuColumn) != 0) {//if is the last page, and not full of last page, then should not display page down arrow.
+        if(globleMenuIdxOfCurCategory < menuRow * menuColumn * (curMenuPage + 1)) {//if is the last page, and not full of last page, then should not display page down arrow.
         	btnPageDownMenu.setVisible(false);
-        }else if(classifiedDishAry.size() < menuRow * menuColumn) {//if there'no enough to display, then don't display page down.
+        }else if(BarFrame.instance == null || BarFrame.instance.curPanel != 3) {//if it's full of page, but is not in setting page then hide!
         	btnPageDownMenu.setVisible(false);
         }else {	// if there's more than one page to display, and currently it's not last page then show it.
         	btnPageDownMenu.setVisible(true);
@@ -433,7 +433,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	        } else if (o == btnPageDownMenu) {
 	            curMenuPage++;
 	            btnPageUpMenu.setVisible(true);
-	            if (curMenuPage * menuQTPerPage > dishNameMetrix.length) {
+	            if (curMenuPage * menuQTPerPage > dishNameMetrix[0].length) {
 	                btnPageDownMenu.setVisible(false);
 	            }
 	            reInitCategoryAndMenuBtns();
