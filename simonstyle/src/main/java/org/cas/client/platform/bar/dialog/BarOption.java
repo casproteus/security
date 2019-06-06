@@ -21,17 +21,24 @@ public class BarOption {
 	public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static String getLicense(){
-    	return (String)CustOpts.custOps.getValue("license");
+    	String license = (String)CustOpts.custOps.getValue("alan");
+    	if(license != null) {
+    		try {
+    			license = TaoEncrypt.decrypt(license, 1);
+    		}catch(Exception e) {
+    		}
+    	}
+    	return license;
     }
     public static void setLicense(String licence){
-    	CustOpts.custOps.setKeyAndValue("license", licence);
+    	CustOpts.custOps.setKeyAndValue("alan", TaoEncrypt.encryptPassword(licence));
     }
     
     public static String getLimitation(){
     	String limitation = (String)CustOpts.custOps.getValue("limitation");
     	if(limitation != null) {
     		try {
-    			qstAccount = TaoEncrypt.decrypt(qstAccount, 1);
+    			limitation = TaoEncrypt.decrypt(limitation, 1);
     		}catch(Exception e) {
     		}
     	}
@@ -39,7 +46,7 @@ public class BarOption {
     }
 
     public static long getActivateTimeLeft(){
-    	String activateTimeLeft = (String)CustOpts.custOps.getValue("activateTimeLeft");
+    	String activateTimeLeft = (String)CustOpts.custOps.getValue("cola");
     	if(activateTimeLeft != null) {
     		try {
     			activateTimeLeft = TaoEncrypt.decrypt(activateTimeLeft, 1);
@@ -49,11 +56,11 @@ public class BarOption {
     	return activateTimeLeft == null ? -1 : Long.valueOf(activateTimeLeft);
     }
     public static void setActivateTimeLeft(String activateTimeLeft){
-    	CustOpts.custOps.setKeyAndValue("activateTimeLeft", TaoEncrypt.encryptPassword(activateTimeLeft));
+    	CustOpts.custOps.setKeyAndValue("cola", TaoEncrypt.encryptPassword(activateTimeLeft));
     }
 
     public static String getLastSuccessStr() {
-    	String lastsuccessStr = (String)CustOpts.custOps.getValue("lastsuccessStr");
+    	String lastsuccessStr = (String)CustOpts.custOps.getValue("leeyo");
     	if(lastsuccessStr != null) {
     		try {
     			lastsuccessStr = TaoEncrypt.decrypt(lastsuccessStr, 1);
@@ -63,7 +70,7 @@ public class BarOption {
     	return lastsuccessStr;
     }
     public static void setLastSuccessStr(String lastsuccessStr) {
-    	CustOpts.custOps.setKeyAndValue("lastsuccessStr", TaoEncrypt.encryptPassword(lastsuccessStr));
+    	CustOpts.custOps.setKeyAndValue("leeyo", TaoEncrypt.encryptPassword(lastsuccessStr));
     }
     
     public static boolean isDebugMode() {
