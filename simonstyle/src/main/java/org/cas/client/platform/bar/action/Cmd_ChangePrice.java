@@ -28,6 +28,7 @@ public class Cmd_ChangePrice implements SamActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		this.sourceBtn = (FunctionToggleButton)e.getSource();
+		
 		if(BillListPanel.curDish == null) {//check if there's an item selected.
   			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
   			return;
@@ -36,11 +37,10 @@ public class Cmd_ChangePrice implements SamActionListener {
     		if (!BarFrame.instance.adminAuthentication()) 
 				return;
     	}
-    	showPriceChangeDlg(sourceBtn);
+    	showPriceChangeDlg();
 	}
 	
-	public void showPriceChangeDlg(ISButton sourceBtn) {
-		this.sourceBtn = sourceBtn;
+	public void showPriceChangeDlg() {
 		NumberPanelDlg numberPanelDlg = BarFrame.numberPanelDlg;
 		numberPanelDlg.setTitle(BarFrame.consts.CHANGEPRICE());
 		numberPanelDlg.setNotice(BarFrame.consts.ChangePriceNotice());
@@ -58,12 +58,8 @@ public class Cmd_ChangePrice implements SamActionListener {
 		numberPanelDlg.setAction(new UpdateItemPriceAction(sourceBtn));
 	}
 
-	public ISButton getSourceBtn() {
-		return sourceBtn;
-	}
-
 	@Override
-	public void setSourceBtn(ISButton btn) {
+	public void setSourceBtn(ISButton sourceBtn) {
 		this.sourceBtn = sourceBtn;
 	}
 

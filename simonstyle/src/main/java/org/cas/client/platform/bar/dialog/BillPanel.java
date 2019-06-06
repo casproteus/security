@@ -552,7 +552,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		        }
 	        	//if the original is not 0.00, then will still be treated as price promp not a taxInclude.
 		        if(newDish.getPrice() == 0 || "true".equals(newDish.getPrompPrice()) && !BarOption.isTreatPricePromtAsTaxInclude()) {
-		        	Cmd_ChangePrice.getInstance().showPriceChangeDlg(null);
+		        	Cmd_ChangePrice.getInstance().showPriceChangeDlg();
 		        }
 			}
 		});
