@@ -168,7 +168,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     		}
     	}else if(o == tfdPrinterMinReachTime) {
     		String content = tfdPrinterMinReachTime.getText();
-    		if(content.equals("cuscmd")) {
+    		if(content.toLowerCase().equals("cuscmd")) {
     			new CmdBtnsDlg(BarFrame.instance).setVisible(true);
     			return;
     		}
