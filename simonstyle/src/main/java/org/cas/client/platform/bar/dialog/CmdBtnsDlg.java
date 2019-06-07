@@ -45,7 +45,7 @@ import org.cas.client.platform.bar.action.Cmd_EqualBill;
 import org.cas.client.platform.bar.action.Cmd_GiftCard;
 import org.cas.client.platform.bar.action.Cmd_Lang;
 import org.cas.client.platform.bar.action.Cmd_Modify;
-import org.cas.client.platform.bar.action.Cmd_Modify3;
+import org.cas.client.platform.bar.action.Cmd_ModifySetting;
 import org.cas.client.platform.bar.action.Cmd_MoveItem;
 import org.cas.client.platform.bar.action.Cmd_OpenDrawer;
 import org.cas.client.platform.bar.action.Cmd_OrderManage;
@@ -544,7 +544,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnPrinter.addActionListener(Cmd_Printer.getInstance());
         btnTable.addActionListener(Cmd_Table.getInstance());
         btnBillFoot.addActionListener(Cmd_BillFoot.getInstance());
-        btnModifySetting.addActionListener(Cmd_Modify3.getInstance());
+        btnModifySetting.addActionListener(Cmd_ModifySetting.getInstance());
         btnGiftCardSetting.addActionListener(Cmd_GiftCard.getInstance());
         btnCoupon.addActionListener(Cmd_Coupon.getInstance());
         btnColor.addActionListener(Cmd_Color.getInstance());

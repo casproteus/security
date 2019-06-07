@@ -560,7 +560,7 @@ public class BarDlgConst2 implements BarDlgConst{
 	@Override
 	public String workOnOnlyUnclosedBills() {return "有的账单已经关闭,您确定要合并剩余的账单吗?";};
 	@Override
-	public Object nonEmptyBillFound() {return "发现该台还有没有付钱的账单！您确定要翻台吗？为清空的账单将被清除.";};
+	public String nonEmptyBillFound() {return "发现该台还有没有付钱的账单！您确定要翻台吗？为清空的账单将被清除.";};
 	@Override
 	public String FONTSIZE() {return "字体大小";}
 	@Override
@@ -608,5 +608,7 @@ public class BarDlgConst2 implements BarDlgConst{
 	@Override
 	public String Login() {return "登录";}
 	@Override
-	public String ExistSystemNotice() {return "您确定要退出吗?";}
+	public String ApplyToList() {return "应用到标签";}
+	@Override
+	public String ApplyToCategory() {return "应用到组名";}
 }

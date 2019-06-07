@@ -13,13 +13,13 @@ import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.bar.uibeans.SamActionListener;
 
-public class Cmd_Modify3 implements SamActionListener {
+public class Cmd_ModifySetting implements SamActionListener {
 
-	private static Cmd_Modify3 instance;
-	private Cmd_Modify3() {}
-	public static Cmd_Modify3 getInstance() {
+	private static Cmd_ModifySetting instance;
+	private Cmd_ModifySetting() {}
+	public static Cmd_ModifySetting getInstance() {
 		if(instance == null)
-			instance = new Cmd_Modify3();
+			instance = new Cmd_ModifySetting();
 		return instance;
 	}
 	
