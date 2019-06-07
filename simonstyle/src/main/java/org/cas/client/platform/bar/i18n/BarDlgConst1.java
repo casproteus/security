@@ -558,7 +558,7 @@ public class BarDlgConst1 implements BarDlgConst{
 	@Override
 	public String workOnOnlyUnclosedBills() {return "Certaines factures sont déjà fermés, voulez-vous agir sur les factures non fermée.";};
 	@Override
-	public Object nonEmptyBillFound() {return "Etes-vous sur de fermer cette tableau, il n'y a toujours pas de facture vide à fermer en premier, ou ils seront automatiquement.";};
+	public String nonEmptyBillFound() {return "Etes-vous sur de fermer cette tableau, il n'y a toujours pas de facture vide à fermer en premier, ou ils seront automatiquement.";};
 	@Override
 	public String FONTSIZE() {return "Taille De Police";}
 	@Override
@@ -605,4 +605,8 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String RestartNeeded() {return "Veuillez redémarrer l'application pour appliquer les nouveaux paramètres.";}
 	@Override
 	public String Login() {return "S'identifier";}
+	@Override
+	public String ApplyToList() {return "Appliquer à la liste";}
+	@Override
+	public String ApplyToCategory() {return "Appliquer au groupe";}
 }

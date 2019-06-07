@@ -23,6 +23,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
@@ -39,8 +40,11 @@ import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
+import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
+import org.hsqldb.lib.StringUtil;
 
 public class AddModificationDialog extends JDialog implements ActionListener, ListSelectionListener, KeyListener,
         MouseListener, Runnable, ComponentListener {
@@ -94,7 +98,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     private void initComponent() {
         setTitle(BarFrame.consts.MODIFY()); // 设置标题
         getContentPane().setLayout(null);
-        setBounds((CustOpts.SCRWIDTH - 350) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 350, 320); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 600) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 600, 320); // 对话框的默认尺寸。
         setResizable(true);
 
         // init--------------------------
@@ -102,7 +106,10 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         txaCurContent = new JTextArea(); // 加入会滚动的文本区
         topLabel = new JLabel(BarFrame.consts.AddNewModificationItem()); // "项目属于这些类别"标签
         modificationList = new JList();
-        btnApply = new JButton(BarFrame.consts.Apply()); // 加至列表按钮
+        scrPane = new PIMScrollPane(modificationList);
+        tabbedPane = new JTabbedPane();
+        btnApplyToList = new JButton(BarFrame.consts.ApplyToList()); // 加至列表按钮
+        btnApplyToCategory = new JButton(BarFrame.consts.ApplyToCategory());
         btnDelete = new JButton(BarFrame.consts.Delete()); // 删除按钮
         resetBTN = new JButton(BarFrame.consts.RESET()); // 重置按钮
         btnOK = new JButton(BarFrame.consts.OK()); // 设置Cancel按钮
@@ -116,22 +123,27 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         txaCurContent.setBorder(new LineBorder(Color.GRAY));
         midLabel.setDisplayedMnemonic('V');
         topLabel.setDisplayedMnemonic('I');
-        btnApply.setMnemonic('A');
+        btnApplyToList.setMnemonic('A');
+        btnApplyToCategory.setMnemonic('G');
         btnDelete.setMnemonic('D');
         resetBTN.setMnemonic('R');
-        btnApply.setMargin(new Insets(0, 0, 0, 0));
+        btnApplyToList.setMargin(new Insets(0, 0, 0, 0));
+        btnApplyToCategory.setMargin(new Insets(0, 0, 0, 0));
         btnDelete.setMargin(new Insets(0, 0, 0, 0));
         resetBTN.setMargin(new Insets(0, 0, 0, 0));
         resetBTN.setVisible(false);
-        btnApply.setEnabled(false); // 一开始这项为禁止
+        btnApplyToList.setEnabled(false); // 一开始这项为禁止
+        btnApplyToCategory.setEnabled(false); // 一开始这项为禁止
 
         // layout---------------------------
         reLayout();
 
         // build----------------------------
         getContentPane().add(midLabel);
-        getContentPane().add(btnApply);
-        getContentPane().add(modificationList);
+        getContentPane().add(btnApplyToList);
+        getContentPane().add(btnApplyToCategory);
+        tabbedPane.add(BarFrame.consts.OTHER(), scrPane);
+        getContentPane().add(tabbedPane);
         getContentPane().add(btnDelete);
         getContentPane().add(resetBTN);
         getContentPane().add(txaCurContent);
@@ -139,7 +151,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         getContentPane().add(btnOK);
 
         // listeners------------------------
-        btnApply.addActionListener(this);
+        btnApplyToList.addActionListener(this);
+        btnApplyToCategory.addActionListener(this);
         btnDelete.addActionListener(this);
         resetBTN.addActionListener(this);
         btnOK.addActionListener(this);
@@ -161,20 +174,23 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             txaCurContent.setBounds(topLabel.getX(), topLabel.getY() + CustOpts.LBL_HEIGHT, 
             		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP,
                     CustOpts.LBL_HEIGHT * 3);
-            btnApply.setBounds(btnOK.getX(), txaCurContent.getY() + txaCurContent.getHeight() + CustOpts.VER_GAP,
-            		CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+            int width = 120;
+            btnApplyToList.setBounds(btnOK.getX() + btnOK.getWidth() - width, txaCurContent.getY() + txaCurContent.getHeight() + CustOpts.VER_GAP,
+            		width, CustOpts.BTN_HEIGHT);
+            btnApplyToCategory.setBounds(btnApplyToList.getX() - CustOpts.HOR_GAP - width, btnApplyToList.getY(),
+            		width, CustOpts.BTN_HEIGHT);
             midLabel.setBounds( topLabel.getX(),
             		txaCurContent.getY() + txaCurContent.getHeight() + CustOpts.VER_GAP,
             		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP, CustOpts.BTN_HEIGHT);
         }else {
         	topLabel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP, 0, 0);
         	txaCurContent.setBounds(0, 0, 0, 0);
-            btnApply.setBounds(0,0,0,0);
+            btnApplyToList.setBounds(0,0,0,0);
+            btnApplyToCategory.setBounds(0,0,0,0);
             midLabel.setBounds(topLabel.getX(),0,0,0);
         }
         
-        
-        modificationList.setBounds(midLabel.getX(), midLabel.getY() + midLabel.getHeight() + CustOpts.VER_GAP, // "可用类别"列表框
+        tabbedPane.setBounds(midLabel.getX(), midLabel.getY() + midLabel.getHeight() + CustOpts.VER_GAP, // "可用类别"列表框
         		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP, 
                 btnOK.getY() - 2 * CustOpts.VER_GAP - midLabel.getY() - midLabel.getHeight());
         if(BillListPanel.curDish == null) {
@@ -230,7 +246,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     }
     
     private ArrayList<String> getAllModification() {
-        StringBuilder sql = new StringBuilder("SELECT * FROM modification where status = ").append(DBConsts.original);
+        StringBuilder sql = new StringBuilder("SELECT * FROM modification where status = ").append(DBConsts.original).append(" and type is null");
         ArrayList<String> nameVec = new ArrayList<String>();
         try {
 
@@ -298,8 +314,10 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     @Override
 	public void actionPerformed(
             ActionEvent e) {
-        if (e.getSource() == btnApply)
+        if (e.getSource() == btnApplyToList)
             addToListClicked();
+        else if (e.getSource() == btnApplyToCategory)
+        	addToCategoryClicked();
         else if (e.getSource() == btnDelete)
             deleteClicked();
         else if (e.getSource() == resetBTN)
@@ -574,9 +592,36 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         }
 
         // 本按钮置无效
-        btnApply.setEnabled(false);
+        btnApplyToList.setEnabled(false);
+        btnApplyToCategory.setEnabled(false);
     }
-
+    
+    private void addToCategoryClicked(){
+		String[] langs = StringUtil.split(txaCurContent.getText(), BarDlgConst.semicolon);
+    	String title = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+    	if(title.equals(BarFrame.consts.OTHER())) {
+    		//insert
+    		StringBuilder sql = new StringBuilder("INSERT INTO modification (lang1, lang2, lang3, type, status) VALUES ('")
+    				.append(langs[0]).append("', ").append(langs[1]).append("', ").append(langs[2]).append("', ")
+    				.append(tabbedPane.getSelectedIndex() * -1).append(", 0)");
+    		try {
+    			PIMDBModel.getStatement().executeUpdate(sql.toString());
+    		}catch(Exception e) {
+    			L.e("AddModification ", "Exception when insert a category into modification.", e);
+    		}
+    	}else {
+    		//update
+    		StringBuilder sql = new StringBuilder("UPDATE modification set lang1 = '").append(langs[0]).append("', ")
+    				.append(" lang2 = '").append(langs[1]).append("', lang3 = '").append(langs[2])
+    				.append("' where type = ").append(tabbedPane.getSelectedIndex() * -1);
+    		try {
+    			PIMDBModel.getStatement().executeUpdate(sql.toString());
+    		}catch(Exception e) {
+    			L.e("AddModification ", "Exception when updating a category into modification.", e);
+    		}
+    	}
+    	initContent("null");
+    }
     /**
      * 设置文本的显示,本方法由列模型自动检测出选中项,组成以逗号为分隔的字符串
      */
@@ -641,7 +686,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             }
         }
         // 一开始这项为禁止
-        btnApply.setEnabled(false);
+        btnApplyToList.setEnabled(false);
+        btnApplyToCategory.setEnabled(false);
         setVisible(true);
     }
 
@@ -816,13 +862,14 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         if (curContent == null || curContent.length() == 0) {
             for (int size = listInListComponent.size(), i = 0; i < size; i++)
                 listModel.setElementAt(new CheckItem(listInListComponent.get(i).toString(), false), i);
-            btnApply.setEnabled(false);
+            btnApplyToList.setEnabled(false);
+            btnApplyToCategory.setEnabled(false);
             btnOK.setEnabled(false);
             return;
         }
 
         ArrayList<String> textArr = getInputModification();
-
+        
         boolean hasNewField = false; // 定义一个布尔值用来表示有新字段产生
         for (int i = 0; i < textArr.size(); i++)
             if (!listInListComponent.contains(textArr.get(i).toString())) { // 列表框模型中不包含才有
@@ -830,20 +877,24 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
                 break;
             }
 
-        if (hasNewField && !btnApply.isEnabled()) { // 添加到列表按钮置有效
-            btnApply.setEnabled(true);
+        if (hasNewField && !btnApplyToList.isEnabled()) { // 添加到列表按钮置有效
+            btnApplyToList.setEnabled(true);
             if (!btnOK.isEnabled()) // 确定按钮置有效
                 btnOK.setEnabled(true);
         }
+        btnApplyToCategory.setEnabled(textArr.size() == 1);
     }
 
     // 以下为本类的变量声明
-    private JButton btnApply; // 几个按钮,在右上方
+    private JButton btnApplyToList; // 几个按钮,在右上方
+    private JButton btnApplyToCategory; // 几个按钮,在右上方
     private JButton btnDelete;
     private JButton resetBTN;
 //    private JButton ok2; // 确定和取消按钮
     private JButton btnOK;
     private JList<CheckItem> modificationList; // 列表框及其模型
+    private PIMScrollPane scrPane;
+    private JTabbedPane tabbedPane;
     private DefaultListModel<CheckItem> listModel;
 
     private JLabel midLabel; // "可用类别"标签

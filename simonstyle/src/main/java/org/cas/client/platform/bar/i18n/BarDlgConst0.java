@@ -560,7 +560,7 @@ public class BarDlgConst0 implements BarDlgConst{
 	@Override
 	public String workOnOnlyUnclosedBills() {return "Some bill already closed, do you want to do the action on unclosed bills.";};
 	@Override
-	public Object nonEmptyBillFound() {return "Are you sure to close this table, there's still non empty bill to close first, or they will be deleted automatically.";};
+	public String nonEmptyBillFound() {return "Are you sure to close this table, there's still non empty bill to close first, or they will be deleted automatically.";};
 	@Override
 	public String FONTSIZE() {return "Font Size";}
 	@Override
@@ -607,5 +607,9 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String RestartNeeded() {return "Please restart the application to apply the new settings.";}
 	@Override
 	public String Login() {return "Login";}
+	@Override
+	public String ApplyToList() {return "Apply To List";}
+	@Override
+	public String ApplyToCategory() {return "Apply To Group";}
 
 }
