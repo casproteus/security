@@ -52,6 +52,7 @@ public class MenuPanel extends JPanel implements ActionListener {
     private Dish[] dishAry;
     private List<Dish> classifiedDishAry;
     ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
+	private int classifiedMenuIndex;
 	public MenuPanel() {
 		initComponent();
 	}
@@ -264,8 +265,7 @@ public class MenuPanel extends JPanel implements ActionListener {
         //find out menus matching to current category and current lang
         classifiedDishNameMetrix = new String[3][dishNameMetrix[0].length];
         classifiedDishAry = new ArrayList<Dish>();
-        
-        int classifiedMenuIndex = 0;
+        classifiedMenuIndex = 0;
         for (int i = 0; i < dishAry.length; i++) {
 			if(dishAry[i].getCATEGORY().equals(tgbActiveCategory.getText())) {
 				
@@ -325,9 +325,10 @@ public class MenuPanel extends JPanel implements ActionListener {
         	btnPageUpCategory.setVisible(true);			//as long as not the first page, page up should display.
         }
         //for category panel page down
-        if(categoryNameMetrix[0].length < categoryRow * categoryColumn * (curCategoryPage + 1)) {//if is the last page, and not full of last page, then should not display page down arrow.
+        int lastCateIdx = categoryRow * categoryColumn * (curCategoryPage + 1);
+        if(lastCateIdx > categoryNameMetrix[0].length) {//if is the last page, and not full of last page, then should not display page down arrow.
         	btnPageDownCategory.setVisible(false);
-        }else if(BarFrame.instance == null || BarFrame.instance.curPanel != 3) {//if full of page, but is sales page, then hide.
+        }else if(BarFrame.instance == null ||(lastCateIdx == categoryNameMetrix[0].length && BarFrame.instance.curPanel != 3)) {//if full of page, but is sales page, then hide.
         	btnPageDownCategory.setVisible(false);
         }else {	// if there's more than one page to display, and currently it's not last page then show it.
         	btnPageDownCategory.setVisible(true);
@@ -340,9 +341,11 @@ public class MenuPanel extends JPanel implements ActionListener {
         	btnPageUpMenu.setVisible(true);			//as long as not the first page, page up should display.
         }
         //for menu panel page down
-        if(globleMenuIdxOfCurCategory < menuRow * menuColumn * (curMenuPage + 1)) {//if is the last page, and not full of last page, then should not display page down arrow.
+        int lastIdx = menuRow * menuColumn * (curMenuPage + 1);
+        if(lastIdx > classifiedMenuIndex) {//if is the last page, and not full of last page, then should not display page down arrow.
         	btnPageDownMenu.setVisible(false);
-        }else if(BarFrame.instance == null || BarFrame.instance.curPanel != 3) {//if it's full of page, but is not in setting page then hide!
+        }else if(BarFrame.instance == null //ignore the case when app not finished start and the BarFrame is still null.
+        		|| (lastIdx == classifiedMenuIndex  && BarFrame.instance.curPanel != 3)) {//if it's full of page, but is not in setting page then hide!
         	btnPageDownMenu.setVisible(false);
         }else {	// if there's more than one page to display, and currently it's not last page then show it.
         	btnPageDownMenu.setVisible(true);

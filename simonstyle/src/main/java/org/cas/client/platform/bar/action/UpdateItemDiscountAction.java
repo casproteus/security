@@ -12,6 +12,7 @@ import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
+import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
@@ -45,9 +46,10 @@ public class UpdateItemDiscountAction implements ActionListener{
              	int row = billPanel.table.getSelectedRow();
              	//NOTE: current total price + existing discount = original total price.
              	String strDisCount = (String)billPanel.table.getValueAt(row, 2);
-             	strDisCount = (strDisCount == null || strDisCount.length() == 0) ? "0" : strDisCount.trim().substring(2);//remove "-$"
-             	float oldDiscount = Float.valueOf(strDisCount);
              	
+             	strDisCount = (strDisCount == null || strDisCount.length() < 2) ? "0" : getMoneyStrOut(strDisCount);//find and remove "-$"
+             	float oldDiscount = Float.valueOf(strDisCount);
+             	 
              	String strTotalPrice = (String)billPanel.table.getValueAt(row, 3);
 				strTotalPrice = strTotalPrice.trim().substring(1);
              	float totalPrice = Float.valueOf(strTotalPrice);
@@ -60,7 +62,16 @@ public class UpdateItemDiscountAction implements ActionListener{
  				}
  				
  				totalPrice = totalPrice + oldDiscount - newDiscount;
-             	billPanel.table.setValueAt("-"+ BarOption.getMoneySign() + BarUtil.formatMoney(newDiscount), row, 2);
+ 				String oldContent = (String)billPanel.table.getValueAt(row, 2);
+ 				String newContent = "-"+ BarOption.getMoneySign() + BarUtil.formatMoney(newDiscount);
+ 				int idx = oldContent.indexOf("-" + BarOption.getMoneySign());
+ 				if(idx > 0) {
+ 					newContent = oldContent.substring(0, idx) + newContent;
+ 				}else {
+ 					newContent = oldContent + newContent;
+ 				}
+             	billPanel.table.setValueAt(newContent, row, 2);
+             	
              	billPanel.table.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney(totalPrice), row, 3);
              	billPanel.orderedDishAry.get(row).setDiscount((int)(newDiscount * 100));
              	billPanel.orderedDishAry.get(row).setTotalPrice((int)((totalPrice) * 100));
@@ -77,5 +88,21 @@ public class UpdateItemDiscountAction implements ActionListener{
          	}
         	((AbstractButton)e.getSource()).removeActionListener(this);
  		}
+	}
+
+	private String getMoneyStrOut(String strDisCount) {
+		int idx = strDisCount.indexOf("-" + BarOption.getMoneySign());
+		if(idx < 0) {
+			return "0";
+		}
+		
+		strDisCount = strDisCount.substring(idx + 2);
+		
+		idx = strDisCount.indexOf(BarDlgConst.delimiter);
+		if(idx > 0) {
+			strDisCount = strDisCount.substring(0, idx);
+		}
+		
+		return strDisCount;
 	}
 }

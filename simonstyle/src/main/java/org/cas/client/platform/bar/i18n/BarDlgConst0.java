@@ -607,5 +607,7 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String RestartNeeded() {return "Please restart the application to apply the new settings.";}
 	@Override
 	public String Login() {return "Login";}
+	@Override
+	public String ExistSystemNotice() {return "Are you sure to exit the system?";}
 
 }

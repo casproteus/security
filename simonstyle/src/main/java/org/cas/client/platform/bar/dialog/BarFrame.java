@@ -49,7 +49,7 @@ import org.cas.client.resource.international.DlgConst;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V2.15-20190606";
+	private String VERSION = "V2.16-20190607";
 	public static BarFrame instance;
     public static BarDlgConst consts;
     
@@ -360,6 +360,12 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     }
 	
     public int switchMode(int i) {
+    	if(curPanel == 3) {	//if it's switching from setting panel, then ask to do a login.
+    		instance.setVisible(false);
+    		new LoginDlg(null).setVisible(true);
+    		instance.setVisible(true);
+    		valOperator.setText(LoginDlg.USERNAME);
+    	}
     	BillListPanel.curDish = null;
     	setStatusMes("");
 		if (i == 3) {		//setting
@@ -762,11 +768,14 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 			singleUserLoginProcess();
 		}else {
 			new LoginDlg(null).setVisible(true);
-		    if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-		    	instance.valOperator.setText(LoginDlg.USERNAME);
-		        //insert a record of start to work.
-		    	CheckInOutListDlg.updateCheckInRecord();
-		    }
+            if (LoginDlg.PASSED == true) {
+            	BarFrame.checkSignIn();
+            	//@note: lowdown a little the level, to enable the admin do sales work.
+            	if ("admin".equalsIgnoreCase(LoginDlg.USERNAME))
+            		 LoginDlg.USERTYPE = LoginDlg.USER_STATUS;
+            }else {
+            	return;
+            }
 		}
 	}
 	
@@ -783,6 +792,11 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		if (ISCLOSING) {
 			return;
 		}
+//dont'know why, it just can not stop the window from exit :(		
+//		if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.ExistSystemNotice(), DlgConst.DlgTitle,
+//                JOptionPane.YES_NO_OPTION) != 0) {
+//			return;
+//		}
 		ISCLOSING = true; // ignore the second windowClosing event.
 
         if (CASControl.ctrl.getMainFrame() != null)

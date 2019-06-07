@@ -31,6 +31,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.CASControl;
 import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
@@ -329,6 +330,17 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             	BillListPanel.curDish.setModification(fullModifyString.toString());
             	PIMTable table = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.table;
             	int row = table.getSelectedRow();
+            	String oldContent = (String)table.getValueAt(row, 2);
+            	
+            	int idx = oldContent.indexOf("-" + BarOption.getMoneySign());
+            	if(idx > -1) {
+            		oldContent = oldContent.substring(idx);
+            		idx = oldContent.indexOf(BarDlgConst.delimiter);
+            		if(idx > -1) {
+            			oldContent = oldContent.substring(0, idx);
+            		}
+            		onSrcString.append(oldContent);
+            	}
             	table.setValueAt(onSrcString.toString(), row, 2);
             }
             dispose();

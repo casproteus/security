@@ -324,6 +324,7 @@ public interface BarDlgConst {
 	String Employee();
 	String ActionNotAllowed();
 	String OrgonizeCommands();
-	Object RestartNeeded();
+	String RestartNeeded();
 	String Login();
+	String ExistSystemNotice();
 }

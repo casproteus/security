@@ -607,4 +607,6 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String RestartNeeded() {return "请重启程序使新的设置生效。";}
 	@Override
 	public String Login() {return "登录";}
+	@Override
+	public String ExistSystemNotice() {return "您确定要退出吗?";}
 }
