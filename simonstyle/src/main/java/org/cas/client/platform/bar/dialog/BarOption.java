@@ -551,5 +551,40 @@ public class BarOption {
 		CustOpts.custOps.saveData();
 		
 		return String.valueOf(nextIdx);
+	}
+
+	public static String getTablePanelBK() {
+		Object o = CustOpts.custOps.getValue("TablePanelBK");
+		return o != null ? o.toString() : getDefaultBK();
+	}
+	public static String getBillPanelBK() {
+		Object o = CustOpts.custOps.getValue("BillPanelBK");
+		return o != null ? o.toString() : getDefaultBK();
+	}
+	public static String getSalePanelBK() {
+		Object o = CustOpts.custOps.getValue("SalePanelBK");
+		return o != null ? o.toString() : getDefaultBK();
+	}
+	public static String getSettingPanelBK() {
+		Object o = CustOpts.custOps.getValue("SettingPanelBK");
+		return o != null ? o.toString() : getDefaultBK();
+	}
+
+	private static String getDefaultBK() {
+		Object o = CustOpts.custOps.getValue("DefaultBK");
+		return o != null ? o.toString() : getDefaultBK();
+	}
+	
+	public static void setTablePanelBK(String filePath) {
+		CustOpts.custOps.setKeyAndValue("TablePanelBK", filePath);
+	}
+	public static void setBillPanelBK(String filePath) {
+		CustOpts.custOps.setKeyAndValue("BillPanelBK", filePath);
+	}
+	public static void setSalePanelBK(String filePath) {
+		CustOpts.custOps.setKeyAndValue("SalePanelBK", filePath);
+	}
+	public static void setSettingPanelBK(String filePath) {
+		CustOpts.custOps.setKeyAndValue("SettingPanelBK", filePath);
 	}	
 }

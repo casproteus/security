@@ -4,17 +4,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileFilter;
 
 import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.action.Cmd_AddBill;
@@ -70,7 +78,7 @@ import org.cas.client.platform.casutil.L;
 import org.cas.client.resource.international.DlgConst;
 import org.hsqldb.lib.HashMap;
 
-public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionListener{
+public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionListener, MouseListener{
    
 	private static final String KEY_TABLE_CMD = "TableCmd";
 	private static final String KEY_BILL_CMD = "BillCmd";
@@ -160,6 +168,11 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 		fromBill.addActionListener(this);
 		fromSale.addActionListener(this);
 		fromSetting.addActionListener(this);
+		
+		tablePanle.addMouseListener(this);
+		billPanle.addMouseListener(this);
+		salePanle.addMouseListener(this);
+		settingPanle.addMouseListener(this);
 		
 		reset.addActionListener(this);
 		close.addActionListener(this);
@@ -776,4 +789,63 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     		"CouponSetting",  //
     		"ColorSetting",	  //
     		"CheckInOutList"};//
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		Object o =e.getSource(); 
+		JFileChooser requestFileChooser = new JFileChooser();
+	    requestFileChooser.setFileFilter(new FileFilterRequest());
+	    requestFileChooser.setMultiSelectionEnabled(false);
+	    
+	    String filePath = "";
+	    final int res = requestFileChooser.showOpenDialog(this);
+        if (res == JFileChooser.APPROVE_OPTION) {
+        	File file = requestFileChooser.getSelectedFile();
+        	filePath = file != null ? file.getAbsolutePath() : null;
+        }else {
+        	return;
+        }
+		if(o == tablePanle) {
+			BarOption.setTablePanelBK(filePath);
+		}else if(o == billPanle) {
+			BarOption.setBillPanelBK(filePath);
+		}else if(o == salePanle) {
+			BarOption.setSalePanelBK(filePath);
+		}else if(o == settingPanle) {
+			BarOption.setSettingPanelBK(filePath);
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
+	
+    /**
+     * This file filter will accept folders, jpeg, jpg and png files.
+     */
+    public static class FileFilterRequest extends FileFilter {
+        /**
+         * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
+         */
+        @Override
+        public boolean accept(final File file) {
+            return (file.isDirectory() || file.getName().endsWith(".jpg") || file.getName().endsWith(".jpeg") || file.getName().endsWith(".png"));
+        }
+
+        /**
+         * @see javax.swing.filechooser.FileFilter#getDescription()
+         */
+        @Override
+        public String getDescription() {
+            return "Requests";
+        }
+    }
 }
