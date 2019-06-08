@@ -49,7 +49,7 @@ import org.cas.client.resource.international.DlgConst;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V2.16-20190607";
+	private String VERSION = "V2.17-20190608";
 	public static BarFrame instance;
     public static BarDlgConst consts;
     

@@ -3,6 +3,8 @@ package org.cas.client.platform.bar.dialog.modifyDish;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Insets;
+import java.awt.ScrollPane;
+import java.awt.Scrollbar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -25,8 +27,11 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -48,7 +53,7 @@ import org.cas.client.platform.pimview.pimtable.PIMTable;
 import org.hsqldb.lib.StringUtil;
 
 public class AddModificationDialog extends JDialog implements ActionListener, ListSelectionListener, KeyListener,
-        MouseListener, Runnable, ComponentListener {
+        MouseListener, Runnable, ComponentListener, ChangeListener {
 //    /**
 //     * 创建一个 Category 的实例
 //     * 
@@ -74,7 +79,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     public AddModificationDialog(Frame prmParent, String prmCategoryInfo) {
         super(prmParent, true);
         initComponent(); // 组件初始化并布局
-        initContent(prmCategoryInfo); // 初始化文本区和列表框数据
+        initContent(prmCategoryInfo, 0); // 初始化文本区和列表框数据
     }
 
     /** Invoked when the component's size changes. */
@@ -143,7 +148,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         getContentPane().add(midLabel);
         getContentPane().add(btnApplyToList);
         getContentPane().add(btnApplyToCategory);
-        tabbedPane.add(BarFrame.consts.OTHER(), scrPane);
+        tabbedPane.add("    ", scrPane);
         getContentPane().add(tabbedPane);
         getContentPane().add(btnDelete);
         getContentPane().add(resetBTN);
@@ -157,10 +162,15 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         btnDelete.addActionListener(this);
         resetBTN.addActionListener(this);
         btnOK.addActionListener(this);
+        
+        tabbedPane.addChangeListener(this);
         modificationList.addListSelectionListener(this);
+        
         modificationList.addMouseListener(this);
+        
         txaCurContent.addKeyListener(this);
         modificationList.addKeyListener(this);
+        
         getContentPane().addComponentListener(this);
     }
 
@@ -204,50 +214,33 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     }
 
     /** 初始化时使用 */
-    private void initContent( String prmCategoryInfo) {
-        txaCurContent.setText("null".equalsIgnoreCase(prmCategoryInfo) ? "" : prmCategoryInfo);
+    private void initContent( String prmCategoryInfo, int idx) {
+        txaCurContent.setText("null".equalsIgnoreCase(prmCategoryInfo) ? "" : prmCategoryInfo);	//must be before getInputModification()
         listModel = new DefaultListModel<CheckItem>();
 
-        // 把文本框中字段还原为字符串数组
-        ArrayList<String> inputModification = getInputModification();
-        ArrayList<String> allModification = getAllModification();
-
-        // 加入列表框模型
-        for (int i = 0, count = allModification.size(); i < count; i++) {
-        	String[] langs = allModification.get(i).split(BarDlgConst.semicolon);
-        	int langIdx = LoginDlg.USERLANG;
-        	String lang_Modify = langs.length > langIdx ? langs[langIdx] : langs[0];
-        	if(lang_Modify.length() == 0)
-        		lang_Modify = langs[0];
-        	
-            // 置检查标志
-            listModel.addElement(new CheckItem(BillListPanel.curDish == null ? allModification.get(i) : lang_Modify, inputModification.contains(allModification.get(i))));
-        }
-        
-        // 反向操作,如果用户的输入导致新的字段的产生,在列表框模型中要加入,并存盘
-        if (inputModification != null && inputModification.size() > 0) {
-            for (int i = 0; i < inputModification.size(); i++) {
-            	boolean notContained = true;
-            	for (String string : allModification) {
-					if(string.indexOf(inputModification.get(i)) > -1) {
-						notContained = false;
-						break;
-					}
-				}
-                if (notContained) {
-                    // 加一个标志为真的
-                    listModel.addElement(new CheckItem(inputModification.get(i), true));
-                    // 保存到数据库中
-                    insertModification(inputModification.get(i));
-                }
+        tabbedPane.removeAll();
+        tabbedPane.add("    ", scrPane);
+        StringBuilder sql = new StringBuilder("select * from modification where type < 0 order by type desc");
+        try {
+			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+            rs.beforeFirst();
+            while (rs.next()) {
+            	tabbedPane.add(rs.getString("lang1"), new PIMScrollPane());
             }
-        }
-        
-        modificationList.setModel(listModel);
+		}catch(Exception exp) {
+			L.e("BillListPanel", "exception when change output back to original bill" + sql, exp);
+		}
     }
     
-    private ArrayList<String> getAllModification() {
-        StringBuilder sql = new StringBuilder("SELECT * FROM modification where status = ").append(DBConsts.original).append(" and type is null");
+    private ArrayList<String> getAllModification(int idx) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM modification where status = ").append(DBConsts.original);
+        if(idx == 0 ) {
+        	sql.append(" and type is null");
+        }else if(idx > 0){
+        	sql.append(" and type = ").append(idx);
+        }else {
+        	//append no type condition if the idx is -1;
+        }
         ArrayList<String> nameVec = new ArrayList<String>();
         try {
 
@@ -257,7 +250,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             	StringBuilder sb = new StringBuilder(rs.getString("lang1")).append(BarDlgConst.semicolon);
             	sb.append(rs.getString("lang2")).append(BarDlgConst.semicolon);
             	sb.append(rs.getString("lang3")).append(BarDlgConst.semicolon);
-            	sb.append(rs.getString("lang4"));
                 nameVec.add(sb.toString());
             }
 
@@ -273,15 +265,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             ErrorUtil.write(e);
             return null;
         }
-    }
-    
-    /**
-     * 返回所用类别已更改标志
-     * 
-     * @return 是否已更改
-     */
-    public boolean isModified() {
-        return this.modified;
     }
 
     /**
@@ -326,7 +309,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         else if (e.getSource() == btnOK) {
             if(BillListPanel.curDish != null) {
             	String[] notes = this.txaCurContent.getText().split(BarDlgConst.delimiter);
-            	ArrayList<String> allModification = getAllModification();
+            	ArrayList<String> allModification = getAllModification(-1);
             	StringBuilder fullModifyString = new StringBuilder();
             	StringBuilder onSrcString = new StringBuilder();
             	for(int i = 0; i < notes.length; i++) {
@@ -366,7 +349,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     }
 
     private boolean insertModification( String modification) {
-        StringBuilder sql = new StringBuilder("INSERT INTO modification (lang1, lang2, lang3, lang4, status) VALUES( '");
+        StringBuilder sql = new StringBuilder("INSERT INTO modification (lang1, lang2, lang3, type, status) VALUES( '");
         String[] langs = modification.split(BarDlgConst.semicolon);
         sql.append(langs.length > 0 ? langs[0] : "");
         sql.append("', '");
@@ -374,7 +357,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         sql.append("', '");
         sql.append(langs.length > 2 ? langs[2] : "");
         sql.append("', '");
-        sql.append(langs.length > 3 ? langs[3] : "");
+        sql.append(tabbedPane.getSelectedIndex());
         sql.append("', 0);");
 
         try {
@@ -416,11 +399,11 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         }
     }
     
-    private boolean deleteModification( String modification) {
+    private boolean deleteModification( String modification, int idx) {
     	StringBuilder sql = new StringBuilder("DELETE FROM modification WHERE lang1 = '");
         String[] langs = modification.split(BarDlgConst.semicolon);
         sql.append(langs[0]);
-        sql.append("';");
+        sql.append(" and type = ").append(idx);
 
         try {
             Statement smt = PIMDBModel.getStatement();
@@ -465,48 +448,32 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         return modelArr;
     }
     
-    /**
-     *
-     */
     private void deleteClicked() {
-        int tmpSelectionIndex = modificationList.getSelectedIndex();
-        if(tmpSelectionIndex < 0) {
-        	JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.AtLeastOneShouldBeSelected());
-        	return;
-        }
-        int size = listModel.getSize();
-        // 看来字段删除必须在这时处理
-        deleteModification(modificationList.getSelectedValue().getName());
-        listModel.remove(tmpSelectionIndex);
-        itemChanged = true;
-        // 如果是最后一个,且列表框中不止一个选项
-        if (tmpSelectionIndex == size - 1 && size > 1) {
-            // 重设可用字段列表中选中索引,就是前一个
-            modificationList.setSelectedIndex(tmpSelectionIndex - 1);
-        }
-        // 如果是最后一个,且列表框中只有一个选项
-        else if (tmpSelectionIndex == size - 1 && size == 1) {
-            // 自宫
-            btnDelete.setEnabled(false);
-        }
-        // 正常设置
-        else {
-            // 重设可用字段列表中选中索引,就是下一个
-            modificationList.setSelectedIndex(tmpSelectionIndex);
-        }
+    	ListModel<CheckItem> model = modificationList.getModel();
+    	for(int i =  model.getSize() - 1; i >= 0; i--) {
+    		CheckItem checkItem = model.getElementAt(i);
+    		if(checkItem.isSelected()) {
+    			int tmpSelectionIndex = i;
+    	        
+    	        // 看来字段删除必须在这时处理
+    	        deleteModification(checkItem.getName(), i);
+    	        listModel.remove(tmpSelectionIndex);
+    	        itemChanged = true;
 
-        // 下面要处理文本区的显示
-        setTextOfTextArea();
+    	        // 下面要处理文本区的显示
+    	        setTextOfTextArea();
 
-        // 确定按钮置有效
-        if (!btnOK.isEnabled()) {
-            btnOK.setEnabled(true);
-        }
+    	        // 确定按钮置有效
+    	        if (!btnOK.isEnabled()) {
+    	            btnOK.setEnabled(true);
+    	        }
+    		}
+    	}
+    	if(!itemChanged) {
+	    	JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.AtLeastOneShouldBeSelected());
+    	}
     }
 
-    /**
-     *
-     */
     private void resetClicked() {
         // 先全清空
         listModel.removeAllElements();
@@ -514,7 +481,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         itemChanged = false;
 
         CASControl.ctrl.getModel().resetCategroyName();
-        ArrayList<String> defaultCate = getAllModification();
+        ArrayList<String> defaultCate = getAllModification(tabbedPane.getSelectedIndex());
         // 再把系统默认的数据加入
         for (int i = 0, count = defaultCate.size(); i < count; i++) {
             listModel.addElement(new CheckItem(defaultCate.get(i), false));
@@ -611,11 +578,19 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     private void addToCategoryClicked(){
 		String[] langs = StringUtil.split(txaCurContent.getText(), BarDlgConst.semicolon);
     	String title = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
-    	if(title.equals(BarFrame.consts.OTHER())) {
+    	if(title.equals("    ")) {
     		//insert
     		StringBuilder sql = new StringBuilder("INSERT INTO modification (lang1, lang2, lang3, type, status) VALUES ('")
-    				.append(langs[0]).append("', ").append(langs[1]).append("', ").append(langs[2]).append("', ")
-    				.append(tabbedPane.getSelectedIndex() * -1).append(", 0)");
+    				.append(langs[0]).append("', '");
+    		if(langs.length > 1) {
+    			sql.append(langs[1]);
+    		}
+    		sql.append("', '");
+    		if(langs.length > 2) {
+    			sql.append(langs[2]);
+    		}
+    		sql.append("', ");
+    		sql.append((tabbedPane.getTabCount()) * -1).append(", 0)");
     		try {
     			PIMDBModel.getStatement().executeUpdate(sql.toString());
     		}catch(Exception e) {
@@ -623,16 +598,22 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     		}
     	}else {
     		//update
-    		StringBuilder sql = new StringBuilder("UPDATE modification set lang1 = '").append(langs[0]).append("', ")
-    				.append(" lang2 = '").append(langs[1]).append("', lang3 = '").append(langs[2])
-    				.append("' where type = ").append(tabbedPane.getSelectedIndex() * -1);
+    		StringBuilder sql = new StringBuilder("UPDATE modification set lang1 = '").append(langs[0]).append("', ").append(" lang2 = '");
+    		if(langs.length > 1) {
+    			sql.append(langs[1]);
+    		}
+    		sql.append("', lang3 = '");
+    		if(langs.length > 2) {
+    			sql.append(langs[2]);
+    		}
+    		sql.append("' where type = ").append((tabbedPane.getSelectedIndex()) * -1);
     		try {
     			PIMDBModel.getStatement().executeUpdate(sql.toString());
     		}catch(Exception e) {
     			L.e("AddModification ", "Exception when updating a category into modification.", e);
     		}
     	}
-    	initContent("null");
+    	initContent("null", tabbedPane.getSelectedIndex());
     }
     /**
      * 设置文本的显示,本方法由列模型自动检测出选中项,组成以逗号为分隔的字符串
@@ -672,7 +653,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         // 把文本框中字段还原为字符串数组
         String[] usedFields = stringToArray(modification);
         ArrayList<String> inputModification = getInputModification();
-        ArrayList<String> allModification = getAllModification();
+        ArrayList<String> allModification = getAllModification(tabbedPane.getSelectedIndex());
         
         // 反向操作,如果用户的输入导致新的字段的产生,在列表框模型中要加入,并存盘
 
@@ -713,6 +694,54 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         return txaCurContent.getText();
     }
 
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		JTabbedPane tabbedPane = (JTabbedPane)e.getSource();
+		//reinit the content.
+		PIMScrollPane scrPane = (PIMScrollPane)tabbedPane.getSelectedComponent();
+		if(scrPane == null) return;
+		int idx = tabbedPane.getSelectedIndex();
+		
+		// 把文本框中字段还原为字符串数组
+        ArrayList<String> inputModification = getInputModification();
+        ArrayList<String> allModification = getAllModification(idx);
+        listModel.clear();
+        // 加入列表框模型
+        for (int i = 0, count = allModification.size(); i < count; i++) {
+        	String[] langs = allModification.get(i).split(BarDlgConst.semicolon);
+        	int langIdx = LoginDlg.USERLANG;
+        	String lang_Modify = langs.length > langIdx ? langs[langIdx] : langs[0];
+        	if(lang_Modify.length() == 0)
+        		lang_Modify = langs[0];
+        	
+            // 置检查标志
+            listModel.addElement(new CheckItem(BillListPanel.curDish == null ? allModification.get(i) : lang_Modify, inputModification.contains(allModification.get(i))));
+        }
+        
+        // 反向操作,如果用户的输入导致新的字段的产生,在列表框模型中要加入,并存盘
+        if (inputModification != null && inputModification.size() > 0) {
+            for (int i = 0; i < inputModification.size(); i++) {
+            	boolean notContained = true;
+            	for (String string : allModification) {
+					if(string.indexOf(inputModification.get(i)) > -1) {
+						notContained = false;
+						break;
+					}
+				}
+//                if (notContained) {
+//                    // 加一个标志为真的
+//                    listModel.addElement(new CheckItem(inputModification.get(i), true));
+//                    // 保存到数据库中
+//                    insertModification(inputModification.get(i));
+//                }
+            }
+        }
+        
+        modificationList.setModel(listModel);
+        scrPane.getViewport().add(modificationList);
+        SwingUtilities.invokeLater(this);
+	}
+	
     /**
      * Called whenever the value of the selection changes.
      * 
@@ -749,9 +778,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 
     }
 
-    /**
-     *
-     */
     private void updateTextArea() {
         // 处理列表本身的选中状态
         int index = modificationList.getSelectedIndex();
@@ -776,88 +802,35 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      *            键盘事件
      */
     @Override
-	public void keyReleased(
-            KeyEvent e) {
-    }
+	public void keyReleased(KeyEvent e) {}
 
-    /**
-     * Invoked when a key has been typed. See the class description for {@link KeyEvent} for a definition of a key typed
-     * event.
-     * 
-     * @param e
-     *            键盘事件
-     */
     @Override
-	public void keyTyped(
-            KeyEvent e) {
+	public void keyTyped(KeyEvent e) {
         // 处理文本区的击键
-        if (e.getSource() == txaCurContent) // && (e.getKeyChar() != ' ' && e.getKeyChar() != ',' && e.getKeyCode() !=
-                                       // e.VK_TAB))//(e.getKeyCode() != e.VK_SPACE && e.getKeyChar() != e.VK_COMMA))
-        {
+        if (e.getSource() == txaCurContent) { 	// && (e.getKeyChar() != ' ' && e.getKeyChar() != ',' && e.getKeyCode() !=
+        										// e.VK_TAB))//(e.getKeyCode() != e.VK_SPACE && e.getKeyChar() != e.VK_COMMA))
             SwingUtilities.invokeLater(this);
         }
     }
 
-    /**
-     * Invoked when the mouse button has been clicked (pressed and released) on a component.
-     * 
-     * @param e
-     *            鼠标事件源
-     */
     @Override
-	public void mouseClicked(
-            MouseEvent e) {
-    }
+	public void mouseClicked(MouseEvent e) {}
 
-    /**
-     * Invoked when the mouse enters a component.
-     * 
-     * @param e
-     *            鼠标事件源
-     */
     @Override
-	public void mouseEntered(
-            MouseEvent e) {
+	public void mouseEntered(MouseEvent e) {}
 
-    }
-
-    /**
-     * Invoked when the mouse exits a component.
-     * 
-     * @param e
-     *            鼠标事件源
-     */
     @Override
-	public void mouseExited(
-            MouseEvent e) {
+	public void mouseExited(MouseEvent e) {}
 
-    }
-
-    /**
-     * Invoked when a mouse button has been pressed on a component.
-     * 
-     * @param e
-     *            鼠标事件源
-     */
     @Override
-	public void mousePressed(
-            MouseEvent e) {
+	public void mousePressed(MouseEvent e) {
         if (e.getSource() == modificationList) {
             updateTextArea();
         }
     }
 
-    /**
-     * Invoked when a mouse button has been released on a component.
-     * 
-     * @param e
-     *            鼠标事件源
-     */
     @Override
-	public void mouseReleased(
-            MouseEvent e) {
-
-    }
+	public void mouseReleased(MouseEvent e) {}
 
     /**
      * When an object implementing interface <code>Runnable</code> is used to create a thread, starting the thread
@@ -916,4 +889,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     private boolean modified; // 保存修改标志,以便父对话盒作相应措施
     public static final int OFFSET = -1;// 构建列表框和文本区用的一个常量 以后要去除
     private boolean itemChanged; // 字段增减标志,用于存盘
+    
+    public boolean isModified() {
+        return this.modified;
+    }
 }
