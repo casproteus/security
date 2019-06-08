@@ -225,7 +225,19 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
             rs.beforeFirst();
             while (rs.next()) {
-            	tabbedPane.add(rs.getString("lang1"), new PIMScrollPane());
+            	switch (LoginDlg.USERLANG) {
+				case 0:
+					tabbedPane.add(rs.getString("lang1"), new PIMScrollPane());
+					break;
+				case 1:
+					tabbedPane.add(rs.getString("lang2"), new PIMScrollPane());
+					break;
+				case 2:
+					tabbedPane.add(rs.getString("lang3"), new PIMScrollPane());
+					break;
+				default:
+					break;
+				}
             }
 		}catch(Exception exp) {
 			L.e("BillListPanel", "exception when change output back to original bill" + sql, exp);
