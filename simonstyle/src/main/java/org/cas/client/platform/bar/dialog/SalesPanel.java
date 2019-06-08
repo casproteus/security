@@ -80,7 +80,7 @@ public class SalesPanel extends JPanel implements ComponentListener, FocusListen
 			return;
 		}
 		billPanel.discount = discount > billPanel.subTotal ? billPanel.subTotal : discount;
-		billPanel.updateTotleArea();
+		billPanel.updateTotalArea();
 		
 		billPanel.createAndPrintNewOutput();
 		billPanel.billPricesUpdateToDB();
@@ -121,7 +121,7 @@ public class SalesPanel extends JPanel implements ComponentListener, FocusListen
 			PIMDBModel.getStatement().executeUpdate(sql.toString());
 		}
 		
-		billPanel.updateTotleArea();
+		billPanel.updateTotalArea();
 		billPanel.createAndPrintNewOutput();
 		billPanel.billPricesUpdateToDB();
 	}

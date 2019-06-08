@@ -609,4 +609,6 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String ApplyToList() {return "Appliquer à la liste";}
 	@Override
 	public String ApplyToCategory() {return "Appliquer au groupe";}
+	@Override
+	public String getPennyRounded() {return "penny arrondi:";}
 }

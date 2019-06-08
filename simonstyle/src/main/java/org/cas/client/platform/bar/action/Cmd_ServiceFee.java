@@ -61,7 +61,7 @@ public class Cmd_ServiceFee implements SamActionListener {
      				Math.round(Float.valueOf((billPanel.subTotal - billPanel.serviceFee + billPanel.discount) * Float.valueOf(curContent)))
      				: Math.round(Float.valueOf(curContent) * 100);
      				
-     		billPanel.updateTotleArea();
+     		billPanel.updateTotalArea();
      		
      		billPanel.createAndPrintNewOutput();
      		billPanel.billPricesUpdateToDB();

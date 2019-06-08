@@ -231,8 +231,23 @@ public class BarUtil {
 		return string;
 	}
 
+	
+//	private static String centRound(String priceStr) {
+//		Float price = Float.parseFloat(priceStr);
+//		int cent = (int)(price * 100);
+//    	//get the last bit
+//    	int lastNum = cent % 10;
+//    	if(lastNum == 1 || lastNum == 2)
+//    		lastNum = 0;
+//    	else if(lastNum == 3 || lastNum == 4 || lastNum == 6 || lastNum == 7)
+//    		lastNum = 5;
+//    	else if(lastNum == 8 || lastNum == 9)
+//    		lastNum = 10;
+//    	return BarUtil.formatMoney((cent/ 10 * 10 + lastNum) / 100.0);
+//    }
+	
     public static String canadianPennyRound(String substring) {
-		Float price = Float.valueOf(substring.trim());
+		Float price = Float.parseFloat(substring.trim());
 		int cent = (int)(price * 100);
 		int lastNum = cent % 10;
 		if(lastNum < 3) {

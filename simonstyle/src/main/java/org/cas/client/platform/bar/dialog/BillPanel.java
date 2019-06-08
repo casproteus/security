@@ -318,7 +318,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				}
 	        }
 
-			updateTotleArea();
+			updateTotalArea();
         }else if(o == billButton){		//when bill button on top are clicked.
         	if(billListPanel != null && Cmd_SplitItem.getInstance().getSourceBtn().isSelected()) {
         		billButton.setSelected(!billButton.isSelected());
@@ -541,7 +541,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         table.setValueAt(dish.getSize() > 1 ? dish.getSize() : "", tValidRowCount, 2); // set the count.
         table.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney(price/100f), tValidRowCount, 3); // set the price.
         
-        updateTotleArea();								//because value change will not be used to remove the record.
+        updateTotalArea();								//because value change will not be used to remove the record.
         SwingUtilities.invokeLater(new Runnable() {
 			
 			@Override
@@ -568,7 +568,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		table.repaint();//to update the color of dishes, it's saved, so it's not red anymore.
 	}
 
-    public void updateTotleArea() {
+    public void updateTotalArea() {
     	float gstRate = BarOption.getGST();
     	float qstRate = BarOption.getQST();
     	totalGst = 0;
@@ -629,6 +629,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	lblTVQ.setText(BarFrame.consts.QST() + " : " + BarOption.getMoneySign() + BarUtil.formatMoney(totalQst/100f));
         int total = Math.round(subTotal + totalGst + totalQst);
         valTotlePrice.setText(BarUtil.formatMoney((total)/100f));
+        
+        BarFrame.setStatusMes(BarFrame.consts.getPennyRounded() + BarUtil.canadianPennyRound(valTotlePrice.getText()));
     }
     
     public void initContent() {
@@ -672,7 +674,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			L.e("BillPanel", " exception when initContent()" + sql, e);
 		}
 
-		updateTotleArea();
+		updateTotalArea();
 	    setBackground(status >= DBConsts.completed || status < DBConsts.original ? Color.gray : null);
 		//reset the flag whichi is only used for showing expired bills.
 		BarFrame.instance.isShowingAnExpiredBill = false;
@@ -855,7 +857,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		table.setDataVector(tValues, header);
 		resetColWidth(scrContent.getWidth());
 		table.setSelectedRow(tValues.length - 1); //@Note this will trigger a value change event, to set the curDish.
-		updateTotleArea();
+		updateTotalArea();
 	}
     
     //return true means can move on, return false means user don't want to move on.

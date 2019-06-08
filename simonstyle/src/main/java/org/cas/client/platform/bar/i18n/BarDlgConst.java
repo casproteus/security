@@ -328,4 +328,5 @@ public interface BarDlgConst {
 	String Login();
 	String ApplyToList();
 	String ApplyToCategory();
+	String getPennyRounded();
 }

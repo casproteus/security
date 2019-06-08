@@ -334,7 +334,7 @@ MouseListener {
 	
 	private void initTable() {
 		StringBuilder sql = new StringBuilder("select * from hardware where category = 1 and status != ")
-				.append(DBConsts.deleted);//.append(" order by name");
+				.append(DBConsts.deleted).append(" order by id desc");//.append(" order by name");
 		
 		try {
 		    ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());

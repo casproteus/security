@@ -2201,7 +2201,7 @@ public class CASUtility {
         return result;
     }
 
-    public static void addToTotleIn(
+    public static void addToTotalIn(
             int pCountIn) {
         sysValue[3] = String.valueOf(Integer.parseInt(sysValue[3]) + pCountIn);
         String sql = "update systeminfo set Version = '".concat(sysValue[3]).concat("' where id = 3");
@@ -2215,7 +2215,7 @@ public class CASUtility {
         }
     }
 
-    public static void addToTotleOut(
+    public static void addToTotalOut(
             int pCountOut) {
         sysValue[4] = String.valueOf(Integer.parseInt(sysValue[4]) + pCountOut);
         String sql = "update systeminfo set Version = '".concat(sysValue[4]).concat("' where id = 4");

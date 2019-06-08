@@ -611,4 +611,6 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String ApplyToList() {return "应用到标签";}
 	@Override
 	public String ApplyToCategory() {return "应用到组名";}
+	@Override
+	public String getPennyRounded() {return "近似到5分:";}
 }
