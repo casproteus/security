@@ -95,7 +95,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         String returnStr = validateActivation(null);
         if(!"OK".equals(returnStr)) { 	// if not valid, might because of expired, then give clean the bill head, 
         	if(!"OK".equals(validateActivation(returnStr))) {	// give another valid to show up licence dialog.
-        		return;
+        		System.exit(0);;
         	}
         }
         
@@ -162,6 +162,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     			return "OK";
     		}else {
     			BarOption.setBillHeadInfo(null);
+    			CustOpts.custOps.saveData();//save to hd.
     			return activateCode;
     		}
     	}
