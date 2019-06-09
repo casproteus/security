@@ -233,11 +233,14 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 
     /** 初始化时使用 */
     private void initContent( String prmCategoryInfo, int idx) {
-        txaCurContent.setText("null".equalsIgnoreCase(prmCategoryInfo) ? "" : prmCategoryInfo);	//must be before getInputModification()
+    	//must set content first, so the selections can be initialized base on it. 
+    	//and set the content again in the last line, when got idea which belongs to this page.
+        txaCurContent.setText("null".equalsIgnoreCase(prmCategoryInfo) ? "" : prmCategoryInfo);	
         listModel = new DefaultListModel<CheckItem>();
 
         initTabbedPaneContent();
         initSelectionMap();
+        txaCurContent.setText(selections.get(idx));
     }
 
 	private void initSelectionMap() {
@@ -367,7 +370,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             resetClicked();
         else if (o == btnOK) {
             if(BillListPanel.curDish != null) {
-            	StringBuilder modifications = new StringBuilder(this.txaCurContent.getText());
+            	StringBuilder modifications = new StringBuilder(txaCurContent.getText());
             	for (java.util.Map.Entry<Integer, String> entry : selections.entrySet()) {
             		if(entry.getKey() != tabbedPane.getSelectedIndex()) {
             			modifications.append(BarDlgConst.delimiter);
@@ -754,9 +757,14 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     }
 
     private String getAllLanguage(String lang) {
-    	StringBuilder sql = new StringBuilder("select * from modification where type = ");
-    	sql.append(tabbedPane.getSelectedIndex()).append(" and status = ").append(DBConsts.original)
-    		.append(" and lang").append(LoginDlg.USERLANG).append(" = '").append(lang).append("'");
+    	StringBuilder sql = new StringBuilder("select * from modification where type ");
+    	if(tabbedPane.getSelectedIndex() == 0) {
+    		sql.append("is null ");
+    	}else {
+    		sql.append("= ").append(tabbedPane.getSelectedIndex());
+    	}
+    	sql.append(" and status = ").append(DBConsts.original)
+    		.append(" and lang").append(LoginDlg.USERLANG + 1).append(" = '").append(lang).append("'");
         try {
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
             rs.beforeFirst();
@@ -768,7 +776,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 		}catch(Exception exp) {
 			L.e("AddModificationDlg", "exception when querying full langs with sql " + sql, exp);
 		}
-        L.e("AddModificationDlg", "exception when change output back to original bill" + sql, exp);
+        L.e("AddModificationDlg", "find no modification record!" + sql, null);
         return null;
 	}
 
