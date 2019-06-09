@@ -613,4 +613,6 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String ApplyToCategory() {return "应用到组名";}
 	@Override
 	public String getPennyRounded() {return "近似到5分:";}
+	@Override
+	public String AllSelectedItemWillBeDeleted() {return "您确定删除所有选中的项吗?";}
 }

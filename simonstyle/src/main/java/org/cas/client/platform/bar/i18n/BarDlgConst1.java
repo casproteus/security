@@ -611,4 +611,6 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String ApplyToCategory() {return "Appliquer au groupe";}
 	@Override
 	public String getPennyRounded() {return "penny arrondi:";}
+	@Override
+	public String AllSelectedItemWillBeDeleted() {return "Êtes-vous sûr de vouloir supprimer tous les éléments sélectionnés?";}
 }

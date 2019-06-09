@@ -329,4 +329,5 @@ public interface BarDlgConst {
 	String ApplyToList();
 	String ApplyToCategory();
 	String getPennyRounded();
+	String AllSelectedItemWillBeDeleted();
 }

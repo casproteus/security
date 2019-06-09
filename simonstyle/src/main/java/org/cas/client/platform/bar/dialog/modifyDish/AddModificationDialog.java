@@ -13,10 +13,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.security.KeyStore.Entry;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import javax.swing.DefaultListModel;
@@ -27,6 +29,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
@@ -50,31 +53,17 @@ import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
+import org.cas.client.resource.international.DlgConst;
 import org.hsqldb.lib.StringUtil;
 
 public class AddModificationDialog extends JDialog implements ActionListener, ListSelectionListener, KeyListener,
         MouseListener, Runnable, ComponentListener, ChangeListener {
-//    /**
-//     * 创建一个 Category 的实例
-//     * 
-//     * @param prmParent
-//     *            父窗体
-//     * @param prmCategoryInfo
-//     *            逗号分隔的字符串
-//     */
-//    public AddModificationDialog(JDialog prmParent, String prmCategoryInfo) {
-//        super(prmParent, true);
-//        initComponent(); // 组件初始化并布局
-//        initContent(prmCategoryInfo); // 初始化文本区和列表框数据
-//    }
 
+    int oldIndex = 0;
+    HashMap<Integer, String> selections = new HashMap<Integer, String>();
+    
     /**
-     * 创建一个 Category 的实例
-     * 
-     * @param prmParent
-     *            父窗体
-     * @param prmCategoryInfo
-     *            逗号分隔的字符串
+     * @param prmCategoryInfo  逗号分隔的字符串
      */
     public AddModificationDialog(Frame prmParent, String prmCategoryInfo) {
         super(prmParent, true);
@@ -116,9 +105,14 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         tabbedPane = new JTabbedPane();
         btnApplyToList = new JButton(BarFrame.consts.ApplyToList()); // 加至列表按钮
         btnApplyToCategory = new JButton(BarFrame.consts.ApplyToCategory());
-        btnDelete = new JButton(BarFrame.consts.Delete()); // 删除按钮
-        resetBTN = new JButton(BarFrame.consts.RESET()); // 重置按钮
-        btnOK = new JButton(BarFrame.consts.OK()); // 设置Cancel按钮
+        lblDspIdx = new JLabel(BarFrame.consts.DSPINDEX());
+        lblPrice = new JLabel(BarFrame.consts.Price());
+        valDspIdx = new JTextField();
+        valPrice = new JTextField();
+        btnApply =  new JButton(BarFrame.consts.Apply());
+        btnDelete = new JButton(BarFrame.consts.Delete());
+        resetBTN = new JButton(BarFrame.consts.RESET());
+        btnOK = new JButton(BarFrame.consts.OK());
 
         // properties-------------------------
         midLabel.setLabelFor(modificationList);
@@ -130,12 +124,14 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         midLabel.setDisplayedMnemonic('V');
         topLabel.setDisplayedMnemonic('I');
         btnApplyToList.setMnemonic('A');
-        btnApplyToCategory.setMnemonic('G');
+        btnApplyToCategory.setMnemonic('p');
+        btnApply.setMnemonic('D');
         btnDelete.setMnemonic('D');
         resetBTN.setMnemonic('R');
         btnApplyToList.setMargin(new Insets(0, 0, 0, 0));
         btnApplyToCategory.setMargin(new Insets(0, 0, 0, 0));
         btnDelete.setMargin(new Insets(0, 0, 0, 0));
+        btnApply.setMargin(new Insets(0, 0, 0, 0));
         resetBTN.setMargin(new Insets(0, 0, 0, 0));
         resetBTN.setVisible(false);
         btnApplyToList.setEnabled(false); // 一开始这项为禁止
@@ -150,6 +146,11 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         getContentPane().add(btnApplyToCategory);
         tabbedPane.add("    ", scrPane);
         getContentPane().add(tabbedPane);
+        getContentPane().add(lblDspIdx);
+        getContentPane().add(valDspIdx);
+        getContentPane().add(lblPrice);
+        getContentPane().add(valPrice);
+        getContentPane().add(btnApply);
         getContentPane().add(btnDelete);
         getContentPane().add(resetBTN);
         getContentPane().add(txaCurContent);
@@ -159,6 +160,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         // listeners------------------------
         btnApplyToList.addActionListener(this);
         btnApplyToCategory.addActionListener(this);
+        btnApply.addActionListener(this);
         btnDelete.addActionListener(this);
         resetBTN.addActionListener(this);
         btnOK.addActionListener(this);
@@ -204,13 +206,29 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         tabbedPane.setBounds(midLabel.getX(), midLabel.getY() + midLabel.getHeight() + CustOpts.VER_GAP, // "可用类别"列表框
         		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP, 
                 btnOK.getY() - 2 * CustOpts.VER_GAP - midLabel.getY() - midLabel.getHeight());
+        
+        lblDspIdx.setBounds(tabbedPane.getX(), btnOK.getY(),
+        		lblDspIdx.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        valDspIdx.setBounds(lblDspIdx.getX() + lblDspIdx.getWidth() + CustOpts.HOR_GAP, lblDspIdx.getY(),
+        		30, CustOpts.BTN_HEIGHT);
+        
+        lblPrice.setBounds(valDspIdx.getX() + valDspIdx.getWidth() + CustOpts.HOR_GAP, valDspIdx.getY(),
+        		lblPrice.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+        valPrice.setBounds(lblPrice.getX() + lblPrice.getWidth() + CustOpts.HOR_GAP, lblPrice.getY(),
+        		60, CustOpts.BTN_HEIGHT);
+       
+        
         if(BillListPanel.curDish == null) {
-        	btnDelete.setBounds(btnOK.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, btnOK.getY(), CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+            btnApply.setBounds(valPrice.getX() + valPrice.getWidth() + CustOpts.HOR_GAP, valPrice.getY(),
+            		CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+        	btnDelete.setBounds(btnApply.getX() + btnApply.getWidth() + CustOpts.HOR_GAP, btnOK.getY(),
+        			CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
         }else {
-        	btnDelete.setBounds(btnOK.getX() - CustOpts.BTN_WIDTH - CustOpts.HOR_GAP, btnOK.getY(), 0, 0);
+            btnApply.setBounds(valPrice.getX() + valPrice.getWidth() + CustOpts.HOR_GAP, valPrice.getY(), 0, 0);
+        	btnDelete.setBounds(btnApply.getX() + btnApply.getWidth() + CustOpts.HOR_GAP, btnOK.getY(), 0, 0);
         }
-        resetBTN.setBounds(btnDelete.getX(), btnDelete.getY() + btnDelete.getHeight() + CustOpts.VER_GAP,
-                CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+//        resetBTN.setBounds(btnDelete.getX(), btnDelete.getY() + btnDelete.getHeight() + CustOpts.VER_GAP,
+//                CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
     }
 
     /** 初始化时使用 */
@@ -218,7 +236,32 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         txaCurContent.setText("null".equalsIgnoreCase(prmCategoryInfo) ? "" : prmCategoryInfo);	//must be before getInputModification()
         listModel = new DefaultListModel<CheckItem>();
 
-        tabbedPane.removeAll();
+        initTabbedPaneContent();
+        initSelectionMap();
+    }
+
+	private void initSelectionMap() {
+        ArrayList<String> inputList = getInputModification();
+        int tabsize = tabbedPane.getTabCount();
+        for(int i = 0; i < tabsize; i++) {
+        	ArrayList<String> allLabelOfCurTab = getAllModification(i);
+        	StringBuilder stringForCurTab = new StringBuilder();
+        	for (int j = inputList.size() - 1; j >= 0; j--) {
+        		String label = inputList.get(j);
+				if(allLabelOfCurTab.contains(label)) {
+					stringForCurTab.append(label);
+					stringForCurTab.append(BarDlgConst.delimiter);
+					inputList.remove(j);
+				}
+			}
+        	selections.put(i, stringForCurTab.toString());
+        }
+        
+        
+	}
+
+	private void initTabbedPaneContent() {
+		tabbedPane.removeAll();
         tabbedPane.add("    ", scrPane);
         StringBuilder sql = new StringBuilder("select * from modification where type < 0 order by type desc");
         try {
@@ -240,9 +283,9 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 				}
             }
 		}catch(Exception exp) {
-			L.e("BillListPanel", "exception when change output back to original bill" + sql, exp);
+			L.e("AddModificationDlg", "exception when change output back to original bill" + sql, exp);
 		}
-    }
+	}
     
     private ArrayList<String> getAllModification(int idx) {
         StringBuilder sql = new StringBuilder("SELECT * FROM modification where status = ").append(DBConsts.original);
@@ -253,6 +296,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         }else {
         	//append no type condition if the idx is -1;
         }
+        sql.append(" order by lang5");
+        
         ArrayList<String> nameVec = new ArrayList<String>();
         try {
 
@@ -308,19 +353,28 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      *            动作事件
      */
     @Override
-	public void actionPerformed(
-            ActionEvent e) {
-        if (e.getSource() == btnApplyToList)
-            addToListClicked();
-        else if (e.getSource() == btnApplyToCategory)
+	public void actionPerformed(ActionEvent e) {
+    	Object o = e.getSource();
+        if (o == btnApplyToList)
+            applyToListClicked();
+        else if (o == btnApplyToCategory)
         	addToCategoryClicked();
-        else if (e.getSource() == btnDelete)
+        else if (o == btnDelete)
             deleteClicked();
-        else if (e.getSource() == resetBTN)
+        else if (o == btnApply)
+        	applyProperties();
+        else if (o == resetBTN)
             resetClicked();
-        else if (e.getSource() == btnOK) {
+        else if (o == btnOK) {
             if(BillListPanel.curDish != null) {
-            	String[] notes = this.txaCurContent.getText().split(BarDlgConst.delimiter);
+            	StringBuilder modifications = new StringBuilder(this.txaCurContent.getText());
+            	for (java.util.Map.Entry<Integer, String> entry : selections.entrySet()) {
+            		if(entry.getKey() != tabbedPane.getSelectedIndex()) {
+            			modifications.append(BarDlgConst.delimiter);
+            			modifications.append(entry.getValue());
+            		}
+				}
+            	String[] notes = modifications.toString().split(BarDlgConst.delimiter);
             	ArrayList<String> allModification = getAllModification(-1);
             	StringBuilder fullModifyString = new StringBuilder();
             	StringBuilder onSrcString = new StringBuilder();
@@ -360,7 +414,45 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         }
     }
 
-    private boolean insertModification( String modification) {
+    private void applyProperties() {
+    	//validate values;
+    	CheckItem seleItem = modificationList.getSelectedValue();
+    	if(seleItem == null) {
+    		JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.AtLeastOneShouldBeSelected());
+    		return;
+    	}
+    		
+    	try {
+    		Float.parseFloat(valPrice.getText());
+    		Float.parseFloat(valDspIdx.getText());
+    	}catch(Exception e) {
+    		JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
+    		return;
+    	}
+    	
+    	//update
+		StringBuilder sql = new StringBuilder("UPDATE modification set lang5 = '").append(valDspIdx.getText()).append("', ")
+				.append(" lang6 = '").append(valPrice.getText());
+		if(tabbedPane.getSelectedIndex() == 0) {
+			sql.append("' where type is null ");
+		}else {
+			sql.append("' where type = ").append((tabbedPane.getSelectedIndex()));
+		}
+		sql.append(" and lang1 = '");
+		
+		String lang1 = seleItem.getName();
+		int i = lang1.indexOf(BarDlgConst.semicolon);
+		lang1 = lang1.substring(0, i);
+		sql.append(lang1).append("'");
+		
+		try {
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
+		}catch(Exception e) {
+			L.e("AddModification ", "Exception when updating a category into modification.", e);
+		}
+	}
+
+	private boolean insertModification( String modification) {
         StringBuilder sql = new StringBuilder("INSERT INTO modification (lang1, lang2, lang3, type, status) VALUES( '");
         String[] langs = modification.split(BarDlgConst.semicolon);
         sql.append(langs.length > 0 ? langs[0] : "");
@@ -415,7 +507,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     	StringBuilder sql = new StringBuilder("DELETE FROM modification WHERE lang1 = '");
         String[] langs = modification.split(BarDlgConst.semicolon);
         sql.append(langs[0]);
-        sql.append(" and type = ").append(idx);
+        sql.append("' and type = ").append(idx);
 
         try {
             Statement smt = PIMDBModel.getStatement();
@@ -461,14 +553,20 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     }
     
     private void deleteClicked() {
+    	if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.AllSelectedItemWillBeDeleted(), DlgConst.DlgTitle,
+                JOptionPane.YES_NO_OPTION) != 0) {
+			return;
+		}
+    	
     	ListModel<CheckItem> model = modificationList.getModel();
+    	
     	for(int i =  model.getSize() - 1; i >= 0; i--) {
     		CheckItem checkItem = model.getElementAt(i);
     		if(checkItem.isSelected()) {
     			int tmpSelectionIndex = i;
     	        
     	        // 看来字段删除必须在这时处理
-    	        deleteModification(checkItem.getName(), i);
+    	        deleteModification(checkItem.getName(), tabbedPane.getSelectedIndex());
     	        listModel.remove(tmpSelectionIndex);
     	        itemChanged = true;
 
@@ -483,6 +581,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     	}
     	if(!itemChanged) {
 	    	JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.AtLeastOneShouldBeSelected());
+	    	return;
     	}
     }
 
@@ -513,7 +612,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         }
     }
 
-    private ArrayList<String> getListInListComponent() {
+    private ArrayList<String> getListInCurrentListComponent() {
         Object[] aryListModelData = listModel.toArray();
 
         // 构造一个 ArrayList 存放列表框中的数据中的字符串以便于判断包含关系
@@ -542,10 +641,10 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     	return -1;	
     }
     
-    private void addToListClicked() {
+    private void applyToListClicked() {
         // 文本框和列表框各取得其中的数组
         ArrayList<String> inputList = getInputModification();
-        ArrayList<String> existingList = getListInListComponent();
+        ArrayList<String> existingList = getListInCurrentListComponent();
 
         // 表示列表框中字段有更改,但不保存 ? 
         itemChanged = true;
@@ -566,7 +665,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             }
         }
         // 下面要判断原有模型中的字符串在文本区中有没有,If no, set unselected， If yes, set slected
-        existingList = getListInListComponent();
+        existingList = getListInCurrentListComponent();
         for (int i = 0; i < existingList.size(); i++) {
             // 文本区中不包含便将它设置标志为假
             if (!inputList.contains(existingList.get(i).toString())) {
@@ -632,7 +731,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      */
     private void setTextOfTextArea() {
         // 用来组装处理文本区中的显示
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int tmpSize = listModel.size();
 
         // 用于取值的一个变量
@@ -643,14 +742,37 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             // 要造型的
             tmpItem = listModel.get(i);
             if (tmpItem.isSelected()) {
-                sb = sb.append(tmpItem.getName()).append(BarDlgConst.delimiter).append(" ");
+            	String langs = tmpItem.getName();
+            	if(langs.indexOf(BarDlgConst.semicolon) < 0) {
+            		langs = getAllLanguage(langs);
+            	}
+                sb = sb.append(langs).append(BarDlgConst.delimiter).append(" ");
             }
         }
         // 要不为空,就要去掉逗号尾巴
         txaCurContent.setText(sb.length() == 0 ? sb.toString() : sb.substring(0, sb.length() - 2));
     }
 
-    /**
+    private String getAllLanguage(String lang) {
+    	StringBuilder sql = new StringBuilder("select * from modification where type = ");
+    	sql.append(tabbedPane.getSelectedIndex()).append(" and status = ").append(DBConsts.original)
+    		.append(" and lang").append(LoginDlg.USERLANG).append(" = '").append(lang).append("'");
+        try {
+			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+            rs.beforeFirst();
+            while (rs.next()) {
+            	return new StringBuilder(rs.getString("lang1")).append(BarDlgConst.semicolon)
+            		.append(rs.getString("lang2")).append(BarDlgConst.semicolon)
+					.append(rs.getString("lang3")).append(BarDlgConst.semicolon).toString();
+            }
+		}catch(Exception exp) {
+			L.e("AddModificationDlg", "exception when querying full langs with sql " + sql, exp);
+		}
+        L.e("AddModificationDlg", "exception when change output back to original bill" + sql, exp);
+        return null;
+	}
+
+	/**
      * 重载,以后要去掉
      * 
      * @param modification
@@ -711,8 +833,15 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 		JTabbedPane tabbedPane = (JTabbedPane)e.getSource();
 		//reinit the content.
 		PIMScrollPane scrPane = (PIMScrollPane)tabbedPane.getSelectedComponent();
-		if(scrPane == null) return;
+		if(scrPane == null) {
+			return;
+		}
+		
 		int idx = tabbedPane.getSelectedIndex();
+
+		selections.put(oldIndex, txaCurContent.getText());
+		oldIndex = idx;
+		txaCurContent.setText(selections.get(idx));
 		
 		// 把文本框中字段还原为字符串数组
         ArrayList<String> inputModification = getInputModification();
@@ -761,8 +890,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      *            the event that characterizes the change.
      */
     @Override
-	public void valueChanged(
-            ListSelectionEvent e) {
+	public void valueChanged(ListSelectionEvent e) {
         /*
          * 主要来处理文本区中的显示 if(e.getSource() == categoryList) { StringBuffer sb = new StringBuffer(); int tmpSize =
          * categoryListModel.size(); CheckItem tmpItem; for(int i = 0; i < tmpSize ; i++) { tmpItem =
@@ -781,13 +909,11 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      *            键盘事件
      */
     @Override
-	public void keyPressed(
-            KeyEvent e) {
-        // 处理列表框空格键选中
-        if (e.getSource() == modificationList && e.getKeyCode() == KeyEvent.VK_SPACE) {
+	public void keyPressed(KeyEvent e) {
+        if (e.getSource() == modificationList && e.getKeyCode() == KeyEvent.VK_SPACE) {        // 处理列表框空格键选中
             updateTextArea();
+            updateProperties();
         }
-
     }
 
     private void updateTextArea() {
@@ -838,10 +964,40 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 	public void mousePressed(MouseEvent e) {
         if (e.getSource() == modificationList) {
             updateTextArea();
+            updateProperties();
         }
     }
 
-    @Override
+    private void updateProperties() {
+    	String lang1 = modificationList.getSelectedValue().getName();
+    	int idx = lang1.indexOf(BarDlgConst.semicolon);
+    	if(idx > 0) {
+        	lang1 = lang1.substring(0, idx);
+    	}
+    	idx = tabbedPane.getSelectedIndex();
+    	StringBuilder sql = new StringBuilder("SELECT * FROM modification where status = ").append(DBConsts.original);
+        if(idx == 0 ) {
+        	sql.append(" and type is null");
+        }else if(idx > 0){
+        	sql.append(" and type = ").append(idx);
+        }else {
+        	//append no type condition if the idx is -1;
+        }
+        sql.append(" and lang1 = '").append(lang1).append("'");
+        
+        try {
+	        ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+	        rs.beforeFirst();
+	        while (rs.next()) {
+	        	valDspIdx.setText(rs.getString("lang5"));
+				valPrice.setText(rs.getString("lang6"));
+	        }
+        }catch(Exception e) {
+        	L.e("AddModification ", "Exception happend when update the value in propertiy fields with searched out records." + sql, e);
+        }
+	}
+
+	@Override
 	public void mouseReleased(MouseEvent e) {}
 
     /**
@@ -855,10 +1011,11 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     @Override
 	public void run() {
         String curContent = txaCurContent.getText(); // 要检查文本区中是否有新字段产生,如果有便要使'添至列表'按钮激活 把文本框中字段还原为字符串数组
-        ArrayList<String> listInListComponent = getListInListComponent();
+        ArrayList<String> listInListComponent = getListInCurrentListComponent();
         if (curContent == null || curContent.length() == 0) {
-            for (int size = listInListComponent.size(), i = 0; i < size; i++)
+            for (int i = 0; i < listInListComponent.size(); i++) {
                 listModel.setElementAt(new CheckItem(listInListComponent.get(i).toString(), false), i);
+            }
             btnApplyToList.setEnabled(false);
             btnApplyToCategory.setEnabled(false);
             btnOK.setEnabled(false);
@@ -901,6 +1058,13 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     private boolean modified; // 保存修改标志,以便父对话盒作相应措施
     public static final int OFFSET = -1;// 构建列表框和文本区用的一个常量 以后要去除
     private boolean itemChanged; // 字段增减标志,用于存盘
+    
+    private JLabel lblDspIdx;
+    private JLabel lblPrice;
+    private JTextField valDspIdx;
+    private JTextField valPrice;
+    private JButton btnApply;
+    
     
     public boolean isModified() {
         return this.modified;
