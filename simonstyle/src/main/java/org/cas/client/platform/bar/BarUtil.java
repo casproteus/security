@@ -16,6 +16,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.BarOption;
+import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
@@ -377,5 +379,21 @@ public class BarUtil {
 
 	public static boolean empty(String content) {
 		return content == null || content.trim().length() == 0;
+	}
+	
+	public static String getMoneyStrOut(String strDisCount) {
+		int idx = strDisCount.indexOf("-" + BarOption.getMoneySign());
+		if(idx < 0) {
+			return "0";
+		}
+		
+		strDisCount = strDisCount.substring(idx + 2);
+		
+		idx = strDisCount.indexOf(BarDlgConst.delimiter);
+		if(idx > 0) {
+			strDisCount = strDisCount.substring(0, idx);
+		}
+		
+		return strDisCount;
 	}
 }

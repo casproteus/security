@@ -47,7 +47,7 @@ public class UpdateItemDiscountAction implements ActionListener{
              	//NOTE: current total price + existing discount = original total price.
              	String strDisCount = (String)billPanel.table.getValueAt(row, 2);
              	
-             	strDisCount = (strDisCount == null || strDisCount.length() < 2) ? "0" : getMoneyStrOut(strDisCount);//find and remove "-$"
+             	strDisCount = (strDisCount == null || strDisCount.length() < 2) ? "0" : BarUtil.getMoneyStrOut(strDisCount);//find and remove "-$"
              	float oldDiscount = Float.valueOf(strDisCount);
              	 
              	String strTotalPrice = (String)billPanel.table.getValueAt(row, 3);
@@ -88,21 +88,5 @@ public class UpdateItemDiscountAction implements ActionListener{
          	}
         	((AbstractButton)e.getSource()).removeActionListener(this);
  		}
-	}
-
-	private String getMoneyStrOut(String strDisCount) {
-		int idx = strDisCount.indexOf("-" + BarOption.getMoneySign());
-		if(idx < 0) {
-			return "0";
-		}
-		
-		strDisCount = strDisCount.substring(idx + 2);
-		
-		idx = strDisCount.indexOf(BarDlgConst.delimiter);
-		if(idx > 0) {
-			strDisCount = strDisCount.substring(0, idx);
-		}
-		
-		return strDisCount;
 	}
 }

@@ -404,14 +404,22 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             	
             	int idx = oldContent.indexOf("-" + BarOption.getMoneySign());
             	if(idx > -1) {
-            		oldContent = oldContent.substring(idx);
-            		idx = oldContent.indexOf(BarDlgConst.delimiter);
+            		String oldDiscount = oldContent.substring(idx); //no matter discount in the end or begging.
+            		idx = oldDiscount.indexOf(BarDlgConst.delimiter);
             		if(idx > -1) {
             			oldContent = oldContent.substring(0, idx);
+            			oldDiscount = oldDiscount.substring(0, idx);
             		}
-            		onSrcString.append(oldContent);
+            		onSrcString.append(oldDiscount);
             	}
             	table.setValueAt(onSrcString.toString(), row, 2);
+            	
+            	//money part update
+            	//old labels added money
+            	float oldMoney = calculateLabelsPrices(oldContent);
+            	//new labels added money
+            	float newPrice = calculateLabelsPrices(newLabelStr);
+            	//update the orderAry and database.
             }
             dispose();
         }
