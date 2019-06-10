@@ -426,8 +426,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     	}
     		
     	try {
-    		Float.parseFloat(valPrice.getText());
-    		Float.parseFloat(valDspIdx.getText());
+    		Float.parseFloat(valPrice.getText().length() > 0 ? valPrice.getText() : "0.00");
+    		Float.parseFloat(valDspIdx.getText().length() > 0 ? valDspIdx.getText() : "0");
     	}catch(Exception e) {
     		JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.InvalidInput());
     		return;
