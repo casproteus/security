@@ -293,7 +293,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     private ArrayList<String> getAllModification(int idx) {
         StringBuilder sql = new StringBuilder("SELECT * FROM modification where status = ").append(DBConsts.original);
         if(idx == 0 ) {
-        	sql.append(" and type is null");
+        	sql.append(" and type is null or type = 0");
         }else if(idx > 0){
         	sql.append(" and type = ").append(idx);
         }else {
@@ -377,27 +377,29 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             			modifications.append(entry.getValue());
             		}
 				}
+            	
             	String[] notes = modifications.toString().split(BarDlgConst.delimiter);
             	ArrayList<String> allModification = getAllModification(-1);
             	StringBuilder fullModifyString = new StringBuilder();
             	StringBuilder onSrcString = new StringBuilder();
             	for(int i = 0; i < notes.length; i++) {
-					for (String fullString : allModification) {
-						if(notes[i].trim().length() > 0 && fullString.indexOf(notes[i].trim()) > -1) {
-							notes[i] = fullString;
-							break;
-						}
-					}
+//            		//now this for lood should be not necessary anymore, because the content in txaCurContent is always full string.
+//					for (String fullStringOfLabel : allModification) {
+//						if(notes[i].trim().length() > 0 && fullStringOfLabel.indexOf(notes[i].trim()) > -1) {
+//							notes[i] = fullStringOfLabel;
+//							break;
+//						}
+//					}
             		fullModifyString.append(notes[i]).append(BarDlgConst.delimiter);
             		
             		String[] langs = notes[i].split(BarDlgConst.semicolon);
-        			String lang_Modify = langs.length > LoginDlg.USERLANG ? langs[LoginDlg.USERLANG] : langs[0];
-                	if(lang_Modify.length() == 0)
-                		lang_Modify = langs[0];
-            		onSrcString.append(lang_Modify).append(BarDlgConst.delimiter);
+        			String lang_OnSrc = langs.length > LoginDlg.USERLANG ? langs[LoginDlg.USERLANG] : langs[0];
+                	if(lang_OnSrc.length() == 0)
+                		lang_OnSrc = langs[0];
+            		onSrcString.append(lang_OnSrc).append(BarDlgConst.delimiter);
 				}
             	
-            	BillListPanel.curDish.setModification(fullModifyString.toString());
+            	//update the display on table
             	PIMTable table = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.table;
             	int row = table.getSelectedRow();
             	String oldContent = (String)table.getValueAt(row, 2);
@@ -415,17 +417,55 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             	table.setValueAt(onSrcString.toString(), row, 2);
             	
             	//money part update
-            	//old labels added money
-            	float oldMoney = calculateLabelsPrices(oldContent);
-            	//new labels added money
-            	float newPrice = calculateLabelsPrices(newLabelStr);
+            	float oldPriceInLabel = calculateLabelsPrices(BillListPanel.curDish.getModification().split(BarDlgConst.delimiter));
+            	float newPriceInLabel = calculateLabelsPrices(notes);	//new labels added money
             	//update the orderAry and database.
+            	BillListPanel.curDish.setModification(fullModifyString.toString());
+            	
+            	BillListPanel.curDish.setTotalPrice((int)(BillListPanel.curDish.getTotalPrice() - oldPriceInLabel * 100 + newPriceInLabel * 100));
+             	
+             	int outputID = BillListPanel.curDish.getOutputID();
+             	if(outputID >= 0) {
+             		String sql = "update output set toltalprice = " + BillListPanel.curDish.getTotalPrice() + " where id = " + outputID;
+             		try {
+             			PIMDBModel.getStatement().executeUpdate(sql);
+             		}catch(Exception exp) {
+    					L.e("AddModificationDlg", " exception when update total price for output!" + sql, exp);
+             		}
+             	}
             }
             dispose();
         }
     }
 
-    private void applyProperties() {
+    private float calculateLabelsPrices(String[] labels) {
+    	Float pirce = 0.0f;
+		for(int i = 0; i < labels.length; i++) {
+			String[] langs = labels[i].split(BarDlgConst.semicolon);
+			StringBuilder sql = new StringBuilder("select distinct lang6 from modification where lang1 = ").append(langs[0]);
+			try {
+				ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+				rs.afterLast();
+				rs.relative(-1);
+				if(rs.getRow() > 1) {
+					L.e("AddModificationDlg", " Found two labels with same name but have different price!" + langs[0], null);
+				}else if(rs.getRow() == 0) {
+					L.e("AddModificationDlg", " Found no labels matching lang1 = " + langs[0] + ". if this label has price property, will affect the total price of this dish!", null);
+				}
+				rs.beforeFirst();
+				rs.next();
+				String lang6 = rs.getString("lang6");
+				if(lang6 != null && lang6.length() > 0) {
+					pirce += Float.parseFloat(rs.getString("lang6"));
+				}
+			}catch(Exception e) {
+				L.e("AddModificationDlg", " Exception when searching price of modificaiton " + sql, null);
+			}
+		}
+		return pirce;
+	}
+
+	private void applyProperties() {
     	//validate values;
     	CheckItem seleItem = modificationList.getSelectedValue();
     	if(seleItem == null) {
@@ -445,7 +485,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 		StringBuilder sql = new StringBuilder("UPDATE modification set lang5 = '").append(valDspIdx.getText()).append("', ")
 				.append(" lang6 = '").append(valPrice.getText());
 		if(tabbedPane.getSelectedIndex() == 0) {
-			sql.append("' where type is null ");
+			sql.append("' where type is null or type = 0");
 		}else {
 			sql.append("' where type = ").append((tabbedPane.getSelectedIndex()));
 		}
@@ -993,7 +1033,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     	idx = tabbedPane.getSelectedIndex();
     	StringBuilder sql = new StringBuilder("SELECT * FROM modification where status = ").append(DBConsts.original);
         if(idx == 0 ) {
-        	sql.append(" and type is null");
+        	sql.append(" and type is null or type = 0");
         }else if(idx > 0){
         	sql.append(" and type = ").append(idx);
         }else {
