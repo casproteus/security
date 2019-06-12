@@ -39,6 +39,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillListPanel;
@@ -136,7 +137,9 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         resetBTN.setVisible(false);
         btnApplyToList.setEnabled(false); // 一开始这项为禁止
         btnApplyToCategory.setEnabled(false); // 一开始这项为禁止
-
+        valDspIdx.setEditable(BillListPanel.curDish == null );
+        valPrice.setEditable(BillListPanel.curDish == null );
+        
         // layout---------------------------
         reLayout();
 
@@ -390,10 +393,10 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 //							break;
 //						}
 //					}
-            		fullModifyString.append(notes[i]).append(BarDlgConst.delimiter);
+            		fullModifyString.append(notes[i].trim()).append(BarDlgConst.delimiter);
             		
             		String[] langs = notes[i].split(BarDlgConst.semicolon);
-        			String lang_OnSrc = langs.length > LoginDlg.USERLANG ? langs[LoginDlg.USERLANG] : langs[0];
+        			String lang_OnSrc = langs.length > LoginDlg.USERLANG ? langs[LoginDlg.USERLANG].trim() : langs[0].trim();
                 	if(lang_OnSrc.length() == 0)
                 		lang_OnSrc = langs[0];
             		onSrcString.append(lang_OnSrc).append(BarDlgConst.delimiter);
@@ -416,13 +419,19 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             	}
             	table.setValueAt(onSrcString.toString(), row, 2);
             	
-            	//money part update
-            	float oldPriceInLabel = calculateLabelsPrices(BillListPanel.curDish.getModification().split(BarDlgConst.delimiter));
-            	float newPriceInLabel = calculateLabelsPrices(notes);	//new labels added money
+            	//money part calculating
+            	float oldPriceInLabel = 0.0f;
+            	float newPriceInLabel = 0.0f;	//new labels added money
+            	if(BillListPanel.curDish.getModification() != null) {
+            		oldPriceInLabel = calculateLabelsPrices(BillListPanel.curDish.getModification().split(BarDlgConst.delimiter));
+            	}
+            	newPriceInLabel = calculateLabelsPrices(notes);	//new labels added money
+            	int newtotal = (int)(BillListPanel.curDish.getTotalPrice() - oldPriceInLabel * 100 + newPriceInLabel * 100);
+            	
             	//update the orderAry and database.
             	BillListPanel.curDish.setModification(fullModifyString.toString());
             	
-            	BillListPanel.curDish.setTotalPrice((int)(BillListPanel.curDish.getTotalPrice() - oldPriceInLabel * 100 + newPriceInLabel * 100));
+            	BillListPanel.curDish.setTotalPrice(newtotal);
              	
              	int outputID = BillListPanel.curDish.getOutputID();
              	if(outputID >= 0) {
@@ -433,6 +442,10 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     					L.e("AddModificationDlg", " exception when update total price for output!" + sql, exp);
              		}
              	}
+             	
+             	//updte table display
+             	table.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney(newtotal/100.0), row, 3);
+             	((SalesPanel)BarFrame.instance.panels[2]).billPanel.updateTotalArea();
             }
             dispose();
         }
@@ -442,7 +455,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     	Float pirce = 0.0f;
 		for(int i = 0; i < labels.length; i++) {
 			String[] langs = labels[i].split(BarDlgConst.semicolon);
-			StringBuilder sql = new StringBuilder("select distinct lang6 from modification where lang1 = ").append(langs[0]);
+			StringBuilder sql = new StringBuilder("select distinct lang6 from modification where lang1 = '").append(langs[0].trim()).append("'");
 			try {
 				ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 				rs.afterLast();
@@ -805,11 +818,11 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     }
 
     private String getAllLanguage(String lang) {
-    	StringBuilder sql = new StringBuilder("select * from modification where type ");
+    	StringBuilder sql = new StringBuilder("select * from modification where (type ");
     	if(tabbedPane.getSelectedIndex() == 0) {
-    		sql.append("is null ");
+    		sql.append("is null or type = 0)");
     	}else {
-    		sql.append("= ").append(tabbedPane.getSelectedIndex());
+    		sql.append("= ").append(tabbedPane.getSelectedIndex()).append(")");
     	}
     	sql.append(" and status = ").append(DBConsts.original)
     		.append(" and lang").append(LoginDlg.USERLANG + 1).append(" = '").append(lang).append("'");
