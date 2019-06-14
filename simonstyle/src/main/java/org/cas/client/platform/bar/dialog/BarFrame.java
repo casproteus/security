@@ -59,6 +59,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	public boolean isShowingAnExpiredBill;
 	
 	public DefaultComboBoxModel<String> tableNames = new DefaultComboBoxModel<String>(new String[] {""});
+	public boolean ignoreLogin;
     public static NumberPanelDlg numberPanelDlg; 
     public static DiscountDlg discountDlg; 
     public static PayDlg payDlg;
@@ -363,10 +364,14 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	
     public int switchMode(int i) {
     	if(curPanel == 3) {	//if it's switching from setting panel, then ask to do a login.
-    		instance.setVisible(false);
-    		new LoginDlg(null).setVisible(true);
-    		instance.setVisible(true);
-    		valOperator.setText(LoginDlg.USERNAME);
+    		if(ignoreLogin == false) {
+	    		instance.setVisible(false);
+	    		new LoginDlg(null).setVisible(true);
+	    		instance.setVisible(true);
+	    		valOperator.setText(LoginDlg.USERNAME);
+    		}else {
+    			ignoreLogin = false;
+    		}
     	}
     	BillListPanel.curDish = null;
     	setStatusMes("");

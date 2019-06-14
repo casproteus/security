@@ -61,6 +61,7 @@ public class Cmd_Return implements SamActionListener {
     	if(BarOption.isCounterMode()) {
     		BarFrame.instance.setVisible(false);
 			BarFrame.singleUserLoginProcess();
+			BarFrame.instance.ignoreLogin = true;
 			//get lateset bill
 			StringBuilder sql = new StringBuilder("select * from bill where employeeID = ");
 			sql.append(LoginDlg.USERID);
@@ -93,6 +94,7 @@ public class Cmd_Return implements SamActionListener {
 			}catch (SQLException exp) {
 	            ErrorUtil.write(exp);
 	        }
+			BarFrame.instance.ignoreLogin = false;
 			//if it's completed, then createa a new empty onee.
 			//if it's not completed. this it's it.
     	}else {
