@@ -46,7 +46,7 @@ public class Cmd_SlpitBill implements  SamActionListener {
     			return;
 		}
 		//check if it's countermode
-		if(BarOption.isFastFoodMode()) {
+		if(BarOption.isCounterMode()) {
 			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.ActionNotAllowed());
 			return;
 		}

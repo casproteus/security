@@ -58,7 +58,7 @@ public class Cmd_Return implements SamActionListener {
             }
     	}
 
-    	if(BarOption.isFastFoodMode()) {
+    	if(BarOption.isCounterMode()) {
     		BarFrame.instance.setVisible(false);
 			BarFrame.singleUserLoginProcess();
 			//get lateset bill

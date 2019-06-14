@@ -324,7 +324,7 @@ public class BarOption {
     public static void setFastFoodMode(boolean isFastFoodMode) {
     	CustOpts.custOps.setKeyAndValue("FastFoodMode", String.valueOf(isFastFoodMode));
     }
-    public static boolean isFastFoodMode() {
+    public static boolean isCounterMode() {
     	return CustOpts.custOps.getValue("FastFoodMode") == null ? 
     			false : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("FastFoodMode"));
     }

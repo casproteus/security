@@ -513,7 +513,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         cbxIsDiscoutAffectTax.setSelected(BarOption.isDiscountAffectTax());
         cbxIsServiceFeeAffectTax.setSelected(BarOption.isServiceFeeAffectTax());
         cbxIsBuffetMode.setSelected(BarOption.isBuffetMode());
-        cbxIsFastFoodMode.setSelected(BarOption.isFastFoodMode());
+        cbxIsFastFoodMode.setSelected(BarOption.isCounterMode());
         cbxIsHideRecordFromOtherWaiter.setSelected(BarOption.isHideRecordFromOtherWaiter());
         cbxIsWaiterAllowedToDiscount.setSelected(BarOption.isWaiterAllowedToDiscount());
         cbxIsWaiterAllowedToChangePrice.setSelected(BarOption.isWaiterAllowedToChangePrice());

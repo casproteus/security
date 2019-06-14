@@ -769,7 +769,7 @@ public class PrintService{
 		printContent.append(mev2);
 		
 		//==========the 3rd part========
-		String comptoir = BarOption.isFastFoodMode() ? "O" : "N";
+		String comptoir = BarOption.isCounterMode() ? "O" : "N";
 		String autreCompte = "S";	//Identifies any sales recorded in a system other than the SRS.• F(Package deal)• G(Group event)• S Sans objet (N/A)
 		String tableTrans = null;//"T1";
 		String serveurTrans = null;//"Tao";

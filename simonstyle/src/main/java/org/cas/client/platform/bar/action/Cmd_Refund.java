@@ -114,7 +114,7 @@ public class Cmd_Refund implements SamActionListener {
      				.append(" where id = ").append(newBillID);
      		PIMDBModel.getStatement().executeUpdate(sql.toString());
     		
-     		if(!BarOption.isFastFoodMode()) {
+     		if(!BarOption.isCounterMode()) {
      			BarFrame.instance.switchMode(0);
      		}				
      		Cmd_OpenDrawer.getInstance().actionPerformed(null);

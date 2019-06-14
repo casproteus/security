@@ -202,7 +202,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String SetCatogoryFirst() {return "请先进行类别设置，然后再添加菜单";}
     @Override
-	public String SendItemCanNotModify() {return "已经发送后厨的菜不能再修改。系统已经在末尾增加一条记录";}
+	public String SendItemCanNotModify() {return "已经发送后厨的菜不能再修改.";}
     @Override
 	public String reCeivedMoneyNotEnough() {return "金额尚未付足，您确定要关闭本条账单吗？";}
     @Override

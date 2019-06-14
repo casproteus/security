@@ -70,7 +70,7 @@ public class Cmd_Suspend implements SamActionListener {
         	ErrorUtil.write(exp);
         }
         
-    	if(BarOption.isFastFoodMode()) {
+    	if(BarOption.isCounterMode()) {
 	    	BarFrame.instance.addNewBillInCurTable();
     	}else {
 			BarFrame.instance.setCurBillIdx("");

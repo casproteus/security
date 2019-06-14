@@ -70,7 +70,7 @@ public class Cmd_CancelAll implements SamActionListener {
     		billPanel.resetColWidth(billPanel.getWidth());
     		billPanel.table.setSelectedRow(tValues.length - 1);
     		billPanel.updateTotalArea();
-    	}else if(!BarOption.isFastFoodMode()){
+    	}else if(!BarOption.isCounterMode()){
     		//@NOTE: we don't close current bill, because maybe there's output still have billID of this bill, all the empty bill will be closed when table closed.
     		//update bill and dining_table in db.
     		if(BarFrame.instance.isTableEmpty(null, null)) {

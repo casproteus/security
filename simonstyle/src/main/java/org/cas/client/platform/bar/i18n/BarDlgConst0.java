@@ -202,7 +202,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String SetCatogoryFirst() {return "Please Set Category First";}
     @Override
-	public String SendItemCanNotModify() {return "Item already send can not be modified. we added a new item into the list";}
+	public String SendItemCanNotModify() {return "Item already send can not be modified.";}
     @Override
 	public String reCeivedMoneyNotEnough() {return "Haven't received enough money, are you sure to close the bill?";}
     @Override

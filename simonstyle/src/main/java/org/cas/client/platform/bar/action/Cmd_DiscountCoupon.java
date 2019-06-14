@@ -99,7 +99,7 @@ public class Cmd_DiscountCoupon implements SamActionListener {
                     	PrintService.exePrintInvoice(salesPanel.billPanel, false, true, true);
                     	BarFrame.instance.closeCurrentBill();
 	                	//this.setVisible(false);
-	                	if(BarOption.isFastFoodMode()) {
+	                	if(BarOption.isCounterMode()) {
 	            	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
 	            	    	BarFrame.instance.addNewBillInCurTable();
 	                	}else {

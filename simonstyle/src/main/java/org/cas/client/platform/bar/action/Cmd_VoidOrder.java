@@ -135,7 +135,7 @@ public class Cmd_VoidOrder implements SamActionListener {
 			L.e("void order", "error happend when voiding a bill with ID:"+ billID, exp);
 		}
 		
-		if(BarOption.isFastFoodMode()) {
+		if(BarOption.isCounterMode()) {
 			String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 			String newOpenTime = BarOption.df.format(new Date());
 			int newBillIdx = BillListPanel.getANewBillIdx(tableName, newOpenTime);

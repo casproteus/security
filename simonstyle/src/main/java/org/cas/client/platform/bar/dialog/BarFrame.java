@@ -49,7 +49,7 @@ import org.cas.client.resource.international.DlgConst;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V2.17-20190608";
+	private String VERSION = "V2.20-201906014";
 	public static BarFrame instance;
     public static BarDlgConst consts;
     
@@ -105,7 +105,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         	instance.setVisible(true);
         }
         
-    	if(BarOption.isFastFoodMode()) {
+    	if(BarOption.isCounterMode()) {
     		instance.ignoreItemChange = true;
     		instance.cmbCurTable.setSelectedItem("");
     		instance.setCurBillIdx("1");
@@ -136,6 +136,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 				}
 			}
         }
+        instance.repaint();
     }
     
     private static String validateActivation(String activateCode) {

@@ -47,7 +47,7 @@ public class Cmd_Send implements SamActionListener {
 		billPanel.createAndPrintNewOutput();
     	billPanel.billPricesUpdateToDB();
 		
-    	if(BarOption.isFastFoodMode()) {
+    	if(BarOption.isCounterMode()) {
 	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
 	    	BarFrame.instance.addNewBillInCurTable();
 	    }else {

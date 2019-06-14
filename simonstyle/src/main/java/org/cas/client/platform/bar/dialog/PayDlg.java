@@ -424,7 +424,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         		boolean needToBePrinted = billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled();
 	        	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
             	
-            	if(BarOption.isFastFoodMode()) {
+            	if(BarOption.isCounterMode()) {
         	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
         	    	BarFrame.instance.addNewBillInCurTable();
         	    }else {
@@ -477,7 +477,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
         	Cmd_OpenDrawer.getInstance().actionPerformed(null);
 
-        	if(BarOption.isFastFoodMode()) {
+        	if(BarOption.isCounterMode()) {
     	    	BarFrame.instance.addNewBillInCurTable();
     	    }else if(BarFrame.instance.isTableEmpty(null, null)) {
     			BarFrame.instance.closeATable(null, null);

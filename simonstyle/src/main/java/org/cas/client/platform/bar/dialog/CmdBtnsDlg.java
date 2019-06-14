@@ -36,7 +36,7 @@ import org.cas.client.platform.bar.action.Cmd_CheckInOutList;
 import org.cas.client.platform.bar.action.Cmd_CheckOrder;
 import org.cas.client.platform.bar.action.Cmd_Color;
 import org.cas.client.platform.bar.action.Cmd_CombineAll;
-import org.cas.client.platform.bar.action.Cmd_Coupon;
+import org.cas.client.platform.bar.action.Cmd_SettingCoupon;
 import org.cas.client.platform.bar.action.Cmd_DiscBill;
 import org.cas.client.platform.bar.action.Cmd_DiscItem;
 import org.cas.client.platform.bar.action.Cmd_DiscountCoupon;
@@ -546,7 +546,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnBillFoot.addActionListener(Cmd_BillFoot.getInstance());
         btnModifySetting.addActionListener(Cmd_ModifySetting.getInstance());
         btnGiftCardSetting.addActionListener(Cmd_GiftCard.getInstance());
-        btnCoupon.addActionListener(Cmd_Coupon.getInstance());
+        btnCoupon.addActionListener(Cmd_SettingCoupon.getInstance());
         btnColor.addActionListener(Cmd_Color.getInstance());
         btnCheckInOutList.addActionListener(Cmd_CheckInOutList.getInstance());
         

@@ -70,13 +70,13 @@ public class Dish {
 		}
 		num += pX;
 		if(billIndex == null) {		//updating the original output.
-			Statement smt = PIMDBModel.getStatement();
+			StringBuilder sql = new StringBuilder("update output set amount = ").append(num)
+					.append(", category = ").append(dish.getBillID())
+					.append(", TOLTALPRICE = ").append(dish.getTotalPrice() * splitRate) 
+					.append(", discount = ").append(dish.getDiscount() * splitRate)
+					.append(" where id = ").append(dish.getOutputID());
 			try {
-				smt.executeUpdate("update output set amount = " + num
-						+ ", category = " + dish.getBillID()
-						+ ", TOLTALPRICE = " + dish.getTotalPrice() * splitRate 
-						+ ", discount = " + dish.getDiscount() * splitRate
-						+" where id = " + dish.getOutputID());
+				PIMDBModel.getStatement().executeUpdate(sql.toString());
 			} catch (Exception exp) {
 				ErrorUtil.write(exp);
 			}

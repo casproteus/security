@@ -14,13 +14,13 @@ import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.bar.uibeans.SamActionListener;
 
-public class Cmd_Coupon implements SamActionListener {
+public class Cmd_SettingCoupon implements SamActionListener {
 
-	private static Cmd_Coupon instance;
-	private Cmd_Coupon() {}
-	public static Cmd_Coupon getInstance() {
+	private static Cmd_SettingCoupon instance;
+	private Cmd_SettingCoupon() {}
+	public static Cmd_SettingCoupon getInstance() {
 		if(instance == null)
-			instance = new Cmd_Coupon();
+			instance = new Cmd_SettingCoupon();
 		return instance;
 	}
 	
