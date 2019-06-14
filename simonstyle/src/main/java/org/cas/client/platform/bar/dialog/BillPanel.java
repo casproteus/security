@@ -728,14 +728,20 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			
 			tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
 
-			String[] langs = dish.getModification().split(BarDlgConst.semicolon);
-			String lang = langs.length > LoginDlg.USERLANG ? langs[LoginDlg.USERLANG] : langs[0];
-			if(lang.length() == 0 || "null".equalsIgnoreCase(lang))
-				lang = langs[0].length() == 0 || "null".equalsIgnoreCase(lang) ? "" : langs[0];
-			
-			tValues[tmpPos][2] = lang;
-			if(dish.getDiscount() > 0) {
-				tValues[tmpPos][2] = lang + "  -" + BarOption.getMoneySign() + BarUtil.formatMoney(dish.getDiscount() / 100.0);
+			String[] marks = dish.getModification().split(BarDlgConst.delimiter);
+			StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < marks.length; i++) {
+				String[] langs = marks[i].split(BarDlgConst.semicolon);
+				String lang = langs.length > LoginDlg.USERLANG ? langs[LoginDlg.USERLANG] : langs[0];
+				if(lang.length() == 0 || "null".equalsIgnoreCase(lang)) {
+					lang = langs[0].length() == 0 || "null".equalsIgnoreCase(lang) ? "" : langs[0];
+				}
+				sb.append(lang).append(" ");
+			}
+			if(dish.getDiscount() == 0) {
+				tValues[tmpPos][2] = sb.toString();
+			}else{
+				tValues[tmpPos][2] = sb.append("  -").append(BarOption.getMoneySign()).append(BarUtil.formatMoney(dish.getDiscount() / 100.0)).toString();
 			}
 			
 			tValues[tmpPos][3] =  BarOption.getMoneySign() + dish.getTotalPrice() / 100f;
