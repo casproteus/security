@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 
 import org.cas.client.platform.CASControl;
 import org.cas.client.platform.bar.BarUtil;
+import org.cas.client.platform.bar.action.Cmd_Send;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
@@ -365,10 +366,12 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     public int switchMode(int i) {
     	if(curPanel == 3) {	//if it's switching from setting panel, then ask to do a login.
     		if(ignoreLogin == false) {
-	    		instance.setVisible(false);
-	    		new LoginDlg(null).setVisible(true);
-	    		instance.setVisible(true);
-	    		valOperator.setText(LoginDlg.USERNAME);
+    			if(BarOption.isSingleUser()) {
+		    		instance.setVisible(false);
+		    		new LoginDlg(null).setVisible(true);
+		    		instance.setVisible(true);
+		    		valOperator.setText(LoginDlg.USERNAME);
+    			}
     		}else {
     			ignoreLogin = false;
     		}
@@ -548,6 +551,9 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	   	                	 this.cmbCurTable.setSelectedItem(oldTable);
 	   	                	 ignoreItemChange = false;
 	   	                     return;	
+	   	            	}else {
+	   	            		//TODO: send out with new table id. @NOte: the notice should also be modified.
+	   	            		//Cmd_Send
 	   	            	}
                     }
          		 }
