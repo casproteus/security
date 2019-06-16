@@ -286,11 +286,12 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				}else {			//not saved yet  //NOTE:getNum() couldn't be bigger than 10000, if it's saved, + button will insert a new line.
 					int tQTY = orderedDishAry.get(selectedRow).getNum() + 1;
 					dish.setNum(tQTY);
-					dish.setTotalPrice((dish.getPrice() - dish.getDiscount()) * tQTY);
+					float priceInLabel = BarUtil.calculateLabelsPrices(BillListPanel.curDish.getModification().split(BarDlgConst.delimiter));
+					dish.setTotalPrice((dish.getPrice() - dish.getDiscount() + (int)(priceInLabel * 100)) * tQTY);
 					
 					table.setValueAt(tQTY % BarOption.MaxQTY + "x", selectedRow, 0);
 					table.setValueAt(BarOption.getMoneySign() 
-							+ BarUtil.formatMoney((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f),
+							+ BarUtil.formatMoney(dish.getTotalPrice()/100f),
 							selectedRow, 3);
 				}
 	        } else if (o == btnLess) {
@@ -309,10 +310,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					} else {
 						int tQTY = orderedDishAry.get(selectedRow).getNum() - 1;
 						dish.setNum(tQTY);
-						dish.setTotalPrice((dish.getPrice() - dish.getDiscount()) * tQTY);
+						float priceInLabel = BarUtil.calculateLabelsPrices(BillListPanel.curDish.getModification().split(BarDlgConst.delimiter));
+						dish.setTotalPrice((dish.getPrice() - dish.getDiscount() + (int)(priceInLabel * 100)) * tQTY);
 						table.setValueAt(tQTY == 1 ? "" : tQTY + "x"  , selectedRow, 0);		
 						table.setValueAt(BarOption.getMoneySign()
-								+ BarUtil.formatMoney((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f),
+								+ BarUtil.formatMoney(dish.getTotalPrice()/100f),
 								selectedRow, 3);
 					}
 				}

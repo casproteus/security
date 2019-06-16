@@ -423,9 +423,9 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             	float oldPriceInLabel = 0.0f;
             	float newPriceInLabel = 0.0f;	//new labels added money
             	if(BillListPanel.curDish.getModification() != null) {
-            		oldPriceInLabel = calculateLabelsPrices(BillListPanel.curDish.getModification().split(BarDlgConst.delimiter));
+            		oldPriceInLabel = BarUtil.calculateLabelsPrices(BillListPanel.curDish.getModification().split(BarDlgConst.delimiter));
             	}
-            	newPriceInLabel = calculateLabelsPrices(notes);	//new labels added money
+            	newPriceInLabel = BarUtil.calculateLabelsPrices(notes);	//new labels added money
             	int newtotal = (int)(BillListPanel.curDish.getTotalPrice() - oldPriceInLabel * 100 + newPriceInLabel * 100);
             	
             	//update the orderAry and database.
@@ -450,33 +450,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             dispose();
         }
     }
-
-    private float calculateLabelsPrices(String[] labels) {
-    	Float pirce = 0.0f;
-		for(int i = 0; i < labels.length; i++) {
-			String[] langs = labels[i].split(BarDlgConst.semicolon);
-			StringBuilder sql = new StringBuilder("select distinct lang6 from modification where lang1 = '").append(langs[0].trim()).append("'");
-			try {
-				ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-				rs.afterLast();
-				rs.relative(-1);
-				if(rs.getRow() > 1) {
-					L.e("AddModificationDlg", " Found two labels with same name but have different price!" + langs[0], null);
-				}else if(rs.getRow() == 0) {
-					L.e("AddModificationDlg", " Found no labels matching lang1 = " + langs[0] + ". if this label has price property, will affect the total price of this dish!", null);
-				}
-				rs.beforeFirst();
-				rs.next();
-				String lang6 = rs.getString("lang6");
-				if(lang6 != null && lang6.length() > 0) {
-					pirce += Float.parseFloat(rs.getString("lang6"));
-				}
-			}catch(Exception e) {
-				L.e("AddModificationDlg", " Exception when searching price of modificaiton " + sql, null);
-			}
-		}
-		return pirce;
-	}
 
 	private void applyProperties() {
     	//validate values;
