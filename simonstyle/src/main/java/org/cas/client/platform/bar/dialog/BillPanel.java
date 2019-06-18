@@ -286,7 +286,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				}else {			//not saved yet  //NOTE:getNum() couldn't be bigger than 10000, if it's saved, + button will insert a new line.
 					int tQTY = orderedDishAry.get(selectedRow).getNum() + 1;
 					dish.setNum(tQTY);
-					float priceInLabel = BarUtil.calculateLabelsPrices(BillListPanel.curDish.getModification().split(BarDlgConst.delimiter));
+					String modify = BillListPanel.curDish.getModification();
+					float priceInLabel = modify == null ? 0.0f : BarUtil.calculateLabelsPrices(modify.split(BarDlgConst.delimiter));
 					dish.setTotalPrice((dish.getPrice() - dish.getDiscount() + (int)(priceInLabel * 100)) * tQTY);
 					
 					table.setValueAt(tQTY % BarOption.MaxQTY + "x", selectedRow, 0);
@@ -310,7 +311,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					} else {
 						int tQTY = orderedDishAry.get(selectedRow).getNum() - 1;
 						dish.setNum(tQTY);
-						float priceInLabel = BarUtil.calculateLabelsPrices(BillListPanel.curDish.getModification().split(BarDlgConst.delimiter));
+						String modify = BillListPanel.curDish.getModification();
+						float priceInLabel = modify == null ? 0.0f : BarUtil.calculateLabelsPrices(modify.split(BarDlgConst.delimiter));
 						dish.setTotalPrice((dish.getPrice() - dish.getDiscount() + (int)(priceInLabel * 100)) * tQTY);
 						table.setValueAt(tQTY == 1 ? "" : tQTY + "x"  , selectedRow, 0);		
 						table.setValueAt(BarOption.getMoneySign()
