@@ -101,7 +101,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         	}
         }
         
-        if(BarOption.isSingleUser()) {
+        if(BarOption.isSingleUser() && BarOption.getDefaultWindowStatus() != JFrame.ICONIFIED) {
 	        singleUserLoginProcess();
         }else {
         	instance.setVisible(true);
@@ -139,6 +139,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 			}
         }
         instance.repaint();
+        instance.setExtendedState(BarOption.getDefaultWindowStatus());
     }
     
     private static String validateActivation(String activateCode) {
