@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.text.SimpleDateFormat;
 
+import javax.swing.JFrame;
+
 import org.cas.client.platform.bar.net.RequestNewOrderThread;
 import org.cas.client.platform.bar.print.Command;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -586,5 +588,20 @@ public class BarOption {
 	}
 	public static void setSettingPanelBK(String filePath) {
 		CustOpts.custOps.setKeyAndValue("SettingPanelBK", filePath);
+	}
+	
+	public static int getDefaultWindowStatus() {
+		Object o = CustOpts.custOps.getValue("DefaultWindowStatus");
+		if(o == null)
+			return JFrame.MAXIMIZED_BOTH;
+		else {
+			int i = JFrame.MAXIMIZED_BOTH;
+			try {
+				i = Integer.valueOf(String.valueOf(o));
+			}catch(Exception e) {
+				
+			}
+			return i;
+		}
 	}	
 }
