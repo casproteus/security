@@ -80,7 +80,9 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		//reinit the four instance properties with new received json string.
 	    mainOrders = new JSONDeserializer<List<MainOrder>>()
 	    		.use(null, ArrayList.class).use("values", MainOrder.class).deserialize(tList.get(0));
-
+	    if(mainOrders.isEmpty())
+	    	return;
+	    
 	    materials = new JSONDeserializer<List<Material>>().use(null, ArrayList.class)
 	            .use("values", Material.class).deserialize(tList.get(1));
 
