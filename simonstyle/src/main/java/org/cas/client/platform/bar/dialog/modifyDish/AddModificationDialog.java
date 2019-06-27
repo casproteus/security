@@ -489,6 +489,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 		}catch(Exception e) {
 			L.e("AddModification ", "Exception when updating a category into modification.", e);
 		}
+		this.initTabbedPaneContent();
 	}
 
 	private boolean insertModification( String modification) {
