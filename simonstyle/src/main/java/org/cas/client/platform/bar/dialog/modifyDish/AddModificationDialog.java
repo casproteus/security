@@ -376,7 +376,9 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             	StringBuilder modifications = new StringBuilder(txaCurContent.getText());
             	for (java.util.Map.Entry<Integer, String> entry : selections.entrySet()) {
             		if(entry.getKey() != tabbedPane.getSelectedIndex()) {
-            			modifications.append(BarDlgConst.delimiter);
+            			if(modifications.length() > 0 && !modifications.toString().endsWith(BarDlgConst.delimiter)) {
+            				modifications.append(BarDlgConst.delimiter);
+            			}
             			modifications.append(entry.getValue());
             		}
 				}
@@ -561,6 +563,27 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         }
     }
     
+    private boolean deleteCategory(int idx) {
+    	if(idx > 0) {
+    		idx = idx * -1;
+    	}
+    	StringBuilder sql = new StringBuilder("DELETE FROM modification where type = ").append(idx);
+        try {
+            PIMDBModel.getStatement().executeUpdate(sql.toString());
+            
+            sql = new StringBuilder("update modification set type = type + 1 where type < " + idx);	//update the other category
+            PIMDBModel.getStatement().executeUpdate(sql.toString());
+
+            sql = new StringBuilder("update modification set type = type - 1 where type > " + (-1 * idx));	//update modification of other category.
+            PIMDBModel.getStatement().executeUpdate(sql.toString());
+            
+            return true;
+        } catch (SQLException e) {
+        	ErrorUtil.write(e);
+            return false;
+        }
+    }
+    
     private ArrayList<String> getInputModification() {
         // 把文本框中字段还原为字符串数组
         String[] usedFields = stringToArray(txaCurContent.getText());
@@ -597,29 +620,34 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 		}
     	
     	ListModel<CheckItem> model = modificationList.getModel();
-    	
-    	for(int i =  model.getSize() - 1; i >= 0; i--) {
-    		CheckItem checkItem = model.getElementAt(i);
-    		if(checkItem.isSelected()) {
-    			int tmpSelectionIndex = i;
-    	        
-    	        // 看来字段删除必须在这时处理
-    	        deleteModification(checkItem.getName(), tabbedPane.getSelectedIndex());
-    	        listModel.remove(tmpSelectionIndex);
-    	        itemChanged = true;
-
-    	        // 下面要处理文本区的显示
-    	        setTextOfTextArea();
-
-    	        // 确定按钮置有效
-    	        if (!btnOK.isEnabled()) {
-    	            btnOK.setEnabled(true);
-    	        }
-    		}
-    	}
-    	if(!itemChanged) {
-	    	JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.AtLeastOneShouldBeSelected());
-	    	return;
+    	if(model.getSize() > 0) {
+	    	for(int i = model.getSize() - 1; i >= 0; i--) {
+	    		CheckItem checkItem = model.getElementAt(i);
+	    		if(checkItem.isSelected()) {
+	    			int tmpSelectionIndex = i;
+	    	        
+	    	        // 看来字段删除必须在这时处理
+	    	        deleteModification(checkItem.getName(), tabbedPane.getSelectedIndex());
+	    	        listModel.remove(tmpSelectionIndex);
+	    	        itemChanged = true;
+	
+	    	        // 下面要处理文本区的显示
+	    	        setTextOfTextArea();
+	
+	    	        // 确定按钮置有效
+	    	        if (!btnOK.isEnabled()) {
+	    	            btnOK.setEnabled(true);
+	    	        }
+	    		}
+	    	}
+	    	if(!itemChanged) {
+		    	JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.AtLeastOneShouldBeSelected());
+		    	return;
+	    	}
+    	}else {//delete the group.
+    		int selectedTabIdx = tabbedPane.getSelectedIndex();
+    		deleteCategory(selectedTabIdx);
+    		tabbedPane.remove(selectedTabIdx);
     	}
     }
 
