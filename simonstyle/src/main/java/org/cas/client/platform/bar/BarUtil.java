@@ -251,6 +251,10 @@ public class BarUtil {
     public static String canadianPennyRound(String substring) {
 		Float price = Float.parseFloat(substring.trim());
 		int cent = (int)(price * 100);
+		boolean isNegtive = cent < 0;
+		if(isNegtive) {
+			cent *= -1;
+		}
 		int lastNum = cent % 10;
 		if(lastNum < 3) {
 			cent = cent - lastNum;
@@ -260,6 +264,9 @@ public class BarUtil {
 			cent = cent - lastNum + 5;
 		}
 		
+		if(isNegtive) {
+			cent *= -1;
+		}
 		return BarUtil.formatMoney(cent/100f);
 	}
     

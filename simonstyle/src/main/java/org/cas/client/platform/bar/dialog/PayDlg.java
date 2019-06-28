@@ -29,6 +29,7 @@ import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
+import org.jfree.chart.title.Title;
 
 public class PayDlg extends JDialog implements ActionListener, ComponentListener, WindowListener{
 	
@@ -219,8 +220,17 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             valMasterReceived.setText(BarUtil.formatMoney(onSrcMasterReceived / 100.0));
             valOtherReceived.setText(BarUtil.formatMoney(onSrcOtherReceived / 100.0));
             
-        	valTotal.setText(BarUtil.formatMoney(total / 100.0));
-            valLeft.setText(BarUtil.formatMoney(left / 100.0));
+            String totalStr = BarUtil.formatMoney(total / 100.0);
+            if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
+            	totalStr = BarUtil.canadianPennyRound(totalStr);
+            }
+        	valTotal.setText(totalStr);
+        	
+        	String leftStr = BarUtil.formatMoney(left / 100.0);
+            if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
+            	leftStr = BarUtil.canadianPennyRound(leftStr);
+            }
+            valLeft.setText(leftStr);
             
             reLayout();
             
@@ -614,7 +624,11 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 			received += Float.valueOf(valOtherReceived.getText()) + Float.valueOf(tfdNewReceived.getText());
 		}catch(Exception e) {}
 		
-		valLeft.setText(String.valueOf((int)(total * 100 - received * 100)/100f));
+		String leftStr = String.valueOf((int)(total * 100 - received * 100)/100f);
+        if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
+        	leftStr = BarUtil.canadianPennyRound(leftStr);
+        }
+		valLeft.setText(leftStr);
 		BarFrame.customerFrame.updateChange(0 - (int)(total * 100 - received * 100));
 	}
 	
