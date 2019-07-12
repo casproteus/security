@@ -94,7 +94,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     private void initComponent() {
         setTitle(BarFrame.consts.MODIFY()); // 设置标题
         getContentPane().setLayout(null);
-        setBounds((CustOpts.SCRWIDTH - 600) / 2, (CustOpts.SCRHEIGHT - 320) / 2, 600, 320); // 对话框的默认尺寸。
+        int modifyDlgWidth = BarOption.getModifyDlgWidth();
+        setBounds(CustOpts.SCRWIDTH - modifyDlgWidth, 0, modifyDlgWidth, CustOpts.SCRHEIGHT); // 对话框的默认尺寸。
         setResizable(true);
 
         // init--------------------------

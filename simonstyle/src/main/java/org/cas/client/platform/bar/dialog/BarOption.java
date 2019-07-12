@@ -603,5 +603,18 @@ public class BarOption {
 			}
 			return i;
 		}
+	}
+	
+	public static int getModifyDlgWidth() {
+		int width = 400;
+		Object o = CustOpts.custOps.getValue("ModifyDlgWidth");
+		if(o != null) {
+			try {
+				width = Integer.valueOf(o.toString());
+			}catch(Exception e) {
+				L.e("barOption", "non valid ModifyDlgWidth set" + o, e);
+			}
+		}
+		return width;
 	}	
 }

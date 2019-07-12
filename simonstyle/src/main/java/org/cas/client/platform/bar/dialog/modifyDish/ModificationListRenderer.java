@@ -1,6 +1,7 @@
 package org.cas.client.platform.bar.dialog.modifyDish;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.io.Serializable;
 
@@ -77,7 +78,8 @@ public class ModificationListRenderer extends JCheckBox implements ListCellRende
         }
 
         setEnabled(list.isEnabled());
-        setFont(list.getFont());
+        Font font = new Font("宋体",Font.PLAIN,36);
+        setFont(font);
         setBorder((cellHasFocus) ? UIManager.getBorder("List.focusCellHighlightBorder") : noFocusBorder);
 
         return this;
