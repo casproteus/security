@@ -19,7 +19,6 @@ import org.cas.client.platform.casutil.L;
 import org.json.JSONException;
 
 public class HttpRequestClient extends Thread{
-	public static final String SERVER_URL = "http://www.sharethegoodones.com";
 	public String url;
 	public String method;
 	public String responseString;

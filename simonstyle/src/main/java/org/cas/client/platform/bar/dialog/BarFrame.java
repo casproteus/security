@@ -186,7 +186,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         }
 
         BarOption.setLicense(inputedSN);
-        new HttpRequestClient(HttpRequestClient.SERVER_URL + "/activeAccount", "POST", prepareLicenceJSONString(), 
+        new HttpRequestClient("http://www.sharethegoodones.com/activeAccount", "POST", prepareLicenceJSONString(), 
         		new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
