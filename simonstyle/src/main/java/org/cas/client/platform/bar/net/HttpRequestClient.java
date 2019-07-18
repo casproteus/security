@@ -125,7 +125,7 @@ public class HttpRequestClient extends Thread{
         //JSONObject rjson = new JSONObject(buffer.toString());//把返回来的json编码格式的字符串数据转化成json对象
         //------------字符流读取服务端返回的数据------------
         InputStream in = urlConnection.getInputStream();
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         String str = null;
         StringBuffer buffer = new StringBuffer();
         while((str = br.readLine())!=null){//BufferedReader特有功能，一次读取一行数据
