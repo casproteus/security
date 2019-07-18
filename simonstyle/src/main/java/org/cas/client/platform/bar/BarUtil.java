@@ -330,7 +330,7 @@ public class BarUtil {
 		int max = buttons.size();
         if(max > maxBtnQt) {
         	MoreButton btnMore = new MoreButton(BarFrame.consts.MORE());
-        	boolean moreBtnAdded = buttons.get(9) instanceof MoreButton;
+        	boolean moreBtnAdded = buttons.get(maxBtnQt - 1) instanceof MoreButton;
         	for(int i =  moreBtnAdded? maxBtnQt : maxBtnQt - 1; i < buttons.size(); i++) {
         		btnMore.addButton(buttons.get(i));
         	}

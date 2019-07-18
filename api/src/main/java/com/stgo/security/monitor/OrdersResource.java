@@ -14,6 +14,11 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.stgo.security.monitor.util.SecurityQueryParameter;
 
@@ -21,14 +26,14 @@ import com.stgo.security.monitor.util.SecurityQueryParameter;
  * Security service REST API resource. Provide support for required handlers for statistic data.
  */
 @Path("/menus")
-public class SecurityResource {
+public class OrdersResource {
     public static final String APP_ZIP = "application/zip";
 
     private ProtectionOperator protectionOperator;
     /**
      * Associated class logger
      */
-    private static final Logger LOG = LoggerFactory.getLogger(SecurityResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OrdersResource.class);
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static final long ONE_DAY = 1000 * 60 * 60 * 24;
@@ -43,24 +48,17 @@ public class SecurityResource {
      * if the host server of SanjiPos is set, then the menu should be modified on web. 
      * @return
      */
+    @RequestMapping(headers = "Accept=application/json")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML, APP_ZIP,
             MediaType.APPLICATION_OCTET_STREAM })
     public Response refreshMenu(
-            @QueryParam(SecurityQueryParameter.VERSION)
-            final String version,
-            @QueryParam(SecurityQueryParameter.HOSTID)
-            final String hostId,
-            @QueryParam(SecurityQueryParameter.LABEL)
-            final String label,
-            @QueryParam(SecurityQueryParameter.MESSAGE)
-            final String message,
-            @QueryParam(SecurityQueryParameter.TIME)
-            String time) {
-        StreamingOutput output = protectionOperator.logStatus(version, hostId, label, message, time);
+    		@RequestBody String accountInfo) {
+        System.out.println(accountInfo);
+    	StreamingOutput output = protectionOperator.logStatus("version", "hostId", "label", "message", "time");
         return Response.ok(output).build();
     }
 
-    /**
+			/**
      * It's designed and used by tablet to send order. we suppose that tablet got menu from sanjiPos, so the menu SanjiPos must have.
      * But we should still check if the menu exist, in case the server deleted the dish while the tablet forgot to get.
      * currently tablet is already been able to synchronize menu from www.sharethegoodones.com.
