@@ -172,29 +172,51 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     			new CmdBtnsDlg(BarFrame.instance).setVisible(true);
     			return;
     		}
-    		int idx = content.indexOf(":");
-    		if(idx >= 0) {
-    			String key = content.substring(0, idx);
-    			String value = BarUtil.encrypt(key, content.substring(idx + 1));
-    	    	CustOpts.custOps.setKeyAndValue(key, value);
-    		}else {
-    			idx = content.indexOf("?");
+    		if(content.contains(":") || content.contains("=") || content.contains("?")) {
+    			int idx = content.indexOf(":");
         		if(idx >= 0) {
         			String key = content.substring(0, idx);
-        			String value = (String)CustOpts.custOps.getValue(key);
-        			tfdPrinterMinReachTime.setText(value);
+        			if(key.startsWith("-")) {
+        				key = key.substring(1);
+        			}
+        			String value = BarUtil.encryptIfNeeded(key, content.substring(idx + 1));
+        	    	CustOpts.custOps.setKeyAndValue(key, value);
         		}else {
-		    		try {
-			    		int t = Integer.valueOf(content);
-			    		if(t < 10) {
-			    			t *= 1000;
-			    		}
-			    		BarOption.setPrinterMinReachTime(String.valueOf(t));
-		    		}catch(Exception exp) {
-		    			JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
+        			idx = content.indexOf(":");
+        			if(idx <= 0) {
+        				idx = content.indexOf("=");
+        			}
+            		if(idx >= 0) {
+            			idx = content.indexOf("?");
+	            		if(idx >= 0) {
+	            			String key = content.substring(0, idx);
+	            			if(key.startsWith("-")) {
+	            				key = key.substring(1);
+	            			}
+	            			String value = BarUtil.encryptIfNeeded(key, content.substring(idx + 1));
+	            	    	CustOpts.custOps.setKeyAndValue(key, value);
+	            		}
+            		}else {
+            			String key = content.substring(0, idx);
+            			if(key.startsWith("-")) {
+            				key = key.substring(1);
+            			}
+            			String value = (String)CustOpts.custOps.getValue(key);
+            			tfdPrinterMinReachTime.setText(value);
+        			}
+        		}
+    		}else {
+	    		try {
+		    		int t = Integer.valueOf(content);
+		    		if(t < 10) {
+		    			t *= 1000;
 		    		}
-    			}
+		    		BarOption.setPrinterMinReachTime(String.valueOf(t));
+	    		}catch(Exception exp) {
+	    			JOptionPane.showMessageDialog(this, BarFrame.consts.InvalidInput());
+	    		}
     		}
+    		
     	}else if(o == tfdServerHost) {
 			BarOption.setServerHost(tfdServerHost.getText());
     	}else if(o == tfdCategoryRow) {

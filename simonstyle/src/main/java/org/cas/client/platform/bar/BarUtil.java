@@ -312,7 +312,7 @@ public class BarUtil {
 		
 	}
 
-	public static String encrypt(String key, String substring) {
+	public static String encryptIfNeeded(String key, String substring) {
 		if(key.equals("superPassword")) {
 			substring = TaoEncrypt.encryptPassword(substring);
 		}
