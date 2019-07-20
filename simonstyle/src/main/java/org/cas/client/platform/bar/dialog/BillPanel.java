@@ -635,6 +635,16 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         valTotlePrice.setText(BarUtil.formatMoney((total)/100f));
         
         BarFrame.setStatusMes(BarFrame.consts.getPennyRounded() + BarUtil.canadianPennyRound(valTotlePrice.getText()));
+
+		if(BarFrame.secondScreen != null) {
+			BillPanel billPanel2 = BarFrame.customerFrame.billPanel;
+			billPanel2.lblDiscount.setText(lblDiscount.getText());
+			billPanel2.lblServiceFee.setText(lblServiceFee.getText());
+			billPanel2.lblSubTotle.setText(lblSubTotle.getText());
+			billPanel2.lblTPS.setText(lblTPS.getText());
+			billPanel2.lblTVQ.setText(lblTVQ.getText());
+			billPanel2.valTotlePrice.setText(valTotlePrice.getText());
+		}
     }
     
     public void initContent() {
@@ -1082,6 +1092,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	}
         setBackground(bg);
         setLayout(null);
+        if(BarFrame.secondScreen != null) {
+        	table.setMirrorTable(BarFrame.customerFrame.billPanel.table); //this must happen before setDataVector is called, because
+        }															//in that method will check if the mirrorTable exist.
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setAutoscrolls(true);
         table.setRowHeight(30);
@@ -1089,7 +1102,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         table.setRenderAgent(this);
         table.setHasSorter(false);
         table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-
+        
         table.setDataVector(new Object[1][header.length], header);
         DefaultPIMTableCellRenderer tCellRender = new DefaultPIMTableCellRenderer();
         tCellRender.setOpaque(true);

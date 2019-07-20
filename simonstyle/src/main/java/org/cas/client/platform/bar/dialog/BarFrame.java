@@ -50,7 +50,7 @@ import org.cas.client.resource.international.DlgConst;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V2.25-20190718";
+	private String VERSION = "V2.26-20190720";
 	public static BarFrame instance;
     public static BarDlgConst consts;
     
@@ -65,7 +65,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     public static DiscountDlg discountDlg; 
     public static PayDlg payDlg;
 	public static CustomerFrame customerFrame;
-	private static GraphicsDevice secondScreen;
+	public static GraphicsDevice secondScreen;
     
     public static void main(String[] args) {
         CASControl.ctrl.initModel();
