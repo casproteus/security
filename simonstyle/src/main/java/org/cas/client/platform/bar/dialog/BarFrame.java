@@ -50,7 +50,7 @@ import org.cas.client.resource.international.DlgConst;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V2.26-20190720";
+	private String VERSION = "V2.27-20190720";
 	public static BarFrame instance;
     public static BarDlgConst consts;
     
@@ -85,13 +85,25 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	        	consts = new BarDlgConst0();
         }
         instance = new BarFrame();
+
         CmdBtnsDlg.initButtons();
         instance.initComponent();
-    	
+        if(BarOption.isShowCustomerFrame()) {
+            GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+            GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            for (GraphicsDevice graphicsDevice : gds) {
+				if(gd != graphicsDevice) {
+					secondScreen = graphicsDevice;
+		            customerFrame = new CustomerFrame();
+					secondScreen.setFullScreenWindow(customerFrame);
+					((SalesPanel)BarFrame.instance.panels[2]).billPanel.table.setMirrorTable(customerFrame.billPanel.table); //this must happen before setDataVector is called, because
+					break;
+				}
+			}
+        }
         numberPanelDlg = new NumberPanelDlg(instance);
         discountDlg = new DiscountDlg(instance);
         payDlg = new PayDlg(instance);
-        customerFrame = new CustomerFrame();
         
         //activation check
         String returnStr = validateActivation(null);
@@ -127,17 +139,6 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         //this thread will start a request thread every 20 seconds to fetch new order from server..
         new RequestNewOrderThread().start();
         
-        if(BarOption.isShowCustomerFrame()) {
-            GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-            GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-            for (GraphicsDevice graphicsDevice : gds) {
-				if(gd != graphicsDevice) {
-					secondScreen = graphicsDevice;
-					secondScreen.setFullScreenWindow(customerFrame);
-					break;
-				}
-			}
-        }
         instance.repaint();
         instance.setExtendedState(BarOption.getDefaultWindowStatus());
     }

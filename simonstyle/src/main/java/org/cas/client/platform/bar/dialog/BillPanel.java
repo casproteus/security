@@ -520,6 +520,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
                     tValues[r][c] = table.getValueAt(r, c);
             table.setDataVector(tValues, header);
             resetColWidth(scrContent.getWidth());
+            if(BarFrame.secondScreen != null) {
+            	BarFrame.customerFrame.billPanel.resetColWidth(scrContent.getWidth());
+            }
         }else {
         	tRowCount--;
         }
@@ -644,6 +647,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			billPanel2.lblTPS.setText(lblTPS.getText());
 			billPanel2.lblTVQ.setText(lblTVQ.getText());
 			billPanel2.valTotlePrice.setText(valTotlePrice.getText());
+			
+			BarFrame.customerFrame.updateTotal(valTotlePrice.getText());
 		}
     }
     
@@ -765,6 +770,10 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		table.setDataVector(tValues, header);
 		
 		resetColWidth(scrContent.getWidth());
+
+        if(BarFrame.secondScreen != null) {
+        	BarFrame.customerFrame.billPanel.resetColWidth(scrContent.getWidth());
+        }
 		return dishAry;
 	}
 
@@ -876,6 +885,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		}
 		table.setDataVector(tValues, header);
 		resetColWidth(scrContent.getWidth());
+        if(BarFrame.secondScreen != null) {
+        	BarFrame.customerFrame.billPanel.resetColWidth(scrContent.getWidth());
+        }
 		table.setSelectedRow(tValues.length - 1); //@Note this will trigger a value change event, to set the curDish.
 		updateTotalArea();
 	}
@@ -1092,9 +1104,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	}
         setBackground(bg);
         setLayout(null);
-        if(BarFrame.secondScreen != null) {
-        	table.setMirrorTable(BarFrame.customerFrame.billPanel.table); //this must happen before setDataVector is called, because
-        }															//in that method will check if the mirrorTable exist.
+													//in that method will check if the mirrorTable exist.
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setAutoscrolls(true);
         table.setRowHeight(30);
@@ -1189,7 +1199,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	}
 
 	public PIMTable table;
-    private PIMScrollPane scrContent;
+	public PIMScrollPane scrContent;
 
     public JLabel lblSubTotle;
     public JLabel lblTPS;

@@ -629,7 +629,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	leftStr = BarUtil.canadianPennyRound(leftStr);
         }
 		valLeft.setText(leftStr);
-		BarFrame.customerFrame.updateChange(0 - (int)(total * 100 - received * 100));
+		if(BarFrame.secondScreen != null) {
+			BarFrame.customerFrame.updateChange(String.valueOf((int)(received * 100)/100f), leftStr);
+		}
 	}
 	
     void initComponent() {

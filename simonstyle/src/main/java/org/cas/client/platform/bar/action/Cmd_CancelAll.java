@@ -13,6 +13,7 @@ import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.bar.uibeans.SamActionListener;
+import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.resource.international.DlgConst;
 
 public class Cmd_CancelAll implements SamActionListener {
@@ -68,6 +69,10 @@ public class Cmd_CancelAll implements SamActionListener {
     		}
     		billPanel.table.setDataVector(tValues, billPanel.header);
     		billPanel.resetColWidth(billPanel.getWidth());
+
+            if(BarFrame.secondScreen != null) {
+            	BarFrame.customerFrame.billPanel.resetColWidth(CustOpts.SCRWIDTH/2 - CustOpts.HOR_GAP * 4);
+            }
     		billPanel.table.setSelectedRow(tValues.length - 1);
     		billPanel.updateTotalArea();
     	}else if(!BarOption.isCounterMode()){
