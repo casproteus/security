@@ -15,7 +15,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String Tip() {return "Pourboire";}
     @Override
-	public String ServiceFee() {return "Frais De Service";}
+	public String ServiceFee() {return "Serv";}
     @Override
 	public String SERVICEFEE() {return "<html><center>FRAIS DE  <br>SRIVICE</center></html>";}
     

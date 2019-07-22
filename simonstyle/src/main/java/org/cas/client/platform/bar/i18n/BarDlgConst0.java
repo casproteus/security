@@ -15,7 +15,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String Tip() {return "Tip";}
     @Override
-	public String ServiceFee() {return "Service Fee";}
+	public String ServiceFee() {return "Serv";}
     @Override
 	public String SERVICEFEE() {return "<html><center>SERVICE<br>FEE</center></html>";}
     
@@ -291,7 +291,7 @@ public class BarDlgConst0 implements BarDlgConst{
 
 
     @Override
-	public String Discount() {return "Discount";}
+	public String Discount() {return "Disc";}
     @Override
 	public String Receive() {return "Received";}
     @Override
