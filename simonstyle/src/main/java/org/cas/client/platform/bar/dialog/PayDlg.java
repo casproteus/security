@@ -419,14 +419,18 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         		BarFrame.instance.closeCurrentBill();
             	this.setVisible(false);
             	if(left < 0) {	//if it's equal to 0, then do not display the change dialog.
-            		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign()
-            				+ BarUtil.formatMoney((0 - left)/100f)).setVisible(true); //it's a non-modal dialog.
+            		ChangeDlg changeDlg = new ChangeDlg(BarFrame.instance, BarOption.getMoneySign()
+            				+ BarUtil.formatMoney((0 - left)/100f)); //it's a non-modal dialog.
             		//if the last pay was with cash, then might need cash back (no change, paid with a "50" bill)
             		if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
+            			changeDlg.setTitle(BarFrame.consts.Change());
             			BillPanel.updateBill(billId, "cashback", oldCashback + left);
             		}else {
+            			changeDlg.setTitle(BarFrame.consts.Tip());
             			BillPanel.updateBill(billId, "TIP", oldTip - left);	//otherwise, treated as tip. the tip in DB are positive, because it means we earned money.
             		}
+            		
+            		changeDlg.setVisible(true);
             	}
 
             	//let's qa decide if we should go back to table interface.
@@ -630,7 +634,8 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         }
 		valLeft.setText(leftStr);
 		if(BarFrame.secondScreen != null) {
-			BarFrame.customerFrame.updateChange(String.valueOf((int)(received * 100)/100f), leftStr);
+			String changeStr = leftStr.startsWith("-") ? "-" + leftStr : leftStr.substring(1);
+			BarFrame.customerFrame.updateChange(String.valueOf((int)(received * 100)/100f), changeStr, getTitle().equals(BarFrame.consts.EnterCashPayment()));
 		}
 	}
 	

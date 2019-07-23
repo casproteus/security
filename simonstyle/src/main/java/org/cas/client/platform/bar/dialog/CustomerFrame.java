@@ -131,9 +131,14 @@ public class CustomerFrame extends JDialog implements ComponentListener{
 		valTotalPrice.setText(BarOption.getMoneySign() + total);
 	}
 	
-	public void updateChange(String received, String left) {
+	public void updateChange(String received, String left, boolean isPayingWithCash) {
 		valReceived.setText(BarOption.getMoneySign() + received);
 		valChange.setText(BarOption.getMoneySign() + left);
+		if(left.startsWith("-") && !isPayingWithCash) {
+			lblChange.setText(BarFrame.consts.Tip() + " : ");
+		}else {
+			lblChange.setText(BarFrame.consts.Change() + " : ");
+		}
 	}
 	
 }
