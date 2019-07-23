@@ -634,7 +634,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         }
 		valLeft.setText(leftStr);
 		if(BarFrame.secondScreen != null) {
-			String changeStr = leftStr.startsWith("-") ? "-" + leftStr : leftStr.substring(1);
+			String changeStr = leftStr.startsWith("-") ? leftStr.substring(1) : "-" + leftStr;
 			BarFrame.customerFrame.updateChange(String.valueOf((int)(received * 100)/100f), changeStr, getTitle().equals(BarFrame.consts.EnterCashPayment()));
 		}
 	}
