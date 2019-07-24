@@ -50,7 +50,7 @@ import org.cas.client.resource.international.DlgConst;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V2.27-20190720";
+	private String VERSION = "V2.29-20190723";
 	public static BarFrame instance;
     public static BarDlgConst consts;
     
@@ -536,6 +536,11 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
                  //no-changes check
         		 String newTable = e.getItem().toString();
                  if ("".equals(newTable) || oldTable.equals(newTable)) {
+                	 return;
+                 }else if(curPanel == 0) {
+                	 TablesPanel tablesPanel = (TablesPanel)panels[curPanel];
+                	 ActionEvent evt = new ActionEvent(tablesPanel.getTableButtonByName(newTable), 0, null);
+                	 tablesPanel.actionPerformed(evt);
                 	 return;
                  }
                  

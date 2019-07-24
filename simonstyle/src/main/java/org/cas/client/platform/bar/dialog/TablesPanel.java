@@ -2,6 +2,7 @@ package org.cas.client.platform.bar.dialog;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Event;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -290,5 +291,15 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
 
 	@Override
 	public void mouseExited(MouseEvent e) {}
+
+	public TableButton getTableButtonByName(String newTable) {
+		for (TableButton tableButton : btnTables) {
+			if(tableButton.getText().equals(newTable)) {
+				return tableButton;
+			}
+		}
+		
+		return null;
+	}
 
 }
