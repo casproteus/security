@@ -48,8 +48,8 @@ public class Cmd_Send implements SamActionListener {
     	billPanel.billPricesUpdateToDB();
 		
     	if(BarOption.isCounterMode()) {
-	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
-	    	BarFrame.instance.addNewBillInCurTable();
+//	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
+//	    	BarFrame.instance.addNewBillInCurTable();
 	    }else {
 	    	if(salesPanel.partialPaid) {
     			if(JOptionPane.showConfirmDialog(BarFrame.instance, 
