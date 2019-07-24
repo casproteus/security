@@ -182,8 +182,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 
     private void reLayout() {
         btnOK.setBounds(getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.BTN_WIDTH - 2 * CustOpts.HOR_GAP, 
-        		getHeight() - CustOpts.BTN_HEIGHT - CustOpts.SIZE_EDGE - CustOpts.SIZE_TITLE - 2 * CustOpts.VER_GAP,
-                CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
+        		getHeight() - CustOpts.BTN_HEIGHT * 2 - CustOpts.SIZE_EDGE - CustOpts.SIZE_TITLE - 2 * CustOpts.VER_GAP,
+                CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT * 2);
 
         if(BillListPanel.curDish == null) {
             topLabel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
