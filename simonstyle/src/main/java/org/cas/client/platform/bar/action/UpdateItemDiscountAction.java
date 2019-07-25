@@ -93,13 +93,13 @@ public class UpdateItemDiscountAction implements ActionListener{
              	billPanel.table.setValueAt(newContent, row, 2);
              	
              	billPanel.table.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney(totalPrice * qt), row, 3);
-             	billPanel.orderedDishAry.get(row).setDiscount((int)(newDiscount * 100));
-             	billPanel.orderedDishAry.get(row).setTotalPrice((int)((totalPrice * qt) * 100));
+             	billPanel.orderedDishAry.get(row).setDiscount(Math.round(newDiscount * 100));
+             	billPanel.orderedDishAry.get(row).setTotalPrice(Math.round((totalPrice * qt) * 100));
              	
              	billPanel.updateTotalArea();
              	int outputID = billPanel.orderedDishAry.get(row).getOutputID();
              	if(outputID >= 0) {
-             		String sql = "update output set discount = " + (int)(newDiscount * 100) + ", toltalprice = " + Math.round(totalPrice * qt * 100) + " where id = " + outputID;
+             		String sql = "update output set discount = " + Math.round(newDiscount * 100) + ", toltalprice = " + Math.round(totalPrice * qt * 100) + " where id = " + outputID;
              		PIMDBModel.getStatement().executeUpdate(sql);
              	}
          	}catch(Exception exp) {

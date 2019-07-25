@@ -288,7 +288,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					dish.setNum(tQTY);
 					String modify = BillListPanel.curDish.getModification();
 					float priceInLabel = modify == null ? 0.0f : BarUtil.calculateLabelsPrices(modify.split(BarDlgConst.delimiter));
-					dish.setTotalPrice((dish.getPrice() - dish.getDiscount() + (int)(priceInLabel * 100)) * tQTY);
+					dish.setTotalPrice((dish.getPrice() - dish.getDiscount() + Math.round(priceInLabel * 100)) * tQTY);
 					
 					table.setValueAt(tQTY % BarOption.MaxQTY + "x", selectedRow, 0);
 					table.setValueAt(BarOption.getMoneySign() 
@@ -313,7 +313,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 						dish.setNum(tQTY);
 						String modify = BillListPanel.curDish.getModification();
 						float priceInLabel = modify == null ? 0.0f : BarUtil.calculateLabelsPrices(modify.split(BarDlgConst.delimiter));
-						dish.setTotalPrice((dish.getPrice() - dish.getDiscount() + (int)(priceInLabel * 100)) * tQTY);
+						dish.setTotalPrice((dish.getPrice() - dish.getDiscount() + Math.round(priceInLabel * 100)) * tQTY);
 						table.setValueAt(tQTY == 1 ? "" : tQTY + "x"  , selectedRow, 0);		
 						table.setValueAt(BarOption.getMoneySign()
 								+ BarUtil.formatMoney(dish.getTotalPrice()/100f),

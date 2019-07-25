@@ -815,7 +815,7 @@ public class PrintService{
 				if(a.length >= 3) {
 					if(isRefund) {
 						Float refund = Math.abs(Float.valueOf(refundvalue));	//@NOTE: have to make it a positive number to avoid Math.round(-108.5) = -108 instead of -109.
-						int price = (int)(refund * 100);
+						int price = Math.round(refund * 100);
 
 			        	price = (int)Math.round(price / ((100 + BarOption.getGST() + BarOption.getQST()) / 100.0));
 			        	float floatPrice = (float)(price / 100.0);
@@ -1735,7 +1735,7 @@ public class PrintService{
     			.append(str).append("\n");
     		}
         	
-            float left = -1 * ((int)((total * 100 - cashReceived - debitReceived - visaReceived - masterReceived - otherReceived)));
+            float left = -1 * (Math.round((total * 100 - cashReceived - debitReceived - visaReceived - masterReceived - otherReceived)));
             str = BarUtil.formatMoney(left/100f);
             String lblText;
             if(isCashBack) {

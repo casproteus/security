@@ -236,7 +236,7 @@ public class BarUtil {
 	
 //	private static String centRound(String priceStr) {
 //		Float price = Float.parseFloat(priceStr);
-//		int cent = (int)(price * 100);
+//		int cent = Math.round(price * 100);
 //    	//get the last bit
 //    	int lastNum = cent % 10;
 //    	if(lastNum == 1 || lastNum == 2)
@@ -250,7 +250,7 @@ public class BarUtil {
 	
     public static String canadianPennyRound(String substring) {
 		Float price = Float.parseFloat(substring.trim());
-		int cent = (int)(price * 100);
+		int cent = Math.round(price * 100);
 		boolean isNegtive = cent < 0;
 		if(isNegtive) {
 			cent *= -1;

@@ -429,7 +429,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             		oldPriceInLabel = BarUtil.calculateLabelsPrices(BillListPanel.curDish.getModification().split(BarDlgConst.delimiter));
             	}
             	newPriceInLabel = BarUtil.calculateLabelsPrices(notes);	//new labels added money
-            	int newtotal = (int)(BillListPanel.curDish.getTotalPrice() - oldPriceInLabel * 100 + newPriceInLabel * 100);
+            	int newtotal = Math.round(BillListPanel.curDish.getTotalPrice() - oldPriceInLabel * 100 + newPriceInLabel * 100);
             	
             	//update the orderAry and database.
             	BillListPanel.curDish.setModification(fullModifyString.toString());

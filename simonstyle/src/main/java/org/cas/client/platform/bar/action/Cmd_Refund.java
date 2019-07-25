@@ -83,10 +83,10 @@ public class Cmd_Refund implements SamActionListener {
 	                    JOptionPane.YES_NO_OPTION) != 0) {// allready refunded, sure to refund again?
 					return;
 				}else {
-					refundAmount -= (int)(refund * 100);
+					refundAmount -= Math.round(refund * 100);
 				}
             }else {		//first time refund, then set the refund.
-            	refundAmount = 0 - (int)(refund * 100);
+            	refundAmount = 0 - Math.round(refund * 100);
             }
             
     		new ChangeDlg(BarFrame.instance, 
@@ -107,7 +107,7 @@ public class Cmd_Refund implements SamActionListener {
      		
      		//change something on cur billPane, then use it to print the refund bill, to let revenue know the store refund some money.
      		billPanel.setBillID(newBillID);
-    		PrintService.exePrintRefund(billPanel, - (int)(refund * 100));
+    		PrintService.exePrintRefund(billPanel, - Math.round(refund * 100));
     		
     		//update the status with new refund amount for the new bill, so next time refund will base on new number.
      		sql = new StringBuilder("update bill set status = ").append(refundAmount)

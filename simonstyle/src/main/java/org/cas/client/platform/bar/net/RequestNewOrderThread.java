@@ -136,7 +136,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 				.append(createtime).append("', '")			//createtime
 		        .append(tableID).append("', '")				//tableID
 		        .append(billIndex).append("', ")			//BillIndex
-		        .append(total == null ? 0 : (int)(Float.parseFloat(total.substring(1)) * 100)).append(", ")	 //remove the $ ahead.
+		        .append(total == null ? 0 : Math.round(Float.parseFloat(total.substring(1)) * 100)).append(", ")	 //remove the $ ahead.
 		        .append(0).append(", ")	//discount
 		        .append(0).append(", ")	//tip
 		        .append(0).append(", ")	//serviceFee

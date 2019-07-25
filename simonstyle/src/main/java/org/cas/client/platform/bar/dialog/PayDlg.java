@@ -118,7 +118,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 			//do nothing.
 		}
 		
-		return (int)(existingMoney * 100 + newAddedMoney * 100);
+		return Math.round(existingMoney * 100 + newAddedMoney * 100);
 	}
     
 	//it's public because there's a menu on salesPane is calling this method.
@@ -628,14 +628,14 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 			received += Float.valueOf(valOtherReceived.getText()) + Float.valueOf(tfdNewReceived.getText());
 		}catch(Exception e) {}
 		
-		String leftStr = String.valueOf((int)(total * 100 - received * 100)/100f);
+		String leftStr = String.valueOf(Math.round(total * 100 - received * 100)/100f);
         if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
         	leftStr = BarUtil.canadianPennyRound(leftStr);
         }
 		valLeft.setText(leftStr);
 		if(BarFrame.secondScreen != null) {
 			String changeStr = leftStr.startsWith("-") ? leftStr.substring(1) : "-" + leftStr;
-			BarFrame.customerFrame.updateChange(String.valueOf((int)(received * 100)/100f), changeStr, getTitle().equals(BarFrame.consts.EnterCashPayment()));
+			BarFrame.customerFrame.updateChange(String.valueOf(Math.round(received * 100)/100f), changeStr, getTitle().equals(BarFrame.consts.EnterCashPayment()));
 		}
 	}
 	

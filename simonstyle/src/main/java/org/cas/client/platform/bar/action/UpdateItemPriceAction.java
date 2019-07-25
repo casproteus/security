@@ -45,7 +45,7 @@ public class UpdateItemPriceAction implements ActionListener{
          			price = Float.valueOf(curContent);
             	}
          		
-             	dish.setPrice((int)(price * 100));
+             	dish.setPrice(Math.round(price * 100));
              	dish.setTotalPrice((dish.getPrice() - dish.getDiscount()) * dish.getNum());
              	
  				int num = dish.getNum();
