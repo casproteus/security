@@ -75,9 +75,9 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		//output will be set as deleted=true only when click a "-" button. when bill closed, the output will not be set as deleted = true! 
 		//so closed bill of this table will also be counted. but will displayed in different color.
 		
-		reInitBillPanels();
+		int latestID = reInitBillPanels();
 		
-		reInitOnscreenBills();
+		reInitOnscreenBills(latestID + 1);
 		
 		allowUnCombineCheck();
 		
@@ -112,17 +112,17 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 		}
 	}
 
-	private void reInitBillPanels(){
+	private int reInitBillPanels(){
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String openTime = BarFrame.instance.valStartTime.getText();
 		StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableName)
 				.append("' and (deleted is null or deleted < ").append(DBConsts.expired)
 				.append(") and time = '").append(openTime).append("' order by contactID");
-		
+
+		int latestID = 0;
 		try {
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.beforeFirst();
-		
 			while (rs.next()) {
 				JToggleButton billButton = new JToggleButton();
 				billButton.setText(String.valueOf(rs.getInt("contactID")));
@@ -132,19 +132,20 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
 	            
 				billPanel.initContent();
 				billPanels.add(billPanel);
+				
+				latestID = rs.getInt("contactID");
 			}
-			
 		} catch (Exception e) {
 			L.e("BillListPane", "Unexpected exception when init the bill panels." + sql, e);
 		}
+		return latestID;
 	}
 
-	private void reInitOnscreenBills() {
+	private void reInitOnscreenBills(int billNum) {
 		//do it outside the above loop, because there's another qb query inside.
 		int col = BarOption.getBillPageCol();
 		int row = BarOption.getBillPageRow();
 		
-		int billNum = getANewBillIdx(null, null);
 		for(int i = 0; i < row * col; i++) {
 			if(row * col * curPageNum + i < billPanels.size()) {	//some panel is using the panel in billPanels list.
 				onScrBillPanels.add(billPanels.get(row * col * curPageNum + i));

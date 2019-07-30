@@ -473,6 +473,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					return;
 				}
 				//if not in split item mode (split item button not pressed.)
+				if(billListPanel.getCurBillPanel() == null) {
+					billListPanel.getSelectedBillPannels().add(this);
+					billButton.setSelected(!billButton.isSelected());
+					return;
+				}
 	 			if(BillListPanel.curDish != null && billListPanel.getCurBillPanel() != this) {	//this there's already an item ready for move.
 					billListPanel.moveDishToBill(this);
 					BillListPanel.curDish = null;
@@ -1113,7 +1118,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         table.setHasSorter(false);
         table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         
-        table.setDataVector(new Object[1][header.length], header);
+        table.setDataVector(new Object[0][header.length], header);
         DefaultPIMTableCellRenderer tCellRender = new DefaultPIMTableCellRenderer();
         tCellRender.setOpaque(true);
         tCellRender.setBackground(Color.LIGHT_GRAY);
