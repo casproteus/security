@@ -430,7 +430,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             			BillPanel.updateBill(billId, "TIP", oldTip - left);	//otherwise, treated as tip. the tip in DB are positive, because it means we earned money.
             		}
             		
-            		changeDlg.setVisible(true);
+            		changeDlg.setVisible(true);		//note: is't a non-modal dialog.
             	}
 
             	//let's qa decide if we should go back to table interface.

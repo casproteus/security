@@ -669,6 +669,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     
     public void initContent(String billId, String billIndex, String tableName, String openTime) {
     	if((billId == null || "".equals(billId)) && (openTime == null || "".equals(openTime))) {//we can find bill by id, if no id, then openTime is a "must have" to locate a sigle bill.
+    		int tColCount = table.getColumnCount();
+    		Object[][] tValues = new Object[0][tColCount];
+    		table.setDataVector(tValues, header);
+    		updateTotalArea();
+    		resetColWidth(scrContent.getWidth());
     		return;
     	}
     	
