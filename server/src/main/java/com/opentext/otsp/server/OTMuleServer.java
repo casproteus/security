@@ -156,8 +156,7 @@ public class OTMuleServer {
      *            Configuration files.
      * @throws MuleException
      */
-    public synchronized void start(
-            final List<URL> configURLs) throws MuleException {
+	public synchronized void start(final List<URL> configURLs) throws MuleException {
         if (muleContext == null || !muleContext.isStarted()) {
             deployNewUpgrade(configURLs);
             final DefaultMuleContextFactory muleContextFactory = new DefaultMuleContextFactory();

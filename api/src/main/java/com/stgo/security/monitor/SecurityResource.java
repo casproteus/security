@@ -13,6 +13,7 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.stgo.security.monitor.util.SecurityQueryParameter;
 
@@ -39,7 +40,8 @@ public class SecurityResource {
      * 
      * @return
      */
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML, APP_ZIP,
+    @ResponseBody
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML, "application/zip",
             MediaType.APPLICATION_OCTET_STREAM })
     public Response reportStatus(
             @QueryParam(SecurityQueryParameter.VERSION)
