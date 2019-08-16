@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -13,6 +14,8 @@ import javax.ws.rs.core.StreamingOutput;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.stgo.security.monitor.util.SecurityQueryParameter;
@@ -129,6 +132,49 @@ public class SecurityResource {
      *                                        Response.ok("<stgo>system is about to restart........</stgo>").build(); }
      */
 
+
+    //==========================================================================================================
+    
+    /**
+     * It's designed for and used by client side, time by time client will send to the server for the new orders.
+     * it's necessary, because 
+     * 1/some time user might edited the menu on servere side.
+     * 2/when clicked the download button on tablet, should send request to server,
+     *  !!!while if server is set as an IP address. then will send requeset to this ip and with a special string, 
+     *  then the response will be treated differently.
+     * if the host server of SanjiPos is set, then the menu should be modified on web. 
+     * @return
+     */
+    @Path("/refreshMenu")
+    @RequestMapping(headers = "Accept=application/json")
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML, APP_ZIP,
+            MediaType.APPLICATION_OCTET_STREAM })
+    public Response refreshMenu(
+    		@RequestBody String accountInfo) {
+        System.out.println(accountInfo);
+    	StreamingOutput output = protectionOperator.logStatus("version", "hostId", "label", "message", "time");
+        return Response.ok(output).build();
+    }
+
+	/**
+     * It's designed and used by tablet to send order. we suppose that tablet got menu from sanjiPos, so the menu SanjiPos must have.
+     * But we should still check if the menu exist, in case the server deleted the dish while the tablet forgot to get.
+     * currently tablet is already been able to synchronize menu from www.sharethegoodones.com.
+     * while we can not leverage it, because it is synchronizing the whole database. so always one way, 
+     * so always server->client if there's a server.
+     * 
+     * when tablet has serverIp set, then instead of sending to printer, whene the send is clicked, it will send content to server.
+     * server will save the record(generate bill and output) like what it did when get content from webpage order, then sanji will do print. 
+     * @return
+     */
+    @Path("/newOrders")
+    @POST
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML })
+    public Response newOrders() {
+        ProtectionOperator.checkSystemSecurityStatus();
+        return Response.ok("<stgo>system is protected, and under monitor. powered by stgo......</stgo>").build();
+    }
+    
     /**
      * Returns the <code>protectionOperator</code> value.
      *
