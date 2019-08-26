@@ -45,7 +45,7 @@ public class RequestNewOrderThread extends Thread implements ActionListener{
 		
     	while(true) {
     		try {
-    			Thread.sleep(20000);
+    			Thread.sleep(10000);
     		}catch(Exception e) {
     			//do nothing.
     		}

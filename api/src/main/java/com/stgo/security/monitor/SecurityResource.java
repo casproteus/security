@@ -163,7 +163,9 @@ public class SecurityResource {
      * while we can not leverage it, because it is synchronizing the whole database. so always one way, 
      * so always server->client if there's a server.
      * 
-     * when tablet has serverIp set, then instead of sending to printer, whene the send is clicked, it will send content to server.
+     * @TODO: infuture, will allow menu be added from any where, app synchronize to other places.
+     * 
+     * when tablet has serverIp set, then instead of sending to printer, while the send is clicked, it will send content to server.
      * server will save the record(generate bill and output) like what it did when get content from webpage order, then sanji will do print. 
      * @return
      */
@@ -171,7 +173,7 @@ public class SecurityResource {
     @POST
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML })
     public Response newOrders() {
-        ProtectionOperator.checkSystemSecurityStatus();
+    	ProtectionOperator.checkSystemSecurityStatus();
         return Response.ok("<stgo>system is protected, and under monitor. powered by stgo......</stgo>").build();
     }
     
