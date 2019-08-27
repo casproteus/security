@@ -12,6 +12,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
+import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.net.action.CreateNewOrderAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -172,8 +174,8 @@ public class SecurityResource {
     @Path("/newOrders")
     @POST
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_XML })
-    public Response newOrders() {
-    	ProtectionOperator.checkSystemSecurityStatus();
+    public Response newOrders(@RequestBody String newOrders) {
+    	CreateNewOrderAction.getInstance().processAddingOrderRequest(newOrders);
         return Response.ok("<stgo>system is protected, and under monitor. powered by stgo......</stgo>").build();
     }
     
