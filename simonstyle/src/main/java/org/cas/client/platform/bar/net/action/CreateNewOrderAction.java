@@ -2,6 +2,8 @@ package org.cas.client.platform.bar.net.action;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -52,6 +54,11 @@ public class CreateNewOrderAction implements ActionListener{
 		String table = rjson.getString("table");
 		String billIndex = rjson.getString("billIndex");
 		String orderContent = rjson.getString("orderContent");
+		try {
+			orderContent = URLDecoder.decode(orderContent, "UTF-8");
+		}catch(Exception e) {
+			L.e("CreateNewOrderAction", "exception when convert the orderContent into UTF-8", e);
+		}
 		String[] dishes = orderContent.split("DishStart:");
 		for(String dish: dishes) {
 			int marksLocation = dish.indexOf("MarkStart:");
@@ -60,6 +67,8 @@ public class CreateNewOrderAction implements ActionListener{
 			String[] dishProp = dishStr.split("\n");	//get name, price and qt of dish
 			String[] markProp = markStr.split("\n");	//get name, qt and status of marks
 		}
+		//start to generate the order.===============================
+		
 	}
 	
 	@Override
