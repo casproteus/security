@@ -51,7 +51,8 @@ public class CreateNewOrderAction implements ActionListener{
 	
 	public void processAddingOrderRequest(String json){
 		JSONObject rjson = new JSONObject(json);
-		String table = rjson.getString("table");
+		//prepare tableID and billIndex
+		String tableID = rjson.getString("table");
 		String billIndex = rjson.getString("billIndex");
 		String orderContent = rjson.getString("orderContent");
 		try {
@@ -66,9 +67,23 @@ public class CreateNewOrderAction implements ActionListener{
 			String dishStr = marksLocation > 0 ? dish.substring(0, marksLocation) : dish;
 			String[] dishProp = dishStr.split("\n");	//get name, price and qt of dish
 			String[] markProp = markStr.split("\n");	//get name, qt and status of marks
+			//price total;
 		}
 		//start to generate the order.===============================
-		
+        String openTime = BarOption.df.format(new Date());
+
+        //table
+        makeSureTableExistsAndOpened(tableID, openTime);
+        
+        //bills
+        int billId = generateBill(openTime, tableID, billIndex, mainOrder.payCondition);
+        if(billId < 0) {
+        	L.e("Request new orders", "Failed to create a bill with createtime:" + openTime + " tableID:" + tableID + " billIndex:" + " price:" + mainOrder.payCondition, null);
+        	return;
+        }
+        
+        //outputs
+        generateOutputs(mainOrder, openTime, tableID, billIndex, billId, materials);
 	}
 	
 	@Override
