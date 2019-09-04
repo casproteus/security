@@ -50,40 +50,46 @@ public class CreateNewOrderAction implements ActionListener{
 	}
 	
 	public void processAddingOrderRequest(String json){
+		if(BarFrame.instance == null || !BarFrame.instance.isVisible()) {
+			BarFrame.main(null);
+		}
 		JSONObject rjson = new JSONObject(json);
 		//prepare tableID and billIndex
 		String tableID = rjson.getString("table");
 		String billIndex = rjson.getString("billIndex");
-		String orderContent = rjson.getString("orderContent");
+		String orderContent = rjson.getString("orderContent"); 
 		try {
 			orderContent = URLDecoder.decode(orderContent, "UTF-8");
 		}catch(Exception e) {
 			L.e("CreateNewOrderAction", "exception when convert the orderContent into UTF-8", e);
 		}
-		String[] dishes = orderContent.split("DishStart:");
-		for(String dish: dishes) {
-			int marksLocation = dish.indexOf("MarkStart:");
-			String markStr = marksLocation > 0 ? dish.substring(marksLocation + 10) : "";
-			String dishStr = marksLocation > 0 ? dish.substring(0, marksLocation) : dish;
-			String[] dishProp = dishStr.split("\n");	//get name, price and qt of dish
-			String[] markProp = markStr.split("\n");	//get name, qt and status of marks
-			//price total;
-		}
+		String[] disheStrs = orderContent.split("DishStart:");
+		
 		//start to generate the order.===============================
         String openTime = BarOption.df.format(new Date());
-
         //table
         makeSureTableExistsAndOpened(tableID, openTime);
-        
         //bills
-        int billId = generateBill(openTime, tableID, billIndex, mainOrder.payCondition);
+		String payCondition = null;
+        int billId = generateBill(openTime, tableID, billIndex, payCondition);
+
         if(billId < 0) {
-        	L.e("Request new orders", "Failed to create a bill with createtime:" + openTime + " tableID:" + tableID + " billIndex:" + " price:" + mainOrder.payCondition, null);
+        	L.e("Request new orders", "Failed to create a bill with createtime:" + openTime + " tableID:" + tableID + " billIndex:" + " price:" + payCondition, null);
         	return;
         }
         
-        //outputs
-        generateOutputs(mainOrder, openTime, tableID, billIndex, billId, materials);
+		for(String dishStr: disheStrs) {
+			//TODO: calculate the totle price.
+			if(dishStr == null || dishStr.length() == 0) {
+				continue;
+			}
+			int marksLocation = dishStr.indexOf("MarkStart:");
+			String markStr = marksLocation > 0 ? dishStr.substring(marksLocation + 10) : "";
+			dishStr = marksLocation > 0 ? dishStr.substring(0, marksLocation) : dishStr;
+			String[] dishProp = dishStr.split("\n");	//get name, price and qt of dish
+			String[] markProp = markStr.split("\n");	//get name, qt and status of marks
+			//price total;			String category = dishProp[0];			String menuName = dishProp[1];			int price = Integer.valueOf(dishProp[2]);			int num = Integer.valueOf(dishProp[3]);			makeSureCategoryExist(category);			Dish dish = makeSureDishExist(category, menuName, price);			dish.setNum(num);	    	dish.setModification(markStr);			createOutputRecord(dish.getId(), openTime, tableID, billIndex, billId, markStr, num, price);
+		}
 	}
 	
 	@Override
@@ -189,14 +195,15 @@ public class CreateNewOrderAction implements ActionListener{
 		    	
 		    	dish.setNum(num);
 		    	dish.setModification(material.remark);
-				createOutputRecord(createtime, tableID, billIndex, billId, dishes, material, num, price, dish);
+		    	dishes.add(dish);
+				createOutputRecord(dish.getId(), createtime, tableID, billIndex, billId, material.remark, num, price);
 			}
 		}
 		return dishes;
 	}
 
-	public void createOutputRecord(String createtime, String tableID, String billIndex, int billId,
-			List<Dish> dishes, Material material, int num, int price, Dish dish) {
+	private void createOutputRecord(int productID, String createtime, String tableID, String billIndex, int billId,
+			 String remark, int num, int price) {
 		StringBuilder sql;
 		Statement smt = PIMDBModel.getStatement();
 		try {
@@ -204,16 +211,15 @@ public class CreateNewOrderAction implements ActionListener{
 		    	"INSERT INTO output(SUBJECT, CONTACTID, PRODUCTID, AMOUNT, TOLTALPRICE, DISCOUNT, CONTENT, EMPLOYEEID, TIME, category) VALUES ('")
 					.append(tableID).append("', ")	//subject ->table id
 		            .append(billIndex).append(", ")			//contactID ->bill id
-		            .append(dish.getId()).append(", ")	//product id
+		            .append(productID).append(", ")	//product id
 		            .append(num).append(", ")	//amount
 		            .append(price).append(", ")	//totalprice int
 		            .append(0).append(", '")	//discount
-		            .append(material.remark == null ? "" : material.remark).append("', ")				//content
+		            .append(remark == null ? "" : remark).append("', ")				//content
 		            .append(LoginDlg.USERID).append(", '")		//emoployid
 		            .append(createtime).append("', ")	//opentime
 		            .append(billId).append(")");	//category ->billId
 			smt.executeUpdate(sql.toString());
-			dishes.add(dish);
 		} catch (Exception exp) {
 			ErrorUtil.write(exp);
 		}
@@ -298,7 +304,26 @@ public class CreateNewOrderAction implements ActionListener{
 			ErrorUtil.write(exp);
 		}
 	}
-
+	
+	//processing request from pad.
+	private void makeSureCategoryExist(String categoryName) {
+		StringBuilder sql = new StringBuilder("select ID, LANG1, LANG2, LANG3, DSP_INDEX from CATEGORY where LANG1 = '").append(categoryName)
+        	.append("' or LANG2 = '").append(categoryName).append("' or LANG3 = '").append(categoryName).append("'");
+        try {
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+            rs.afterLast();
+            rs.relative(-1);
+            int tmpPos = rs.getRow();
+            if(tmpPos == 0) {
+            	createNewCategory(categoryName);
+            }else {
+            	// we don't need to synchronize the category with pad for now. synchronizeLocalCategory(menuIdx, idx, rs);
+            }
+        } catch (SQLException e) {
+            ErrorUtil.write(e);
+        }
+	}
+	
 	private String makeSureCategoryExist(String location, int menuIdx, int idx) {
 		//if less than category exist, then add category to 3.
         String sql = "select ID, LANG1, LANG2, LANG3, DSP_INDEX from CATEGORY where DSP_INDEX = " + idx;
@@ -371,10 +396,24 @@ public class CreateNewOrderAction implements ActionListener{
         }catch(Exception exp) {
         	return "";
         }
+	}	
+	
+	//add a category
+	private void createNewCategory(String categoryName) {
+        StringBuilder sql = new StringBuilder("INSERT INTO Category(LANG1, LANG2, LANG3) VALUES('")
+            		.append(categoryName).append("', '")
+            		.append(categoryName).append("', '")
+            		.append(categoryName).append("')");
+        try {
+	        PIMDBModel.getStatement().executeUpdate(sql.toString());
+	        BarFrame.menuPanel.initComponent();
+        }catch(Exception exp) {
+        	L.e("CreateNewOrder", "exception when insert a new category:" +sql , exp);
+        }
 	}
 
 	//the dencity must be a null or $1
-	private Dish makeSureDishExist(String category, String location, int menuIdx, String portionName, int price, String menFu) {
+	private Dish makeSureDishExist(String category, String location, int menuIdx, String menuName, int price, String seletedPrinterIdStr) {
 		//ID, CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, STORE,  COST, BRAND, CATEGORY, CONTENT, UNIT, PRODUCAREA, INDEX
 		StringBuilder sql = new StringBuilder("select * from product where deleted != true and index = ").append(menuIdx).append(" and category = '").append(category).append("'");
 
@@ -384,18 +423,44 @@ public class CreateNewOrderAction implements ActionListener{
 			rs.relative(-1);
             int tmpPos = rs.getRow();
             if(tmpPos == 0) {
-            	return createNewDish(location, price, menFu, category);
+            	return createNewDish(location, price, seletedPrinterIdStr, category);
             }else {
             	//check if the properties are all same, if not, update local to make sure local are same with server.
-        		String localPrinterIdx = synchronizeLocalProduct(location, price, menFu, rs);
-            	return new Dish(rs.getInt("id"), category, portionName, rs.getString("MNEMONIC"), rs.getString("SUBJECT"), localPrinterIdx);
+        		String localPrinterIdx = synchronizeLocalProduct(location, price, seletedPrinterIdStr, rs);
+            	return new Dish(rs.getInt("id"), category, menuName, rs.getString("MNEMONIC"), rs.getString("SUBJECT"), localPrinterIdx);
             }
         } catch (SQLException e) {
             ErrorUtil.write(e);
         }
         return null;
 	}
+	
+	//process reqeust from pad.
+	private Dish makeSureDishExist(String category, String menuName, int price) {
+		//ID, CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, STORE,  COST, BRAND, CATEGORY, CONTENT, UNIT, PRODUCAREA, INDEX
+		StringBuilder sql = new StringBuilder("select * from product where deleted != true and category = '").append(category).append("'")
+				.append(" and (CODE = '").append(menuName).append("'")
+				.append(" or MNEMONIC = '").append(menuName).append("'")
+				.append(" or SUBJECT = '").append(menuName).append("')");
 
+        try {
+			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+			rs.afterLast();
+			rs.relative(-1);
+            int tmpPos = rs.getRow();
+            if(tmpPos == 0) {
+            	return createNewDish(menuName, price, category);
+            }else {
+            	//check if the properties are all same, if not, update local to make sure local are same with server.
+        		//TODO: consider later  String localPrinterIdx = synchronizeLocalProduct(location, price, seletedPrinterIdStr, rs);
+            	return new Dish(rs.getInt("id"), category, menuName, rs.getString("MNEMONIC"), rs.getString("SUBJECT"), "");
+            }
+        } catch (SQLException e) {
+            ErrorUtil.write(e);
+        }
+        return null;
+	}
+		
 	private String synchronizeLocalProduct(String location, int price, String menFu, ResultSet rs) throws SQLException {
 		HashMap<String, String> contentMap = new HashMap<>(); 
 		for(TextContent textContent : serviceTexts) {
@@ -478,6 +543,41 @@ public class CreateNewOrderAction implements ActionListener{
             rs.beforeFirst();
             rs.next();
             return new Dish(rs.getInt("id"), category, name1, name2, name3, seletedPrinterIdStr);
+        }catch(Exception exp) {
+        	L.e("RequestNewOrders", "exception when creating new Dish.", exp);
+        }
+        return null;
+	}
+	
+	//create the new dish in the given category.
+	private Dish createNewDish(String menuName, int price, String category) {
+		//we need to find out the 3 name of the product and the first category string of the product.
+
+		StringBuilder sql = new StringBuilder(
+                 "INSERT INTO Product(CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, store, Cost,  BRAND, CATEGORY, INDEX, CONTENT, Unit, PRODUCAREA) VALUES ('")
+                 .append(menuName).append("', '")//CODE
+                 .append(menuName).append("', '")//MNEMONIC
+                 .append(menuName).append("', ")//SUBJECT
+                 .append(price).append(", ")	//PRICE
+                 .append(1).append(", ")		//FOLDERID---if need gst?
+                 .append(1).append(", ")		//store---if need qst?
+                 .append(0).append(", '")		//Cost--size
+                 .append("").append("', '")	//BRAND --printer string
+                 .append(category).append("', ")		//category
+                 .append(0).append(", '")//INDEX
+                 .append("false").append("', '")//CONTENT---cbxPricePomp
+                 .append("false").append("', '")//Unit---cbxMenuPomp
+                 .append("false").append("')");//PRODUCAREA---cbxModifyPomp
+        try {
+	        PIMDBModel.getStatement().executeUpdate(sql.toString());
+	        BarFrame.menuPanel.initComponent();
+	        
+	        sql = new StringBuilder("Select id from product where CODE = '")
+	        		.append(menuName).append("' and category = '").append(category).append("'");
+            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+            rs.beforeFirst();
+            rs.next();
+            return new Dish(rs.getInt("id"), category, menuName, menuName, menuName, "");
         }catch(Exception exp) {
         	L.e("RequestNewOrders", "exception when creating new Dish.", exp);
         }
