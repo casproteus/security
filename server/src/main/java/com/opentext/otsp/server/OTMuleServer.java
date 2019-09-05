@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This class is the main entry point for OTSP running in Mule.
  */
-public class STGOServer {
+public class OTMuleServer {
 
     /**
      * Time in milliseconds. Used for delaying the next poll on server status
@@ -55,12 +55,12 @@ public class STGOServer {
     /**
      * Name of the logger.
      */
-    private static final String LOG_NAME = STGOServer.class.getName();
+    private static final String LOG_NAME = OTMuleServer.class.getName();
 
     /**
      * Logger used to output information.
      */
-    private static final Logger LOG = LoggerFactory.getLogger(STGOServer.LOG_NAME);
+    private static final Logger LOG = LoggerFactory.getLogger(OTMuleServer.LOG_NAME);
 
     /**
      * Default configuration path.
@@ -76,7 +76,7 @@ public class STGOServer {
     /**
      * Server instance
      */
-    public static STGOServer SERVER;
+    public static OTMuleServer SERVER;
 
     /**
      * Flag used for tracing if the server is stopped or not
@@ -94,21 +94,21 @@ public class STGOServer {
     private final AtomicBoolean isRestarted = new AtomicBoolean(false);
 
     static {
-        STGOServer.OPTIONS.addOption("help", "help", false, "display this help and exit");
+        OTMuleServer.OPTIONS.addOption("help", "help", false, "display this help and exit");
         final Option configFile = new Option("config", "config", true, "configuration files");
         configFile.setArgName("file");
-        STGOServer.OPTIONS.addOption(configFile);
+        OTMuleServer.OPTIONS.addOption(configFile);
 
         final ExecutorService executor = Executors.newCachedThreadPool();
         executor.submit(new Callable<Boolean>() {
 
             @Override
             public Boolean call() {
-                STGOServer.LOG.info("Restart server thread initialized");
-                while (!STGOServer.SERVER_STOPPED) {
+                OTMuleServer.LOG.info("Restart server thread initialized");
+                while (!OTMuleServer.SERVER_STOPPED) {
                     try {
-                        STGOServer.LOG.debug("Checking for restart requests");
-                        final STGOServer server = STGOServer.SERVER;
+                        OTMuleServer.LOG.debug("Checking for restart requests");
+                        final OTMuleServer server = OTMuleServer.SERVER;
                         if (server == null) {
                             Thread.sleep(MAX_DELAY_FOR_RESTART_REQUEST_POLL);
                         } else {
@@ -163,7 +163,7 @@ public class STGOServer {
             final List<ConfigResource> resources = new ArrayList<ConfigResource>();
             if (configURLs != null) {
                 for (final URL url : configURLs) {
-                    STGOServer.LOG.info("Adding url config: {}", url.getFile());
+                    OTMuleServer.LOG.info("Adding url config: {}", url.getFile());
                     resources.add(new ConfigResource(url));
                 }
             }
@@ -172,7 +172,7 @@ public class STGOServer {
             muleContext = muleContextFactory.createMuleContext(configBuilder);
             muleContext.start();
         } else {
-            STGOServer.LOG.warn("Mule context already started! Ignoring start command.");
+            OTMuleServer.LOG.warn("Mule context already started! Ignoring start command.");
         }
     }
 
@@ -199,10 +199,10 @@ public class STGOServer {
      */
     public synchronized void restart(
             final List<URL> configURLs) throws MuleException {
-        STGOServer.LOG.info("Restarting mule server");
+        OTMuleServer.LOG.info("Restarting mule server");
         stop();
         while (!muleContext.isStopped() && muleContext.isStopping()) {
-            STGOServer.LOG.info("Waiting for the server to completely shutdown ...");
+            OTMuleServer.LOG.info("Waiting for the server to completely shutdown ...");
             try {
                 Thread.sleep(DELAY_BETWEEN_CHECKING_SERVER_STATUS);
             } catch (final InterruptedException e) {
@@ -210,7 +210,7 @@ public class STGOServer {
             }
         }
         muleContext.dispose();
-        STGOServer.LOG.info("Server stopped, trying to bring it up again");
+        OTMuleServer.LOG.info("Server stopped, trying to bring it up again");
 
         setLastUsedConfigPaths(configURLs);
         start(configURLs);
@@ -344,18 +344,18 @@ public class STGOServer {
         path = path.replace("%20", " ");
 
         File cache = new File(path + "\\cache");
-        STGOServer.LOG.warn("********************cache folder located at:" + cache.getAbsolutePath());
+        OTMuleServer.LOG.warn("********************cache folder located at:" + cache.getAbsolutePath());
 
         if (cache.exists()) {
-            STGOServer.LOG.warn("********************cache folder exists, to go copy sub folders");
+            OTMuleServer.LOG.warn("********************cache folder exists, to go copy sub folders");
             try {
                 FileUtils.copyDirectory(cache, new File(path));
             } catch (Exception e) {
-                STGOServer.LOG.error("Noe expected error occured when copying content under cache:" + e);
+                OTMuleServer.LOG.error("Noe expected error occured when copying content under cache:" + e);
             }
 
             FileUtils.deleteQuietly(cache);
-            STGOServer.LOG.warn("********************cache folder deleted!");
+            OTMuleServer.LOG.warn("********************cache folder deleted!");
         }
     }
 
@@ -370,32 +370,32 @@ public class STGOServer {
      */
     public static void main(
             final String... args) throws InterruptedException, ExecutionException {
-        STGOServer.SERVER = new STGOServer();
+        OTMuleServer.SERVER = new OTMuleServer();
 
         try {
             final HelpFormatter formatter = new HelpFormatter();
             final CommandLineParser parser = new GnuParser();
             CommandLine line = null;
             try {
-                line = parser.parse(STGOServer.OPTIONS, args);
+                line = parser.parse(OTMuleServer.OPTIONS, args);
             } catch (final UnrecognizedOptionException e) {
-                STGOServer.LOG.error(e.getMessage());
+                OTMuleServer.LOG.error(e.getMessage());
                 System.err.println(e.getMessage());
                 System.exit(1);
             }
             if (line.hasOption("help") || args.length == 0) {
-                formatter.printHelp(STGOServer.LOG_NAME, STGOServer.OPTIONS);
+                formatter.printHelp(OTMuleServer.LOG_NAME, OTMuleServer.OPTIONS);
             }
-            String configPath = STGOServer.DEFAULT_CONFIG;
+            String configPath = OTMuleServer.DEFAULT_CONFIG;
             if (line.hasOption("config")) {
                 configPath = line.getOptionValue("config");
             }
 
-            final List<URL> paths = STGOServer.SERVER.findConfigFiles(configPath);
-            STGOServer.SERVER.setLastUsedConfigPaths(paths);
-            STGOServer.SERVER.start(paths);
+            final List<URL> paths = OTMuleServer.SERVER.findConfigFiles(configPath);
+            OTMuleServer.SERVER.setLastUsedConfigPaths(paths);
+            OTMuleServer.SERVER.start(paths);
         } catch (final Throwable e) {
-            STGOServer.LOG.error(null, e);
+            OTMuleServer.LOG.error(null, e);
             e.printStackTrace(System.err);
             System.exit(1);
         }
@@ -436,7 +436,7 @@ public class STGOServer {
         this.isRestartRequired.set(isRestartRequired);
         this.isRestarted.set(false);
         if (this.isRestartRequired.get() == true) {
-            STGOServer.LOG.info("Server restart requested.");
+            OTMuleServer.LOG.info("Server restart requested.");
             synchronized (this.isRestartRequired) {
                 this.isRestartRequired.notifyAll();
             }

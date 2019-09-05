@@ -22,7 +22,7 @@ import javax.ws.rs.core.StreamingOutput;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import com.opentext.otsp.server.STGOServer;
+import com.opentext.otsp.server.OTMuleServer;
 import com.stgo.security.monitor.ProtectionOperator;
 
 public class FileUtil {
@@ -161,7 +161,7 @@ public class FileUtil {
         DBUtil.setVersion(String.valueOf(new Date().getTime()));// DBUtil.getVersion(); //update the new version with
                                                                 // current time long value
         // restart the service.
-        STGOServer.SERVER.setIsRestartRequired(true); // tell mule to restart.
+        OTMuleServer.SERVER.setIsRestartRequired(true); // tell mule to restart.
     }
 
     /**
