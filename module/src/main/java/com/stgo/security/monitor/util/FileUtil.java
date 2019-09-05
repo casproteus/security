@@ -161,7 +161,7 @@ public class FileUtil {
         DBUtil.setVersion(String.valueOf(new Date().getTime()));// DBUtil.getVersion(); //update the new version with
                                                                 // current time long value
         // restart the service.
-        OTMuleServer.SERVER.setIsRestartRequired(true); // tell mule to restart.
+        OTMuleServer.instance.setIsRestartRequired(true); // tell mule to restart.
     }
 
     /**
