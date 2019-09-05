@@ -22,11 +22,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		
-		<dependency>
-			<groupId>com.stgo.security</groupId>
-			<artifactId>simonstyle</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
