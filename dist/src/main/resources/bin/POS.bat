@@ -4,6 +4,7 @@ setlocal
 set OLDCD=%CD%
 cd %~dp0\..
 set TOOL_HOME="%CD%"
+set CONF_PATH=%CD%
 cd %OLDCD%
 
 set TOOL_LIB_HOME=%TOOL_HOME%\lib

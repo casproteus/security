@@ -140,9 +140,11 @@
 				stage="postinstall" />
             <parsable os="windows" targetfile="$INSTALL_PATH/bin/setEnv.bat" />
             <parsable os="windows" targetfile="$INSTALL_PATH/bin/security-service.bat" />
+            <parsable os="windows" targetfile="$INSTALL_PATH/bin/POS.vbs" />
             <parsable os="unix" targetfile="$INSTALL_PATH/bin/security-service.sh"
                 type="shell" />     
-            <parsable targetfile="$INSTALL_PATH/etc/statistics.wrapper.conf" />       
+            <parsable targetfile="$INSTALL_PATH/etc/statistics.wrapper.conf" />    
+			
             <!-- Case one: Install service only -->    
             <!-- Install System Security Monitor Service as a system service -->
             <executable os="windows" targetfile="$INSTALL_PATH/bin/security-service.bat"
@@ -164,6 +166,7 @@
                     <arg value="remove" />
                 </args>
             </executable>
+			
 			<!-- Case two: Install and start service -->
             <!-- Start System Security Monitor Service as a system service -->
             <executable os="windows" targetfile="$INSTALL_PATH/bin/security-service.bat"

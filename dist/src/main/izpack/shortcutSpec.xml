@@ -9,7 +9,7 @@
          applications="no"
          startMenu="yes"
          startup="yes"
-         target="$INSTALL_PATH\bin\POS.bat"
+         target="$INSTALL_PATH\bin\POS.vbs"
          commandLine=""
          description=""
          iconFile="$INSTALL_PATH\desktop.ico"

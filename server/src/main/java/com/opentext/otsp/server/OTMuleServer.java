@@ -46,7 +46,7 @@ public class OTMuleServer {
 
     private static final String DEFAULT_CONFIG = "mule";    // Default configuration folder name.
 
-    private static OTMuleServer instance;
+    public static OTMuleServer instance;
 
     private static boolean SERVER_STOPPED;    // Flag used for tracing if the server is stopped or not
 
