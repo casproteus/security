@@ -141,7 +141,7 @@ public class OTMuleServer {
     }
     
 	public synchronized void start(final List<URL> configURLs) throws MuleException {
-		if(BarFrame.instance == null || !BarFrame.instance.isVisible()) {
+		if(BarFrame.instance == null) {
 			Thread a = new Thread() {
 				@Override
 				public void run() {
