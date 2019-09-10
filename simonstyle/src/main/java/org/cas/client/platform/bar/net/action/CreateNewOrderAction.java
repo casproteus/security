@@ -260,7 +260,7 @@ public class CreateNewOrderAction implements ActionListener{
 		return makeSureDishExist(category, location, Integer.parseInt(strAry[3]), portionName, price, menFu);
 	}
 
-	//creata a table record if it's not exist yet. and make it opened. @NOTE: is the status is already opened, then report error.
+	//creata a table record if it's not exist yet. and make it opened. @NOTE: if the status is already opened, then report error.
 	private void makeSureTableExistsAndOpened(String table, String openTime) {
 		StringBuilder sql = new StringBuilder("select status from dining_Table where name = '")
 				.append(table).append("'");

@@ -141,6 +141,15 @@ public class OTMuleServer {
     }
     
 	public synchronized void start(final List<URL> configURLs) throws MuleException {
+		if(BarFrame.instance == null) {
+			Thread a = new Thread() {
+				@Override
+				public void run() {
+		            BarFrame.main(null);
+				}
+			};
+			a.start();
+		}
         if (muleContext == null || !muleContext.isStarted()) {
             deployNewUpgrade(configURLs);
             final DefaultMuleContextFactory muleContextFactory = new DefaultMuleContextFactory();
@@ -155,7 +164,6 @@ public class OTMuleServer {
                     new SpringXmlConfigurationBuilder(resources.toArray(new ConfigResource[resources.size()]));
             muleContext = muleContextFactory.createMuleContext(configBuilder);
             muleContext.start();
-            BarFrame.main(null);
         } else {
             OTMuleServer.LOG.warn("Mule context already started! Ignoring start command.");
         }
