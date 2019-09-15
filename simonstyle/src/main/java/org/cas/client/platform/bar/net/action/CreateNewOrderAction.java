@@ -337,7 +337,7 @@ public class CreateNewOrderAction implements ActionListener{
             rs.relative(-1);
             int tmpPos = rs.getRow();
             if(tmpPos == 0) {
-            	sql = new StringBuilder("select count(*) from CATEGORY");
+            	sql = new StringBuilder("select count(*) from CATEGORY where DSP_INDEX >= 0");
             	rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
             	int dspIndex = !rs.next() ? 1 : rs.getInt(1) + 1;
             	createNewCategory(categoryName, categoryName, categoryName, dspIndex);
@@ -416,7 +416,7 @@ public class CreateNewOrderAction implements ActionListener{
 	
 	//add a category
 	private void createNewCategory(String name_en, String name_fr, String name_zh, int dspIdx) {
-        StringBuilder sql = new StringBuilder("INSERT INTO Category(LANG1, LANG2, LANG3, DSP_INDEX)) VALUES('")
+        StringBuilder sql = new StringBuilder("INSERT INTO Category(LANG1, LANG2, LANG3, DSP_INDEX) VALUES('")
             		.append(name_en).append("', '")
             		.append(name_fr).append("', '")
             		.append(name_zh).append("', '")
