@@ -126,7 +126,6 @@ public class FileUtil {
         try {
             b = pushbackInputStream.read();
             if (b == -1) {
-                System.out.println("the content in inputstream is empty.");
                 return null;
             }
             pushbackInputStream.unread(b);

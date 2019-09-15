@@ -51,7 +51,13 @@ public class CreateNewOrderAction implements ActionListener{
 	
 	public void processAddingOrderRequest(String json){
 		if(BarFrame.instance == null || !BarFrame.instance.isVisible()) {
-			BarFrame.main(null);
+			Thread a = new Thread() {
+				@Override
+				public void run() {
+		            BarFrame.main(null);
+				}
+			};
+			a.start();
 		}
 		JSONObject rjson = new JSONObject(json);
 		//prepare tableID and billIndex
@@ -88,7 +94,7 @@ public class CreateNewOrderAction implements ActionListener{
 			dishStr = marksLocation > 0 ? dishStr.substring(0, marksLocation) : dishStr;
 			String[] dishProp = dishStr.split("\n");	//get name, price and qt of dish
 			String[] markProp = markStr.split("\n");	//get name, qt and status of marks
-			//price total;			String category = dishProp[0];			String menuName = dishProp[1];			int price = Integer.valueOf(dishProp[2]);			int num = Integer.valueOf(dishProp[3]);			makeSureCategoryExist(category);			Dish dish = makeSureDishExist(category, menuName, price);			dish.setNum(num);	    	dish.setModification(markStr);			createOutputRecord(dish.getId(), openTime, tableID, billIndex, billId, markStr, num, price);
+			//price total;			String category = dishProp[0];			String menuName = dishProp[1];			int price = Math.round(Float.valueOf(dishProp[2]) * 100);			int num = Integer.valueOf(dishProp[3]);			makeSureCategoryExist(category);			Dish dish = makeSureDishExist(category, menuName, price);			dish.setNum(num);	    	dish.setModification(markStr);			createOutputRecord(dish.getId(), openTime, tableID, billIndex, billId, markStr, num, price);
 		}
 	}
 	
@@ -133,7 +139,7 @@ public class CreateNewOrderAction implements ActionListener{
 	        //bills
 	        int billId = generateBill(openTime, tableID, billIndex, mainOrder.payCondition);
             if(billId < 0) {
-            	L.e("Request new orders", "Failed to create a bill with createtime:" + openTime + " tableID:" + tableID + " billIndex:" + " price:" + mainOrder.payCondition, null);
+            	L.e("Request new orders", "Failed to create a bill with createtime:" + openTime + " tableID:" + tableID + " billIndex:" + billIndex + " price:" + mainOrder.payCondition, null);
             	return;
             }
             
@@ -141,7 +147,7 @@ public class CreateNewOrderAction implements ActionListener{
             List<Dish> dishes = generateOutputs(mainOrder, openTime, tableID, billIndex, billId, materials);
             
             //send these output to kitchen.
-            PrintService.exePrintOrderList(dishes, tableID, billIndex, "customer", false);
+            //PrintService.exePrintOrderList(dishes, tableID, billIndex, "customer", false);
             
             //send request to update the status to be 50.
         	new HttpRequestClient(prepareUpdateOrderStatusURL(BarOption.getServerHost(), mainOrder.id, 50), "POST", BarFrame.prepareLicenceJSONString(), null).start();
@@ -284,11 +290,27 @@ public class CreateNewOrderAction implements ActionListener{
 
 	//create a new opened table
 	private void createNewOpenedTable(String table) {
-		int idx = Integer.valueOf(table);
+		int tableNum = 0;
+		StringBuilder sql = new StringBuilder("select count(*) from dining_Table");
+		try {
+			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+			int size = !rs.next() ? 0 : rs.getInt(1);
+			tableNum = size + 1;
+		}catch(Exception exp) {
+			L.e("CreateNewOrder", "exception when run sql:" + sql, exp);
+		}
+		
+		
+		int idx = tableNum;
+		try {
+			idx = Integer.valueOf(table);
+		}catch(Exception e) {
+			//do nothing, it's ok if table is not presented with number.
+		}
 		int row = idx / 10 + 1;
 		int col = idx % 10;
 		
-		StringBuilder sql = new StringBuilder("INSERT INTO DINING_TABLE (name, posX, posY, width, height, type, status, openTime) VALUES ('")
+		sql = new StringBuilder("INSERT INTO DINING_TABLE (name, posX, posY, width, height, type, status, openTime) VALUES ('")
 			.append(table).append("', ")	//name
 			.append(col * 90 + CustOpts.HOR_GAP).append(", ")	//posX
 			.append(row * 90 + CustOpts.VER_GAP).append(", ")	//posY
@@ -315,7 +337,10 @@ public class CreateNewOrderAction implements ActionListener{
             rs.relative(-1);
             int tmpPos = rs.getRow();
             if(tmpPos == 0) {
-            	createNewCategory(categoryName);
+            	sql = new StringBuilder("select count(*) from CATEGORY");
+            	rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+            	int dspIndex = !rs.next() ? 1 : rs.getInt(1) + 1;
+            	createNewCategory(categoryName, categoryName, categoryName, dspIndex);
             }else {
             	// we don't need to synchronize the category with pad for now. synchronizeLocalCategory(menuIdx, idx, rs);
             }
@@ -324,6 +349,7 @@ public class CreateNewOrderAction implements ActionListener{
         }
 	}
 	
+	//make it exist, and return the English version of category.
 	private String makeSureCategoryExist(String location, int menuIdx, int idx) {
 		//if less than category exist, then add category to 3.
         String sql = "select ID, LANG1, LANG2, LANG3, DSP_INDEX from CATEGORY where DSP_INDEX = " + idx;
@@ -333,7 +359,8 @@ public class CreateNewOrderAction implements ActionListener{
             rs.relative(-1);
             int tmpPos = rs.getRow();
             if(tmpPos == 0) {
-            	return createNewCategory(idx);
+            	createNewCategory(idx);
+            	return rs.getString(1);
             }else {
             	return synchronizeLocalCategory(menuIdx, idx, rs);
             }
@@ -377,33 +404,23 @@ public class CreateNewOrderAction implements ActionListener{
 	}
 
 	//create the No. idx category
-	private String createNewCategory(int idx) {
+	private void createNewCategory(int dspIdx) {
 		HashMap<String, String> titleMap = new HashMap<>(); 
 		for(TextContent textContent : menus) {
-			if(textContent.getCategoryIdx() == idx) {
+			if(textContent.getCategoryIdx() == dspIdx) {
 				textContent.putTitle(titleMap);
 			}
 		}
-        StringBuilder sql = new StringBuilder("INSERT INTO Category(LANG1, LANG2, LANG3, DSP_INDEX) VALUES('")
-            		.append(titleMap.get("en")).append("', '")
-            		.append(titleMap.get("fr")).append("', '")
-            		.append(titleMap.get("zh")).append("', ")
-            		.append(idx).append(")");
-        try {
-	        PIMDBModel.getStatement().executeUpdate(sql.toString());
-	        BarFrame.menuPanel.initComponent();
-	        return titleMap.get("en");
-        }catch(Exception exp) {
-        	return "";
-        }
+		createNewCategory(titleMap.get("en"), titleMap.get("fr"), titleMap.get("zh"), dspIdx);
 	}	
 	
 	//add a category
-	private void createNewCategory(String categoryName) {
-        StringBuilder sql = new StringBuilder("INSERT INTO Category(LANG1, LANG2, LANG3) VALUES('")
-            		.append(categoryName).append("', '")
-            		.append(categoryName).append("', '")
-            		.append(categoryName).append("')");
+	private void createNewCategory(String name_en, String name_fr, String name_zh, int dspIdx) {
+        StringBuilder sql = new StringBuilder("INSERT INTO Category(LANG1, LANG2, LANG3, DSP_INDEX)) VALUES('")
+            		.append(name_en).append("', '")
+            		.append(name_fr).append("', '")
+            		.append(name_zh).append("', '")
+            		.append(dspIdx).append("')");
         try {
 	        PIMDBModel.getStatement().executeUpdate(sql.toString());
 	        BarFrame.menuPanel.initComponent();
