@@ -56,7 +56,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     
     public int curPanel;
     //curBillID is currently only used for displaying a expired bill, which is to say, when showingExpiredBill is set to true;
-	public int curBillID;	
+	private int curBillID;	
 	public boolean isShowingAnExpiredBill;
 	
 	public DefaultComboBoxModel<String> tableNames = new DefaultComboBoxModel<String>(new String[] {""});
@@ -128,8 +128,8 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         	instance.valStartTime.setText(openTime);
 
         	instance.openATable("", openTime);
-        	instance.curBillID = instance.createAnEmptyBill("", openTime, 0);
-        	((SalesPanel)instance.panels[2]).billPanel.setBillID(instance.curBillID);
+        	instance.setCurBillID(instance.createAnEmptyBill("", openTime, 0));
+        	((SalesPanel)instance.panels[2]).billPanel.setBillID(instance.getCurBillID());
     		
         	instance.switchMode(2);
     	}else {
@@ -877,5 +877,13 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 			valCurBillIdx.setText("");
 		else
 			valCurBillIdx.setText(curBillIndex);
+	}
+
+	public int getCurBillID() {
+		return curBillID;
+	}
+
+	public void setCurBillID(int curBillID) {
+		this.curBillID = curBillID;
 	}
 }

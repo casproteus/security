@@ -270,7 +270,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
     	//if this flag set, the initContent will choose outputs and bill differently.
     	//NOTE: there's could be one final and several expired bills under same tableid and billIdx and opentime. we don't support more than one exipred bill.
     	BarFrame.instance.isShowingAnExpiredBill = "expired".equals(tblContent.getValueAt(selectedRow, 8));
-    	BarFrame.instance.curBillID = Integer.valueOf(String.valueOf(tblContent.getValueAt(selectedRow, 17)));
+    	BarFrame.instance.setCurBillID(Integer.valueOf(String.valueOf(tblContent.getValueAt(selectedRow, 17))));
     	BarFrame.instance.switchMode(2);
     	return true;
     }

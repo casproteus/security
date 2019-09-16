@@ -84,7 +84,7 @@ public class Cmd_Return implements SamActionListener {
 	        	    	//if this flag set, the initContent will choose outputs and bill differently.
 	        	    	//NOTE: there's could be one final and several expired bills under same tableid and billIdx and opentime. we don't support more than one exipred bill.
 	        	    	BarFrame.instance.isShowingAnExpiredBill = false;
-	        	    	BarFrame.instance.curBillID = rs.getInt("id");
+	        	    	BarFrame.instance.setCurBillID(rs.getInt("id"));
 	        	    	BarFrame.instance.switchMode(2);
 
 	        		}else {
@@ -159,8 +159,8 @@ public class Cmd_Return implements SamActionListener {
 		BarFrame.instance.valStartTime.setText(openTime);
 
 		BarFrame.instance.openATable("", openTime);
-		BarFrame.instance.curBillID = BarFrame.instance.createAnEmptyBill("", openTime, 0);
-		billPanel.setBillID(BarFrame.instance.curBillID);
+		BarFrame.instance.setCurBillID(BarFrame.instance.createAnEmptyBill("", openTime, 0));
+		billPanel.setBillID(BarFrame.instance.getCurBillID());
 		
 		BarFrame.instance.switchMode(2);
 	}

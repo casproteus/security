@@ -70,7 +70,7 @@ public class TableButton extends JButton {
 		setOpenTime(openTime);
 		
 		BarFrame.instance.openATable(getText(), openTime);
-		BarFrame.instance.curBillID = BarFrame.instance.createAnEmptyBill(getText(), openTime, 0);
+		BarFrame.instance.setCurBillID(BarFrame.instance.createAnEmptyBill(getText(), openTime, 0));
 	}
 
 }

@@ -312,8 +312,8 @@ public class CreateNewOrderAction implements ActionListener{
 		
 		sql = new StringBuilder("INSERT INTO DINING_TABLE (name, posX, posY, width, height, type, status, openTime) VALUES ('")
 			.append(table).append("', ")	//name
-			.append(col * 90 + CustOpts.HOR_GAP).append(", ")	//posX
-			.append(row * 90 + CustOpts.VER_GAP).append(", ")	//posY
+			.append(col * (90 + 20)).append(", ")	//posX
+			.append(row * (90 + 20)).append(", ")	//posY
 			.append(90).append(", ")	//width
 			.append(90).append(", ")	//height
 			.append(1).append(", ")		//type

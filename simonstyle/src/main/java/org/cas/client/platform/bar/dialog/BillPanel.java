@@ -485,15 +485,15 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					billButton.setSelected(!billButton.isSelected());
 					if(billButton.isSelected()) {
 						BarFrame.instance.setCurBillIdx(billButton.getText());
-						BarFrame.instance.curBillID = getBillID();
+						BarFrame.instance.setCurBillID(getBillID());
 					}else {
 						BillPanel panel = billListPanel.getCurBillPanel();
 						if(panel != null) {
 							BarFrame.instance.setCurBillIdx(panel.billButton.getText());
-							BarFrame.instance.curBillID = panel.getBillID();
+							BarFrame.instance.setCurBillID(panel.getBillID());
 						}else {
 							BarFrame.instance.setCurBillIdx("");
-							BarFrame.instance.curBillID = 0;
+							BarFrame.instance.setCurBillID(0);
 						}
 					}
 				}
@@ -662,7 +662,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		//used deleted <= 1, means both uncompleted and normally completed will be displayed, unnormally delted recored will be delted = 100
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String openTime = BarFrame.instance.valStartTime.getText();
-		String billId = BarFrame.instance.isShowingAnExpiredBill ? String.valueOf(BarFrame.instance.curBillID) : "";
+		String billId = BarFrame.instance.isShowingAnExpiredBill ? String.valueOf(BarFrame.instance.getCurBillID()) : "";
 		
 		initContent(billId, billIndex, tableName, openTime);
 	}
