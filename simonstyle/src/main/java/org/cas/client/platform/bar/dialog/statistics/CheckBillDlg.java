@@ -270,7 +270,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
     	//if this flag set, the initContent will choose outputs and bill differently.
     	//NOTE: there's could be one final and several expired bills under same tableid and billIdx and opentime. we don't support more than one exipred bill.
     	BarFrame.instance.isShowingAnExpiredBill = "expired".equals(tblContent.getValueAt(selectedRow, 8));
-    	BarFrame.instance.curBillID = Integer.valueOf(String.valueOf(tblContent.getValueAt(selectedRow, 17)));
+    	BarFrame.instance.setCurBillID(Integer.valueOf(String.valueOf(tblContent.getValueAt(selectedRow, 17))));
     	BarFrame.instance.switchMode(2);
     	return true;
     }
@@ -390,7 +390,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         		.append("' and createTime <= '").append(endTime)
         		.append("' and bill.employeeId = employee.id and (bill.status < ").append(LoginDlg.USERTYPE < 2 ? DBConsts.expired : DBConsts.deleted)
         		.append(" or bill.status is null)");
-        if(!"true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("ShowProcessingBill"))) && !BarOption.isFastFoodMode()) {
+        if(!"true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("ShowProcessingBill"))) && !BarOption.isCounterMode()) {
         	sql.append(" and bill.status is not null ").append(" and bill.status != ").append(DBConsts.billPrinted);
         }
         if("true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("HideRecordFromOtherWaiter"))) //if configured, then do not show records of other waiter.
@@ -567,7 +567,7 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
     		BarFrame.consts.DEBIT(),
     		BarFrame.consts.VISA(),
     		BarFrame.consts.MASTER(),
-    		BarFrame.consts.OTHER(),
+    		BarFrame.consts.GIFTCARD(),
     		BarFrame.consts.BILL()
     };
 

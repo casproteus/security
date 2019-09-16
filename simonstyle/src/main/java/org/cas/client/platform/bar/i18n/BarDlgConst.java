@@ -301,7 +301,7 @@ public interface BarDlgConst {
 	String TreatPricePromtAsTaxInclude();
 	String IsShowCustomerFrame();
 	String workOnOnlyUnclosedBills();
-	Object nonEmptyBillFound();
+	String nonEmptyBillFound();
 	String FONTSIZE();
 	String WIDTH();
 	String COUPON();
@@ -322,4 +322,12 @@ public interface BarDlgConst {
 	String History();
 	String Balance();
 	String Employee();
+	String ActionNotAllowed();
+	String OrgonizeCommands();
+	String RestartNeeded();
+	String Login();
+	String ApplyToList();
+	String ApplyToCategory();
+	String getPennyRounded();
+	String AllSelectedItemWillBeDeleted();
 }

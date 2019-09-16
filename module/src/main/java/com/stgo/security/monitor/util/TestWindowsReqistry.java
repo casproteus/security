@@ -7,7 +7,7 @@ import java.io.StringWriter;
 /**
  * @author Oleg Ryaboy, based on work by Miguel Enriquez
  */
-public class WindowsReqistry {
+public class TestWindowsReqistry {
 
     /**
      * 
@@ -73,7 +73,7 @@ public class WindowsReqistry {
 
         // Sample usage
         String value =
-                WindowsReqistry.readRegistry("HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Conotrol", "CurrentUser");
+                TestWindowsReqistry.readRegistry("HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Conotrol", "CurrentUser");
         System.out.println(value);
     }
 }

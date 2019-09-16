@@ -192,7 +192,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String COMFIRMLOSTACTION() {return "您确定不要把新点的菜发送到厨房或者保存到系统中吗？";}
     @Override
-	public String COMFIRMCLEARMONEYRECEIVED() {return "该单尚未完全付清! 是否取消已输入的付款金额? 选是则改单所有类别的输入金额清零，选否则保留输入，再收钱时只需付清余额。";}
+	public String COMFIRMCLEARMONEYRECEIVED() {return "该单尚未完全付清! 是否取消已输入的付款金额? (如果有用礼品卡支付,则需要高级权限再后台调整相关礼品卡余额!)";}
     @Override
 	public String ConfirmPayAgain() {return "该账单已经支付过了！您确定要再次收钱吗？";}
     @Override
@@ -202,7 +202,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String SetCatogoryFirst() {return "请先进行类别设置，然后再添加菜单";}
     @Override
-	public String SendItemCanNotModify() {return "已经发送后厨的菜不能再修改。系统已经在末尾增加一条记录";}
+	public String SendItemCanNotModify() {return "已经发送后厨的菜不能再修改.";}
     @Override
 	public String reCeivedMoneyNotEnough() {return "金额尚未付足，您确定要关闭本条账单吗？";}
     @Override
@@ -363,7 +363,7 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String TO() {return "到";}
     
     @Override
-	public String Code() {return "内部编号:";}
+	public String Code() {return "识别码:";}
     @Override
 	public String PHOTO() {return "添加照片...";}
     @Override
@@ -560,7 +560,7 @@ public class BarDlgConst2 implements BarDlgConst{
 	@Override
 	public String workOnOnlyUnclosedBills() {return "有的账单已经关闭,您确定要合并剩余的账单吗?";};
 	@Override
-	public Object nonEmptyBillFound() {return "发现该台还有没有付钱的账单！您确定要翻台吗？为清空的账单将被清除.";};
+	public String nonEmptyBillFound() {return "发现该台还有没有付钱的账单！您确定要翻台吗？为清空的账单将被清除.";};
 	@Override
 	public String FONTSIZE() {return "字体大小";}
 	@Override
@@ -599,4 +599,20 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String Balance() {return "余额";}
 	@Override
 	public String Employee() {return "经办人";}
+	@Override
+	public String ActionNotAllowed() {return "该动作在当前状态下无效！";}
+	@Override
+	public String OrgonizeCommands() {return "设定命令按钮布局";}
+	@Override
+	public String RestartNeeded() {return "请重启程序使新的设置生效。";}
+	@Override
+	public String Login() {return "登录";}
+	@Override
+	public String ApplyToList() {return "应用到标签";}
+	@Override
+	public String ApplyToCategory() {return "应用到组名";}
+	@Override
+	public String getPennyRounded() {return "近似到5分:";}
+	@Override
+	public String AllSelectedItemWillBeDeleted() {return "您确定删除所有选中的项吗?";}
 }

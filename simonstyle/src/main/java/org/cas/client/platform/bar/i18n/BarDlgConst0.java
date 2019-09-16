@@ -15,7 +15,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String Tip() {return "Tip";}
     @Override
-	public String ServiceFee() {return "Service Fee";}
+	public String ServiceFee() {return "Serv";}
     @Override
 	public String SERVICEFEE() {return "<html><center>SERVICE<br>FEE</center></html>";}
     
@@ -192,7 +192,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String COMFIRMLOSTACTION() {return "Are you sure not to send or save the new input content?";}
     @Override
-	public String COMFIRMCLEARMONEYRECEIVED() {return "This bill is partial paid! Do you want to cancel all the paid money before leaving this interface?";}
+	public String COMFIRMCLEARMONEYRECEIVED() {return "This bill is partial paid! Do you want to cancel all the paid money before leaving this interface? (If there's payment with gift card, need to call manager to refund!)";}
     @Override
 	public String ConfirmPayAgain() {return "This bill has already been closed! Are you sure to reopen it?";}
     @Override
@@ -202,7 +202,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String SetCatogoryFirst() {return "Please Set Category First";}
     @Override
-	public String SendItemCanNotModify() {return "Item already send can not be modified. we added a new item into the list";}
+	public String SendItemCanNotModify() {return "Item already send can not be modified.";}
     @Override
 	public String reCeivedMoneyNotEnough() {return "Haven't received enough money, are you sure to close the bill?";}
     @Override
@@ -242,7 +242,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String IsSingleUser() {return "Is single user mode";}
     @Override
-	public String IsTaxNotAllowDiscount() {return "discount of bill will affect tax";}
+	public String IsTaxNotAllowDiscount() {return "Discount of bill will affect tax";}
     @Override
     public String IsServiceFeeAffectTax() {return "service fee will affect tax";}
     @Override
@@ -291,7 +291,7 @@ public class BarDlgConst0 implements BarDlgConst{
 
 
     @Override
-	public String Discount() {return "Discount";}
+	public String Discount() {return "Disc";}
     @Override
 	public String Receive() {return "Received";}
     @Override
@@ -560,7 +560,7 @@ public class BarDlgConst0 implements BarDlgConst{
 	@Override
 	public String workOnOnlyUnclosedBills() {return "Some bill already closed, do you want to do the action on unclosed bills.";};
 	@Override
-	public Object nonEmptyBillFound() {return "Are you sure to close this table, there's still non empty bill to close first, or they will be deleted automatically.";};
+	public String nonEmptyBillFound() {return "Are you sure to close this table, there's still non empty bill to close first, or they will be deleted automatically.";};
 	@Override
 	public String FONTSIZE() {return "Font Size";}
 	@Override
@@ -599,5 +599,21 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String Balance() {return "Balance";}
 	@Override
 	public String Employee() {return "Employee";}
+	@Override
+	public String ActionNotAllowed() {return "Action not allowed in current status!";}
+	@Override
+	public String OrgonizeCommands() {return "Organize the commands";}
+	@Override
+	public String RestartNeeded() {return "Please restart the application to apply the new settings.";}
+	@Override
+	public String Login() {return "Login";}
+	@Override
+	public String ApplyToList() {return "Apply To List";}
+	@Override
+	public String ApplyToCategory() {return "Apply To Group";}
+	@Override
+	public String getPennyRounded() {return "penny rounded:";}
+	@Override
+	public String AllSelectedItemWillBeDeleted() {return "Are you sure to delete all selected items?";}
 
 }

@@ -15,7 +15,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String Tip() {return "Pourboire";}
     @Override
-	public String ServiceFee() {return "Frais De Service";}
+	public String ServiceFee() {return "Serv";}
     @Override
 	public String SERVICEFEE() {return "<html><center>FRAIS DE  <br>SRIVICE</center></html>";}
     
@@ -192,7 +192,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String COMFIRMLOSTACTION() {return "Etes-vous sur de ne pas envoyer ou enregistrer le nouveau contenu?";}
     @Override
-	public String COMFIRMCLEARMONEYRECEIVED() {return "Cette facture est partiellement payée! Voulez-vous annuler tout l'argent payé avant de quitter cette interface?";}
+	public String COMFIRMCLEARMONEYRECEIVED() {return "Cette facture est partiellement payée! Voulez-vous annuler tout l'argent payé avant de quitter cette interface? (Si vous payez avec une carte-cadeau, vous devez appeler le responsable pour le remboursement!)";}
     @Override
 	public String ConfirmPayAgain() {return "Cette facture a déjà été payée! Etes-vous sur de recevoir de l'argent encore une fois?";}
     @Override
@@ -202,7 +202,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String SetCatogoryFirst() {return "Veuillez etablir la catégorie en premier";}
     @Override
-	public String SendItemCanNotModify() {return "C'est interdit de modifier car cet article est déjà envoyé.Nous ajoutons un nouvel article à la liste";}
+	public String SendItemCanNotModify() {return "C'est interdit de modifier car cet article est déjà envoyé.";}
     @Override
 	public String reCeivedMoneyNotEnough() {return "Pas assez d'argent, êtes-vous sur de fermer la facture?";}
     @Override
@@ -558,7 +558,7 @@ public class BarDlgConst1 implements BarDlgConst{
 	@Override
 	public String workOnOnlyUnclosedBills() {return "Certaines factures sont déjà fermés, voulez-vous agir sur les factures non fermée.";};
 	@Override
-	public Object nonEmptyBillFound() {return "Etes-vous sur de fermer cette tableau, il n'y a toujours pas de facture vide à fermer en premier, ou ils seront automatiquement.";};
+	public String nonEmptyBillFound() {return "Etes-vous sur de fermer cette tableau, il n'y a toujours pas de facture vide à fermer en premier, ou ils seront automatiquement.";};
 	@Override
 	public String FONTSIZE() {return "Taille De Police";}
 	@Override
@@ -597,4 +597,20 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String Balance() {return "Équilibre";}
 	@Override
 	public String Employee() {return "Employée";}
+	@Override
+	public String ActionNotAllowed() {return "Action non autorisée dans l'état actuel!";}
+	@Override
+	public String OrgonizeCommands() {return "Organiser les commandes";}
+	@Override
+	public String RestartNeeded() {return "Veuillez redémarrer l'application pour appliquer les nouveaux paramètres.";}
+	@Override
+	public String Login() {return "S'identifier";}
+	@Override
+	public String ApplyToList() {return "Appliquer à la liste";}
+	@Override
+	public String ApplyToCategory() {return "Appliquer au groupe";}
+	@Override
+	public String getPennyRounded() {return "penny arrondi:";}
+	@Override
+	public String AllSelectedItemWillBeDeleted() {return "Êtes-vous sûr de vouloir supprimer tous les éléments sélectionnés?";}
 }

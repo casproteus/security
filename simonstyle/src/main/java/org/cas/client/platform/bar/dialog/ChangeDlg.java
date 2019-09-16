@@ -44,6 +44,10 @@ public class ChangeDlg extends JDialog implements ComponentListener, ActionListe
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if(BarFrame.secondScreen != null) {
+			BarFrame.customerFrame.initContent();
+			BarFrame.customerFrame.updateChange("", "", false);
+		}
 		this.dispose();
 	}
 	

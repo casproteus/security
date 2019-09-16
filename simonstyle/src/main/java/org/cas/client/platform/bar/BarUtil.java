@@ -1,5 +1,7 @@
 package org.cas.client.platform.bar;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -9,13 +11,17 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
-import org.cas.client.platform.bar.dialog.BillPanel;
+import org.cas.client.platform.bar.dialog.BarOption;
+import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.print.PrintService;
+import org.cas.client.platform.bar.uibeans.MoreButton;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
@@ -28,7 +34,7 @@ import gnu.io.PortInUseException;
 
 public class BarUtil {
 	
-    public static DecimalFormat formatter = new DecimalFormat("#0.00");
+	public static DecimalFormat formatter = new DecimalFormat("#0.00");
     public static String[] sepLines;
     public static String SEP_STR1 = "=";
     public static String SEP_STR2 = "-";
@@ -198,23 +204,6 @@ public class BarUtil {
 		}
 	}
 
-	//
-	public static void updateBillRecordPrices(BillPanel billPanel) {
-		updateBill(billPanel.getBillID(), "total", Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
-		updateBill(billPanel.getBillID(), "discount", Math.round(billPanel.discount));
-		updateBill(billPanel.getBillID(), "serviceFee", billPanel.serviceFee);
-	}
-	
-	public static void updateBill(int billId, String fieldName, int value) {
-		StringBuilder sb = new StringBuilder("update bill set ").append(fieldName).append(" = ").append(value).append(" where id = ").append(billId);
-		
-		try {
-			PIMDBModel.getStatement().executeUpdate(sb.toString());
-		}catch(Exception e) {
-			ErrorUtil.write(e);
-		}
-	}
-	
 	//remove html tags e.g.<html><center>Bill<br>FOOT INFO</center></html>
 	public static String getPlainTextOut(String string) {
 		int p = string.indexOf("<html>");
@@ -244,9 +233,28 @@ public class BarUtil {
 		return string;
 	}
 
+	
+//	private static String centRound(String priceStr) {
+//		Float price = Float.parseFloat(priceStr);
+//		int cent = Math.round(price * 100);
+//    	//get the last bit
+//    	int lastNum = cent % 10;
+//    	if(lastNum == 1 || lastNum == 2)
+//    		lastNum = 0;
+//    	else if(lastNum == 3 || lastNum == 4 || lastNum == 6 || lastNum == 7)
+//    		lastNum = 5;
+//    	else if(lastNum == 8 || lastNum == 9)
+//    		lastNum = 10;
+//    	return BarUtil.formatMoney((cent/ 10 * 10 + lastNum) / 100.0);
+//    }
+	
     public static String canadianPennyRound(String substring) {
-		Float price = Float.valueOf(substring.trim());
-		int cent = (int)(price * 100);
+		Float price = Float.parseFloat(substring.trim());
+		int cent = Math.round(price * 100);
+		boolean isNegtive = cent < 0;
+		if(isNegtive) {
+			cent *= -1;
+		}
 		int lastNum = cent % 10;
 		if(lastNum < 3) {
 			cent = cent - lastNum;
@@ -256,6 +264,9 @@ public class BarUtil {
 			cent = cent - lastNum + 5;
 		}
 		
+		if(isNegtive) {
+			cent *= -1;
+		}
 		return BarUtil.formatMoney(cent/100f);
 	}
     
@@ -301,7 +312,7 @@ public class BarUtil {
 		
 	}
 
-	public static String encrypt(String key, String substring) {
+	public static String encryptIfNeeded(String key, String substring) {
 		if(key.equals("superPassword")) {
 			substring = TaoEncrypt.encryptPassword(substring);
 		}
@@ -313,5 +324,110 @@ public class BarUtil {
 		Dish dish = new Dish();
 		dishes.add(dish);
 		return dishes;
+	}
+	
+	public static void addFunctionButtons(Container panel, ArrayList<JComponent> buttons, int maxBtnQt) {
+		int max = buttons.size();
+        if(max > maxBtnQt) {
+        	MoreButton btnMore = new MoreButton(BarFrame.consts.MORE());
+        	boolean moreBtnAdded = buttons.get(maxBtnQt - 1) instanceof MoreButton;
+        	for(int i =  moreBtnAdded? maxBtnQt : maxBtnQt - 1; i < buttons.size(); i++) {
+        		btnMore.addButton(buttons.get(i));
+        	}
+        	if(!moreBtnAdded) {
+        		buttons.add(maxBtnQt - 1, btnMore);
+        	}
+        	max = maxBtnQt;
+        }
+        
+        for(int i = 0; i < max ; i++) {
+        	panel.add((Component)buttons.get(i));
+		}
+	}
+
+	public static int layoutCommandButtons(JPanel panel, ArrayList<JComponent> buttons, int maxBtnQt) {
+		if(buttons == null)
+			return -1;
+		
+        int panelWidth = panel.getWidth();
+        int panelHeight = panel.getHeight();
+
+        // command buttons--------------
+        int butonQT = buttons.size();
+        
+        int row;
+        int col;
+        if(butonQT <= 0) {
+        	row = 0;
+        	col = 0;
+        }else if(butonQT <= 10) {
+        	row = 1;
+        	col = butonQT;
+        }else {
+        	row = maxBtnQt > 10 ? 2 : 1;
+        	if(butonQT >= maxBtnQt){
+        		col = 10;
+        	}else{
+        		col = butonQT%2 + butonQT/2;
+        	}
+        }
+        
+        int tBtnWidht = col == 0? 100 : (panelWidth - CustOpts.HOR_GAP * (col + 1)) / (col);
+        int tBtnHeight = (BarFrame.instance.getHeight() - 80) / 10;
+
+        int max = butonQT > maxBtnQt ? maxBtnQt : butonQT;
+        for(int i = 0; i < max; i++) {
+        	buttons.get(i).setBounds(CustOpts.HOR_GAP + tBtnWidht * (i < col ? i : i - col) + CustOpts.HOR_GAP * (i < col ? i : i - col),
+        			panelHeight - tBtnHeight * (i < col && max > col ? 2 : 1) - CustOpts.VER_GAP * (i < col && max > col ? 2 : 1),
+        			tBtnWidht, tBtnHeight);
+        }
+		return buttons != null && buttons.size() > 0 ? buttons.get(0).getY() : -1;
+	}
+
+	public static boolean empty(String content) {
+		return content == null || content.trim().length() == 0;
+	}
+	
+	public static String getMoneyStrOut(String strDisCount) {
+		int idx = strDisCount.indexOf("-" + BarOption.getMoneySign());
+		if(idx < 0) {
+			return "0";
+		}
+		
+		strDisCount = strDisCount.substring(idx + 2);
+		
+		idx = strDisCount.indexOf(BarDlgConst.delimiter);
+		if(idx > 0) {
+			strDisCount = strDisCount.substring(0, idx);
+		}
+		
+		return strDisCount;
+	}
+	
+	public static float calculateLabelsPrices(String[] labels) {
+    	Float pirce = 0.0f;
+		for(int i = 0; i < labels.length; i++) {
+			String[] langs = labels[i].split(BarDlgConst.semicolon);
+			StringBuilder sql = new StringBuilder("select distinct lang6 from modification where lang1 = '").append(langs[0].trim()).append("'");
+			try {
+				ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+				rs.afterLast();
+				rs.relative(-1);
+				if(rs.getRow() > 1) {
+					L.e("AddModificationDlg", " Found two labels with same name but have different price!" + langs[0], null);
+				}else if(rs.getRow() == 0) {
+					L.e("AddModificationDlg", " Found no labels matching lang1 = " + langs[0] + ". if this label has price property, will affect the total price of this dish!", null);
+				}
+				rs.beforeFirst();
+				rs.next();
+				String lang6 = rs.getString("lang6");
+				if(lang6 != null && lang6.length() > 0) {
+					pirce += Float.parseFloat(rs.getString("lang6"));
+				}
+			}catch(Exception e) {
+				L.e("AddModificationDlg", " Exception when searching price of modificaiton " + sql, null);
+			}
+		}
+		return pirce;
 	}
 }

@@ -21,6 +21,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.bar.BarUtil;
+import org.cas.client.platform.bar.action.Cmd_OpenDrawer;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -28,6 +29,7 @@ import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
+import org.jfree.chart.title.Title;
 
 public class PayDlg extends JDialog implements ActionListener, ComponentListener, WindowListener{
 	
@@ -35,7 +37,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	//flag
 	boolean isAllContentSelected;
 	
-	float maxInput;
+	public float maxInput;
 
 	//values got from db record
 	int oldTotal = 0;
@@ -116,7 +118,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 			//do nothing.
 		}
 		
-		return (int)(existingMoney * 100 + newAddedMoney * 100);
+		return Math.round(existingMoney * 100 + newAddedMoney * 100);
 	}
     
 	//it's public because there's a menu on salesPane is calling this method.
@@ -218,8 +220,17 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
             valMasterReceived.setText(BarUtil.formatMoney(onSrcMasterReceived / 100.0));
             valOtherReceived.setText(BarUtil.formatMoney(onSrcOtherReceived / 100.0));
             
-        	valTotal.setText(BarUtil.formatMoney(total / 100.0));
-            valLeft.setText(BarUtil.formatMoney(left / 100.0));
+            String totalStr = BarUtil.formatMoney(total / 100.0);
+            if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
+            	totalStr = BarUtil.canadianPennyRound(totalStr);
+            }
+        	valTotal.setText(totalStr);
+        	
+        	String leftStr = BarUtil.formatMoney(left / 100.0);
+            if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
+            	leftStr = BarUtil.canadianPennyRound(leftStr);
+            }
+            valLeft.setText(leftStr);
             
             reLayout();
             
@@ -408,14 +419,18 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         		BarFrame.instance.closeCurrentBill();
             	this.setVisible(false);
             	if(left < 0) {	//if it's equal to 0, then do not display the change dialog.
-            		new ChangeDlg(BarFrame.instance, BarOption.getMoneySign()
-            				+ BarUtil.formatMoney((0 - left)/100f)).setVisible(true); //it's a non-modal dialog.
+            		ChangeDlg changeDlg = new ChangeDlg(BarFrame.instance, BarOption.getMoneySign()
+            				+ BarUtil.formatMoney((0 - left)/100f)); //it's a non-modal dialog.
             		//if the last pay was with cash, then might need cash back (no change, paid with a "50" bill)
             		if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
-            			BarUtil.updateBill(billId, "cashback", oldCashback + left);
+            			changeDlg.setTitle(BarFrame.consts.Change());
+            			BillPanel.updateBill(billId, "cashback", oldCashback + left);
             		}else {
-            			BarUtil.updateBill(billId, "TIP", oldTip - left);	//otherwise, treated as tip. the tip in DB are positive, because it means we earned money.
+            			changeDlg.setTitle(BarFrame.consts.Tip());
+            			BillPanel.updateBill(billId, "TIP", oldTip - left);	//otherwise, treated as tip. the tip in DB are positive, because it means we earned money.
             		}
+            		
+            		changeDlg.setVisible(true);		//note: is't a non-modal dialog.
             	}
 
             	//let's qa decide if we should go back to table interface.
@@ -423,9 +438,9 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         		boolean needToBePrinted = billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled();
 	        	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
             	
-            	if(BarOption.isFastFoodMode()) {
+            	if(BarOption.isCounterMode()) {
         	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
-        	    	((SalesPanel)BarFrame.instance.panels[2]).addNewBillInCurTable();
+        	    	BarFrame.instance.addNewBillInCurTable();
         	    }else {
         	    	if(BarFrame.instance.isTableEmpty(null, null)) {
             			BarFrame.instance.closeATable(null, null);
@@ -435,7 +450,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	}
         	
         	if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
-        		PrintService.openDrawer();
+        		Cmd_OpenDrawer.getInstance().actionPerformed(null);
         	}
 
         	resetContent();
@@ -474,10 +489,10 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	this.setVisible(false);
         	
         	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
-    		PrintService.openDrawer();
+        	Cmd_OpenDrawer.getInstance().actionPerformed(null);
 
-        	if(BarOption.isFastFoodMode()) {
-    	    	((SalesPanel)BarFrame.instance.panels[2]).addNewBillInCurTable();
+        	if(BarOption.isCounterMode()) {
+    	    	BarFrame.instance.addNewBillInCurTable();
     	    }else if(BarFrame.instance.isTableEmpty(null, null)) {
     			BarFrame.instance.closeATable(null, null);
     			BarFrame.instance.switchMode(0);
@@ -613,8 +628,15 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 			received += Float.valueOf(valOtherReceived.getText()) + Float.valueOf(tfdNewReceived.getText());
 		}catch(Exception e) {}
 		
-		valLeft.setText(String.valueOf((int)(total * 100 - received * 100)/100f));
-		BarFrame.customerFrame.updateChange(0 - (int)(total * 100 - received * 100));
+		String leftStr = String.valueOf(Math.round(total * 100 - received * 100)/100f);
+        if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
+        	leftStr = BarUtil.canadianPennyRound(leftStr);
+        }
+		valLeft.setText(leftStr);
+		if(BarFrame.secondScreen != null) {
+			String changeStr = leftStr.startsWith("-") ? leftStr.substring(1) : "-" + leftStr;
+			BarFrame.customerFrame.updateChange(String.valueOf(Math.round(received * 100)/100f), changeStr, getTitle().equals(BarFrame.consts.EnterCashPayment()));
+		}
 	}
 	
     void initComponent() {

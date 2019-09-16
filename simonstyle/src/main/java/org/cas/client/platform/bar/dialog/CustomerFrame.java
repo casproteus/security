@@ -25,7 +25,7 @@ public class CustomerFrame extends JDialog implements ComponentListener{
  
 	void initComponent() {
         
-        billPanel = new BillPanel((SalesPanel)BarFrame.instance.panels[2]);
+        billPanel = new BillPanel(null);
 
     	String fileName = CASUtility.getPIMDirPath() + "CustomerFrameBG.jpg";
 		icon = new ImageIcon(fileName);
@@ -69,8 +69,8 @@ public class CustomerFrame extends JDialog implements ComponentListener{
 
         // add listener
         addComponentListener(this);
-        billPanel.initContent();
 		reLayout();
+        billPanel.resetColWidth(CustOpts.SCRWIDTH/2 - CustOpts.HOR_GAP * 4);
     }
 	
     private void reLayout() {
@@ -127,11 +127,18 @@ public class CustomerFrame extends JDialog implements ComponentListener{
 		valTotalPrice.setText(BarOption.getMoneySign() + billPanel.valTotlePrice.getText());
 	}
 
-	public void updateChange(int left) {
-		valChange.setText(BarOption.getMoneySign() + String.valueOf(left/100f));
-		
-		int totalprice = Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100);
-		valReceived.setText(BarOption.getMoneySign() + BarUtil.formatMoney((totalprice + left)/100f));
+	public void updateTotal(String total) {
+		valTotalPrice.setText(BarOption.getMoneySign() + total);
+	}
+	
+	public void updateChange(String received, String left, boolean isPayingWithCash) {
+		valReceived.setText(BarOption.getMoneySign() + received);
+		valChange.setText(BarOption.getMoneySign() + left);
+		if(!left.startsWith("-") && !isPayingWithCash) {
+			lblChange.setText(BarFrame.consts.Tip() + " : ");
+		}else {
+			lblChange.setText(BarFrame.consts.Change() + " : ");
+		}
 	}
 	
 }

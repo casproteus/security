@@ -5,28 +5,31 @@ import java.awt.event.ActionListener;
 
 import javax.swing.AbstractButton;
 import javax.swing.JOptionPane;
-import javax.swing.JToggleButton;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillPanel;
+import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
 
 public class UpdateItemPriceAction implements ActionListener{
 
-	JToggleButton btn;
-	BillPanel billPanel;
+	ISButton btn;
 	
-	public UpdateItemPriceAction(JToggleButton button, BillPanel billPanel) {
+	public UpdateItemPriceAction(ISButton button) {
 		this.btn = button;
-		this.billPanel = billPanel;
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(btn.isSelected()) {
+
+			SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
+			BillPanel billPanel = salesPanel.billPanel;
+			
  			try {
              	int row = billPanel.table.getSelectedRow();
          		Dish dish = billPanel.orderedDishAry.get(row);
@@ -42,7 +45,7 @@ public class UpdateItemPriceAction implements ActionListener{
          			price = Float.valueOf(curContent);
             	}
          		
-             	dish.setPrice((int)(price * 100));
+             	dish.setPrice(Math.round(price * 100));
              	dish.setTotalPrice((dish.getPrice() - dish.getDiscount()) * dish.getNum());
              	
  				int num = dish.getNum();
@@ -62,7 +65,7 @@ public class UpdateItemPriceAction implements ActionListener{
  	    			priceDSP /= pK;
  	    		
              	billPanel.table.setValueAt(BarOption.getMoneySign() + priceDSP/100f, row, 3);
-             	billPanel.updateTotleArea();
+             	billPanel.updateTotalArea();
              	int outputID = billPanel.orderedDishAry.get(row).getOutputID();
              	if(outputID >= 0) {
              		String sql = "update output set TOLTALPRICE = "

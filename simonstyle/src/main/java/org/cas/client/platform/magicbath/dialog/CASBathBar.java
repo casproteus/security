@@ -47,8 +47,8 @@ public class CASBathBar extends JPanel implements ComponentListener, ActionListe
             ActionEvent e) {
         Object tSource = e.getSource();
         if (tSource == btnOK) {
-            CASUtility.addToTotleIn(Integer.parseInt(lblMoneyIn.getText())); // 本次收入计入总收入中
-            CASUtility.addToTotleOut(Integer.parseInt(lblMoneyOut.getText())); // 本次支出计入总支出中
+            CASUtility.addToTotalIn(Integer.parseInt(lblMoneyIn.getText())); // 本次收入计入总收入中
+            CASUtility.addToTotalOut(Integer.parseInt(lblMoneyOut.getText())); // 本次支出计入总支出中
             CustOpts.custOps.setKeyAndValue("TotleMoneyIn", "0");
             CustOpts.custOps.setKeyAndValue("TotleMoneyOut", "0");
             lblMoneyIn.setText("0");

@@ -502,69 +502,6 @@ public class PrintService{
         return errorsAmount;
     }
 
-	public static boolean openDrawer(){
-		String key = BarFrame.menuPanel.getPrinters()[0].getIp();
-		if("".equals(key)) {
-			return false;
-		}
-		
-		if(key.equalsIgnoreCase("mev")) {
-			try{
-				printThroughOSdriver(getMevCommandFilePath("mevOpenCashierCommand.xml", Command.OPEN_CASHIER), new HashPrintRequestAttributeSet(), false);
-				return true;
-			} catch (Exception exp) {
-				ErrorUtil.write(exp);
-				return false;
-			}
-			
-		}else if (key.equalsIgnoreCase("serial")){
-			CommPortIdentifier commPortIdentifier;
-			try{
-				Enumeration tPorts = CommPortIdentifier.getPortIdentifiers();
-		        if (tPorts == null || !tPorts.hasMoreElements()) {
-		        	JOptionPane.showMessageDialog(BarFrame.instance, "no comm ports found! please check the printer connection.");
-		        	return false;
-		        }
-
-		        while (tPorts.hasMoreElements()) {
-		        	commPortIdentifier = (CommPortIdentifier) tPorts.nextElement();
-		        	if (commPortIdentifier.getPortType() != CommPortIdentifier.PORT_SERIAL)
-		                    continue;
-					SerialPort tSerialPort = (SerialPort)commPortIdentifier.open("PrintService", 10000);//并口用"ParallelBlackBox"
-					OutputStream outputStream = new DataOutputStream(tSerialPort.getOutputStream());
-	                int[] cmd = BarOption.getOpenDrawerCommand();
-	 				for (int i : cmd) {
-	 					outputStream.write(i);
-	 				}
-	 				return true;
-		        }
-		        
-		        return false;
-			} catch (Exception exp) {
-				ErrorUtil.write(exp);
-				return false;
-			}
-		}else {
-	    	try{
-				Socket socket = new Socket(key != null ? key : BarFrame.menuPanel.getPrinters()[0].getIp(), 9100);
-				BarFrame.setStatusMes("sockeet connected!");
-				OutputStream outputStream = socket.getOutputStream();
-				int[] cmd = BarOption.getOpenDrawerCommand();
-				for (int i : cmd) {
-					outputStream.write(i);
-				}
-				
-				BarFrame.setStatusMes("Command Send!");
-				outputStream.flush();
-				socket.close();
-				BarFrame.setStatusMes("Drawer Openned!");
-				return true;
-			} catch (Exception exp) {
-				ErrorUtil.write(exp);
-				return false;
-			}
-		}
-    }
     
 	//==============================================mev print part===========================================
     private static boolean doMevPrint(List<String> sndMsg) {
@@ -679,7 +616,7 @@ public class PrintService{
 	}
 
 	
-	private static boolean printThroughOSdriver(Path path, PrintRequestAttributeSet pras,
+	public static boolean printThroughOSdriver(Path path, PrintRequestAttributeSet pras,
 			boolean deleteCommandFile) {
 		try {
 			DocPrintJob job = defaultService.createPrintJob();
@@ -719,7 +656,7 @@ public class PrintService{
 		return formattedContent;
 	}
 	
-	private static Path getMevCommandFilePath(String fileName, byte[] command) {
+	public static Path getMevCommandFilePath(String fileName, byte[] command) {
 		String filePath = CASUtility.getPIMDirPath().concat(fileName);
 		Path path = Paths.get(filePath);
 		File file = new File(filePath);
@@ -832,7 +769,7 @@ public class PrintService{
 		printContent.append(mev2);
 		
 		//==========the 3rd part========
-		String comptoir = BarOption.isFastFoodMode() ? "O" : "N";
+		String comptoir = BarOption.isCounterMode() ? "O" : "N";
 		String autreCompte = "S";	//Identifies any sales recorded in a system other than the SRS.• F(Package deal)• G(Group event)• S Sans objet (N/A)
 		String tableTrans = null;//"T1";
 		String serveurTrans = null;//"Tao";
@@ -878,7 +815,7 @@ public class PrintService{
 				if(a.length >= 3) {
 					if(isRefund) {
 						Float refund = Math.abs(Float.valueOf(refundvalue));	//@NOTE: have to make it a positive number to avoid Math.round(-108.5) = -108 instead of -109.
-						int price = (int)(refund * 100);
+						int price = Math.round(refund * 100);
 
 			        	price = (int)Math.round(price / ((100 + BarOption.getGST() + BarOption.getQST()) / 100.0));
 			        	float floatPrice = (float)(price / 100.0);
@@ -1579,7 +1516,7 @@ public class PrintService{
 	        	//apply list into a new panel, and calculate the subtotal and taxes.
         		BillPanel bp = new BillPanel(null);
         		bp.orderedDishAry = entry.getValue();
-        		bp.updateTotleArea();
+        		bp.updateTotalArea();
         		
         		formatDishListContent(entry.getValue(), curPrintIp, tWidth, content,
 	            		BarUtil.formatMoney(bp.subTotal / 100.0),
@@ -1709,14 +1646,14 @@ public class PrintService{
         return content;
 	}
 
-	private static void pushRound(BillPanel billPanel, ArrayList<String> strAryFR, int tWidth) {
-		StringBuilder content = new StringBuilder();
-        //push total
-        String strTotal = roundCent(billPanel.valTotlePrice.getText());
-        content.append("Round").append(" : ").append(BarUtil.generateString(tWidth - 9 - strTotal.length(), " "))
-			.append(strTotal).append("\n");
-        strAryFR.add(content.toString());
-	}
+//	private static void pushRound(BillPanel billPanel, ArrayList<String> strAryFR, int tWidth) {
+//		StringBuilder content = new StringBuilder();
+//        //push total
+//        String strTotal = BarUtil.canadianPennyRound(billPanel.valTotlePrice.getText());
+//        content.append("Round").append(" : ").append(BarUtil.generateString(tWidth - 9 - strTotal.length(), " "))
+//			.append(strTotal).append("\n");
+//        strAryFR.add(content.toString());
+//	}
 	
 	private static void pushVoidedTotal(BillPanel billPanel, ArrayList<String> strAryFR, int tWidth) {
 	    //push new totall
@@ -1798,7 +1735,7 @@ public class PrintService{
     			.append(str).append("\n");
     		}
         	
-            float left = -1 * ((int)((total * 100 - cashReceived - debitReceived - visaReceived - masterReceived - otherReceived)));
+            float left = -1 * (Math.round((total * 100 - cashReceived - debitReceived - visaReceived - masterReceived - otherReceived)));
             str = BarUtil.formatMoney(left/100f);
             String lblText;
             if(isCashBack) {
@@ -1807,7 +1744,7 @@ public class PrintService{
  				.append(BarUtil.generateString(width - lblText.length() - str.length(), " "))
  				.append(str).append("\n");
             	
-            	String roundedStr = roundCent(str);
+            	String roundedStr = BarUtil.canadianPennyRound(str);
             	if(!roundedStr.equals(str)) {
             		lblText = "ARRONDI DE MONTANT : ";	//rounded price
             		content.append(lblText)
@@ -1859,7 +1796,7 @@ public class PrintService{
   		for (Bill bill : list) {
   			BillPanel bp = new BillPanel(null);
     		bp.initContent(null, bill.getBillIndex(), bill.getTableID(), bill.getOpenTime());
-    		bp.updateTotleArea();
+    		bp.updateTotalArea();
     		
     		net += bp.subTotal;
     		GST += bp.totalGst;
@@ -2267,20 +2204,6 @@ public class PrintService{
 		    }
 	    }
 	}
-	
-	private static String roundCent(String priceStr) {
-		Float f = Float.parseFloat(priceStr);
-		int t = (int)(f * 100);
-    	//get the last bit
-    	int last = t % 10;
-    	if(last == 1 || last == 2)
-    		last = 0;
-    	else if(last == 3 || last == 4 || last == 6 || last == 7)
-    		last = 5;
-    	else if(last == 8 || last == 9)
-    		last = 10;
-    	return BarUtil.formatMoney((t/ 10 * 10 + last) / 100.0);
-    }
 	
     final static String mev1 = "<reqMEV><trans noVersionTrans=\"v0%s.00\" etatDoc=\"%s\" modeTrans=\"%s\" duplicata=\"%s\"><doc><texte><![CDATA[\n";
     final static String mev2 = "]]></texte></doc>\r\n		<donneesTrans ";

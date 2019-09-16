@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +28,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.cas.client.platform.bar.BarUtil;
+import org.cas.client.platform.bar.action.Cmd_ChangePrice;
+import org.cas.client.platform.bar.action.Cmd_DiscItem;
+import org.cas.client.platform.bar.action.Cmd_SplitItem;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.DBConsts;
@@ -84,6 +88,23 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		initComponent();
 	}
 	
+	public void createAndPrintNewOutput() {
+		//if there's any new bill, send it to kitchen first, and this also made the output generated.
+		List<Dish> dishes = getNewDishes();
+		if (dishes != null && dishes.size() > 0) {
+			sendNewOrdersToKitchenAndDB(dishes);
+		}else {
+			sendNewOrdersToKitchenAndDB(BarUtil.generateAnEmptyDish());
+ 		}
+	}
+	
+	//if there's new dish added.... update the total value field of bill record.
+	//and make sure new added dish will be updated with new information.
+	public void billPricesUpdateToDB() {
+		BillPanel.updateBillRecordPrices(this);		//in case if added service fee or discout of bill. ??? so this means, when added discount, will not save to db immediatly?
+		initContent();	//always need to initContent, to make sure dish in selection ary has new property. e.g. saved dish should has different color.,
+	}
+		
 	public void printBill(String tableID, String billIndex, String opentime, boolean isToCustomer) {
 		
         if(status >= DBConsts.completed || status < DBConsts.original || comment.contains(PrintService.OLD_GST)) { //for completed or reopened completed bill
@@ -191,7 +212,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		 }
 	}
 
-	
 	void sendDishToKitchen(Dish dish, boolean isCancelled) {
 		List<Dish> dishes = new ArrayList<Dish>();
 		dishes.add(dish);
@@ -199,7 +219,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	}
 	
 	//send to printer
-	void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
+	public void sendDishesToKitchen(List<Dish> dishes, boolean isCancelled) {
 		//prepare the printing String and do printing
 		String curTable = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String curCustomerIdx = BarFrame.instance.getOnSrcCurBillIdx();
@@ -237,7 +257,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		}
 	}
 	
-	List<Dish> getNewDishes() {
+	public List<Dish> getNewDishes() {
 		List<Dish> newDishes = new ArrayList<Dish>();
 		for (Dish dish : orderedDishAry) {
 			if(dish.getOutputID() > -1)	//if it's already saved into db, ignore.
@@ -266,15 +286,17 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				}else {			//not saved yet  //NOTE:getNum() couldn't be bigger than 10000, if it's saved, + button will insert a new line.
 					int tQTY = orderedDishAry.get(selectedRow).getNum() + 1;
 					dish.setNum(tQTY);
-					dish.setTotalPrice((dish.getPrice() - dish.getDiscount()) * tQTY);
+					String modify = BillListPanel.curDish.getModification();
+					float priceInLabel = modify == null ? 0.0f : BarUtil.calculateLabelsPrices(modify.split(BarDlgConst.delimiter));
+					dish.setTotalPrice((dish.getPrice() - dish.getDiscount() + Math.round(priceInLabel * 100)) * tQTY);
 					
 					table.setValueAt(tQTY % BarOption.MaxQTY + "x", selectedRow, 0);
 					table.setValueAt(BarOption.getMoneySign() 
-							+ BarUtil.formatMoney((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f),
+							+ BarUtil.formatMoney(dish.getTotalPrice()/100f),
 							selectedRow, 3);
 				}
 	        } else if (o == btnLess) {
-				if(dish.getOutputID() >= 0) {	//if it's already send, then do the removePanel.
+				if(dish.getOutputID() >= 0) {	//if it's already send, then do the removeItem.
 					salesPanel.removeItem();
 				}else {
 					if(orderedDishAry.get(selectedRow).getNum() == 1) {
@@ -289,18 +311,20 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					} else {
 						int tQTY = orderedDishAry.get(selectedRow).getNum() - 1;
 						dish.setNum(tQTY);
-						dish.setTotalPrice((dish.getPrice() - dish.getDiscount()) * tQTY);
+						String modify = BillListPanel.curDish.getModification();
+						float priceInLabel = modify == null ? 0.0f : BarUtil.calculateLabelsPrices(modify.split(BarDlgConst.delimiter));
+						dish.setTotalPrice((dish.getPrice() - dish.getDiscount() + Math.round(priceInLabel * 100)) * tQTY);
 						table.setValueAt(tQTY == 1 ? "" : tQTY + "x"  , selectedRow, 0);		
 						table.setValueAt(BarOption.getMoneySign()
-								+ BarUtil.formatMoney((orderedDishAry.get(selectedRow).getPrice() - orderedDishAry.get(selectedRow).getDiscount()) * tQTY/100f),
+								+ BarUtil.formatMoney(dish.getTotalPrice()/100f),
 								selectedRow, 3);
 					}
 				}
 	        }
 
-			updateTotleArea();
+			updateTotalArea();
         }else if(o == billButton){		//when bill button on top are clicked.
-        	if(billListPanel != null && billListPanel.btnSplitItem.isSelected()) {
+        	if(billListPanel != null && Cmd_SplitItem.getInstance().getSourceBtn().isSelected()) {
         		billButton.setSelected(!billButton.isSelected());
         		return;
         	}
@@ -341,6 +365,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	public void valueChanged(ListSelectionEvent e) {
 		//adjust more and less button status.
 		int selectedRow =  table.getSelectedRow();
+		if(selectedRow < 0 || orderedDishAry.size() < selectedRow + 1)
+			return;
 		btnMore.setEnabled(selectedRow >= 0 && selectedRow <= orderedDishAry.size());
 		btnLess.setEnabled(selectedRow >= 0 && selectedRow <= orderedDishAry.size());
 		
@@ -361,14 +387,14 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				if(obj != null)
 					BarFrame.numberPanelDlg.setContents(obj.toString());
 			}
-			if( salesPanel.btnDiscItem.isSelected()) {
+			if(Cmd_DiscItem.getInstance().getSourceBtn().isSelected()) {
 				Object obj = table.getValueAt(selectedRow,2);
 				//update the discount in qtyDlg.
 				if(obj != null)
 					BarFrame.numberPanelDlg.setContents(obj.toString());
 			}
 		}else if(billListPanel != null) {
-			if(billListPanel.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
+			if(Cmd_SplitItem.getInstance().getSourceBtn().isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
 				billButton.setSelected(!billButton.isSelected());
 				return;
 			}
@@ -442,11 +468,16 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == scrContent.getViewport()) {
 			if(billListPanel != null) {
-				if(billListPanel.btnSplitItem.isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
+				if(Cmd_SplitItem.getInstance().getSourceBtn().isSelected()) {	//if in splite item mode, then do nothing but select the bill button.
 					billButton.setSelected(!billButton.isSelected());
 					return;
 				}
 				//if not in split item mode (split item button not pressed.)
+				if(billListPanel.getCurBillPanel() == null) {
+					billListPanel.getSelectedBillPannels().add(this);
+					billButton.setSelected(!billButton.isSelected());
+					return;
+				}
 	 			if(BillListPanel.curDish != null && billListPanel.getCurBillPanel() != this) {	//this there's already an item ready for move.
 					billListPanel.moveDishToBill(this);
 					BillListPanel.curDish = null;
@@ -454,15 +485,15 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 					billButton.setSelected(!billButton.isSelected());
 					if(billButton.isSelected()) {
 						BarFrame.instance.setCurBillIdx(billButton.getText());
-						BarFrame.instance.curBillID = getBillID();
+						BarFrame.instance.setCurBillID(getBillID());
 					}else {
 						BillPanel panel = billListPanel.getCurBillPanel();
 						if(panel != null) {
 							BarFrame.instance.setCurBillIdx(panel.billButton.getText());
-							BarFrame.instance.curBillID = panel.getBillID();
+							BarFrame.instance.setCurBillID(panel.getBillID());
 						}else {
 							BarFrame.instance.setCurBillIdx("");
-							BarFrame.instance.curBillID = 0;
+							BarFrame.instance.setCurBillID(0);
 						}
 					}
 				}
@@ -494,6 +525,9 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
                     tValues[r][c] = table.getValueAt(r, c);
             table.setDataVector(tValues, header);
             resetColWidth(scrContent.getWidth());
+            if(BarFrame.secondScreen != null) {
+            	BarFrame.customerFrame.billPanel.resetColWidth(scrContent.getWidth());
+            }
         }else {
         	tRowCount--;
         }
@@ -519,7 +553,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         table.setValueAt(dish.getSize() > 1 ? dish.getSize() : "", tValidRowCount, 2); // set the count.
         table.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney(price/100f), tValidRowCount, 3); // set the price.
         
-        updateTotleArea();								//because value change will not be used to remove the record.
+        updateTotalArea();								//because value change will not be used to remove the record.
         SwingUtilities.invokeLater(new Runnable() {
 			
 			@Override
@@ -530,8 +564,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		        }
 	        	//if the original is not 0.00, then will still be treated as price promp not a taxInclude.
 		        if(newDish.getPrice() == 0 || "true".equals(newDish.getPrompPrice()) && !BarOption.isTreatPricePromtAsTaxInclude()) {
-		        	salesPanel.btnChangePrice.setSelected(true);
-		        	salesPanel.showPriceChangeDlg();
+		        	Cmd_ChangePrice.getInstance().showPriceChangeDlg();
 		        }
 			}
 		});
@@ -547,7 +580,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		table.repaint();//to update the color of dishes, it's saved, so it's not red anymore.
 	}
 
-    public void updateTotleArea() {
+    public void updateTotalArea() {
     	float gstRate = BarOption.getGST();
     	float qstRate = BarOption.getQST();
     	totalGst = 0;
@@ -608,138 +641,190 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	lblTVQ.setText(BarFrame.consts.QST() + " : " + BarOption.getMoneySign() + BarUtil.formatMoney(totalQst/100f));
         int total = Math.round(subTotal + totalGst + totalQst);
         valTotlePrice.setText(BarUtil.formatMoney((total)/100f));
+        
+        BarFrame.setStatusMes(BarFrame.consts.getPennyRounded() + BarUtil.canadianPennyRound(valTotlePrice.getText()));
+
+		if(BarFrame.secondScreen != null) {
+			BillPanel billPanel2 = BarFrame.customerFrame.billPanel;
+			billPanel2.lblDiscount.setText(lblDiscount.getText());
+			billPanel2.lblServiceFee.setText(lblServiceFee.getText());
+			billPanel2.lblSubTotle.setText(lblSubTotle.getText());
+			billPanel2.lblTPS.setText(lblTPS.getText());
+			billPanel2.lblTVQ.setText(lblTVQ.getText());
+			billPanel2.valTotlePrice.setText(valTotlePrice.getText());
+			
+			BarFrame.customerFrame.updateTotal(valTotlePrice.getText());
+		}
     }
     
-    void initContent() {
-    	String billIndex = billButton == null ? BarFrame.instance.getCurBillIndex() : billButton.getText();
+    public void initContent() {
+    	String billIndex = billButton != null ? billButton.getText() : BarFrame.instance.getCurBillIndex();
 		//used deleted <= 1, means both uncompleted and normally completed will be displayed, unnormally delted recored will be delted = 100
 		String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
 		String openTime = BarFrame.instance.valStartTime.getText();
-		String billId = BarFrame.instance.isShowingAnExpiredBill ? String.valueOf(BarFrame.instance.curBillID) : "";
+		String billId = BarFrame.instance.isShowingAnExpiredBill ? String.valueOf(BarFrame.instance.getCurBillID()) : "";
+		
 		initContent(billId, billIndex, tableName, openTime);
 	}
     
     public void initContent(String billId, String billIndex, String tableName, String openTime) {
+    	if((billId == null || "".equals(billId)) && (openTime == null || "".equals(openTime))) {//we can find bill by id, if no id, then openTime is a "must have" to locate a sigle bill.
+    		int tColCount = table.getColumnCount();
+    		Object[][] tValues = new Object[0][tColCount];
+    		table.setDataVector(tValues, header);
+    		updateTotalArea();
+    		resetColWidth(scrContent.getWidth());
+    		return;
+    	}
+    	
     	resetProperties();
+    	
     	//get outputs of current table and bill id.
     	StringBuilder sql = null;
 		try {
-			boolean isShowingExpiredBill = BarFrame.instance.isShowingAnExpiredBill;
-			sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
-				.append(tableName)
-				.append("' and CONTACTID = ").append(billIndex)
-				.append(" and (deleted is null or deleted < ").append(isShowingExpiredBill ? DBConsts.deleted : DBConsts.expired)	//dumpted also should show.
-				.append(") AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
-				.append(openTime).append("'").append(billId != null && billId.length() > 0 ? " and output.category = " + billId : "");	//new added after dump should not display.
+			orderedDishAry = initTableWithOutput(sql, billId, billIndex, tableName, openTime);	//make the table display the dishes in this bill first. (output of dumped bill will not match billId.)
+
+			if(orderedDishAry.size() > 0 && orderedDishAry.get(0).getBillID() > 0) {	//if has output, update the discount and service fee, and tip info, and (don't forget the billID).
+																						//then get the billID from any output, 
+				int billID = initBillStatus(sql, billIndex, tableName, openTime);
+				setBillID(billID);	//@NOTE: do not use orderedDishAry.get(0).getBillID() to get billID, because when combine all we don't modify bill id in output and dish (for undo use)
 			
-			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-			rs.afterLast();
-			rs.relative(-1);
-			int tmpPos = rs.getRow();
-
-			int tColCount = table.getColumnCount();
-			Object[][] tValues = new Object[tmpPos][tColCount];
-			rs.beforeFirst();
-			tmpPos = 0;
-			while (rs.next()) {
-				Dish dish = new Dish();
-				dish.setCATEGORY(rs.getString("PRODUCT.CATEGORY"));
-				dish.setDiscount(rs.getInt("OUTPUT.discount"));//
-				dish.setDspIndex(rs.getInt("PRODUCT.INDEX"));
-				dish.setGst(rs.getInt("PRODUCT.FOLDERID"));
-				dish.setId(rs.getInt("PRODUCT.ID"));
-				dish.setLanguage(0, rs.getString("PRODUCT.CODE"));
-				dish.setLanguage(1, rs.getString("PRODUCT.MNEMONIC"));
-				dish.setLanguage(2, rs.getString("PRODUCT.SUBJECT"));
-				dish.setModification(rs.getString("OUTPUT.CONTENT"));//
-				dish.setNum(rs.getInt("OUTPUT.AMOUNT"));//
-				dish.setOutputID(rs.getInt("OUTPUT.ID"));//
-				dish.setPrice(rs.getInt("PRODUCT.PRICE"));
-				dish.setPrinter(rs.getString("PRODUCT.BRAND"));
-				dish.setPrompMenu(rs.getString("PRODUCT.UNIT"));
-				dish.setPrompMofify(rs.getString("PRODUCT.PRODUCAREA"));
-				dish.setPrompPrice(rs.getString("PRODUCT.CONTENT"));
-				dish.setQst(rs.getInt("PRODUCT.STORE"));
-				dish.setSize(rs.getInt("PRODUCT.COST"));
-				dish.setBillIndex(billIndex);
-				dish.setOpenTime(rs.getString("OUTPUT.TIME"));	//output time is table's open time. no need to remember output created time.
-				dish.setBillID(rs.getInt("OUTPUT.Category"));
-				dish.setTotalPrice(rs.getInt("OUTPUT.TOLTALPRICE"));
-				orderedDishAry.add(dish);
-
-				tValues[tmpPos][0] = dish.getDisplayableNum(dish.getNum());
-				
-				tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
-
-				String[] langs = dish.getModification().split(BarDlgConst.semicolon);
-				String lang = langs.length > LoginDlg.USERLANG ? langs[LoginDlg.USERLANG] : langs[0];
-				if(lang.length() == 0 || "null".equalsIgnoreCase(lang))
-					lang = langs[0].length() == 0 || "null".equalsIgnoreCase(lang) ? "" : langs[0];
-				
-				tValues[tmpPos][2] = lang;
-				if(dish.getDiscount() > 0) {
-					tValues[tmpPos][2] = lang + "  -" + BarOption.getMoneySign() + BarUtil.formatMoney(dish.getDiscount() / 100.0);
-				}
-				
-				tValues[tmpPos][3] =  BarOption.getMoneySign() + dish.getTotalPrice() / 100f;
-				tmpPos++;
+			}else if(tableName.length() > 0 && openTime.length() > 0) {		//if has no output(---could be an non-first but empty bill), then if has tablename and opentime
+																			//together with the BillIdx in Barframe, we can still locate a bill.
+				int billID = getBillIdByIdxOrCreateNew(sql, Integer.valueOf(billIndex), tableName, openTime);			//what kind of case will reach here: no bill and create an new empty bill?
+				setBillID(billID);
 			}
-
-			table.setDataVector(tValues, header);
+			
 			// do not set the default selected value, if it's used in billListDlg.
-			if (salesPanel != null)
-				table.setSelectedRow(tmpPos - 1);
-			//rs.close();
-			
-			//update the discount and service fee, and tip info, and (don't forget the billID).
-			//if has output, then get the billID from any output, 
-			if(orderedDishAry.size() > 0 && orderedDishAry.get(0).getBillID() > 0) {
-				sql = new StringBuilder("select * from Bill where opentime = '").append(openTime)
-						.append("' and billIndex = '").append(billIndex).append("'")
-						.append(" and tableID = '").append(tableName).append("'")
-						.append(" and (status is null or status ").append(isShowingExpiredBill ? "<=" : "<").append(DBConsts.expired).append(")");
-				  
-				rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-				rs.beforeFirst();
-				if(rs.next()) {
-					setBillID(rs.getInt("id"));	//@NOTE: do not use orderedDishAry.get(0).getBillID() to get billID, because when combine all we don't modify bill id in output and dish (for undo use)
-				    discount = rs.getInt("discount");
-				    serviceFee = rs.getInt("serviceFee");
-				    tip = rs.getInt("tip");
-				    cashback = rs.getInt("cashback");
-				    status = rs.getInt("status");
-				    comment = rs.getString("comment");
-				    setBackground(status >= DBConsts.completed || status < DBConsts.original ? Color.gray : null);
-				}
+			if (salesPanel != null && orderedDishAry.size() > 0) {
+				table.setSelectedRow(orderedDishAry.size() - 1);
 			}
-			//if has no output, then search related bill from db. ---could be an non-first but empty bill, 
-			//so must consider the bill ID if it's not empty string.
-			else if(tableName.length() > 0 && openTime.length() > 0) {
-				sql = new StringBuilder("Select id from bill where tableID = '").append(tableName)
-						.append("' and opentime = '").append(openTime)
-						.append("' and billIndex = '").append(BarFrame.instance.getCurBillIndex()).append("'");
-                ResultSet resultSet = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-                resultSet.beforeFirst();
-                if(resultSet.next()) {
-                	setBillID(resultSet.getInt("id"));
-                }else {
-                	L.e("initing BillPanel", "there's no bill in an openned table.", null);
-                	setBillID(BarFrame.instance.createAnEmptyBill("", openTime, 0));
-                }
-			}
-			rs.close();
 		} catch (Exception e) {
 			L.e("BillPanel", " exception when initContent()" + sql, e);
 		}
 
-		resetColWidth(scrContent.getWidth());
-		
-		updateTotleArea();
+		updateTotalArea();
+	    setBackground(status >= DBConsts.completed || status < DBConsts.original ? Color.gray : null);
 		//reset the flag whichi is only used for showing expired bills.
 		BarFrame.instance.isShowingAnExpiredBill = false;
 	}
 
-    private void resetProperties(){
+    private ArrayList<Dish> initTableWithOutput(StringBuilder sql, String billId, String billIndex, String tableName, Object openTime) throws SQLException {
+    	ArrayList<Dish> dishAry = new ArrayList<Dish>();
+    	sql = new StringBuilder("select * from OUTPUT, PRODUCT where OUTPUT.SUBJECT = '")
+			.append(tableName)
+			.append("' and CONTACTID = ").append(billIndex)
+			.append(" and (deleted is null or deleted < ").append(BarFrame.instance.isShowingAnExpiredBill ? DBConsts.deleted : DBConsts.expired)	//dumpted also should show.
+			.append(") AND OUTPUT.PRODUCTID = PRODUCT.ID and output.time = '")
+			.append(openTime).append("'").append(billId != null && billId.length() > 0 ? " and output.category = " + billId : "");	//new added outputs after dumped should not display.
+		
+		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+		rs.afterLast();
+		rs.relative(-1);
+		int tmpPos = rs.getRow();
+
+		int tColCount = table.getColumnCount();
+		Object[][] tValues = new Object[tmpPos][tColCount];
+		rs.beforeFirst();
+		tmpPos = 0;
+		while (rs.next()) {
+			Dish dish = new Dish();
+			dish.setCATEGORY(rs.getString("PRODUCT.CATEGORY"));
+			dish.setDiscount(rs.getInt("OUTPUT.discount"));//
+			dish.setDspIndex(rs.getInt("PRODUCT.INDEX"));
+			dish.setGst(rs.getInt("PRODUCT.FOLDERID"));
+			dish.setId(rs.getInt("PRODUCT.ID"));
+			dish.setLanguage(0, rs.getString("PRODUCT.CODE"));
+			dish.setLanguage(1, rs.getString("PRODUCT.MNEMONIC"));
+			dish.setLanguage(2, rs.getString("PRODUCT.SUBJECT"));
+			dish.setModification(rs.getString("OUTPUT.CONTENT"));//
+			dish.setNum(rs.getInt("OUTPUT.AMOUNT"));//
+			dish.setOutputID(rs.getInt("OUTPUT.ID"));//
+			dish.setPrice(rs.getInt("PRODUCT.PRICE"));
+			dish.setPrinter(rs.getString("PRODUCT.BRAND"));
+			dish.setPrompMenu(rs.getString("PRODUCT.UNIT"));
+			dish.setPrompMofify(rs.getString("PRODUCT.PRODUCAREA"));
+			dish.setPrompPrice(rs.getString("PRODUCT.CONTENT"));
+			dish.setQst(rs.getInt("PRODUCT.STORE"));
+			dish.setSize(rs.getInt("PRODUCT.COST"));
+			dish.setBillIndex(billIndex);
+			dish.setOpenTime(rs.getString("OUTPUT.TIME"));	//output time is table's open time. no need to remember output created time.
+			dish.setBillID(rs.getInt("OUTPUT.Category"));
+			dish.setTotalPrice(rs.getInt("OUTPUT.TOLTALPRICE"));
+			dishAry.add(dish);
+			
+			tValues[tmpPos][0] = dish.getDisplayableNum(dish.getNum());
+			
+			tValues[tmpPos][1] = dish.getLanguage(LoginDlg.USERLANG);
+
+			String[] marks = dish.getModification().split(BarDlgConst.delimiter);
+			StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < marks.length; i++) {
+				String[] langs = marks[i].split(BarDlgConst.semicolon);
+				String lang = langs.length > LoginDlg.USERLANG ? langs[LoginDlg.USERLANG] : langs[0];
+				if(lang.length() == 0 || "null".equalsIgnoreCase(lang)) {
+					lang = langs[0].length() == 0 || "null".equalsIgnoreCase(lang) ? "" : langs[0];
+				}
+				sb.append(lang).append(" ");
+			}
+			if(dish.getDiscount() == 0) {
+				tValues[tmpPos][2] = sb.toString();
+			}else{
+				tValues[tmpPos][2] = sb.append("  -").append(BarOption.getMoneySign()).append(BarUtil.formatMoney(dish.getDiscount() / 100.0)).toString();
+			}
+			
+			tValues[tmpPos][3] =  BarOption.getMoneySign() + dish.getTotalPrice() / 100f;
+			tmpPos++;
+		}
+
+		table.setDataVector(tValues, header);
+		
+		resetColWidth(scrContent.getWidth());
+
+        if(BarFrame.secondScreen != null) {
+        	BarFrame.customerFrame.billPanel.resetColWidth(scrContent.getWidth());
+        }
+		return dishAry;
+	}
+
+	private int initBillStatus(StringBuilder sql, String billIndex, String tableName, String openTime) throws SQLException {
+		sql = new StringBuilder("select * from Bill where opentime = '").append(openTime)
+				.append("' and billIndex = '").append(billIndex).append("'")
+				.append(" and tableID = '").append(tableName).append("'")
+				.append(" and (status is null or status ").append(BarFrame.instance.isShowingAnExpiredBill ? "<=" : "<").append(DBConsts.expired).append(")");
+		  
+		ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+		rs.beforeFirst();
+		if(rs.next()) {
+		    discount = rs.getInt("discount");
+		    serviceFee = rs.getInt("serviceFee");
+		    tip = rs.getInt("tip");
+		    cashback = rs.getInt("cashback");
+		    status = rs.getInt("status");
+		    comment = rs.getString("comment");
+		    return rs.getInt("id");
+		}
+		return -1;
+	}
+
+	private int getBillIdByIdxOrCreateNew(StringBuilder sql, int billIdx, String tableName, String openTime) throws SQLException {
+		sql = new StringBuilder("Select id from bill where tableID = '").append(tableName)
+				.append("' and opentime = '").append(openTime)
+				.append("' and billIndex = '").append(billIdx).append("'");
+		
+		ResultSet resultSet = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+		
+		resultSet.beforeFirst();
+		if(resultSet.next()) {
+			return resultSet.getInt("id");
+		}else {
+			// it's not error, can be openning a new bill by clicking an new table. what we should do is add a new bill.
+			//L.e("initing BillPanel", "there's no bill in an openned table.", null);
+			return BarFrame.instance.createAnEmptyBill("", openTime, billIdx);
+		}
+	}
+	
+	private void resetProperties(){
         orderedDishAry.clear();
         discount = 0;
         tip = 0;
@@ -757,7 +842,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         
     }
     
-    void resetColWidth(int tableWidth) {
+    public void resetColWidth(int tableWidth) {
         PIMTableColumn tmpCol1 = table.getColumnModel().getColumn(0);
         tmpCol1.setWidth(60);
         tmpCol1.setPreferredWidth(60);
@@ -810,13 +895,16 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		}
 		table.setDataVector(tValues, header);
 		resetColWidth(scrContent.getWidth());
+        if(BarFrame.secondScreen != null) {
+        	BarFrame.customerFrame.billPanel.resetColWidth(scrContent.getWidth());
+        }
 		table.setSelectedRow(tValues.length - 1); //@Note this will trigger a value change event, to set the curDish.
-		updateTotleArea();
+		updateTotalArea();
 	}
     
     //return true means can move on, return false means user don't want to move on.
 	public boolean checkStatus() {
-		if(status >= DBConsts.billPrinted || status < DBConsts.original) {//check if the bill is .
+		if(status >= DBConsts.billPrinted || status < DBConsts.original) {//check if the bill is more than billPrinted.
 			if (JOptionPane.showConfirmDialog(this, BarFrame.consts.ConvertClosedBillBack(), BarFrame.consts.Operator(),
 		            JOptionPane.YES_NO_OPTION) != 0) {// are you sure to convert the voided bill back？
 		        return false;
@@ -1026,6 +1114,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	}
         setBackground(bg);
         setLayout(null);
+													//in that method will check if the mirrorTable exist.
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setAutoscrolls(true);
         table.setRowHeight(30);
@@ -1033,8 +1122,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         table.setRenderAgent(this);
         table.setHasSorter(false);
         table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-
-        table.setDataVector(new Object[1][header.length], header);
+        
+        table.setDataVector(new Object[0][header.length], header);
         DefaultPIMTableCellRenderer tCellRender = new DefaultPIMTableCellRenderer();
         tCellRender.setOpaque(true);
         tCellRender.setBackground(Color.LIGHT_GRAY);
@@ -1070,7 +1159,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         // built
         if(billButton != null) {
         	add(billButton);
-            billButton.addActionListener(this);
+        	billButton.addActionListener(this);
         }else {
             add(btnMore);
             add(btnLess);
@@ -1101,9 +1190,26 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 	public void setBillID(int billID) {
 		this.billID = billID;
 	}
+	
+	public static void updateBill(int billId, String fieldName, int value) {
+		StringBuilder sb = new StringBuilder("update bill set ").append(fieldName).append(" = ").append(value).append(" where id = ").append(billId);
+		
+		try {
+			PIMDBModel.getStatement().executeUpdate(sb.toString());
+		}catch(Exception e) {
+			ErrorUtil.write(e);
+		}
+	}
+
+	//
+	public static void updateBillRecordPrices(BillPanel billPanel) {
+		updateBill(billPanel.getBillID(), "total", Math.round(Float.valueOf(billPanel.valTotlePrice.getText()) * 100));
+		updateBill(billPanel.getBillID(), "discount", Math.round(billPanel.discount));
+		updateBill(billPanel.getBillID(), "serviceFee", billPanel.serviceFee);
+	}
 
 	public PIMTable table;
-    private PIMScrollPane scrContent;
+	public PIMScrollPane scrContent;
 
     public JLabel lblSubTotle;
     public JLabel lblTPS;
@@ -1116,6 +1222,6 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     private ArrowButton btnMore;
     private ArrowButton btnLess;
     
-    String[] header = new String[] {BarFrame.consts.Count(), BarFrame.consts.ProdName(), "", BarFrame.consts.Price()};
+    public String[] header = new String[] {BarFrame.consts.Count(), BarFrame.consts.ProdName(), "", BarFrame.consts.Price()};
 
 }

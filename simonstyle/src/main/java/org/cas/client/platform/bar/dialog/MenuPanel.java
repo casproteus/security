@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.model.Category;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.model.Printer;
@@ -38,7 +39,7 @@ public class MenuPanel extends JPanel implements ActionListener {
     Integer menuColumn;
     Integer menuRow;
 
-    String[][] categoryNameMetrix;
+    public String[][] categoryNameMetrix;
     ArrayList<ArrayList<CategoryToggleButton>> onSrcCategoryTgbMatrix = new ArrayList<ArrayList<CategoryToggleButton>>();
     CategoryToggleButton tgbActiveCategory;
     
@@ -51,6 +52,7 @@ public class MenuPanel extends JPanel implements ActionListener {
     private Dish[] dishAry;
     private List<Dish> classifiedDishAry;
     ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
+	private int classifiedMenuIndex;
 	public MenuPanel() {
 		initComponent();
 	}
@@ -90,11 +92,16 @@ public class MenuPanel extends JPanel implements ActionListener {
 	}
 	
     public void initCategoryAndDishes() {
-        try {
-            Statement statement = PIMDBModel.getReadOnlyStatement();
+        loadAllCategorys();
+        loadAllDishes();
+        curMenuPage = 0;
+        reInitCategoryAndMenuBtns();
+    }
 
+	private void loadAllCategorys() {
+		try {
             // load all the categorys---------------------------
-            ResultSet categoryRS = statement.executeQuery("select ID, LANG1, LANG2, LANG3 from CATEGORY  where DSP_INDEX >= 0 order by DSP_INDEX");
+            ResultSet categoryRS = PIMDBModel.getReadOnlyStatement().executeQuery("select ID, LANG1, LANG2, LANG3 from CATEGORY  where DSP_INDEX >= 0 order by DSP_INDEX");
             categoryRS.afterLast();
             categoryRS.relative(-1);
             int tmpPos = categoryRS.getRow();
@@ -117,14 +124,20 @@ public class MenuPanel extends JPanel implements ActionListener {
                 tmpPos++;
             }
             categoryRS.close();// 关闭
-
+        } catch (Exception e) {
+            L.e("MenuPanel ", "exception when loading all categories", e);
+        }
+	}
+	
+	private void loadAllDishes() {
+		try {
             // load all the dishes----------------------------
             ResultSet productRS =
-                    statement
+            		PIMDBModel.getReadOnlyStatement()
                             .executeQuery("select ID, CODE, MNEMONIC, SUBJECT, PRICE, FOLDERID, STORE,  COST, BRAND, CATEGORY, CONTENT, UNIT, PRODUCAREA, INDEX from product where deleted != true order by index");
             productRS.afterLast();
             productRS.relative(-1);
-            tmpPos = productRS.getRow();
+            int tmpPos = productRS.getRow();
             dishNameMetrix = new String[3][tmpPos];
             dishAry = new Dish[tmpPos];
             productRS.beforeFirst();
@@ -156,11 +169,9 @@ public class MenuPanel extends JPanel implements ActionListener {
             productRS.close();// 关闭
 			
         } catch (Exception e) {
-            ErrorUtil.write(e);
+            L.e("MenuPanel ", "exception when loading all dishes", e);
         }
-        curMenuPage = 0;
-        reInitCategoryAndMenuBtns();
-    }
+	}
 
 	public void initPrinters() {
 		
@@ -199,7 +210,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	}
 
     // menu and category buttons must be init after initContent---------
-    private void reInitCategoryAndMenuBtns() {
+    public void reInitCategoryAndMenuBtns() {
         // validate rows and columns first(in case they are changed into bad value)--------
         categoryColumn = (categoryColumn == null || categoryColumn < 4) ? 5 : categoryColumn;
         categoryRow = (categoryRow == null || categoryRow < 1 || categoryRow > 9) ? 3 : categoryRow;
@@ -232,7 +243,8 @@ public class MenuPanel extends JPanel implements ActionListener {
                 btnCategoryArry.add(btnCategory);
                 
                 if (globleCategoryIdxOfCurCategory < categoryNameMetrix[0].length) {
-                    btnCategory.setText(categoryNameMetrix[CustOpts.custOps.getUserLang()][globleCategoryIdxOfCurCategory]);
+                	String text = categoryNameMetrix[CustOpts.custOps.getUserLang()][globleCategoryIdxOfCurCategory];
+                    btnCategory.setText(BarUtil.empty(text) ? categoryNameMetrix[0][globleCategoryIdxOfCurCategory] : text);
                     if (tgbActiveCategory != null && categoryNameMetrix[CustOpts.custOps.getUserLang()][globleCategoryIdxOfCurCategory].equalsIgnoreCase(tgbActiveCategory.getText())) {
                         btnCategory.setSelected(true);
                     }
@@ -253,8 +265,7 @@ public class MenuPanel extends JPanel implements ActionListener {
         //find out menus matching to current category and current lang
         classifiedDishNameMetrix = new String[3][dishNameMetrix[0].length];
         classifiedDishAry = new ArrayList<Dish>();
-        
-        int classifiedMenuIndex = 0;
+        classifiedMenuIndex = 0;
         for (int i = 0; i < dishAry.length; i++) {
 			if(dishAry[i].getCATEGORY().equals(tgbActiveCategory.getText())) {
 				
@@ -293,7 +304,8 @@ public class MenuPanel extends JPanel implements ActionListener {
                 btnMenu.addActionListener(this);
                 btnMenuArry.add(btnMenu);
                 if (globleMenuIdxOfCurCategory < classifiedMenuIndex) {	//the last page could be not full page.
-                    btnMenu.setText(classifiedDishNameMetrix[CustOpts.custOps.getUserLang()][globleMenuIdxOfCurCategory]);
+                	String text = classifiedDishNameMetrix[CustOpts.custOps.getUserLang()][globleMenuIdxOfCurCategory];
+                    btnMenu.setText(BarUtil.empty(text) ? classifiedDishNameMetrix[0][globleMenuIdxOfCurCategory] : text);
                     btnMenu.setDish(classifiedDishAry.get(globleMenuIdxOfCurCategory));
                     globleMenuIdxOfCurCategory++;
                 }
@@ -307,30 +319,33 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private void adjustPageArrowStatus(int globleCategoryIdxOfCurCategory, int globleMenuIdxOfCurCategory) {
 		
 		//for category panel page up
-        if(globleCategoryIdxOfCurCategory <= categoryQtPerPage) {		//the last displayed category is less than categoryQtPerPage, means
+        if(globleCategoryIdxOfCurCategory <= categoryQtPerPage && curCategoryPage == 0) {		//the last displayed category is less than categoryQtPerPage, means
         	btnPageUpCategory.setVisible(false);				  			// now it's on first page. no need to display up arrow.
         }else {
         	btnPageUpCategory.setVisible(true);			//as long as not the first page, page up should display.
         }
         //for category panel page down
-        if(globleCategoryIdxOfCurCategory > categoryNameMetrix[0].length) {//if is the last page, and not full of last page, then should not display page down arrow.
+        int lastCateIdx = categoryRow * categoryColumn * (curCategoryPage + 1);
+        if(lastCateIdx > categoryNameMetrix[0].length) {//if is the last page, and not full of last page, then should not display page down arrow.
         	btnPageDownCategory.setVisible(false);
-        }else if(categoryNameMetrix[0].length < categoryRow * categoryColumn) {//if there'no enough to display, then don't display page down.
+        }else if(BarFrame.instance == null ||(lastCateIdx == categoryNameMetrix[0].length && BarFrame.instance.curPanel != 3)) {//if full of page, but is sales page, then hide.
         	btnPageDownCategory.setVisible(false);
         }else {	// if there's more than one page to display, and currently it's not last page then show it.
         	btnPageDownCategory.setVisible(true);
         }
 		
 		//for menu panel page up
-        if(globleMenuIdxOfCurCategory <= menuQTPerPage) {		//the last displayed menu is less than curMenuPerPage, means
+        if(globleMenuIdxOfCurCategory <= menuQTPerPage && curMenuPage == 0) {		//the last displayed menu is less than curMenuPerPage, means
             btnPageUpMenu.setVisible(false);				  	// now it's on first page. no need to display up arrow.
         }else {
         	btnPageUpMenu.setVisible(true);			//as long as not the first page, page up should display.
         }
         //for menu panel page down
-        if(globleMenuIdxOfCurCategory == classifiedDishAry.size() && globleMenuIdxOfCurCategory % (menuRow * menuColumn) != 0) {//if is the last page, and not full of last page, then should not display page down arrow.
+        int lastIdx = menuRow * menuColumn * (curMenuPage + 1);
+        if(lastIdx > classifiedMenuIndex) {//if is the last page, and not full of last page, then should not display page down arrow.
         	btnPageDownMenu.setVisible(false);
-        }else if(classifiedDishAry.size() < menuRow * menuColumn) {//if there'no enough to display, then don't display page down.
+        }else if(BarFrame.instance == null //ignore the case when app not finished start and the BarFrame is still null.
+        		|| (lastIdx == classifiedMenuIndex  && BarFrame.instance.curPanel != 3)) {//if it's full of page, but is not in setting page then hide!
         	btnPageDownMenu.setVisible(false);
         }else {	// if there's more than one page to display, and currently it's not last page then show it.
         	btnPageDownMenu.setVisible(true);
@@ -421,7 +436,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	        } else if (o == btnPageDownMenu) {
 	            curMenuPage++;
 	            btnPageUpMenu.setVisible(true);
-	            if (curMenuPage * menuQTPerPage > dishNameMetrix.length) {
+	            if (curMenuPage * menuQTPerPage > dishNameMetrix[0].length) {
 	                btnPageDownMenu.setVisible(false);
 	            }
 	            reInitCategoryAndMenuBtns();

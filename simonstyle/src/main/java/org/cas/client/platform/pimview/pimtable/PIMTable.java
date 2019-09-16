@@ -119,6 +119,7 @@ public class PIMTable extends JComponent implements IPIMTableModelListener, IPIM
     public static final int AUTO_RESIZE_LAST_COLUMN = 3; // 单列宽度变化时,调整最后一列的宽度
     public static final int AUTO_RESIZE_ALL_COLUMNS = 4; // 单列宽度变化时,列宽度自动调整
 
+	private PIMTable mirrorTable;
     // 构造器==============================================================================================================================
     /**
      * 构建一个PIMTable的实例
@@ -2209,6 +2210,9 @@ public class PIMTable extends JComponent implements IPIMTableModelListener, IPIM
             int column) {
         // 从数据模型中得到
         getModel().setValueAt(aValue, row, convertColumnIndexToModel(column));
+        if(mirrorTable != null) {
+        	mirrorTable.setValueAt(aValue, row, column);
+        }
     }
 
     /**
@@ -4924,6 +4928,9 @@ public class PIMTable extends JComponent implements IPIMTableModelListener, IPIM
             Object[][] prmContents,
             Object[] prmHeaderTitles) {
         ((PIMTableModelAryBased) dataModel).setData(prmContents, prmHeaderTitles);
+        if(getMirrorTable() != null) {
+        	getMirrorTable().setDataVector(prmContents, prmHeaderTitles);
+        }
     }
 
     /**
@@ -4947,6 +4954,14 @@ public class PIMTable extends JComponent implements IPIMTableModelListener, IPIM
 
 	public void setRenderAgent(PIMTableRenderAgent renderAgent) {
 		this.renderAgent = renderAgent;
+	}
+
+	public PIMTable getMirrorTable() {
+		return mirrorTable;
+	}
+
+	public void setMirrorTable(PIMTable mirrorTable) {
+		this.mirrorTable = mirrorTable;
 	}
 
 	private boolean specialProcess;

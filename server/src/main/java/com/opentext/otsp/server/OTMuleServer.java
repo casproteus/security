@@ -1,8 +1,3 @@
-/*
- * This file is part of OTSP.
- * (C) 2011-2011 - Open Text Corporation
- * All rights reserved.
- */
 package com.opentext.otsp.server;
 
 import java.io.File;
@@ -26,6 +21,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.UnrecognizedOptionException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.cas.client.platform.bar.dialog.BarFrame;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleException;
 import org.mule.api.context.notification.ServerNotification;
@@ -37,61 +33,32 @@ import org.mule.context.notification.NotificationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * This class is the main entry point for OTSP running in Mule.
- */
+//This class is the main entry point for OTSP running in Mule.
 public class OTMuleServer {
 
-    /**
-     * Time in milliseconds. Used for delaying the next poll on server status
-     */
-    private static final int DELAY_BETWEEN_CHECKING_SERVER_STATUS = 1000;
+    private static final Logger LOG = LoggerFactory.getLogger("SERVER");
 
-    /**
-     * Command line options.
-     */
+    private static final int DELAY_BETWEEN_CHECKING_SERVER_STATUS = 1000;    // Time in milliseconds. Used for delaying the next poll on server status
+
+    private static final long MAX_WAIT_FOR_RESTART_REQUEST = 60000;    // milliseconds
+
+    private static final long MAX_DELAY_FOR_RESTART_REQUEST_POLL = 2000;    // milliseconds
+
+    private static final String DEFAULT_CONFIG = "mule";    // Default configuration folder name.
+
+    public static OTMuleServer instance;
+
+    private static boolean SERVER_STOPPED;    // Flag used for tracing if the server is stopped or not
+
+    private final AtomicBoolean isRestartRequired = new AtomicBoolean(false);    // Placeholder for restart requests
+
+    private final AtomicBoolean isRestarted = new AtomicBoolean(false);    // Flag used for tracing if the server was restarted from the last restart request
+
+    private MuleContext muleContext;    // Context of the server.
+
+    private List<URL> lastUsedConfigPaths;    //List of configuration paths used in starting the current server session
+
     private static Options OPTIONS = new Options();
-
-    /**
-     * Name of the logger.
-     */
-    private static final String LOG_NAME = OTMuleServer.class.getName();
-
-    /**
-     * Logger used to output information.
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(OTMuleServer.LOG_NAME);
-
-    /**
-     * Default configuration path.
-     */
-    private static final String DEFAULT_CONFIG = "mule";
-
-    // milliseconds
-    private static final long MAX_WAIT_FOR_RESTART_REQUEST = 60000;
-
-    // milliseconds
-    private static final long MAX_DELAY_FOR_RESTART_REQUEST_POLL = 2000;
-
-    /**
-     * Server instance
-     */
-    public static OTMuleServer SERVER;
-
-    /**
-     * Flag used for tracing if the server is stopped or not
-     */
-    private static boolean SERVER_STOPPED;
-
-    /**
-     * Placeholder for restart requests
-     */
-    private final AtomicBoolean isRestartRequired = new AtomicBoolean(false);
-
-    /**
-     * Flag used for tracing if the server was restarted from the last restart request
-     */
-    private final AtomicBoolean isRestarted = new AtomicBoolean(false);
 
     static {
         OTMuleServer.OPTIONS.addOption("help", "help", false, "display this help and exit");
@@ -108,7 +75,7 @@ public class OTMuleServer {
                 while (!OTMuleServer.SERVER_STOPPED) {
                     try {
                         OTMuleServer.LOG.debug("Checking for restart requests");
-                        final OTMuleServer server = OTMuleServer.SERVER;
+                        final OTMuleServer server = OTMuleServer.instance;
                         if (server == null) {
                             Thread.sleep(MAX_DELAY_FOR_RESTART_REQUEST_POLL);
                         } else {
@@ -131,33 +98,58 @@ public class OTMuleServer {
         });
         executor.shutdown();
     }
-
     /**
-     * Context of the server.
-     */
-    private MuleContext muleContext;
-
-    /**
-     * List of configuration paths used in starting the current server session
-     */
-    private List<URL> lastUsedConfigPaths;
-
-    /**
-     * Get the <code>muleContext</code> for the started server
-     */
-    public MuleContext getMuleContext() {
-        return muleContext;
-    }
-
-    /**
-     * Start the server using the specified configuration path.
+     * Main entry point.
      *
-     * @param configURLs
-     *            Configuration files.
-     * @throws MuleException
+     * @param args
+     *            Arguments, can specify a file, a pattern or a semicolon file list of configuration files or patterns
+     *            for the mule server using -config option.
+     * @throws ExecutionException
+     * @throws InterruptedException
      */
-    public synchronized void start(
-            final List<URL> configURLs) throws MuleException {
+    public static void main(
+            final String... args) throws InterruptedException, ExecutionException {
+        OTMuleServer.instance = new OTMuleServer();
+
+        try {
+            final HelpFormatter formatter = new HelpFormatter();
+            final CommandLineParser parser = new GnuParser();
+            CommandLine line = null;
+            try {
+                line = parser.parse(OTMuleServer.OPTIONS, args);
+            } catch (final UnrecognizedOptionException e) {
+                OTMuleServer.LOG.error(e.getMessage());
+                System.err.println(e.getMessage());
+                System.exit(1);
+            }
+            if (line.hasOption("help") || args.length == 0) {
+                formatter.printHelp("SERVER", OTMuleServer.OPTIONS);
+            }
+            String configPath = OTMuleServer.DEFAULT_CONFIG;
+            if (line.hasOption("config")) {
+                configPath = line.getOptionValue("config");
+            }
+
+            final List<URL> paths = OTMuleServer.instance.findConfigFiles(configPath);
+            OTMuleServer.instance.setLastUsedConfigPaths(paths);
+            OTMuleServer.instance.start(paths);
+        } catch (final Throwable e) {
+            OTMuleServer.LOG.error(null, e);
+            e.printStackTrace(System.err);
+            System.exit(1);
+        }
+    }
+    
+	public synchronized void start(final List<URL> configURLs) throws MuleException {
+		if(BarFrame.instance == null || !BarFrame.instance.isVisible()) {
+			Thread a = new Thread() {
+				@Override
+				public void run() {
+		            BarFrame.main(null);
+				}
+			};
+			a.start();
+		}
         if (muleContext == null || !muleContext.isStarted()) {
             deployNewUpgrade(configURLs);
             final DefaultMuleContextFactory muleContextFactory = new DefaultMuleContextFactory();
@@ -177,9 +169,6 @@ public class OTMuleServer {
         }
     }
 
-    /**
-     * Stop the server.
-     */
     public synchronized void stop() {
         if (muleContext != null) {
             try {
@@ -192,11 +181,6 @@ public class OTMuleServer {
 
     /**
      * Restarts the mule server, the supplied <code>configURLs</code> list will be used as startup configuration
-     * 
-     * @param configURLs
-     *            list of configuration paths
-     * @throws MuleException
-     *             thrown if mule encounters any error while initializing
      */
     public synchronized void restart(
             final List<URL> configURLs) throws MuleException {
@@ -217,47 +201,22 @@ public class OTMuleServer {
         start(configURLs);
     }
 
-    /**
-     * @return Whether or not the context has been disposed of.
-     *
-     * @see org.mule.api.MuleContext#isDisposed()
-     */
     public synchronized boolean isDisposed() {
         return muleContext != null && muleContext.isDisposed();
     }
 
-    /**
-     * @return Whether or not the context is currently disposing.
-     *
-     * @see org.mule.api.MuleContext#isDisposing()
-     */
     public synchronized boolean isDisposing() {
         return muleContext != null && muleContext.isDisposing();
     }
 
-    /**
-     * @return Whether or not the context is initialised.
-     *
-     * @see org.mule.api.MuleContext#isInitialised()
-     */
     public synchronized boolean isInitialised() {
         return muleContext != null && muleContext.isInitialised();
     }
 
-    /**
-     * @return Whether or not the context is currently initialising.
-     *
-     * @see org.mule.api.MuleContext#isInitialising()
-     */
     public synchronized boolean isInitialising() {
         return muleContext != null && muleContext.isInitialising();
     }
 
-    /**
-     * @return Whether or not the context is started.
-     *
-     * @see org.mule.api.MuleContext#isStarted()
-     */
     public synchronized boolean isStarted() {
         return muleContext != null && muleContext.isStarted();
     }
@@ -317,8 +276,7 @@ public class OTMuleServer {
      *            Folder to look into.
      * @return File paths, separated by semicolons.
      */
-    public List<URL> findConfigFiles(
-            final String folderPath) {
+    public List<URL> findConfigFiles( final String folderPath) {
         final List<URL> urlList = new ArrayList<URL>();
         if (!StringUtils.isEmpty(folderPath)) {
             final File folder = new File(folderPath);
@@ -337,8 +295,7 @@ public class OTMuleServer {
         return urlList;
     }
 
-    private void deployNewUpgrade(
-            List<URL> configURLs) {
+    private void deployNewUpgrade( List<URL> configURLs) {
         File cacheFolder = new File(configURLs.get(0).getPath());
         File rootFolder = cacheFolder.getParentFile().getParentFile().getParentFile().getParentFile();
         String path = rootFolder.getAbsolutePath();
@@ -360,80 +317,19 @@ public class OTMuleServer {
         }
     }
 
-    /**
-     * Main entry point.
-     *
-     * @param args
-     *            Arguments, can specify a file, a pattern or a semicolon file list of configuration files or patterns
-     *            for the mule server using -config option.
-     * @throws ExecutionException
-     * @throws InterruptedException
-     */
-    public static void main(
-            final String... args) throws InterruptedException, ExecutionException {
-        OTMuleServer.SERVER = new OTMuleServer();
-
-        try {
-            final HelpFormatter formatter = new HelpFormatter();
-            final CommandLineParser parser = new GnuParser();
-            CommandLine line = null;
-            try {
-                line = parser.parse(OTMuleServer.OPTIONS, args);
-            } catch (final UnrecognizedOptionException e) {
-                OTMuleServer.LOG.error(e.getMessage());
-                System.err.println(e.getMessage());
-                System.exit(1);
-            }
-            if (line.hasOption("help") || args.length == 0) {
-                formatter.printHelp(OTMuleServer.LOG_NAME, OTMuleServer.OPTIONS);
-            }
-            String configPath = OTMuleServer.DEFAULT_CONFIG;
-            if (line.hasOption("config")) {
-                configPath = line.getOptionValue("config");
-            }
-
-            final List<URL> paths = OTMuleServer.SERVER.findConfigFiles(configPath);
-            OTMuleServer.SERVER.setLastUsedConfigPaths(paths);
-            OTMuleServer.SERVER.start(paths);
-        } catch (final Throwable e) {
-            OTMuleServer.LOG.error(null, e);
-            e.printStackTrace(System.err);
-            System.exit(1);
-        }
-    }
-
-    /**
-     * @return value of {@link #lastUsedConfigPaths}
-     */
     public List<URL> getLastUsedConfigPaths() {
         return lastUsedConfigPaths;
     }
 
-    /**
-     * Set value for {@link #lastUsedConfigPaths}
-     * 
-     * @param lastUsedConfigPaths
-     *            list of configuration paths used in starting the current server session
-     */
-    public void setLastUsedConfigPaths(
-            final List<URL> lastUsedConfigPaths) {
+    public void setLastUsedConfigPaths( final List<URL> lastUsedConfigPaths) {
         this.lastUsedConfigPaths = lastUsedConfigPaths;
     }
 
-    /**
-     * @return value of {@link #isRestartRequired}
-     */
     public AtomicBoolean getIsRestartRequired() {
         return isRestartRequired;
     }
 
-    /**
-     * Set value for {@link #isRestartRequired}
-     * 
-     * @param isRestartRequired
-     */
-    public void setIsRestartRequired(
-            final boolean isRestartRequired) {
+    public void setIsRestartRequired( final boolean isRestartRequired) {
         this.isRestartRequired.set(isRestartRequired);
         this.isRestarted.set(false);
         if (this.isRestartRequired.get() == true) {
@@ -444,20 +340,15 @@ public class OTMuleServer {
         }
     }
 
-    /**
-     * @return value of {@link #isRestarted}
-     */
     public AtomicBoolean getIsRestarted() {
         return isRestarted;
     }
 
-    /**
-     * Set value for for {@link #isRestarted}
-     * 
-     * @param isRestarted
-     */
-    public void setIsRestarted(
-            final boolean isRestarted) {
+    public MuleContext getMuleContext() {
+        return muleContext;
+    }
+
+    public void setIsRestarted( final boolean isRestarted) {
         this.isRestarted.set(isRestarted);
     }
 }

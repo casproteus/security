@@ -11,7 +11,8 @@
 	<spring:beans>
 		<!-- To specify multiple files, use a comma separated list value for location, 
 			example: location="file1,file2,file3" -->
-		<context:property-placeholder location="classpath:mule/security/service.properties" />
+		<!-- context:property-placeholder location="classpath:mule/security/service.properties" /-->
+		<context:property-placeholder location="file:${CONF_PATH}\etc\mule/security/service.properties" />
 		<context:annotation-config />
 	</spring:beans>
 </mule>

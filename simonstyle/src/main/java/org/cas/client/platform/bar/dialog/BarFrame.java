@@ -24,12 +24,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import org.cas.client.platform.CASControl;
+import org.cas.client.platform.bar.BarUtil;
+import org.cas.client.platform.bar.action.Cmd_Send;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
+import org.cas.client.platform.bar.i18n.BarDlgConst1;
+import org.cas.client.platform.bar.i18n.BarDlgConst2;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.net.HttpRequestClient;
 import org.cas.client.platform.bar.net.RequestNewOrderThread;
@@ -43,87 +46,108 @@ import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
+import org.cas.client.resource.international.DlgConst;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
-	private String VERSION = "V2.08-20190514";
+	private String VERSION = "V2.32-20190730";
 	public static BarFrame instance;
-    public static BarDlgConst consts = new BarDlgConst0();
+    public static BarDlgConst consts;
     
     public int curPanel;
     //curBillID is currently only used for displaying a expired bill, which is to say, when showingExpiredBill is set to true;
-	public int curBillID;	
+	private int curBillID;	
 	public boolean isShowingAnExpiredBill;
 	
 	public DefaultComboBoxModel<String> tableNames = new DefaultComboBoxModel<String>(new String[] {""});
+	public boolean ignoreLogin;
     public static NumberPanelDlg numberPanelDlg; 
     public static DiscountDlg discountDlg; 
     public static PayDlg payDlg;
 	public static CustomerFrame customerFrame;
-	private static GraphicsDevice secondScreen;
+	public static GraphicsDevice secondScreen;
     
     public static void main(String[] args) {
         CASControl.ctrl.initModel();
         CASControl.ctrl.setMainFrame(new CASMainFrame());
         menuPanel = new MenuPanel();	//have to be after initModel, before new BarFrame().
+        switch (CustOpts.custOps.getUserLang()){
+	        case 0:
+	       		consts = new BarDlgConst0();
+	            break;
+	        case 1:
+	       		consts = new BarDlgConst1();
+	            break;
+	        case 2:
+	       		consts = new BarDlgConst2();
+	            break;
+	        default:
+	        	consts = new BarDlgConst0();
+        }
         instance = new BarFrame();
-        numberPanelDlg = new NumberPanelDlg(instance);
-        discountDlg = new DiscountDlg(instance);
-        payDlg = new PayDlg(instance);
-        customerFrame = new CustomerFrame();
-        
-        //activation check
-        String returnStr = validateActivation(null);
-        if(!"OK".equals(returnStr)) { 	// if not valid, might because of expired, then give clean the bill head, 
-        	if(!"OK".equals(validateActivation(returnStr))) {	// give another valid to show up licence dialog.
-        		return;
-        	}
-        }
-        
-        if(BarOption.isSingleUser()) {
-	        singleUserLoginProcess();
-        }else {
-        	instance.setVisible(true);
-        }
-        
-    	if(BarOption.isFastFoodMode()) {
-    		BarFrame.instance.ignoreItemChange = true;
-    		BarFrame.instance.cmbCurTable.setSelectedItem("");
-    		BarFrame.instance.setCurBillIdx("1");
-        	
-        	String openTime = BarOption.df.format(new Date());
-        	BarFrame.instance.valStartTime.setText(openTime);
 
-        	BarFrame.instance.openATable("", openTime);
-        	BarFrame.instance.curBillID = BarFrame.instance.createAnEmptyBill("", openTime, 0);
-        	((SalesPanel)BarFrame.instance.panels[2]).billPanel.setBillID(BarFrame.instance.curBillID);
-    		
-        	BarFrame.instance.switchMode(2);
-    	}else {
-    		BarFrame.instance.switchMode(0);	//while BarFrame.instance is still null if don't put it in the later.
-    	}
-        
-        //this thread will start a request thread every 20 seconds to fetch new order from server..
-        new RequestNewOrderThread().start();
-        
+        CmdBtnsDlg.initButtons();
+        instance.initComponent();
         if(BarOption.isShowCustomerFrame()) {
             GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
             GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             for (GraphicsDevice graphicsDevice : gds) {
 				if(gd != graphicsDevice) {
 					secondScreen = graphicsDevice;
+		            customerFrame = new CustomerFrame();
 					secondScreen.setFullScreenWindow(customerFrame);
+					((SalesPanel)BarFrame.instance.panels[2]).billPanel.table.setMirrorTable(customerFrame.billPanel.table); //this must happen before setDataVector is called, because
 					break;
 				}
 			}
         }
+        numberPanelDlg = new NumberPanelDlg(instance);
+        discountDlg = new DiscountDlg(instance);
+        payDlg = new PayDlg(instance);
+        
+        //activation check
+        String returnStr = validateActivation(null);
+        if(!"OK".equals(returnStr)) { 	// if not valid, might because of expired, then give clean the bill head, 
+        	if(!"OK".equals(validateActivation(returnStr))) {	// give another valid to show up licence dialog.
+        		System.exit(0);;
+        	}
+        }
+        
+        if(BarOption.isSingleUser() && BarOption.getDefaultWindowStatus() != JFrame.ICONIFIED) {
+	        singleUserLoginProcess();
+        }else {
+        	instance.setVisible(true);
+        }
+        
+    	if(BarOption.isCounterMode()) {
+    		instance.ignoreItemChange = true;
+    		instance.cmbCurTable.setSelectedItem("");
+    		instance.setCurBillIdx("1");
+        	
+        	String openTime = BarOption.df.format(new Date());
+        	instance.valStartTime.setText(openTime);
+
+        	instance.openATable("", openTime);
+        	instance.setCurBillID(instance.createAnEmptyBill("", openTime, 0));
+        	((SalesPanel)instance.panels[2]).billPanel.setBillID(instance.getCurBillID());
+    		
+        	instance.switchMode(2);
+    	}else {
+    		instance.switchMode(0);	//while instance is still null if don't put it in the later.
+    	}
+        
+        //this thread will start a request thread every 20 seconds to fetch new order from server..
+        new RequestNewOrderThread().start();
+        
+        instance.repaint();
+        instance.setExtendedState(BarOption.getDefaultWindowStatus());
     }
     
     private static String validateActivation(String activateCode) {
     	if(BarOption.getBillHeadInfo() == null || BarOption.getBillHeadInfo().trim().length() == 0 ) {
     		
     		if(activateCode == null)
-    			activateCode = JOptionPane.showInputDialog(null, BarFrame.consts.activeCode());
+    			activateCode = JOptionPane.showInputDialog(null, consts.activeCode());
     		if("asdfas".equals(activateCode)) {
     			if(BarOption.getBillHeadInfo() == null) {
             		BarOption.setBillHeadInfo("AikaPos");
@@ -143,6 +167,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     			return "OK";
     		}else {
     			BarOption.setBillHeadInfo(null);
+    			CustOpts.custOps.saveData();//save to hd.
     			return activateCode;
     		}
     	}
@@ -162,7 +187,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         }
 
         BarOption.setLicense(inputedSN);
-        new HttpRequestClient(HttpRequestClient.SERVER_URL + "/activeAccount", "POST", prepareLicenceJSONString(), 
+        new HttpRequestClient("http://www.sharethegoodones.com/activeAccount", "POST", prepareLicenceJSONString(), 
         		new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -189,7 +214,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 									}
 								}
 								//@NOTE: can not use JOptionPane.showMessageDialog, because it will be hided by LoginDlg, and stuck there.
-								BarFrame.setStatusMes("Application is activated successfully!");
+								setStatusMes("Application is activated successfully!");
 							} else {
 								JOptionPane.showMessageDialog(null,
 										"Software expired, please contact us at info@ShareTheGoodOnes.com");
@@ -248,7 +273,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
      */
 	public static void checkSignIn() {
 		//first make sure the name is displayed on BarFrame heder area.
-    	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
+    	instance.valOperator.setText(LoginDlg.USERNAME);
     	
 		String time = BarOption.df.format(new Date());
 		int p = time.indexOf(" ");
@@ -274,13 +299,9 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		}
 	}
     
-    public BarFrame() {
-    	initComponent();
-    }
-    
-    public void initComponent(){
+	public void initComponent(){
     	getContentPane().removeAll();
-    	setTitle(BarFrame.consts.Title());
+    	setTitle(consts.Title());
         setIconImage(CustOpts.custOps.getFrameLogoImage()); // 设置主窗体的LOGO。
 
         setBounds(0, 0, CustOpts.SCRWIDTH, CustOpts.SCRHEIGHT - 30); // 对话框的默认尺寸。
@@ -290,17 +311,17 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         // 初始化－－－－－－－－－－－－－－－－
         int tShoestring = 0;
         try {
-            tShoestring = Integer.parseInt((String) CustOpts.custOps.getValue(BarFrame.consts.Shoestring()));
+            tShoestring = Integer.parseInt((String) CustOpts.custOps.getValue(consts.Shoestring()));
         } catch (Exception exp) {
         }
         
-        lblOperator = new JLabel(BarFrame.consts.Operator().concat(BarFrame.consts.Colon()));
+        lblOperator = new JLabel(consts.Operator().concat(consts.Colon()));
         valOperator = new JLabel();
-        lblCurTable = new JLabel(BarFrame.consts.TABLE().concat(" #"));
+        lblCurTable = new JLabel(consts.TABLE().concat(" #"));
         cmbCurTable = new JComboBox<String>(tableNames);
-        lblCurBillIdx = new JLabel(BarFrame.consts.BILL().concat(" #"));
+        lblCurBillIdx = new JLabel(consts.BILL().concat(" #"));
         valCurBillIdx = new JLabel();
-        lblStartTime = new JLabel(BarFrame.consts.OPENTIME().concat(BarFrame.consts.Colon()));
+        lblStartTime = new JLabel(consts.OPENTIME().concat(consts.Colon()));
         valStartTime = new JLabel();
         
         lblStatus = new JLabel();
@@ -345,6 +366,18 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     }
 	
     public int switchMode(int i) {
+    	if(curPanel == 3) {	//if it's switching from setting panel, then ask to do a login.
+    		if(ignoreLogin == false) {
+    			if(BarOption.isSingleUser()) {
+		    		instance.setVisible(false);
+		    		new LoginDlg(null).setVisible(true);
+		    		instance.setVisible(true);
+		    		valOperator.setText(LoginDlg.USERNAME);
+    			}
+    		}else {
+    			ignoreLogin = false;
+    		}
+    	}
     	BillListPanel.curDish = null;
     	setStatusMes("");
 		if (i == 3) {		//setting
@@ -371,11 +404,14 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     		panel.setVisible(false);
 		
     	panels[i].setVisible(true);
+
+    	curPanel = i;
     	if(i > 1) {	//salespanel and setting pannel need menu panel on it.
+    		menuPanel.reInitCategoryAndMenuBtns();
+    		menuPanel.reLayout();
     		panels[i].add(menuPanel);
     	}
     	
-    	curPanel = i;
     	return 0;
 	}
     
@@ -395,7 +431,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         new LoginDlg(null).setVisible(true);
         if (LoginDlg.PASSED == true && LoginDlg.USERTYPE == LoginDlg.ADMIN_STATUS) { // 如果用户选择了确定按钮。
         	valOperator.setText(LoginDlg.USERNAME);
-            BarFrame.setStatusMes(BarFrame.consts.ADMIN_MODE());
+            setStatusMes(consts.ADMIN_MODE());
             // @TODO: might need to do some modification on the interface.
             revalidate();
             return true;
@@ -501,13 +537,32 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         		 String newTable = e.getItem().toString();
                  if ("".equals(newTable) || oldTable.equals(newTable)) {
                 	 return;
+                 }else if(curPanel == 0) {
+                	 TablesPanel tablesPanel = (TablesPanel)panels[curPanel];
+                	 ActionEvent evt = new ActionEvent(tablesPanel.getTableButtonByName(newTable), 0, null);
+                	 tablesPanel.actionPerformed(evt);
+                	 return;
                  }
                  
                  ArrayList<BillPanel> unclosedBillPanels = new ArrayList<BillPanel>(); 
                  if(curPanel == 1) {
                 	 unclosedBillPanels.addAll(((BillListPanel)panels[curPanel]).gatherAllUnclosedBillPanels());
          		 }else if(curPanel == 2) { //modify only one bill
-         			unclosedBillPanels.add(((SalesPanel)panels[curPanel]).billPanel);
+         			BillPanel billPanel = ((SalesPanel)panels[curPanel]).billPanel;
+         			unclosedBillPanels.add(billPanel);
+                    //if there's unsend selections
+                    if(billPanel.getNewDishes().size() > 0) {
+	   	            	if(JOptionPane.showConfirmDialog(BarFrame.instance, 
+	   	         				BarFrame.consts.COMFIRMLOSTACTION(), DlgConst.DlgTitle, JOptionPane.YES_NO_OPTION) != 0) {
+	   	                	 ignoreItemChange = true;
+	   	                	 this.cmbCurTable.setSelectedItem(oldTable);
+	   	                	 ignoreItemChange = false;
+	   	                     return;	
+	   	            	}else {
+	   	            		//TODO: send out with new table id. @NOte: the notice should also be modified.
+	   	            		//Cmd_Send
+	   	            	}
+                    }
          		 }
          		
                  Table table = null;
@@ -525,7 +580,22 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
                  break;
 		}
 	}
-
+	
+	//add new bill with a new billID and billIdx.
+	public void addNewBillInCurTable() {
+		String tableName = instance.cmbCurTable.getSelectedItem().toString();
+		String openTime = instance.valStartTime.getText();
+		SalesPanel salesPanel = (SalesPanel)panels[2];
+		BillPanel billPanel = salesPanel.billPanel;
+		
+		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
+		int oldbill = billPanel.getBillID();
+		int billId = createAnEmptyBill(tableName, openTime, newBillIdx);
+		billPanel.setBillID(billId);
+		setCurBillIdx(String.valueOf(newBillIdx));
+		switchMode(2);
+	}
+		
 	//update all current output and bill with target table name, opentime and with the new billIdx?
 	//@Note: why people merge table??? maybe they are friends met in restaurant, they shouldn't share same bill number for sure, 
 	//because they might AA when pay the bill.
@@ -562,8 +632,8 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	//So, finally, I think it's better to let the unclosed bills display in check list box, anyway, they are not closed yet, they are waiting for uncombine.
     public boolean isTableEmpty(String tableName, String openTime){
 		//validate parameters
-		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
-		openTime = openTime == null ? valStartTime.getText() : openTime;
+		tableName = BarUtil.empty(tableName) ? cmbCurTable.getSelectedItem().toString() : tableName;
+		openTime = BarUtil.empty(openTime) ? valStartTime.getText() : openTime;
     	
     	try {
     		StringBuilder sql = new StringBuilder("SELECT DISTINCT contactID from output where SUBJECT = '").append(tableName)
@@ -635,8 +705,8 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 
 	public int createAnEmptyBill(String tableName, String openTime, int newBillIdx){
 		//validate parameters
-		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
-		openTime = openTime == null ? valStartTime.getText() : openTime;
+		tableName = BarUtil.empty(tableName) ? cmbCurTable.getSelectedItem().toString() : tableName;
+		openTime = BarUtil.empty(openTime) ? valStartTime.getText() : openTime;
 		if(newBillIdx <= 0) {
 			newBillIdx = BillListPanel.getANewBillIdx(tableName, openTime);
 		}
@@ -692,8 +762,8 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	
 	public void closeATable(String tableName, String openTime) {
 		//validate parameters
-		tableName = tableName == null ? cmbCurTable.getSelectedItem().toString() : tableName;
-		openTime = openTime == null ? valStartTime.getText() : openTime;
+		tableName = BarUtil.empty(tableName) ? cmbCurTable.getSelectedItem().toString() : tableName;
+		openTime = openTime == null || openTime.length() == 0? valStartTime.getText() : openTime;
 		//all the bill should already completed when table closed except those was generated while has no output on it.
 		//this is the designed time to clean those bills.
 		StringBuilder sql = new StringBuilder("update bill set status = ").append(DBConsts.deleted)
@@ -710,19 +780,22 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 			 L.e("change table", "exception when recover table:" + sql, exp);
 		 }
 	}
-	
+
 	public void userCheckOut() {
 		if(BarOption.isSingleUser()) {
 			CheckInOutListDlg.updateCheckInRecord();
-			BarFrame.instance.setVisible(false);
-			BarFrame.singleUserLoginProcess();
+			instance.setVisible(false);
+			singleUserLoginProcess();
 		}else {
 			new LoginDlg(null).setVisible(true);
-		    if (LoginDlg.PASSED == true) { // 如果用户选择了确定按钮。
-		    	BarFrame.instance.valOperator.setText(LoginDlg.USERNAME);
-		        //insert a record of start to work.
-		    	CheckInOutListDlg.updateCheckInRecord();
-		    }
+            if (LoginDlg.PASSED == true) {
+            	BarFrame.checkSignIn();
+            	//@note: lowdown a little the level, to enable the admin do sales work.
+            	if ("admin".equalsIgnoreCase(LoginDlg.USERNAME))
+            		 LoginDlg.USERTYPE = LoginDlg.USER_STATUS;
+            }else {
+            	return;
+            }
 		}
 	}
 	
@@ -739,6 +812,11 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		if (ISCLOSING) {
 			return;
 		}
+//dont'know why, it just can not stop the window from exit :(		
+//		if(JOptionPane.showConfirmDialog(BarFrame.instance, BarFrame.consts.ExistSystemNotice(), DlgConst.DlgTitle,
+//                JOptionPane.YES_NO_OPTION) != 0) {
+//			return;
+//		}
 		ISCLOSING = true; // ignore the second windowClosing event.
 
         if (CASControl.ctrl.getMainFrame() != null)
@@ -777,6 +855,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     public JLabel valStartTime;
 
     public JPanel[] panels = new JPanel[4];
+
     public static MenuPanel menuPanel;
     static JLabel lblStatus;
     private JLabel lblVersion;
@@ -800,4 +879,11 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 			valCurBillIdx.setText(curBillIndex);
 	}
 
+	public int getCurBillID() {
+		return curBillID;
+	}
+
+	public void setCurBillID(int curBillID) {
+		this.curBillID = curBillID;
+	}
 }
