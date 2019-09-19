@@ -12,9 +12,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.TablesPanel;
+import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.model.Printer;
 import org.cas.client.platform.bar.net.HttpRequestClient;
@@ -94,10 +96,57 @@ public class CreateNewOrderAction implements ActionListener{
 			dishStr = marksLocation > 0 ? dishStr.substring(0, marksLocation) : dishStr;
 			String[] dishProp = dishStr.split("\n");	//get name, price and qt of dish
 			String[] markProp = markStr.split("\n");	//get name, qt and status of marks
-			//price total;			String category = dishProp[0];			String menuName = dishProp[1];			int price = Math.round(Float.valueOf(dishProp[2]) * 100);			int num = Integer.valueOf(dishProp[3]);			makeSureCategoryExist(category);			Dish dish = makeSureDishExist(category, menuName, price);			dish.setNum(num);	    	dish.setModification(markStr);			createOutputRecord(dish.getId(), openTime, tableID, billIndex, billId, markStr, num, price);
+			//price total;			String category = dishProp[0];			String menuName = dishProp[1];			int price = Math.round(Float.valueOf(dishProp[2]) * 100);			int num = Integer.valueOf(dishProp[3]);			makeSureCategoryExist(category);			Dish dish = makeSureDishExist(category, menuName, price);			dish.setNum(num);
+			int markPrice = makeSureMarkExist(markProp);
+			markStr = refineMarkStr(markProp);	    	dish.setModification(markStr);			createOutputRecord(dish.getId(), openTime, tableID, billIndex, billId, markStr, num, price * num + markPrice);
 		}
 	}
 	
+	private String refineMarkStr(String[] markProp) {
+		int size = markProp.length / 4;
+		StringBuilder markStr = new StringBuilder();
+		for(int i = 0; i < size; i++) {
+			if(i > 0) {
+				markStr.append(",");
+			}
+			markStr.append(markProp[0 + i * 4]).append(" x").append(markProp[1 + i * 4]);
+		}
+		return markStr.toString();
+	}
+
+	private int makeSureMarkExist(String[] markProp) {
+		AddModificationDialog dlg = AddModificationDialog.getInstance();
+		ArrayList<String> existingList = dlg.getListInCurrentListComponent();
+		int size = markProp.length / 4;
+		int totalPrice = 0;
+		for(int i = 0; i < size; i++) {
+			String strInput = markProp[0 + i * 4];
+			int num = 1;
+			try {
+				num = Integer.valueOf(markProp[1 + i * 4]);
+			}catch(Exception e) {
+				//do nothing.
+			}
+			
+			int price = 0;
+			try {
+				price = Integer.valueOf(markProp[3 + i * 4]);
+			}catch(Exception e) {
+				//do nothing.
+			}
+			
+			int index = dlg.findIndexByLang1(existingList, strInput);
+			if(index < 0) {
+				dlg.insertModification(strInput, BarUtil.formatMoney(price/100.0));
+			}else {
+				dlg.updateToModification(strInput, BarUtil.formatMoney(price/100.0));
+			}
+			totalPrice += num * price;
+		}
+		return totalPrice; 
+	}
+	
+
 	@Override
 	public synchronized void actionPerformed(ActionEvent e) {
 		List<String> tList = new JSONDeserializer<List<String>>()
@@ -196,12 +245,13 @@ public class CreateNewOrderAction implements ActionListener{
 		    	Integer num = qtMap.get(material.portionName + (material.remark == null ? "" : material.remark));	//@NOTE we supposed the dish name should not duplicate.
 		    	int price = material.dencity == null ? 0 : Math.round(Float.valueOf(material.dencity.substring(1).trim()) * 100);
 		    	
-		    	//make sure product exist.
+		    	//make sure product and marexist.
 		    	Dish dish = synchronizeToLocalDB(location, portionName, price, material.menFu);
 		    	
 		    	dish.setNum(num);
 		    	dish.setModification(material.remark);
 		    	dishes.add(dish);
+		    	
 				createOutputRecord(dish.getId(), createtime, tableID, billIndex, billId, material.remark, num, price);
 			}
 		}

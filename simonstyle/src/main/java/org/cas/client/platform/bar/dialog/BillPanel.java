@@ -560,7 +560,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			public void run() {
 		        table.setSelectedRow(orderedDishAry.size() - 1);
 		        if("true".equals(newDish.getPrompMofify())) {
-		        	new AddModificationDialog(BarFrame.instance, BillListPanel.curDish.getModification()).setVisible(true);
+		    		AddModificationDialog.getInstance().initContent(BillListPanel.curDish.getModification(), 0);
+		    		AddModificationDialog.getInstance().setVisible(true);
 		        }
 	        	//if the original is not 0.00, then will still be treated as price promp not a taxInclude.
 		        if(newDish.getPrice() == 0 || "true".equals(newDish.getPrompPrice()) && !BarOption.isTreatPricePromtAsTaxInclude()) {

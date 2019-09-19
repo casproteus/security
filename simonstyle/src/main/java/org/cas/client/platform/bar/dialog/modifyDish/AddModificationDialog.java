@@ -63,13 +63,20 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     int oldIndex = 0;
     HashMap<Integer, String> selections = new HashMap<Integer, String>();
     
+    private static AddModificationDialog instance;
+    public static AddModificationDialog getInstance() {
+    	if(instance == null) {
+    		instance = new AddModificationDialog(BarFrame.instance);
+    	}
+    	return instance;
+    }
     /**
      * @param prmCategoryInfo  逗号分隔的字符串
      */
-    public AddModificationDialog(Frame prmParent, String prmCategoryInfo) {
+    private AddModificationDialog(Frame prmParent) {//, String prmCategoryInfo) {
         super(prmParent, true);
         initComponent(); // 组件初始化并布局
-        initContent(prmCategoryInfo, 0); // 初始化文本区和列表框数据
+        initContent("", 0); // 初始化文本区和列表框数据
     }
 
     /** Invoked when the component's size changes. */
@@ -236,7 +243,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     }
 
     /** 初始化时使用 */
-    private void initContent( String prmCategoryInfo, int idx) {
+    public void initContent( String prmCategoryInfo, int idx) {
     	//must set content first, so the selections can be initialized base on it. 
     	//and set the content again in the last line, when got idea which belongs to this page.
         txaCurContent.setText("null".equalsIgnoreCase(prmCategoryInfo) ? "" : prmCategoryInfo);	
@@ -493,8 +500,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 		this.initTabbedPaneContent();
 	}
 
-	private boolean insertModification( String modification) {
-        StringBuilder sql = new StringBuilder("INSERT INTO modification (lang1, lang2, lang3, type, status) VALUES( '");
+	public boolean insertModification( String modification, String price) {
+        StringBuilder sql = new StringBuilder("INSERT INTO modification (lang1, lang2, lang3, type, status, lang6) VALUES( '");
         String[] langs = modification.split(BarDlgConst.semicolon);
         sql.append(langs.length > 0 ? langs[0] : "");
         sql.append("', '");
@@ -503,13 +510,13 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         sql.append(langs.length > 2 ? langs[2] : "");
         sql.append("', '");
         sql.append(tabbedPane.getSelectedIndex());
-        sql.append("', 0);");
+        sql.append("', 0, ");
+        sql.append(price).append(")");
 
         try {
             Statement smt = PIMDBModel.getStatement();
             int rows = smt.executeUpdate(sql.toString());
 
-            // 关闭
             smt.close();
             smt = null;
 
@@ -520,7 +527,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         }
     }
     
-    private boolean updateToModification(String modification){
+    public boolean updateToModification(String modification, String price){
         String[] langs = modification.split(BarDlgConst.semicolon);
     	StringBuilder sql = new StringBuilder("update modification set lang2 = '");
         sql.append(langs.length > 1 ? langs[1] : "");
@@ -528,6 +535,9 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         sql.append(langs.length > 2 ? langs[2] : "");
         sql.append("', lang4 = '");
         sql.append(langs.length > 3 ? langs[3] : "");
+        if(!"-123456".equals(price)) {
+        	sql.append("', lang6 = '").append(price);
+        }
         sql.append("' where lang1 = '").append(langs[0]).append("';");
 
         try {
@@ -679,15 +689,15 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         }
     }
 
-    private ArrayList<String> getListInCurrentListComponent() {
+    public ArrayList<String> getListInCurrentListComponent() {
         Object[] aryListModelData = listModel.toArray();
 
-        // 构造一个 ArrayList 存放列表框中的数据中的字符串以便于判断包含关系
+        // ArrayList 存放列表框中的数据中的字符串以便于判断包含关系
         ArrayList<String> lstListModelArr = new ArrayList<String>(aryListModelData.length);
 
         CheckItem tmpCheckItem;
 
-        // 用列表框模型中的数据的名字加入 list
+        // add the data in list model into a list
         for (int i = 0; i < aryListModelData.length; i++) {
             tmpCheckItem = (CheckItem) aryListModelData[i];
             lstListModelArr.add(tmpCheckItem.getName());
@@ -695,7 +705,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         return lstListModelArr;
     }
 
-    private int findIndexByLang1(ArrayList<String> existingList, String content) {
+    public int findIndexByLang1(ArrayList<String> existingList, String content) {
     	String strToCompare = content;
     	int p = strToCompare.indexOf(BarDlgConst.semicolon);
     	if(p > 0)
@@ -709,32 +719,35 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     }
     
     private void applyToListClicked() {
-        // 文本框和列表框各取得其中的数组
+        //get the array in textArea and in the list.
         ArrayList<String> inputList = getInputModification();
         ArrayList<String> existingList = getListInCurrentListComponent();
 
-        // 表示列表框中字段有更改,但不保存 ? 
+        // indicate that some item in the list has been changed.  
         itemChanged = true;
 
-        // 循环判断模型中是否包含文本区中的字符串们
+        // give a loop to check if the content in text area is same with any of the item in the list
         for (int i = 0; i < inputList.size(); i++) {
-            // 不包含才加入列表框模型
+            // go through each input. check if each language indicated, add ";;;" to complete it if no.  
         	String strInput = inputList.get(i).toString();
+        	if(strInput.indexOf(";") < 0) {
+        		strInput = strInput + ";;;";
+        	}
+        	
         	int index = findIndexByLang1(existingList, strInput);
             if (index == -1) {
-            	insertModification(strInput);
+            	insertModification(strInput, "");
                 listModel.addElement(new CheckItem(strInput, true));
             }else {
             	if(!existingList.get(index).equals(strInput)) {
             		listModel.setElementAt(new CheckItem(inputList.get(i), true), index);
-            		updateToModification(strInput);
+            		updateToModification(strInput, "-123456");
             	}
             }
         }
-        // 下面要判断原有模型中的字符串在文本区中有没有,If no, set unselected， If yes, set slected
+        // now it's time to check if the item in list has been exist in the textArea, if no, set unselected， If yes, set slected
         existingList = getListInCurrentListComponent();
         for (int i = 0; i < existingList.size(); i++) {
-            // 文本区中不包含便将它设置标志为假
             if (!inputList.contains(existingList.get(i).toString())) {
                 listModel.setElementAt(new CheckItem(existingList.get(i).toString(), false), i);
             } else {
@@ -743,12 +756,10 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         }
         setTextOfTextArea();
 
-        // 确定按钮置有效
         if (!btnOK.isEnabled()) {
             btnOK.setEnabled(true);
         }
 
-        // 本按钮置无效
         btnApplyToList.setEnabled(false);
         btnApplyToCategory.setEnabled(false);
     }
