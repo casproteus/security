@@ -772,9 +772,12 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 				.append("' and status IS NULL OR status = ").append(DBConsts.original);
 		 try {
 			 PIMDBModel.getStatement().executeUpdate(sql.toString());
-			 
-	         sql = new StringBuilder("update dining_Table set status = ").append(DBConsts.original)
-	    			.append(" WHERE name = '").append(tableName).append("'");
+			 if(BarOption.isDeleteTableWhenClose()) {
+				 sql = new StringBuilder("delete from dining_Table WHERE name = '").append(tableName).append("'");
+			 }else {
+		         sql = new StringBuilder("update dining_Table set status = ").append(DBConsts.original)
+		    			.append(" WHERE name = '").append(tableName).append("'");
+			 }
 			 PIMDBModel.getStatement().executeUpdate(sql.toString());
 		 }catch(Exception exp) {
 			 L.e("change table", "exception when recover table:" + sql, exp);

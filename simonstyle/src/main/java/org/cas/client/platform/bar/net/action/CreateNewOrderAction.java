@@ -362,10 +362,10 @@ public class CreateNewOrderAction implements ActionListener{
 		
 		sql = new StringBuilder("INSERT INTO DINING_TABLE (name, posX, posY, width, height, type, status, openTime) VALUES ('")
 			.append(table).append("', ")	//name
-			.append(col * (90 + 20)).append(", ")	//posX
-			.append(row * (90 + 20)).append(", ")	//posY
-			.append(90).append(", ")	//width
-			.append(90).append(", ")	//height
+			.append(col * (40 + 20)).append(", ")	//posX
+			.append(row * (40 + 20)).append(", ")	//posY
+			.append(40).append(", ")	//width
+			.append(40).append(", ")	//height
 			.append(1).append(", ")		//type
 			.append(1).append(", '")
 			.append(BarOption.df.format(new Date())).append("')");		//status

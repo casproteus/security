@@ -616,5 +616,10 @@ public class BarOption {
 			}
 		}
 		return width;
+	}
+	
+	public static boolean isDeleteTableWhenClose() {
+		return CustOpts.custOps.getValue("isDeleteTableWhenClose") == null ? false : 
+			"true".equals(CustOpts.custOps.getValue("isDeleteTableWhenClose"));
 	}	
 }
