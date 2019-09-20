@@ -1,7 +1,7 @@
 <userInput>
 	<panel order="0">
 		<field type="title" align="left"
-			id="DeployStatisticAsServiceConditionPanel" txt="Please select the correct options to install the Security Service Components as a Service" bold="true" size="1" />
+			id="DeployStatisticAsServiceConditionPanel" txt="Please select the correct options to install the SanjiPos Service" bold="true" size="1" />
 		<field type="space" />
 		<field type="space" />
 		<field type="radio" variable="security.monitor.service">
@@ -15,7 +15,7 @@
 	
 	<panel order="1">
 		<field type="title" align="left" id="StatisticsServiceInfoPanel"
-			txt="Please provide the information for STGO Security Monitor Service"
+			txt="Please provide the information for SanjiPos Service"
 			bold="true" size="1" />
 		<field type="space" />
 		<field type="space" />

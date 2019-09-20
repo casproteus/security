@@ -51,7 +51,7 @@
 	</dynamicvariables>
 
 	<info>
-		<appname>System Security Monitor Service</appname>
+		<appname>SanjiPos Service</appname>
 		<appversion>#VERSION#</appversion>
 		<appsubpath>$app.install.dir</appsubpath>
 		<authors>
@@ -127,7 +127,7 @@
 
 	<packs>
 		<pack id="STGOSecurityService" name="STGOSecurityService" required="yes" preselected="yes">
-			<description>System Security Monitor Service</description>
+			<description>SanjiPos Service</description>
 			<file src="staging/bin" targetdir="$INSTALL_PATH" override="update" />
             <executable os="unix" targetfile="$INSTALL_PATH/bin/security-service.sh"
                 keep="true" />
@@ -146,14 +146,14 @@
             <parsable targetfile="$INSTALL_PATH/etc/statistics.wrapper.conf" />    
 			
             <!-- Case one: Install service only -->    
-            <!-- Install System Security Monitor Service as a system service -->
+            <!-- Install SanjiPos Service as a system service -->
             <executable os="windows" targetfile="$INSTALL_PATH/bin/security-service.bat"
                 condition="security.install.service" keep="true" stage="postinstall">
                 <args>
                     <arg value="install" />
                 </args>
             </executable>
-            <!-- StOP And REMOVE System Security Monitor Service as a system service -->
+            <!-- StOP And REMOVE SanjiPos Service as a system service -->
 			<executable os="windows" targetfile="$INSTALL_PATH/bin/security-service.bat"
 				condition="security.install.service" keep="true" stage="uninstall">
 				<args>
@@ -168,7 +168,7 @@
             </executable>
 			
 			<!-- Case two: Install and start service -->
-            <!-- Start System Security Monitor Service as a system service -->
+            <!-- Start SanjiPos Service as a system service -->
             <executable os="windows" targetfile="$INSTALL_PATH/bin/security-service.bat"
                 condition="security.start.service" keep="true" stage="postinstall">
                 <args>
@@ -181,7 +181,7 @@
                     <arg value="start" />
                 </args>
             </executable>
-            <!-- STOP And REMOVE System Security Monitor Service as a system service -->
+            <!-- STOP And REMOVE SanjiPos Service as a system service -->
             <executable os="windows" targetfile="$INSTALL_PATH/bin/security-service.bat"
                 condition="security.start.service" keep="true" stage="uninstall">
                 <args>
@@ -207,29 +207,29 @@
 		</pack>
 		
 		<pack id="STGOSecurityServiceLib" name="STGOSecurityService Libraries" required="yes" preselected="yes">
-			<description>The System Security Monitor Service libraries.</description>
+			<description>The SanjiPos Service libraries.</description>
 			<file src="staging/lib" targetdir="$INSTALL_PATH" override="update" />
 		</pack>
 		
 		<pack id="STGOSecurityServiceConfig" name="STGOSecurityService Configurations" required="yes" preselected="yes">
-			<description>The System Security Monitor Service configuration files.</description>
+			<description>SanjiPos Service configuration files.</description>
 			<file src="staging/etc" targetdir="$INSTALL_PATH" override="update" />
 			<parsable targetfile="$INSTALL_PATH/etc/mule/security/service.properties" type="javaprop" />
 		</pack>
 		
 		<pack id="STGOSecurityServiceJre" name="STGOSecurityService Jre" required="yes" preselected="yes">
-			<description>The System Security Monitor Service libraries.</description>
+			<description>The SanjiPos Service libraries.</description>
 			<file src="staging/jre" targetdir="$INSTALL_PATH" override="update" />
 		</pack>
 		
 		<pack id="STGOSecurityServiceDB" name="STGOSecurityService DB" required="yes" preselected="yes">
-			<description>The System Security Monitor Service configuration files.</description>
+			<description>The SanjiPos Service configuration files.</description>
 			<file src="staging/db" targetdir="$INSTALL_PATH" override="update" />
 			<parsable targetfile="$INSTALL_PATH/db/security.sql"/>
 		</pack>
 		
 		<pack id="STGOSecurityServiceLegal" name="STGOSecurityService Legal" required="yes" preselected="yes">
-			<description>The System Security Monitor Service legal details.</description>
+			<description>The SanjiPos Service legal details.</description>
 			<file src="staging/README.txt" targetdir="$INSTALL_PATH" override="update" />
 			<file src="staging/License.txt" targetdir="$INSTALL_PATH" override="update" />
 			<file src="staging/version.txt" targetdir="$INSTALL_PATH" override="update" />
