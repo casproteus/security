@@ -1,3 +1,3 @@
-The Setup Wizard will install ShareTheGoodOnes Security Monitor Service on your computer.
+The Setup Wizard will install ShareTheGoodOnes SanjiPos Service onto your computer.
 
 Click Next to continue or Quit to exit the Setup Wizard.
