@@ -1,8 +1,8 @@
 #! /bin/sh
 
 # Application
-APP_NAME="Security Monitor Service"
-APP_LONG_NAME="Security Monitor Service %{product.version}"
+APP_NAME="SanjiPos Service"
+APP_LONG_NAME="SanjiPos Service %{product.version}"
 
 cd "`dirname "$0"`/.."
 STATISTICS_HOME="$PWD"
@@ -72,19 +72,19 @@ WAIT_AFTER_STARTUP=0
 # The following two lines are used by the chkconfig command. Change as is
 #  appropriate for your application.  They should remain commented.
 # chkconfig: 2345 20 80
-# description: Security Monitor Service %{product.version}
+# description: SanjiPos Service %{product.version}
  
 # Initialization block for the install_initd and remove_initd scripts used by
 #  SUSE linux distributions.
 ### BEGIN INIT INFO
-# Provides: Security Monitor Service
+# Provides: SanjiPos Service
 # Required-Start: $local_fs $network $syslog
 # Should-Start: 
 # Required-Stop:
 # Default-Start: 2 3 4 5
 # Default-Stop: 0 1 6
-# Short-Description: Security Monitor Service
-# Description: Security Monitor Service %{product.version}
+# Short-Description: SanjiPos Service
+# Description: SanjiPos Service %{product.version}
 ### END INIT INFO
 
 # Do not modify anything beyond this point

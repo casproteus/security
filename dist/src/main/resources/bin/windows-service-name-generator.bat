@@ -1,10 +1,10 @@
 @echo off
 
-set WINDOWS_SERVICE_NAME=System Security Monitor Service
+set WINDOWS_SERVICE_NAME=SanjiPos Service
 set CONSTANT=-
 set INSTANCE_COUNTER=0
 set _REALPATH=%~dp0
-set DESCRIPTION=System Security Monitor Service
+set DESCRIPTION=SanjiPos Service
 call :recursion
 @echo # Name of the service> "%_REALPATH%..\etc\%"windows-service-name-generator.wrapper.conf
 @echo wrapper.ntservice.name=%WINDOWS_SERVICE_NAME%>> "%_REALPATH%..\etc\%"windows-service-name-generator.wrapper.conf
@@ -28,7 +28,7 @@ goto:eof
 
 :nameExist
 set /A INSTANCE_COUNTER=INSTANCE_COUNTER+1
-set WINDOWS_SERVICE_NAME=System Security Monitor Service
+set WINDOWS_SERVICE_NAME=SanjiPos Service
 set WINDOWS_SERVICE_NAME=%WINDOWS_SERVICE_NAME%%CONSTANT%%INSTANCE_COUNTER%
 call :recursion
 goto:eof
