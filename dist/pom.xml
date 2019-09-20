@@ -184,7 +184,7 @@
 			<version>${mule.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
+		<!-- dependency>
 			<groupId>org.tanukisoftware</groupId>
 			<artifactId>wrapper</artifactId>
 		</dependency>
@@ -218,7 +218,7 @@
 			<artifactId>winsw</artifactId>
 			<version>1.9</version>
 			<type>zip</type>
-		</dependency>
+		</dependency-->
 
 		<dependency>
 			<groupId>org.apache.derby</groupId>
