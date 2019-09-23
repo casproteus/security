@@ -847,7 +847,7 @@
 				<artifactId>nstein-jersey-mule-transport</artifactId>
 				<groupId>com.nstein</groupId>
 				<version>1.1-SNAPSHOT</version>
-			</dependency> -->
+			</dependency>
 
 			<dependency>
 				<groupId>org.tanukisoftware</groupId>
@@ -881,7 +881,7 @@
 				<version>3.5.7-st</version>
 				<classifier>windows-x86-64</classifier>
 				<type>zip</type>
-			</dependency>
+			</dependency-->
 			<dependency>
 				<groupId>org.codehaus.jettison</groupId>
 				<artifactId>jettison</artifactId>

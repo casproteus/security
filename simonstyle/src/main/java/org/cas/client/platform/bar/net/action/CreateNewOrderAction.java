@@ -215,7 +215,7 @@ public class CreateNewOrderAction implements ActionListener{
 		        .append(0).append(", ")	//tip
 		        .append(0).append(", ")	//serviceFee
 		        .append(0).append(", ")	//cashback
-		        .append(0).append(", '")		//emoployid--0 is the id of automactically generated Robot employee when first time use.
+		        .append(0).append(", '")		//emoployid--0 is the id of automactically generated DEFAULT employee when first time use.
 		        .append("").append("', '")					//Comment
 		        .append(createtime).append("')");				//opentime
 		try {
