@@ -2112,9 +2112,7 @@ public class CASUtility {
     public static void backup() {
         String tmpSrcPath =
                 System.getProperty("user.home").concat(System.getProperty("file.separator")).concat(".Storm070111")
-                        .concat(System.getProperty("file.separator")).concat("database")
-                        .concat(System.getProperty("file.separator")).concat("pim");
-
+                        .concat(System.getProperty("file.separator")).concat("qiji");
         String pDesPath = CASControl.ctrl.getSourcePath();
         pDesPath = pDesPath.substring(0, pDesPath.indexOf("/lib/") + 1);
         pDesPath = pDesPath.concat(".Storm070111");
