@@ -608,9 +608,9 @@ public class BarDlgConst0 implements BarDlgConst{
 	@Override
 	public String Login() {return "Login";}
 	@Override
-	public String ApplyToList() {return "Apply To List";}
+	public String ApplyToList() {return "Apply Mark";}
 	@Override
-	public String ApplyToCategory() {return "Apply To Group";}
+	public String ApplyToCategory() {return "Add Category";}
 	@Override
 	public String getPennyRounded() {return "penny rounded:";}
 	@Override

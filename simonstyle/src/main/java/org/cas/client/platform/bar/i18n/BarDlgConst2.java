@@ -608,9 +608,9 @@ public class BarDlgConst2 implements BarDlgConst{
 	@Override
 	public String Login() {return "登录";}
 	@Override
-	public String ApplyToList() {return "应用到标签";}
+	public String ApplyToList() {return "添加标注";}
 	@Override
-	public String ApplyToCategory() {return "应用到组名";}
+	public String ApplyToCategory() {return "添加类别";}
 	@Override
 	public String getPennyRounded() {return "近似到5分:";}
 	@Override
