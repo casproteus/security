@@ -393,6 +393,10 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 				secondScreen.setFullScreenWindow(customerFrame);
 			}
 			cmbCurTable.setEnabled(((SalesPanel)panels[i]).billPanel.status < DBConsts.completed);
+			if(BarOption.isCounterMode()) {
+				((TablesPanel)panels[0]).initContent();
+				panels[0].setVisible(true);
+			}
 		}else if(i == 1) {	//bill
 			((BillListPanel)panels[i]).initContent();
 		}else if(i == 0) {	//table
@@ -404,6 +408,9 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     		panel.setVisible(false);
 		
     	panels[i].setVisible(true);
+    	if(i == 2 && BarOption.isCounterMode()) {
+    		panels[0].setVisible(true);
+    	}
 
     	curPanel = i;
     	if(i > 1) {	//salespanel and setting pannel need menu panel on it.
@@ -465,12 +472,25 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         
         // status---------
         lblStatus.setBounds(CustOpts.HOR_GAP, getContainer().getHeight() - CustOpts.LBL_HEIGHT - CustOpts.VER_GAP, 
-        		getContainer().getWidth() - CustOpts.HOR_GAP * 2 - 120 -  - CustOpts.HOR_GAP, CustOpts.LBL_HEIGHT);
+        		getContainer().getWidth() - CustOpts.HOR_GAP * 2 - 120 - CustOpts.HOR_GAP, CustOpts.LBL_HEIGHT);
         lblVersion.setBounds(lblStatus.getX() + lblStatus.getWidth() + CustOpts.VER_GAP, lblStatus.getY(), 100, lblStatus.getHeight());
-        for (JPanel panel : panels) {
-        	panel.setBounds(0, lblOperator.getY() + lblOperator.getHeight(), 
+        
+        //main panels
+        if(BarOption.isCounterMode()) {
+        	panels[0].setBounds(0, lblOperator.getY() + lblOperator.getHeight(), 
+        			69, lblStatus.getY() - lblOperator.getY() - lblOperator.getHeight());
+        	panels[2].setBounds(panels[0].getWidth(), lblOperator.getY() + lblOperator.getHeight(), 
+        			getContainer().getWidth() - panels[0].getWidth(), lblStatus.getY() - lblOperator.getY() - lblOperator.getHeight());
+        	panels[1].setBounds(0, lblOperator.getY() + lblOperator.getHeight(), 
         			getContainer().getWidth(), lblStatus.getY() - lblOperator.getY() - lblOperator.getHeight());
-		}
+        	panels[3].setBounds(0, lblOperator.getY() + lblOperator.getHeight(), 
+        			getContainer().getWidth(), lblStatus.getY() - lblOperator.getY() - lblOperator.getHeight());
+        }else {
+	        for (JPanel panel : panels) {
+	        	panel.setBounds(0, lblOperator.getY() + lblOperator.getHeight(), 
+	        			getContainer().getWidth(), lblStatus.getY() - lblOperator.getY() - lblOperator.getHeight());
+			}
+        }
         validate();
     }
 

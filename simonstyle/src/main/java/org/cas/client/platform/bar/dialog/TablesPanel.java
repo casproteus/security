@@ -197,13 +197,18 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
             // load all the categorys---------------------------
             ResultSet rs = smt.executeQuery("select * from dining_Table order by Name");
             rs.beforeFirst();
-
+            int yPos = 0;
             while (rs.next()) {
             	TableButton tableToggleButton = new TableButton();
             	
             	tableToggleButton.setId(rs.getInt("ID"));
             	tableToggleButton.setText(rs.getString("Name"));
-            	tableToggleButton.setBounds(rs.getInt("posX"), rs.getInt("posY"), rs.getInt("width"), rs.getInt("height"));
+            	if(BarOption.isCounterMode()) {
+            		tableToggleButton.setBounds(0, yPos, getWidth(), 60);
+            		yPos += 69;
+            	}else {
+            		tableToggleButton.setBounds(rs.getInt("posX"), rs.getInt("posY"), rs.getInt("width"), rs.getInt("height"));
+            	}
             	tableToggleButton.setOpenTime(rs.getString("openTime"));
             	if(rs.getInt("status") > 0)
             		tableToggleButton.setBackground(TableButton.colorSelected);
