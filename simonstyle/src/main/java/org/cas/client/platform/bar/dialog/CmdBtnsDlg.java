@@ -560,87 +560,91 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 		Object strSaleCmd = CustOpts.custOps.getValue(KEY_SALE_CMD);
 		Object strSettingCmd = CustOpts.custOps.getValue(KEY_SETTING_CMD);
 		
-		//if not all set, then use default.
-		if(strTableCmds == null || strBillCmd == null || strSaleCmd == null || strSettingCmd == null) {
-			fillRegroupBtnWithDefault();
-			
-		}else {
-			//all not null, then fill grouped button with custimizations.
+		//if not set, then use default.
+		if(strTableCmds != null) {
 			fillRegroupBtnWithCustimization(strTableCmds, groupedButtons[0]);
+		}else {
+			groupedButtons[0].add(btnAddTable);
+	    	groupedButtons[0].add(btnOrderManage);
+	    	groupedButtons[0].add(btnOpenDrawer);
+	    	//groupedButtons[0].add(btnWaiterReport);
+	    	groupedButtons[0].add(btnSetting);
+	    	groupedButtons[0].add(btnReport);
+	    	groupedButtons[0].add(btnCheckInOut);
+		}
+		
+		if(strBillCmd != null) {
 			fillRegroupBtnWithCustimization(strBillCmd, groupedButtons[1]);
+		}else {
+	    	//BillListPanel
+	    	groupedButtons[1].add(btnReturn);
+	    	groupedButtons[1].add(btnAddUser);
+	    	groupedButtons[1].add(btnPrintAll);
+//	    	groupedButtons[1].add(btnPrintOneBill);
+//	    	groupedButtons[1].add(btnPrintOneInVoice);
+	    	groupedButtons[1].add(btnEqualBill);
+	    	groupedButtons[1].add(btnCombineAll);
+	    	groupedButtons[1].add(btnSplitItem);
+	    	groupedButtons[1].add(btnMoveItem);
+	    	groupedButtons[1].add(btnSuspendAll);
+		}
+		
+		if(strSaleCmd != null) {
 			fillRegroupBtnWithCustimization(strSaleCmd, groupedButtons[2]);
+		}else {
+	    	//SalesPanel
+	    	groupedButtons[2].add(btnCASH);
+	    	groupedButtons[2].add(btnDEBIT);
+	    	groupedButtons[2].add(btnVISA);
+	    	groupedButtons[2].add(btnSplitBill);
+	    	groupedButtons[2].add(btnRemoveItem);
+	    	groupedButtons[2].add(btnModify);
+	    	groupedButtons[2].add(btnDiscItem);
+	    	groupedButtons[2].add(btnChangePrice);
+	    	groupedButtons[2].add(btnServiceFee);
+	    	groupedButtons[2].add(btnPrintBill);
+
+	    	groupedButtons[2].add(btnReturn.clone());
+	    	groupedButtons[2].add(btnAddBill);
+	    	groupedButtons[2].add(btnMASTER);
+	    	groupedButtons[2].add(btnCancelAll);
+	    	groupedButtons[2].add(btnVoidOrder);
+	    	groupedButtons[2].add(btnOpenDrawer.clone());
+	    	groupedButtons[2].add(btnDiscBill);
+	    	groupedButtons[2].add(btnRefund);
+	    	groupedButtons[2].add(btnSend);
+			
+	    	groupedButtons[2].add(btnGIFTCARD);
+	    	groupedButtons[2].add(btnDiscountCoupon);
+	    	groupedButtons[2].add(btnSuspend);
+	    	groupedButtons[2].add(btnCheckOrder);
+	    	groupedButtons[2].add(btnSetting.clone());
+	    	groupedButtons[2].add(btnEN);
+	    	groupedButtons[2].add(btnFR);
+	    	groupedButtons[2].add(btnCN);
+	    	groupedButtons[2].add(btnReport.clone());
+	    	groupedButtons[2].add(btnCheckOut);
+		}
+		
+		if(strSettingCmd != null) {
 			fillRegroupBtnWithCustimization(strSettingCmd, groupedButtons[3]);
+		}else {
+	    	//setting panels
+	        groupedButtons[3].add(btnReturn.clone());
+	        groupedButtons[3].add(btnEmployee);
+	        groupedButtons[3].add(btnPrinter);
+	        groupedButtons[3].add(btnTable);
+	        groupedButtons[3].add(btnBillFoot);
+	        groupedButtons[3].add(btnModifySetting);
+	        groupedButtons[3].add(btnGiftCardSetting);
+	        groupedButtons[3].add(btnCoupon);
+	        groupedButtons[3].add(btnColor);
+	        groupedButtons[3].add(btnCheckInOutList);
 		}
 	}
 
-	private static void fillRegroupBtnWithDefault(){
-    	groupedButtons[0].add(btnAddTable);
-    	groupedButtons[0].add(btnOrderManage);
-    	groupedButtons[0].add(btnOpenDrawer);
-    	//groupedButtons[0].add(btnWaiterReport);
-    	groupedButtons[0].add(btnSetting);
-    	groupedButtons[0].add(btnReport);
-    	groupedButtons[0].add(btnCheckInOut);
-    	
-    	//BillListPanel
-    	groupedButtons[1].add(btnReturn);
-    	groupedButtons[1].add(btnAddUser);
-    	groupedButtons[1].add(btnPrintAll);
-//    	groupedButtons[1].add(btnPrintOneBill);
-//    	groupedButtons[1].add(btnPrintOneInVoice);
-    	groupedButtons[1].add(btnEqualBill);
-    	groupedButtons[1].add(btnCombineAll);
-    	groupedButtons[1].add(btnSplitItem);
-    	groupedButtons[1].add(btnMoveItem);
-    	groupedButtons[1].add(btnSuspendAll);
-    	
-    	//SalesPanel
-    	groupedButtons[2].add(btnCASH);
-    	groupedButtons[2].add(btnDEBIT);
-    	groupedButtons[2].add(btnVISA);
-    	groupedButtons[2].add(btnSplitBill);
-    	groupedButtons[2].add(btnRemoveItem);
-    	groupedButtons[2].add(btnModify);
-    	groupedButtons[2].add(btnDiscItem);
-    	groupedButtons[2].add(btnChangePrice);
-    	groupedButtons[2].add(btnServiceFee);
-    	groupedButtons[2].add(btnPrintBill);
-
-    	groupedButtons[2].add(btnReturn.clone());
-    	groupedButtons[2].add(btnAddBill);
-    	groupedButtons[2].add(btnMASTER);
-    	groupedButtons[2].add(btnCancelAll);
-    	groupedButtons[2].add(btnVoidOrder);
-    	groupedButtons[2].add(btnOpenDrawer.clone());
-    	groupedButtons[2].add(btnDiscBill);
-    	groupedButtons[2].add(btnRefund);
-    	groupedButtons[2].add(btnSend);
-		
-    	groupedButtons[2].add(btnGIFTCARD);
-    	groupedButtons[2].add(btnDiscountCoupon);
-    	groupedButtons[2].add(btnSuspend);
-    	groupedButtons[2].add(btnCheckOrder);
-    	groupedButtons[2].add(btnSetting.clone());
-    	groupedButtons[2].add(btnEN);
-    	groupedButtons[2].add(btnFR);
-    	groupedButtons[2].add(btnCN);
-    	groupedButtons[2].add(btnReport.clone());
-    	groupedButtons[2].add(btnCheckOut);
-    	
-    	//setting panels
-        groupedButtons[3].add(btnReturn.clone());
-        groupedButtons[3].add(btnEmployee);
-        groupedButtons[3].add(btnPrinter);
-        groupedButtons[3].add(btnTable);
-        groupedButtons[3].add(btnBillFoot);
-        groupedButtons[3].add(btnModifySetting);
-        groupedButtons[3].add(btnGiftCardSetting);
-        groupedButtons[3].add(btnCoupon);
-        groupedButtons[3].add(btnColor);
-        groupedButtons[3].add(btnCheckInOutList);
-    }
-
 	private static void fillRegroupBtnWithCustimization(Object customization, ArrayList<JComponent> groupedButtons) {
+		
 		String[] btns = ((String)customization).split(",");
 		for (String string : btns) {
 			try {
