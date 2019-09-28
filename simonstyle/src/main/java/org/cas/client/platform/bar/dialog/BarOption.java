@@ -606,7 +606,7 @@ public class BarOption {
 	}
 	
 	public static int getModifyDlgWidth() {
-		int width = 400;
+		int width = 600;
 		Object o = CustOpts.custOps.getValue("ModifyDlgWidth");
 		if(o != null) {
 			try {
