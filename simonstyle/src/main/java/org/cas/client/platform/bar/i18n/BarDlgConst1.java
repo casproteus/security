@@ -46,7 +46,7 @@ public class BarDlgConst1 implements BarDlgConst{
     @Override
 	public String ChangeMode() {return "<html><center>CHANGER<br>LE MODE</center></html>";}
     @Override
-	public String AddTable() {return "<html><center>AJOUTER<br>TABLE</center></html>";}
+	public String AddTable() {return "AJOUTER";}
     @Override
 	public String OrderManage() {return "<html><center>VERIFIER<br> ORDRE</center></html>";}
     @Override

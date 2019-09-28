@@ -439,8 +439,15 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 	        	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
             	
             	if(BarOption.isCounterMode()) {
-        	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
-        	    	BarFrame.instance.addNewBillInCurTable();
+            		if(false) {
+            	    	//TODO: if working with pad, then should clean the interface and waiting for clicking next bill(table).
+            			if(false) {//TODO: if not working with pad, then create a new table, with a empty bill in it. waiting for adding new item into the bill.
+            				
+            			}
+            		}else {
+            			BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
+            			BarFrame.instance.addNewBillInCurTable();
+            		}
         	    }else {
         	    	if(BarFrame.instance.isTableEmpty(null, null)) {
             			BarFrame.instance.closeATable(null, null);
@@ -491,12 +498,18 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
         	Cmd_OpenDrawer.getInstance().actionPerformed(null);
 
-        	if(BarOption.isCounterMode()) {
-    	    	BarFrame.instance.addNewBillInCurTable();
-    	    }else if(BarFrame.instance.isTableEmpty(null, null)) {
+//        	if(BarOption.isCounterMode()) {
+//    	    	BarFrame.instance.addNewBillInCurTable();
+//    	    }else 
+    	    if(BarFrame.instance.isTableEmpty(null, null)) {
     			BarFrame.instance.closeATable(null, null);
-    			BarFrame.instance.switchMode(0);
-    	    }else {	//in table mode, if there's other open bill on this table, should swith to billPanel
+    	    	if(BarOption.isCounterMode()) {
+    	    		//remove the closed table, and set next table as current one, and if there's no new table, then create a new one.
+    	    		BarFrame.instance.switchMode(2);
+    	    	}else {
+    	    		BarFrame.instance.switchMode(0);
+    	    	}
+    	    }else {	//in table mode, if there's other open bill on this table, should switch to billPanel
     	    	BarFrame.instance.switchMode(1);
     	    }
         	

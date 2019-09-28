@@ -46,7 +46,7 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String ChangeMode() {return "改变模式";}
     @Override
-	public String AddTable() {return "添加桌子";}
+	public String AddTable() {return "添加";}
     @Override
 	public String OrderManage() {return "查看订单";}
     @Override

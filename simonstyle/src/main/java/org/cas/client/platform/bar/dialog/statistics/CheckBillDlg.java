@@ -390,10 +390,12 @@ public class CheckBillDlg extends JDialog implements ICASDialog, ActionListener,
         		.append("' and createTime <= '").append(endTime)
         		.append("' and bill.employeeId = employee.id and (bill.status < ").append(LoginDlg.USERTYPE < 2 ? DBConsts.expired : DBConsts.deleted)
         		.append(" or bill.status is null)");
-        if(!"true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("ShowProcessingBill"))) && !BarOption.isCounterMode()) {
+        //if didn't set to ShowProcessingBill then show only completed(paid) bill
+        if(!"true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("ShowProcessingBill")))) {
         	sql.append(" and bill.status is not null ").append(" and bill.status != ").append(DBConsts.billPrinted);
         }
-        if("true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("HideRecordFromOtherWaiter"))) //if configured, then do not show records of other waiter.
+        //if configured, then do not show records of other waiter.
+        if("true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("HideRecordFromOtherWaiter"))) 
         		&& LoginDlg.USERTYPE < 2) {
         	sql.append(" and employee.id = ").append(LoginDlg.USERID);
         }

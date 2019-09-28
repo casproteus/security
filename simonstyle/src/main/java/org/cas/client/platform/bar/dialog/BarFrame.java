@@ -127,7 +127,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         	String openTime = BarOption.df.format(new Date());
         	instance.valStartTime.setText(openTime);
 
-        	instance.openATable("", openTime);
+        	instance.openATable("", openTime);	//a table with no name? it's not good, I think with name "Default" might be more clear?
         	instance.setCurBillID(instance.createAnEmptyBill("", openTime, 0));
         	((SalesPanel)instance.panels[2]).billPanel.setBillID(instance.getCurBillID());
     		

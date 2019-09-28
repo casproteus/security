@@ -507,11 +507,7 @@ public class BillListPanel extends JPanel implements ActionListener, ComponentLi
     	try {
 			StringBuilder sql = new StringBuilder("select billIndex from bill where tableId = '").append(tableName).append("'")
 				.append(" and opentime = '").append(openTime).append("'");
-			if(BarOption.isCounterMode()) {	//if it's fast mode, then we keep the open time no change,  and increase the billIdx. so should count in the completed bills.
-				sql.append(" and (status is null or status < ").append(DBConsts.deleted).append(")");
-			} else {
-				sql.append(" and (status is null or status < ").append(DBConsts.completed).append(" and status >= 0)");
-			}
+			sql.append(" and (status is null or status < ").append(DBConsts.completed).append(" and status >= 0)");
 			sql.append(" order by id");//if order by billIndex, then "9" will be the last one. so should order by id
             ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 			rs.afterLast();
