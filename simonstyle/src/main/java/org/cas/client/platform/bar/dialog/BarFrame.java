@@ -832,6 +832,20 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
             }
 		}
 	}
+
+	public void actionAfterBillClosed() {
+		if(BarOption.getDefaultTableName().equals(BarFrame.instance.cmbCurTable.getSelectedItem().toString())) {
+			valStartTime.setText(BarOption.df.format(new Date()));
+			addNewBillInCurTable();
+		}else {
+			if(!isTableEmpty(null, null)) {
+		    	switchMode(1);
+		    }else {
+		    	closeATable(null, null);	//when closing a table with check the "isDeleteTableWhenClosing" flag, and this flag should has been set when set to Countermode.
+		    	switchMode(0);
+		    }
+		}
+	}
 	
     @Override
     public void windowActivated(WindowEvent e) {}

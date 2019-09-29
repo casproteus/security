@@ -438,17 +438,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         		boolean needToBePrinted = billOldStatus != DBConsts.billPrinted || !BarOption.isSavePrintInvoiceWhenBilled();
 	        	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
             	
-    	    	if(!BarFrame.instance.isTableEmpty(null, null)) {
-    	    		BarFrame.instance.switchMode(1);
-    	    	}else {
-        			BarFrame.instance.closeATable(null, null);
-	    	    	if(BarOption.getDefaultTableName().equals(BarFrame.instance.cmbCurTable.getSelectedItem().toString())) {
-	        			BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
-	        			BarFrame.instance.addNewBillInCurTable();
-	    	    	}else {
-	    	    		BarFrame.instance.switchMode(0);
-	    	    	}
-    	    	}
+	        	BarFrame.instance.actionAfterBillClosed();
         	}
         	
         	if(getTitle().equals(BarFrame.consts.EnterCashPayment())){
@@ -493,17 +483,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         	PrintService.exePrintInvoice(bp, getTitle().equals(BarFrame.consts.EnterCashPayment()), true, needToBePrinted);
         	Cmd_OpenDrawer.getInstance().actionPerformed(null);
 
-    	    if(!BarFrame.instance.isTableEmpty(null, null)) {
-    	    	BarFrame.instance.switchMode(1);
-    	    }else {
-    	    	if(BarOption.getDefaultTableName().equals(BarFrame.instance.cmbCurTable.getSelectedItem().toString())) {
-        			BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
-        			BarFrame.instance.addNewBillInCurTable();
-    	    	}else {
-        			BarFrame.instance.closeATable(null, null);	//when closing a table with check the "isDeleteTableWhenClosing" flag, and this flag should has been set when set to Countermode.
-    	    		BarFrame.instance.switchMode(0);
-    	    	}
-    	    }
+        	BarFrame.instance.actionAfterBillClosed();
         } else if( o == valCashReceived || o == valDebitReceived || o == valVisaReceived || o == valMasterReceived || o == valOtherReceived) {
         	StringBuilder sb = new StringBuilder("update bill set ");
         	if(o == valCashReceived ) {
