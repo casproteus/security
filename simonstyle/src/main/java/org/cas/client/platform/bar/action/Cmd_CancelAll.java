@@ -75,13 +75,10 @@ public class Cmd_CancelAll implements SamActionListener {
             }
     		billPanel.table.setSelectedRow(tValues.length - 1);
     		billPanel.updateTotalArea();
-    	}else if(!BarOption.isCounterMode()){
-    		//@NOTE: we don't close current bill, because maybe there's output still have billID of this bill, all the empty bill will be closed when table closed.
-    		//update bill and dining_table in db.
-    		if(BarFrame.instance.isTableEmpty(null, null)) {
-    			BarFrame.instance.closeATable(null, null);
-    		}
-    		BarFrame.instance.switchMode(0);
+    	}else {
+    		//if it's default table, then increse billidx, otherwise, if it counter mode, switch to other table, if not, switch view.
+    		//close the table if not living bill of course.
+        	BarFrame.instance.actionAfterBillClosed(); 
     	}
     	
 	}

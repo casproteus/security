@@ -98,16 +98,7 @@ public class Cmd_DiscountCoupon implements SamActionListener {
                     if("0.00".equals(salesPanel.billPanel.valTotlePrice.getText())) {
                     	PrintService.exePrintInvoice(salesPanel.billPanel, false, true, true);
                     	BarFrame.instance.closeCurrentBill();
-	                	//this.setVisible(false);
-	                	if(BarOption.isCounterMode()) {
-	            	    	BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
-	            	    	BarFrame.instance.addNewBillInCurTable();
-	                	}else {
-		            		if(BarFrame.instance.isTableEmpty(null, null)) {
-		            			BarFrame.instance.closeATable(null, null);
-		            		}
-		            		BarFrame.instance.switchMode(0);
-	                	}
+                    	BarFrame.instance.actionAfterBillClosed(); 
                     }
                 } else {//apply the coupon only to the dish item.
                 	//find out the most expensive dish
