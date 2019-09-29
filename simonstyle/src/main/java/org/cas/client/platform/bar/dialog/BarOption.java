@@ -323,12 +323,13 @@ public class BarOption {
     	CustOpts.custOps.setKeyAndValue("SingleUserMode", is);
     }
     
-    public static void setFastFoodMode(boolean isFastFoodMode) {
-    	CustOpts.custOps.setKeyAndValue("FastFoodMode", String.valueOf(isFastFoodMode));
+    public static void setCounterMode(boolean isFastFoodMode) {
+    	CustOpts.custOps.setKeyAndValue("CounterMode", String.valueOf(isFastFoodMode));
+    	CustOpts.custOps.setKeyAndValue("isDeleteTableWhenClose", String.valueOf(isFastFoodMode));
     }
     public static boolean isCounterMode() {
-    	return CustOpts.custOps.getValue("FastFoodMode") == null ? 
-    			false : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("FastFoodMode"));
+    	return CustOpts.custOps.getValue("CounterMode") == null ? 
+    			false : "true".equalsIgnoreCase((String)CustOpts.custOps.getValue("CounterMode"));
     }
 
     public static void setHideRecordFromOtherWaiter(boolean isHideRecordFromOtherWaiter) {

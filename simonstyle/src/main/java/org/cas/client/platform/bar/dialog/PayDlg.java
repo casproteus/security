@@ -496,11 +496,11 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
     	    if(!BarFrame.instance.isTableEmpty(null, null)) {
     	    	BarFrame.instance.switchMode(1);
     	    }else {
-    			BarFrame.instance.closeATable(null, null);
     	    	if(BarOption.getDefaultTableName().equals(BarFrame.instance.cmbCurTable.getSelectedItem().toString())) {
         			BarFrame.instance.valStartTime.setText(BarOption.df.format(new Date()));
         			BarFrame.instance.addNewBillInCurTable();
     	    	}else {
+        			BarFrame.instance.closeATable(null, null);	//when closing a table with check the "isDeleteTableWhenClosing" flag, and this flag should has been set when set to Countermode.
     	    		BarFrame.instance.switchMode(0);
     	    	}
     	    }

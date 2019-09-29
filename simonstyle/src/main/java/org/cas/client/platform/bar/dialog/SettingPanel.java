@@ -328,7 +328,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         	}else  if(o == cbxIsBuffetMode) {
         		BarOption.setIsBuffetMode(cbxIsBuffetMode.isSelected() ? true : false);
         	}else if(o == cbxIsFastFoodMode) {
-        		BarOption.setFastFoodMode(cbxIsFastFoodMode.isSelected() ? true : false);
+        		BarOption.setCounterMode(cbxIsFastFoodMode.isSelected() ? true : false);
         	}else if(o == cbxIsHideRecordFromOtherWaiter) {
         		BarOption.setHideRecordFromOtherWaiter(cbxIsHideRecordFromOtherWaiter.isSelected() ? true : false);
         	}else if(o == cbxIsWaiterAllowedToDiscount) {

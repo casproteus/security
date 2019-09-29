@@ -127,10 +127,10 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         	String openTime = BarOption.df.format(new Date());
         	instance.valStartTime.setText(openTime);
 
-        	instance.openATable("", openTime);	//a table with no name? it's not good, I think with name "Default" might be more clear?
+        	instance.openATable("", openTime);	//a table with no name? it's not good, I think with name "
         	instance.setCurBillID(instance.createAnEmptyBill("", openTime, 0));
         	((SalesPanel)instance.panels[2]).billPanel.setBillID(instance.getCurBillID());
-    		
+        	instance.switchMode(0);
         	instance.switchMode(2);
     	}else {
     		instance.switchMode(0);	//while instance is still null if don't put it in the later.
@@ -383,33 +383,34 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		if (i == 3) {		//setting
 			if (!adminAuthentication()) 
 				return -1;
-			//shouldn't do this, when swith back, if there's no time, don't know where to condinue.
+			//shouldn't do this, when swith back, if there's no time, don't know where to continue.
 			//resetStatus();
 		}else if(i == 2) {	//sale
-			((SalesPanel)panels[i]).billPanel.initContent();
-			
-			if(secondScreen != null) {
-				customerFrame.initContent();
-				secondScreen.setFullScreenWindow(customerFrame);
-			}
-			cmbCurTable.setEnabled(((SalesPanel)panels[i]).billPanel.status < DBConsts.completed);
-			if(BarOption.isCounterMode()) {
-				((TablesPanel)panels[0]).initContent();
-				panels[0].setVisible(true);
-			}
+			initSalesPanel();
 		}else if(i == 1) {	//bill
-			((BillListPanel)panels[i]).initContent();
+			((BillListPanel)panels[1]).initContent();
 		}else if(i == 0) {	//table
 			resetStatus();
-			((TablesPanel)panels[i]).initContent();
+			((TablesPanel)panels[0]).initContent();
 		}
 		
     	for (JPanel panel : panels)
     		panel.setVisible(false);
 		
     	panels[i].setVisible(true);
-    	if(i == 2 && BarOption.isCounterMode()) {
-    		panels[0].setVisible(true);
+    	
+    	if(BarOption.isCounterMode()) {
+    		if(i == 2) {
+    			panels[0].setVisible(true);
+    		}else if(i == 0) {
+           	 	TablesPanel tablesPanel = (TablesPanel)panels[0];
+           	 	ActionEvent evt = new ActionEvent(tablesPanel.getTableButtonByName(
+           	 		cmbCurTable.getModel().getSize() > 1 ? cmbCurTable.getItemAt(1) : cmbCurTable.getItemAt(0)),
+           	 			0, null);
+           	 	tablesPanel.actionPerformed(evt);
+           	 
+    			panels[2].setVisible(true);
+    		}
     	}
 
     	curPanel = i;
@@ -420,6 +421,16 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     	}
     	
     	return 0;
+	}
+
+	private void initSalesPanel() {
+		((SalesPanel)panels[2]).billPanel.initContent();
+		
+		if(secondScreen != null) {
+			customerFrame.initContent();
+			secondScreen.setFullScreenWindow(customerFrame);
+		}
+		cmbCurTable.setEnabled(((SalesPanel)panels[2]).billPanel.status < DBConsts.completed);
 	}
     
 	private void resetStatus() {

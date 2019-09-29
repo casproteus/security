@@ -15,6 +15,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
+import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.cascontrol.AbstractApp;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascustomize.CustOpts;
@@ -130,6 +132,14 @@ public class App_Bar extends AbstractApp {
                     .concat(" DSP_INDEX INTEGER, posX INTEGER, posY INTEGER, width INTEGER, height INTEGER, type INTEGER, opentime VARCHAR(255), status INTEGER);");
             stm.executeUpdate(sql);
             
+            sql = new StringBuilder("INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('")
+					.append(BarOption.getDefaultTableName()).append("', '").append(0).append("', ")
+					.append(0).append(", ")
+					.append(0).append(", 40, 40, ")
+					.append(0).append(")").toString();
+			stm.executeUpdate(sql);
+			
+			
             String path = CASUtility.getPIMDirPath();
             int length = path.length();
             File read = new File(path);
@@ -143,19 +153,16 @@ public class App_Bar extends AbstractApp {
 					if(p > -1) {
 						string = string.substring(p + 1);
 					}
-					try {
-						int idx = Integer.valueOf(string);
-						int row = idx / 10 + 1;
-						int col = idx % 10;
-						sql = new StringBuilder("INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('")
-								.append(string).append("', '").append(idx).append("', ")
-								.append(col * 90 + CustOpts.HOR_GAP).append(", ")
-								.append(row * 90 + CustOpts.VER_GAP).append(", 90, 90, ")
-								.append(string).append(")").toString();
-						stm.executeUpdate(sql);
-					}catch(Exception e) {
-						//CustOpts.custOps is null now, can not do L.w()!!1 L.w("app_bar", "customer might have put wrong format of *.png in .storm07111 folder.", e);
-					}
+					
+					int idx = Integer.valueOf(string);
+					int row = idx / 10 + 1;
+					int col = idx % 10;
+					sql = new StringBuilder("INSERT INTO DINING_TABLE (name, DSP_INDEX, posX, posY, width, height, type) VALUES ('")
+							.append(string).append("', '").append(idx).append("', ")
+							.append(col * 90 + CustOpts.HOR_GAP).append(", ")
+							.append(row * 90 + CustOpts.VER_GAP).append(", 90, 90, ")
+							.append(string).append(")").toString();
+					stm.executeUpdate(sql);
 				}
 			}
 
