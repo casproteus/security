@@ -23,6 +23,7 @@ hs_err_pid*
 
 #every thing under target
 **/target/*
+**/.Storm070111/*
 
 #every thing under installer
 installer/*
