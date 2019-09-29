@@ -6,9 +6,9 @@
 		<field type="space" />
 		<field type="radio" variable="security.monitor.service">
   			<spec>
-    			<choice txt="Install and start service" value="installAndStart"/>
+    			<choice txt="Install application" value="no" set="true"/>
     			<choice txt="Install service" value="install"/>
-    			<choice txt="No" value="no" set="true"/>
+    			<choice txt="Install and start service" value="installAndStart"/>
   			</spec>
 		</field>
 	</panel>
