@@ -135,22 +135,6 @@ public class Cmd_VoidOrder implements SamActionListener {
 			L.e("void order", "error happend when voiding a bill with ID:"+ billID, exp);
 		}
 		
-		if(BarOption.isCounterMode()) {
-			String tableName = BarFrame.instance.cmbCurTable.getSelectedItem().toString();
-			String newOpenTime = BarOption.df.format(new Date());
-			int newBillIdx = BillListPanel.getANewBillIdx(tableName, newOpenTime);
-			BarFrame.instance.valStartTime.setText(newOpenTime);
-			BarFrame.instance.setCurBillIdx(String.valueOf(newBillIdx));
-			
-			billPanel.setBillID(BarFrame.instance.createAnEmptyBill(tableName, newOpenTime, newBillIdx));
-			billPanel.initContent();
-			
-		}else {
-			//if the bill amount is 1, cancel the selected status of the table.
-			if(BarFrame.instance.isTableEmpty(null, null)) {
-				BarFrame.instance.closeATable(null, null);
-			}
-			BarFrame.instance.switchMode(0);
-		}
+		BarFrame.instance.actionAfterBillClosed(); 
 	}
 }

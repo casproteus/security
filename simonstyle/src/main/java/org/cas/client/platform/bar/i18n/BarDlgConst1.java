@@ -301,7 +301,7 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String Change() {return "Changer";}
 
     @Override
-	public String AddUser() {return "Ajouter Facture";}
+	public String AddBill() {return "Ajouter Facture";}
     @Override
 	public String PrintAll() {return "Imprimer tout";}
     @Override

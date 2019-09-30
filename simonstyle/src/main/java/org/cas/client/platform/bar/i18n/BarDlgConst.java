@@ -165,7 +165,7 @@ public interface BarDlgConst {
     
     String Change();
 
-    String AddUser();
+    String AddBill();
     String PrintAll();
     String PrintOneBill();
 	String PrintOneInvoice();

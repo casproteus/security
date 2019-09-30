@@ -116,7 +116,7 @@ public class Cmd_Refund implements SamActionListener {
     		
      		if(!BarOption.isCounterMode()) {
      			BarFrame.instance.switchMode(0);
-     		}				
+     		}
      		Cmd_OpenDrawer.getInstance().actionPerformed(null);
      	}catch(Exception exp) {
          	JOptionPane.showMessageDialog(BarFrame.numberPanelDlg, DlgConst.FORMATERROR);

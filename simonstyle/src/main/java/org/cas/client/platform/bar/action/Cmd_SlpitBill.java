@@ -46,7 +46,7 @@ public class Cmd_SlpitBill implements  SamActionListener {
     			return;
 		}
 		//check if it's countermode
-		if(BarOption.isCounterMode()) {
+		if(BarOption.getDefaultTableName().equals(BarFrame.instance.cmbCurTable.getSelectedItem().toString())) {
 			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.ActionNotAllowed());
 			return;
 		}

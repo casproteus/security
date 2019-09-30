@@ -70,12 +70,6 @@ public class Cmd_Suspend implements SamActionListener {
         	ErrorUtil.write(exp);
         }
         
-    	if(BarOption.isCounterMode()) {
-	    	BarFrame.instance.addNewBillInCurTable();
-    	}else {
-			BarFrame.instance.setCurBillIdx("");
-			BarFrame.instance.switchMode(0);
-    	}
-		
+        BarFrame.instance.actionAfterBillClosed(); 
 	}
 }

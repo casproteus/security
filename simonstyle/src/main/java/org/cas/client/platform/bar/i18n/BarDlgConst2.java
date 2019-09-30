@@ -303,7 +303,7 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String Change() {return "找零";}
 
     @Override
-	public String AddUser() {return "添加账单";}
+	public String AddBill() {return "添加账单";}
     @Override
 	public String PrintAll() {return "全部打印";}
     @Override

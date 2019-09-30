@@ -380,7 +380,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 		btnCheckInOut = new FunctionButton(BarFrame.consts.CheckOut());
 		
 		//BillListPanel
-		btnAddUser = new FunctionButton(BarFrame.consts.AddUser());
+//		btnAddUser = new FunctionButton(BarFrame.consts.AddBill());
 		btnPrintAll = new FunctionButton(BarFrame.consts.PrintAll());
 		btnPrintOneBill = new FunctionButton(BarFrame.consts.PrintOneBill());
 		btnPrintOneInVoice = new FunctionButton(BarFrame.consts.PrintOneInvoice());
@@ -405,7 +405,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnPrintBill = new FunctionButton(BarFrame.consts.PRINT_BILL());
 
         btnReturn = new FunctionButton(BarFrame.consts.RETURN());
-        btnAddBill = new FunctionButton(BarFrame.consts.AddUser());
+        btnAddBill = new FunctionButton(BarFrame.consts.AddBill());
         btnMASTER = new FunctionButton(BarFrame.consts.MASTER());
         btnCancelAll = new FunctionButton(BarFrame.consts.CANCEL_ALL());
         btnVoidOrder = new FunctionButton(BarFrame.consts.VOID_ORDER());
@@ -443,49 +443,49 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         		btnReport,
         		btnCheckInOut,
         			
-        		btnAddUser,		//5
-        		btnPrintAll,
+//        		btnAddUser,
+        		btnPrintAll,		//5
 //        		btnPrintOneBill,
 //        		btnPrintOneInVoice,
         		btnEqualBill,
         		btnSplitItem,
         		btnMoveItem,
-        		btnCombineAll,	//10
-        		btnSuspendAll,
+        		btnCombineAll,
+        		btnSuspendAll,	//10
         			
         		btnCASH,
         		btnDEBIT,
         		btnVISA,
-        		btnMASTER,		//15
-        		btnGIFTCARD,
+        		btnMASTER,
+        		btnGIFTCARD,		//15
         		btnSplitBill,
         		btnRemoveItem,
         		btnModify,
-        		btnDiscItem,	//20
-        		btnChangePrice,
+        		btnDiscItem,
+        		btnChangePrice,	//20
         		btnDiscBill,
         		btnServiceFee,
         		btnPrintBill,
 
-        		btnReturn,		//25
-        		btnAddBill,
+        		btnReturn,
+        		btnAddBill,		//25
         			   
         		btnCancelAll,
         		btnVoidOrder,
         		btnOpenDrawer,
-        		btnDiscountCoupon,//30
-        		btnRefund,		
+        		btnDiscountCoupon,
+        		btnRefund,		//30
         		btnSend,
         		btnEN,
         		btnFR,
-        		btnCN,		//35
+        		btnCN,
         			
-        		btnEmployee,
+        		btnEmployee,		//35
         		btnPrinter,
         		btnTable,
         		btnBillFoot,
-        		btnModifySetting,		//40
-        		btnGiftCardSetting,
+        		btnModifySetting,
+        		btnGiftCardSetting,		//40
         		btnCoupon,
         		btnColor,
         		btnCheckInOutList};
@@ -500,7 +500,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnReport.addActionListener(Cmd_Report.getInstance());
         btnCheckInOut.addActionListener(Cmd_CheckInOut.getInstance());
         //billList
-        btnAddUser.addActionListener(Cmd_AddUser.getInstance());
+//        btnAddUser.addActionListener(Cmd_AddUser.getInstance());
 		btnPrintAll.addActionListener(Cmd_PrintAll.getInstance());
 		btnPrintOneBill.addActionListener(Cmd_PrintOneBill.getInstance());
 		btnPrintOneInVoice.addActionListener(Cmd_PrintOneInVoice.getInstance());
@@ -578,7 +578,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 		}else {
 	    	//BillListPanel
 	    	groupedButtons[1].add(btnReturn);
-	    	groupedButtons[1].add(btnAddUser);
+//	    	groupedButtons[1].add(btnAddUser);
 	    	groupedButtons[1].add(btnPrintAll);
 //	    	groupedButtons[1].add(btnPrintOneBill);
 //	    	groupedButtons[1].add(btnPrintOneInVoice);
@@ -686,7 +686,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 	private static FunctionButton btnCheckInOut;
 	
 	//BillListPanel
-	private static FunctionButton btnAddUser;
+//	private static FunctionButton btnAddUser;
 	private static FunctionButton btnPrintAll;
 	private static FunctionButton btnPrintOneBill;
 	private static FunctionButton btnPrintOneInVoice;

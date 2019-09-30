@@ -620,9 +620,10 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 		BillPanel billPanel = salesPanel.billPanel;
 		
 		int newBillIdx = BillListPanel.getANewBillIdx(null, null);
-		int oldbill = billPanel.getBillID();
+		
 		int billId = createAnEmptyBill(tableName, openTime, newBillIdx);
 		billPanel.setBillID(billId);
+		
 		setCurBillIdx(String.valueOf(newBillIdx));
 		switchMode(2);
 	}
