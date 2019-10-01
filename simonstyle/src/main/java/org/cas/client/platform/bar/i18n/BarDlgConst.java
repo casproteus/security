@@ -330,4 +330,6 @@ public interface BarDlgConst {
 	String ApplyToCategory();
 	String getPennyRounded();
 	String AllSelectedItemWillBeDeleted();
+	String RuleName();
+	String Rule();
 }

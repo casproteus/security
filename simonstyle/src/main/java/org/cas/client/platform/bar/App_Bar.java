@@ -212,6 +212,10 @@ public class App_Bar extends AbstractApp {
             sql = "INSERT INTO EMPLOYEE (FNAME, NNAME, CATEGORY, PASSWORD) VALUES ('DEFAULT','DEFAULT', 'Waiter', 'asdf')";
             stm.executeUpdate(sql);
 
+        	//add a customizedrule table. 
+        	sql = "CREATE CACHED TABLE CustomizedRule (id INTEGER IDENTITY PRIMARY KEY, ruleName VARCHAR(255),  content VARCHAR(255), action INTEGER, status INTEGER,  dspIdx INTEGER, ext1 VARCHAR(255),  ext2 VARCHAR(255),  ext3 VARCHAR(255),)";
+        	stm.executeUpdate(sql);
+        	
             stm.close();
         } catch (Exception e) {
         	ErrorUtil.write(e);

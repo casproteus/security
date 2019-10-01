@@ -615,5 +615,9 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String getPennyRounded() {return "penny rounded:";}
 	@Override
 	public String AllSelectedItemWillBeDeleted() {return "Are you sure to delete all selected items?";}
+	@Override
+	public String RuleName() {return "Rule Name";}
+	@Override
+	public String Rule() {return "Rule";}
 
 }

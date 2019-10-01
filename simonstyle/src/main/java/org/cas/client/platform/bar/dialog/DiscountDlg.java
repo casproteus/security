@@ -5,6 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -14,12 +18,17 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
+import org.cas.client.platform.bar.model.DBConsts;
+import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.bar.uibeans.NumButton;
+import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
+import org.cas.client.platform.pimmodel.PIMDBModel;
 
-public class DiscountDlg extends JDialog implements ActionListener, ComponentListener{
+public class DiscountDlg extends JDialog implements ActionListener, ComponentListener, MouseListener{
 	public static String curContent = "";
 	public boolean isPercentage = false;
 	public static boolean confirmed;
@@ -324,6 +333,7 @@ public class DiscountDlg extends JDialog implements ActionListener, ComponentLis
         getContentPane().add(percent);
 
         // 加监听器－－－－－－－－
+        lblQTY.addMouseListener(this);
         ok.addActionListener(this);
         back.addActionListener(this);
         btn5.addActionListener(this);
@@ -405,5 +415,66 @@ public class DiscountDlg extends JDialog implements ActionListener, ComponentLis
 
     public JTextField tfdQTY;
     private JLabel lblQTY;
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if(e.getSource() == lblQTY && e.getClickCount() > 1) {
+			StringBuilder content = new StringBuilder();
+			StringBuilder noticeForContent = new StringBuilder();
+			//prepare the content:
+			SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
+			BillPanel billPanel = salesPanel.billPanel;
+			ArrayList<Dish> selection = billPanel.orderedDishAry;
+			for (Dish dish : selection) {
+				content.append(",").append(dish.getId());
+				noticeForContent.append(",").append(dish.getLanguage(CustOpts.custOps.getUserLang()));
+			}
+			if(content.length() < 2) {
+				JOptionPane.showConfirmDialog(null, BarFrame.consts.InvalidInput());
+				return;
+			}
+			
+			String actionStr = tfdQTY.getText();
+			
+			String notice = "when dishes contains '" + noticeForContent.substring(1) + "', will be discount:" + actionStr + ".\n To create this rule, please give it a name, then click OK. \n";
+			String ruleName = JOptionPane.showInputDialog(null, notice + BarFrame.consts.RuleName() + " you:");
+			if(ruleName == null || ruleName.length() == 0)
+				return;
+			
+			
+			Float f;
+			if(actionStr.endsWith("%")) {
+		    	String tContent = actionStr.substring(0, actionStr.length() - 1);
+				f = Float.valueOf(tContent);
+				if(f > 1) {
+					JOptionPane.showConfirmDialog(null, BarFrame.consts.InvalidInput());
+					return;
+				}
+			}else {
+				f = Float.valueOf(actionStr);
+			}
+			//sql = "CREATE CACHED TABLE CustomizedRule (id INTEGER IDENTITY PRIMARY KEY, ruleName VARCHAR(255),  content VARCHAR(255), action INTEGER, status INTEGER,  ext1 VARCHAR(255),  ext2 VARCHAR(255),  ext3 VARCHAR(255),)";
+			StringBuilder sql = new StringBuilder("INSERT INTO CustomizedRule (ruleName, content, action, status) VALUES ('").append(ruleName)
+				    .append("', '").append(content.substring(1)).append("', ").append(Math.round(f * 100)).append(", 0)");
+			
+			try {
+    			PIMDBModel.getStatement().executeUpdate(sql.toString());
+    		}catch(Exception exp) {
+    			L.e("DiscountDlg ", "Exception when insert a rule into CustomizedRule.", exp);
+    		}
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
     
 }

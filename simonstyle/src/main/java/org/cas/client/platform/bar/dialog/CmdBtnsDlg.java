@@ -37,6 +37,7 @@ import org.cas.client.platform.bar.action.Cmd_CheckOrder;
 import org.cas.client.platform.bar.action.Cmd_Color;
 import org.cas.client.platform.bar.action.Cmd_CombineAll;
 import org.cas.client.platform.bar.action.Cmd_SettingCoupon;
+import org.cas.client.platform.bar.action.Cmd_SettingRule;
 import org.cas.client.platform.bar.action.Cmd_DiscBill;
 import org.cas.client.platform.bar.action.Cmd_DiscItem;
 import org.cas.client.platform.bar.action.Cmd_DiscountCoupon;
@@ -433,6 +434,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnModifySetting = new FunctionButton(BarFrame.consts.MODIFY());
         btnGiftCardSetting = new FunctionButton(BarFrame.consts.GIFTCARD());
         btnCoupon = new FunctionButton(BarFrame.consts.COUPON());
+        btnRule = new FunctionButton(BarFrame.consts.Rule());
         btnColor = new FunctionButton(BarFrame.consts.Color().toUpperCase());
         btnCheckInOutList = new FunctionButton(BarFrame.consts.CheckInOut());
         
@@ -487,8 +489,9 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         		btnModifySetting,
         		btnGiftCardSetting,		//40
         		btnCoupon,
+        		btnRule,
         		btnColor,
-        		btnCheckInOutList};
+        		btnCheckInOutList};		//45
         
         
         //listener------------------------------
@@ -547,6 +550,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
         btnModifySetting.addActionListener(Cmd_ModifySetting.getInstance());
         btnGiftCardSetting.addActionListener(Cmd_GiftCard.getInstance());
         btnCoupon.addActionListener(Cmd_SettingCoupon.getInstance());
+        btnRule.addActionListener(Cmd_SettingRule.getInstance());
         btnColor.addActionListener(Cmd_Color.getInstance());
         btnCheckInOutList.addActionListener(Cmd_CheckInOutList.getInstance());
         
@@ -638,6 +642,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
 	        groupedButtons[3].add(btnModifySetting);
 	        groupedButtons[3].add(btnGiftCardSetting);
 	        groupedButtons[3].add(btnCoupon);
+	        groupedButtons[3].add(btnRule);
 	        groupedButtons[3].add(btnColor);
 	        groupedButtons[3].add(btnCheckInOutList);
 		}
@@ -736,6 +741,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     private static FunctionButton btnModifySetting;
     private static FunctionButton btnGiftCardSetting;
     private static FunctionButton btnCoupon;
+    private static FunctionButton btnRule;
     private static FunctionButton btnColor;
     private static FunctionButton btnCheckInOutList;
     
@@ -791,8 +797,9 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     		"ModifySetting",  //40
     		"GiftCardSetting",//
     		"CouponSetting",  //
+    		"RuleSetting",	  //
     		"ColorSetting",	  //
-    		"CheckInOutList"};//
+    		"CheckInOutList"};//45
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
