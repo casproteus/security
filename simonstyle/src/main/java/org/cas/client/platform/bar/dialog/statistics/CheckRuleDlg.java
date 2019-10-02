@@ -46,7 +46,7 @@ import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.IPIMTableColumnModel;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 
-public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener, ListSelectionListener, FocusListener {
+public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener, ListSelectionListener {
     
 	private boolean isEditingBillID;
 	
@@ -99,46 +99,11 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
                 getHeight() - CustOpts.SIZE_TITLE - CustOpts.SIZE_EDGE - CustOpts.VER_GAP * 3
                 - CustOpts.BTN_WIDTH_NUM);
         
-        int startX = (getWidth() - 490 - CustOpts.HOR_GAP * 8 - lblFrom.getPreferredSize().width - lblTo.getPreferredSize().width) / 2;
-        lblFrom.setBounds(startX, srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP * 2 + lblYearFrom.getPreferredSize().height,
-        		lblFrom.getPreferredSize().width, lblFrom.getPreferredSize().height);
-        lblYearFrom.setBounds(lblFrom.getX() + lblFrom.getWidth() + CustOpts.HOR_GAP, srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP,
-        		60, lblYearFrom.getPreferredSize().height);
-        tfdYearFrom.setBounds(lblYearFrom.getX(), lblYearFrom.getY() + lblYearFrom.getHeight() + CustOpts.VER_GAP, 
-        		lblYearFrom.getWidth(), 30);
-        
-        lblMonthFrom.setBounds(lblYearFrom.getX() + lblYearFrom.getWidth() + CustOpts.HOR_GAP, lblYearFrom.getY(), 
-        		40, lblMonthFrom.getPreferredSize().height);
-        tfdMonthFrom.setBounds(lblMonthFrom.getX(), tfdYearFrom.getY(), lblMonthFrom.getWidth(), tfdYearFrom.getHeight());
-        
-        lblDayFrom.setBounds(lblMonthFrom.getX() + lblMonthFrom.getWidth() + CustOpts.HOR_GAP, lblMonthFrom.getY(), 
-        		lblMonthFrom.getWidth(), lblDayFrom.getPreferredSize().height);
-        tfdDayFrom.setBounds(lblDayFrom.getX(), tfdYearFrom.getY(), lblDayFrom.getWidth(), tfdYearFrom.getHeight());
-        
-        lblTo.setBounds(tfdDayFrom.getX() + tfdDayFrom.getWidth() + CustOpts.HOR_GAP, lblFrom.getY(), lblTo.getPreferredSize().width, lblFrom.getHeight());
-        
-        lblYearTo.setBounds(lblTo.getX() + lblTo.getWidth() + CustOpts.HOR_GAP, lblMonthFrom.getY(), 
-        		lblYearFrom.getWidth(), lblYearFrom.getHeight());
-        tfdYearTo.setBounds(lblYearTo.getX(), tfdYearFrom.getY(), lblYearTo.getWidth(), tfdYearFrom.getHeight());
-        
-        lblMonthTo.setBounds(lblYearTo.getX() + lblYearTo.getWidth() + CustOpts.HOR_GAP, lblMonthFrom.getY(), 
-        		lblMonthFrom.getWidth(), lblMonthFrom.getHeight());
-        tfdMonthTo.setBounds(lblMonthTo.getX(), tfdYearFrom.getY(), lblMonthTo.getWidth(), tfdYearFrom.getHeight());
-        
-        lblDayTo.setBounds(lblMonthTo.getX() + lblMonthTo.getWidth() + CustOpts.HOR_GAP, lblMonthFrom.getY(), 
-        		lblDayFrom.getWidth(), lblDayFrom.getHeight());
-        tfdDayTo.setBounds(lblDayTo.getX(), tfdYearFrom.getY(), lblDayTo.getWidth(), tfdYearFrom.getHeight());
-
         int btnWidth = 80;
-        btnChangeDate.setBounds(tfdDayTo.getX() + tfdDayTo.getWidth() + CustOpts.HOR_GAP, lblDayTo.getY(),
-                btnWidth, tfdDayTo.getHeight() + lblDayTo.getHeight() + CustOpts.VER_GAP);
+        btnChangeDate.setBounds(getWidth() - CustOpts.SIZE_EDGE - CustOpts.HOR_GAP * 2 - btnWidth * 2, srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP,
+                btnWidth, CustOpts.BTN_WIDTH_NUM);
         btnPrintInvoice.setBounds(btnChangeDate.getX() + btnChangeDate.getWidth() + CustOpts.HOR_GAP, btnChangeDate.getY(),
-                btnWidth, tfdDayTo.getHeight() + lblDayTo.getHeight() + CustOpts.VER_GAP);
-        ckxIsToCustomer.setBounds(btnPrintInvoice.getX() + btnPrintInvoice.getWidth() + CustOpts.HOR_GAP, tfdDayTo.getY(),
-        		ckxIsToCustomer.getPreferredSize().width, ckxIsToCustomer.getPreferredSize().height);
-        
-        lblBillID.setBounds(CustOpts.HOR_GAP, lblYearFrom.getY(), lblBillID.getPreferredSize().width, lblYearFrom.getHeight());
-        tfdBillID.setBounds(lblBillID.getX(), tfdYearFrom.getY(), 60, tfdYearFrom.getHeight());
+                btnWidth, CustOpts.BTN_WIDTH_NUM);
         
         IPIMTableColumnModel tTCM = tblContent.getColumnModel();
         tTCM.getColumn(0).setPreferredWidth(130);	//BarFrame.consts.TIME
@@ -204,45 +169,10 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
             ActionEvent e) {
         Object o = e.getSource();
         if (o == btnChangeDate) {
-        	if(!isEditingBillID) {	//if is editing in BillID field, then leave to the focus lost event to handle.s
-	        	StringBuilder startTime = new StringBuilder();
-	        	startTime.append(tfdYearFrom.getText());
-	        	startTime.append("-");
-	        	startTime.append(tfdMonthFrom.getText());
-	        	startTime.append("-");
-	        	startTime.append(tfdDayFrom.getText());
-	        	startTime.append(" 00:00:00");
-	
-	        	StringBuilder endTime = new StringBuilder();
-	        	endTime.append(tfdYearTo.getText());
-	        	endTime.append("-");
-	        	endTime.append(tfdMonthTo.getText());
-	        	endTime.append("-");
-	        	endTime.append(tfdDayTo.getText());
-	        	endTime.append(" 23:59:59");
-	        	initContent(startTime.toString(), endTime.toString());
-        	}
         	reLayout();
         }else if(o == btnPrintInvoice) {
-        	(((SalesPanel)BarFrame.instance.panels[2]).billPanel).printBill(
-        			BarFrame.instance.cmbCurTable.getSelectedItem().toString(), 
-        			BarFrame.instance.getOnSrcCurBillIdx(),
-        			BarFrame.instance.valStartTime.getText(), ckxIsToCustomer.isSelected());
-        	//use true as cashback when re printing invoice. because no need to mention that restaurant receiced tips. 
         }
     }
-
-	@Override
-	public void focusGained(FocusEvent e) {
-		isEditingBillID = e.getSource() == tfdBillID;
-	}
-
-	@Override
-	public void focusLost(FocusEvent e) {
-		if(e.getSource() == tfdBillID) {
-			initContent(tfdBillID.getText());
-		}
-	}
 	
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
@@ -295,39 +225,13 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
 
-        lblBillID = new JLabel(BarFrame.consts.Bill());
-        lblFrom = new JLabel(BarFrame.consts.FROM());
-        lblTo = new JLabel(BarFrame.consts.TO());
-        lblYearFrom = new JLabel("YYYY");
-        lblMonthFrom = new JLabel("MM");
-        lblDayFrom = new JLabel("DD");
-        lblYearTo = new JLabel("YYYY");
-        lblMonthTo = new JLabel("MM");
-        lblDayTo = new JLabel("DD");
-        tfdBillID = new JTextField();
-        tfdYearFrom = new JTextField();
-        tfdMonthFrom = new JTextField();
-        tfdDayFrom = new JTextField();
-        tfdYearTo = new JTextField();
-        tfdMonthTo = new JTextField();
-        tfdDayTo = new JTextField();
         btnChangeDate = new JButton(BarFrame.consts.Apply());
         btnPrintInvoice = new JButton(BarFrame.consts.PRINT());
-        ckxIsToCustomer = new JCheckBox(BarFrame.consts.isToCustomer());
         // properties
         btnChangeDate.setMnemonic('A');
         btnChangeDate.setMargin(new Insets(0, 0, 0, 0));
         btnPrintInvoice.setMnemonic('P');
         btnPrintInvoice.setMargin(new Insets(0, 0, 0, 0));
-        ckxIsToCustomer.setBackground(null);
-        ckxIsToCustomer.setSelected(true);
-        lblTo.setHorizontalTextPosition(SwingConstants.CENTER);
-        lblYearFrom.setHorizontalTextPosition(SwingConstants.CENTER);
-        lblMonthFrom.setHorizontalTextPosition(SwingConstants.CENTER);
-        lblDayFrom.setHorizontalTextPosition(SwingConstants.CENTER);
-        lblYearTo.setHorizontalTextPosition(SwingConstants.CENTER);
-        lblMonthTo.setHorizontalTextPosition(SwingConstants.CENTER);
-        lblDayTo.setHorizontalTextPosition(SwingConstants.CENTER);
         
         tblContent.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         tblContent.setAutoscrolls(true);
@@ -347,35 +251,10 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
         // 搭建－－－－－－－－－－－－－
         getContentPane().add(srpContent);
         
-        getContentPane().add(lblBillID);
-        getContentPane().add(lblFrom);
-        getContentPane().add(lblTo);
-        getContentPane().add(lblYearFrom);
-        getContentPane().add(lblMonthFrom);
-        getContentPane().add(lblDayFrom);
-        getContentPane().add(lblYearTo);
-        getContentPane().add(lblMonthTo);
-        getContentPane().add(lblDayTo);
-
-        getContentPane().add(tfdBillID);
-        getContentPane().add(tfdYearFrom);
-        getContentPane().add(tfdMonthFrom);
-        getContentPane().add(tfdDayFrom);
-        getContentPane().add(tfdYearTo);
-        getContentPane().add(tfdMonthTo);
-        getContentPane().add(tfdDayTo);
         getContentPane().add(btnChangeDate);
         getContentPane().add(btnPrintInvoice);
-        getContentPane().add(ckxIsToCustomer);
         // 加监听器－－－－－－－－
         tblContent.getSelectionModel().addListSelectionListener(this);
-        tfdBillID.addFocusListener(this);
-        tfdYearFrom.addFocusListener(this);
-        tfdMonthFrom.addFocusListener(this);
-        tfdDayFrom.addFocusListener(this);
-        tfdYearTo.addFocusListener(this);
-        tfdMonthTo.addFocusListener(this);
-        tfdDayTo.addFocusListener(this);
         
         btnChangeDate.addActionListener(this);
         btnChangeDate.addKeyListener(this);
@@ -402,25 +281,6 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
         
         sql.append(" order by createTime desc");
         fillTableAreaWithResultSet(sql);
-        
-        //fill the dataselection area
-        int p = startTime.indexOf(" ");
-        startTime = startTime.substring(0, p);
-        p = startTime.indexOf("-");
-        tfdYearFrom.setText(startTime.substring(0, p));
-        startTime = startTime.substring(p + 1);
-        p = startTime.indexOf("-");
-        tfdMonthFrom.setText(startTime.substring(0, p));
-        tfdDayFrom.setText(startTime.substring(p + 1));
-        
-        p = endTime.indexOf(" ");
-        endTime = endTime.substring(0, p);
-        p = endTime.indexOf("-");
-        tfdYearTo.setText(endTime.substring(0, p));
-        endTime = endTime.substring(p + 1);
-        p = endTime.indexOf("-");
-        tfdMonthTo.setText(endTime.substring(0, p));
-        tfdDayTo.setText(endTime.substring(p + 1));
         
     }
     
@@ -575,23 +435,6 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
     PIMTable tblContent;
     PIMScrollPane srpContent;
 
-    JLabel lblBillID;
-    JLabel lblFrom;
-    JLabel lblTo;
-    JLabel lblYearFrom;
-    JLabel lblMonthFrom;
-    JLabel lblDayFrom;
-    JLabel lblYearTo;
-    JLabel lblMonthTo;
-    JLabel lblDayTo;
-    JTextField tfdYearFrom;
-    JTextField tfdBillID;
-    JTextField tfdMonthFrom;
-    JTextField tfdDayFrom;
-    JTextField tfdYearTo;
-    JTextField tfdMonthTo;
-    JTextField tfdDayTo;
     private JButton btnChangeDate;
     private JButton btnPrintInvoice;
-    private JCheckBox ckxIsToCustomer;
 }
