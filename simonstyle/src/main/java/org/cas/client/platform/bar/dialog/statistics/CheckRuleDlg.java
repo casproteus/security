@@ -105,11 +105,7 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
                 btnWidth, CustOpts.BTN_WIDTH_NUM);
         btnDown.setBounds(btnUp.getX() + btnUp.getWidth() + CustOpts.HOR_GAP, btnUp.getY(),
                 btnWidth, CustOpts.BTN_WIDTH_NUM);
-        btnActive.setBounds(btnDown.getX() + btnDown.getWidth() + CustOpts.HOR_GAP, btnDown.getY(),
-                btnWidth, CustOpts.BTN_WIDTH_NUM);
-        btnDeActive.setBounds(btnActive.getX() + btnActive.getWidth() + CustOpts.HOR_GAP, btnActive.getY(),
-                btnWidth, CustOpts.BTN_WIDTH_NUM);
-        btnDeLete.setBounds(btnDeActive.getX() + btnDeActive.getWidth() + CustOpts.HOR_GAP, btnDeActive.getY(),
+        btnDeLete.setBounds(btnDown.getX() + btnDown.getWidth() + CustOpts.HOR_GAP, btnDown.getY(),
                 btnWidth, CustOpts.BTN_WIDTH_NUM);
 
         
@@ -141,8 +137,6 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
     public void release() {
         btnUp.removeActionListener(this);
         btnDown.removeActionListener(this);
-        btnActive.removeActionListener(this);
-        btnDeActive.removeActionListener(this);
         btnDeLete.removeActionListener(this);
 
         dispose();// 对于对话盒，如果不加这句话，就很难释放掉。
@@ -171,10 +165,6 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
         	reLayout();
         }else if(o == btnDown) {
         	
-        }else if(o == btnActive) {
-        	
-        }else if(o == btnDeActive) {
-    	
         }else if(o == btnDeLete) {
         	
         }
@@ -196,7 +186,7 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
     	//swith to sales panel.
 
         BarFrame.instance.ignoreItemChange = true;
-    	BarFrame.instance.cmbCurTable.setSelectedItem(String.valueOf(tblContent.getValueAt(selectedRow, 1)));
+    	BarFrame.instance.cmbCurTable.setSelectedItem(null);
     	BarFrame.instance.setCurBillIdx(String.valueOf(tblContent.getValueAt(selectedRow, 2)));
     	BarFrame.instance.valOperator.setText(String.valueOf(tblContent.getValueAt(selectedRow, 9)));
     	BarFrame.instance.valStartTime.setText(String.valueOf(tblContent.getValueAt(selectedRow, 11)));
@@ -233,8 +223,6 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
 
         btnUp = new ArrowButton("↑");
         btnDown = new ArrowButton("↓");
-        btnActive = new JButton("TBD");
-        btnDeActive = new JButton("TBD");
         btnDeLete = new JButton(BarFrame.consts.Delete());
         // properties
         btnUp.setMnemonic('A');
@@ -262,8 +250,6 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
         
         getContentPane().add(btnUp);
         getContentPane().add(btnDown);
-        getContentPane().add(btnActive);
-        getContentPane().add(btnDeActive);
         getContentPane().add(btnDeLete);
         // 加监听器－－－－－－－－
         tblContent.getSelectionModel().addListSelectionListener(this);
@@ -272,10 +258,6 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
         btnUp.addKeyListener(this);
         btnDown.addActionListener(this);
         btnDown.addKeyListener(this);
-        btnActive.addActionListener(this);
-        btnActive.addKeyListener(this);
-        btnDeActive.addActionListener(this);
-        btnDeActive.addKeyListener(this);
         btnDeLete.addActionListener(this);
         btnDeLete.addKeyListener(this);
         
@@ -320,11 +302,11 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
             rs.beforeFirst();
             tmpPos = 0;
             while (rs.next()) {
-                tValues[tmpPos][0] = rs.getString("createTime");;
-                tValues[tmpPos][1] = rs.getString("tableID");
-                tValues[tmpPos][2] = rs.getString("billIndex");
-                tValues[tmpPos][3] = BarUtil.formatMoney(rs.getInt("total") / 100.0);
-                tValues[tmpPos][4] = BarUtil.formatMoney(rs.getInt("discount") / 100.0);
+                tValues[tmpPos][0] = rs.getInt("dspIdx");;
+                tValues[tmpPos][1] = rs.getString("ruleName");
+                tValues[tmpPos][2] = rs.getString("content");
+                tValues[tmpPos][3] = BarUtil.formatMoney(rs.getInt("action") / 100.0);
+                tValues[tmpPos][4] = rs.getInt("status");
                 tmpPos++;
             }
             rs.close();// 关闭
@@ -404,7 +386,5 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
 
     private JButton btnUp;
     private JButton btnDown;
-    private JButton btnActive;
-    private JButton btnDeActive;
     private JButton btnDeLete;
 }

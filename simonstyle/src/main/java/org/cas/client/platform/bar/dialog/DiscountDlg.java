@@ -436,7 +436,7 @@ public class DiscountDlg extends JDialog implements ActionListener, ComponentLis
 			
 			String actionStr = tfdQTY.getText();
 			
-			String notice = "when dishes contains '" + noticeForContent.substring(1) + "', will be discount:" + actionStr + ".\n To create this rule, please give it a name, then click OK. \n";
+			String notice = "When contains dishes: '" + noticeForContent.substring(1) + "', will discount "+ BarOption.getMoneySign()  + actionStr + ".\n To create this rule, please enter a name, and click OK. \n";
 			String ruleName = JOptionPane.showInputDialog(null, notice + BarFrame.consts.RuleName() + " you:");
 			if(ruleName == null || ruleName.length() == 0)
 				return;
