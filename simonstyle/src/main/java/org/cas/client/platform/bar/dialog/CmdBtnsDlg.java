@@ -754,7 +754,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     		"Report",
     		"CheckInOut",
     			
-    		"AddUser",		//5
+//    		"AddUser",		//5
     		"PrintAll",
 //    		"PrintOneBill",
 //    		"PrintOneInVoice",

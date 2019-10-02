@@ -34,6 +34,7 @@ import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.model.DBConsts;
+import org.cas.client.platform.bar.uibeans.ArrowButton;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -100,30 +101,24 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
                 - CustOpts.BTN_WIDTH_NUM);
         
         int btnWidth = 80;
-        btnChangeDate.setBounds(getWidth() - CustOpts.SIZE_EDGE - CustOpts.HOR_GAP * 2 - btnWidth * 2, srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP,
+        btnUp.setBounds(CustOpts.HOR_GAP + 100, srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP,
                 btnWidth, CustOpts.BTN_WIDTH_NUM);
-        btnPrintInvoice.setBounds(btnChangeDate.getX() + btnChangeDate.getWidth() + CustOpts.HOR_GAP, btnChangeDate.getY(),
+        btnDown.setBounds(btnUp.getX() + btnUp.getWidth() + CustOpts.HOR_GAP, btnUp.getY(),
                 btnWidth, CustOpts.BTN_WIDTH_NUM);
+        btnActive.setBounds(btnDown.getX() + btnDown.getWidth() + CustOpts.HOR_GAP, btnDown.getY(),
+                btnWidth, CustOpts.BTN_WIDTH_NUM);
+        btnDeActive.setBounds(btnActive.getX() + btnActive.getWidth() + CustOpts.HOR_GAP, btnActive.getY(),
+                btnWidth, CustOpts.BTN_WIDTH_NUM);
+        btnDeLete.setBounds(btnDeActive.getX() + btnDeActive.getWidth() + CustOpts.HOR_GAP, btnDeActive.getY(),
+                btnWidth, CustOpts.BTN_WIDTH_NUM);
+
         
         IPIMTableColumnModel tTCM = tblContent.getColumnModel();
-        tTCM.getColumn(0).setPreferredWidth(130);	//BarFrame.consts.TIME
-        tTCM.getColumn(1).setPreferredWidth(40);	//BarFrame.consts.Table,
-        tTCM.getColumn(2).setPreferredWidth(40);	//BarFrame.consts.Bill
+        tTCM.getColumn(0).setPreferredWidth(40);	//BarFrame.consts.TIME
+        tTCM.getColumn(1).setPreferredWidth(230);	//BarFrame.consts.Table,
+        tTCM.getColumn(2).setPreferredWidth(360);	//BarFrame.consts.Bill
         tTCM.getColumn(3).setPreferredWidth(60);	//BarFrame.consts.Total
         tTCM.getColumn(4).setPreferredWidth(60);	//BarFrame.consts.Discount
-        tTCM.getColumn(5).setPreferredWidth(60);	//BarFrame.consts.Receive
-        tTCM.getColumn(6).setPreferredWidth(60);	//BarFrame.consts.Tip
-        tTCM.getColumn(7).setPreferredWidth(60);	//BarFrame.consts.CashBack
-        tTCM.getColumn(8).setPreferredWidth(60);	//BarFrame.consts.Status
-        tTCM.getColumn(9).setPreferredWidth(60);	//BarFrame.consts.Operator
-        tTCM.getColumn(10).setPreferredWidth(srpContent.getWidth() - 635);	//BarFrame.consts.comment
-        tTCM.getColumn(11).setPreferredWidth(0);	//table open time, invisible.
-        tTCM.getColumn(12).setPreferredWidth(60);	//cash received.
-        tTCM.getColumn(13).setPreferredWidth(60);	//debit received..
-        tTCM.getColumn(14).setPreferredWidth(60);	//visa received..
-        tTCM.getColumn(15).setPreferredWidth(60);	//master received..
-        tTCM.getColumn(16).setPreferredWidth(60);	//otehr received.
-        tTCM.getColumn(17).setPreferredWidth(40);	//id.
         validate();
     }
 
@@ -144,8 +139,12 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
 
     @Override
     public void release() {
-        btnChangeDate.removeActionListener(this);
-        btnPrintInvoice.removeActionListener(this);
+        btnUp.removeActionListener(this);
+        btnDown.removeActionListener(this);
+        btnActive.removeActionListener(this);
+        btnDeActive.removeActionListener(this);
+        btnDeLete.removeActionListener(this);
+
         dispose();// 对于对话盒，如果不加这句话，就很难释放掉。
         System.gc();// @TODO:不能允许私自运行gc，应该改为象收邮件线程那样低优先级地自动后台执行，可以从任意方法设置立即执行。
     }
@@ -168,9 +167,16 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
     public void actionPerformed(
             ActionEvent e) {
         Object o = e.getSource();
-        if (o == btnChangeDate) {
+        if (o == btnUp) {
         	reLayout();
-        }else if(o == btnPrintInvoice) {
+        }else if(o == btnDown) {
+        	
+        }else if(o == btnActive) {
+        	
+        }else if(o == btnDeActive) {
+    	
+        }else if(o == btnDeLete) {
+        	
         }
     }
 	
@@ -218,20 +224,23 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
     }
 
     private void initDialog() {
-        setTitle(BarFrame.consts.SaleRecs());
+        setTitle(BarFrame.consts.Rule());
         setModal(false);
 
         // 初始化－－－－－－－－－－－－－－－－
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
 
-        btnChangeDate = new JButton(BarFrame.consts.Apply());
-        btnPrintInvoice = new JButton(BarFrame.consts.PRINT());
+        btnUp = new ArrowButton("↑");
+        btnDown = new ArrowButton("↓");
+        btnActive = new JButton("TBD");
+        btnDeActive = new JButton("TBD");
+        btnDeLete = new JButton(BarFrame.consts.Delete());
         // properties
-        btnChangeDate.setMnemonic('A');
-        btnChangeDate.setMargin(new Insets(0, 0, 0, 0));
-        btnPrintInvoice.setMnemonic('P');
-        btnPrintInvoice.setMargin(new Insets(0, 0, 0, 0));
+        btnUp.setMnemonic('A');
+        btnUp.setMargin(new Insets(0, 0, 0, 0));
+        btnDown.setMnemonic('P');
+        btnDown.setMargin(new Insets(0, 0, 0, 0));
         
         tblContent.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         tblContent.setAutoscrolls(true);
@@ -251,15 +260,25 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
         // 搭建－－－－－－－－－－－－－
         getContentPane().add(srpContent);
         
-        getContentPane().add(btnChangeDate);
-        getContentPane().add(btnPrintInvoice);
+        getContentPane().add(btnUp);
+        getContentPane().add(btnDown);
+        getContentPane().add(btnActive);
+        getContentPane().add(btnDeActive);
+        getContentPane().add(btnDeLete);
         // 加监听器－－－－－－－－
         tblContent.getSelectionModel().addListSelectionListener(this);
         
-        btnChangeDate.addActionListener(this);
-        btnChangeDate.addKeyListener(this);
-        btnPrintInvoice.addActionListener(this);
-        btnPrintInvoice.addKeyListener(this);
+        btnUp.addActionListener(this);
+        btnUp.addKeyListener(this);
+        btnDown.addActionListener(this);
+        btnDown.addKeyListener(this);
+        btnActive.addActionListener(this);
+        btnActive.addKeyListener(this);
+        btnDeActive.addActionListener(this);
+        btnDeActive.addKeyListener(this);
+        btnDeLete.addActionListener(this);
+        btnDeLete.addKeyListener(this);
+        
         getContentPane().addComponentListener(this);
     }
 
@@ -306,45 +325,6 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
                 tValues[tmpPos][2] = rs.getString("billIndex");
                 tValues[tmpPos][3] = BarUtil.formatMoney(rs.getInt("total") / 100.0);
                 tValues[tmpPos][4] = BarUtil.formatMoney(rs.getInt("discount") / 100.0);
-                int received = rs.getInt("cashReceived") + rs.getInt("debitReceived")
-                + rs.getInt("visaReceived") + rs.getInt("masterReceived") + rs.getInt("otherreceived"); 
-                tValues[tmpPos][5] = BarUtil.formatMoney(received / 100.0);
-                tValues[tmpPos][6] = BarUtil.formatMoney(rs.getInt("tip") / 100.0);
-                tValues[tmpPos][7] = BarUtil.formatMoney(rs.getInt("cashback") / 100.0);
-                int status = rs.getInt("status");
-                switch (status) {
-				case DBConsts.original:
-					tValues[tmpPos][8] = "to pay";
-					break;
-				case DBConsts.billPrinted:
-					tValues[tmpPos][8] = "billed";
-					break;
-				case DBConsts.suspended:
-					tValues[tmpPos][8] = "suspended";
-					break;
-				case DBConsts.completed:
-					tValues[tmpPos][8] = "paid";
-					break;
-				case DBConsts.voided:
-					tValues[tmpPos][8] = "void";
-					break;
-				case DBConsts.expired:
-					tValues[tmpPos][8] = "expired";
-					break;
-				default:
-					tValues[tmpPos][8] = BarUtil.formatMoney(status / 100.0);
-					break;
-				}
-                tValues[tmpPos][9] = rs.getString("employee.nName");
-                tValues[tmpPos][10] = rs.getString("Comment");
-                tValues[tmpPos][11] = rs.getString("OpenTime");
-                tValues[tmpPos][12] = BarUtil.formatMoney(rs.getInt("cashReceived") / 100.0);
-                tValues[tmpPos][13] = BarUtil.formatMoney(rs.getInt("debitReceived") / 100.0);
-                tValues[tmpPos][14] = BarUtil.formatMoney(rs.getInt("visaReceived") / 100.0);
-                tValues[tmpPos][15] = BarUtil.formatMoney(rs.getInt("masterReceived") / 100.0);
-                tValues[tmpPos][16] = BarUtil.formatMoney(rs.getInt("otherreceived") / 100.0);
-                tValues[tmpPos][17] = rs.getString("id");
-                
                 tmpPos++;
             }
             rs.close();// 关闭
@@ -407,24 +387,11 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
     }
 
     private String[] header = new String[] {
-    		BarFrame.consts.TIME(), // "时间"
-    		BarFrame.consts.TABLE(),
-    		BarFrame.consts.Bill(),
-    		BarFrame.consts.Total(),
-    		BarFrame.consts.Discount(),
-    		BarFrame.consts.Receive(),
-    		BarFrame.consts.Tip(),
-    		BarFrame.consts.Changes(),
-    		BarFrame.consts.Status(),
-    		BarFrame.consts.Operator(), // "操作员"
+    		BarFrame.consts.DSPINDEX(),
+    		BarFrame.consts.Name(),
     		BarFrame.consts.comment(),
-    		BarFrame.consts.OpenTime(),
-    		BarFrame.consts.CASH(),
-    		BarFrame.consts.DEBIT(),
-    		BarFrame.consts.VISA(),
-    		BarFrame.consts.MASTER(),
-    		BarFrame.consts.GIFTCARD(),
-    		BarFrame.consts.BILL()
+    		BarFrame.consts.Discount(),
+    		BarFrame.consts.Status()
     };
 
     int[] employIdAry;
@@ -435,6 +402,9 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
     PIMTable tblContent;
     PIMScrollPane srpContent;
 
-    private JButton btnChangeDate;
-    private JButton btnPrintInvoice;
+    private JButton btnUp;
+    private JButton btnDown;
+    private JButton btnActive;
+    private JButton btnDeActive;
+    private JButton btnDeLete;
 }
