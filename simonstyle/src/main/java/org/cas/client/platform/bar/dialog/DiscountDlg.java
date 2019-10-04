@@ -454,8 +454,8 @@ public class DiscountDlg extends JDialog implements ActionListener, ComponentLis
 				f = Float.valueOf(actionStr);
 			}
 			//sql = "CREATE CACHED TABLE CustomizedRule (id INTEGER IDENTITY PRIMARY KEY, ruleName VARCHAR(255),  content VARCHAR(255), action INTEGER, status INTEGER,  ext1 VARCHAR(255),  ext2 VARCHAR(255),  ext3 VARCHAR(255),)";
-			StringBuilder sql = new StringBuilder("INSERT INTO CustomizedRule (ruleName, content, action, status) VALUES ('").append(ruleName)
-				    .append("', '").append(content.substring(1)).append("', ").append(Math.round(f * 100)).append(", 0)");
+			StringBuilder sql = new StringBuilder("INSERT INTO CustomizedRule (ruleName, content, action, status, dspIdx) VALUES ('").append(ruleName)
+				    .append("', '").append(content.substring(1)).append("', ").append(Math.round(f * 100)).append(", 0, 0)");
 			
 			try {
     			PIMDBModel.getStatement().executeUpdate(sql.toString());

@@ -40,6 +40,7 @@ import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
+import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.platform.pimview.pimscrollpane.PIMScrollPane;
@@ -47,7 +48,7 @@ import org.cas.client.platform.pimview.pimtable.DefaultPIMTableCellRenderer;
 import org.cas.client.platform.pimview.pimtable.IPIMTableColumnModel;
 import org.cas.client.platform.pimview.pimtable.PIMTable;
 
-public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener, ListSelectionListener {
+public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, KeyListener {
     
 	private boolean isEditingBillID;
 	
@@ -101,11 +102,11 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
                 - CustOpts.BTN_WIDTH_NUM);
         
         int btnWidth = 80;
-        btnUp.setBounds(CustOpts.HOR_GAP + 100, srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP,
+        btnUp.setBounds(getWidth() - btnWidth * 2 - CustOpts.HOR_GAP * 4, srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP,
                 btnWidth, CustOpts.BTN_WIDTH_NUM);
         btnDown.setBounds(btnUp.getX() + btnUp.getWidth() + CustOpts.HOR_GAP, btnUp.getY(),
                 btnWidth, CustOpts.BTN_WIDTH_NUM);
-        btnDeLete.setBounds(btnDown.getX() + btnDown.getWidth() + CustOpts.HOR_GAP, btnDown.getY(),
+        btnDeLete.setBounds(CustOpts.HOR_GAP, btnDown.getY(),
                 btnWidth, CustOpts.BTN_WIDTH_NUM);
 
         
@@ -161,49 +162,46 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
     public void actionPerformed(
             ActionEvent e) {
         Object o = e.getSource();
-        if (o == btnUp) {
-        	reLayout();
-        }else if(o == btnDown) {
-        	
-        }else if(o == btnDeLete) {
-        	
-        }
-    }
-	
-	@Override
-	public void valueChanged(ListSelectionEvent e) {
-		showInSalesPanel();
-	}
-	
-    private boolean showInSalesPanel() {
+
     	int selectedRow = tblContent.getSelectedRow();
     	int tValidRowCount = getUsedRowCount();
     	if(selectedRow < 0 || selectedRow > tValidRowCount - 1) {
     		JOptionPane.showMessageDialog(this, BarFrame.consts.OnlyOneShouldBeSelected());
     		ErrorUtil.write("Unexpected row number when calling removeAtSelection : " + selectedRow);
-    		return false;
+    		return;
     	}
-    	//swith to sales panel.
-
-        BarFrame.instance.ignoreItemChange = true;
-    	BarFrame.instance.cmbCurTable.setSelectedItem(null);
-    	BarFrame.instance.setCurBillIdx(String.valueOf(tblContent.getValueAt(selectedRow, 2)));
-    	BarFrame.instance.valOperator.setText(String.valueOf(tblContent.getValueAt(selectedRow, 9)));
-    	BarFrame.instance.valStartTime.setText(String.valueOf(tblContent.getValueAt(selectedRow, 11)));
-
-    	((SalesPanel)BarFrame.instance.panels[2]).billPanel.setBillID(Integer.valueOf(String.valueOf(tblContent.getValueAt(selectedRow, 17))));
     	
-    	//if this flag set, the initContent will choose outputs and bill differently.
-    	//NOTE: there's could be one final and several expired bills under same tableid and billIdx and opentime. we don't support more than one exipred bill.
-    	BarFrame.instance.isShowingAnExpiredBill = "expired".equals(tblContent.getValueAt(selectedRow, 8));
-    	BarFrame.instance.setCurBillID(Integer.valueOf(String.valueOf(tblContent.getValueAt(selectedRow, 17))));
-    	BarFrame.instance.switchMode(2);
-    	return true;
+        if (o == btnUp) {
+        	StringBuilder sql = new StringBuilder("update CustomizedRule set dspIdx = dspIdx -1 where ruleName = '").append(tblContent.getValueAt(selectedRow, 1))
+    	        	.append("' and content = '").append(tblContent.getValueAt(selectedRow, 2)).append("'");
+        	try {
+		    	PIMDBModel.getStatement().executeUpdate(sql.toString());
+			}catch(Exception exp) {
+				L.e("counter mode returning... ", "error happend when deleting an rule with sql:" + sql, exp);
+			}	
+        }else if(o == btnDown) {
+        	StringBuilder sql = new StringBuilder("update CustomizedRule set dspIdx = dspIdx + 1 where ruleName = '").append(tblContent.getValueAt(selectedRow, 1))
+    	        	.append("' and content = '").append(tblContent.getValueAt(selectedRow, 2)).append("'");
+        	try {
+		    	PIMDBModel.getStatement().executeUpdate(sql.toString());
+			}catch(Exception exp) {
+				L.e("counter mode returning... ", "error happend when deleting an rule with sql:" + sql, exp);
+			}
+        }else if(o == btnDeLete) {
+        	StringBuilder sql = new StringBuilder("delete from CustomizedRule where ruleName = '").append(tblContent.getValueAt(selectedRow, 1))
+	        	.append("' and content = '").append(tblContent.getValueAt(selectedRow, 2)).append("'");
+        	try {
+		    	PIMDBModel.getStatement().executeUpdate(sql.toString());
+			}catch(Exception exp) {
+				L.e("counter mode returning... ", "error happend when deleting an rule with sql:" + sql, exp);
+			}		
+        }
+        this.initContent();
     }
-    
+	
     private int getUsedRowCount() {
         for (int i = 0, len = tblContent.getRowCount(); i < len; i++)
-            if (tblContent.getValueAt(i, 0) == null)
+            if (tblContent.getValueAt(i, 2) == null)
                 return i; // 至此得到 the used RowCount。
         return tblContent.getRowCount();
     }
@@ -252,8 +250,6 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
         getContentPane().add(btnDown);
         getContentPane().add(btnDeLete);
         // 加监听器－－－－－－－－
-        tblContent.getSelectionModel().addListSelectionListener(this);
-        
         btnUp.addActionListener(this);
         btnUp.addKeyListener(this);
         btnDown.addActionListener(this);
@@ -264,29 +260,8 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
         getContentPane().addComponentListener(this);
     }
 
-    public void initContent(String startTime, String endTime) {
-        
-        StringBuilder sql = new StringBuilder("select * from bill, employee where createTime >= '").append(startTime)
-        		.append("' and createTime <= '").append(endTime)
-        		.append("' and bill.employeeId = employee.id and (bill.status < ").append(LoginDlg.USERTYPE < 2 ? DBConsts.expired : DBConsts.deleted)
-        		.append(" or bill.status is null)");
-        //if didn't set to ShowProcessingBill then show only completed(paid) bill
-        if(!"true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("ShowProcessingBill")))) {
-        	sql.append(" and bill.status is not null ").append(" and bill.status != ").append(DBConsts.billPrinted);
-        }
-        //if configured, then do not show records of other waiter.
-        if("true".equalsIgnoreCase(String.valueOf(CustOpts.custOps.getValue("HideRecordFromOtherWaiter"))) 
-        		&& LoginDlg.USERTYPE < 2) {
-        	sql.append(" and employee.id = ").append(LoginDlg.USERID);
-        }
-        
-        sql.append(" order by createTime desc");
-        fillTableAreaWithResultSet(sql);
-        
-    }
-    
     public void initContent() {
-        StringBuilder sql = new StringBuilder("select * from CustomizedRule where status != -100");
+        StringBuilder sql = new StringBuilder("select * from CustomizedRule where status != -100 order by dspidx");
         fillTableAreaWithResultSet(sql);
         reLayout();
     }
