@@ -616,5 +616,5 @@ public class BarDlgConst1 implements BarDlgConst{
 	@Override
 	public String RuleName() {return "Nombre de la regla";}
 	@Override
-	public String Rule() {return "Regla";}
+	public String Rule() {return "REGLA";}
 }

@@ -421,7 +421,8 @@ public class DiscountDlg extends JDialog implements ActionListener, ComponentLis
 		if(e.getSource() == lblQTY && e.getClickCount() > 1) {
 			StringBuilder content = new StringBuilder();
 			StringBuilder noticeForContent = new StringBuilder();
-			//prepare the content:
+			
+			//check the selection content:
 			SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
 			BillPanel billPanel = salesPanel.billPanel;
 			ArrayList<Dish> selection = billPanel.orderedDishAry;
@@ -430,24 +431,30 @@ public class DiscountDlg extends JDialog implements ActionListener, ComponentLis
 				noticeForContent.append(",").append(dish.getLanguage(CustOpts.custOps.getUserLang()));
 			}
 			if(content.length() < 2) {
-				JOptionPane.showConfirmDialog(null, BarFrame.consts.InvalidInput());
+				JOptionPane.showMessageDialog(null, BarFrame.consts.InvalidInput());
 				return;
 			}
 			
+			//check discount content.
 			String actionStr = tfdQTY.getText();
+			if(actionStr == null || actionStr.length() == 0) {
+				JOptionPane.showMessageDialog(null, BarFrame.consts.InvalidInput());
+				return;
+			}
 			
+			//ask for a name
 			String notice = "When contains dishes: '" + noticeForContent.substring(1) + "', will discount "+ BarOption.getMoneySign()  + actionStr + ".\n To create this rule, please enter a name, and click OK. \n";
 			String ruleName = JOptionPane.showInputDialog(null, notice + BarFrame.consts.RuleName() + " you:");
-			if(ruleName == null || ruleName.length() == 0)
+			if(ruleName == null || ruleName.length() == 0) {
 				return;
-			
+			}
 			
 			Float f;
 			if(actionStr.endsWith("%")) {
 		    	String tContent = actionStr.substring(0, actionStr.length() - 1);
 				f = Float.valueOf(tContent);
-				if(f > 1) {
-					JOptionPane.showConfirmDialog(null, BarFrame.consts.InvalidInput());
+				if(f > 100) {
+					JOptionPane.showMessageDialog(null, BarFrame.consts.InvalidInput());
 					return;
 				}
 			}else {
@@ -455,7 +462,7 @@ public class DiscountDlg extends JDialog implements ActionListener, ComponentLis
 			}
 			//sql = "CREATE CACHED TABLE CustomizedRule (id INTEGER IDENTITY PRIMARY KEY, ruleName VARCHAR(255),  content VARCHAR(255), action INTEGER, status INTEGER,  ext1 VARCHAR(255),  ext2 VARCHAR(255),  ext3 VARCHAR(255),)";
 			StringBuilder sql = new StringBuilder("INSERT INTO CustomizedRule (ruleName, content, action, status, dspIdx) VALUES ('").append(ruleName)
-				    .append("', '").append(content.substring(1)).append("', ").append(Math.round(f * 100)).append(", 0, 0)");
+				    .append("', '").append(content.substring(1)).append("', ").append(Math.round(f)).append(", 0, 0)");
 			
 			try {
     			PIMDBModel.getStatement().executeUpdate(sql.toString());
@@ -464,10 +471,12 @@ public class DiscountDlg extends JDialog implements ActionListener, ComponentLis
     		}
 			
 			Rule rule = new Rule();
-			sql = new StringBuilder("select * from CustomizedRule where ruleName == '").append(ruleName).append("' and content = '").append(content.substring(1)).append("')");
+			sql = new StringBuilder("select * from CustomizedRule where ruleName = '").append(ruleName)
+					.append("' and content = '").append(content.substring(1)).append("'");
 			try {
 	            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
 	            rs.beforeFirst();
+	            rs.next();
 	            rule.setId(rs.getInt("id"));
 	            rule.setRuleName(rs.getString("ruleName"));
 	            rule.setContent(rs.getString("content"));
@@ -477,12 +486,12 @@ public class DiscountDlg extends JDialog implements ActionListener, ComponentLis
 	            L.e("DiscountDlg ", "Exception when fetching a rule." + sql, exp);
 	        }
 			
-			Rule[] rules = BarFrame.instance.menuPanel.getRules();
+			Rule[] rules = BarFrame.menuPanel.getRules();
 			Rule[] rules2 = new Rule[rules.length + 1];
 			System.arraycopy(rules, 0, rules2, 0, rules.length);
 			
 			rules2[rules.length] = rule;
-			BarFrame.instance.menuPanel.setRules(rules2);
+			BarFrame.menuPanel.setRules(rules2);
 		}
 	}
 

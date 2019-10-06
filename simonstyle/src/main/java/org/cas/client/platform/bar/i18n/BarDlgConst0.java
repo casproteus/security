@@ -618,6 +618,6 @@ public class BarDlgConst0 implements BarDlgConst{
 	@Override
 	public String RuleName() {return "Rule Name";}
 	@Override
-	public String Rule() {return "Rule";}
+	public String Rule() {return "RULE";}
 
 }

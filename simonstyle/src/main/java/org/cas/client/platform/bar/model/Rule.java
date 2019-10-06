@@ -56,7 +56,7 @@ public class Rule {
 			String[] ids = content.split(",");
 			int totalPrice = 0;
 			for(String id : ids) {
-				for(Dish dish : BarFrame.instance.menuPanel.getDishAry()) {
+				for(Dish dish : BarFrame.menuPanel.getDishAry()) {
 					if(id.equals(String.valueOf(dish.getId()))) {
 						totalPrice += dish.getPrice();
 						break;

@@ -188,6 +188,10 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
 				L.e("counter mode returning... ", "error happend when deleting an rule with sql:" + sql, exp);
 			}
         }else if(o == btnDeLete) {
+        	if(tblContent.getSelectedRow() < 0) {
+        		JOptionPane.showConfirmDialog(null, BarFrame.consts.OnlyOneShouldBeSelected());
+        		return;
+        	}
         	StringBuilder sql = new StringBuilder("delete from CustomizedRule where ruleName = '").append(tblContent.getValueAt(selectedRow, 1))
 	        	.append("' and content = '").append(tblContent.getValueAt(selectedRow, 2)).append("'");
         	try {

@@ -577,7 +577,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     }
     
     private void checkWithRules() {
-    	Rule[] rules = BarFrame.instance.menuPanel.getRules();
+    	Rule[] rules = BarFrame.menuPanel.getRules();
     	if(rules.length < 1) {
     		return;
     	}
@@ -621,7 +621,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 				dish.setRuleMark(null);
 			}
 		}
-		for(Rule rule: BarFrame.instance.menuPanel.getRules()) {
+		for(Rule rule: BarFrame.menuPanel.getRules()) {
 			if(ruleIds.contains(rule.getId())) {
 				discount -= rule.getAction();
 			}
