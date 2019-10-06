@@ -1,5 +1,7 @@
 package org.cas.client.platform.bar.model;
 
+import org.cas.client.platform.bar.dialog.BarFrame;
+
 public class Rule {
 
 	private int id;
@@ -45,6 +47,25 @@ public class Rule {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-    
+	
+	public float getActionPrice() {
+		if(action >= 60) {
+			return action;
+		}else {
+			//get the price of the dishes
+			String[] ids = content.split(",");
+			int totalPrice = 0;
+			for(String id : ids) {
+				for(Dish dish : BarFrame.instance.menuPanel.getDishAry()) {
+					if(id.equals(String.valueOf(dish.getId()))) {
+						totalPrice += dish.getPrice();
+						break;
+					}
+				}
+			}
+			//then calculate the discount price.
+			return Math.round(Float.valueOf(totalPrice * action) / 100f);
+		}
+	}
 
 }

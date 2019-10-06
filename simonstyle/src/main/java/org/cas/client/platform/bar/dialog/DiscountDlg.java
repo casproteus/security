@@ -7,22 +7,22 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
-import org.cas.client.platform.bar.model.DBConsts;
+import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.model.Rule;
 import org.cas.client.platform.bar.uibeans.ISButton;
 import org.cas.client.platform.bar.uibeans.NumButton;
-import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
@@ -462,6 +462,27 @@ public class DiscountDlg extends JDialog implements ActionListener, ComponentLis
     		}catch(Exception exp) {
     			L.e("DiscountDlg ", "Exception when insert a rule into CustomizedRule.", exp);
     		}
+			
+			Rule rule = new Rule();
+			sql = new StringBuilder("select * from CustomizedRule where ruleName == '").append(ruleName).append("' and content = '").append(content.substring(1)).append("')");
+			try {
+	            ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+	            rs.beforeFirst();
+	            rule.setId(rs.getInt("id"));
+	            rule.setRuleName(rs.getString("ruleName"));
+	            rule.setContent(rs.getString("content"));
+	            rule.setAction(rs.getInt("action"));
+	            rs.close();// 关闭
+	        } catch (SQLException exp) {
+	            L.e("DiscountDlg ", "Exception when fetching a rule." + sql, exp);
+	        }
+			
+			Rule[] rules = BarFrame.instance.menuPanel.getRules();
+			Rule[] rules2 = new Rule[rules.length + 1];
+			System.arraycopy(rules, 0, rules2, 0, rules.length);
+			
+			rules2[rules.length] = rule;
+			BarFrame.instance.menuPanel.setRules(rules2);
 		}
 	}
 

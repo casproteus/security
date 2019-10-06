@@ -577,10 +577,17 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     }
     
     private void checkWithRules() {
-		removeTheRuleEffect();	//reset the ruleId in the dishes and reset the discount value.
-		// back up the rules
+    	Rule[] rules = BarFrame.instance.menuPanel.getRules();
+    	if(rules.length < 1) {
+    		return;
+    	}
+    	
+    	//reset the ruleId in the dishes and reset the discount value.
+		removeTheRuleEffect();	
+		
+		// back up the rules and selected dishes.
 		ArrayList<Rule> copyOfRules = new ArrayList<>();
-		for (Rule rule : BarFrame.instance.menuPanel.getRules()) {
+		for (Rule rule : rules) {
 			copyOfRules.add(rule);
 		}
 		ArrayList<Dish> copyOfSelection = new ArrayList<Dish>();
@@ -589,17 +596,17 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		}
 		
 		while(true) {
-			Rule rule = copyOfRules.get(0);
-			if(ruleSatisfied(rule, copyOfSelection)) {	//all contained in current selection.
-				discount += rule.getAction();			// add the action of the rule into the discount.
-			}else {
-				copyOfRules.remove(rule);				// when a rule not satisfied, the rule will be removed from list.
-			}
-			
 			if(copyOfRules.size() == 0) {
 				break;
 			}
+			Rule rule = copyOfRules.get(0);
+			if(ruleSatisfied(rule, copyOfSelection)) {	//all contained in current selection.
+				discount += rule.getActionPrice();			// add the action of the rule into the discount.
+			}else {
+				copyOfRules.remove(rule);				// when a rule not satisfied, the rule will be removed from list.
+			}
 		}
+		updateTotalArea();
 	}
 
 	//reset the ruleId in the dishes and reset the discount value.
@@ -607,10 +614,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		List<Integer> ruleIds = new ArrayList<Integer>();
 		for(Dish dish : orderedDishAry) {
 			Integer ruleId = dish.getRuleMark();
-			if(ruleId != null && ruleIds.contains(ruleId)) {
+			if(ruleId != null) {	//care only not-null case, clean it, and if it not added ruleIds, add into the list.
+				if(!ruleIds.contains(ruleId)) {
+					ruleIds.add(ruleId);
+				}
 				dish.setRuleMark(null);
-			}else {
-				ruleIds.add(ruleId);
 			}
 		}
 		for(Rule rule: BarFrame.instance.menuPanel.getRules()) {
@@ -622,27 +630,28 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 
 	//if all the dishes in the rule is contained in selectionList, then return the dishlist, so they can be removed).
 	private boolean ruleSatisfied(Rule rule, ArrayList<Dish> copyOfSelection) {
-		String[] dishIds = rule.getContent().split(","); 
-		List<Dish> dishesMatchedByRule = new ArrayList<Dish>();
-		for(String id : dishIds) {
+		String[] dishIdsInRule = rule.getContent().split(","); 
+		List<Dish> matchedDishesByRule = new ArrayList<Dish>();
+		for(String id : dishIdsInRule) {
 			for(int i = copyOfSelection.size() - 1; i >= 0; i--) {
 				Dish dish = copyOfSelection.get(i);
-				if(id.equals(dish.getId())) {
-					dishesMatchedByRule.add(dish);
+				if(id.equals(String.valueOf(dish.getId()))) {
+					matchedDishesByRule.add(dish);
 					copyOfSelection.remove(dish);
+					break;
 				}
 			}
 		}
-		//Todo: be vericareful to the size, because if there's a "," in the end, then the size is not acurate.
-		if(dishesMatchedByRule.size() == dishIds.length) {
+		//be vericareful to the size, because if there's a "," in the end, then the size is not acurate.
+		if(matchedDishesByRule.size() == dishIdsInRule.length) {
 			//mark those dished with a flag indication the rule id. so when it's removed from the selection, all relevent dishs will be removed the flag, and a action indicated price will
 			//be added back. then a checkWithRules will be performed.
-			for(Dish dish : dishesMatchedByRule) {
+			for(Dish dish : matchedDishesByRule) {
 				dish.setRuleMark(rule.getId());
 			}
 			return true;
 		}else {
-			for(Dish dish: dishesMatchedByRule) {
+			for(Dish dish: matchedDishesByRule) {
 				copyOfSelection.add(dish);
 			}
 			return false;
