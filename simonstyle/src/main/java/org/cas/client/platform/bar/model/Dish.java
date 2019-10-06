@@ -398,6 +398,14 @@ public class Dish {
 		this.totalPrice = totalPrice;
 	}
 
+	public Integer getRuleMark() {
+		return ruleMark;
+	}
+
+	public void setRuleMark(Integer ruleMark) {
+		this.ruleMark = ruleMark;
+	}
+
 	private int id = -1;
     private int dspIndex = 0; // display position on screen.
     private String language[] = new String[3]; // CODE VARCHAR(255), MNEMONIC VARCHAR(255),SUBJECT VARCHAR(255)
@@ -409,7 +417,7 @@ public class Dish {
     private String CATEGORY; // CATEGORY VARCHAR(255)
     private String prompPrice; // CONTENT VARCHAR(255)
     private String prompMenu; // UNIT VARCHAR(255)
-    private String prompMofify; // /PRODUCAREA VARCHAR(255)
+    private String prompMofify; // PRODUCAREA VARCHAR(255)
     //none saving fields-----------------------------------------
     private int num = 1;
     private int discount;
@@ -420,4 +428,5 @@ public class Dish {
     private int billID;
     private boolean isCanceled;
     private int totalPrice;
+    private Integer ruleMark;
 }

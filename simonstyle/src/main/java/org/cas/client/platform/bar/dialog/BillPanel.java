@@ -573,55 +573,82 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		        //by now price is changed, then should check the rule.
 		        checkWithRules();
 			}
-
-			private void checkWithRules() {
-				// back up the rules
-				ArrayList<Rule> copyOfRules = new ArrayList<>();
-				for (Rule rule : BarFrame.instance.menuPanel.getRules()) {
-					copyOfRules.add(rule);
-				}
-				ArrayList<Dish> copyOfSelection = new ArrayList<Dish>();
-				for (Dish dish : orderedDishAry) {
-					copyOfSelection.add(dish);
-				}
-				
-				while(true) {
-					Rule rule = copyOfRules.get(0);
-					if(!ruleNotSatisfied(rule, copyOfSelection)) {//all contained in current selection.
-						copyOfRules.remove(rule);
-					}
-					
-					if(copyOfRules.size() == 0) {// when a rule not satisfied, the rule will be removed from list.
-						break;
-					}
-				}
-			}
-
-			//if all the dishes in the rule is contained in selectionList, then return the dishlist, so they can be removed).
-			private boolean ruleNotSatisfied(Rule rule, ArrayList<Dish> copyOfSelection) {
-				String[] dishIds = rule.getContent().split(","); 
-				List<Dish> dishesMatchedByRule = new ArrayList<Dish>();
-				for(String id : dishIds) {
-					for(int i = copyOfSelection.size() - 1; i >= 0; i--) {
-						Dish dish = copyOfSelection.get(i);
-						if(id.equals(dish.getId())) {
-							dishesMatchedByRule.add(dish);
-							copyOfSelection.remove(dish);
-						}
-					}
-				}
-				if(dishesMatchedByRule.size() == dishIds.length) {
-					return true;
-				}else {
-					for(Dish dish: dishesMatchedByRule) {
-						copyOfSelection.add(dish);
-					}
-					return false;
-				}
-			}
 		});
     }
+    
+    private void checkWithRules() {
+		removeTheRuleEffect();	//reset the ruleId in the dishes and reset the discount value.
+		// back up the rules
+		ArrayList<Rule> copyOfRules = new ArrayList<>();
+		for (Rule rule : BarFrame.instance.menuPanel.getRules()) {
+			copyOfRules.add(rule);
+		}
+		ArrayList<Dish> copyOfSelection = new ArrayList<Dish>();
+		for (Dish dish : orderedDishAry) {
+			copyOfSelection.add(dish);
+		}
+		
+		while(true) {
+			Rule rule = copyOfRules.get(0);
+			if(ruleSatisfied(rule, copyOfSelection)) {	//all contained in current selection.
+				discount += rule.getAction();			// add the action of the rule into the discount.
+			}else {
+				copyOfRules.remove(rule);				// when a rule not satisfied, the rule will be removed from list.
+			}
+			
+			if(copyOfRules.size() == 0) {
+				break;
+			}
+		}
+	}
 
+	//reset the ruleId in the dishes and reset the discount value.
+	private void removeTheRuleEffect() {
+		List<Integer> ruleIds = new ArrayList<Integer>();
+		for(Dish dish : orderedDishAry) {
+			Integer ruleId = dish.getRuleMark();
+			if(ruleId != null && ruleIds.contains(ruleId)) {
+				dish.setRuleMark(null);
+			}else {
+				ruleIds.add(ruleId);
+			}
+		}
+		for(Rule rule: BarFrame.instance.menuPanel.getRules()) {
+			if(ruleIds.contains(rule.getId())) {
+				discount -= rule.getAction();
+			}
+		}
+	}
+
+	//if all the dishes in the rule is contained in selectionList, then return the dishlist, so they can be removed).
+	private boolean ruleSatisfied(Rule rule, ArrayList<Dish> copyOfSelection) {
+		String[] dishIds = rule.getContent().split(","); 
+		List<Dish> dishesMatchedByRule = new ArrayList<Dish>();
+		for(String id : dishIds) {
+			for(int i = copyOfSelection.size() - 1; i >= 0; i--) {
+				Dish dish = copyOfSelection.get(i);
+				if(id.equals(dish.getId())) {
+					dishesMatchedByRule.add(dish);
+					copyOfSelection.remove(dish);
+				}
+			}
+		}
+		//Todo: be vericareful to the size, because if there's a "," in the end, then the size is not acurate.
+		if(dishesMatchedByRule.size() == dishIds.length) {
+			//mark those dished with a flag indication the rule id. so when it's removed from the selection, all relevent dishs will be removed the flag, and a action indicated price will
+			//be added back. then a checkWithRules will be performed.
+			for(Dish dish : dishesMatchedByRule) {
+				dish.setRuleMark(rule.getId());
+			}
+			return true;
+		}else {
+			for(Dish dish: dishesMatchedByRule) {
+				copyOfSelection.add(dish);
+			}
+			return false;
+		}
+	}
+	
 	public void sendNewOrdersToKitchenAndDB(List<Dish> dishes) {
 		//if all record are new, means it's adding a new bill.otherwise, it's adding output to exixting bill.
 //		if(dishes.size() == orderedDishAry.size()) {	//didn't set the idx when bill created, because don't wanto display idx if there's only 1 bill.
@@ -933,6 +960,11 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
     	}
     	//update array second.
 		orderedDishAry.remove(selectedRow);
+
+    	if(dish.getRuleMark() != null) {
+    		checkWithRules();
+    	}
+    	
 		//update the table view
 		int tColCount = table.getColumnCount();
 		Object[][] tValues = new Object[tValidRowCount - 1][tColCount];
