@@ -13,6 +13,8 @@ import java.awt.event.MouseMotionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +37,7 @@ import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.model.Dish;
+import org.cas.client.platform.bar.model.Rule;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.bar.uibeans.ArrowButton;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -567,6 +570,54 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		        if(newDish.getPrice() == 0 || "true".equals(newDish.getPrompPrice()) && !BarOption.isTreatPricePromtAsTaxInclude()) {
 		        	Cmd_ChangePrice.getInstance().showPriceChangeDlg();
 		        }
+		        //by now price is changed, then should check the rule.
+		        checkWithRules();
+			}
+
+			private void checkWithRules() {
+				// back up the rules
+				ArrayList<Rule> copyOfRules = new ArrayList<>();
+				for (Rule rule : BarFrame.instance.menuPanel.getRules()) {
+					copyOfRules.add(rule);
+				}
+				ArrayList<Dish> copyOfSelection = new ArrayList<Dish>();
+				for (Dish dish : orderedDishAry) {
+					copyOfSelection.add(dish);
+				}
+				
+				while(true) {
+					Rule rule = copyOfRules.get(0);
+					if(!ruleNotSatisfied(rule, copyOfSelection)) {//all contained in current selection.
+						copyOfRules.remove(rule);
+					}
+					
+					if(copyOfRules.size() == 0) {// when a rule not satisfied, the rule will be removed from list.
+						break;
+					}
+				}
+			}
+
+			//if all the dishes in the rule is contained in selectionList, then return the dishlist, so they can be removed).
+			private boolean ruleNotSatisfied(Rule rule, ArrayList<Dish> copyOfSelection) {
+				String[] dishIds = rule.getContent().split(","); 
+				List<Dish> dishesMatchedByRule = new ArrayList<Dish>();
+				for(String id : dishIds) {
+					for(int i = copyOfSelection.size() - 1; i >= 0; i--) {
+						Dish dish = copyOfSelection.get(i);
+						if(id.equals(dish.getId())) {
+							dishesMatchedByRule.add(dish);
+							copyOfSelection.remove(dish);
+						}
+					}
+				}
+				if(dishesMatchedByRule.size() == dishIds.length) {
+					return true;
+				}else {
+					for(Dish dish: dishesMatchedByRule) {
+						copyOfSelection.add(dish);
+					}
+					return false;
+				}
 			}
 		});
     }

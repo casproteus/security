@@ -16,13 +16,13 @@ import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.model.Category;
 import org.cas.client.platform.bar.model.Dish;
 import org.cas.client.platform.bar.model.Printer;
+import org.cas.client.platform.bar.model.Rule;
 import org.cas.client.platform.bar.print.PrintService;
 import org.cas.client.platform.bar.uibeans.ArrowButton;
 import org.cas.client.platform.bar.uibeans.CategoryToggleButton;
 import org.cas.client.platform.bar.uibeans.MenuButton;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
-import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 
@@ -49,6 +49,7 @@ public class MenuPanel extends JPanel implements ActionListener {
     private ArrayList<ArrayList<MenuButton>> onSrcMenuBtnMatrix = new ArrayList<ArrayList<MenuButton>>();
 
     private Printer[] printers;
+    private Rule[] rules;
     private Dish[] dishAry;
     private List<Dish> classifiedDishAry;
     ArrayList<Dish> selectdDishAry = new ArrayList<Dish>();
@@ -86,12 +87,40 @@ public class MenuPanel extends JPanel implements ActionListener {
         setLayout(null);
         initPrinters();
 		initCategoryAndDishes();
+		initRules();
 		reLayout();
 		validate();
 		repaint();
 	}
 	
-    public void initCategoryAndDishes() {
+    private void initRules() {
+		int tmpPos;
+		//load all printers--------------------------
+		String sql = "select * from CustomizedRule where status != -100 order by dspidx";
+		try {
+			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql);
+			rs.afterLast();
+			rs.relative(-1);
+			tmpPos = rs.getRow();
+			setRules(new Rule[tmpPos]);
+			rs.beforeFirst();
+			tmpPos = 0;
+			while (rs.next()) {
+				rules[tmpPos] = new Rule();
+				rules[tmpPos].setId(rs.getInt("id"));
+				rules[tmpPos].setRuleName(rs.getString("ruleName"));
+				rules[tmpPos].setContent(rs.getString("content"));
+				rules[tmpPos].setAction(rs.getInt("action")); // discount price( it's an int formatted)
+				rules[tmpPos].setDspIdx(rs.getInt("dspIdx"));
+				tmpPos++;
+			}
+			rs.close();
+		}catch(Exception e) {
+			L.e("MenuPanel", "exception when initPrinters", e);
+		}
+	}
+
+	public void initCategoryAndDishes() {
         loadAllCategorys();
         loadAllDishes();
         curMenuPage = 0;
@@ -517,5 +546,13 @@ public class MenuPanel extends JPanel implements ActionListener {
 	
     public Dish[] getDishAry() {
 		return dishAry;
+	}
+
+	public Rule[] getRules() {
+		return rules;
+	}
+
+	public void setRules(Rule[] rules) {
+		this.rules = rules;
 	}
 }
