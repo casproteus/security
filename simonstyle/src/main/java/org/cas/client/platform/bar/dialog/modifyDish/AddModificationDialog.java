@@ -60,7 +60,8 @@ import org.hsqldb.lib.StringUtil;
 public class AddModificationDialog extends JDialog implements ActionListener, ListSelectionListener, KeyListener,
         MouseListener, Runnable, ComponentListener, ChangeListener {
 
-    int oldIndex = 0;
+    private static Color[] backgrounds = new Color[10];// {Color.BLACK, Color.BLUE};
+	int oldIndex = 0;
     HashMap<Integer, String> selections = new HashMap<Integer, String>();
     
     private static AddModificationDialog instance;
@@ -75,11 +76,25 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
      */
     private AddModificationDialog(Frame prmParent) {//, String prmCategoryInfo) {
         super(prmParent, true);
+        initBackGrounds();
         initComponent(); // 组件初始化并布局
         initContent("", 0); // 初始化文本区和列表框数据
     }
 
-    /** Invoked when the component's size changes. */
+    private void initBackGrounds() {
+    	backgrounds[0] = Color.CYAN;
+    	backgrounds[1] = Color.GRAY;
+    	backgrounds[2] = Color.GREEN;
+    	backgrounds[3] = Color.LIGHT_GRAY;
+    	backgrounds[4] = Color.MAGENTA;
+    	backgrounds[5] = Color.ORANGE;
+    	backgrounds[6] = Color.PINK;
+    	backgrounds[7] = Color.RED;
+    	backgrounds[8] = Color.WHITE;
+    	backgrounds[9] = Color.YELLOW;
+		
+	}
+	/** Invoked when the component's size changes. */
     @Override
 	public void componentResized(ComponentEvent e) {
         reLayout();
@@ -296,6 +311,9 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 					break;
 				}
             }
+            for(int i = 1; i < tabbedPane.getTabCount(); i++) {
+            	tabbedPane.setBackgroundAt(i, backgrounds[i%10]);
+            }
 		}catch(Exception exp) {
 			L.e("AddModificationDlg", "exception when change output back to original bill" + sql, exp);
 		}
@@ -510,8 +528,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         sql.append(langs.length > 2 ? langs[2] : "");
         sql.append("', '");
         sql.append(tabbedPane.getSelectedIndex());
-        sql.append("', 0, ");
-        sql.append(price).append(")");
+        sql.append("', 0, '");
+        sql.append(price).append("')");
 
         try {
             Statement smt = PIMDBModel.getStatement();
