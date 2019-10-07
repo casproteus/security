@@ -102,13 +102,14 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
                 - CustOpts.BTN_WIDTH_NUM);
         
         int btnWidth = 80;
+        btnDeLete.setBounds(CustOpts.HOR_GAP, btnDown.getY(),
+                btnWidth, CustOpts.BTN_WIDTH_NUM);
+        label.setBounds(btnDeLete.getX() + btnDeLete.getWidth() + CustOpts.HOR_GAP, btnDeLete.getY(), label.getPreferredSize().width, btnDeLete.getPreferredSize().height);
         btnUp.setBounds(getWidth() - btnWidth * 2 - CustOpts.HOR_GAP * 4, srpContent.getY() + srpContent.getHeight() + CustOpts.VER_GAP,
                 btnWidth, CustOpts.BTN_WIDTH_NUM);
         btnDown.setBounds(btnUp.getX() + btnUp.getWidth() + CustOpts.HOR_GAP, btnUp.getY(),
                 btnWidth, CustOpts.BTN_WIDTH_NUM);
-        btnDeLete.setBounds(CustOpts.HOR_GAP, btnDown.getY(),
-                btnWidth, CustOpts.BTN_WIDTH_NUM);
-
+        
         
         IPIMTableColumnModel tTCM = tblContent.getColumnModel();
         tTCM.getColumn(0).setPreferredWidth(40);	//BarFrame.consts.TIME
@@ -200,6 +201,7 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
 				L.e("counter mode returning... ", "error happend when deleting an rule with sql:" + sql, exp);
 			}		
         }
+        BarFrame.menuPanel.initRules();
         this.initContent();
     }
 	
@@ -223,9 +225,10 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
         tblContent = new PIMTable();// 显示字段的表格,设置模型
         srpContent = new PIMScrollPane(tblContent);
 
+        btnDeLete = new JButton(BarFrame.consts.Delete());
+        label = new JLabel("Disc less than 0.6 will be considered as persentage.");
         btnUp = new ArrowButton("↑");
         btnDown = new ArrowButton("↓");
-        btnDeLete = new JButton(BarFrame.consts.Delete());
         // properties
         btnUp.setMnemonic('A');
         btnUp.setMargin(new Insets(0, 0, 0, 0));
@@ -249,10 +252,11 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
 
         // 搭建－－－－－－－－－－－－－
         getContentPane().add(srpContent);
-        
+
+        getContentPane().add(btnDeLete);
+        getContentPane().add(label);
         getContentPane().add(btnUp);
         getContentPane().add(btnDown);
-        getContentPane().add(btnDeLete);
         // 加监听器－－－－－－－－
         btnUp.addActionListener(this);
         btnUp.addKeyListener(this);
@@ -265,6 +269,7 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
     }
 
     public void initContent() {
+    	//NOTE: can not use the rules in menuPane as model, because in dialog will also display the deactived rules infuture. so might be different from the ary in menuPane.
         StringBuilder sql = new StringBuilder("select * from CustomizedRule where status != -100 order by dspidx");
         fillTableAreaWithResultSet(sql);
         reLayout();
@@ -363,7 +368,8 @@ public class CheckRuleDlg extends JDialog implements ICASDialog, ActionListener,
     PIMTable tblContent;
     PIMScrollPane srpContent;
 
+    private JButton btnDeLete;
+    private JLabel label;
     private JButton btnUp;
     private JButton btnDown;
-    private JButton btnDeLete;
 }

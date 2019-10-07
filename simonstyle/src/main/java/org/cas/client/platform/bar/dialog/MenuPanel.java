@@ -93,7 +93,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		repaint();
 	}
 	
-    private void initRules() {
+    public void initRules() {
 		int tmpPos;
 		//load all printers--------------------------
 		String sql = "select * from CustomizedRule where status != -100 order by dspidx";

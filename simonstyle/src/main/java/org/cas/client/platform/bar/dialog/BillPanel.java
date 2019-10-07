@@ -623,7 +623,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		}
 		for(Rule rule: BarFrame.menuPanel.getRules()) {
 			if(ruleIds.contains(rule.getId())) {
-				discount -= rule.getAction();
+				discount -= rule.getActionPrice();
 			}
 		}
 	}
