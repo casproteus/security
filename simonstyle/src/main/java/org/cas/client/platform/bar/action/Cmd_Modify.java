@@ -35,6 +35,10 @@ public class Cmd_Modify implements SamActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if(BillListPanel.curDish == null) {
+			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.AtLeastOneShouldBeSelected());
+			return;
+		}
 		//if already send, then do not allow to modify the marks.
 		if(BillListPanel.curDish.getOutputID() > 0) {
 			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.SendItemCanNotModify());

@@ -288,8 +288,6 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String MenuPomp() {return "MenuPomp";}
     @Override
 	public String ModifyPomp() {return "ModifyPomp";}
-
-
     @Override
 	public String Discount() {return "Disc";}
     @Override
@@ -610,7 +608,7 @@ public class BarDlgConst0 implements BarDlgConst{
 	@Override
 	public String ApplyToList() {return "Apply Mark";}
 	@Override
-	public String ApplyToCategory() {return "Add Category";}
+	public String ApplyToCategory() {return "Apply/Add Category";}
 	@Override
 	public String getPennyRounded() {return "penny rounded:";}
 	@Override
@@ -619,5 +617,4 @@ public class BarDlgConst0 implements BarDlgConst{
 	public String RuleName() {return "Rule Name";}
 	@Override
 	public String Rule() {return "RULE";}
-
 }

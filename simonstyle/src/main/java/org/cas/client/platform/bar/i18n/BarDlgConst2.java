@@ -288,8 +288,6 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String MenuPomp() {return "菜单提醒";}
     @Override
 	public String ModifyPomp() {return "备注提醒";}
-
-
     @Override
 	public String Discount() {return "折扣";}
     @Override
@@ -610,7 +608,7 @@ public class BarDlgConst2 implements BarDlgConst{
 	@Override
 	public String ApplyToList() {return "添加标注";}
 	@Override
-	public String ApplyToCategory() {return "添加类别";}
+	public String ApplyToCategory() {return "添加/修改类别";}
 	@Override
 	public String getPennyRounded() {return "近似到5分:";}
 	@Override
