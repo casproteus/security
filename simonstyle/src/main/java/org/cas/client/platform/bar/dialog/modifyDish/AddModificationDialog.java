@@ -124,7 +124,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         midLabel = new JLabel(BarFrame.consts.AvailableModification()); // "可用类别"标签
         txaCurContent = new JTextArea(); // 加入会滚动的文本区
         topLabel = new JLabel(BarFrame.consts.AddNewModificationItem()); // "项目属于这些类别"标签
-        modificationList = new JList();
+        modificationList = new JList<CheckItem>();
         scrPane = new PIMScrollPane(modificationList);
         tabbedPane = new JTabbedPane();
         btnApplyToList = new JButton(BarFrame.consts.ApplyToList()); // 加至列表按钮

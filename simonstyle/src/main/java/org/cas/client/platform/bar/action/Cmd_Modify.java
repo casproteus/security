@@ -8,6 +8,8 @@ import javax.swing.JOptionPane;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BillListPanel;
 import org.cas.client.platform.bar.dialog.BillPanel;
+import org.cas.client.platform.bar.dialog.MenuPanel;
+import org.cas.client.platform.bar.dialog.ModificationPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.dialog.modifyDish.AddModificationDialog;
 import org.cas.client.platform.bar.uibeans.ISButton;
@@ -50,7 +52,8 @@ public class Cmd_Modify implements SamActionListener {
 			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
 			return;
 		}
-		AddModificationDialog.getInstance().initContent(BillListPanel.curDish.getModification(), 0);
-		AddModificationDialog.getInstance().setVisible(true);
+		ModificationPanel.getInstance().initContent(BillListPanel.curDish.getModification(), 0);
+		ModificationPanel.getInstance().setVisible(true);
+		BarFrame.instance.menuPanel.setVisible(false);
 	}
 }
