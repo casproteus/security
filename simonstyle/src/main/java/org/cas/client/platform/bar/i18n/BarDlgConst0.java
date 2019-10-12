@@ -606,7 +606,7 @@ public class BarDlgConst0 implements BarDlgConst{
 	@Override
 	public String Login() {return "Login";}
 	@Override
-	public String ApplyToList() {return "Apply/Add Mark";}
+	public String ApplyToList() {return "Add Mark";}
 	@Override
 	public String ApplyToCategory() {return "Apply/Add Category";}
 	@Override
