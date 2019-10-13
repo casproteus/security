@@ -61,7 +61,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 
 	public boolean isSettingMode = false;
 	
-    private static Color[] backgrounds = new Color[10];// {Color.BLACK, Color.BLUE};
+    public static Color[] backgrounds = new Color[10];
+    
 	int oldIndex = 0;
     HashMap<Integer, String> selectionsMap = new HashMap<Integer, String>();
     
@@ -72,9 +73,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     	}
     	return instance;
     }
-    /**
-     * @param prmCategoryInfo  逗号分隔的字符串
-     */
+
     private AddModificationDialog(Frame prmParent) {//, String prmCategoryInfo) {
         super(prmParent, true);
         initBackGrounds();
@@ -95,7 +94,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     	backgrounds[9] = Color.YELLOW;
 		
 	}
-	/** Invoked when the component's size changes. */
+	
+    /** Invoked when the component's size changes. */
     @Override
 	public void componentResized(ComponentEvent e) {
         reLayout();
@@ -126,7 +126,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         topLabel = new JLabel(BarFrame.consts.AddNewModificationItem()); // "项目属于这些类别"标签
         modificationList = new JList<CheckItem>();
         categoryPaneList = new JList<JPanel>();
-        scrPane = new PIMScrollPane(modificationList);
         tabbedPane = new JTabbedPane();
         allInOnePane = new PIMScrollPane(categoryPaneList);
         btnApplyToList = new JButton(BarFrame.consts.ApplyToList()); // 加至列表按钮
@@ -143,10 +142,15 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         // properties-------------------------
         midLabel.setLabelFor(modificationList);
         topLabel.setLabelFor(txaCurContent);
+        
         modificationList.setCellRenderer(new ModificationListRenderer());
         modificationList.setBackground(null);
         modificationList.setBorder(new LineBorder(Color.GRAY));
         modificationList.setSelectionBackground(null);
+        
+        categoryPaneList.setCellRenderer(new CategoriseListRenderer());
+        categoryPaneList.setSelectionBackground(null);
+        
         txaCurContent.setBorder(new LineBorder(Color.GRAY));
         midLabel.setDisplayedMnemonic('V');
         topLabel.setDisplayedMnemonic('I');
@@ -173,7 +177,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         getContentPane().add(midLabel);
         getContentPane().add(btnApplyToList);
         getContentPane().add(btnApplyToCategory);
-        tabbedPane.add("    ", scrPane);
         //only one of following two can be visible at one time.
         getContentPane().add(tabbedPane);
         getContentPane().add(allInOnePane);
@@ -277,8 +280,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     }
 
 	private void initTabbedPaneContent() {
-		tabbedPane.removeAll();
-        tabbedPane.add("    ", scrPane);
+		tabbedPane.removeAll(); 	//this removeAll will trigger the stateChanged method.
         StringBuilder sql = new StringBuilder("select * from modification where type < 0 order by type desc");
         try {
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -286,13 +288,13 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             while (rs.next()) {
             	switch (LoginDlg.USERLANG) {
 				case 0:
-					tabbedPane.add(rs.getString("lang1"), new PIMScrollPane());
+					tabbedPane.add(rs.getString("lang1"), new PIMScrollPane());		//add mothod will also trigger stateChanged method.
 					break;
 				case 1:
-					tabbedPane.add(rs.getString("lang2"), new PIMScrollPane());
+					tabbedPane.add(rs.getString("lang2"), new PIMScrollPane());		//add mothod will also trigger stateChanged method.
 					break;
 				case 2:
-					tabbedPane.add(rs.getString("lang3"), new PIMScrollPane());
+					tabbedPane.add(rs.getString("lang3"), new PIMScrollPane());		//add mothod will also trigger stateChanged method.
 					break;
 				default:
 					break;
@@ -346,7 +348,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             	categoryPaneList.getComponent(i).setBackground(backgrounds[i%10]);
             }
 		}catch(Exception exp) {
-			L.e("AddModificationDlg", "exception when change output back to original bill" + sql, exp);
+			L.e("AddModificationDlg", "exception when fetching categorys of modification from db:" + sql, exp);
 		}
 	
 		// TODO init the buttons in panels
@@ -358,8 +360,18 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     private void initPanelContent(JPanel panel, int type) {
     	type = type < 0 ? (-1 * type) : type;
 		StringBuilder sql = new StringBuilder("select * from modification where type = ").append(type * -1).append(" order by type desc ");
-		
+		 try {
+				ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+	            rs.beforeFirst();
+	            while (rs.next()) {
+	            	JButton button = new JButton("xxxx");
+	            	panel.add(button);
+	            }
+		 }catch(Exception exp) {
+				L.e("AddModificationDlg", "exception when fetching out modifications from db:" + sql, exp);
+		 }
 	}
+    
 	//keep all selections in a map. key is category idx, value is separated string in top text area.
 	private void initSelectionMap() {
         ArrayList<String> inputList = getInputModification();//the modifications in above text area.
@@ -417,9 +429,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         }
     }
 
-    /**
-     * 解析一个逗号分隔符处理的字符串 getTextAreaData
-     */
+    // 解析一个逗号分隔符处理的字符串 getTextAreaData
     private String[] stringToArray( String string) {
         if (string != null) {
             // 构建字符串分隔器
@@ -439,12 +449,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         }
     }
 
-    /**
-     * Invoked when an action occurs.
-     * 
-     * @param e
-     *            动作事件
-     */
     @Override
 	public void actionPerformed(ActionEvent e) {
     	Object o = e.getSource();
@@ -887,9 +891,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     	}
     	initContent("null", tabbedPane.getSelectedIndex());
     }
-    /**
-     * 设置文本的显示,本方法由列模型自动检测出选中项,组成以逗号为分隔的字符串
-     */
+    
+    //设置文本的显示,本方法由列模型自动检测出选中项,组成以逗号为分隔的字符串
     private void updateTextOfTextArea() {
         // 用来组装处理文本区中的显示
         StringBuilder sb = new StringBuilder();
@@ -1247,21 +1250,14 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         return hasNewField;
 	}
 
-    private boolean hasNewField() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	// 以下为本类的变量声明
     private JButton btnApplyToList; // 几个按钮,在右上方
     private JButton btnApplyToCategory; // 几个按钮,在右上方
     private JButton btnDelete;
     private JButton resetBTN;
-//    private JButton ok2; // 确定和取消按钮
+
     private JButton btnOK;
     private JList<CheckItem> modificationList; // 列表框及其模型
     private JList<JPanel> categoryPaneList;
-    private PIMScrollPane scrPane;
     private JTabbedPane tabbedPane;
     private PIMScrollPane allInOnePane;
     private DefaultListModel<CheckItem> listModel;
