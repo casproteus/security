@@ -563,6 +563,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 			public void run() {
 		        table.setSelectedRow(orderedDishAry.size() - 1);
 		        if("true".equals(newDish.getPrompMofify())) {
+		    		AddModificationDialog.getInstance().isSettingMode = false;
 		    		AddModificationDialog.getInstance().initContent(BillListPanel.curDish.getModification(), 0);
 		    		AddModificationDialog.getInstance().setVisible(true);
 		        }

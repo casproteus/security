@@ -52,8 +52,9 @@ public class Cmd_Modify implements SamActionListener {
 			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.OnlyOneShouldBeSelected());
 			return;
 		}
-		ModificationPanel.getInstance().initContent(BillListPanel.curDish.getModification(), 0);
-		ModificationPanel.getInstance().setVisible(true);
-		BarFrame.instance.menuPanel.setVisible(false);
+
+		AddModificationDialog.getInstance().isSettingMode = false;
+		AddModificationDialog.getInstance().initContent(BillListPanel.curDish.getModification(), 0);
+		AddModificationDialog.getInstance().setVisible(true);
 	}
 }

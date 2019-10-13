@@ -35,6 +35,7 @@ public class Cmd_ModifySetting implements SamActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		AddModificationDialog.getInstance().isSettingMode = true;;
 		AddModificationDialog.getInstance().initContent("", 0);
 		AddModificationDialog.getInstance().setVisible(true);
 	}

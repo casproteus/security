@@ -1,10 +1,10 @@
 package org.cas.client.platform.bar.dialog.modifyDish;
 
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Insets;
-import java.awt.ScrollPane;
-import java.awt.Scrollbar;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -13,7 +13,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.security.KeyStore.Entry;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -34,12 +33,12 @@ import javax.swing.JTextField;
 import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.cas.client.platform.CASControl;
 import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
@@ -49,7 +48,6 @@ import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
-import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
@@ -61,9 +59,11 @@ import org.hsqldb.lib.StringUtil;
 public class AddModificationDialog extends JDialog implements ActionListener, ListSelectionListener, KeyListener,
         MouseListener, Runnable, ComponentListener, ChangeListener {
 
+	public boolean isSettingMode = false;
+	
     private static Color[] backgrounds = new Color[10];// {Color.BLACK, Color.BLUE};
 	int oldIndex = 0;
-    HashMap<Integer, String> selections = new HashMap<Integer, String>();
+    HashMap<Integer, String> selectionsMap = new HashMap<Integer, String>();
     
     private static AddModificationDialog instance;
     public static AddModificationDialog getInstance() {
@@ -125,8 +125,10 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         txaCurContent = new JTextArea(); // 加入会滚动的文本区
         topLabel = new JLabel(BarFrame.consts.AddNewModificationItem()); // "项目属于这些类别"标签
         modificationList = new JList<CheckItem>();
+        categoryPaneList = new JList<JPanel>();
         scrPane = new PIMScrollPane(modificationList);
         tabbedPane = new JTabbedPane();
+        allInOnePane = new PIMScrollPane(categoryPaneList);
         btnApplyToList = new JButton(BarFrame.consts.ApplyToList()); // 加至列表按钮
         btnApplyToCategory = new JButton(BarFrame.consts.ApplyToCategory());
         lblDspIdx = new JLabel(BarFrame.consts.DSPINDEX());
@@ -172,7 +174,10 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         getContentPane().add(btnApplyToList);
         getContentPane().add(btnApplyToCategory);
         tabbedPane.add("    ", scrPane);
+        //only one of following two can be visible at one time.
         getContentPane().add(tabbedPane);
+        getContentPane().add(allInOnePane);
+        
         getContentPane().add(lblDspIdx);
         getContentPane().add(valDspIdx);
         getContentPane().add(lblPrice);
@@ -225,6 +230,9 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         tabbedPane.setBounds(midLabel.getX(), midLabel.getY() + midLabel.getHeight() + CustOpts.VER_GAP, // "可用类别"列表框
         		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP, 
                 btnOK.getY() - 2 * CustOpts.VER_GAP - midLabel.getY() - midLabel.getHeight());
+        allInOnePane.setBounds(midLabel.getX(), midLabel.getY() + midLabel.getHeight() + CustOpts.VER_GAP, // "可用类别"列表框
+        		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP, 
+                btnOK.getY() - 2 * CustOpts.VER_GAP - midLabel.getY() - midLabel.getHeight());
         
         lblDspIdx.setBounds(tabbedPane.getX(), btnOK.getY(),
         		lblDspIdx.getPreferredSize().width, CustOpts.BTN_HEIGHT);
@@ -254,11 +262,18 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     	//must set content first, so the selections can be initialized base on it. 
     	//and set the content again in the last line, when got idea which belongs to this page.
         txaCurContent.setText("null".equalsIgnoreCase(prmCategoryInfo) ? "" : prmCategoryInfo);	
-        listModel = new DefaultListModel<CheckItem>();
-
-        initTabbedPaneContent();
+        //decide which component to display, allInOnePanel or tabbledPane.
+    	allInOnePane.setVisible(!isSettingMode);
+    	tabbedPane.setVisible(isSettingMode);
+    	
+        if(isSettingMode) {
+        	listModel = new DefaultListModel<CheckItem>();
+        	initTabbedPaneContent();
+        }else {
+        	initPanelContent();
+        }
         initSelectionMap();
-        txaCurContent.setText(selections.get(idx));
+        txaCurContent.setText(selectionsMap.get(idx));
     }
 
 	private void initTabbedPaneContent() {
@@ -291,7 +306,61 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 		}
 	}
 	
-    //keep all selections in a map. key is category idx, value is separated string in top text area.
+	private void initPanelContent() {
+		categoryPaneList.removeAll();
+		
+		//added default panel
+		JPanel panel = new JPanel();
+		panel.setLayout(new FlowLayout());
+		panel.setBorder(new TitledBorder("default"));
+		categoryPaneList.add(panel);
+		
+		//add other panels;
+        StringBuilder sql = new StringBuilder("select * from modification where type < 0 order by type desc");
+        try {
+			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+            rs.beforeFirst();
+            while (rs.next()) {
+            	
+            	panel = new JPanel();
+        		panel.setLayout(new FlowLayout());
+            	switch (LoginDlg.USERLANG) {
+				case 0:
+					panel.setBorder(new TitledBorder(rs.getString("lang1")));
+					break;
+				case 1:
+					panel.setBorder(new TitledBorder(rs.getString("lang2")));
+					break;
+				case 2:
+					panel.setBorder(new TitledBorder(rs.getString("lang3")));
+					break;
+				default:
+					break;
+				}
+
+        		initPanelContent(panel, rs.getInt("type"));
+        		categoryPaneList.add(panel);
+            }
+            
+            for(int i = 1; i < categoryPaneList.getModel().getSize(); i++) {
+            	categoryPaneList.getComponent(i).setBackground(backgrounds[i%10]);
+            }
+		}catch(Exception exp) {
+			L.e("AddModificationDlg", "exception when change output back to original bill" + sql, exp);
+		}
+	
+		// TODO init the buttons in panels
+		revalidate();
+		invalidate();
+		repaint();
+	}
+	
+    private void initPanelContent(JPanel panel, int type) {
+    	type = type < 0 ? (-1 * type) : type;
+		StringBuilder sql = new StringBuilder("select * from modification where type = ").append(type * -1).append(" order by type desc ");
+		
+	}
+	//keep all selections in a map. key is category idx, value is separated string in top text area.
 	private void initSelectionMap() {
         ArrayList<String> inputList = getInputModification();//the modifications in above text area.
         int tabsize = tabbedPane.getTabCount();
@@ -307,7 +376,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 				}
 			}
         	if(selectedNameStrOfCurTab.length() > 1) {
-        		selections.put(i, selectedNameStrOfCurTab.substring(1));
+        		selectionsMap.put(i, selectedNameStrOfCurTab.substring(1));
         	}
         }
 	}
@@ -392,7 +461,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         }else if (o == btnOK) {
             if(BillListPanel.curDish != null) {
             	StringBuilder modifications = new StringBuilder(txaCurContent.getText());
-            	for (java.util.Map.Entry<Integer, String> entry : selections.entrySet()) {
+            	for (java.util.Map.Entry<Integer, String> entry : selectionsMap.entrySet()) {
             		if(entry.getKey() != tabbedPane.getSelectedIndex()) {
             			if(modifications.length() > 0 && !modifications.toString().endsWith(BarDlgConst.delimiter)) {
             				modifications.append(BarDlgConst.delimiter);
@@ -938,12 +1007,12 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 		valPrice.setText("");
 		
 		//back up the old index and relavent text in txaCurContent.
-		selections.put(oldIndex, txaCurContent.getText());
+		selectionsMap.put(oldIndex, txaCurContent.getText());
 		
 		//update the oldIndex to the new value(current selection), then init the txaCurContent with previouse selection.
 		int idx = tabbedPane.getSelectedIndex();
 		oldIndex = idx;
-		txaCurContent.setText(selections.get(idx));
+		txaCurContent.setText(selectionsMap.get(idx));
 		
 		// reflect the content in text area into the status of the list items.
         ArrayList<String> inputModification = getInputModification();
@@ -1191,8 +1260,10 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 //    private JButton ok2; // 确定和取消按钮
     private JButton btnOK;
     private JList<CheckItem> modificationList; // 列表框及其模型
+    private JList<JPanel> categoryPaneList;
     private PIMScrollPane scrPane;
     private JTabbedPane tabbedPane;
+    private PIMScrollPane allInOnePane;
     private DefaultListModel<CheckItem> listModel;
 
     private JLabel midLabel; // "可用类别"标签
@@ -1208,9 +1279,5 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     private JTextField valDspIdx;
     private JTextField valPrice;
     private JButton btnApply;
-    
-    
-    public boolean isModified() {
-        return this.modified;
-    }
+
 }
