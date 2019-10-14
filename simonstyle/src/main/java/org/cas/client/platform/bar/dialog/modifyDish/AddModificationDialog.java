@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.swing.DefaultListModel;
@@ -82,10 +83,10 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     }
 
     private void initBackGrounds() {
-    	backgrounds[0] = Color.CYAN;
+    	backgrounds[0] = Color.LIGHT_GRAY;
     	backgrounds[1] = Color.GRAY;
     	backgrounds[2] = Color.GREEN;
-    	backgrounds[3] = Color.LIGHT_GRAY;
+    	backgrounds[3] = Color.CYAN;
     	backgrounds[4] = Color.MAGENTA;
     	backgrounds[5] = Color.ORANGE;
     	backgrounds[6] = Color.PINK;
@@ -273,6 +274,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         	listModel = new DefaultListModel<CheckItem>();
         	initTabbedPaneContent();
         }else {
+        	panelListModel = new DefaultListModel<JPanel>();
         	initPanelContent();
         }
         initSelectionMap();
@@ -300,7 +302,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 					break;
 				}
             }
-            for(int i = 1; i < tabbedPane.getTabCount(); i++) {
+            for(int i = 0; i < tabbedPane.getTabCount(); i++) {
             	tabbedPane.setBackgroundAt(i, backgrounds[i%10]);
             }
 		}catch(Exception exp) {
@@ -309,14 +311,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 	}
 	
 	private void initPanelContent() {
-		categoryPaneList.removeAll();
-		
-		//added default panel
-		JPanel panel = new JPanel();
-		panel.setLayout(new FlowLayout());
-		panel.setBorder(new TitledBorder("default"));
-		categoryPaneList.add(panel);
-		
+		panelListModel.removeAllElements();
+		int i = 0;
 		//add other panels;
         StringBuilder sql = new StringBuilder("select * from modification where type < 0 order by type desc");
         try {
@@ -324,7 +320,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
             rs.beforeFirst();
             while (rs.next()) {
             	
-            	panel = new JPanel();
+            	JPanel panel = new JPanel();
         		panel.setLayout(new FlowLayout());
             	switch (LoginDlg.USERLANG) {
 				case 0:
@@ -340,17 +336,17 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 					break;
 				}
 
+        		panel.setBackground(backgrounds[i%10]);
         		initPanelContent(panel, rs.getInt("type"));
-        		categoryPaneList.add(panel);
-            }
-            
-            for(int i = 1; i < categoryPaneList.getModel().getSize(); i++) {
-            	categoryPaneList.getComponent(i).setBackground(backgrounds[i%10]);
+        		panelListModel.addElement(panel);
+        		i++;
             }
 		}catch(Exception exp) {
 			L.e("AddModificationDlg", "exception when fetching categorys of modification from db:" + sql, exp);
 		}
-	
+
+        categoryPaneList.setModel(panelListModel);
+        
 		// TODO init the buttons in panels
 		revalidate();
 		invalidate();
@@ -359,17 +355,19 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 	
     private void initPanelContent(JPanel panel, int type) {
     	type = type < 0 ? (-1 * type) : type;
-		StringBuilder sql = new StringBuilder("select * from modification where type = ").append(type * -1).append(" order by type desc ");
-		 try {
-				ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-	            rs.beforeFirst();
-	            while (rs.next()) {
-	            	JButton button = new JButton("xxxx");
-	            	panel.add(button);
-	            }
-		 }catch(Exception exp) {
-				L.e("AddModificationDlg", "exception when fetching out modifications from db:" + sql, exp);
-		 }
+		 
+		ArrayList<String> allModification = getAllLangNamesFromDB(type);
+        //start to init current list.
+        for (int i = 0, count = allModification.size(); i < count; i++) {
+        	String[] langs = allModification.get(i).split(BarDlgConst.semicolon);
+        	int langIdx = LoginDlg.USERLANG;
+        	String lang_Modify = langs.length > langIdx ? langs[langIdx] : langs[0];
+        	if(lang_Modify.length() == 0)
+        		lang_Modify = langs[0];
+        	
+            // 置检查标志
+        	panel.add(new JLabel(lang_Modify));
+        }
 	}
     
 	//keep all selections in a map. key is category idx, value is separated string in top text area.
@@ -1261,6 +1259,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     private JTabbedPane tabbedPane;
     private PIMScrollPane allInOnePane;
     private DefaultListModel<CheckItem> listModel;
+    private DefaultListModel<JPanel> panelListModel;
 
     private JLabel midLabel; // "可用类别"标签
     private JLabel topLabel; // "项目属于这些类别"标签
