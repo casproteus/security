@@ -235,7 +235,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         tabbedPane.setBounds(midLabel.getX(), midLabel.getY() + midLabel.getHeight() + CustOpts.VER_GAP, // "可用类别"列表框
         		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP, 
                 btnOK.getY() - 2 * CustOpts.VER_GAP - midLabel.getY() - midLabel.getHeight());
-        scrollPanelAllMarks.setBounds(midLabel.getX(), midLabel.getY() + midLabel.getHeight() + CustOpts.VER_GAP, // "可用类别"列表框
+        scrollPanelAllMarks.setBounds(midLabel.getX(), CustOpts.VER_GAP, // "可用类别"列表框
         		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP, 
                 btnOK.getY() - 2 * CustOpts.VER_GAP - midLabel.getY() - midLabel.getHeight());
         
@@ -269,7 +269,16 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         txaCurContent.setText("null".equalsIgnoreCase(prmCategoryInfo) ? "" : prmCategoryInfo);	
         //decide which component to display, allInOnePanel or tabbledPane.
     	scrollPanelAllMarks.setVisible(!isSettingMode);
+    	txaCurContent.setVisible(isSettingMode);
     	tabbedPane.setVisible(isSettingMode);
+    	btnApplyToList.setVisible(isSettingMode);
+    	btnApplyToCategory.setVisible(isSettingMode);
+    	lblDspIdx.setVisible(isSettingMode);
+    	lblPrice.setVisible(isSettingMode);
+    	midLabel.setVisible(isSettingMode);
+    	topLabel.setVisible(isSettingMode);
+    	valDspIdx.setVisible(isSettingMode);
+    	valPrice.setVisible(isSettingMode);
     	
         if(isSettingMode) {
         	listModel = new DefaultListModel<CheckItem>();
@@ -365,10 +374,16 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         	if(lang_Modify.length() == 0)
         		lang_Modify = langs[0];
         	
-        	panel.add(new PIMAdjuster(lang_Modify, "0"));
+        	JButton btn = new JButton(lang_Modify);
+        	btn.addMouseListener(this);
+        	panel.add(btn);
         }
 	}
     
+	protected void addModifyIntoBillPanel(String modify) {
+//		String currentselection = 
+	}
+
 	//keep all selections in a map. key is category idx, value is separated string in top text area.
 	private void initSelectionMap() {
         ArrayList<String> inputList = getInputModification();//the modifications in above text area.
@@ -1106,10 +1121,17 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         if (e.getSource() == modificationList) {
             updateTextArea();
             updateProperties();
+        }else if (isSettingMode) {
+				String modify = ((JButton)e.getSource()).getText();
+				addModifyIntoBillPanel(modify);
         }
     }
 
-    private void updateProperties() {
+   
+	@Override
+	public void mouseReleased(MouseEvent e) {}
+	 
+	private void updateProperties() {
     	//reset
     	boolean differentPricedItemSelected = false;
     	valDspIdx.setText("");
@@ -1167,9 +1189,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 	    	}
     	}
 	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {}
 
     @Override
 	public void run() {
