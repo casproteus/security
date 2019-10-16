@@ -1,6 +1,7 @@
 package org.cas.client.platform.bar.dialog.modifyDish;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Insets;
@@ -155,8 +156,9 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         modificationList.setBackground(null);
         modificationList.setBorder(new LineBorder(Color.GRAY));
         modificationList.setSelectionBackground(null);
-        
+
         scrollPanelAllMarks.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPanelAllMarks.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         panelList.setLayout(null);//new WrapLayout());
         
         txaCurContent.setBorder(new LineBorder(Color.GRAY));
@@ -175,8 +177,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         resetBTN.setVisible(false);
         btnApplyToList.setEnabled(false); // 一开始这项为禁止
         btnApplyToCategory.setEnabled(false); // 一开始这项为禁止
-        valDspIdx.setEditable(BillListPanel.curDish == null );
-        valPrice.setEditable(BillListPanel.curDish == null );
         
         // layout---------------------------
         reLayout();
@@ -243,8 +243,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
                 btnOK.getY() - 2 * CustOpts.VER_GAP - midLabel.getY() - midLabel.getHeight());
         scrollPanelAllMarks.setBounds(midLabel.getX(), CustOpts.VER_GAP, // "可用类别"列表框
         		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP, 
-                btnOK.getY() - 2 * CustOpts.VER_GAP - midLabel.getY() - midLabel.getHeight());
-        panelList.setBounds(0, 0, scrollPanelAllMarks.getWidth(), panelList.getPreferredSize().height);
+                btnOK.getY() - 2 * CustOpts.VER_GAP);
         initPanelListContent();
         
         lblDspIdx.setBounds(tabbedPane.getX(), btnOK.getY(),
@@ -287,7 +286,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     	topLabel.setVisible(isSettingMode);
     	valDspIdx.setVisible(isSettingMode);
     	valPrice.setVisible(isSettingMode);
-    	
+        
         if(isSettingMode) {
         	listModel = new DefaultListModel<CheckItem>();
         	initTabbedPaneContent();
@@ -363,6 +362,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         		i++;
         		y += jpCategorizedMarks.getHeight();
             }
+            
+            panelList.setPreferredSize(new Dimension(scrollPanelAllMarks.getWidth(), y));
 		}catch(Exception exp) {
 			L.e("AddModificationDlg", "exception when fetching categorys of modification from db:" + sql, exp);
 		}
@@ -491,83 +492,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         else if (o == resetBTN) {
             //resetClicked();
         }else if (o == btnOK) {
-            if(BillListPanel.curDish != null) {
-            	StringBuilder modifications = new StringBuilder(txaCurContent.getText());
-            	for (java.util.Map.Entry<Integer, String> entry : selectionsMap.entrySet()) {
-            		if(entry.getKey() != tabbedPane.getSelectedIndex()) {
-            			if(modifications.length() > 0 && !modifications.toString().endsWith(BarDlgConst.delimiter)) {
-            				modifications.append(BarDlgConst.delimiter);
-            			}
-            			modifications.append(entry.getValue());
-            		}
-				}
-            	
-            	String[] notes = modifications.toString().split(BarDlgConst.delimiter);
-            	ArrayList<String> allModification = getAllLangNamesFromDB(-1);
-            	StringBuilder fullModifyString = new StringBuilder();
-            	StringBuilder onSrcString = new StringBuilder();
-            	for(int i = 0; i < notes.length; i++) {
-//            		//now this for lood should be not necessary anymore, because the content in txaCurContent is always full string.
-//					for (String fullStringOfLabel : allModification) {
-//						if(notes[i].trim().length() > 0 && fullStringOfLabel.indexOf(notes[i].trim()) > -1) {
-//							notes[i] = fullStringOfLabel;
-//							break;
-//						}
-//					}
-            		fullModifyString.append(notes[i].trim()).append(BarDlgConst.delimiter);
-            		
-            		String[] langs = notes[i].split(BarDlgConst.semicolon);
-        			String lang_OnSrc = langs.length > LoginDlg.USERLANG ? langs[LoginDlg.USERLANG].trim() : langs[0].trim();
-                	if(lang_OnSrc.length() == 0)
-                		lang_OnSrc = langs[0];
-            		onSrcString.append(lang_OnSrc).append(BarDlgConst.delimiter);
-				}
-            	
-            	//update the display on table
-            	PIMTable table = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.table;
-            	int row = table.getSelectedRow();
-            	String oldContent = (String)table.getValueAt(row, 2);
-            	
-            	int idx = oldContent.indexOf("-" + BarOption.getMoneySign());
-            	if(idx > -1) {
-            		String oldDiscount = oldContent.substring(idx); //no matter discount in the end or begging.
-            		idx = oldDiscount.indexOf(BarDlgConst.delimiter);
-            		if(idx > -1) {
-            			oldContent = oldContent.substring(0, idx);
-            			oldDiscount = oldDiscount.substring(0, idx);
-            		}
-            		onSrcString.append(oldDiscount);
-            	}
-            	table.setValueAt(onSrcString.toString(), row, 2);
-            	
-            	//money part calculating
-            	float oldPriceInLabel = 0.0f;
-            	float newPriceInLabel = 0.0f;	//new labels added money
-            	if(BillListPanel.curDish.getModification() != null) {
-            		oldPriceInLabel = BarUtil.calculateLabelsPrices(BillListPanel.curDish.getModification().split(BarDlgConst.delimiter));
-            	}
-            	newPriceInLabel = BarUtil.calculateLabelsPrices(notes);	//new labels added money
-            	int newtotal = Math.round(BillListPanel.curDish.getTotalPrice() - oldPriceInLabel * 100 + newPriceInLabel * 100);
-            	
-            	//update the orderAry and database.
-            	BillListPanel.curDish.setModification(fullModifyString.toString());
-            	
-            	BillListPanel.curDish.setTotalPrice(newtotal);
-             	
-             	int outputID = BillListPanel.curDish.getOutputID();
-             	if(outputID >= 0) {
-             		String sql = "update output set toltalprice = " + BillListPanel.curDish.getTotalPrice() + " where id = " + outputID;
-             		try {
-             			PIMDBModel.getStatement().executeUpdate(sql);
-             		}catch(Exception exp) {
-    					L.e("AddModificationDlg", " exception when update total price for output!" + sql, exp);
-             		}
-             	}
-             	
-             	//updte table display
-             	table.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney(newtotal/100.0), row, 3);
-             	((SalesPanel)BarFrame.instance.panels[2]).billPanel.updateTotalArea();
-            }
             dispose();
         }
     }
@@ -1137,19 +1061,19 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent e) {System.out.println("....");}
+	public void mouseMoved(MouseEvent e) {}
 	
     @Override
-	public void mouseClicked(MouseEvent e) {System.out.println("....");}
+	public void mouseClicked(MouseEvent e) {}
 
     @Override
-	public void mouseEntered(MouseEvent e) {System.out.println("....");}
+	public void mouseEntered(MouseEvent e) {}
 
     @Override
-	public void mouseExited(MouseEvent e) {System.out.println("....");}
+	public void mouseExited(MouseEvent e) {}
 
     @Override
-	public void mousePressed(MouseEvent e) {System.out.println("....");
+	public void mousePressed(MouseEvent e) {
         if (e.getSource() == modificationList) {
             updateTextArea();
             updateProperties();
@@ -1158,33 +1082,86 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 
     //this method is used for removing an mark in the billPanel by a drag action on markDialog.
 	@Override
-	public void mouseReleased(MouseEvent e) {System.out.println("....");
-		stepCounter = 0;
-		int selectedRow = billPanel.table.getSelectionModel().getMinSelectionIndex();
-		
-		if(isDragging == true) {
-			isDragging = false;
-			removeFromSelectedItem(((JButton)e.getSource()).getText(), selectedRow);
-		}else {
-			addIntoSelectedItem(((JButton)e.getSource()).getText(), selectedRow);
+	public void mouseReleased(MouseEvent e) {
+		Object o = e.getSource();
+		if(o instanceof JButton) {	//if it's checkItem, then ignore the event.
+			stepCounter = 0;
+			int selectedRow = billPanel.table.getSelectionModel().getMinSelectionIndex();
+			
+			if(isDragging == true) {
+				isDragging = false;
+				adjustLableContent(((JButton)o).getText(), selectedRow, true);
+			}else {
+				adjustLableContent(((JButton)o).getText(), selectedRow, false);
+			}
 		}
-	}
-	 
-	private void removeFromSelectedItem(String modify, int selectedRow) {
-		if(!checkSelectedItemStatus(selectedRow)) {
-			return;
-		}
-		System.out.println("removing...........");
-	}
-
-	protected void addIntoSelectedItem(String modify, int selectedRow) {
-		if(!checkSelectedItemStatus(selectedRow)) {
-			return;
-		}
-
-		System.out.println("adding...........");
 	}
 	
+	//adjust the display of the modification, dish in memory, record in db, and also the total area.
+	private void adjustLableContent(String modify, int selectedRow, boolean isRemoving) {
+		if(!checkSelectedItemStatus(selectedRow)) {
+			return;
+		}
+    	
+    	//update the display on table
+    	PIMTable table = ((SalesPanel)BarFrame.instance.panels[2]).billPanel.table;
+    	int row = table.getSelectedRow();
+    	String oldContent = (String)table.getValueAt(row, 2);
+    	StringBuilder newContent = new StringBuilder();
+    	
+    	//find matching mark.
+    	String matchingStr = " " + modify + " ";
+    	int idx = oldContent.indexOf(matchingStr);
+    	if(idx > -1) {
+			int beginIndex = idx + modify.length() + 2;	//note: there might be a "x"
+			int numEnd = oldContent.indexOf(';', beginIndex);
+
+        	//money part calculating
+        	int oldNum = 0;
+    		if("x".equals(oldContent.substring(beginIndex, beginIndex + 1))) {
+    			oldNum = Integer.valueOf(oldContent.substring(beginIndex + 1, numEnd));
+    		}else {
+    			oldNum = 1;
+    		}
+    		int newNum = oldNum + (isRemoving ? -1 : 1);
+    		if(newNum != 0) {
+        		newContent.append(oldContent.substring(0, beginIndex)).append("x").append(newNum)
+        		.append(oldContent.substring(numEnd));
+    		}else {
+    			newContent.append(oldContent.substring(0, idx)).append(oldContent.substring(numEnd + 1));
+    		}
+    	}else {
+    		if(isRemoving) {
+    			return;
+    		}
+    		newContent.append(oldContent).append(" ").append(modify).append(" ;");
+    	}
+    	table.setValueAt(newContent.toString(), row, 2);
+    	
+    	
+    	//new price
+    	float newPriceInLabel = BarUtil.calculateLabelsPrices(new String[]{modify});	//new labels added money
+    	int newtotal = Math.round(BillListPanel.curDish.getTotalPrice() + (isRemoving ? -1 * newPriceInLabel * 100 : newPriceInLabel * 100));
+    	
+    	//update the orderAry
+    	BillListPanel.curDish.setModification(newContent.toString());
+    	BillListPanel.curDish.setTotalPrice(newtotal);
+     	//update the database
+     	int outputID = BillListPanel.curDish.getOutputID();
+     	if(outputID >= 0) {
+     		String sql = "update output set toltalprice = " + BillListPanel.curDish.getTotalPrice() + " where id = " + outputID;
+     		try {
+     			PIMDBModel.getStatement().executeUpdate(sql);
+     		}catch(Exception exp) {
+				L.e("AddModificationDlg", " exception when update total price for output!" + sql, exp);
+     		}
+     	}
+     	
+     	//update table display
+     	table.setValueAt(BarOption.getMoneySign() + BarUtil.formatMoney(newtotal/100.0), row, 3);
+     	((SalesPanel)BarFrame.instance.panels[2]).billPanel.updateTotalArea();
+	}
+
 	private boolean checkSelectedItemStatus(int selectedRow) {
 		if(selectedRow < 0 || selectedRow >= billPanel.orderedDishAry.size()) 
 			return false;
@@ -1316,7 +1293,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     private JLabel topLabel; // "项目属于这些类别"标签
 
     private JTextArea txaCurContent; // 文本区及其模型
-    private boolean modified; // 保存修改标志,以便父对话盒作相应措施
     public static final int OFFSET = -1;// 构建列表框和文本区用的一个常量 以后要去除
     private boolean itemChanged; // 字段增减标志,用于存盘
     
