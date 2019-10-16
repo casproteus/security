@@ -1,6 +1,7 @@
 package org.cas.client.platform.bar.dialog.modifyDish;
 
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -11,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -30,6 +32,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -42,6 +45,7 @@ import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.BillListPanel;
+import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.DBConsts;
@@ -58,7 +62,7 @@ import org.cas.client.resource.international.DlgConst;
 import org.hsqldb.lib.StringUtil;
 
 public class AddModificationDialog extends JDialog implements ActionListener, ListSelectionListener, KeyListener,
-        MouseListener, Runnable, ComponentListener, ChangeListener {
+        MouseListener, MouseMotionListener, Runnable, ComponentListener, ChangeListener {
 
 	public boolean isSettingMode = false;
 	
@@ -67,6 +71,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 	int oldIndex = 0;
     HashMap<Integer, String> selectionsMap = new HashMap<Integer, String>();
     
+	BillPanel billPanel = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
+	
     private static AddModificationDialog instance;
     public static AddModificationDialog getInstance() {
     	if(instance == null) {
@@ -118,6 +124,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         setTitle(BarFrame.consts.MODIFY()); // 设置标题
         getContentPane().setLayout(null);
         int modifyDlgWidth = BarOption.getModifyDlgWidth();
+        modifyDlgWidth = modifyDlgWidth== 0 ? BarFrame.instance.menuPanel.getWidth() + CustOpts.SIZE_EDGE * 2 + CustOpts.HOR_GAP : modifyDlgWidth;
         setBounds(CustOpts.SCRWIDTH - modifyDlgWidth, 0, modifyDlgWidth, CustOpts.SCRHEIGHT - 30); // 对话框的默认尺寸, get rid of the height of status bar。
         setResizable(true);
 
@@ -126,9 +133,9 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         txaCurContent = new JTextArea(); // 加入会滚动的文本区
         topLabel = new JLabel(BarFrame.consts.AddNewModificationItem()); // "项目属于这些类别"标签
         modificationList = new JList<CheckItem>();
-        jListCategoryPanels = new JList<JPanel>();
         tabbedPane = new JTabbedPane();
-        scrollPanelAllMarks = new PIMScrollPane(jListCategoryPanels);
+        panelList = new JPanel();
+        scrollPanelAllMarks = new PIMScrollPane(panelList);
         btnApplyToList = new JButton(BarFrame.consts.ApplyToList()); // 加至列表按钮
         btnApplyToCategory = new JButton(BarFrame.consts.ApplyToCategory());
         lblDspIdx = new JLabel(BarFrame.consts.DSPINDEX());
@@ -150,8 +157,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         modificationList.setSelectionBackground(null);
         
         scrollPanelAllMarks.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        jListCategoryPanels.setCellRenderer(new CategoriseListRenderer());
-        jListCategoryPanels.setSelectionBackground(null);
+        panelList.setLayout(null);//new WrapLayout());
         
         txaCurContent.setBorder(new LineBorder(Color.GRAY));
         midLabel.setDisplayedMnemonic('V');
@@ -238,6 +244,8 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         scrollPanelAllMarks.setBounds(midLabel.getX(), CustOpts.VER_GAP, // "可用类别"列表框
         		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP, 
                 btnOK.getY() - 2 * CustOpts.VER_GAP - midLabel.getY() - midLabel.getHeight());
+        panelList.setBounds(0, 0, scrollPanelAllMarks.getWidth(), panelList.getPreferredSize().height);
+        initPanelListContent();
         
         lblDspIdx.setBounds(tabbedPane.getX(), btnOK.getY(),
         		lblDspIdx.getPreferredSize().width, CustOpts.BTN_HEIGHT);
@@ -284,7 +292,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         	listModel = new DefaultListModel<CheckItem>();
         	initTabbedPaneContent();
         }else {
-        	panelListModel = new DefaultListModel<JPanel>();
         	initPanelListContent();
         }
         initSelectionMap();
@@ -321,17 +328,18 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 	}
 	
 	private void initPanelListContent() {
-		panelListModel.removeAllElements();
+		panelList.removeAll();
 		int i = 0;
 		//add other panels;
         StringBuilder sql = new StringBuilder("select * from modification where type < 0 order by type desc");
         try {
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
             rs.beforeFirst();
+            int y = 0;
             while (rs.next()) {
             	
             	JPanel jpCategorizedMarks = new JPanel();
-        		jpCategorizedMarks.setLayout(new WrapLayout());
+        		//jpCategorizedMarks.setLayout(new WrapLayout());
             	switch (LoginDlg.USERLANG) {
 				case 0:
 					jpCategorizedMarks.setBorder(new TitledBorder(rs.getString("lang1")));
@@ -347,26 +355,30 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 				}
 
         		jpCategorizedMarks.setBackground(backgrounds[i%10]);
-//        		panel.setMaximumSize(scrollPanelAllMarks.getWidth());
-        		initPanelContent(jpCategorizedMarks, -1 * rs.getInt("type") - 1); 	//because the category's type was defined to be from -1 to -n, and modification was from 0~n
-        		panelListModel.addElement(jpCategorizedMarks);
+        		int height = initPanelContent(jpCategorizedMarks, -1 * rs.getInt("type") - 1); 	//because the category's type was defined to be from -1 to -n, and modification was from 0~n
+        		jpCategorizedMarks.setPreferredSize(jpCategorizedMarks.getPreferredSize());
+        		
+        		jpCategorizedMarks.setBounds(0, y, panelList.getWidth(), height + 39);
+        		panelList.add(jpCategorizedMarks);
         		i++;
+        		y += jpCategorizedMarks.getHeight();
             }
 		}catch(Exception exp) {
 			L.e("AddModificationDlg", "exception when fetching categorys of modification from db:" + sql, exp);
 		}
 
-        jListCategoryPanels.setModel(panelListModel);
-        
 		// TODO init the buttons in panels
 		revalidate();
 		invalidate();
 		repaint();
 	}
 	
-    private void initPanelContent(JPanel panel, int type) {
+    private int initPanelContent(JPanel panel, int type) {
 		ArrayList<String> allModification = getAllLangNamesFromDB(type);
         //start to init current list.
+		JButton btn = null;
+		int x = 0;
+		int y = 0;
         for (int i = 0, count = allModification.size(); i < count; i++) {
         	String[] langs = allModification.get(i).split(BarDlgConst.semicolon);
         	int langIdx = LoginDlg.USERLANG;
@@ -374,14 +386,18 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         	if(lang_Modify.length() == 0)
         		lang_Modify = langs[0];
         	
-        	JButton btn = new JButton(lang_Modify);
+        	btn = new JButton(lang_Modify);
         	btn.addMouseListener(this);
+        	btn.addMouseMotionListener(this);
+        	if(x + btn.getPreferredSize().width > panelList.getWidth()) {
+        		x = 0;
+        		y += btn.getPreferredSize().height + CustOpts.VER_GAP;
+        	}
+        	btn.setBounds(x, y, btn.getPreferredSize().width, btn.getPreferredSize().height);
         	panel.add(btn);
+        	x += btn.getPreferredSize().width + CustOpts.HOR_GAP;
         }
-	}
-    
-	protected void addModifyIntoBillPanel(String modify) {
-//		String currentselection = 
+        return btn == null ? 39 : btn.getY() + btn.getHeight();
 	}
 
 	//keep all selections in a map. key is category idx, value is separated string in top text area.
@@ -1107,30 +1123,82 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         }
     }
 
+    //-------------------adding and removing a mark------------------
+    private int stepCounter;
+    private boolean isDragging;
+    private int minStepCounter = CustOpts.custOps.getValue("minMoveStep") == null ? 5 : Integer.valueOf((String)CustOpts.custOps.getValue("minMoveStep"));
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		stepCounter++;
+		if(stepCounter > minStepCounter ) {
+			stepCounter = 0;
+			isDragging = true;
+		}
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {System.out.println("....");}
+	
     @Override
-	public void mouseClicked(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {System.out.println("....");}
 
     @Override
-	public void mouseEntered(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {System.out.println("....");}
 
     @Override
-	public void mouseExited(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {System.out.println("....");}
 
     @Override
-	public void mousePressed(MouseEvent e) {
+	public void mousePressed(MouseEvent e) {System.out.println("....");
         if (e.getSource() == modificationList) {
             updateTextArea();
             updateProperties();
-        }else if (isSettingMode) {
-				String modify = ((JButton)e.getSource()).getText();
-				addModifyIntoBillPanel(modify);
         }
     }
 
-   
+    //this method is used for removing an mark in the billPanel by a drag action on markDialog.
 	@Override
-	public void mouseReleased(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {System.out.println("....");
+		stepCounter = 0;
+		int selectedRow = billPanel.table.getSelectionModel().getMinSelectionIndex();
+		
+		if(isDragging == true) {
+			isDragging = false;
+			removeFromSelectedItem(((JButton)e.getSource()).getText(), selectedRow);
+		}else {
+			addIntoSelectedItem(((JButton)e.getSource()).getText(), selectedRow);
+		}
+	}
 	 
+	private void removeFromSelectedItem(String modify, int selectedRow) {
+		if(!checkSelectedItemStatus(selectedRow)) {
+			return;
+		}
+		System.out.println("removing...........");
+	}
+
+	protected void addIntoSelectedItem(String modify, int selectedRow) {
+		if(!checkSelectedItemStatus(selectedRow)) {
+			return;
+		}
+
+		System.out.println("adding...........");
+	}
+	
+	private boolean checkSelectedItemStatus(int selectedRow) {
+		if(selectedRow < 0 || selectedRow >= billPanel.orderedDishAry.size()) 
+			return false;
+		
+		if(billPanel.orderedDishAry.get(selectedRow).getOutputID() >= 0) {
+			JOptionPane.showMessageDialog(BarFrame.instance, BarFrame.consts.SendItemCanNotModify());
+			return false;
+		}
+    	if(!billPanel.checkStatus()) {	//check if it's bill printed, if yes, need to reopen a bill.
+    		return false;
+    	}
+    	return true;
+	}
+	
 	private void updateProperties() {
     	//reset
     	boolean differentPricedItemSelected = false;
@@ -1239,11 +1307,10 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 
     private JButton btnOK;
     private JList<CheckItem> modificationList; // 列表框及其模型
-    private JList<JPanel> jListCategoryPanels;
     private JTabbedPane tabbedPane;
+    private JPanel panelList;
     private PIMScrollPane scrollPanelAllMarks;
     private DefaultListModel<CheckItem> listModel;
-    private DefaultListModel<JPanel> panelListModel;
 
     private JLabel midLabel; // "可用类别"标签
     private JLabel topLabel; // "项目属于这些类别"标签

@@ -438,7 +438,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 		if(isDragging == true) {
 			isDragging = false;
 			ListSelectionModel selectionModel = ((PIMTable)e.getSource()).getSelectionModel();
-			int selectedRow =  selectionModel.getMinSelectionIndex();
+			int selectedRow = selectionModel.getMinSelectionIndex();
 			if(selectedRow < 0 || selectedRow >= orderedDishAry.size()) 
 				return;
 			
