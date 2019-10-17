@@ -85,6 +85,7 @@ public class MenuPanel extends JPanel implements ActionListener {
         btnPageDownMenu.addActionListener(this);
         
         setLayout(null);
+        setOpaque(false);
         initPrinters();
 		initCategoryAndDishes();
 		initRules();

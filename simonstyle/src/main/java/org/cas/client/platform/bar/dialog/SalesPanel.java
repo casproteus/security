@@ -19,10 +19,11 @@ import org.cas.client.platform.bar.uibeans.MenuButton;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
+import org.cas.client.platform.pimview.PicturePane;
 import org.cas.client.resource.international.DlgConst;
 
 //Identity表应该和Employ表合并。
-public class SalesPanel extends JPanel implements ComponentListener, FocusListener {
+public class SalesPanel extends PicturePane implements ComponentListener, FocusListener {
 
 	static final int MAX_CMDBTN_QT = 20;
 	String[][] categoryNameMetrix;
@@ -42,6 +43,7 @@ public class SalesPanel extends JPanel implements ComponentListener, FocusListen
     public boolean partialPaid;	//for indicating that money is partial paid, when leaving sales panel, will give a notice!
     
     public SalesPanel() {
+    	super(CustOpts.custOps.getMainPaneBGImg());
         initComponent();
     }
 

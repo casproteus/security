@@ -21,10 +21,11 @@ import javax.swing.SwingConstants;
 import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.PIMPool;
+import org.cas.client.platform.pimview.PicturePane;
 import org.cas.client.resource.international.PaneConsts;
 
 //Identity表应该和Employ表合并。
-public class SettingPanel extends JPanel implements ComponentListener, ActionListener, FocusListener {
+public class SettingPanel extends PicturePane implements ComponentListener, ActionListener, FocusListener {
     
     static final int MAX_CMDBTN_QT = 10;
 
@@ -39,6 +40,7 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
     
     
     public SettingPanel() {
+    	super(CustOpts.custOps.getMainPaneBGImg());
         initComponent();
     }
 
@@ -517,18 +519,18 @@ public class SettingPanel extends JPanel implements ComponentListener, ActionLis
         tLbl.setBackground(Color.GRAY);
         Font tFont = PIMPool.pool.getFont((String) CustOpts.custOps.hash2.get(PaneConsts.DFT_FONT), Font.PLAIN, 40);
         
-        cbxIsTrainingMode.setBackground(null);
-        cbxIsSingleUserMode.setBackground(null);
-        cbxIsDiscoutAffectTax.setBackground(null);
-        cbxIsServiceFeeAffectTax.setBackground(null);
-        cbxIsBuffetMode.setBackground(null);
-        cbxIsFastFoodMode.setBackground(null);
-        cbxIsHideRecordFromOtherWaiter.setBackground(null);
-        cbxIsWaiterAllowedToDiscount.setBackground(null);
-        cbxIsWaiterAllowedToChangePrice.setBackground(null);
+        cbxIsTrainingMode.setOpaque(false);
+        cbxIsSingleUserMode.setOpaque(false);
+        cbxIsDiscoutAffectTax.setOpaque(false);
+        cbxIsServiceFeeAffectTax.setOpaque(false);
+        cbxIsBuffetMode.setOpaque(false);
+        cbxIsFastFoodMode.setOpaque(false);
+        cbxIsHideRecordFromOtherWaiter.setOpaque(false);
+        cbxIsWaiterAllowedToDiscount.setOpaque(false);
+        cbxIsWaiterAllowedToChangePrice.setOpaque(false);
 
-        cbxTreatPricePromtAsTaxInclude.setBackground(null);
-        cbxShowCustomerFrame.setBackground(null);
+        cbxTreatPricePromtAsTaxInclude.setOpaque(false);
+        cbxShowCustomerFrame.setOpaque(false);
         
         cbxIsTrainingMode.setSelected(BarOption.isTrainingMode());
         cbxIsSingleUserMode.setSelected(BarOption.isSingleUser());

@@ -25,15 +25,17 @@ import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
+import org.cas.client.platform.pimview.PicturePane;
 import org.cas.client.resource.international.DlgConst;
 import org.hsqldb.lib.HashMap;
 
-public class BillListPanel extends JPanel implements ActionListener, ComponentListener{
+public class BillListPanel extends PicturePane implements ActionListener, ComponentListener{
 	static final int MAX_CMDBTN_QT = 10;
 	public static Dish curDish;
 	int curPageNum;
 	
 	public BillListPanel() {
+		super(CustOpts.custOps.getMainPaneBGImg());
 		initComponent();
 	}
 
