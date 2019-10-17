@@ -158,7 +158,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         modificationList.setSelectionBackground(null);
 
         scrollPanelAllMarks.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPanelAllMarks.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPanelAllMarks.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         panelList.setLayout(null);//new WrapLayout());
         
         txaCurContent.setBorder(new LineBorder(Color.GRAY));

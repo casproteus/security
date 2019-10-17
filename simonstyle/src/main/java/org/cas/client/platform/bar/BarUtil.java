@@ -345,7 +345,7 @@ public class BarUtil {
 		}
 	}
 
-	public static int layoutCommandButtons(JPanel panel, ArrayList<JComponent> buttons, int maxBtnQt) {
+	public static int layoutCommandButtons(JComponent panel, ArrayList<JComponent> buttons, int maxBtnQt) {
 		if(buttons == null)
 			return -1;
 		

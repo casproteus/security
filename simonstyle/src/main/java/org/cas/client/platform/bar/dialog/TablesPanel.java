@@ -1,8 +1,7 @@
 package org.cas.client.platform.bar.dialog;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Event;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,21 +18,20 @@ import java.util.ArrayList;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.model.DBConsts;
-import org.cas.client.platform.bar.uibeans.MoreButton;
 import org.cas.client.platform.bar.uibeans.TableButton;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
 import org.cas.client.platform.pimmodel.PIMDBModel;
+import org.cas.client.platform.pimview.PicturePane;
 
 //Identity表应该和Employ表合并。
-public class TablesPanel extends JPanel implements ComponentListener, ActionListener, FocusListener, MouseListener {
+public class TablesPanel extends PicturePane implements ComponentListener, ActionListener, FocusListener, MouseListener {
 
     static final int MAX_CMDBTN_QT = 10;
 
@@ -53,6 +51,7 @@ public class TablesPanel extends JPanel implements ComponentListener, ActionList
     public static String ERROR = "2";
         
     public TablesPanel() {
+        super(CustOpts.custOps.getMainPaneBGImg());
         initComponent();
     }
 

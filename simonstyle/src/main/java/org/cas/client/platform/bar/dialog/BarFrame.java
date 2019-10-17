@@ -20,6 +20,7 @@ import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -394,7 +395,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 			((TablesPanel)panels[0]).initContent();
 		}
 		
-    	for (JPanel panel : panels)
+    	for (JComponent panel : panels)
     		panel.setVisible(false);
 		
     	panels[i].setVisible(true);
@@ -497,7 +498,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         	panels[3].setBounds(0, lblOperator.getY() + lblOperator.getHeight(), 
         			getContainer().getWidth(), lblStatus.getY() - lblOperator.getY() - lblOperator.getHeight());
         }else {
-	        for (JPanel panel : panels) {
+	        for (JComponent panel : panels) {
 	        	panel.setBounds(0, lblOperator.getY() + lblOperator.getHeight(), 
 	        			getContainer().getWidth(), lblStatus.getY() - lblOperator.getY() - lblOperator.getHeight());
 			}
@@ -523,7 +524,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     @Override
     public void release() {
         removeWindowListener(this);
-        for (JPanel panel : panels) {
+        for (JComponent panel : panels) {
     		panel.removeAll();
     		panel = null;
 		}
@@ -903,7 +904,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     public JLabel valOperator;
     public JLabel valStartTime;
 
-    public JPanel[] panels = new JPanel[4];
+    public JComponent[] panels = new JComponent[4];
 
     public static MenuPanel menuPanel;
     static JLabel lblStatus;
