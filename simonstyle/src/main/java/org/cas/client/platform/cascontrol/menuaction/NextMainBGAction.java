@@ -22,7 +22,7 @@ public class NextMainBGAction extends SAction {
             CustOpts.custOps.setKeyAndValue(CustOptsConsts.MainBGIndex, String.valueOf(tIdx));
         }
 
-        CASControl.ctrl.getMainPane().preparePicture(CustOpts.custOps.getMainPaneBGImg());
+        CASControl.ctrl.getMainPane().preparePicture();
         CASControl.ctrl.getMainPane().repaint();
     }
 }

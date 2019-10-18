@@ -9,7 +9,10 @@ import javax.swing.JButton;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
+import org.cas.client.platform.cascustomize.CustOptsConsts;
 import org.cas.client.platform.casutil.CASUtility;
+import org.cas.client.platform.casutil.PIMPool;
+import org.cas.client.resource.international.PaneConsts;
 
 public class TableButton extends JButton {
 	
@@ -43,11 +46,15 @@ public class TableButton extends JButton {
 			type = 1;
 		}
 		this.type = type;
-		String fileName = folerPath + type+ ".png";
-		ImageIcon icon = new ImageIcon(fileName);
-		Image temp = icon.getImage().getScaledInstance(getWidth(),
-				getHeight(), icon.getImage().SCALE_DEFAULT);
-		icon = new ImageIcon(temp);
+		
+//		String fileName = folerPath + type+ ".png";
+//		ImageIcon icon = new ImageIcon(fileName);
+//		Image temp = icon.getImage().getScaledInstance(getWidth(),
+//				getHeight(), icon.getImage().SCALE_DEFAULT);
+		
+
+		Image temp = PIMPool.pool.getImage(PaneConsts.IAMGE_PATH.concat("T".concat(String.valueOf(type)).concat(".png")));
+        ImageIcon icon = new ImageIcon(temp);
 		
     	setIcon(icon);
 	}

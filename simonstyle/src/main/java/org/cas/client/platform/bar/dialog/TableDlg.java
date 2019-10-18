@@ -250,7 +250,7 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
 	        tfdWidth.setText("60");
 	        tfdHeight.setText("50");
         }
-        String[] typeAry = new String[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"};
+        String[] typeAry = new String[]{"11","12","14","14", "21", "22", "31", "32", "33", "34", "41", "42"};
         cmbCategory.setModel(new DefaultComboBoxModel(typeAry));
         cmbCategory.setSelectedIndex(btnTable.getType());
     
