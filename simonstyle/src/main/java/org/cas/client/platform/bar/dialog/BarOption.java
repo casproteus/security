@@ -626,5 +626,5 @@ public class BarOption {
 	
 	public static Object getDefaultTableName() {
 		return "Default";
-	}	
+	}
 }

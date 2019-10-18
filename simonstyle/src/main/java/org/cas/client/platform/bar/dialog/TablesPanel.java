@@ -153,6 +153,7 @@ public class TablesPanel extends PicturePane implements ComponentListener, Actio
     }
 
     void reLayout() {
+    	preparePicture();
     	BarUtil.layoutCommandButtons(this, CmdBtnsDlg.groupedButtons[0], MAX_CMDBTN_QT);
     }
     

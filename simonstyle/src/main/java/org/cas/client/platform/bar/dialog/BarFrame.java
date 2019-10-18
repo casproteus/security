@@ -1,8 +1,12 @@
 package org.cas.client.platform.bar.dialog;
 
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -19,12 +23,14 @@ import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JWindow;
 
 import org.cas.client.platform.CASControl;
 import org.cas.client.platform.bar.BarUtil;
@@ -45,9 +51,11 @@ import org.cas.client.platform.cascontrol.frame.CASMainFrame;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.casutil.L;
+import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.resource.international.DlgConst;
+import org.cas.client.resource.international.PaneConsts;
 import org.json.JSONObject;
 
 public class BarFrame extends JFrame implements ICASDialog, WindowListener, ComponentListener, ItemListener {
@@ -69,6 +77,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
 	public static GraphicsDevice secondScreen;
     
     public static void main(String[] args) {
+    	JWindow startWindow = showFlashDialog();
         CASControl.ctrl.initModel();
         CASControl.ctrl.setMainFrame(new CASMainFrame());
         menuPanel = new MenuPanel();	//have to be after initModel, before new BarFrame().
@@ -113,7 +122,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         		System.exit(0);;
         	}
         }
-        
+        startWindow.dispose();
         if(BarOption.isSingleUser() && BarOption.getDefaultWindowStatus() != JFrame.ICONIFIED) {
 	        singleUserLoginProcess();
         }else {
@@ -142,6 +151,20 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         
         instance.repaint();
         instance.setExtendedState(BarOption.getDefaultWindowStatus());
+    }
+    
+    private static JWindow showFlashDialog() {
+        JLabel tmpStartLabel =
+                new JLabel(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
+                        PIMPool.pool.getClass().getResource(PaneConsts.IAMGE_PATH.concat("Start1.gif")))));
+        Dimension tmpIconSize = tmpStartLabel.getPreferredSize();
+        JWindow startWindow = new JWindow((Frame) null);
+        startWindow.getContentPane().add(tmpStartLabel);
+        Dimension tmpSrcSize = Toolkit.getDefaultToolkit().getScreenSize();
+        startWindow.setBounds((tmpSrcSize.width - tmpIconSize.width) / 2, (tmpSrcSize.height - tmpIconSize.height) / 2,
+                tmpIconSize.width, tmpIconSize.height);
+        startWindow.setVisible(true);
+        return startWindow;
     }
     
     private static String validateActivation(String activateCode) {

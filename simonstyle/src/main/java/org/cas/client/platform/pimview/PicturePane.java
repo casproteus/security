@@ -21,13 +21,17 @@ import javax.swing.JComponent;
  */
 
 public class PicturePane extends JComponent implements LayoutManager2 {
+	
+	Image image;
     /**
-     * @param prmImag
+     * @param imag
      *            传入的图片 改抽象类作为其所有子类的父类,实现了layoutManager2接口,并将自己作为布局管理器加在自己身上. 这样,其子类必须覆盖layoutContainer()方法,来定制自己的布局方案.
      */
-    public PicturePane(Image prmImag) {
-        if (prmImag != null) // 如果传入的图片不是空，则用它初始化picture对象。
-            preparePicture(prmImag);
+    public PicturePane(Image image) {
+        if (image != null) {// 如果传入的图片不是空，则用它初始化picture对象。
+        	this.image = image;
+            preparePicture();
+        }
         setDoubleBuffered(true);
         setLayout(this); // 改变布局管理器。
     }
@@ -35,25 +39,24 @@ public class PicturePane extends JComponent implements LayoutManager2 {
     /**
      * 初始化图片
      * 
-     * @param prmImg
+     * @param image
      *            传入的图片
      * @called by: emo.pim.pimview.CoverPane;
      */
-    public void preparePicture(
-            Image prmImg) {
+    public void preparePicture() {
         MediaTracker track = new MediaTracker(this);
-        track.addImage(prmImg, 0);
+        track.addImage(image, 0);
         try {
             track.waitForID(0);
         } catch (InterruptedException e) {
         }
 
-        int tmpImgWidth = prmImg.getWidth(this);
-        int tmpImgHeight = prmImg.getHeight(this);
+        int tmpImgWidth = image.getWidth(this);
+        int tmpImgHeight = image.getHeight(this);
 
         Rectangle2D tmpRect = new Rectangle2D.Double(0, 0, tmpImgWidth, tmpImgHeight);
         BufferedImage tmpImgBuf = new BufferedImage(tmpImgWidth, tmpImgHeight, BufferedImage.SCALE_FAST);
-        tmpImgBuf.getGraphics().drawImage(prmImg, 0, 0, this);
+        tmpImgBuf.getGraphics().drawImage(image, 0, 0, this);
         picture = new TexturePaint(tmpImgBuf, tmpRect);
     }
 
@@ -118,10 +121,7 @@ public class PicturePane extends JComponent implements LayoutManager2 {
      * @param constraints
      *            where/how the component is added to the layout.
      */
-    public void addLayoutComponent(
-            Component comp,
-            Object constraints) {
-    }
+    public void addLayoutComponent(Component comp, Object constraints) {}
 
     /**
      * If the layout manager uses a per-component string, adds the component <code>comp</code> to the layout,
@@ -132,47 +132,34 @@ public class PicturePane extends JComponent implements LayoutManager2 {
      * @param comp
      *            the component to be added
      */
-    public void addLayoutComponent(
-            String name,
-            Component comp) {
-    }
+    public void addLayoutComponent(String name, Component comp) {}
 
     /**
      * Returns the alignment along the x axis. This specifies how the component would like to be aligned relative to
      * other components. The value should be a number between 0 and 1 where 0 represents alignment along the origin, 1
      * is aligned the furthest away from the origin, 0.5 is centered, etc.
      */
-    public float getLayoutAlignmentX(
-            Container target) {
-        return 0.0f;
-    }
+    public float getLayoutAlignmentX(Container target) {return 0.0f;}
 
     /**
      * Returns the alignment along the y axis. This specifies how the component would like to be aligned relative to
      * other components. The value should be a number between 0 and 1 where 0 represents alignment along the origin, 1
      * is aligned the furthest away from the origin, 0.5 is centered, etc.
      */
-    public float getLayoutAlignmentY(
-            Container target) {
-        return 0.0f;
-    }
+    public float getLayoutAlignmentY(Container target) {return 0.0f;}
 
     /**
      * Invalidates the layout, indicating that if the layout manager has cached information it should be discarded.
      */
-    public void invalidateLayout(
-            Container target) {
-    }
+    public void invalidateLayout(Container target) {}
 
     /**
-     * 调自己的将有子类实现的方法实现布局.Lays out the specified container.
+     * *调自己的将有子类实现的方法实现布局.Lays out the specified container.
      * 
      * @param parent
      *            the container to be laid out
      */
-    public void layoutContainer(
-            Container parent) {
-    }
+    public void layoutContainer(Container parent) {}
 
     /**
      * Calculates the maximum size dimensions for the specified container, given the components it contains.
@@ -180,10 +167,7 @@ public class PicturePane extends JComponent implements LayoutManager2 {
      * @see java.awt.Component#getMaximumSize
      * @see LayoutManager
      */
-    public Dimension maximumLayoutSize(
-            Container target) {
-        return getSize();
-    }
+    public Dimension maximumLayoutSize(Container target) {return getSize();}
 
     /**
      * Calculates the minimum size dimensions for the specified container, given the components it contains.
@@ -192,10 +176,7 @@ public class PicturePane extends JComponent implements LayoutManager2 {
      *            the component to be laid out
      * @see #preferredLayoutSize
      */
-    public Dimension minimumLayoutSize(
-            Container parent) {
-        return new Dimension(0, 0);
-    }
+    public Dimension minimumLayoutSize(Container parent) {return new Dimension(0, 0);}
 
     /**
      * Calculates the preferred size dimensions for the specified container, given the components it contains.
@@ -204,10 +185,7 @@ public class PicturePane extends JComponent implements LayoutManager2 {
      *            the container to be laid out
      * @see #minimumLayoutSize
      */
-    public Dimension preferredLayoutSize(
-            Container parent) {
-        return getSize();
-    }
+    public Dimension preferredLayoutSize(Container parent) {return getSize();}
 
     /**
      * Removes the specified component from the layout.
@@ -215,9 +193,7 @@ public class PicturePane extends JComponent implements LayoutManager2 {
      * @param comp
      *            the component to be removed
      */
-    public void removeLayoutComponent(
-            Component comp) {
-    }
+    public void removeLayoutComponent(Component comp) {}
 
     // over-----------------------------------------------
     private TexturePaint picture; // 两边纹理绘制的图片/
