@@ -36,6 +36,9 @@ public class PicturePane extends JComponent implements LayoutManager2 {
         setLayout(this); // 改变布局管理器。
     }
 
+    public void preparePicture() {
+    	preparePicture(this.image);
+    }
     /**
      * 初始化图片
      * 
@@ -43,7 +46,7 @@ public class PicturePane extends JComponent implements LayoutManager2 {
      *            传入的图片
      * @called by: emo.pim.pimview.CoverPane;
      */
-    public void preparePicture() {
+    public void preparePicture(Image image) {
         MediaTracker track = new MediaTracker(this);
         track.addImage(image, 0);
         try {
