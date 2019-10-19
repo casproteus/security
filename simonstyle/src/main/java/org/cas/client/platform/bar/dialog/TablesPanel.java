@@ -210,13 +210,17 @@ public class TablesPanel extends PicturePane implements ComponentListener, Actio
             		tableToggleButton.setBounds(rs.getInt("posX"), rs.getInt("posY"), rs.getInt("width"), rs.getInt("height"));
             	}
             	tableToggleButton.setOpenTime(rs.getString("openTime"));
-            	if(rs.getInt("status") > 0)
+            	if(rs.getInt("status") > 0) {
             		tableToggleButton.setBackground(TableButton.colorSelected);
+            		tableToggleButton.setOpaque(true);
+            	}else {
+            		tableToggleButton.setOpaque(false);
+            	}
             	tableToggleButton.setMargin(new Insets(4, 4, 4, 4));
     			tableToggleButton.addActionListener(this);
     			int type = rs.getInt("type");
-    			if(type >= 100) {
-    				type -= 100;
+    			if(type < 0) {
+    				type = -type;
     				tableToggleButton.addMouseListener(this);
     				tableToggleButton.addMouseMotionListener(new MouseMotionListener(){
         	        	@Override

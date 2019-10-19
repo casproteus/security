@@ -37,8 +37,10 @@ import org.cas.client.resource.international.OptionDlgConst;
  */
 public class TableDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
 
-	TableButton btnTable;
-	TabbleSettingDlg settingTabbleDlg;
+	private TableButton btnTable;
+	private TabbleSettingDlg settingTabbleDlg;
+	
+	//if called by cmd_AddTable, the settingTabbleDlg will be null!
     public TableDlg(TabbleSettingDlg pFrame, TableButton button) {
     	super(pFrame);
     	settingTabbleDlg = pFrame;
@@ -175,9 +177,9 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         	
         	StringBuilder sql = new StringBuilder();
     		if(btnTable.getId() == -1) {	//if has no index means it's new table/
-    			int type = cmbCategory.getSelectedIndex();
-    			if(settingTabbleDlg == null){
-    				type += 100;
+    			String type = (String)cmbCategory.getSelectedItem();
+    			if(settingTabbleDlg == null){//if called from Cmd_AddTable, then give it negative tpye.
+    				type = "-" + type;
     			}
     			sql.append("INSERT INTO DINING_TABLE (name, posX, posY, width, height, type) VALUES ('")
     			.append(name).append("', ").append(tfdX.getText()).append(", ")
@@ -188,7 +190,7 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
     			sql.append("Update DINING_TABLE set name = '").append(name).append("', posX = ")
     			.append(tfdX.getText()).append(", posY = ").append(tfdY.getText())
     			.append(", width = ").append(tfdWidth.getText()).append(", height = ")
-    			.append(tfdHeight.getText()).append(", type = ").append(cmbCategory.getSelectedIndex())
+    			.append(tfdHeight.getText()).append(", type = ").append(cmbCategory.getSelectedItem())
     			.append(" where id = ").append(btnTable.getId());
     		}
         		
@@ -247,12 +249,12 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         }else {
 	        tfdX.setText("200");
 	        tfdY.setText("400");
-	        tfdWidth.setText("60");
-	        tfdHeight.setText("50");
+	        tfdWidth.setText("74");
+	        tfdHeight.setText("122");
         }
         String[] typeAry = new String[]{"11","12","14","14", "21", "22", "31", "32", "33", "34", "41", "42"};
-        cmbCategory.setModel(new DefaultComboBoxModel(typeAry));
-        cmbCategory.setSelectedIndex(btnTable.getType());
+        cmbCategory.setModel(new DefaultComboBoxModel<String>(typeAry));
+        cmbCategory.setSelectedItem(String.valueOf(btnTable.getType()));
     
     
         ok.setMnemonic('o');

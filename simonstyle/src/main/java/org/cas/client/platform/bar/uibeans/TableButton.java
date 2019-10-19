@@ -16,7 +16,7 @@ import org.cas.client.resource.international.PaneConsts;
 
 public class TableButton extends JButton {
 	
-    public static Color colorSelected = new Color(123, 213, 132);
+    public static Color colorSelected = new Color(200, 200, 200);
     public static Color colorDefault = new Color(255, 255, 255);
     
     private int id = -1;
@@ -42,21 +42,17 @@ public class TableButton extends JButton {
 	}
 
 	public void setType(int type) {
-		if(type < 1) {
-			type = 1;
+		if(type < 0) {
+			type = -1 * type;
 		}
 		this.type = type;
 		
-//		String fileName = folerPath + type+ ".png";
-//		ImageIcon icon = new ImageIcon(fileName);
-//		Image temp = icon.getImage().getScaledInstance(getWidth(),
-//				getHeight(), icon.getImage().SCALE_DEFAULT);
-		
-
-		Image temp = PIMPool.pool.getImage(PaneConsts.IAMGE_PATH.concat("T".concat(String.valueOf(type)).concat(".png")));
-        ImageIcon icon = new ImageIcon(temp);
-		
-    	setIcon(icon);
+		if(type != 0) {
+			Image temp = PIMPool.pool.getImage(PaneConsts.IAMGE_PATH.concat("T".concat(String.valueOf(type)).concat(".png")));
+	        ImageIcon icon = new ImageIcon(temp);
+			
+	    	setIcon(icon);
+		}
 	}
 
 	public void setId(int index) {

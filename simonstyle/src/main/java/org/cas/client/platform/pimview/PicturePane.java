@@ -10,10 +10,14 @@ import java.awt.LayoutManager;
 import java.awt.LayoutManager2;
 import java.awt.MediaTracker;
 import java.awt.TexturePaint;
+import java.awt.Toolkit;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JComponent;
+
+import org.cas.client.platform.bar.dialog.BarFrame;
+import org.cas.client.platform.cascustomize.CustOpts;
 
 /**
  * 面板基类，主要实现两个功能：1、绘制背景图片；2、将自己设为自己的布局管理器（子类只需重写layoutContainer方法， 即可定制自己的布局方案）。 TODO:
@@ -47,6 +51,8 @@ public class PicturePane extends JComponent implements LayoutManager2 {
      * @called by: emo.pim.pimview.CoverPane;
      */
     public void preparePicture(Image image) {
+    	Dimension scrSize = Toolkit.getDefaultToolkit().getScreenSize();
+    	image = image.getScaledInstance(scrSize.width, scrSize.height, Image.SCALE_DEFAULT);
         MediaTracker track = new MediaTracker(this);
         track.addImage(image, 0);
         try {
