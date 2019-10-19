@@ -51,8 +51,14 @@ public class PicturePane extends JComponent implements LayoutManager2 {
      * @called by: emo.pim.pimview.CoverPane;
      */
     public void preparePicture(Image image) {
-    	Dimension scrSize = Toolkit.getDefaultToolkit().getScreenSize();
-    	image = image.getScaledInstance(scrSize.width, scrSize.height, Image.SCALE_DEFAULT);
+    	int width = getWidth();
+    	int height = getHeight();
+    	if(width == 0 || height == 0) {
+    		Dimension scrSize = Toolkit.getDefaultToolkit().getScreenSize();
+    		width = scrSize.width;
+    		height = scrSize.height;
+    	}
+    	image = image.getScaledInstance(width, height, Image.SCALE_DEFAULT);
         MediaTracker track = new MediaTracker(this);
         track.addImage(image, 0);
         try {

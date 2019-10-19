@@ -16,7 +16,7 @@ public class NumButton extends JButton {
     		bg = new Color(50,97,141);
     	}
 		setBackground(bg);
-		
+		setFont(BarOption.lessBigFont);
 		setBorder(BorderFactory.createEtchedBorder());
 	}
 }

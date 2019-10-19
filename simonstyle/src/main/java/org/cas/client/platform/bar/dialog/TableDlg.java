@@ -39,6 +39,9 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
 
 	private TableButton btnTable;
 	private TabbleSettingDlg settingTabbleDlg;
+	public static Integer[] typeAry = new Integer[]{11, 12, 13, 14, 21, 22, 31, 32, 33, 34, 41, 42 };
+	public static int[] widthAry    = new int[] {   74, 122,74,122, 170,74, 170,122,170,122,170,156};
+	public static int[] heightAry   = new int[] {  122, 74, 122,74, 74, 170,122,170,122,170,170,156};
 	
 	//if called by cmd_AddTable, the settingTabbleDlg will be null!
     public TableDlg(TabbleSettingDlg pFrame, TableButton button) {
@@ -82,18 +85,18 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         tfdY.setBounds(lblY.getX() + lblY.getWidth() + CustOpts.HOR_GAP, lblY.getY(), 
         		sptName.getWidth()/2 - lblY.getWidth() - CustOpts.HOR_GAP * 2, CustOpts.BTN_HEIGHT);
         
-        lblWidth.setBounds(CustOpts.HOR_GAP * 2, lblX.getY() + lblX.getHeight() + CustOpts.VER_GAP,
-        		lblWidth.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        tfdWidth.setBounds(lblWidth.getX() + lblWidth.getWidth() + CustOpts.HOR_GAP,
-        		lblWidth.getY(), sptName.getWidth()/2 - lblWidth.getWidth() - CustOpts.HOR_GAP * 2, CustOpts.BTN_HEIGHT);
-        
-        lblHeight.setBounds(tfdWidth.getX() + tfdWidth.getWidth() + CustOpts.HOR_GAP, lblWidth.getY(), 
-        		lblHeight.getPreferredSize().width, CustOpts.BTN_HEIGHT);
-        tfdHeight.setBounds(lblHeight.getX() + lblHeight.getWidth() + CustOpts.HOR_GAP, lblHeight.getY(), 
-        		sptName.getWidth()/2 - lblHeight.getWidth() - CustOpts.HOR_GAP * 2, CustOpts.BTN_HEIGHT);
+//        lblWidth.setBounds(CustOpts.HOR_GAP * 2, lblX.getY() + lblX.getHeight() + CustOpts.VER_GAP,
+//        		lblWidth.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+//        tfdWidth.setBounds(lblWidth.getX() + lblWidth.getWidth() + CustOpts.HOR_GAP,
+//        		lblWidth.getY(), sptName.getWidth()/2 - lblWidth.getWidth() - CustOpts.HOR_GAP * 2, CustOpts.BTN_HEIGHT);
+//        
+//        lblHeight.setBounds(tfdWidth.getX() + tfdWidth.getWidth() + CustOpts.HOR_GAP, lblWidth.getY(), 
+//        		lblHeight.getPreferredSize().width, CustOpts.BTN_HEIGHT);
+//        tfdHeight.setBounds(lblHeight.getX() + lblHeight.getWidth() + CustOpts.HOR_GAP, lblHeight.getY(), 
+//        		sptName.getWidth()/2 - lblHeight.getWidth() - CustOpts.HOR_GAP * 2, CustOpts.BTN_HEIGHT);
         
         // other-----------
-        sptType.setBounds(sptBounds.getX(), lblWidth.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
+        sptType.setBounds(sptBounds.getX(), lblX.getY() + CustOpts.BTN_HEIGHT + CustOpts.VER_GAP,
         		sptBounds.getWidth(), CustOpts.SEP_HEIGHT + 2);
         lblCategory.setBounds(sptType.getX() + CustOpts.HOR_GAP, sptType.getY() + sptType.getHeight()
                 + CustOpts.VER_GAP, lblCategory.getPreferredSize().width, CustOpts.BTN_HEIGHT);
@@ -177,20 +180,18 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         	
         	StringBuilder sql = new StringBuilder();
     		if(btnTable.getId() == -1) {	//if has no index means it's new table/
-    			String type = (String)cmbCategory.getSelectedItem();
+    			Integer type = (Integer)cmbCategory.getSelectedItem();
     			if(settingTabbleDlg == null){//if called from Cmd_AddTable, then give it negative tpye.
-    				type = "-" + type;
+    				type = -type;
     			}
-    			sql.append("INSERT INTO DINING_TABLE (name, posX, posY, width, height, type) VALUES ('")
+    			sql.append("INSERT INTO DINING_TABLE (name, posX, posY, type) VALUES ('")
     			.append(name).append("', ").append(tfdX.getText()).append(", ")
-    			.append(tfdY.getText()).append(", ").append(tfdWidth.getText())
-    			.append(", ").append(tfdHeight.getText()).append(", ")
+    			.append(tfdY.getText()).append(", ")
     			.append(type).append(")");
     		}else {
     			sql.append("Update DINING_TABLE set name = '").append(name).append("', posX = ")
     			.append(tfdX.getText()).append(", posY = ").append(tfdY.getText())
-    			.append(", width = ").append(tfdWidth.getText()).append(", height = ")
-    			.append(tfdHeight.getText()).append(", type = ").append(cmbCategory.getSelectedItem())
+    			.append(", type = ").append(cmbCategory.getSelectedItem())
     			.append(" where id = ").append(btnTable.getId());
     		}
         		
@@ -234,7 +235,7 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
 
         sptType = new PIMSeparator(OptionDlgConst.OPTION_OTHER);
         lblCategory = new JLabel(BarFrame.consts.Categary());
-        cmbCategory = new JComboBox<String>();
+        cmbCategory = new JComboBox<Integer>();
 
         ok = new JButton(DlgConst.OK);
         cancel = new JButton(DlgConst.CANCEL);
@@ -252,16 +253,16 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
 	        tfdWidth.setText("74");
 	        tfdHeight.setText("122");
         }
-        String[] typeAry = new String[]{"11","12","14","14", "21", "22", "31", "32", "33", "34", "41", "42"};
-        cmbCategory.setModel(new DefaultComboBoxModel<String>(typeAry));
+        
+        cmbCategory.setModel(new DefaultComboBoxModel<Integer>(typeAry));
         cmbCategory.setSelectedItem(String.valueOf(btnTable.getType()));
     
     
         ok.setMnemonic('o');
         ok.setMargin(new Insets(0, 0, 0, 0));
 
-        setBounds((CustOpts.SCRWIDTH - 280) / 2, (CustOpts.SCRHEIGHT - 260) / 2,
-        		280, LoginDlg.USERTYPE >= 2 ? 260 : 160); // 对话框的默认尺寸。
+        setBounds((CustOpts.SCRWIDTH - 280) / 2, (CustOpts.SCRHEIGHT - 210) / 2,
+        		280, LoginDlg.USERTYPE >= 2 ? 210 : 160); // 对话框的默认尺寸。
         getContentPane().setLayout(null);
         getRootPane().setDefaultButton(ok);
 
@@ -311,7 +312,7 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
     
     private PIMSeparator sptType;
     private JLabel lblCategory;
-    private JComboBox<String> cmbCategory;
+    private JComboBox<Integer> cmbCategory;
 
     private JButton ok;
     private JButton cancel;

@@ -2,13 +2,16 @@ package org.cas.client.platform.bar.uibeans;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
+import org.cas.client.platform.bar.dialog.TableDlg;
 import org.cas.client.platform.cascustomize.CustOptsConsts;
 import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.PIMPool;
@@ -24,6 +27,8 @@ public class TableButton extends JButton {
     private String openTime;
 
 	static String folerPath = CASUtility.getPIMDirPath();
+	
+	List<Integer> typeList = Arrays.asList(TableDlg.typeAry);
 	
     public TableButton() {
     	setBorder(null);
@@ -52,6 +57,8 @@ public class TableButton extends JButton {
 	        ImageIcon icon = new ImageIcon(temp);
 			
 	    	setIcon(icon);
+	    	int p = typeList.indexOf(type);
+	    	setSize(TableDlg.widthAry[p], TableDlg.heightAry[p]);
 		}
 	}
 
