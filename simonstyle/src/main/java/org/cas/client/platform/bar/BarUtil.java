@@ -249,7 +249,12 @@ public class BarUtil {
 //    }
 	
     public static String canadianPennyRound(String substring) {
-		Float price = Float.parseFloat(substring.trim());
+		Float price = 0.00f;
+		try{
+			price = Float.parseFloat(substring.trim());
+		}catch(Exception exp) {
+			L.e("BarUtil", "Wrong format found", exp);
+		}
 		int cent = Math.round(price * 100);
 		boolean isNegtive = cent < 0;
 		if(isNegtive) {

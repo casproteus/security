@@ -627,4 +627,13 @@ public class BarOption {
 	public static Object getDefaultTableName() {
 		return "Default";
 	}
+
+    public static int getCmdCustFontSize(){
+    	String fontSize = (String)CustOpts.custOps.getValue("CommandBtnFontSize");
+    	if(fontSize != null) {
+    		return Integer.valueOf(fontSize);
+    	}else {
+    		return 16;
+    	}
+    }
 }

@@ -1,6 +1,7 @@
 package org.cas.client.platform.bar.uibeans;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
@@ -22,7 +23,7 @@ public class FunctionButton extends JButton implements ISButton{
     		bg = new Color(153,153,255);
     	}
 		setBackground(bg);
-
+		setFont(new Font("Arial", Font.PLAIN, BarOption.getCmdCustFontSize()));
 		setBorder(BorderFactory.createEtchedBorder());
 	}
 
