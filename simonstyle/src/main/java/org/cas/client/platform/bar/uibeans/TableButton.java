@@ -20,7 +20,6 @@ import org.cas.client.resource.international.PaneConsts;
 public class TableButton extends JButton {
 	
     public static Color colorSelected = new Color(200, 200, 200);
-    public static Color colorDefault = new Color(255, 255, 255);
     
     private int id = -1;
     private int type;
@@ -46,14 +45,18 @@ public class TableButton extends JButton {
 		return type;
 	}
 
-	public void setType(int type) {
+	public void setType(int type, int status) {
 		if(type < 0) {
 			type = -1 * type;
 		}
 		this.type = type;
 		
 		if(type != 0) {
-			Image temp = PIMPool.pool.getImage(PaneConsts.IAMGE_PATH.concat("T".concat(String.valueOf(type)).concat(".png")));
+			String path = PaneConsts.IAMGE_PATH.concat("T").concat(String.valueOf(type));
+			if(status > 0) {
+				path = path.concat("s");
+			}
+			Image temp = PIMPool.pool.getImage(path.concat(".png"));
 	        ImageIcon icon = new ImageIcon(temp);
 			
 	    	setIcon(icon);
@@ -75,7 +78,10 @@ public class TableButton extends JButton {
 	}
 
 	public void open() {
-		setBackground(colorSelected);
+		Image temp = PIMPool.pool.getImage(PaneConsts.IAMGE_PATH.concat("T".concat(String.valueOf(type).concat("s")).concat(".png")));
+        ImageIcon icon = new ImageIcon(temp);
+		
+    	setIcon(icon);
 		String openTime = BarOption.df.format(new Date());
 		setOpenTime(openTime);
 		

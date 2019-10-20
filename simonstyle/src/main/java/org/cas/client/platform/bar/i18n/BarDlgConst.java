@@ -4,7 +4,7 @@ import javax.swing.Icon;
 
 public interface BarDlgConst {
     int SCROLLBAR_WIDTH = 40;
-    int SubTotal_HEIGHT = 70;
+    int TotalAreaHeight = 70;
 
     String semicolon = ";"; // 分隔符
     String delimiter = ","; // 分隔符

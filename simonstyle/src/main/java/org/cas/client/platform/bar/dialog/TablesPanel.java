@@ -210,12 +210,9 @@ public class TablesPanel extends PicturePane implements ComponentListener, Actio
             		tableToggleButton.setBounds(rs.getInt("posX"), rs.getInt("posY"), rs.getInt("width"), rs.getInt("height"));
             	}
             	tableToggleButton.setOpenTime(rs.getString("openTime"));
-            	if(rs.getInt("status") > 0) {
-            		tableToggleButton.setBackground(TableButton.colorSelected);
-            		tableToggleButton.setOpaque(true);
-            	}else {
-            		tableToggleButton.setOpaque(false);
-            	}
+            	
+            	tableToggleButton.setOpaque(false);
+            	
             	tableToggleButton.setMargin(new Insets(4, 4, 4, 4));
     			tableToggleButton.addActionListener(this);
     			int type = rs.getInt("type");
@@ -234,7 +231,7 @@ public class TablesPanel extends PicturePane implements ComponentListener, Actio
     					public void mouseMoved(MouseEvent e) {}
         	        });
     			}
-            	tableToggleButton.setType(type);		//it's rectanglee or round?
+            	tableToggleButton.setType(type, rs.getInt("status"));		//it's rectanglee or round?
     			add(tableToggleButton);
             	btnTables.add(tableToggleButton);
             }

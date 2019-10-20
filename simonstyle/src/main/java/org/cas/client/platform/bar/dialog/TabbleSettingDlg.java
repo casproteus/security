@@ -267,7 +267,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
             	tableToggleButton.setId(rs.getInt("ID"));
             	tableToggleButton.setText(rs.getString("Name"));
             	tableToggleButton.setBounds(rs.getInt("posX"), rs.getInt("posY"), rs.getInt("width"), rs.getInt("height"));
-            	tableToggleButton.setType(rs.getInt("type"));		//it's rectanglee or round?
+            	tableToggleButton.setType(rs.getInt("type"), 0);		//it's rectanglee or round?
             	//tableToggleButton.setMargin(new Insets(0, 0, 0, 0));
     			tableToggleButton.addActionListener(this);
     			tableToggleButton.addMouseMotionListener(new MouseMotionListener(){
