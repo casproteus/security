@@ -21,7 +21,7 @@ public class MenuButton extends JButton {
     	setBackground(bg);
 
 		setBorder(BorderFactory.createEtchedBorder());
-		setFont(new Font("Arial", Font.PLAIN, BarOption.getMenuCustFontSize()));
+		setFont(BarOption.getMenuCustFont());
         this.dspIndex = dspIndex;
     }
 

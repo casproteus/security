@@ -13,8 +13,6 @@ import java.awt.event.MouseMotionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -936,8 +934,8 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         tmpCol1.setWidth(60);
         tmpCol1.setPreferredWidth(60);
         PIMTableColumn tmpCol4 = table.getColumnModel().getColumn(3);
-        tmpCol4.setWidth(60);
-        tmpCol4.setPreferredWidth(60);
+        tmpCol4.setWidth(100);
+        tmpCol4.setPreferredWidth(100);
         //at first, teh tableWidth is 0, then after, the tableWidth will be 260. 
         PIMTableColumn tmpCol2 = table.getColumnModel().getColumn(1);
         int width = (tableWidth - tmpCol1.getWidth() - tmpCol4.getWidth())/2 - 3;
@@ -1167,25 +1165,31 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
             		BarFrame.consts.SCROLLBAR_WIDTH, BarFrame.consts.SCROLLBAR_WIDTH);
             btnLess.setBounds(btnMore.getX() - CustOpts.HOR_GAP - BarFrame.consts.SCROLLBAR_WIDTH, btnMore.getY(), 
             		BarFrame.consts.SCROLLBAR_WIDTH, BarFrame.consts.SCROLLBAR_WIDTH);
-    		lblSubTotle.setBounds(btnLess.getX() - 130, 
-    				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
-    				130, lblSubTotle.getPreferredSize().height);
+            
+            lblTotlePrice.setBounds(btnLess.getX() - 236, scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
+            		lblTotlePrice.getPreferredSize().width, BarFrame.consts.SubTotal_HEIGHT);
+    		valTotlePrice.setBounds(lblTotlePrice.getX() + lblTotlePrice.getWidth(), lblTotlePrice.getY(),
+    				236 - lblTotlePrice.getWidth(), BarFrame.consts.SubTotal_HEIGHT);
+    		
         }else {
-        	lblSubTotle.setBounds(scrContent.getX() + scrContent.getWidth() - 130, 
-    				scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
-    				130, lblSubTotle.getHeight());
+        	lblTotlePrice.setBounds(scrContent.getX() + scrContent.getWidth() - 236, scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
+        			lblTotlePrice.getPreferredSize().width, BarFrame.consts.SubTotal_HEIGHT);
+    		valTotlePrice.setBounds(lblTotlePrice.getX() + lblTotlePrice.getWidth(), lblTotlePrice.getY(),
+    				236 - lblTotlePrice.getWidth(), BarFrame.consts.SubTotal_HEIGHT);
         }
         lblDiscount.setBounds(scrContent.getX(), scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP, 
-        		scrContent.getWidth() / 5, lblSubTotle.getHeight());
-        lblServiceFee.setBounds(lblDiscount.getX() + lblDiscount.getWidth() + CustOpts.HOR_GAP, lblDiscount.getY(), 
+        		scrContent.getWidth() / 5, lblDiscount.getPreferredSize().height);
+        lblServiceFee.setBounds(lblDiscount.getX(), lblDiscount.getY() + lblDiscount.getHeight() + CustOpts.VER_GAP, 
         		scrContent.getWidth() / 4, lblSubTotle.getHeight());
-
-		lblTPS.setBounds(scrContent.getX(), getHeight() - CustOpts.BTN_HEIGHT, scrContent.getWidth() / 5,
-				lblTPS.getPreferredSize().height);
-		lblTVQ.setBounds(lblTPS.getX() + lblTPS.getWidth() + CustOpts.HOR_GAP, lblTPS.getY(), lblTPS.getWidth(), lblTPS.getHeight());
-		lblTotlePrice.setBounds(lblSubTotle.getX(), lblTVQ.getY(), lblTotlePrice.getPreferredSize().width, lblTVQ.getHeight());
-		valTotlePrice.setBounds(lblTotlePrice.getX() + lblTotlePrice.getWidth(), lblTotlePrice.getY(),
-				130 - lblTotlePrice.getWidth(), lblTotlePrice.getHeight() + CustOpts.VER_GAP);
+        lblSubTotle.setBounds(lblServiceFee.getX(), 
+        		lblServiceFee.getY() + lblServiceFee.getHeight() + CustOpts.VER_GAP,
+        		scrContent.getWidth() / 4, lblSubTotle.getPreferredSize().height);
+        
+		lblTPS.setBounds(lblDiscount.getX() + lblDiscount.getWidth() + CustOpts.HOR_GAP, lblDiscount.getY(),
+				scrContent.getWidth() / 5, lblTPS.getPreferredSize().height);
+		lblTVQ.setBounds(lblTPS.getX(), lblTPS.getY() + lblTPS.getHeight() + CustOpts.VER_GAP,
+				lblTPS.getWidth(), lblTPS.getHeight());
+		
     }
     
     void initComponent() {
@@ -1211,19 +1215,19 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
 													//in that method will check if the mirrorTable exist.
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setAutoscrolls(true);
-        table.setRowHeight(30);
         table.setCellEditable(false);
         table.setRenderAgent(this);
         table.setHasSorter(false);
         table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        table.setFont(new Font("Arial", Font.PLAIN, BarOption.getSelectionFontSize()));
+        table.setFont(BarOption.getSelectionFont());
         
         table.setDataVector(new Object[0][header.length], header);
         DefaultPIMTableCellRenderer tCellRender = new DefaultPIMTableCellRenderer();
         tCellRender.setOpaque(true);
         tCellRender.setBackground(Color.LIGHT_GRAY);
         table.getColumnModel().getColumn(1).setCellRenderer(tCellRender);
-        valTotlePrice.setFont(BarOption.lessBigFont);
+        lblTotlePrice.setFont(BarOption.lessBigFont);
+        valTotlePrice.setFont(BarOption.bigFont);
         //@do_not_work! valTotlePrice.setHorizontalAlignment(SwingConstants.RIGHT);
         //@work! valTotlePrice.setAlignmentX(Component.RIGHT_ALIGNMENT);
       //@do_not_work!valTotlePrice.setBackground(Color.RED);

@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
@@ -23,6 +25,7 @@ import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
+import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
 import org.cas.client.resource.international.DlgConst;
@@ -37,8 +40,8 @@ import org.cas.client.resource.international.OptionDlgConst;
  */
 public class TableDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener {
 
-	private TableButton btnTable;
 	private TabbleSettingDlg settingTabbleDlg;
+	private List<TableButton> btnTables = new ArrayList<TableButton>();
 	public static Integer[] typeAry = new Integer[]{11, 12, 13, 14, 21, 22, 31, 32, 33, 34, 41, 42 };
 	public static int[] widthAry    = new int[] {   74, 122,74,122, 170,74, 170,122,170,122,170,156};
 	public static int[] heightAry   = new int[] {  122, 74, 122,74, 74, 170,122,170,122,170,170,156};
@@ -46,13 +49,20 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
 	//if called by cmd_AddTable, the settingTabbleDlg will be null!
     public TableDlg(TabbleSettingDlg pFrame, TableButton button) {
     	super(pFrame);
-    	settingTabbleDlg = pFrame;
+    	if(pFrame != null) {
+    		settingTabbleDlg = pFrame;
+    	}
     	if(button == null) {
     		button =  new TableButton();
     		button.setId(-1);
+    	}else {
+    		for (TableButton tableButton : settingTabbleDlg.btnTables) {
+				if (tableButton.getBackground().equals(settingTabbleDlg.bg)) {
+					btnTables.add(tableButton);
+				}
+			}
     	}
-    	btnTable = button;
-        initDialog();
+        initDialog(button);
         reLayout();
     }
 
@@ -151,14 +161,6 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
             ActionEvent e) {
         Object o = e.getSource();
         if (o == ok) {
-            //check name
-        	String name = tfdName.getText();
-        	if(name.length() < 1 ) {
-        		JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
-        		tfdName.grabFocus();
-				return;
-        	}
-        	
         	//check width
     		try {
     			int i = Integer.valueOf(tfdWidth.getText());
@@ -176,52 +178,72 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         		tfdHeight.grabFocus();
 				return;
     		}
-        	
-        	
-        	StringBuilder sql = new StringBuilder();
-    		if(btnTable.getId() == -1) {	//if has no index means it's new table/
-    			Integer type = (Integer)cmbCategory.getSelectedItem();
-    			if(settingTabbleDlg == null){//if called from Cmd_AddTable, then give it negative tpye.
-    				type = -type;
-    			}
-    			sql.append("INSERT INTO DINING_TABLE (name, posX, posY, type) VALUES ('")
-    			.append(name).append("', ").append(tfdX.getText()).append(", ")
-    			.append(tfdY.getText()).append(", ")
-    			.append(type).append(")");
-    		}else {
-    			sql.append("Update DINING_TABLE set name = '").append(name).append("', posX = ")
-    			.append(tfdX.getText()).append(", posY = ").append(tfdY.getText())
-    			.append(", type = ").append(cmbCategory.getSelectedItem())
-    			.append(" where id = ").append(btnTable.getId());
-    		}
-        		
-        	try {
-        		PIMDBModel.getStatement().executeUpdate(sql.toString());
-                dispose();
-                if(settingTabbleDlg != null)
-                	settingTabbleDlg.initContent();
-                else
-                	((TablesPanel)BarFrame.instance.panels[0]).initContent();
-        	}catch(Exception exp) {
+    		
+            //check name
+        	String name = tfdName.getText();
+        	if(name.length() < 1 && btnTables.size() == 1) {
         		JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
+        		tfdName.grabFocus();
+				return;
         	}
+        	
+    		for (TableButton tableButton : btnTables) {
+				updateTable(tableButton.getText(), tableButton.getId());
+			}
+        	
         } else if (o == cancel) {
             dispose();
         }
     }
 
+	private void updateTable(String name, int id) {
+		StringBuilder sql = new StringBuilder();
+		if(id == -1) {	//if has no index means it's new table/
+			Integer type = (Integer)cmbCategory.getSelectedItem();
+			if(settingTabbleDlg == null){//if called from Cmd_AddTable, then give it negative tpye.
+				type = -type;
+			}
+			sql.append("INSERT INTO DINING_TABLE (name, posX, posY, type) VALUES ('")
+			.append(name).append("', ").append(tfdX.getText()).append(", ")
+			.append(tfdY.getText()).append(", ")
+			.append(type).append(")");
+		}else {
+			sql.append("Update DINING_TABLE set name = '").append(name).append("'");
+			if(tfdX.getText().length() > 0) {
+				sql.append(", posX = ").append(tfdX.getText());
+			}
+			if(tfdY.getText().length() > 0) {
+				sql.append(", posY = ").append(tfdY.getText());
+			}
+			
+			sql.append(", type = ").append(cmbCategory.getSelectedItem())
+			.append(" where id = ").append(id);
+		}
+			
+		try {
+			PIMDBModel.getStatement().executeUpdate(sql.toString());
+		    dispose();
+		    if(settingTabbleDlg != null)
+		    	settingTabbleDlg.initContent();
+		    else
+		    	((TablesPanel)BarFrame.instance.panels[0]).initContent();
+		}catch(Exception exp) {
+			JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
+		}
+	}
+
 
     @Override
     public Container getContainer() { return getContentPane(); }
 
-    private void initDialog() {
+    private void initDialog(TableButton btnTable) {
     	setModal(true);
         setTitle(btnTable.getText().length() > 0 ? btnTable.getText() : BarFrame.consts.TABLE());
         setResizable(false);
         // 初始化－－－－－－－－－－－－－－－－
         sptName = new PIMSeparator(BarFrame.consts.Name());
         lblName = new JLabel(BarFrame.consts.TableName());
-        tfdName = new JTextField(btnTable.getText());
+        tfdName = new JTextField(btnTables.size() == 1 ? btnTable.getText() : "");//----------
 
         sptBounds = new PIMSeparator(BarFrame.consts.Size());
         lblX = new JLabel("Horizontal");
@@ -241,9 +263,13 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         cancel = new JButton(DlgConst.CANCEL);
 
         // 属性设置－－－－－－－－－－－－－－
-
-        if(btnTable.getText().length() > 0) {
-	        tfdX.setText(String.valueOf(btnTable.getX()));
+        if(btnTables.size() > 1) {
+        	tfdX.setText("");
+	        tfdY.setText("");
+	        tfdWidth.setText("74");
+	        tfdHeight.setText("122");
+        }else if(btnTable.getText().length() > 0) {
+	        tfdX.setText(String.valueOf(btnTable.getX()));							//-----------
 	        tfdY.setText(String.valueOf(btnTable.getY()));
 	        tfdWidth.setText(String.valueOf(btnTable.getWidth()));
 	        tfdHeight.setText(String.valueOf(btnTable.getHeight()));
@@ -255,7 +281,7 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         }
         
         cmbCategory.setModel(new DefaultComboBoxModel<Integer>(typeAry));
-        cmbCategory.setSelectedItem(String.valueOf(btnTable.getType()));
+        cmbCategory.setSelectedItem(btnTable.getType());
     
     
         ok.setMnemonic('o');

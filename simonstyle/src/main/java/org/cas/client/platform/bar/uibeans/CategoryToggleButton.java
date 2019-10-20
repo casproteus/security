@@ -19,7 +19,7 @@ public class CategoryToggleButton extends JToggleButton {
         setBackground(bg);
 
 		setBorder(BorderFactory.createEtchedBorder());
-		setFont(new Font("Arial", Font.PLAIN, BarOption.getMenuCustFontSize()));
+		setFont(BarOption.getMenuCustFont());
         this.index = index;
     }
 

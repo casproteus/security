@@ -473,7 +473,7 @@ public class BarOption {
 		try{
 			return Integer.valueOf((String)CustOpts.custOps.getValue("TableRowHeight"));
 		}catch(Exception exp) {
-			return 30;
+			return 50;
 		}
 	}
 	public static void setTableRowHeight(String height) {
@@ -628,30 +628,46 @@ public class BarOption {
 		return "Default";
 	}
 
-    public static int getCmdCustFontSize(){
+	private static Font cmdFont = null;
+    public static Font getCmdCustFont(){
+    	if(cmdFont != null) 
+    		return cmdFont;
+    	
     	String fontSize = (String)CustOpts.custOps.getValue("CommandBtnFontSize");
     	if(fontSize != null) {
-    		return Integer.valueOf(fontSize);
+    		cmdFont = new Font("Arial", Font.BOLD, Integer.valueOf(fontSize));
     	}else {
-    		return 12;
+    		cmdFont = new Font("Arial", Font.BOLD, Integer.valueOf(12));
     	}
+    	return cmdFont;
     }
 
-    public static int getMenuCustFontSize(){
+    private static Font menuFont = null;
+    public static Font getMenuCustFont(){
+    	if(menuFont != null)
+    		return menuFont;
+    	
     	String fontSize = (String)CustOpts.custOps.getValue("MenuBtnFontSize");
     	if(fontSize != null) {
-    		return Integer.valueOf(fontSize);
+    		menuFont = new Font("Arial", Font.BOLD, Integer.valueOf(fontSize));
     	}else {
-    		return 12;
+    		menuFont = new Font("Arial", Font.BOLD, 12);
     	}
+    	return menuFont;
     }
 
-	public static int getSelectionFontSize() {
+    private static Font selectionFont = null;
+	public static Font getSelectionFont() {
+		if(selectionFont != null)
+			return selectionFont;
+		
     	String fontSize = (String)CustOpts.custOps.getValue("SelectionFontSize");
     	if(fontSize != null) {
-    		return Integer.valueOf(fontSize);
+    		selectionFont = new Font("Arial", Font.PLAIN, Integer.valueOf(fontSize));
     	}else {
-    		return 12;
+    		selectionFont = new Font("Arial", Font.PLAIN, 24);
     	}
+    	return selectionFont;
 	}
+	
 }

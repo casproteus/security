@@ -23,7 +23,7 @@ public class FunctionButton extends JButton implements ISButton{
     		bg = new Color(153,153,255);
     	}
 		setBackground(bg);
-		setFont(new Font("Arial", Font.PLAIN, BarOption.getCmdCustFontSize()));
+		setFont(BarOption.getCmdCustFont());
 		setBorder(BorderFactory.createEtchedBorder());
 	}
 

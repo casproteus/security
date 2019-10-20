@@ -24,6 +24,7 @@ import org.cas.client.platform.bar.BarUtil;
 import org.cas.client.platform.bar.action.Cmd_OpenDrawer;
 import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.print.PrintService;
+import org.cas.client.platform.bar.uibeans.NumButton;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -633,7 +634,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         // 初始化－－－－－－－－－－－－－－－－
 
         lblCashReceived = new JLabel(BarFrame.consts.CASH() + " : " + BarOption.getMoneySign());
-        valCashReceived = new JButton("");
+        valCashReceived = new NumButton("");
         lblDebitReceived = new JLabel(BarFrame.consts.DEBIT() + " : " + BarOption.getMoneySign());
         valDebitReceived = new JButton("");
         lblVisaReceived = new JLabel(BarFrame.consts.VISA() + " : " + BarOption.getMoneySign());
@@ -650,28 +651,28 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         lblLeft = new JLabel(BarFrame.consts.Due());
         valLeft = new JLabel("");
         
-        ok = new JButton("<html><h1 style='text-align: center; padding-bottom: 5px; color:#18F507;'>✔</h1></html>");
-        back = new JButton("←");
+        ok = new NumButton("<html><h1 style='text-align: center; padding-bottom: 5px; color:#18F507;'>✔</h1></html>");
+        back = new NumButton("←");
         
-        btn10 = new JButton(BarOption.getMoneySign() + "10");
-        btn20 = new JButton(BarOption.getMoneySign() + "20");
-        btn30 = new JButton(BarOption.getMoneySign() + "30");
-        btn40 = new JButton(BarOption.getMoneySign() + "40");
-        btn50 = new JButton(BarOption.getMoneySign() + "50");
-        btn100 = new JButton(BarOption.getMoneySign() + "100");
-        btnExact = new JButton(BarFrame.consts.EXACT());
+        btn10 = new NumButton(BarOption.getMoneySign() + "10");
+        btn20 = new NumButton(BarOption.getMoneySign() + "20");
+        btn30 = new NumButton(BarOption.getMoneySign() + "30");
+        btn40 = new NumButton(BarOption.getMoneySign() + "40");
+        btn50 = new NumButton(BarOption.getMoneySign() + "50");
+        btn100 = new NumButton(BarOption.getMoneySign() + "100");
+        btnExact = new NumButton(BarFrame.consts.EXACT());
         
-        num1 = new JButton("1");
-        num2 = new JButton("2");
-        num3 = new JButton("3");
-        num4 = new JButton("4");
-        num5 = new JButton("5");
-        num6 = new JButton("6");
-        num7 = new JButton("7");
-        num8 = new JButton("8");
-        num9 = new JButton("9");
-        num0 = new JButton("0");
-        point = new JButton(".");
+        num1 = new NumButton("1");
+        num2 = new NumButton("2");
+        num3 = new NumButton("3");
+        num4 = new NumButton("4");
+        num5 = new NumButton("5");
+        num6 = new NumButton("6");
+        num7 = new NumButton("7");
+        num8 = new NumButton("8");
+        num9 = new NumButton("9");
+        num0 = new NumButton("0");
+        point = new NumButton(".");
 
         // 属性设置－－－－－－－－－－－－－－
         // ok.setFont(CustOpts.custOps.getFontOfDefault());
@@ -804,31 +805,31 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 		point.setVisible(setFloatSupport);
 	}
 	
-	private JButton num1;
-    private JButton num2;
-    private JButton num3;
-    private JButton num4;
-    private JButton num5;
-    private JButton num6;
-    private JButton num7;
-    private JButton num8;
-    private JButton num9;
-    private JButton num0;
-    private JButton point;
-    private JButton back;
-    private JButton ok;
+	private NumButton num1;
+    private NumButton num2;
+    private NumButton num3;
+    private NumButton num4;
+    private NumButton num5;
+    private NumButton num6;
+    private NumButton num7;
+    private NumButton num8;
+    private NumButton num9;
+    private NumButton num0;
+    private NumButton point;
+    private NumButton back;
+    private NumButton ok;
 
-    private JButton btn10;
-    private JButton btn20;
-    private JButton btn30;
-    private JButton btn40;
-    private JButton btn50;
-    private JButton btn100;
-    private JButton btnExact;
+    private NumButton btn10;
+    private NumButton btn20;
+    private NumButton btn30;
+    private NumButton btn40;
+    private NumButton btn50;
+    private NumButton btn100;
+    private NumButton btnExact;
 
     
     private JLabel lblCashReceived;
-    public JButton valCashReceived;
+    public NumButton valCashReceived;
     private JLabel lblDebitReceived;
     public JButton valDebitReceived;
     private JLabel lblVisaReceived;
