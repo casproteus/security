@@ -396,7 +396,7 @@ public class CmdBtnsDlg extends JDialog implements ComponentListener, ActionList
     	//SalesPanel
     	btnCASH = new FunctionButton(BarFrame.consts.CASH());
     	btnDEBIT = new FunctionButton(BarFrame.consts.DEBIT());
-    	btnVISA = new FunctionButton(BarFrame.consts.VISA());
+    	btnVISA = new FunctionButton(BarOption.isCredit() ? BarFrame.consts.CREDIT() : BarFrame.consts.VISA());
         btnSplitBill = new FunctionButton(BarFrame.consts.SPLIT_BILL());
         btnRemoveItem = new FunctionButton(BarFrame.consts.REMOVEITEM());
         btnModify = new FunctionButton(BarFrame.consts.MODIFY());

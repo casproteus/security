@@ -39,7 +39,7 @@ public class Cmd_Pay implements SamActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		String o = ((FunctionButton)e.getSource()).getText();
+		String txtOnButton = ((FunctionButton)e.getSource()).getText();
 		
 		SalesPanel salesPanel = (SalesPanel)BarFrame.instance.panels[2];
 		BillPanel billPanel = salesPanel.billPanel;
@@ -65,15 +65,15 @@ public class Cmd_Pay implements SamActionListener {
 		}
 		//show dialog-------------------------------------
  		BarFrame.payDlg.setFloatSupport(true);
- 		if(o.equals(BarFrame.consts.CASH())) {
+ 		if(txtOnButton.equals(BarFrame.consts.CASH())) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterCashPayment());
- 		}else if(o.equals(BarFrame.consts.DEBIT())) {
+ 		}else if(txtOnButton.equals(BarFrame.consts.DEBIT())) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterDebitPayment());
- 		}else if(o.equals(BarFrame.consts.VISA())) {
+ 		}else if(txtOnButton.equals(BarFrame.consts.VISA()) || txtOnButton.equals(BarFrame.consts.CREDIT())) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterVisaPayment());
- 		}else if(o.equals(BarFrame.consts.MASTER())) {
+ 		}else if(txtOnButton.equals(BarFrame.consts.MASTER())) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterMasterPayment());
- 		}else if(o.equals(BarFrame.consts.GIFTCARD())) {
+ 		}else if(txtOnButton.equals(BarFrame.consts.GIFTCARD())) {
  			BarFrame.payDlg.setTitle(BarFrame.consts.EnterOtherPayment());
  		}
  		//init payDialog content base on bill.

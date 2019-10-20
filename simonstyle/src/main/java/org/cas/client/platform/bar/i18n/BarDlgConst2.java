@@ -122,6 +122,8 @@ public class BarDlgConst2 implements BarDlgConst{
     @Override
 	public String DEBIT() {return "借记";}
     @Override
+    public String CREDIT() {return "信用";}
+    @Override
 	public String VISA() {return "VISA";}
     @Override
 	public String MASTER() {return "MASTER";}

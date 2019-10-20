@@ -670,4 +670,9 @@ public class BarOption {
     	return selectionFont;
 	}
 	
+	public static boolean isCredit() {
+		return CustOpts.custOps.getValue("DisplayVisaAsCredit") == null ? false : 
+			"true".equals(CustOpts.custOps.getValue("DisplayVisaAsCredit"));
+	}
+	
 }

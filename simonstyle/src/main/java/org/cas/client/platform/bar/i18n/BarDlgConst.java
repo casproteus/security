@@ -70,6 +70,7 @@ public interface BarDlgConst {
     String PRINT_BILL();
 
     String DEBIT();
+    String CREDIT();
     String VISA();
     String MASTER();
     String CANCEL_ALL();
