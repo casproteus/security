@@ -633,7 +633,25 @@ public class BarOption {
     	if(fontSize != null) {
     		return Integer.valueOf(fontSize);
     	}else {
-    		return 16;
+    		return 12;
     	}
     }
+
+    public static int getMenuCustFontSize(){
+    	String fontSize = (String)CustOpts.custOps.getValue("MenuBtnFontSize");
+    	if(fontSize != null) {
+    		return Integer.valueOf(fontSize);
+    	}else {
+    		return 12;
+    	}
+    }
+
+	public static int getSelectionFontSize() {
+    	String fontSize = (String)CustOpts.custOps.getValue("SelectionFontSize");
+    	if(fontSize != null) {
+    		return Integer.valueOf(fontSize);
+    	}else {
+    		return 12;
+    	}
+	}
 }

@@ -1,6 +1,7 @@
 package org.cas.client.platform.bar.uibeans;
 
 import java.awt.Color;
+import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -20,7 +21,7 @@ public class MenuButton extends JButton {
     	setBackground(bg);
 
 		setBorder(BorderFactory.createEtchedBorder());
-		
+		setFont(new Font("Arial", Font.PLAIN, BarOption.getMenuCustFontSize()));
         this.dspIndex = dspIndex;
     }
 

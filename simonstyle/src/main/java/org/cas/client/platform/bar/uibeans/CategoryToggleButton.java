@@ -1,6 +1,7 @@
 package org.cas.client.platform.bar.uibeans;
 
 import java.awt.Color;
+import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JToggleButton;
@@ -18,7 +19,7 @@ public class CategoryToggleButton extends JToggleButton {
         setBackground(bg);
 
 		setBorder(BorderFactory.createEtchedBorder());
-		
+		setFont(new Font("Arial", Font.PLAIN, BarOption.getMenuCustFontSize()));
         this.index = index;
     }
 

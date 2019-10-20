@@ -127,8 +127,7 @@ public class BarUtil {
     	return formatter.format(number);
     }
     
-    public static boolean isNumber(
-            int pKeyCode) {
+    public static boolean isNumber(int pKeyCode) {
         return (pKeyCode >= 48 && pKeyCode <= 58) || (pKeyCode >= 96 && pKeyCode <= 106);
     }
 

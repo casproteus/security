@@ -1216,6 +1216,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         table.setRenderAgent(this);
         table.setHasSorter(false);
         table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        table.setFont(new Font("Arial", Font.PLAIN, BarOption.getSelectionFontSize()));
         
         table.setDataVector(new Object[0][header.length], header);
         DefaultPIMTableCellRenderer tCellRender = new DefaultPIMTableCellRenderer();
