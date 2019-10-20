@@ -133,7 +133,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
 				}
         		//if no table selected, then Add a new table();
         		if(!isAnyTableButtonSelected) {
-        			new TableDlg(this, new TableButton()).setVisible(true);
+        			new TableDlg(this, null).setVisible(true);
         		}
         		initContent();
         		btnTables.get(btnTables.size() - 1).setBackground(bg);

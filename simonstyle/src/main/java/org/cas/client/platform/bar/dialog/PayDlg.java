@@ -30,7 +30,6 @@ import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.resource.international.DlgConst;
-import org.jfree.chart.title.Title;
 
 public class PayDlg extends JDialog implements ActionListener, ComponentListener, WindowListener{
 	

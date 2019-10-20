@@ -55,6 +55,7 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
     	if(button == null) {
     		button =  new TableButton();
     		button.setId(-1);
+    		btnTables.add(button);
     	}else {
     		for (TableButton tableButton : settingTabbleDlg.btnTables) {
 				if (tableButton.getBackground().equals(settingTabbleDlg.bg)) {
@@ -181,15 +182,17 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
     		
             //check name
         	String name = tfdName.getText();
-        	if(name.length() < 1 && btnTables.size() == 1) {
+        	if(name.length() < 1 && btnTables.size() == 1) { //if modifying a single table, the name shouldn't be empty.
         		JOptionPane.showMessageDialog(this, DlgConst.InvalidInput);
         		tfdName.grabFocus();
 				return;
+        	}else if(btnTables.size() == 1) {				//single table modifying or creating new table.
+        		updateTable(name, btnTables.get(0).getId());
+        	}else {											//multi tables modifying.
+	    		for (TableButton tableButton : btnTables) {
+					updateTable(tableButton.getText(), tableButton.getId());
+				}
         	}
-        	
-    		for (TableButton tableButton : btnTables) {
-				updateTable(tableButton.getText(), tableButton.getId());
-			}
         	
         } else if (o == cancel) {
             dispose();
