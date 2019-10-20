@@ -1166,16 +1166,16 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
             btnLess.setBounds(btnMore.getX() - CustOpts.HOR_GAP - BarFrame.consts.SCROLLBAR_WIDTH, btnMore.getY(), 
             		BarFrame.consts.SCROLLBAR_WIDTH, BarFrame.consts.SCROLLBAR_WIDTH);
             
-            lblTotlePrice.setBounds(btnLess.getX() - 236, scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
+            lblTotlePrice.setBounds(btnLess.getX() - 150, scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
             		lblTotlePrice.getPreferredSize().width, BarFrame.consts.SubTotal_HEIGHT);
     		valTotlePrice.setBounds(lblTotlePrice.getX() + lblTotlePrice.getWidth(), lblTotlePrice.getY(),
-    				236 - lblTotlePrice.getWidth(), BarFrame.consts.SubTotal_HEIGHT);
+    				150 - lblTotlePrice.getWidth(), BarFrame.consts.SubTotal_HEIGHT);
     		
         }else {
-        	lblTotlePrice.setBounds(scrContent.getX() + scrContent.getWidth() - 236, scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
+        	lblTotlePrice.setBounds(scrContent.getX() + scrContent.getWidth() - 150, scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP,
         			lblTotlePrice.getPreferredSize().width, BarFrame.consts.SubTotal_HEIGHT);
     		valTotlePrice.setBounds(lblTotlePrice.getX() + lblTotlePrice.getWidth(), lblTotlePrice.getY(),
-    				236 - lblTotlePrice.getWidth(), BarFrame.consts.SubTotal_HEIGHT);
+    				150 - lblTotlePrice.getWidth(), BarFrame.consts.SubTotal_HEIGHT);
         }
         lblDiscount.setBounds(scrContent.getX(), scrContent.getY() + scrContent.getHeight() + CustOpts.VER_GAP, 
         		scrContent.getWidth() / 5, lblDiscount.getPreferredSize().height);
@@ -1201,7 +1201,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         lblSubTotle = new JLabel(BarFrame.consts.Subtotal());
         lblTPS = new JLabel(BarFrame.consts.GST());
         lblTVQ = new JLabel(BarFrame.consts.QST());
-        lblTotlePrice = new JLabel(BarFrame.consts.Total() + " : " + BarOption.getMoneySign());
+        lblTotlePrice = new JLabel();
         valTotlePrice = new JLabel();
         btnMore = new ArrowButton("<html><h1 style='text-align: center; padding-bottom: 5px; color:#18F507;'>+</h1></html>");
         btnLess = new ArrowButton("<html><h1 style='text-align: center; padding-bottom: 5px; color:#FB112C;'>-</h1></html>");

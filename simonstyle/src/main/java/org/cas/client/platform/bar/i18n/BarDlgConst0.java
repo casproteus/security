@@ -277,7 +277,7 @@ public class BarDlgConst0 implements BarDlgConst{
     @Override
 	public String Price() {return "Price";}
     @Override
-	public String Subtotal() {return "SubTotal";}
+	public String Subtotal() {return "Sub";}
     @Override
 	public String Total() {return "Total";}
     @Override
