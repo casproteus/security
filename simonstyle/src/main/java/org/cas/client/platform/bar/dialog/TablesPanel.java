@@ -109,7 +109,7 @@ public class TablesPanel extends PicturePane implements ComponentListener, Actio
 	            }
 			}
 			//if before is not selected, then update the status
-        	if(tableToggle.getBackground() != TableButton.colorSelected){
+        	if(tableToggle.getStatus() == 0){
         		tableToggle.open();
 			}
         	//update ui's time field.

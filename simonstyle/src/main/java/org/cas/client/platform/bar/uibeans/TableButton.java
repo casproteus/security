@@ -18,8 +18,6 @@ import org.cas.client.resource.international.PaneConsts;
 
 public class TableButton extends JButton {
 	
-    public static Color colorSelected = new Color(200, 200, 200);
-    
     private int id = -1;
     private int type;
     private String openTime;
@@ -27,6 +25,7 @@ public class TableButton extends JButton {
 	static String folerPath = CASUtility.getPIMDirPath();
 	
 	List<Integer> typeList = Arrays.asList(TableDlg.typeAry);
+	private int status;
 	
     public TableButton() {
     	setBorder(null);
@@ -45,6 +44,7 @@ public class TableButton extends JButton {
 	}
 
 	public void setType(int type, int status) {
+		this.setStatus(status);
 		if(type < 0) {
 			type = -1 * type;
 		}
@@ -75,6 +75,7 @@ public class TableButton extends JButton {
 	}
 
 	public void open() {
+		setStatus(1);
 		Image temp = PIMPool.pool.getImage(PaneConsts.IAMGE_PATH.concat("T".concat(String.valueOf(type).concat("s")).concat(".png")));
         ImageIcon icon = new ImageIcon(temp);
 		
@@ -84,6 +85,14 @@ public class TableButton extends JButton {
 		
 		BarFrame.instance.openATable(getText(), openTime);
 		BarFrame.instance.setCurBillID(BarFrame.instance.createAnEmptyBill(getText(), openTime, 0));
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 }

@@ -633,7 +633,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
         // 初始化－－－－－－－－－－－－－－－－
 
         lblCashReceived = new JLabel(BarFrame.consts.CASH() + " : " + BarOption.getMoneySign());
-        valCashReceived = new NumButton("");
+        valCashReceived = new JButton("");
         lblDebitReceived = new JLabel(BarFrame.consts.DEBIT() + " : " + BarOption.getMoneySign());
         valDebitReceived = new JButton("");
         lblVisaReceived = new JLabel(BarFrame.consts.VISA() + " : " + BarOption.getMoneySign());
@@ -828,7 +828,7 @@ public class PayDlg extends JDialog implements ActionListener, ComponentListener
 
     
     private JLabel lblCashReceived;
-    public NumButton valCashReceived;
+    public JButton valCashReceived;
     private JLabel lblDebitReceived;
     public JButton valDebitReceived;
     private JLabel lblVisaReceived;
