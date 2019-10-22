@@ -1,0 +1,1 @@
+Don't deleted the folder lib, otherwise it will fail when copying the jars into the lib folder. and the zip file generated at last will be 0KB!
