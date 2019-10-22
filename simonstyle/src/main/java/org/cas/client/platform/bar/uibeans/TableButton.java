@@ -12,7 +12,6 @@ import javax.swing.JButton;
 import org.cas.client.platform.bar.dialog.BarFrame;
 import org.cas.client.platform.bar.dialog.BarOption;
 import org.cas.client.platform.bar.dialog.TableDlg;
-import org.cas.client.platform.cascustomize.CustOptsConsts;
 import org.cas.client.platform.casutil.CASUtility;
 import org.cas.client.platform.casutil.PIMPool;
 import org.cas.client.resource.international.PaneConsts;
@@ -51,18 +50,16 @@ public class TableButton extends JButton {
 		}
 		this.type = type;
 		
-		if(type != 0) {
-			String path = PaneConsts.IAMGE_PATH.concat("T").concat(String.valueOf(type));
-			if(status > 0) {
-				path = path.concat("s");
-			}
-			Image temp = PIMPool.pool.getImage(path.concat(".png"));
-	        ImageIcon icon = new ImageIcon(temp);
-			
-	    	setIcon(icon);
-	    	int p = typeList.indexOf(type);
-	    	setSize(TableDlg.widthAry[p], TableDlg.heightAry[p]);
+		String path = PaneConsts.IAMGE_PATH.concat("T").concat(String.valueOf(type));
+		if(status > 0) {
+			path = path.concat("s");
 		}
+		Image temp = PIMPool.pool.getImage(path.concat(".png"));
+        ImageIcon icon = new ImageIcon(temp);
+		
+    	setIcon(icon);
+    	int p = typeList.indexOf(type);
+    	setSize(TableDlg.widthAry[p], TableDlg.heightAry[p]);
 	}
 
 	public void setId(int index) {

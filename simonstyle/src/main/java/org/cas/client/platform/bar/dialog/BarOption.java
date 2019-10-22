@@ -317,7 +317,7 @@ public class BarOption {
     }
     
     public static boolean isSingleUser() {
-    	return "true".equals(CustOpts.custOps.getValue("SingleUserMode"));
+    	return "true".equals(CustOpts.custOps.getValue("SingleUserMode")) || isCounterMode();	//if it's counter mode, then it must be single user mode.
     }
     public static void setSingleUser(String is) {
     	CustOpts.custOps.setKeyAndValue("SingleUserMode", is);
@@ -625,7 +625,7 @@ public class BarOption {
 	}
 	
 	public static Object getDefaultTableName() {
-		return "Default";
+		return "D";
 	}
 
 	private static Font cmdFont = null;

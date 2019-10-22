@@ -3,12 +3,12 @@
     <skipIfNotSupported/>
     <programGroup defaultName="SANJI POS" location="applications"/>
       <shortcut
-         name="SANJI POS"
+         name="SanjiPos"
          programGroup="yes"
          desktop="yes"
          applications="no"
          startMenu="yes"
-         startup="yes"
+         startup="no"
          target="$INSTALL_PATH\bin\POS.vbs"
          commandLine=""
          description=""
@@ -16,6 +16,6 @@
          iconIndex="0"
          initialState="noShow">
 
-         <createForPack name="STGOSecurityService"/>
+         <createForPack name="SanjiPosService"/>
        </shortcut>
 </shortcuts>

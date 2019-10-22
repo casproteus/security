@@ -42,9 +42,9 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
 
 	private TabbleSettingDlg settingTabbleDlg;
 	private List<TableButton> btnTables = new ArrayList<TableButton>();
-	public static Integer[] typeAry = new Integer[]{11, 12, 13, 14, 21, 22, 31, 32, 33, 34, 41, 42 };
-	public static int[] widthAry    = new int[] {   74, 122,74,122, 170,74, 170,122,170,122,170,156};
-	public static int[] heightAry   = new int[] {  122, 74, 122,74, 74, 170,122,170,122,170,170,156};
+	public static Integer[] typeAry = new Integer[]{0,11, 12, 13, 14, 21, 22, 31, 32, 33, 34, 41, 42 };
+	public static int[] widthAry    = new int[] {42, 42, 69,42,69, 96,42, 96,69,96,69,96,96};
+	public static int[] heightAry   = new int[] {42, 69, 42, 69,42, 42, 96,69,96,69,96,96,96};
 	
 	//if called by cmd_AddTable, the settingTabbleDlg will be null!
     public TableDlg(TabbleSettingDlg pFrame, TableButton button) {
@@ -235,7 +235,6 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
 		}
 	}
 
-
     @Override
     public Container getContainer() { return getContentPane(); }
 
@@ -269,8 +268,8 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         if(btnTables.size() > 1) {
         	tfdX.setText("");
 	        tfdY.setText("");
-	        tfdWidth.setText("74");
-	        tfdHeight.setText("122");
+	        tfdWidth.setText("42");
+	        tfdHeight.setText("69");
         }else if(btnTable.getText().length() > 0) {
 	        tfdX.setText(String.valueOf(btnTable.getX()));							//-----------
 	        tfdY.setText(String.valueOf(btnTable.getY()));
@@ -279,8 +278,8 @@ public class TableDlg extends JDialog implements ICASDialog, ActionListener, Com
         }else {
 	        tfdX.setText("200");
 	        tfdY.setText("400");
-	        tfdWidth.setText("74");
-	        tfdHeight.setText("122");
+	        tfdWidth.setText("42");
+	        tfdHeight.setText("69");
         }
         
         cmbCategory.setModel(new DefaultComboBoxModel<Integer>(typeAry));

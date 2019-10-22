@@ -26,6 +26,7 @@ import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
 import org.cas.client.platform.pimmodel.PIMDBModel;
 import org.cas.client.platform.pimmodel.PIMRecord;
+import org.cas.client.platform.pimview.PicturePane;
 
 public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListener, ComponentListener, MouseListener{
 	
@@ -34,6 +35,8 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
     private TableButton btnPressed;
     private boolean isDragged;
     private int xGap, yGap;
+
+	private PicturePane picturePane;
     
     static ArrayList<TableButton> btnTables = new ArrayList<TableButton>();
     
@@ -223,18 +226,19 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
     }
 
     private void initDialog() {
+    	picturePane = new PicturePane(CustOpts.custOps.getMainPaneBGImg());
         btnMore = new JButton("+");
         btnLess = new JButton("-");
         btnModify = new JButton(BarFrame.consts.MODIFY());
 
         // border----------
         setBounds(BarFrame.instance.getX(), BarFrame.instance.getY(), BarFrame.instance.getWidth(), BarFrame.instance.getHeight());
-        setLayout(null);
+        picturePane.setLayout(null);
 
         // built
-        add(btnMore);
-        add(btnLess);
-        add(btnModify);
+        picturePane.add(btnMore);
+        picturePane.add(btnLess);
+        picturePane.add(btnModify);
 
         // add listener
         addComponentListener(this);
@@ -243,6 +247,8 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
         btnLess.addActionListener(this);
         btnModify.addActionListener(this);
         initContent();
+        
+        add(picturePane);
     }
 
     // menu and category buttons must be init after initContent---------
@@ -251,7 +257,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
 		for (int i = btnTables.size() - 1; i >=0; i--) {
 			TableButton tableToggleButton = btnTables.get(i);
 			btnTables.remove(i);
-			remove(tableToggleButton);
+			picturePane.remove(tableToggleButton);
 		}
 		//renite buttons.
 		try {
@@ -282,7 +288,7 @@ public class TabbleSettingDlg extends JDialog implements ICASDialog, ActionListe
 					public void mouseMoved(MouseEvent e) {}
     	        });
     			tableToggleButton.addMouseListener(this);
-    			this.add(tableToggleButton);
+    			picturePane.add(tableToggleButton);
     			
             	btnTables.add(tableToggleButton);
             }

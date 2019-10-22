@@ -126,7 +126,7 @@
 	</panels>
 
 	<packs>
-		<pack id="STGOSecurityService" name="STGOSecurityService" required="yes" preselected="yes">
+		<pack id="SanjiPosService" name="SanjiPosService" required="yes" preselected="yes">
 			<description>SanjiPos Service</description>
 			<file src="staging/bin" targetdir="$INSTALL_PATH" override="update" />
             <executable os="unix" targetfile="$INSTALL_PATH/bin/security-service.sh"
@@ -206,29 +206,29 @@
             			
 		</pack>
 		
-		<pack id="STGOSecurityServiceLib" name="STGOSecurityService Libraries" required="yes" preselected="yes">
+		<pack id="SanjiPosServiceLib" name="SanjiPosService Libraries" required="yes" preselected="yes">
 			<description>The SanjiPos Service libraries.</description>
 			<file src="staging/lib" targetdir="$INSTALL_PATH" override="update" />
 		</pack>
 		
-		<pack id="STGOSecurityServiceConfig" name="STGOSecurityService Configurations" required="yes" preselected="yes">
+		<pack id="SanjiPosServiceConfig" name="SanjiPosService Configurations" required="yes" preselected="yes">
 			<description>SanjiPos Service configuration files.</description>
 			<file src="staging/etc" targetdir="$INSTALL_PATH" override="update" />
 			<parsable targetfile="$INSTALL_PATH/etc/mule/security/service.properties" type="javaprop" />
 		</pack>
 		
-		<pack id="STGOSecurityServiceJre" name="STGOSecurityService Jre" required="yes" preselected="yes">
+		<pack id="SanjiPosServiceJre" name="SanjiPosService Jre" required="yes" preselected="yes">
 			<description>The SanjiPos Service libraries.</description>
 			<file src="staging/jre" targetdir="$INSTALL_PATH" override="update" />
 		</pack>
 		
-		<pack id="STGOSecurityServiceDB" name="STGOSecurityService DB" required="yes" preselected="yes">
+		<pack id="SanjiPosServiceDB" name="SanjiPosService DB" required="yes" preselected="yes">
 			<description>The SanjiPos Service configuration files.</description>
 			<file src="staging/db" targetdir="$INSTALL_PATH" override="update" />
 			<parsable targetfile="$INSTALL_PATH/db/security.sql"/>
 		</pack>
 		
-		<pack id="STGOSecurityServiceLegal" name="STGOSecurityService Legal" required="yes" preselected="yes">
+		<pack id="SanjiPosServiceLegal" name="SanjiPosService Legal" required="yes" preselected="yes">
 			<description>The SanjiPos Service legal details.</description>
 			<file src="staging/README.txt" targetdir="$INSTALL_PATH" override="update" />
 			<file src="staging/License.txt" targetdir="$INSTALL_PATH" override="update" />
