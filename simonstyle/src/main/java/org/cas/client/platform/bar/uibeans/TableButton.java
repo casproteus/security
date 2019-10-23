@@ -55,6 +55,13 @@ public class TableButton extends JButton {
 			path = path.concat("s");
 		}
 		Image temp = PIMPool.pool.getImage(path.concat(".png"));
+		if(temp == null) {
+			path = PaneConsts.IAMGE_PATH.concat("T").concat(String.valueOf(type));
+			if(status > 0) {
+				path = path.concat("s");
+			}
+			temp = PIMPool.pool.getImage(path.concat(".png"));
+		}
         ImageIcon icon = new ImageIcon(temp);
 		
     	setIcon(icon);

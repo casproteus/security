@@ -2,7 +2,6 @@ package org.cas.client.platform.bar.dialog.modifyDish;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -33,7 +32,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -50,8 +48,6 @@ import org.cas.client.platform.bar.dialog.BillPanel;
 import org.cas.client.platform.bar.dialog.SalesPanel;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.model.DBConsts;
-import org.cas.client.platform.casbeans.PIMAdjuster;
-import org.cas.client.platform.casbeans.WrapLayout;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
 import org.cas.client.platform.cascustomize.CustOpts;
 import org.cas.client.platform.casutil.ErrorUtil;
@@ -73,7 +69,9 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     HashMap<Integer, String> selectionsMap = new HashMap<Integer, String>();
     
 	BillPanel billPanel = ((SalesPanel)BarFrame.instance.panels[2]).billPanel;
-	
+
+	private String defaultTabName = "     ";
+
     private static AddModificationDialog instance;
     public static AddModificationDialog getInstance() {
     	if(instance == null) {
@@ -146,7 +144,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         btnApply =  new JButton(BarFrame.consts.Apply());
         btnDelete = new JButton(BarFrame.consts.Delete());
         resetBTN = new JButton(BarFrame.consts.RESET());
-        btnOK = new JButton(BarFrame.consts.OK());
+        btnClose = new JButton(BarFrame.consts.Close());
 
         // properties-------------------------
         midLabel.setLabelFor(modificationList);
@@ -198,7 +196,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         getContentPane().add(resetBTN);
         getContentPane().add(txaCurContent);
         getContentPane().add(topLabel);
-        getContentPane().add(btnOK);
+        getContentPane().add(btnClose);
 
         // listeners------------------------
         btnApplyToList.addActionListener(this);
@@ -206,7 +204,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         btnApply.addActionListener(this);
         btnDelete.addActionListener(this);
         resetBTN.addActionListener(this);
-        btnOK.addActionListener(this);
+        btnClose.addActionListener(this);
         
         tabbedPane.addChangeListener(this);
         modificationList.addListSelectionListener(this);
@@ -220,17 +218,17 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     }
 
     private void reLayout() {
-        btnOK.setBounds(getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.BTN_WIDTH - 2 * CustOpts.HOR_GAP, 
+        btnClose.setBounds(getWidth() - CustOpts.SIZE_EDGE * 2 - CustOpts.BTN_WIDTH - 2 * CustOpts.HOR_GAP, 
         		getHeight() - CustOpts.BTN_HEIGHT * 2 - CustOpts.SIZE_EDGE - CustOpts.SIZE_TITLE - 2 * CustOpts.VER_GAP,
                 CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT * 2);
 
         topLabel.setBounds(CustOpts.HOR_GAP, CustOpts.VER_GAP,
-        		btnOK.getX() + btnOK.getWidth(), CustOpts.LBL_HEIGHT);
+        		btnClose.getX() + btnClose.getWidth(), CustOpts.LBL_HEIGHT);
         txaCurContent.setBounds(topLabel.getX(), topLabel.getY() + CustOpts.LBL_HEIGHT, 
         		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP,
                 CustOpts.LBL_HEIGHT * 3);
         int width = 120;
-        btnApplyToList.setBounds(btnOK.getX() + btnOK.getWidth() - width, txaCurContent.getY() + txaCurContent.getHeight() + CustOpts.VER_GAP,
+        btnApplyToList.setBounds(btnClose.getX() + btnClose.getWidth() - width, txaCurContent.getY() + txaCurContent.getHeight() + CustOpts.VER_GAP,
         		width, CustOpts.BTN_HEIGHT);
         btnApplyToCategory.setBounds(btnApplyToList.getX() - CustOpts.HOR_GAP - width, btnApplyToList.getY(),
         		width, CustOpts.BTN_HEIGHT);
@@ -240,13 +238,13 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         
         tabbedPane.setBounds(midLabel.getX(), midLabel.getY() + midLabel.getHeight() + CustOpts.VER_GAP, // "可用类别"列表框
         		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP, 
-                btnOK.getY() - 2 * CustOpts.VER_GAP - midLabel.getY() - midLabel.getHeight());
+                btnClose.getY() - 2 * CustOpts.VER_GAP - midLabel.getY() - midLabel.getHeight());
         scrollPanelAllMarks.setBounds(midLabel.getX(), CustOpts.VER_GAP, // "可用类别"列表框
         		getWidth() - 2 * CustOpts.SIZE_EDGE - 3 * CustOpts.HOR_GAP, 
-                btnOK.getY() - 2 * CustOpts.VER_GAP);
+                btnClose.getY() - 2 * CustOpts.VER_GAP);
         initPanelListContent();
         
-        lblDspIdx.setBounds(tabbedPane.getX(), btnOK.getY(),
+        lblDspIdx.setBounds(tabbedPane.getX(), btnClose.getY(),
         		lblDspIdx.getPreferredSize().width, CustOpts.BTN_HEIGHT);
         valDspIdx.setBounds(lblDspIdx.getX() + lblDspIdx.getWidth() + CustOpts.HOR_GAP, lblDspIdx.getY(),
         		30, CustOpts.BTN_HEIGHT);
@@ -260,11 +258,11 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         if(BillListPanel.curDish == null) {
             btnApply.setBounds(valPrice.getX() + valPrice.getWidth() + CustOpts.HOR_GAP, valPrice.getY(),
             		CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
-        	btnDelete.setBounds(btnApply.getX() + btnApply.getWidth() + CustOpts.HOR_GAP, btnOK.getY(),
+        	btnDelete.setBounds(btnApply.getX() + btnApply.getWidth() + CustOpts.HOR_GAP, btnClose.getY(),
         			CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
         }else {
             btnApply.setBounds(valPrice.getX() + valPrice.getWidth() + CustOpts.HOR_GAP, valPrice.getY(), 0, 0);
-        	btnDelete.setBounds(btnApply.getX() + btnApply.getWidth() + CustOpts.HOR_GAP, btnOK.getY(), 0, 0);
+        	btnDelete.setBounds(btnApply.getX() + btnApply.getWidth() + CustOpts.HOR_GAP, btnClose.getY(), 0, 0);
         }
 //        resetBTN.setBounds(btnDelete.getX(), btnDelete.getY() + btnDelete.getHeight() + CustOpts.VER_GAP,
 //                CustOpts.BTN_WIDTH, CustOpts.BTN_HEIGHT);
@@ -290,15 +288,23 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         if(isSettingMode) {
         	listModel = new DefaultListModel<CheckItem>();
         	initTabbedPaneContent();
+        	if(tabbedPane.getTabCount() > 0) {
+        		tabbedPane.setSelectedIndex(idx);
+        	}
         }else {
         	initPanelListContent();
         }
         initSelectionMap();
         txaCurContent.setText(selectionsMap.get(idx));
+        reLayout();
     }
 
 	private void initTabbedPaneContent() {
 		tabbedPane.removeAll(); 	//this removeAll will trigger the stateChanged method.
+		
+		//must add a blank tab for adding none classified lales and for adding new category. (category and label are saved in same table, with different type)
+		tabbedPane.add(defaultTabName , new PIMScrollPane());
+		
         StringBuilder sql = new StringBuilder("select * from modification where type < 0 order by type desc");
         try {
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
@@ -326,18 +332,32 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 		}
 	}
 	
+	//for grouped mark lables.
 	private void initPanelListContent() {
 		panelList.removeAll();
+		
 		int i = 0;
+		int y = 0;
+		//prepare the default panel
+		JPanel jpCategorizedMarks = new JPanel();
+		jpCategorizedMarks.setBorder(new TitledBorder(defaultTabName));
+		jpCategorizedMarks.setBackground(backgrounds[i%10]);
+		int height = initPanelContent(jpCategorizedMarks, 0); 	//because the category's type was defined to be from -1 to -n, and modification was from 0~n
+		jpCategorizedMarks.setPreferredSize(jpCategorizedMarks.getPreferredSize());
+		
+		jpCategorizedMarks.setBounds(0, y, panelList.getWidth(), height + 39);
+		panelList.add(jpCategorizedMarks);
+		i++;
+		y += jpCategorizedMarks.getHeight();
+		
 		//add other panels;
         StringBuilder sql = new StringBuilder("select * from modification where type < 0 order by type desc");
         try {
 			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
             rs.beforeFirst();
-            int y = 0;
+            
             while (rs.next()) {
-            	
-            	JPanel jpCategorizedMarks = new JPanel();
+            	jpCategorizedMarks = new JPanel();
         		//jpCategorizedMarks.setLayout(new WrapLayout());
             	switch (LoginDlg.USERLANG) {
 				case 0:
@@ -354,7 +374,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 				}
 
         		jpCategorizedMarks.setBackground(backgrounds[i%10]);
-        		int height = initPanelContent(jpCategorizedMarks, -1 * rs.getInt("type") - 1); 	//because the category's type was defined to be from -1 to -n, and modification was from 0~n
+        		height = initPanelContent(jpCategorizedMarks, -1 * rs.getInt("type")); 	//because the category's type was defined to be from -1 to -n, and modification was from 0~n
         		jpCategorizedMarks.setPreferredSize(jpCategorizedMarks.getPreferredSize());
         		
         		jpCategorizedMarks.setBounds(0, y, panelList.getWidth(), height + 39);
@@ -374,6 +394,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 		repaint();
 	}
 	
+	//inside each group.
     private int initPanelContent(JPanel panel, int type) {
 		ArrayList<String> allModification = getAllLangNamesFromDB(type);
         //start to init current list.
@@ -491,7 +512,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         	applyProperties();
         else if (o == resetBTN) {
             //resetClicked();
-        }else if (o == btnOK) {
+        }else if (o == btnClose) {
             dispose();
         }
     }
@@ -537,8 +558,9 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 				L.e("AddModification ", "Exception when updating a category into modification.", e);
 			}
     	}
-
+    	int idx = tabbedPane.getSelectedIndex();
 	    this.initTabbedPaneContent();
+	    tabbedPane.setSelectedIndex(idx);
 	}
 
 	public boolean insertModification( String modification, String price) {
@@ -683,11 +705,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 	    	        itemChanged = true;
 	
 	    	        updateTextOfTextArea();
-	
-	    	        // 确定按钮置有效
-	    	        if (!btnOK.isEnabled()) {
-	    	            btnOK.setEnabled(true);
-	    	        }
 	    		}
 	    	}
 	    	if(!itemChanged) {
@@ -696,6 +713,9 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 	    	}
     	}else {//delete the group.
     		int selectedTabIdx = tabbedPane.getSelectedIndex();
+    		if(selectedTabIdx == 0) {
+    			return;
+    		}
     		deleteCategory(selectedTabIdx);
     		tabbedPane.remove(selectedTabIdx);
     	}
@@ -795,18 +815,15 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         }
         updateTextOfTextArea();
 
-        if (!btnOK.isEnabled()) {
-            btnOK.setEnabled(true);
-        }
-
         btnApplyToList.setEnabled(false);
         btnApplyToCategory.setEnabled(false);
     }
     
     private void addToCategoryClicked(){
 		String[] langs = StringUtil.split(txaCurContent.getText(), BarDlgConst.semicolon);
+
     	String title = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
-    	if(title.equals("    ")) {
+    	if(title.equals(defaultTabName)) {
     		//insert
     		StringBuilder sql = new StringBuilder("INSERT INTO modification (lang1, lang2, lang3, type, status) VALUES ('")
     				.append(langs[0]).append("', '");
@@ -834,7 +851,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     		if(langs.length > 2) {
     			sql.append(langs[2]);
     		}
-    		sql.append("' where type = ").append((tabbedPane.getSelectedIndex()) * -1);
+    		sql.append("' where type = ").append(tabbedPane.getSelectedIndex() * -1);
     		try {
     			PIMDBModel.getStatement().executeUpdate(sql.toString());
     		}catch(Exception e) {
@@ -1028,10 +1045,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 
             // 以列表框的模型来设置文本区中的显示
             updateTextOfTextArea();
-            // 确定按钮置有效
-            if (!btnOK.isEnabled()) {
-                btnOK.setEnabled(true);
-            }
         }
     }
 
@@ -1246,7 +1259,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         	}
             btnApplyToList.setEnabled(false);
             btnApplyToCategory.setEnabled(false);
-            btnOK.setEnabled(false);
             return;
         }
 
@@ -1254,7 +1266,6 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
         
         if (hasNewField(listInListComponent, textArr) && !btnApplyToList.isEnabled()) { // 添加到列表按钮置有效
             btnApplyToList.setEnabled(true);
-            btnOK.setEnabled(true); // make sure the ok button enabled
         }
         btnApplyToCategory.setEnabled(textArr.size() == 1);
         
@@ -1282,7 +1293,7 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
     private JButton btnDelete;
     private JButton resetBTN;
 
-    private JButton btnOK;
+    private JButton btnClose;
     private JList<CheckItem> modificationList; // 列表框及其模型
     private JTabbedPane tabbedPane;
     private JPanel panelList;
