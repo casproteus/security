@@ -5,4 +5,5 @@ echo This script only works with NT-based versions of Windows.
 goto :eof
 
 :nt
+md c:\SanjiPos
 "%~dp0\jre\bin\java" -jar stgo.jar

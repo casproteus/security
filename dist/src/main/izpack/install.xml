@@ -10,7 +10,7 @@
 		<variable name="wrapper.home" value="" />
 		<variable name="app.install.dir" value="stgo/sanjipos" />
 		<variable name="TargetPanel.dir.unix" value="/opt/$app.install.dir" />
-		<variable name="TargetPanel.dir.windows" value="$INSTALL_PATH"/>
+		<variable name="TargetPanel.dir.windows" value="C:\SanjiPos"/> <!-- $INSTALL_PATH"/> -->
 
 		<!-- Panel settings -->
 		<variable name="JDKPathPanel.minVersion" value="1.8.0" />
@@ -40,9 +40,17 @@
 				<field>IS_WINDOWS</field>
 			</java>
 			<returnvalue type="boolean">true</returnvalue>
-		</condition>			
+		</condition>
+		<!-- to determin if the system is 32bit -->
+		<condition type="variable" id="arch64">
+			<name>SYSTEM_sun_arch_data_model</name>
+			<value>64</value>
+		</condition>
+		<condition type="not" id="arch32">
+			<condition type="ref" refid="arch64" />
+		</condition>
 	</conditions>
-
+	
 	<dynamicvariables>
 		<variable name="service.host" value="${security.service.host}"/>
 		<variable name="service.port" value="${security.service.port}"/>
@@ -120,7 +128,7 @@
 		  
 		<panel classname="SummaryPanel" id="SummaryPanel" />
 		<panel classname="InstallPanel" id="InstallPanel" />		
-		<panel classname="ShortcutPanel" id="ShortcutPanel" />		
+		<panel classname="ShortcutPanel" id="ShortcutPanel" condition="arch64" />		
 		<panel classname="ProcessPanel" id="ProcessPanel" />
 		<panel classname="FinishPanel" id="FinishPanel" />
 	</panels>
