@@ -78,7 +78,6 @@ public interface BarDlgConst {
     String SETTINGS();
     String RETURN();
     String MORE();
-    String SEND();
 
     String EQUL_BILL();
     String FAST_DISCOUNT();

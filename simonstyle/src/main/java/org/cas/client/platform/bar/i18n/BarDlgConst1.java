@@ -137,8 +137,6 @@ public class BarDlgConst1 implements BarDlgConst{
 	public String RETURN() {return "RETOURNER";}
     @Override
 	public String MORE() {return "PLUS";}
-    @Override
-	public String SEND() {return "ENVOYER";}
 
     @Override
 	public String EQUL_BILL() {return "EGALER FACTURE";}

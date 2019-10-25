@@ -137,8 +137,6 @@ public class BarDlgConst2 implements BarDlgConst{
 	public String RETURN() {return "返回";}
     @Override
 	public String MORE() {return "更多...";}
-    @Override
-	public String SEND() {return "发送";}
 
     @Override
 	public String EQUL_BILL() {return "分单";}

@@ -674,6 +674,7 @@ public class BarOption {
 		return CustOpts.custOps.getValue("DisplayVisaAsCredit") == null ? false : 
 			"true".equals(CustOpts.custOps.getValue("DisplayVisaAsCredit"));
 	}
+	
 	public static int getNameColWidth(int width) {
 		Object o = CustOpts.custOps.getValue("NameColWidth");
 		if(o != null) {
@@ -681,6 +682,19 @@ public class BarOption {
 				width = Integer.valueOf(o.toString());
 			}catch(Exception e) {
 				L.e("barOption", "non valid ModifyDlgWidth set" + o, e);
+			}
+		}
+		return width;
+	}
+	
+	public static int getCounterModeTablePanelWidth() {
+		int width = 44;
+		Object o = CustOpts.custOps.getValue("CounterModeTablePanelWidth");
+		if(o != null) {
+			try {
+				width = Integer.valueOf(o.toString());
+			}catch(Exception e) {
+				L.e("barOption", "non valid CounterModeTablePanelWidth set" + o, e);
 			}
 		}
 		return width;

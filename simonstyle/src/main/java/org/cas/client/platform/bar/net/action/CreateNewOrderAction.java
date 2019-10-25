@@ -340,22 +340,19 @@ public class CreateNewOrderAction implements ActionListener{
 
 	//create a new opened table
 	private void createNewOpenedTable(String table) {
-		int tableNum = 0;
-		StringBuilder sql = new StringBuilder("select count(*) from dining_Table");
-		try {
-			ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
-			int size = !rs.next() ? 0 : rs.getInt(1);
-			tableNum = size + 1;
-		}catch(Exception exp) {
-			L.e("CreateNewOrder", "exception when run sql:" + sql, exp);
-		}
-		
-		
-		int idx = tableNum;
+		StringBuilder sql = null;
+		int idx = 0;
 		try {
 			idx = Integer.valueOf(table);
 		}catch(Exception e) {
-			//do nothing, it's ok if table is not presented with number.
+			sql = null;new StringBuilder("select count(*) from dining_Table");
+			try {
+				ResultSet rs = PIMDBModel.getReadOnlyStatement().executeQuery(sql.toString());
+				int size = !rs.next() ? 0 : rs.getInt(1);
+				idx = size + 1;
+			}catch(Exception exp) {
+				L.e("CreateNewOrder", "exception when run sql:" + sql, exp);
+			}
 		}
 		int row = idx / 10 + 1;
 		int col = idx % 10;
@@ -366,7 +363,7 @@ public class CreateNewOrderAction implements ActionListener{
 			.append(row * (40 + 20)).append(", ")	//posY
 			.append(40).append(", ")	//width
 			.append(40).append(", ")	//height
-			.append(1).append(", ")		//type
+			.append(0).append(", ")		//type
 			.append(1).append(", '")
 			.append(BarOption.df.format(new Date())).append("')");		//status
 		

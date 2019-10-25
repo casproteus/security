@@ -749,6 +749,9 @@ public class AddModificationDialog extends JDialog implements ActionListener, Li
 //    }
 
     public ArrayList<String> getListInCurrentListComponent() {
+    	if(listModel == null) {
+    		listModel = new DefaultListModel<CheckItem>(); 
+    	}
         Object[] aryListModelData = listModel.toArray();
 
         // ArrayList 存放列表框中的数据中的字符串以便于判断包含关系

@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,12 +28,10 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JWindow;
 
 import org.cas.client.platform.CASControl;
 import org.cas.client.platform.bar.BarUtil;
-import org.cas.client.platform.bar.action.Cmd_Send;
 import org.cas.client.platform.bar.dialog.statistics.CheckInOutListDlg;
 import org.cas.client.platform.bar.i18n.BarDlgConst;
 import org.cas.client.platform.bar.i18n.BarDlgConst0;
@@ -44,6 +41,7 @@ import org.cas.client.platform.bar.model.DBConsts;
 import org.cas.client.platform.bar.net.HttpRequestClient;
 import org.cas.client.platform.bar.net.RequestNewOrderThread;
 import org.cas.client.platform.bar.net.bean.Table;
+import org.cas.client.platform.bar.uibeans.TableButton;
 import org.cas.client.platform.casbeans.textpane.PIMTextPane;
 import org.cas.client.platform.cascontrol.dialog.ICASDialog;
 import org.cas.client.platform.cascontrol.dialog.logindlg.LoginDlg;
@@ -428,10 +426,12 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
     			panels[0].setVisible(true);
     		}else if(i == 0) {
            	 	TablesPanel tablesPanel = (TablesPanel)panels[0];
-           	 	ActionEvent evt = new ActionEvent(tablesPanel.getTableButtonByName(
-           	 		cmbCurTable.getModel().getSize() > 1 ? cmbCurTable.getItemAt(1) : cmbCurTable.getItemAt(0)),
-           	 			0, null);
-           	 	tablesPanel.actionPerformed(evt);
+           	 	TableButton tableButton = tablesPanel.getTableButtonByName(
+               	 		cmbCurTable.getModel().getSize() > 1 ? cmbCurTable.getItemAt(1) : cmbCurTable.getItemAt(0));
+           	 	if(tableButton != null) {
+           	 		ActionEvent evt = new ActionEvent(tableButton, 0, null);
+               	 	tablesPanel.actionPerformed(evt);
+           	 	}
            	 
     			panels[2].setVisible(true);
     		}
@@ -513,7 +513,7 @@ public class BarFrame extends JFrame implements ICASDialog, WindowListener, Comp
         //main panels
         if(BarOption.isCounterMode()) {
         	panels[0].setBounds(0, lblOperator.getY() + lblOperator.getHeight(), 
-        			69, lblStatus.getY() - lblOperator.getY() - lblOperator.getHeight());
+        			BarOption.getCounterModeTablePanelWidth(), lblStatus.getY() - lblOperator.getY() - lblOperator.getHeight());
         	panels[2].setBounds(panels[0].getWidth(), lblOperator.getY() + lblOperator.getHeight(), 
         			getContainer().getWidth() - panels[0].getWidth(), lblStatus.getY() - lblOperator.getY() - lblOperator.getHeight());
         	panels[1].setBounds(0, lblOperator.getY() + lblOperator.getHeight(), 
