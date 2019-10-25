@@ -56,7 +56,8 @@ public class TableButton extends JButton {
 		}
 		Image temp = PIMPool.pool.getImage(path.concat(".png"));
 		if(temp == null) {
-			path = PaneConsts.IAMGE_PATH.concat("T").concat(String.valueOf(type));
+			type = 0;
+			path = PaneConsts.IAMGE_PATH.concat("T0");
 			if(status > 0) {
 				path = path.concat("s");
 			}
