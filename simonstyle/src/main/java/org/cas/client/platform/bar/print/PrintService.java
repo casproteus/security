@@ -110,20 +110,48 @@ public class PrintService{
     public static final int ERR_PROCESSING = 1001;	//processing error
     public static final int ERR_PARAM = 1002;		//parameter error
 
+    private static List<String> errorPrinterList = new ArrayList<String>();
+    public static String SUCCESS_STR = "0";
+    public static String ERROR_STR = "2";
+    
 	private static final String CASH = "ARGENT";
 	private static final String REFUND = "Refund : ";
     public static final String METHOD = "Method:";
 	private static final String VOID = "*Voided*";
     
     //The start time and end time are long format, need to be translate for print.
-    public static void exePrintBill(BillPanel billPanel, List<Dish> saleRecords){
+    public static String exePrintBill(BillPanel billPanel, List<Dish> saleRecords, boolean isCancel){
+//        L.d("PrintService", "start to translate selection into ipContent for printing.");
+//        String ip = getIPofNonEmptyIpContentMapEntry();
+//        if(ip != null){
+//            L.d("PrintService", "ipContent not empty, means last print job not finished yet! returning not success flag.");
+//            return ip;                     //未打印完毕
+//        }
+//        if(checkErrorPrinterList()){
+//            BarFrame.setStatusMes("PRINTING...");
+//        }
+//        popKitchenBillIdx();
+//
+//        Double priceOfBill = saveSaleRecToDB(isCancel);                              //save to db
+//
+//        if(!StringUtils.isBlank(serverip)){                     //send to server
+//            sendToServer(serverip);
+//        }
+//
+//        if (manageDishesIntoMapAndWaitingForPrint(isCancel, priceOfBill)) { //send to printer
+//            return SUCCESS_STR;
+//        }else {
+//            return ERROR_STR;
+//        }
+        
+        
     	//init status
     	flushIpContent();
         reInitPrintRelatedMaps();
         
         String printerIP = BarFrame.menuPanel.getPrinters()[0].getIp();
 		if("".equals(printerIP)) {
-        	return;
+        	return null;
         }
         List<String> contents = ipContentMap.get(printerIP);
 		if(contents == null) {
@@ -167,6 +195,32 @@ public class PrintService{
         contents.add("cut");
         
         printContents();
+        return SUCCESS_STR;
+    }
+    
+    private static String getIPofNonEmptyIpContentMapEntry(){
+        for(Map.Entry entry : ipContentMap.entrySet()){
+            List<String> listTypeValue = (List<String>)entry.getValue();
+            if(listTypeValue.size() > 0){
+                if(!errorPrinterList.contains(entry.getKey())) {
+                    return entry.getKey().toString();
+                }
+            }
+        }
+        return null;
+    }
+    
+    private static boolean checkErrorPrinterList() {
+        StringBuilder ipStr = new StringBuilder();
+        for(String ip : errorPrinterList){
+            ipStr.append(",");
+            ipStr.append(ip);
+        }
+        if(ipStr.length() > 1) {
+            BarFrame.setStatusMes("PRINTER ERROR, restart printer " + ipStr.substring(1) + ", and restart this app");
+            return false;
+        }
+        return true;
     }
     
     //The start time and end time are long format, need to be translate for print.

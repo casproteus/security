@@ -112,7 +112,7 @@ public class BillPanel extends JPanel implements ActionListener, ComponentListen
         if(status >= DBConsts.completed || status < DBConsts.original || comment.contains(PrintService.OLD_GST)) { //for completed or reopened completed bill
         	PrintService.exePrintInvoice(this, false, isToCustomer, true);
         }else {		//for original or billprinted or reopeneed billPrinted bills go here..
-	        PrintService.exePrintBill(this, orderedDishAry);
+	        PrintService.exePrintBill(this, orderedDishAry, false);
 	        status = DBConsts.billPrinted;
 	        comment += PrintService.REF_TO + getBillID();
 	        comment = replaceMoney(comment, lblSubTotle.getText());
