@@ -24,7 +24,7 @@
 		<slf4j.version>1.7.2</slf4j.version>
 		<nekodtd.version>1.9.15</nekodtd.version>
 		<nekohtml.version>1.9.6.2</nekohtml.version>
-		<apache.poi.version>3.11-beta2</apache.poi.version>
+		<apache.poi.version>3.17</apache.poi.version>
 		<apache.poi-ooxml.verssion>3.11-beta2</apache.poi-ooxml.verssion>
 		<apache.poi-scratchpad.version>3.11-beta2</apache.poi-scratchpad.version>
 		<mule.version>3.7.0</mule.version>
